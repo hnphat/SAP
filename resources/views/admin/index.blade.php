@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laravel</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{asset('css/style.css')}}" />
+</head>
+<body>
+    <h1>Welcome to Laravel</h1>
+    @yield('content')
+    @include('admin.footer')
+</body>
+</html>
