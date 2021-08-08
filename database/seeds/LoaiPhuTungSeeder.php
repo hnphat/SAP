@@ -12,5 +12,19 @@ class LoaiPhuTungSeeder extends Seeder
     public function run()
     {
         //
+        DB::table('loai_phu_tung')->insert([
+            [
+                'id' => 1,
+                'name' => 'Dầu'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Nhớt'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Bố thắng'
+            ]
+        ]);
     }
 }

@@ -12,5 +12,15 @@ class TypeGuestSeeder extends Seeder
     public function run()
     {
         //
+        DB::table('type_guest')->insert([
+            [
+                'id' => 1,
+                'name' => 'Cá nhân'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Doanh nghiệp'
+            ]
+        ]);
     }
 }

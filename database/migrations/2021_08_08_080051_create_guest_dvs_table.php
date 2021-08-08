@@ -19,7 +19,7 @@ class CreateGuestDvsTable extends Migration
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->string('date_create',10)->nullable();
             $table->string('name',100)->nullable();
-            $table->string('phone',10)->nullable();
+            $table->string('phone',20)->nullable();
             $table->string('address',100)->nullable();
             $table->string('number_car',50)->nullable();
             $table->string('vin', 100)->nullable();
