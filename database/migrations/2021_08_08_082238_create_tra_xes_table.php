@@ -23,6 +23,7 @@ class CreateTraXesTable extends Migration
             $table->integer('fuel_current')->nullable();
             $table->string('car_status', 255)->nullable();
             $table->string('date_return', 50)->nullable();
+            $table->boolean('allow')->default(false);
             $table->timestamps();
         });
     }

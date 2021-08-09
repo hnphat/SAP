@@ -21,6 +21,7 @@ class CreateTaiLieusTable extends Migration
             $table->string('moTa', 255)->nullable();
             $table->text('noiDung')->nullable();
             $table->string('duongDan', 255)->nullable();
+            $table->string('ngayTao', 10)->nullable();
             $table->timestamps();
         });
     }

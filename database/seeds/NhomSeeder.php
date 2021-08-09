@@ -12,5 +12,23 @@ class NhomSeeder extends Seeder
     public function run()
     {
         //
+        DB::table('nhom')->insert([
+           [
+               'id' => 1,
+               'name' => 'TVBH'
+           ],
+            [
+                'id' => 2,
+                'name' => 'CVDV'
+            ],
+            [
+                'id' => 3,
+                'name' => 'CSKH'
+            ],
+            [
+                'id' => 4,
+                'name' => 'MKT'
+            ]
+        ]);
     }
 }

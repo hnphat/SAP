@@ -25,6 +25,7 @@ class CreateDangKySuDungsTable extends Migration
             $table->string('car_status', 255)->nullable();
             $table->string('date_go', 50)->nullable();
             $table->string('date_return', 50)->nullable();
+            $table->boolean('allow')->default(false);
             $table->timestamps();
         });
     }
