@@ -17,7 +17,7 @@ class CreateUsersDetailsTable extends Migration
             $table->increments('id');
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');
-            $table->string('name',255);
+            $table->string('surname',255);
             $table->string('birthday',10);
             $table->string('address',255);
             $table->string('phone', 20);

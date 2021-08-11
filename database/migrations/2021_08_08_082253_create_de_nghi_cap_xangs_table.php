@@ -17,10 +17,13 @@ class CreateDeNghiCapXangsTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');
+            $table->string('name', 100)->nullable();
+            $table->string('vin', 100)->nullable();
+            $table->string('number_car', 50)->nullable();
             $table->string('lyDo', 255)->nullable();
             $table->integer('soLit')->default(5);
             $table->boolean('active')->default(false);
-            $table->timestamps();
+            $table->string('ngayCap', 10)->nullable();
         });
     }
 

@@ -1,4 +1,9 @@
 @extends('admin.index')
+@section('title')
+    Hyundai An Giang SAP
+@endsection
+@section('script_head')
+@endsection
 @section('content')
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -25,4 +30,12 @@
     </div>
     <!-- /.content -->
 </div>
+@endsection
+@section('script')
+    <!-- jQuery -->
+    <script src="plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/adminlte.min.js"></script>
 @endsection

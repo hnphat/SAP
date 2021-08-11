@@ -8,4 +8,7 @@ class TypeCar extends Model
 {
     //
     protected $table = "type_car";
+    public function typeCarDetail() {
+        return $this->hasMany('App\TypeCarDetail', 'id_type_car', 'id');
+    }
 }

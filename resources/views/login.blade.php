@@ -90,22 +90,30 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center form_container">
-                <form>
+                <form action="{{route('login')}}" method="post" autocomplete="off">
+                    @csrf
                     <div class="input-group mb-3">
                         <div class="input-group-append">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                         </div>
-                        <input autofocus="autofocus" type="text" name="" class="form-control input_user" value="" placeholder="username">
+                        <input autofocus="autofocus" type="text" name="account" class="form-control input_user" value="" placeholder="username" required="required">
                     </div>
                     <div class="input-group mb-2">
                         <div class="input-group-append">
                             <span class="input-group-text"><i class="fas fa-key"></i></span>
                         </div>
-                        <input type="password" name="" class="form-control input_pass" value="" placeholder="password">
+                        <input type="password" name="password" class="form-control input_pass" value="" placeholder="password" required="required">
                     </div>
                     <div class="d-flex justify-content-center mt-3 login_container">
-                        <button type="button" name="button" class="btn login_btn">TRUY CẬP</button>
-                    </div>
+                        <input type="submit" name="submit" class="btn login_btn" value="TRUY CẬP">
+                    </div><br/>
+                    <h5 class="text-white">
+                        <i>
+                            @if(isset($error))
+                                {{$error}}
+                            @endif
+                        </i>
+                    </h5>
                 </form>
             </div>
         </div>

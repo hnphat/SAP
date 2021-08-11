@@ -18,7 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('password');
-            $table->integer('rule')->default(0);
+            $table->integer('rule')->unsigned()->default(0);
+            $table->foreign('rule')->references('id')->on('quyen');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

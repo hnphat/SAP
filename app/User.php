@@ -27,4 +27,55 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function userDetail() {
+        return $this->hasOne('App\UsersDetail', 'id_user', 'id');
+    }
+
+    public function guest() {
+        return $this->hasMany('App\Guest', 'id_user_create', 'id');
+    }
+
+    public function sale() {
+        return $this->hasMany('App\Sale','id_user_create','id');
+    }
+
+    public function carSale() {
+        return $this->hasMany('App\CarSale','id_user_create','id');
+    }
+
+    public function dv() {
+        return $this->hasMany('App\DV','id_user_create','id');
+    }
+
+    public function xeLaiThu() {
+        return $this->hasMany('App\XeLaiThu','id_user_use','id');
+    }
+
+    public function deNghiCapXang() {
+        return $this->hasMany('App\DeNghiCapXang','id_user','id');
+    }
+
+    public function dangKySuDung() {
+        return $this->hasMany('App\DangKySuDung','id_user_reg','id');
+    }
+
+    public function traXe() {
+        return $this->hasMany('App\TraXe','id_user_pay', 'id');
+    }
+
+    public function taiLieu() {
+        return $this->hasMany('App\TaiLieu','id_user','id');
+    }
+
+//    public function nhomUser() {
+//        return $this->hasMany('App\NhomUser', 'id_user', 'id');
+//    }
+    public function nhom() {
+        return $this->belongsToMany('App\Nhom','nhom_user', 'id_user', 'id_nhom');
+    }
+
+    public function quyen() {
+        return $this->belongsTo('App\Quyen','rule', 'id');
+    }
 }
