@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
@@ -100,10 +101,13 @@ class UserController extends Controller
     {
 //        $user = User::find($id);
 //        $user->delete();
-        $user = User::where('id', $id)->delete();
-        if ($user)
-            return redirect()->route('user.list');
-        return "Loi";
+        try {
+            $user = User::where('id', $id)->delete();
+            if ($user)
+                return redirect()->route('user.list');
+        } catch (QueryException $ex) {
+            return redirect()->route('user.list')->with('loi','Không thể xóa vì người dùng đang còn sử dụng ở những nơi khác NOTE: ' .$ex->getMessage());
+        }
     }
 
     public function lock($id)

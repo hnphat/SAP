@@ -34,6 +34,11 @@
         <!-- Main content -->
         <div class="content">
             <div class="container">
+                @if(session('loi'))
+                    <div class="alert alert-danger">
+                        {{session('loi')}}
+                    </div>
+                @endif
                 <button class="btn btn-success" data-toggle="modal" data-target="#add"><span class="fas fa-plus-circle"></span></button><br/><br/>
                 <div class="card">
 {{--                    <div class="card-header">--}}
@@ -62,9 +67,9 @@
                                         <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
                                         <button onclick="lock('{{$row->id}}')" class="btn btn-dark btn-sm">
                                             @if($row->active == 1)
-                                                <span class="fas fa-lock"></span>
+                                                <span class="fas fa-lock text-success"></span>
                                             @else
-                                                <span class="fas fa-unlock"></span>
+                                                <span class="fas fa-unlock text-danger"></span>
                                             @endif
                                         </button>
                                         <button onclick="xoa('{{$row->id}}')" class="btn btn-danger btn-sm"><span class="fas fa-times-circle"></span></button>

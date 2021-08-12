@@ -14,7 +14,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>QUẢN TRỊ HỒ SƠ</strong></h1>
+                        <h1 class="m-0"><strong>HỒ SƠ</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -78,11 +78,11 @@
                                         {{csrf_field()}}
                                         <div class="card-body">
                                             <div class="form-group">
-                                                <label for="acc">Tài khoản</label>
+                                                <label for="acc">Tài khoản chưa bổ sung thông tin</label>
                                                 <select class="form-control" name="user_id" id="acc">
-                                                    @foreach($user as $row)
-                                                        <option value="{{$row->id}}">{{$row->name}}</option>
-                                                    @endforeach
+{{--                                                    @foreach($user_empty as $row)--}}
+{{--                                                        <option value="{{$row->id}}">{{$row->name}}</option>--}}
+{{--                                                    @endforeach--}}
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -197,6 +197,17 @@
         });
 
         $(document).ready(function(){
+
+            function reloadUserOption() {
+                // reload when add new user
+                $.get('{{url('management/hoso/users/')}}', function(data){
+                    $("#acc").html(data);
+                });
+            }
+
+            // reload when start page
+            reloadUserOption();
+
             $("#submit").click(function(e){
                 e.preventDefault();
 
@@ -214,6 +225,7 @@
                         })
                         table.ajax.reload();
                         $("#add").modal("hide");
+                        reloadUserOption();
                     }
                 });
             });
@@ -294,8 +306,12 @@
                             'id': $(this).data('id')
                         },
                         success: function(response){
-                            console.log(response);
+                            Toast.fire({
+                                icon: 'info',
+                                title: "Đã xóa!"
+                            })
                             table.ajax.reload();
+                            reloadUserOption();
                         }
                     });
                 }

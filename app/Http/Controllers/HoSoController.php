@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\UsersDetail;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HoSoController extends Controller
 {
@@ -15,9 +17,17 @@ class HoSoController extends Controller
      */
     public function index()
     {
-        //
+//        $user_empty = User::select('*')->whereNotIn('id', DB::table('users_detail')->select('id_user')->join('users','users_detail.id_user','=','users.id'))->get();
         $user = User::all();
+        //return view('user.hoso',['user' => $user, 'user_empty' => $user_empty]);
         return view('user.hoso',['user' => $user]);
+    }
+
+    public function getUser() {
+        $user_empty = User::select('*')->whereNotIn('id', DB::table('users_detail')->select('id_user')->join('users','users_detail.id_user','=','users.id'))->get();
+        foreach($user_empty as $row) {
+            echo "<option value='".$row->id."'>".$row->name."</option>";
+        }
     }
 
     /**

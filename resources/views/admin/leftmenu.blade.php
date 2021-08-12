@@ -13,7 +13,15 @@
                 <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{\Illuminate\Support\Facades\Auth::user()->name}}</a>
+                <a href="#" class="d-block">
+                    <?php
+                        try {
+                            echo \Illuminate\Support\Facades\Auth::user()->userDetail->surname;
+                        } catch (Throwable $ex) {
+                            echo \Illuminate\Support\Facades\Auth::user()->name;
+                        }
+                    ?>
+                </a>
                 <a href="{{route('out')}}" class="text-danger">Đăng xuất</a>
             </div>
         </div>
@@ -39,25 +47,25 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-drafting-compass nav-icon"></i>
+                                <p>Phân quyền</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route("hoso.list")}}" class="nav-link">
                                 <i class="far fa-newspaper nav-icon"></i>
                                 <p>Hồ sơ</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route("typecar.list")}}" class="nav-link">
                                 <i class="fas fa-car nav-icon"></i>
-                                <p>Dòng xe</p>
+                                <p>Model Xe</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-car-alt nav-icon"></i>
-                                <p>Loại xe</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route("package.list")}}" class="nav-link">
                                 <i class="fas fa-business-time nav-icon"></i>
                                 <p>Bảo hiểm - Phụ kiện</p>
                             </a>
@@ -65,13 +73,7 @@
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-diagnoses nav-icon"></i>
-                                <p>Loại công</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-dice-d6 nav-icon"></i>
-                                <p>Loại phụ tùng</p>
+                                <p>Loại công - phụ tùng</p>
                             </a>
                         </li>
                     </ul>
