@@ -71,7 +71,7 @@ class TypeCarController extends Controller
 
     public function update(Request $request) {
         $result = TypeCar::where('id', $request->idMasterXe)->update([
-            'name' => $request->tenXe
+            'name' => $request->tenXeE
         ]);
         if($result) {
             return response()->json([

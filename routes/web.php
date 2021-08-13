@@ -65,6 +65,30 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit/show','PackageController@editShow');
         Route::post('update','PackageController@update');
     });
+    Route::group(['prefix' => 'cong'], function(){
+        Route::get('list','CongController@index')->name('cong.list');
+        Route::get('get/list','CongController@getList');
+        Route::post('add','CongController@add');
+        Route::post('delete','CongController@delete');
+        Route::post('edit/show','CongController@editShow');
+        Route::post('update','CongController@update');
+    });
+    Route::group(['prefix' => 'phutung'], function(){
+        Route::get('get/list','PhuTungController@getList');
+        Route::post('add','PhuTungController@add');
+        Route::post('delete','PhuTungController@delete');
+        Route::post('edit/show','PhuTungController@editShow');
+        Route::post('update','PhuTungController@update');
+    });
+    Route::group(['prefix' => 'guest'], function(){
+        Route::get('list','GuestController@index')->name('guest.list');
+        Route::get('get/list','GuestController@getList');
+        Route::get('check/{num}','GuestController@checkPhone');
+        Route::post('add','GuestController@add');
+        Route::post('delete','GuestController@delete');
+        Route::post('edit/show','GuestController@editShow');
+        Route::post('update','GuestController@update');
+    });
 });
 
 

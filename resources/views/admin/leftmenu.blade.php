@@ -71,7 +71,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('cong.list')}}" class="nav-link">
                                 <i class="fas fa-diagnoses nav-icon"></i>
                                 <p>Loại công - phụ tùng</p>
                             </a>
@@ -88,7 +88,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('guest.list')}}" class="nav-link">
                                 <i class="fas fa-people-arrows nav-icon"></i>
                                 <p>Khách hàng</p>
                             </a>

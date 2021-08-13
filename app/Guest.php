@@ -15,4 +15,8 @@ class Guest extends Model
     public function typeGuest() {
         return $this->belongsTo('App\TypeGuest', 'id_type_guest', 'id');
     }
+
+    public function user() {
+        return $this->belongsTo('App\User', 'id_user_create', 'id');
+    }
 }

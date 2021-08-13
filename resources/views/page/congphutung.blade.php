@@ -30,55 +30,100 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="row container">
-                <div class="col-sm-4">
-                    <form id="addForm" autocomplete="off">
-                        {{csrf_field()}}
-                        <div class="card-body">
-                            <input type="hidden" name="idObject">
-                            <div class="form-group">
-                                <label>Nội dung</label>
-                                <input name="noiDung" type="text" class="form-control" placeholder="Nhập nội dung" autofocus="autofocus">
+            <div class="container">
+                <div class="row">
+                    <div class="col-5 col-sm-3">
+                        <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                            <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true"><button class="btn btn-info">Loại công</button></a>
+                            <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false"><button class="btn btn-info">Loại phụ tùng</button></a>
+                        </div>
+                    </div>
+                    <div class="col-7 col-sm-9">
+                        <div class="tab-content" id="vert-tabs-tabContent">
+                            <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                                    <div class="row">
+                                        <div class="col-sm-5">
+                                            <form id="addForm" autocomplete="off">
+                                                {{csrf_field()}}
+                                                <div class="card-body">
+                                                    <input type="hidden" name="idObject">
+                                                    <div class="form-group">
+                                                        <label>Loại công</label>
+                                                        <input name="loaiCong" type="text" class="form-control" placeholder="Nhập loại công" autofocus="autofocus">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button id="btnAdd" class="btn btn-primary">Thêm mới</button>
+                                                        <button id="btnUpdate" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>
+                                                        <button id="btnCancel" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <table id="dataTable" class="display" style="width:100%">
+                                                <thead>
+                                                <tr class="bg-cyan">
+                                                    <th>TT</th>
+                                                    <th>Loại công</th>
+                                                    <th>Sửa</th>
+                                                    <th>Xóa</th>
+                                                </tr>
+                                                </thead>
+                                                <tfoot>
+                                                <tr>
+                                                    <th>TT</th>
+                                                    <th>Loại công</th>
+                                                    <th>Sửa</th>
+                                                    <th>Xóa</th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
                             </div>
-                            <div class="form-group">
-                                <label>Giá</label>
-                                <input name="gia" type="number" class="form-control" placeholder="Nhập giá (nếu có)">
-                            </div>
-                            <div class="form-group">
-                                <label>Hoa hồng</label>
-                                <input name="hoaHong" type="number" class="form-control" placeholder="Nhập hoa hồng (nếu có)" >
-                            </div>
-                            <div class="form-group">
-                                <button id="btnAdd" class="btn btn-primary">Thêm mới</button>
-                                <button id="btnUpdate" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>
-                                <button id="btnCancel" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>
+                            <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <form id="addForm2" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <div class="card-body">
+                                                <input type="hidden" name="idObject2">
+                                                <div class="form-group">
+                                                    <label>Loại phụ tùng</label>
+                                                    <input name="loaiCong2" type="text" class="form-control" placeholder="Nhập loại phụ tùng" autofocus="autofocus">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button id="btnAdd2" class="btn btn-primary">Thêm mới</button>
+                                                    <button id="btnUpdate2" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>
+                                                    <button id="btnCancel2" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <table id="dataTable2" class="display" style="width:100%">
+                                            <thead>
+                                            <tr class="bg-cyan">
+                                                <th>TT</th>
+                                                <th>Loại phụ tùng</th>
+                                                <th>Sửa</th>
+                                                <th>Xóa</th>
+                                            </tr>
+                                            </thead>
+                                            <tfoot>
+                                            <tr>
+                                                <th>TT</th>
+                                                <th>Loại phụ tùng</th>
+                                                <th>Sửa</th>
+                                                <th>Xóa</th>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="col-sm-8">
-                    <table id="dataTable" class="display" style="width:100%">
-                        <thead>
-                        <tr class="bg-cyan">
-                            <th>TT</th>
-                            <th>Nội dung</th>
-                            <th>Giá</th>
-                            <th>Hoa hồng</th>
-                            <th>Sửa</th>
-                            <th>Xóa</th>
-                        </tr>
-                        </thead>
-                        <tfoot>
-                        <tr>
-                            <th>TT</th>
-                            <th>Nội dung</th>
-                            <th>Giá</th>
-                            <th>Hoa hồng</th>
-                            <th>Sửa</th>
-                            <th>Xóa</th>
-                        </tr>
-                        </tfoot>
-                    </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -115,11 +160,7 @@
 
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
-                dom: 'Blfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                ajax: "{{ url('management/package/get/list') }}",
+                ajax: "{{ url('management/cong/get/list') }}",
                 "columnDefs": [ {
                     "searchable": false,
                     "orderable": false,
@@ -132,8 +173,6 @@
                 columns: [
                     { "data": "id" },
                     { "data": "name" },
-                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
-                    { "data": "profit", render: $.fn.dataTable.render.number(',','.',0,'') },
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -160,7 +199,7 @@
             $("#btnAdd").click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/package/add/')}}",
+                    url: "{{url('management/cong/add/')}}",
                     type: "post",
                     dataType: 'json',
                     data: $("#addForm").serialize(),
@@ -171,7 +210,7 @@
                             title: " Đã thêm " + response.noidung
                         })
                         table.ajax.reload();
-                        $('input[name=noiDung]').focus();
+                        $('input[name=loaiCong]').focus();
                     },
                     error: function() {
                         Toast.fire({
@@ -186,7 +225,7 @@
             $(document).on('click','#delete', function(){
                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
-                        url: "{{url('management/package/delete/')}}",
+                        url: "{{url('management/cong/delete/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
@@ -219,7 +258,7 @@
                 $("#btnCancel").show();
                 $("#btnCancel").prop("disabled", false);
                 $.ajax({
-                    url: "{{url('management/package/edit/show/')}}",
+                    url: "{{url('management/cong/edit/show/')}}",
                     type: "post",
                     dataType: "json",
                     data: {
@@ -229,9 +268,7 @@
                     success: function(response) {
                         console.log(response);
                         $("input[name=idObject]").val(response.data.id);
-                        $("input[name=noiDung]").val(response.data.name);
-                        $("input[name=gia]").val(response.data.cost);
-                        $("input[name=hoaHong]").val(response.data.profit);
+                        $("input[name=loaiCong]").val(response.data.name);
                     },
                     error: function(){
                         Toast.fire({
@@ -250,13 +287,13 @@
                 $(this).hide();
                 $(this).prop("disabled", true);
                 $("#addForm")[0].reset();
-                $("input[name=noiDung]").focus();
+                $("input[name=loaiCong]").focus();
             });
 
             $("#btnUpdate").click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/package/update/')}}",
+                    url: "{{url('management/cong/update/')}}",
                     type: "post",
                     dataType: "json",
                     data: $("#addForm").serialize(),
@@ -273,7 +310,7 @@
                         $("#btnCancel").hide();
                         $("#btnCancel").prop("disabled", true);
                         table.ajax.reload();
-                        $('input[name=noiDung]').focus();
+                        $('input[name=loaiCong]').focus();
                     },
                     error: function(){
                         Toast.fire({
@@ -283,6 +320,171 @@
                     }
                 });
             });
+
+            //--------------------------------------------------- Phu Tung ----------------
+            var table2 = $('#dataTable2').DataTable({
+                // paging: false,    use to show all data
+                ajax: "{{ url('management/phutung/get/list') }}",
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": "id" },
+                    { "data": "name" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            return "<button id='btnEdit2' data-id='"+row.id+"' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;";
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            return "<button id='delete2' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                        }
+                    }
+                ]
+            });
+
+            table2.on( 'order.dt search.dt', function () {
+                table2.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table2.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            // Add data
+            $("#btnAdd2").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/phutung/add/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#addForm2").serialize(),
+                    success: function(response) {
+                        $("#addForm2")[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: " Đã thêm " + response.noidung
+                        })
+                        table2.ajax.reload();
+                        $('input[name=loaiCong2]').focus();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Lỗi nhập liệu; Lỗi xử lý dữ liệu"
+                        })
+                    }
+                });
+            });
+
+            //Delete data
+            $(document).on('click','#delete2', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/phutung/delete/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: "Đã xóa"
+                            })
+                            table2.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            // edit data
+            $(document).on('click','#btnEdit2', function(){
+                $("#btnAdd2").hide();
+                $("#btnAdd2").prop("disabled", true);
+                $("#btnUpdate2").show();
+                $("#btnUpdate2").prop("disabled", false);
+                $("#btnCancel2").show();
+                $("#btnCancel2").prop("disabled", false);
+                $.ajax({
+                    url: "{{url('management/phutung/edit/show/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $("input[name=idObject2]").val(response.data.id);
+                        $("input[name=loaiCong2]").val(response.data.name);
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            });
+
+            $("#btnCancel2").click(function(){
+                $("#btnAdd2").show();
+                $("#btnAdd2").prop("disabled", false);
+                $("#btnUpdate2").hide();
+                $("#btnUpdate2").prop("disabled", true);
+                $(this).hide();
+                $(this).prop("disabled", true);
+                $("#addForm2")[0].reset();
+                $("input[name=loaiCong2]").focus();
+            });
+
+            $("#btnUpdate2").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/phutung/update/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#addForm2").serialize(),
+                    success: function(response) {
+                        $("#addForm2")[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: "Đã cập nhật!"
+                        })
+                        $("#btnAdd2").show();
+                        $("#btnAdd2").prop("disabled", false);
+                        $("#btnUpdate2").hide();
+                        $("#btnUpdate2").prop("disabled", true);
+                        $("#btnCancel2").hide();
+                        $("#btnCancel2").prop("disabled", true);
+                        table2.ajax.reload();
+                        $('input[name=loaiCong2]').focus();
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            });
+            //-------------------------------------------------------- end Phu Tung--------
         });
     </script>
 @endsection

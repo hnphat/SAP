@@ -89,8 +89,8 @@
                                         <div class="card-body">
                                             <input type="hidden" name="idMasterXe">
                                             <div class="form-group">
-                                                <label for="tenXe">Tên dòng xe</label>
-                                                <input type="text" class="form-control" id="tenXe" placeholder="Tên dòng xe" name="tenXe">
+                                                <label for="tenXeE">Tên dòng xe</label>
+                                                <input type="text" class="form-control" id="tenXeE" placeholder="Tên dòng xe" name="tenXeE">
                                             </div>
                                             <div class="form-group">
                                                 <button id="btnUpdate" class="btn btn-primary">Cập nhật</button>
@@ -281,7 +281,7 @@
                    },
                    success: function(response) {
                        console.log(response.data);
-                       $("input[name=tenXe]").val(response.data.name);
+                       $("input[name=tenXeE]").val(response.data.name);
                        $("input[name=idMasterXe]").val(response.data.id);
                    }
                });
