@@ -49,6 +49,14 @@
                                 <input name="hoaHong" type="number" class="form-control" placeholder="Nhập hoa hồng (nếu có)" >
                             </div>
                             <div class="form-group">
+                                <label>Loại</label>
+                                <select name="loai" class="form-control">
+                                    <option value="free">Phụ kiện - Quà tặng (free)</option>
+                                    <option value="pay">Phụ kiện bán (pay)</option>
+                                    <option value="cost">Các loại phí (cost)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <button id="btnAdd" class="btn btn-primary">Thêm mới</button>
                                 <button id="btnUpdate" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>
                                 <button id="btnCancel" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>
@@ -64,6 +72,7 @@
                             <th>Nội dung</th>
                             <th>Giá</th>
                             <th>Hoa hồng</th>
+                            <th>Loại</th>
                             <th>Sửa</th>
                             <th>Xóa</th>
                         </tr>
@@ -74,6 +83,7 @@
                             <th>Nội dung</th>
                             <th>Giá</th>
                             <th>Hoa hồng</th>
+                            <th>Loại</th>
                             <th>Sửa</th>
                             <th>Xóa</th>
                         </tr>
@@ -134,6 +144,7 @@
                     { "data": "name" },
                     { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
                     { "data": "profit", render: $.fn.dataTable.render.number(',','.',0,'') },
+                    { "data": "type"},
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -232,6 +243,7 @@
                        $("input[name=noiDung]").val(response.data.name);
                        $("input[name=gia]").val(response.data.cost);
                        $("input[name=hoaHong]").val(response.data.profit);
+                       $("select[name=loai]").val(response.data.type);
                    },
                    error: function(){
                        Toast.fire({

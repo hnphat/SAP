@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -191,7 +192,6 @@
                             <!-- /.card -->
                         </div>
                     </div>
-
             </div>
         </div>
         <!-- /.content -->
@@ -214,6 +214,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -227,6 +228,7 @@
 
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
+                responsive: true,
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
@@ -242,7 +244,7 @@
                 ],
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
-                    { "data": "idmaster" },
+                    { "data": null },
                     { "data": "type" },
                     { "data": "name" },
                     { "data": "phone" },
@@ -275,7 +277,7 @@
                 let flag = true;
                 if($("input[name=dienThoai]").val().match(/\d/g).length===10) {
                     $.ajax({
-                       url: "management/guest/check/" + $("input[name=dienThoai]").val(),
+                       url: "management/guest/check/" + $("input[name=dienThoai]").val().replace(',','').replace('.',''),
                        dataType: "text",
                        success: function(responce) {
                            let obj = JSON.parse(responce);
@@ -287,6 +289,7 @@
                        async: false
                     });
                     if (flag) {
+                        $("input[name=dienThoai]").val($("input[name=dienThoai]").val().replace(',','').replace('.',''));
                         $.ajax({
                             url: "{{url('management/guest/add/')}}",
                             type: "post",
@@ -376,7 +379,7 @@
                 if($("input[name=edienThoai]").val().match(/\d/g).length===10) {
                     if (parseInt($("input[name=edienThoaiCopy]").val()) != parseInt($("input[name=edienThoai]").val())) {
                         $.ajax({
-                            url: "management/guest/check/" + $("input[name=edienThoai]").val(),
+                            url: "management/guest/check/" + $("input[name=edienThoai]").val().replace(',','').replace('.',''),
                             dataType: "text",
                             success: function(responce) {
                                 let obj = JSON.parse(responce);
@@ -389,6 +392,7 @@
                         });
                     }
                     if (flag) {
+                        $("input[name=edienThoai]").val($("input[name=edienThoai]").val().replace(',','').replace('.',''));
                         $.ajax({
                             url: "{{url('management/guest/update/')}}",
                             type: "post",

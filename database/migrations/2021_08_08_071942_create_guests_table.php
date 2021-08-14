@@ -20,6 +20,13 @@ class CreateGuestsTable extends Migration
             $table->string('name',255);
             $table->string('phone', 20);
             $table->string('address',255);
+            $table->string('daiDien',255)->nullable();
+            $table->string('chucVu',255)->nullable();
+            $table->string('mst',255)->nullable();
+            $table->string('cmnd',255)->nullable();
+            $table->string('ngayCap',255)->nullable();
+            $table->string('noiCap',255)->nullable();
+            $table->string('ngaySinh',255)->nullable();
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->timestamps();

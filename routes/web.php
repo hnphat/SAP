@@ -89,6 +89,24 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit/show','GuestController@editShow');
         Route::post('update','GuestController@update');
     });
+    Route::group(['prefix' => 'kho'], function(){
+        Route::get('list','KhoController@index')->name('kho.list');
+        Route::get('get/list','KhoController@getList');
+        Route::post('add','KhoController@add');
+        Route::post('delete','KhoController@delete');
+        Route::post('edit/show','KhoController@editShow');
+        Route::post('update','KhoController@update');
+    });
+    Route::group(['prefix' => 'hd'], function(){
+        Route::get('list','HDController@index')->name('hd.list');
+        Route::get('get/list','HDController@getList');
+        Route::post('add','HDController@add');
+        Route::post('delete','HDController@delete');
+        Route::post('edit/show','HDController@editShow');
+        Route::post('update','HDController@update');
+        Route::get('exportToWord','HDController@test');
+        Route::get('down','HDController@down');
+    });
 });
 
 

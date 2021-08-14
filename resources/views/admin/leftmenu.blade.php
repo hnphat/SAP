@@ -100,13 +100,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('hd.list')}}" class="nav-link">
                                 <i class="fas fa-allergies nav-icon"></i>
-                                <p>Tạo hợp đồng</p>
+                                <p>Hợp đồng</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('kho.list')}}" class="nav-link">
                                 <i class="fas fa-columns nav-icon"></i>
                                 <p>Kho xe</p>
                             </a>
