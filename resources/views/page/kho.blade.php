@@ -32,260 +32,36 @@
         <!-- Main content -->
         <div class="content">
             <div class="container">
-                <div class="card card-primary card-tabs">
+                <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                <div class="card card-info card-tabs">
                     <div class="card-header p-0 pt-1">
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Kho xe</a>
+                                <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true"><strong>Kho xe</strong></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Đã xuất</a>
+                                <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false"><strong>Đã xuất bán</strong></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-3-tab" data-toggle="pill" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false"><strong>Đang đặt hàng</strong></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-4-tab" data-toggle="pill" href="#tab-4" role="tab" aria-controls="tab-4" aria-selected="false"><strong>Đang lên hợp đồng</strong></a>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
-                                <div>
-                                    <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
-                                    <!-- Medal Add -->
-                                    <div class="modal fade" id="addModal">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Nhập kho xe</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="card">
-                                                        <!-- /.card-header -->
-                                                        <!-- form start -->
-                                                        <form id="addForm" autocomplete="off">
-                                                            {{csrf_field()}}
-                                                            <div class="card-body row">
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Tên xe</label>
-                                                                        <select name="tenXe" class="form-control">
-                                                                            @foreach($typecar as $row)
-                                                                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Năm sản xuất</label>
-                                                                        <select name="nam" class="form-control">
-                                                                            <option value="0">Chọn</option>
-                                                                            @for($i = 2000; $i <= 2100; $i++)
-                                                                                <option value="{{$i}}">{{$i}}</option>
-                                                                            @endfor
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số VIN</label>
-                                                                        <input name="vin" placeholder="VIN" type="text" class="form-control">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số máy</label>
-                                                                        <input name="frame" placeholder="Số máy" type="text" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Màu sắc</label>
-                                                                        <select name="color" class="form-control">
-                                                                            <option value="0">Chọn</option>
-                                                                            <option value="Đỏ">Đỏ</option>
-                                                                            <option value="Xanh">Xanh</option>
-                                                                            <option value="Trắng">Trắng</option>
-                                                                            <option value="Vàng">Vàng</option>
-                                                                            <option value="Ghi">Ghi</option>
-                                                                            <option value="Nâu">Nâu</option>
-                                                                            <option value="Bạc">Bạc</option>
-                                                                            <option value="Xám">Xám</option>
-                                                                            <option value="Đen">Đen</option>
-                                                                            <option value="Vàng cát">Vàng cát</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Hộp số</label>
-                                                                        <select name="gear" class="form-control">
-                                                                            <option value="0">Chọn</option>
-                                                                            <option value="MT">MT</option>
-                                                                            <option value="AT">AT</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Động cơ</label>
-                                                                        <input name="machine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số chỗ ngồi</label>
-                                                                        <select name="seat" class="form-control">
-                                                                            <option value="4">Chọn</option>
-                                                                            <option value="4">4 chỗ</option>
-                                                                            <option value="5">5 chỗ</option>
-                                                                            <option value="7">7 chỗ</option>
-                                                                            <option value="9">9 chỗ</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Nhiên liệu</label>
-                                                                        <select name="fuel" class="form-control">
-                                                                            <option value="0">Chọn</option>
-                                                                            <option value="Xăng">Xăng</option>
-                                                                            <option value="Dầu">Dầu</option>
-                                                                            <option value="Điện">Điện</option>
-                                                                            <option value="Điện/Dầu">Điện/Dầu</option>
-                                                                            <option value="Điện/Xăng">Điện/Xăng</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Giá xe</label>
-                                                                        <input name="cost" value="0" id="cost" type="number" class="form-control" placeholder="Giá xe tối đa 2 tỷ 1">
-                                                                        <span id="showCost"></span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                                                    <button id="btnAdd" class="btn btn-primary" form="addForm">Lưu</button>
-                                                </div>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-                                    <!-- /.modal -->
-                                    <!-- Medal Edit -->
-                                    <div class="modal fade" id="editModal">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Chỉnh sửa</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="card">
-                                                        <!-- /.card-header -->
-                                                        <!-- form start -->
-                                                        <form id="editForm" autocomplete="off">
-                                                            {{csrf_field()}}
-                                                            <input type="hidden" name="eid"/>
-                                                            <div class="card-body row">
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Tên xe</label>
-                                                                        <select name="etenXe" class="form-control">
-                                                                            @foreach($typecar as $row)
-                                                                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Năm sản xuất</label>
-                                                                        <select name="enam" class="form-control">
-                                                                            @for($i = 2000; $i <= 2100; $i++)
-                                                                                <option value="{{$i}}">{{$i}}</option>
-                                                                            @endfor
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số VIN</label>
-                                                                        <input name="evin" placeholder="VIN" type="text" class="form-control">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số máy</label>
-                                                                        <input name="eframe" placeholder="Số máy" type="text" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Màu sắc</label>
-                                                                        <select name="ecolor" class="form-control">
-                                                                            <option value="Đỏ">Đỏ</option>
-                                                                            <option value="Xanh">Xanh</option>
-                                                                            <option value="Trắng">Trắng</option>
-                                                                            <option value="Vàng">Vàng</option>
-                                                                            <option value="Ghi">Ghi</option>
-                                                                            <option value="Nâu">Nâu</option>
-                                                                            <option value="Bạc">Bạc</option>
-                                                                            <option value="Xám">Xám</option>
-                                                                            <option value="Đen">Đen</option>
-                                                                            <option value="Vàng cát">Vàng cát</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Hộp số</label>
-                                                                        <select name="egear" class="form-control">
-                                                                            <option value="MT">MT</option>
-                                                                            <option value="AT">AT</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Động cơ</label>
-                                                                        <input name="emachine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số chỗ ngồi</label>
-                                                                        <select name="eseat" class="form-control">
-                                                                            <option value="4">4 chỗ</option>
-                                                                            <option value="5">5 chỗ</option>
-                                                                            <option value="7">7 chỗ</option>
-                                                                            <option value="9">9 chỗ</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Nhiên liệu</label>
-                                                                        <select name="efuel" class="form-control">
-                                                                            <option value="Xăng">Xăng</option>
-                                                                            <option value="Dầu">Dầu</option>
-                                                                            <option value="Điện">Điện</option>
-                                                                            <option value="Điện/Dầu">Điện/Dầu</option>
-                                                                            <option value="Điện/Xăng">Điện/Xăng</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Giá xe</label>
-                                                                        <input name="ecost" id="ecost" type="number" class="form-control" placeholder="Giá xe">
-                                                                        <span id="eshowCost"></span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                                                    <button id="btnUpdate" class="btn btn-primary" form="editForm">Lưu</button>
-                                                </div>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-                                    <!-- /.modal -->
-                                </div>
                                 <table id="dataTable" class="display" style="width:100%">
                                     <thead>
-                                    <tr class="bg-cyan">
+                                    <tr class="bg-gradient-gray">
                                         <th>TT</th>
                                         <th>Tên xe</th>
                                         <th>Năm</th>
                                         <th>Màu</th>
                                         <th>VIN</th>
-                                        <th>Số khung</th>
+                                        <th>Số máy</th>
                                         <th>Hộp số</th>
                                         <th>Động cơ</th>
                                         <th>Số ghế</th>
@@ -301,7 +77,7 @@
                                         <th>Năm</th>
                                         <th>Màu</th>
                                         <th>VIN</th>
-                                        <th>Số khung</th>
+                                        <th>Số máy</th>
                                         <th>Hộp số</th>
                                         <th>Động cơ</th>
                                         <th>Số ghế</th>
@@ -313,6 +89,104 @@
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
+                                <table id="dataTableOut" class="display" style="width:100%">
+                                    <thead>
+                                    <tr class="bg-success">
+                                        <th>TT</th>
+                                        <th>Tên xe</th>
+                                        <th>Năm</th>
+                                        <th>Màu</th>
+                                        <th>VIN</th>
+                                        <th>Số máy</th>
+                                        <th>Hộp số</th>
+                                        <th>Động cơ</th>
+                                        <th>Số ghế</th>
+                                        <th>Nhiên liệu</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>TT</th>
+                                        <th>Tên xe</th>
+                                        <th>Năm</th>
+                                        <th>Màu</th>
+                                        <th>VIN</th>
+                                        <th>Số máy</th>
+                                        <th>Hộp số</th>
+                                        <th>Động cơ</th>
+                                        <th>Số ghế</th>
+                                        <th>Nhiên liệu</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3-tab">
+                                <table id="dataTableOrder" class="display" style="width:100%">
+                                    <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>TT</th>
+                                        <th>Tên xe</th>
+                                        <th>Năm</th>
+                                        <th>Màu</th>
+                                        <th>VIN</th>
+                                        <th>Số máy</th>
+                                        <th>Hộp số</th>
+                                        <th>Động cơ</th>
+                                        <th>Số ghế</th>
+                                        <th>Nhiên liệu</th>
+                                        <th>Giá</th>
+                                        <th>Tác vụ</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>TT</th>
+                                        <th>Tên xe</th>
+                                        <th>Năm</th>
+                                        <th>Màu</th>
+                                        <th>VIN</th>
+                                        <th>Số máy</th>
+                                        <th>Hộp số</th>
+                                        <th>Động cơ</th>
+                                        <th>Số ghế</th>
+                                        <th>Nhiên liệu</th>
+                                        <th>Giá</th>
+                                        <th>Tác vụ</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="tab-pane fade" id="tab-4" role="tabpanel" aria-labelledby="tab-4-tab">
+                                <table id="dataTableSetup" class="display" style="width:100%">
+                                    <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>TT</th>
+                                        <th>Sale bán</th>
+                                        <th>Xe bán</th>
+                                        <th>Số VIN</th>
+                                        <th>Số máy</th>
+                                        <th>Màu</th>
+                                        <th>Nhiên liệu</th>
+                                        <th>Giá</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>TT</th>
+                                        <th>Sale bán</th>
+                                        <th>Xe bán</th>
+                                        <th>Số VIN</th>
+                                        <th>Số máy</th>
+                                        <th>Màu</th>
+                                        <th>Nhiên liệu</th>
+                                        <th>Giá</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -322,6 +196,254 @@
         </div>
         <!-- /.content -->
     </div>
+    <!--  MEDAL -->
+    <div>
+        <!-- Medal Add -->
+        <div class="modal fade" id="addModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Nhập kho xe</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form id="addForm" autocomplete="off">
+                                {{csrf_field()}}
+                                <div class="card-body row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Tên xe</label>
+                                            <select name="tenXe" class="form-control">
+                                                @foreach($typecar as $row)
+                                                    <option value="{{$row->id}}">{{$row->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Năm sản xuất</label>
+                                            <select name="nam" class="form-control">
+                                                <option value="0">Chọn</option>
+                                                @for($i = 2000; $i <= 2100; $i++)
+                                                    <option value="{{$i}}">{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số VIN</label>
+                                            <input name="vin" placeholder="VIN" type="text" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số máy</label>
+                                            <input name="frame" placeholder="Số máy" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Màu sắc</label>
+                                            <select name="color" class="form-control">
+                                                <option value="0">Chọn</option>
+                                                <option value="Đỏ">Đỏ</option>
+                                                <option value="Xanh">Xanh</option>
+                                                <option value="Trắng">Trắng</option>
+                                                <option value="Vàng">Vàng</option>
+                                                <option value="Ghi">Ghi</option>
+                                                <option value="Nâu">Nâu</option>
+                                                <option value="Bạc">Bạc</option>
+                                                <option value="Xám">Xám</option>
+                                                <option value="Đen">Đen</option>
+                                                <option value="Vàng cát">Vàng cát</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Hộp số</label>
+                                            <select name="gear" class="form-control">
+                                                <option value="0">Chọn</option>
+                                                <option value="MT">MT</option>
+                                                <option value="AT">AT</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Động cơ</label>
+                                            <input name="machine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số chỗ ngồi</label>
+                                            <select name="seat" class="form-control">
+                                                <option value="0">Chọn</option>
+                                                <option value="4">4 chỗ</option>
+                                                <option value="5">5 chỗ</option>
+                                                <option value="7">7 chỗ</option>
+                                                <option value="9">9 chỗ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Nhiên liệu</label>
+                                            <select name="fuel" class="form-control">
+                                                <option value="0">Chọn</option>
+                                                <option value="Xăng">Xăng</option>
+                                                <option value="Dầu">Dầu</option>
+                                                <option value="Điện">Điện</option>
+                                                <option value="Điện/Dầu">Điện/Dầu</option>
+                                                <option value="Điện/Xăng">Điện/Xăng</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Giá xe</label>
+                                            <input name="cost" value="0" id="cost" type="number" class="form-control" placeholder="Giá xe tối đa 2 tỷ 1">
+                                            <span id="showCost"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="exist" id="oop1" type="radio" value="1" checked="checked">
+                                            <label for="oop1">Đang có xe</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="exist" id="oop2" type="radio" value="2">
+                                            <label for="oop2">Đang đặt hàng</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        <button id="btnAdd" class="btn btn-primary" form="addForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!-- Medal Edit -->
+        <div class="modal fade" id="editModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chỉnh sửa</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form id="editForm" autocomplete="off">
+                                {{csrf_field()}}
+                                <input type="hidden" name="eid"/>
+                                <div class="card-body row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Tên xe</label>
+                                            <select name="etenXe" class="form-control">
+                                                @foreach($typecar as $row)
+                                                    <option value="{{$row->id}}">{{$row->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Năm sản xuất</label>
+                                            <select name="enam" class="form-control">
+                                                @for($i = 2000; $i <= 2100; $i++)
+                                                    <option value="{{$i}}">{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số VIN</label>
+                                            <input name="evin" placeholder="VIN" type="text" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số máy</label>
+                                            <input name="eframe" placeholder="Số máy" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Màu sắc</label>
+                                            <select name="ecolor" class="form-control">
+                                                <option value="Đỏ">Đỏ</option>
+                                                <option value="Xanh">Xanh</option>
+                                                <option value="Trắng">Trắng</option>
+                                                <option value="Vàng">Vàng</option>
+                                                <option value="Ghi">Ghi</option>
+                                                <option value="Nâu">Nâu</option>
+                                                <option value="Bạc">Bạc</option>
+                                                <option value="Xám">Xám</option>
+                                                <option value="Đen">Đen</option>
+                                                <option value="Vàng cát">Vàng cát</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Hộp số</label>
+                                            <select name="egear" class="form-control">
+                                                <option value="MT">MT</option>
+                                                <option value="AT">AT</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Động cơ</label>
+                                            <input name="emachine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số chỗ ngồi</label>
+                                            <select name="eseat" class="form-control">
+                                                <option value="4">4 chỗ</option>
+                                                <option value="5">5 chỗ</option>
+                                                <option value="7">7 chỗ</option>
+                                                <option value="9">9 chỗ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Nhiên liệu</label>
+                                            <select name="efuel" class="form-control">
+                                                <option value="Xăng">Xăng</option>
+                                                <option value="Dầu">Dầu</option>
+                                                <option value="Điện">Điện</option>
+                                                <option value="Điện/Dầu">Điện/Dầu</option>
+                                                <option value="Điện/Xăng">Điện/Xăng</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Giá xe</label>
+                                            <input name="ecost" id="ecost" type="number" class="form-control" placeholder="Giá xe">
+                                            <span id="eshowCost"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="eexist" id="exist1" type="radio" value="1" checked="checked">
+                                            <label for="exist1">Đang có xe</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="eexist" id="exist2" type="radio" value="2">
+                                            <label for="exist2">Đang đặt hàng</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        <button id="btnUpdate" class="btn btn-primary" form="editForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -408,11 +530,115 @@
                     }
                 ]
             });
+            var tableOut = $('#dataTableOut').DataTable({
+                // paging: false,    use to show all data
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: "{{ url('management/kho/get/list/out/') }}",
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": null },
+                    { "data": "ten" },
+                    { "data": "year" },
+                    { "data": "color" },
+                    { "data": "vin" },
+                    { "data": "frame" },
+                    { "data": "gear" },
+                    { "data": "machine" },
+                    { "data": "seat" },
+                    { "data": "fuel" },
+                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')}
+                    // {
+                    //     "data": null,
+                    //     render: function(data, type, row) {
+                    //         // return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#edit' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
+                    //         //     "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                    //         return "<div class='btn-group'>" +
+                    //             "<button type='button' class='btn btn-info btn-sm dropdown-toggle dropdown-icon' data-toggle='dropdown'></button>" +
+                    //             "<div class='dropdown-menu' role='menu'>" +
+                    //             "<button id='btnEdit' data-id='"+row.id+"'  data-toggle='modal' data-target='#editModal' class='dropdown-item' data-id='"+row.id+"'>Sửa</button>" +
+                    //             "<button id='delete' data-id='"+row.id+"' class='dropdown-item'>Xóa</button>" +
+                    //             "</div>" +
+                    //             "</div>";
+                    //     }
+                    // }
+                ]
+            });
+            var tableOrder = $('#dataTableOrder').DataTable({
+                // paging: false,    use to show all data
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: "{{ url('management/kho/get/list/order/') }}",
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": null },
+                    { "data": "ten" },
+                    { "data": "year" },
+                    { "data": "color" },
+                    { "data": "vin" },
+                    { "data": "frame" },
+                    { "data": "gear" },
+                    { "data": "machine" },
+                    { "data": "seat" },
+                    { "data": "fuel" },
+                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            // return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#edit' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
+                            //     "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                            return "<div class='btn-group'>" +
+                                "<button type='button' class='btn btn-info btn-sm dropdown-toggle dropdown-icon' data-toggle='dropdown'></button>" +
+                                "<div class='dropdown-menu' role='menu'>" +
+                                "<button id='btnEdit' data-id='"+row.id+"'  data-toggle='modal' data-target='#editModal' class='dropdown-item' data-id='"+row.id+"'>Sửa</button>" +
+                                "<button id='delete' data-id='"+row.id+"' class='dropdown-item'>Xóa</button>" +
+                                "</div>" +
+                                "</div>";
+                        }
+                    }
+                ]
+            });
 
             table.on( 'order.dt search.dt', function () {
                 table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                     cell.innerHTML = i+1;
                     table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            tableOut.on( 'order.dt search.dt', function () {
+                tableOut.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    tableOut.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            tableOrder.on( 'order.dt search.dt', function () {
+                tableOrder.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    tableOrder.cell(cell).invalidate('dom');
                 } );
             } ).draw();
 
@@ -431,6 +657,8 @@
                             title: " Đã nhập kho xe "
                         })
                         table.ajax.reload();
+                        tableOut.ajax.reload();
+                        tableOrder.ajax.reload();
                         $("#addModal").modal('hide');
                     },
                     error: function() {
@@ -459,6 +687,8 @@
                                 title: "Đã xóa"
                             })
                             table.ajax.reload();
+                            tableOut.ajax.reload();
+                            tableOrder.ajax.reload();
                         },
                         error: function() {
                             Toast.fire({
@@ -492,6 +722,10 @@
                         $("select[name=eseat]").val(response.data.seat);
                         $("select[name=efuel]").val(response.data.fuel);
                         $("input[name=ecost]").val(response.data.cost);
+                        if (response.data.exist == 1)
+                            $("#exist1").prop('checked',true);
+                        if (response.data.order == 1)
+                            $("#exist2").prop('checked',true);
                     },
                     error: function(){
                         Toast.fire({
@@ -521,6 +755,8 @@
                             title: "Đã cập nhật!"
                         })
                         table.ajax.reload();
+                        tableOut.ajax.reload();
+                        tableOrder.ajax.reload();
                         $("#editModal").modal('hide');
                     },
                     error: function(){

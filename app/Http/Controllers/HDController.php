@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\BhPkPackage;
+use App\CarSale;
+use App\Guest;
+use App\Sale;
+use App\SaleOff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class HDController extends Controller
 {
     //
     public function index() {
-        return view('page.hd');
+        $guest = Guest::all();
+        $xeList = CarSale::where('order', 1)->orWhere('exist',1)->orderBy('id_type_car_detail','asc')->get();
+        return view('page.hd', ['guest' => $guest, 'xeList' => $xeList]);
     }
 
     public function getList() {
@@ -28,25 +36,48 @@ class HDController extends Controller
         }
     }
 
-    public function add(Request $request) {
-        $package = new CarSale;
-
-        $package->id_type_car_detail = $request->tenXe;
-        $package->year = $request->nam;
-        $package->vin = $request->vin;
-        $package->frame = $request->frame;
-        $package->color = $request->color;
-        $package->gear = $request->gear;
-        $package->machine = $request->machine;
-        $package->seat = $request->seat;
-        $package->fuel = $request->fuel;
-        $package->cost = $request->cost;
-        $package->id_user_create = Auth::user()->id;
-        $package->save();
-
-        if($package) {
+    public function getListCode() {
+        $result = Sale::select('sale.id','g.name as surname', 'c.cost','t.name','sale.complete','sale.admin_check','sale.lead_sale_check')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->orderby('sale.id','desc')->get();
+        if($result) {
             return response()->json([
-                'message' => 'Insert data successfully!',
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getListPK() {
+        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addCode(Request $request) {
+        $code = new Sale();
+        $code->id_guest = $request->idGuest;
+        $code->id_car_sale = $request->idCarSale;
+        $code->tamUng = $request->tamUng;
+        $code->id_user_create = Auth::user()->id;
+        $code->save();
+        if($code) {
+            return response()->json([
+                'message' => 'Tạo mã hợp đồng thành công!',
                 'code' => 200
             ]);
         } else {
@@ -55,11 +86,10 @@ class HDController extends Controller
                 'code' => 500
             ]);
         }
-
     }
 
     public function delete(Request $request) {
-        $result = CarSale::where('id', $request->id)->delete();
+        $result = Sale::where('id', $request->id)->delete();
         if($result) {
             return response()->json([
                 'message' => 'Delete data successfully!',
@@ -73,11 +103,35 @@ class HDController extends Controller
         }
     }
 
-    public function editShow(Request $request) {
-        $result = CarSale::where('id', $request->id)->first();
+    public function getGuestPersonal(){
+        $result = Guest::where('id_type_guest',1)->get();
+        if($result) {
+                echo "<option value='0'>Chọn</option>";
+            foreach($result as $row){
+                echo "<option value='".$row->id."'>".$row->name."</option>";
+            }
+        } else {
+            echo "<option value='0'>Không tìm thấy</option>";
+        }
+    }
+
+    public function getGuestCompany(){
+        $result = Guest::where('id_type_guest',2)->get();
+        if($result) {
+            echo "<option value='0'>Chọn</option>";
+            foreach($result as $row){
+                echo "<option value='".$row->id."'>".$row->name."</option>";
+            }
+        } else {
+            echo "<option value='0'>Không tìm thấy</option>";
+        }
+    }
+
+    public function getGuest($id){
+        $result = Guest::where('id',$id)->first();
         if($result) {
             return response()->json([
-                'message' => 'Show edit data successfully!',
+                'message' => 'Get Guest Success!',
                 'code' => 200,
                 'data' => $result
             ]);
@@ -89,22 +143,91 @@ class HDController extends Controller
         }
     }
 
-    public function update(Request $request) {
-        $result = CarSale::where('id', $request->eid)->update([
-            "id_type_car_detail" => $request->etenXe,
-            "year" => $request->enam,
-            "vin" => $request->evin,
-            "frame" => $request->eframe,
-            "color" => $request->ecolor,
-            "gear" => $request->egear,
-            "machine" => $request->emachine,
-            "seat" => $request->eseat,
-            "fuel" => $request->efuel,
-            "cost" => $request->ecost,
-        ]);
+    public function getCar($id){
+        $status = "";
+        $result = CarSale::where('id',$id)->first();
+        if($result) {
+            if ($result->sale()->exists()) {
+                $status = "<span class='badge badge-secondary'>Xe này đã được lên hợp đồng</span>";
+            } elseif ($result->order == 1) {
+                $status = "<span class='badge badge-info'>Đang đặt hàng</span>";
+            } elseif ($result->exist == 1) {
+                $status = "<span class='badge badge-success'>Đang có xe</span>";
+            }
+            return response()->json([
+                'message' => 'Get Car Success!',
+                'code' => 200,
+                'name_car' => $result->typeCarDetail->name,
+                'cost' => number_format($result->cost),
+                'status' => $status,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function loadHD() {
+        $result = Sale::select('sale.id')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->orderby('sale.id','desc')->get();
+        if($result) {
+            if($result) {
+                echo "<option value='0'>Chọn</option>";
+                foreach($result as $row){
+                    echo "<option value='".$row->id."'>HAGI-0".$row->id."/HDMB-PA</option>";
+                }
+            } else {
+                echo "<option value='0'>Không tìm thấy</option>";
+            }
+        }
+    }
+
+    public function detailHD($id) {
+        $result = Sale::select('sale.id as idsale','sale.tamUng','g.*','g.name as surname', 'c.*','t.name as name_car')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->where('sale.id', $id)->orderby('sale.id','desc')->first();
+//        $pkban = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where('sale_off.id_sale', $id)->get();
         if($result) {
             return response()->json([
-                'message' => 'Updated successfully!',
+                'message' => 'Get Detail HD Success!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getpkpay($id) {
+        $pkban = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','pay']
+        ])->get();
+        if($pkban) {
+            return response()->json([
+                'message' => 'Get PK Pay Success!',
+                'code' => 200,
+                'pkban' => $pkban
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deletePkPay(Request $request) {
+        $result = SaleOff::where([
+            ['id_sale','=', $request->sale],
+            ['id_bh_pk_package','=', $request->id]
+        ])->delete();
+        if($result) {
+            return response()->json([
+                'message' => 'Delete PK Pay successfully!',
                 'code' => 200
             ]);
         } else {
@@ -113,6 +236,186 @@ class HDController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    public function getpkfree($id) {
+        $pkban = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','free']
+        ])->get();
+        if($pkban) {
+            return response()->json([
+                'message' => 'Get PK Free Success!',
+                'code' => 200,
+                'pkfree' => $pkban
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getpkcost($id) {
+        $pkcost = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','cost']
+        ])->get();
+        if($pkcost) {
+            return response()->json([
+                'message' => 'Get PK Cost Success!',
+                'code' => 200,
+                'pkcost' => $pkcost
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deletePkFree(Request $request) {
+        $result = SaleOff::where([
+            ['id_sale','=', $request->sale],
+            ['id_bh_pk_package','=', $request->id]
+        ])->delete();
+        if($result) {
+            return response()->json([
+                'message' => 'Delete PK Free successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deletePkCost(Request $request) {
+        $result = SaleOff::where([
+            ['id_sale','=', $request->sale],
+            ['id_bh_pk_package','=', $request->id]
+        ])->delete();
+        if($result) {
+            return response()->json([
+                'message' => 'Delete PK Cost successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addPkPay(Request $request){
+        $pkpay = new BhPkPackage();
+        $pkpay->name = $request->namePkPay;
+        $pkpay->cost = $request->giaPkPay;
+        $pkpay->profit = $request->hoaHongPkPay;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'pay';
+        $pkpay->save();
+        if($pkpay) {
+            $saleOff = new SaleOff;
+            $saleOff->id_sale = $request->idHD;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+            if($saleOff) {
+                return response()->json([
+                    'message' => 'Tạo phụ kiện bán thành công!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addPkFree(Request $request){
+        $pkpay = new BhPkPackage();
+        $pkpay->name = $request->namePkFree;
+        $pkpay->cost = $request->giaPkFree;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'free';
+        $pkpay->save();
+        if($pkpay) {
+            $saleOff = new SaleOff;
+            $saleOff->id_sale = $request->idHD2;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+            if($saleOff) {
+                return response()->json([
+                    'message' => 'Tạo phụ kiện tặng thành công!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addPkCost(Request $request){
+        $pkpay = new BhPkPackage();
+        $pkpay->name = $request->namePkCost;
+        $pkpay->cost = $request->giaPkCost;
+        $pkpay->profit = $request->hoaHongPkCost;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'cost';
+        $pkpay->save();
+        if($pkpay) {
+            $saleOff = new SaleOff;
+            $saleOff->id_sale = $request->idHD3;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+            if($saleOff) {
+                return response()->json([
+                    'message' => 'Tạo các chi phí thành công!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getTotal($id){
+        $sale = Sale::find($id);
+        $sum = 0;
+        $package = $sale->package;
+        foreach($package as $row) {
+            if ($row->type == 'free') continue;
+            $sum += $row->cost;
+        }
+        echo $sum + $sale->carSale->cost;
     }
 
     public function test() {
@@ -220,8 +523,368 @@ class HDController extends Controller
 
     }
 
-    public function down() {
-        $pathToSave = 'template/CN_HD_TM_NEW.docx';
+    public function cntm($id) {
+        $templateProcessor = new TemplateProcessor('template/CN_HD_TM_NO_PK.docx');
+        $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','pay']
+        ])->exists();
+
+        if ($hasPK) {
+            $templateProcessor = new TemplateProcessor('template/CN_HD_TM.docx');
+            // Set data from database
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'cmnd' => $sale->guest->cmnd,
+                'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noiCap' => $sale->guest->noiCap,
+                'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                'tenDaiDien' => $sale->guest->name,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'phuKien' => number_format($sum),
+                'giaPhuKien' => number_format($sum),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        } else {
+            // Không phụ kiện
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'cmnd' => $sale->guest->cmnd,
+                'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noiCap' => $sale->guest->noiCap,
+                'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                'tenDaiDien' => $sale->guest->name,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        }
+        $pathToSave = 'template/CN_HD_TM_DOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        return response()->download($pathToSave);
+    }
+    public function cnnh($id) {
+        $templateProcessor = new TemplateProcessor('template/CN_HD_NH_NO_PK.docx');
+        $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','pay']
+        ])->exists();
+
+        if ($hasPK) {
+            $templateProcessor = new TemplateProcessor('template/CN_HD_NH.docx');
+            // Set data from database
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'cmnd' => $sale->guest->cmnd,
+                'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noiCap' => $sale->guest->noiCap,
+                'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                'tenDaiDien' => $sale->guest->name,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'phuKien' => number_format($sum),
+                'giaPhuKien' => number_format($sum),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        } else {
+            // Không phụ kiện
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'cmnd' => $sale->guest->cmnd,
+                'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noiCap' => $sale->guest->noiCap,
+                'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                'tenDaiDien' => $sale->guest->name,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        }
+        $pathToSave = 'template/CN_HD_TM_DOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        return response()->download($pathToSave);
+    }
+    public function cttm($id) {
+        $templateProcessor = new TemplateProcessor('template/CT_HD_TM_NO_PK.docx');
+        $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','pay']
+        ])->exists();
+
+        if ($hasPK) {
+            $templateProcessor = new TemplateProcessor('template/CT_HD_TM.docx');
+            // Set data from database
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'tenDaiDien' => $sale->guest->daiDien,
+                'chucVu' => $sale->guest->chucVu,
+                'mst' => $sale->guest->mst,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'phuKien' => number_format($sum),
+                'giaPhuKien' => number_format($sum),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        } else {
+            // Không phụ kiện
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'tenDaiDien' => $sale->guest->daiDien,
+                'chucVu' => $sale->guest->chucVu,
+                'mst' => $sale->guest->mst,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        }
+        $pathToSave = 'template/CT_HD_TM_DOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        return response()->download($pathToSave);
+    }
+    public function ctnh($id) {
+        $templateProcessor = new TemplateProcessor('template/CT_HD_NH_NO_PK.docx');
+        $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+            ['sale_off.id_sale','=', $id],
+            ['package.type','=','pay']
+        ])->exists();
+
+        if ($hasPK) {
+            $templateProcessor = new TemplateProcessor('template/CT_HD_NH.docx');
+            // Set data from database
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'tenDaiDien' => $sale->guest->daiDien,
+                'chucVu' => $sale->guest->chucVu,
+                'mst' => $sale->guest->mst,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'phuKien' => number_format($sum),
+                'giaPhuKien' => number_format($sum),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        } else {
+            // Không phụ kiện
+            $sale = Sale::find($id);
+            $sum = 0;
+            $pkfree = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free')
+                    $pkfree .=  $row->name . ', ';
+                if ($row->type == 'free' || $row->type == 'cost') continue;
+                $sum += $row->cost;
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'tenDaiDien' => $sale->guest->daiDien,
+                'chucVu' => $sale->guest->chucVu,
+                'mst' => $sale->guest->mst,
+                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
+                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
+                'donGia' => number_format($car->cost),
+                'thanhTien' => number_format($car->cost),
+                'tongCong' => number_format($sum + $car->cost),
+                'quaTang' => $pkfree,
+                'tamUng' => number_format($sale->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+            ]);
+        }
+        $pathToSave = 'template/CT_HD_TM_DOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
         return response()->download($pathToSave);
     }
 }

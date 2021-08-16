@@ -16,7 +16,45 @@ class KhoController extends Controller
     }
 
     public function getList() {
-        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->get();
+        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->where('car_sale.exist',1)->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getListOut() {
+        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->where([
+            ['car_sale.exist','=',0],
+            ['car_sale.order','=',0]
+        ])->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getListOrder() {
+        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->where([
+            ['car_sale.order','=',1],
+            ['car_sale.exist','=',0]
+        ])->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -44,6 +82,14 @@ class KhoController extends Controller
         $package->seat = $request->seat;
         $package->fuel = $request->fuel;
         $package->cost = $request->cost;
+        if ($request->exist == 1) {
+            $package->exist = 1;
+            $package->order = 0;
+        }
+        if ($request->exist == 2) {
+            $package->exist = 0;
+            $package->order = 1;
+        }
         $package->id_user_create = Auth::user()->id;
         $package->save();
 
@@ -93,6 +139,16 @@ class KhoController extends Controller
     }
 
     public function update(Request $request) {
+        $exist = 0;
+        $order = 0;
+        if ($request->eexist == 1) {
+            $exist = 1;
+            $order = 0;
+        }
+        if ($request->eexist == 2) {
+            $exist = 0;
+            $order = 1;
+        }
         $result = CarSale::where('id', $request->eid)->update([
             "id_type_car_detail" => $request->etenXe,
             "year" => $request->enam,
@@ -104,6 +160,8 @@ class KhoController extends Controller
             "seat" => $request->eseat,
             "fuel" => $request->efuel,
             "cost" => $request->ecost,
+            'exist' => $exist,
+            'order' => $order
         ]);
         if($result) {
             return response()->json([

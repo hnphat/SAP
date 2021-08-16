@@ -92,6 +92,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'kho'], function(){
         Route::get('list','KhoController@index')->name('kho.list');
         Route::get('get/list','KhoController@getList');
+        Route::get('get/list/out','KhoController@getListOut');
+        Route::get('get/list/order','KhoController@getListOrder');
         Route::post('add','KhoController@add');
         Route::post('delete','KhoController@delete');
         Route::post('edit/show','KhoController@editShow');
@@ -100,12 +102,32 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'hd'], function(){
         Route::get('list','HDController@index')->name('hd.list');
         Route::get('get/list','HDController@getList');
-        Route::post('add','HDController@add');
+        Route::get('get/list/code','HDController@getListCode');
+        Route::post('add/code','HDController@addCode');
+        Route::post('add/pkpay','HDController@addPkPay');
+        Route::post('add/pkfree','HDController@addPkFree');
+        Route::post('add/pkcost','HDController@addPkCost');
         Route::post('delete','HDController@delete');
-        Route::post('edit/show','HDController@editShow');
-        Route::post('update','HDController@update');
+        Route::post('delete/pkpay/','HDController@deletePkPay');
+        Route::post('delete/pkfree/','HDController@deletePkFree');
+        Route::post('delete/pkcost/','HDController@deletePkCost');
+        // ajax get quickly
+        Route::get('get/guest/personal/','HDController@getGuestPersonal');
+        Route::get('get/guest/company/','HDController@getGuestCompany');
+        Route::get('get/guest/{id}','HDController@getGuest');
+        Route::get('get/car/{id}','HDController@getCar');
+        Route::get('get/load/hd/','HDController@loadHD');
+        Route::get('get/detail/hd/{id}','HDController@detailHD');
+        Route::get('get/pkpay/{id}','HDController@getpkpay');
+        Route::get('get/pkfree/{id}','HDController@getpkfree');
+        Route::get('get/pkcost/{id}','HDController@getpkcost');
+        Route::get('get/total/{id}','HDController@getTotal');
+        // --- end ajax quickly
         Route::get('exportToWord','HDController@test');
-        Route::get('down','HDController@down');
+        Route::get('banle/canhan/tienmat/down/{id}','HDController@cntm');
+        Route::get('banle/canhan/nganhang/down/{id}','HDController@cnnh');
+        Route::get('banle/congty/tienmat/down/{id}','HDController@cttm');
+        Route::get('banle/congty/nganhang/down/{id}','HDController@ctnh');
     });
 });
 

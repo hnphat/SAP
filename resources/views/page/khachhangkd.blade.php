@@ -50,7 +50,7 @@
                                         <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
                                         <!-- Medal Add -->
                                         <div class="modal fade" id="addModal">
-                                            <div class="modal-dialog">
+                                            <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -68,25 +68,61 @@
                                                             <form id="addForm" autocomplete="off">
                                                                 {{csrf_field()}}
                                                                 <div class="card-body">
-                                                                    <div class="form-group">
-                                                                        <label>Loại khách hàng</label>
-                                                                        <select name="loai" class="form-control">
-                                                                            @foreach($typeGuest as $row)
-                                                                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Tên khách hàng</label>
-                                                                        <input name="ten" type="text" class="form-control" placeholder="Tên khách hàng">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số điện thoại</label>
-                                                                        <input name="dienThoai" type="number" class="form-control" placeholder="Số điện thoại">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Địa chỉ</label>
-                                                                        <input name="diaChi" type="text" class="form-control" placeholder="Địa chỉ">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-4">
+                                                                            <div class="form-group">
+                                                                                <label>Loại khách hàng</label>
+                                                                                <select name="loai" class="form-control">
+                                                                                    @foreach($typeGuest as $row)
+                                                                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Tên khách hàng</label>
+                                                                                <input name="ten" type="text" class="form-control" placeholder="Tên khách hàng">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Số điện thoại</label>
+                                                                                <input name="dienThoai" type="number" class="form-control" placeholder="Số điện thoại">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Địa chỉ</label>
+                                                                                <input name="diaChi" type="text" class="form-control" placeholder="Địa chỉ">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <div class="form-group">
+                                                                                <label>Ngày sinh</label>
+                                                                                <input name="ngaySinh" type="date" class="form-control">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>CMND</label>
+                                                                                <input name="cmnd" type="text" class="form-control" placeholder="CMND">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Ngày cấp</label>
+                                                                                <input name="ngayCap" type="date" class="form-control">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Nơi cấp</label>
+                                                                                <input name="noiCap" type="text" class="form-control" placeholder="Nơi cấp">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <div class="form-group">
+                                                                                <label>Mã số thuế (nếu có)</label>
+                                                                                <input name="mst" type="number" class="form-control" placeholder="Mã số thuế">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Đại diện (nếu có)</label>
+                                                                                <input name="daiDien" type="text" class="form-control" placeholder="Đại diện">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chức vụ (nếu có)</label>
+                                                                                <input name="chucVu" type="text" class="form-control" placeholder="Chức vụ">
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                                 <!-- /.card-body -->
@@ -105,7 +141,7 @@
                                         <!-- /.modal -->
                                         <!-- Medal Add -->
                                         <div class="modal fade" id="editModal">
-                                            <div class="modal-dialog">
+                                            <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -122,33 +158,73 @@
                                                             <!-- form start -->
                                                             <form id="editForm" autocomplete="off">
                                                                 {{csrf_field()}}
-                                                                <input type="hidden" name="eid"/>
-                                                                <input type="hidden" name="edienThoaiCopy"/>
-                                                                <div class="card-body">
-                                                                    <div class="form-group">
-                                                                        <label>Loại khách hàng</label>
-                                                                        <select name="eloai" class="form-control">
-                                                                            @foreach($typeGuest as $row)
-                                                                                <option value="{{$row->id}}">{{$row->name}}</option>
-                                                                            @endforeach
-                                                                        </select>
+                                                                <div class="row">
+                                                                    <div class="col-sm-4">
+                                                                        <input type="hidden" name="eid"/>
+                                                                        <input type="hidden" name="edienThoaiCopy"/>
+                                                                        <div class="card-body">
+                                                                            <div class="form-group">
+                                                                                <label>Loại khách hàng</label>
+                                                                                <select name="eloai" class="form-control">
+                                                                                    @foreach($typeGuest as $row)
+                                                                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Tên khách hàng</label>
+                                                                                <input name="eten" type="text" class="form-control" placeholder="Tên khách hàng">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Số điện thoại</label>
+                                                                                <input name="edienThoai" type="number" class="form-control" placeholder="Số điện thoại">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Địa chỉ</label>
+                                                                                <input name="ediaChi" type="text" class="form-control" placeholder="Địa chỉ">
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- /.card-body -->
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label>Tên khách hàng</label>
-                                                                        <input name="eten" type="text" class="form-control" placeholder="Tên khách hàng">
+                                                                    <div class="col-sm-4">
+                                                                        <div class="card-body">
+                                                                            <div class="form-group">
+                                                                                <label>Ngày sinh</label>
+                                                                                <input name="engaySinh" type="date" class="form-control">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>CMND</label>
+                                                                                <input name="ecmnd" type="text" class="form-control" placeholder="CMND">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Ngày cấp</label>
+                                                                                <input name="engayCap" type="date" class="form-control">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Nơi cấp</label>
+                                                                                <input name="enoiCap" type="text" class="form-control" placeholder="Nơi cấp">
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label>Số điện thoại</label>
-                                                                        <input name="edienThoai" type="number" class="form-control" placeholder="Số điện thoại">
+                                                                    <div class="col-sm-4">
+                                                                        <div class="card-body">
+                                                                            <div class="form-group">
+                                                                                <label>Mã số thuế (nếu có)</label>
+                                                                                <input name="emst" type="number" class="form-control" placeholder="Mã số thuế">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Đại diện (nếu có)</label>
+                                                                                <input name="edaiDien" type="text" class="form-control" placeholder="Đại diện">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chức vụ (nếu có)</label>
+                                                                                <input name="echucVu" type="text" class="form-control" placeholder="Chức vụ">
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label>Địa chỉ</label>
-                                                                        <input name="ediaChi" type="text" class="form-control" placeholder="Địa chỉ">
+                                                                    <div class="card-footer">
+                                                                        <button id="btnUpdate" class="btn btn-success">Cập nhật</button>
                                                                     </div>
-                                                                </div>
-                                                                <!-- /.card-body -->
-                                                                <div class="card-footer">
-                                                                    <button id="btnUpdate" class="btn btn-success">Cập nhật</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -167,9 +243,15 @@
                                                 <th>Loại KH</th>
                                                 <th>Tên</th>
                                                 <th>Điện thoại</th>
+                                                <th>Mã số thuế</th>
+                                                <th>Ngày sinh</th>
+                                                <th>CMND</th>
+                                                <th>Ngày cấp</th>
+                                                <th>Nơi cấp</th>
+                                                <th>Đại diện</th>
+                                                <th>Chức vụ</th>
                                                 <th>Địa chỉ</th>
-                                                <th>Sửa</th>
-                                                <th>Xóa</th>
+                                                <th>Tác vụ</th>
                                             </tr>
                                             </thead>
                                             <tfoot>
@@ -178,9 +260,15 @@
                                                 <th>Loại KH</th>
                                                 <th>Tên</th>
                                                 <th>Điện thoại</th>
+                                                <th>Mã số thuế</th>
+                                                <th>Ngày sinh</th>
+                                                <th>CMND</th>
+                                                <th>Ngày cấp</th>
+                                                <th>Nơi cấp</th>
+                                                <th>Đại diện</th>
+                                                <th>Chức vụ</th>
                                                 <th>Địa chỉ</th>
-                                                <th>Sửa</th>
-                                                <th>Xóa</th>
+                                                <th>Tác vụ</th>
                                             </tr>
                                             </tfoot>
                                         </table>
@@ -248,17 +336,19 @@
                     { "data": "type" },
                     { "data": "name" },
                     { "data": "phone" },
+                    { "data": "mst" },
+                    { "data": "ngaySinh" },
+                    { "data": "cmnd" },
+                    { "data": "ngayCap" },
+                    { "data": "noiCap" },
+                    { "data": "daiDien" },
+                    { "data": "chucVu" },
                     { "data": "address" },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {
-                            return "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                            return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;" +
+                                "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
                         }
                     }
                 ]
@@ -360,6 +450,13 @@
                         $("input[name=eid]").val(response.data.id);
                         $("select[name=eloai]").val(response.data.id_type_guest);
                         $("input[name=eten]").val(response.data.name);
+                        $("input[name=engaySinh]").val(response.data.ngaySinh);
+                        $("input[name=emst]").val(response.data.mst);
+                        $("input[name=engayCap]").val(response.data.ngayCap);
+                        $("input[name=enoiCap]").val(response.data.noiCap);
+                        $("input[name=ecmnd]").val(response.data.cmnd);
+                        $("input[name=edaiDien]").val(response.data.daiDien);
+                        $("input[name=echucVu]").val(response.data.chucVu);
                         $("input[name=edienThoai]").val(response.data.phone);
                         $("input[name=edienThoaiCopy]").val(response.data.phone);
                         $("input[name=ediaChi]").val(response.data.address);
@@ -402,8 +499,15 @@
                                 'eid': $("input[name=eid]").val(),
                                 'eloai': $("select[name=eloai]").val(),
                                 'eten': $("input[name=eten]").val(),
+                                'ecmnd': $("input[name=ecmnd]").val(),
                                 'edienThoai': $("input[name=edienThoai]").val(),
-                                'ediaChi': $("input[name=ediaChi]").val()
+                                'emst': $("input[name=emst]").val(),
+                                'engayCap': $("input[name=engayCap]").val(),
+                                'enoiCap': $("input[name=enoiCap]").val(),
+                                'engaySinh': $("input[name=engaySinh]").val(),
+                                'ediaChi': $("input[name=ediaChi]").val(),
+                                'edaiDien': $("input[name=edaiDien]").val(),
+                                'echucVu': $("input[name=echucVu]").val(),
                             },
                             success: function(response) {
                                 $("#editForm")[0].reset();

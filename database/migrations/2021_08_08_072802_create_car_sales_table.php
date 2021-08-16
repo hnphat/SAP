@@ -25,9 +25,10 @@ class CreateCarSalesTable extends Migration
             $table->string('machine', 10)->nullable();
             $table->string('seat', 10)->nullable();
             $table->string('fuel', 10)->nullable();
-            $table->boolean('exist')->default(true);
+            $table->boolean('exist');
             $table->integer('cost')->default(0);
-            $table->boolean('order')->default(false);
+            $table->boolean('order');
+            $table->integer('profit')->default(0);
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->timestamps();

@@ -16,7 +16,7 @@ class GuestController extends Controller
     }
 
     public function getList() {
-        $result = Guest::select('t.name as type','guest.name','guest.id as idmaster','guest.phone', 'guest.address')->join('type_guest as t','guest.id_type_guest','=','t.id')->get();
+        $result = Guest::select('t.name as type','guest.*','guest.id as idmaster')->join('type_guest as t','guest.id_type_guest','=','t.id')->orderBy('guest.id', 'DESC')->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -44,6 +44,13 @@ class GuestController extends Controller
 
         $guest->id_type_guest = $request->loai;
         $guest->name = $request->ten;
+        $guest->mst = $request->mst;
+        $guest->cmnd = $request->cmnd;
+        $guest->ngayCap = $request->ngayCap;
+        $guest->noiCap = $request->noiCap;
+        $guest->ngaySinh = $request->ngaySinh;
+        $guest->daiDien = $request->daiDien;
+        $guest->chucVu = $request->chucVu;
         $guest->phone = $request->dienThoai;
         $guest->address = $request->diaChi;
         $guest->id_user_create = Auth::user()->id;
@@ -96,11 +103,19 @@ class GuestController extends Controller
     }
 
     public function update(Request $request) {
+
         $result = Guest::where('id', $request->eid)->update([
             'id_type_guest' => $request->eloai,
             'name' => $request->eten,
             'phone' => $request->edienThoai,
-            'address' => $request->ediaChi
+            'address' => $request->ediaChi,
+            'mst' => $request->emst,
+            'cmnd' => $request->ecmnd,
+            'ngayCap' => $request->engayCap,
+            'noiCap' => $request->enoiCap,
+            'ngaySinh' => $request->engaySinh,
+            'daiDien' => $request->edaiDien,
+            'chucVu' => $request->echucVu
         ]);
         if($result) {
             return response()->json([
