@@ -52,7 +52,6 @@
                                 <th>STT</th>
                                 <th>Tài khoản</th>
                                 <th>Email</th>
-                                <th>Quyền</th>
                                 <th>Tác vụ</th>
                             </tr>
                             </thead>
@@ -62,7 +61,6 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->email}}</td>
-                                    <td>{{$row->quyen->name}}</td>
                                     <td>
                                         <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
                                         <button onclick="lock('{{$row->id}}')" class="btn btn-dark btn-sm">
@@ -82,7 +80,6 @@
                                 <th>STT</th>
                                 <th>Tài khoản</th>
                                 <th>Email</th>
-                                <th>Quyền</th>
                                 <th>Tác vụ</th>
                             </tr>
                             </tfoot>
@@ -125,14 +122,6 @@
                                 <div class="form-group">
                                     <label for="pass">Mật khẩu</label>
                                     <input type="password" class="form-control" id="pass" placeholder="Mật khẩu" name="pass">
-                                </div>
-                                <div class="form-group">
-                                    <label for="rule">Quyền</label>
-                                    <select class="form-control" name="rule" id="rule">
-                                        @foreach($quyen as $row)
-                                            <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="active" name="active">
@@ -184,15 +173,6 @@
                                 <div class="form-group">
                                     <label for="pass">Mật khẩu mới</label>
                                     <input type="password" class="form-control" id="pass2" placeholder="Mật khẩu" name="pass2">
-                                </div>
-                                <div class="form-group">
-                                    <label for="rule">Quyền</label>
-                                    <select class="form-control" name="rule2" id="rule2">
-                                        <option value="0" selected="selected">Chọn quyền</option>
-                                        @foreach($quyen as $row)
-                                            <option value="{{$row->id}}">{{$row->name}}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
                             </div>
                             <!-- /.card-body -->
@@ -252,7 +232,6 @@
                 let name = $("input[name=acc]").val();
                 let email = $("input[name=email]").val();
                 let password = $("input[name=pass]").val();
-                let rule = $("#rule").val();
                 let active = 0;
                 if ($('#active').is(":checked"))
                 {
@@ -273,7 +252,6 @@
                             name: name,
                             email: email,
                             password: password,
-                            rule: rule,
                             active: active
                         },
                         success:function(data){
@@ -296,10 +274,7 @@
                 let name = $("input[name=acc2]").val();
                 let email = $("input[name=email2]").val();
                 let password = $("input[name=pass2]").val();
-                let rule = $("#rule2").val();
-                if (rule == 0)
-                    alert('Vui lòng chọn quyền cho người dùng');
-                else if (!$("input[name=pass2]").val() ) {
+                 if (!$("input[name=pass2]").val() ) {
                     if (confirm('Bạn chưa nhập mật khẩu mới cho người dùng, nếu tiếp tục sẽ để mặc định là 123456')) {
                         password = 123456;
                         $.ajaxSetup({
@@ -314,8 +289,7 @@
                                 id: id,
                                 name: name,
                                 email: email,
-                                password: password,
-                                rule: rule
+                                password: password
                             },
                             success:function(data){
                                 // alert(data.success);
@@ -343,8 +317,7 @@
                             id: id,
                             name: name,
                             email: email,
-                            password: password,
-                            rule: rule
+                            password: password
                         },
                         success:function(data){
                             // alert(data.success);

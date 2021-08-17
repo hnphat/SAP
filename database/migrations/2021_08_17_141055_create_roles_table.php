@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQuyensTable extends Migration
+class CreateRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateQuyensTable extends Migration
      */
     public function up()
     {
-        Schema::create('quyen', function (Blueprint $table) {
-            $table->increments('id')->unsigned();
+        Schema::create('roles', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -26,6 +27,6 @@ class CreateQuyensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quyen');
+        Schema::dropIfExists('roles');
     }
 }

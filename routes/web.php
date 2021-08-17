@@ -34,6 +34,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('create', 'UserController@store')->name('ajax.user.create');
         Route::post('update', 'UserController@update')->name('ajax.user.update');
    });
+    Route::group(['prefix' => 'roles'], function(){
+        Route::get('list','RolesController@index')->name('roles.list');
+        Route::post('add','RolesController@add')->name('roles.add');
+        Route::get('rm/{role_id}/{user_id}','RolesController@rm');
+    });
     Route::group(['prefix' => 'hoso'], function(){
         Route::get('list','HoSoController@index')->name('hoso.list');
         Route::get('users','HoSoController@getUser')->name('hoso.users');

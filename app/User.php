@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -27,6 +26,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function roles() {
+        return $this->belongsToMany('App\Roles','role_user', 'user_id', 'role_id');
+    }
+
+    public function hasRole($role) {
+        return $role = $this->roles()->where('name', $role)->exists();
+    }
 
     public function userDetail() {
         return $this->hasOne('App\UsersDetail', 'id_user', 'id');
@@ -78,4 +85,6 @@ class User extends Authenticatable
     public function quyen() {
         return $this->belongsTo('App\Quyen','rule', 'id');
     }
+
+
 }

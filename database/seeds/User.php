@@ -18,7 +18,6 @@ class User extends Seeder
                 'name' => 'guest',
                 'email' => 'guest@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 1,
                 'active' => 0
             ],
             [
@@ -26,7 +25,6 @@ class User extends Seeder
                 'name' => 'admin',
                 'email' => 'admin@gmail.com',
                 'password' => bcrypt('admin'),
-                'rule' => 2,
                 'active' => 1
             ],
             [
@@ -34,7 +32,6 @@ class User extends Seeder
                 'name' => 'ceo',
                 'email' => 'ceo@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 3,
                 'active' => 1
             ],
             [
@@ -42,7 +39,6 @@ class User extends Seeder
                 'name' => 'adminsale',
                 'email' => 'adminsale@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 4,
                 'active' => 1
             ],
             [
@@ -50,7 +46,6 @@ class User extends Seeder
                 'name' => 'admindv',
                 'email' => 'admindv@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 5,
                 'active' => 1
             ],
             [
@@ -58,7 +53,6 @@ class User extends Seeder
                 'name' => 'tpkd',
                 'email' => 'tpkd@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 6,
                 'active' => 1
             ],
             [
@@ -66,7 +60,6 @@ class User extends Seeder
                 'name' => 'tpdv',
                 'email' => 'tpdv@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 7,
                 'active' => 1
             ],
             [
@@ -74,7 +67,6 @@ class User extends Seeder
                 'name' => 'tvbh',
                 'email' => 'tvbh@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 8,
                 'active' => 1
             ],
             [
@@ -82,7 +74,6 @@ class User extends Seeder
                 'name' => 'cvdv',
                 'email' => 'cvdv@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 9,
                 'active' => 1
             ],
             [
@@ -90,7 +81,6 @@ class User extends Seeder
                 'name' => 'other',
                 'email' => 'other@gmail.com',
                 'password' => bcrypt('123456'),
-                'rule' => 10,
                 'active' => 1
             ]
         ]);

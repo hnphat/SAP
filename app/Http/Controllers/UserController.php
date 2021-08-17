@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Roles;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
-use App\Quyen;
 
 class UserController extends Controller
 {
@@ -18,8 +18,7 @@ class UserController extends Controller
     public function index()
     {
         $user = User::all()->sortByDesc('id');
-        $quyen = Quyen::all();
-        return view('user.list', ['user' => $user, 'quyen' => $quyen]);
+        return view('user.list', ['user' => $user]);
     }
 
     /**
@@ -44,9 +43,11 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
-        $user->rule = $request->rule;
         $user->active = $request->active;
         $user->save();
+        $role = Roles::where('name','normal')->firstOrFail();
+        $userAddRole = User::where('id',$user->id)->firstOrFail();
+        $userAddRole->roles()->attach($role->id);
         return response()->json(['success'=>'Đã thêm người dùng']);
     }
 
@@ -86,7 +87,6 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
-        $user->rule = $request->rule;
         $user->save();
         return response()->json(['success'=>'Đã cập nhật người dùng']);
     }
@@ -99,8 +99,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-//        $user = User::find($id);
-//        $user->delete();
         try {
             $user = User::where('id', $id)->delete();
             if ($user)
@@ -136,7 +134,6 @@ class UserController extends Controller
                     <td>".$row->id."</td>
                     <td>".$row->name."</td>
                     <td>".$row->email."</td>
-                    <td>".$row->quyen->name."</td>
                     <td>Xoa</td>
               </tr>";
         }

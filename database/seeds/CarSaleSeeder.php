@@ -25,6 +25,7 @@ class CarSaleSeeder extends Seeder
                 'seat' => '5',
                 'fuel' => 'Xăng',
                 'exist' => true,
+                'order' => false,
                 'cost' => 99000000,
                 'id_user_create' => 1
             ],
@@ -40,6 +41,7 @@ class CarSaleSeeder extends Seeder
                 'seat' => '7',
                 'fuel' => 'Dầu',
                 'exist' => true,
+                'order' => false,
                 'cost' => 199000000,
                 'id_user_create' => 1
             ]
