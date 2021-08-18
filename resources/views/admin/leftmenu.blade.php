@@ -32,14 +32,18 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-cog"></i>
-                        <p>
-                            <strong>QUẢN TRỊ</strong>
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                         \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-cog"></i>
+                            <p>
+                                <strong>QUẢN TRỊ</strong>
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                    @endif
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route("user.list")}}" class="nav-link">
                                 <i class="fas fa-user-alt nav-icon"></i>
@@ -58,62 +62,79 @@
                                 <p>Hồ sơ</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{route("typecar.list")}}" class="nav-link">
-                                <i class="fas fa-car nav-icon"></i>
-                                <p>Model Xe</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route("package.list")}}" class="nav-link">
-                                <i class="fas fa-business-time nav-icon"></i>
-                                <p>Bảo hiểm - Phụ kiện</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('cong.list')}}" class="nav-link">
-                                <i class="fas fa-diagnoses nav-icon"></i>
-                                <p>Loại công - phụ tùng</p>
-                            </a>
-                        </li>
+                        @endif
+                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
+                                <li class="nav-item">
+                                    <a href="{{route("typecar.list")}}" class="nav-link">
+                                        <i class="fas fa-car nav-icon"></i>
+                                        <p>Model Xe</p>
+                                    </a>
+                                </li>
+                            @endif
+                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                <li class="nav-item">
+                                    <a href="{{route('cong.list')}}" class="nav-link">
+                                        <i class="fas fa-diagnoses nav-icon"></i>
+                                        <p>Loại công - phụ tùng</p>
+                                    </a>
+                                </li>
+                        @endif
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-dollar-sign"></i>
-                        <p>
-                            <strong>KINH DOANH</strong>
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-dollar-sign"></i>
+                            <p>
+                                <strong>KINH DOANH</strong>
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                    @endif
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{route('guest.list')}}" class="nav-link">
-                                <i class="fas fa-people-arrows nav-icon"></i>
-                                <p>Khách hàng</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-luggage-cart nav-icon"></i>
-                                <p>Đề nghị xe</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('hd.list')}}" class="nav-link">
-                                <i class="fas fa-allergies nav-icon"></i>
-                                <p>Hợp đồng</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('kho.list')}}" class="nav-link">
-                                <i class="fas fa-columns nav-icon"></i>
-                                <p>Kho xe</p>
-                            </a>
-                        </li>
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('sale'))
+                                <li class="nav-item">
+                                    <a href="{{route('guest.list')}}" class="nav-link">
+                                        <i class="fas fa-people-arrows nav-icon"></i>
+                                        <p>Khách hàng</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('hd.list')}}" class="nav-link">
+                                        <i class="fas fa-allergies nav-icon"></i>
+                                        <p>Hợp đồng</p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            <li class="nav-item">
+                                <a href="{{route('kho.list')}}" class="nav-link">
+                                    <i class="fas fa-columns nav-icon"></i>
+                                    <p>Kho xe</p>
+                                </a>
+                            </li>
+                            @endif
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    <li class="nav-item">
+                                        <a href="{{route('pheduyet.list')}}" class="nav-link">
+                                            <i class="fab fa-accusoft nav-icon"></i>
+                                            <p>Phê duyệt hợp đồng</p>
+                                        </a>
+                                    </li>
+                            @endif
                     </ul>
                 </li>
                 <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-hammer"></i>
                         <p>
@@ -121,7 +142,9 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-people-arrows nav-icon"></i>
@@ -134,6 +157,7 @@
                                 <p>Báo giá thực hiện</p>
                             </a>
                         </li>
+                            @endif
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -201,6 +225,8 @@
                     </ul>
                 </li>
                 <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                         \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
@@ -208,7 +234,16 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        <li class="nav-item">
+                                <a href="{{route("package.list")}}" class="nav-link">
+                                    <i class="fas fa-business-time nav-icon"></i>
+                                    <p>Bảo hiểm - Phụ kiện</p>
+                                </a>
+                            </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
@@ -233,6 +268,7 @@
                                 <p>Dịch vụ</p>
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </li>
                 <li class="nav-item">

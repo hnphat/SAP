@@ -44,9 +44,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" id="so-02-tab" data-toggle="pill" href="#so-02" role="tab" aria-controls="so-02" aria-selected="false">Tạo hợp đồng bán lẻ</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="so-03-tab" data-toggle="pill" href="#so-03" role="tab" aria-controls="so-03" aria-selected="false">Tạo hợp đồng bán lô</a>
-                            </li>
+{{--                            <li class="nav-item">--}}
+{{--                                <a class="nav-link" id="so-03-tab" data-toggle="pill" href="#so-03" role="tab" aria-controls="so-03" aria-selected="false">Tạo hợp đồng bán lô</a>--}}
+{{--                            </li>--}}
                             <li class="nav-item">
                                 <a class="nav-link" id="so-04-tab" data-toggle="pill" href="#so-04" role="tab" aria-controls="so-04" aria-selected="false">In hợp đồng</a>
                             </li>
@@ -635,7 +635,12 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                            if (row.admin_check == 1 || row.lead_sale_check == 1 || row.complete == 1) {
+                                return "<span class='badge badge-info'>Không được xóa</span>";
+                            }
+                            else {
+                                return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                            }
                         }
                     }
                 ]
@@ -964,6 +969,11 @@
                             loadPKFree($("select[name=chonHD]").val());
                             loadPKCost($("select[name=chonHD]").val());
                             loadTotal($("select[name=chonHD]").val());
+                            if (response.data.admin_check == 1 || response.data.lead_sale_check == 1 || response.data.complete == 1) {
+                                $("#pkPayAdd").hide();
+                                $("#pkFreeAdd").hide();
+                                $("#pkCostAdd").hide();
+                            }
                         } else {
                             Toast.fire({
                                 icon: 'info',

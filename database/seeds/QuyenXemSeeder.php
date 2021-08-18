@@ -12,17 +12,17 @@ class QuyenXemSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('quyen_xem')->insert([
-           [
-               'id' => 1,
-               'id_tai_lieu' => 1,
-               'id_nhom' => 1
-           ],
-            [
-                'id' => 2,
-                'id_tai_lieu' => 2,
-                'id_nhom' => 2
-            ]
-        ]);
+//        DB::table('quyen_xem')->insert([
+//           [
+//               'id' => 1,
+//               'id_tai_lieu' => 1,
+//               'id_nhom' => 1
+//           ],
+//            [
+//                'id' => 2,
+//                'id_tai_lieu' => 2,
+//                'id_nhom' => 2
+//            ]
+//        ]);
     }
 }

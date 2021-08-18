@@ -134,6 +134,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('banle/congty/tienmat/down/{id}','HDController@cttm');
         Route::get('banle/congty/nganhang/down/{id}','HDController@ctnh');
     });
+    Route::group(['prefix' => 'pheduyet'], function(){
+        Route::get('list','PheDuyetController@index')->name('pheduyet.list');
+        Route::get('check/{id}','PheDuyetController@check');
+        Route::get('detail/hd/{id}','PheDuyetController@detailHD');
+        Route::get('get/pkpay/{id}','HDController@getpkpay');
+        Route::get('get/pkfree/{id}','HDController@getpkfree');
+        Route::get('get/pkcost/{id}','HDController@getpkcost');
+        Route::get('get/total/{id}','HDController@getTotal');
+    });
 });
 
 

@@ -16,7 +16,10 @@ class GuestController extends Controller
     }
 
     public function getList() {
-        $result = Guest::select('t.name as type','guest.*','guest.id as idmaster')->join('type_guest as t','guest.id_type_guest','=','t.id')->orderBy('guest.id', 'DESC')->get();
+        if (Auth::user()->hasRole('system'))
+            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster')->join('type_guest as t','guest.id_type_guest','=','t.id')->orderBy('guest.id', 'DESC')->get();
+        if (Auth::user()->hasRole('sale'))
+            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster')->join('type_guest as t','guest.id_type_guest','=','t.id')->where('id_user_create', Auth::user()->id)->orderBy('guest.id', 'DESC')->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -128,5 +131,9 @@ class GuestController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    public function guestBuy() {
+
     }
 }

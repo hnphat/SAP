@@ -254,26 +254,23 @@
                                                 <th>Tác vụ</th>
                                             </tr>
                                             </thead>
-                                            <tfoot>
-                                            <tr>
-                                                <th>TT</th>
-                                                <th>Loại KH</th>
-                                                <th>Tên</th>
-                                                <th>Điện thoại</th>
-                                                <th>Mã số thuế</th>
-                                                <th>Ngày sinh</th>
-                                                <th>CMND</th>
-                                                <th>Ngày cấp</th>
-                                                <th>Nơi cấp</th>
-                                                <th>Đại diện</th>
-                                                <th>Chức vụ</th>
-                                                <th>Địa chỉ</th>
-                                                <th>Tác vụ</th>
-                                            </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                     <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
+                                        <table id="dataTableOut" class="display" style="width:100%">
+                                            <thead>
+                                            <tr class="bg-success">
+                                                <th>TT</th>
+                                                <th>Hợp đồng</th>
+                                                <th>Ngày hợp đồng</th>
+                                                <th>Giá trị hợp đồng</th>
+                                                <th>Khách hàng</th>
+                                                <th>Số điện thoại</th>
+                                                <th>Tên xe</th>
+                                                <th>Giá</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

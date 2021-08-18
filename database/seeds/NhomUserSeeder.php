@@ -12,17 +12,17 @@ class NhomUserSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('nhom_user')->insert([
-           [
-               'id' => 1,
-               'id_nhom' => 1,
-               'id_user' => 7
-           ],
-            [
-                'id' => 2,
-                'id_nhom' => 2,
-                'id_user' => 8
-            ]
-        ]);
+//        DB::table('nhom_user')->insert([
+//           [
+//               'id' => 1,
+//               'id_nhom' => 1,
+//               'id_user' => 1
+//           ],
+//            [
+//                'id' => 2,
+//                'id_nhom' => 2,
+//                'id_user' => 2
+//            ]
+//        ]);
     }
 }

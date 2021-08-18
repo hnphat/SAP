@@ -121,7 +121,13 @@ class UserController extends Controller
     public function login(Request $request) {
         $data = ['name' => $request->account, 'password' => $request->password];
         if (Auth::attempt($data)) {
-            return redirect()->route('trangchu');
+            if (Auth::user()->active == 1)
+                return redirect()->route('trangchu');
+            else
+                {
+                    Auth::logout();
+                    abort(403);
+                }
         }
         return view('login', ['error' => 'Sai tài khoản hoặc mật khẩu']);
     }

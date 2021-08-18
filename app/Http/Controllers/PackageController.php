@@ -14,7 +14,8 @@ class PackageController extends Controller
     }
 
     public function getList() {
-        $result = BhPkPackage::all();
+//        $result = BhPkPackage::all();
+        $result = BhPkPackage::select('u.*','u.name as surname','u.id as idu','u.created_at as create','bh_pk_package.*')->join('users as u','bh_pk_package.id_user_create','=','u.id')->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',

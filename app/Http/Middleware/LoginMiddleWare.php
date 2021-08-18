@@ -17,7 +17,10 @@ class LoginMiddleWare
     public function handle($request, Closure $next)
     {
         if (Auth::check()) {
-            return $next($request);
+            if (Auth::user()->active == 1)
+                return $next($request);
+            else
+                abort(403);
         }
         abort(403);
     }

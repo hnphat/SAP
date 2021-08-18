@@ -39,7 +39,9 @@
                                 <label>Tài khoản</label>
                                 <select name="chonTaiKhoan" class="form-control">
                                     @foreach($users as $user)
-                                        <option value="{{$user->id}}">{{$user->name}}</option>
+                                        @if($user->name != 'admin')
+                                            <option value="{{$user->id}}">{{$user->name}}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -68,15 +70,17 @@
                         </thead>
                         <tbody>
                             @foreach($users as $row)
-                                <tr>
-                                    <td>{{$loop->iteration}}</td>
-                                    <td>{{$row->name}}</td>
-                                    <td>
-                                        @foreach($row->roles as $role)
-                                            <span style="cursor: pointer;" id="del" data-id="{{$role->id}}" data-user="{{$row->id}}" class='badge badge-info'>{{$role->name}}</span>
-                                        @endforeach
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{$row->name}}</td>
+                                        <td>
+                                            @if($row->name != 'admin')
+                                                @foreach($row->roles as $role)
+                                                    <span style="cursor: pointer;" id="del" data-id="{{$role->id}}" data-user="{{$row->id}}" class='badge badge-info'>{{$role->name}}</span>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                    </tr>
                             @endforeach
                         </tbody>
                     </table>

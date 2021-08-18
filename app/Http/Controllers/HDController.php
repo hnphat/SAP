@@ -15,13 +15,14 @@ class HDController extends Controller
 {
     //
     public function index() {
-        $guest = Guest::all();
         $xeList = CarSale::where('order', 1)->orWhere('exist',1)->orderBy('id_type_car_detail','asc')->get();
-        return view('page.hd', ['guest' => $guest, 'xeList' => $xeList]);
+        return view('page.hd', ['xeList' => $xeList]);
     }
 
     public function getList() {
-        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->get();
+        $result = CarSale::select('car_sale.*','t.name as ten')
+            ->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')
+            ->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -37,7 +38,12 @@ class HDController extends Controller
     }
 
     public function getListCode() {
-        $result = Sale::select('sale.id','g.name as surname', 'c.cost','t.name','sale.complete','sale.admin_check','sale.lead_sale_check')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->orderby('sale.id','desc')->get();
+        $result = Sale::select('sale.id','g.name as surname', 'c.cost','t.name','sale.complete','sale.admin_check','sale.lead_sale_check')
+            ->join('guest as g','sale.id_guest','=','g.id')
+            ->join('car_sale as c','sale.id_car_sale','=','c.id')
+            ->join('type_car_detail as t','c.id_type_car_detail','=','t.id')
+            ->where('sale.id_user_create', Auth::user()->id)
+            ->orderby('sale.id','desc')->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -104,7 +110,9 @@ class HDController extends Controller
     }
 
     public function getGuestPersonal(){
-        $result = Guest::where('id_type_guest',1)->get();
+        $result = Guest::where('id_type_guest',1)
+            ->where('id_user_create', Auth::user()->id)
+            ->get();
         if($result) {
                 echo "<option value='0'>Chọn</option>";
             foreach($result as $row){
@@ -116,7 +124,9 @@ class HDController extends Controller
     }
 
     public function getGuestCompany(){
-        $result = Guest::where('id_type_guest',2)->get();
+        $result = Guest::where('id_type_guest',2)
+            ->where('id_user_create', Auth::user()->id)
+            ->get();
         if($result) {
             echo "<option value='0'>Chọn</option>";
             foreach($result as $row){
@@ -171,7 +181,12 @@ class HDController extends Controller
     }
 
     public function loadHD() {
-        $result = Sale::select('sale.id')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->orderby('sale.id','desc')->get();
+        $result = Sale::select('sale.id')->join('guest as g','sale.id_guest','=','g.id')
+            ->join('car_sale as c','sale.id_car_sale','=','c.id')
+            ->join('type_car_detail as t','c.id_type_car_detail','=','t.id')
+            ->where('sale.id_user_create', Auth::user()->id)
+            ->orderby('sale.id','desc')
+            ->get();
         if($result) {
             if($result) {
                 echo "<option value='0'>Chọn</option>";
@@ -185,8 +200,7 @@ class HDController extends Controller
     }
 
     public function detailHD($id) {
-        $result = Sale::select('sale.id as idsale','sale.tamUng','g.*','g.name as surname', 'c.*','t.name as name_car')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->where('sale.id', $id)->orderby('sale.id','desc')->first();
-//        $pkban = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where('sale_off.id_sale', $id)->get();
+        $result = Sale::select('sale.id as idsale','sale.admin_check','sale.lead_sale_check','sale.complete','sale.tamUng','g.*','g.name as surname', 'c.*','t.name as name_car')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->where('sale.id', $id)->orderby('sale.id','desc')->first();
         if($result) {
             return response()->json([
                 'message' => 'Get Detail HD Success!',
@@ -221,10 +235,12 @@ class HDController extends Controller
     }
 
     public function deletePkPay(Request $request) {
-        $result = SaleOff::where([
-            ['id_sale','=', $request->sale],
-            ['id_bh_pk_package','=', $request->id]
-        ])->delete();
+        $check = Sale::find($request->sale);
+        if ($check->admin_check != 1 && $check->lead_sale_check != 1 && $check->complete != 1)
+                $result = SaleOff::where([
+                    ['id_sale','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->delete();
         if($result) {
             return response()->json([
                 'message' => 'Delete PK Pay successfully!',
@@ -277,10 +293,12 @@ class HDController extends Controller
     }
 
     public function deletePkFree(Request $request) {
-        $result = SaleOff::where([
-            ['id_sale','=', $request->sale],
-            ['id_bh_pk_package','=', $request->id]
-        ])->delete();
+        $check = Sale::find($request->sale);
+        if ($check->admin_check != 1 && $check->lead_sale_check != 1 && $check->complete != 1)
+            $result = SaleOff::where([
+                ['id_sale','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->delete();
         if($result) {
             return response()->json([
                 'message' => 'Delete PK Free successfully!',
@@ -295,10 +313,12 @@ class HDController extends Controller
     }
 
     public function deletePkCost(Request $request) {
-        $result = SaleOff::where([
-            ['id_sale','=', $request->sale],
-            ['id_bh_pk_package','=', $request->id]
-        ])->delete();
+        $check = Sale::find($request->sale);
+        if ($check->admin_check != 1 && $check->lead_sale_check != 1 && $check->complete != 1)
+            $result = SaleOff::where([
+                ['id_sale','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->delete();
         if($result) {
             return response()->json([
                 'message' => 'Delete PK Cost successfully!',

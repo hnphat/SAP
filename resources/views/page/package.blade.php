@@ -31,40 +31,40 @@
         <!-- Main content -->
         <div class="content">
             <div class="row container">
-                <div class="col-sm-4">
-                    <form id="addForm" autocomplete="off">
-                        {{csrf_field()}}
-                        <div class="card-body">
-                            <input type="hidden" name="idObject">
-                            <div class="form-group">
-                                <label>Nội dung</label>
-                                <input name="noiDung" type="text" class="form-control" placeholder="Nhập nội dung" autofocus="autofocus">
-                            </div>
-                            <div class="form-group">
-                                <label>Giá</label>
-                                <input name="gia" type="number" class="form-control" placeholder="Nhập giá (nếu có)">
-                            </div>
-                            <div class="form-group">
-                                <label>Hoa hồng</label>
-                                <input name="hoaHong" type="number" class="form-control" placeholder="Nhập hoa hồng (nếu có)" >
-                            </div>
-                            <div class="form-group">
-                                <label>Loại</label>
-                                <select name="loai" class="form-control">
-                                    <option value="free">Phụ kiện - Quà tặng (free)</option>
-                                    <option value="pay">Phụ kiện bán (pay)</option>
-                                    <option value="cost">Các loại phí (cost)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <button id="btnAdd" class="btn btn-primary">Thêm mới</button>
-                                <button id="btnUpdate" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>
-                                <button id="btnCancel" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-sm-8">
+{{--                <div class="col-sm-4">--}}
+{{--                    <form id="addForm" autocomplete="off">--}}
+{{--                        {{csrf_field()}}--}}
+{{--                        <div class="card-body">--}}
+{{--                            <input type="hidden" name="idObject">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>Nội dung</label>--}}
+{{--                                <input name="noiDung" type="text" class="form-control" placeholder="Nhập nội dung" autofocus="autofocus">--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>Giá</label>--}}
+{{--                                <input name="gia" type="number" class="form-control" placeholder="Nhập giá (nếu có)">--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>Hoa hồng</label>--}}
+{{--                                <input name="hoaHong" type="number" class="form-control" placeholder="Nhập hoa hồng (nếu có)" >--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label>Loại</label>--}}
+{{--                                <select name="loai" class="form-control">--}}
+{{--                                    <option value="free">Phụ kiện - Quà tặng (free)</option>--}}
+{{--                                    <option value="pay">Phụ kiện bán (pay)</option>--}}
+{{--                                    <option value="cost">Các loại phí (cost)</option>--}}
+{{--                                </select>--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <button id="btnAdd" class="btn btn-primary">Thêm mới</button>--}}
+{{--                                <button id="btnUpdate" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>--}}
+{{--                                <button id="btnCancel" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </form>--}}
+{{--                </div>--}}
+                <div class="col-sm-12">
                     <table id="dataTable" class="display" style="width:100%">
                         <thead>
                         <tr class="bg-cyan">
@@ -73,21 +73,10 @@
                             <th>Giá</th>
                             <th>Hoa hồng</th>
                             <th>Loại</th>
-                            <th>Sửa</th>
-                            <th>Xóa</th>
+                            <th>Sale</th>
+                            <th>Ngày tạo</th>
                         </tr>
                         </thead>
-                        <tfoot>
-                        <tr>
-                            <th>TT</th>
-                            <th>Nội dung</th>
-                            <th>Giá</th>
-                            <th>Hoa hồng</th>
-                            <th>Loại</th>
-                            <th>Sửa</th>
-                            <th>Xóa</th>
-                        </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -145,18 +134,20 @@
                     { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
                     { "data": "profit", render: $.fn.dataTable.render.number(',','.',0,'') },
                     { "data": "type"},
-                    {
-                        "data": null,
-                        render: function(data, type, row) {
-                            return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#edit' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {
-                            return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
-                        }
-                    }
+                    { "data": "surname"},
+                    { "data": "created_at"}
+                    // {
+                    //     "data": null,
+                    //     render: function(data, type, row) {
+                    //         return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#edit' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;";
+                    //     }
+                    // },
+                    // {
+                    //     "data": null,
+                    //     render: function(data, type, row) {
+                    //         return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                    //     }
+                    // }
                 ]
             });
 
