@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BhPkPackage;
 use App\CarSale;
 use App\Guest;
+use App\RequestHD;
 use App\Sale;
 use App\SaleOff;
 use Illuminate\Http\Request;
@@ -58,6 +59,27 @@ class HDController extends Controller
         }
     }
 
+    public function getListWait() {
+        $result = RequestHD::select('request_hd.id','request_hd.color','request_hd.tamUng','request_hd.giaXe','request_hd.admin_check','u.name as user_name','t.name as carname','g.name as guestname')
+            ->join('guest as g','request_hd.guest_id','=','g.id')
+            ->join('type_car_detail as t','request_hd.car_detail_id','=','t.id')
+            ->join('users as u','request_hd.user_id','=', 'u.id')
+            ->where('request_hd.user_id','=',Auth::user()->id)
+            ->orderby('request_hd.id','desc')->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list wailt successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function getListPK() {
         $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->get();
         if($result) {
@@ -75,15 +97,17 @@ class HDController extends Controller
     }
 
     public function addCode(Request $request) {
-        $code = new Sale();
-        $code->id_guest = $request->idGuest;
-        $code->id_car_sale = $request->idCarSale;
+        $code = new RequestHD();
+        $code->user_id = Auth::user()->id;
+        $code->car_detail_id = $request->chonXe;
+        $code->color = $request->chonMauXe;
         $code->tamUng = $request->tamUng;
-        $code->id_user_create = Auth::user()->id;
+        $code->giaXe = $request->giaBanXe;
+        $code->guest_id = $request->idGuest;
         $code->save();
         if($code) {
             return response()->json([
-                'message' => 'Tạo mã hợp đồng thành công!',
+                'message' => 'Tạo đề nghị hợp đồng thành công!',
                 'code' => 200
             ]);
         } else {
@@ -99,6 +123,21 @@ class HDController extends Controller
         if($result) {
             return response()->json([
                 'message' => 'Delete data successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deleteWait(Request $request) {
+        $result = RequestHD::where('id', $request->id)->delete();
+        if($result) {
+            return response()->json([
+                'message' => 'Delete data wait successfully!',
                 'code' => 200
             ]);
         } else {

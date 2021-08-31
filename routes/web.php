@@ -108,11 +108,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','HDController@index')->name('hd.list');
         Route::get('get/list','HDController@getList');
         Route::get('get/list/code','HDController@getListCode');
+        Route::get('get/list/wait','HDController@getListWait');
         Route::post('add/code','HDController@addCode');
         Route::post('add/pkpay','HDController@addPkPay');
         Route::post('add/pkfree','HDController@addPkFree');
         Route::post('add/pkcost','HDController@addPkCost');
         Route::post('delete','HDController@delete');
+        Route::post('deleteWait','HDController@deleteWait');
         Route::post('delete/pkpay/','HDController@deletePkPay');
         Route::post('delete/pkfree/','HDController@deletePkFree');
         Route::post('delete/pkcost/','HDController@deletePkCost');

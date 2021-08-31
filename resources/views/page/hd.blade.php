@@ -36,17 +36,17 @@
                     <div class="card-header p-0 pt-1">
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="so-00-tab" data-toggle="pill" href="#so-00" role="tab" aria-controls="so-00" aria-selected="true">Tạo mã hợp đồng</a>
+                                <a class="nav-link active" id="so-00-tab" data-toggle="pill" href="#so-00" role="tab" aria-controls="so-00" aria-selected="true">Đề nghị hợp đồng</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-01" aria-selected="true">Danh sách hợp đồng</a>
+                                <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-03" role="tab" aria-controls="so-01" aria-selected="true">Hợp đồng đợi duyệt</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="so-02-tab" data-toggle="pill" href="#so-02" role="tab" aria-controls="so-02" aria-selected="false">Tạo hợp đồng bán lẻ</a>
+                                <a class="nav-link" id="so-02-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-02" aria-selected="false">Danh sách hợp đồng</a>
                             </li>
-{{--                            <li class="nav-item">--}}
-{{--                                <a class="nav-link" id="so-03-tab" data-toggle="pill" href="#so-03" role="tab" aria-controls="so-03" aria-selected="false">Tạo hợp đồng bán lô</a>--}}
-{{--                            </li>--}}
+                            <li class="nav-item">
+                                <a class="nav-link" id="so-03-tab" data-toggle="pill" href="#so-02" role="tab" aria-controls="so-03" aria-selected="false">Tạo hợp đồng bán lẻ</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="so-04-tab" data-toggle="pill" href="#so-04" role="tab" aria-controls="so-04" aria-selected="false">In hợp đồng</a>
                             </li>
@@ -112,29 +112,61 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <table class="table table-bordered table-striped">
-                                            <tr class="bg-cyan">
-                                                <th>TT</th>
-                                                <th>Tên xe</th>
-                                                <th>Số vin</th>
-                                                <th>Số máy</th>
-                                                <th>Thông tin khác</th>
-                                                <th>Giá xe</th>
-                                                <th>Trạng thái xe</th>
-                                            </tr>
-                                            <tr>
-                                                <td>1</td>
-                                                <td id="x_ten"></td>
-                                                <td id="x_vin"></td>
-                                                <td id="x_frame"></td>
-                                                <td id="x_detail"></td>
-                                                <td id="x_cost"></td>
-                                                <td id="x_status"></td>
-                                            </tr>
-                                        </table>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Màu sắc</label>
+                                                    <select name="chonMauXe" id="chonMauXe" class="form-control">
+                                                        <option value="0">Chọn</option>
+                                                        <option value="Đỏ">Đỏ</option>
+                                                        <option value="Xanh">Xanh</option>
+                                                        <option value="Trắng">Trắng</option>
+                                                        <option value="Vàng">Vàng</option>
+                                                        <option value="Ghi">Ghi</option>
+                                                        <option value="Nâu">Nâu</option>
+                                                        <option value="Bạc">Bạc</option>
+                                                        <option value="Xám">Xám</option>
+                                                        <option value="Đen">Đen</option>
+                                                        <option value="Vàng cát">Vàng cát</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Giá xe:</label>
+                                                    <input name="giaBanXe" id="giaBanXe" value="0" placeholder="Nhập giá bán xe" type="number" class="form-control"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="text" id="showCostCar" class="form-control" disabled="disabled" />
+                                                </div>
+                                            </div>
+                                        </div>
+{{--                                        <table class="table table-bordered table-striped">--}}
+{{--                                            <tr class="bg-cyan">--}}
+{{--                                                <th>TT</th>--}}
+{{--                                                <th>Tên xe</th>--}}
+{{--                                                <th>Số vin</th>--}}
+{{--                                                <th>Số máy</th>--}}
+{{--                                                <th>Thông tin khác</th>--}}
+{{--                                                <th>Giá xe</th>--}}
+{{--                                                <th>Trạng thái xe</th>--}}
+{{--                                            </tr>--}}
+{{--                                            <tr>--}}
+{{--                                                <td>1</td>--}}
+{{--                                                <td id="x_ten"></td>--}}
+{{--                                                <td id="x_vin"></td>--}}
+{{--                                                <td id="x_frame"></td>--}}
+{{--                                                <td id="x_detail"></td>--}}
+{{--                                                <td id="x_cost"></td>--}}
+{{--                                                <td id="x_status"></td>--}}
+{{--                                            </tr>--}}
+{{--                                        </table>--}}
                                     </div>
                                     <div class="form-group">
-                                        <button id="addCodeHD" class="btn btn-success">TẠO MÃ HỢP ĐỒNG</button>
+                                        <button id="addCodeHD" class="btn btn-success">ĐỀ NGHỊ HỢP ĐỒNG</button>
                                     </div>
                                 </form>
                             </div>
@@ -150,7 +182,6 @@
                                         <th>Admin duyệt</th>
                                         <th>Quản lý duyệt</th>
                                         <th>Kế toán duyệt</th>
-                                        <th>Thao tác</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -248,7 +279,21 @@
                                 </h4>
                             </div>
                             <div class="tab-pane fade" id="so-03" role="tabpanel" aria-labelledby="so-03-tab">
-                                Đang phát triển
+                                <table id="dataTableCodeWait" class="display" style="width:100%">
+                                    <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>TT</th>
+                                        <th>Sale bán</th>
+                                        <th>Khách hàng</th>
+                                        <th>Xe bán</th>
+                                        <th>Màu sắc</th>
+                                        <th>Giá</th>
+                                        <th>Tiền cọc</th>
+                                        <th>Admin duyệt</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                </table>
                             </div>
                             <div class="tab-pane fade" id="so-04" role="tabpanel" aria-labelledby="so-04-tab">
                                 <form id="inForm">
@@ -577,6 +622,11 @@
                 $('#showCost').val("(" + DOCSO.doc(cos) + ")");
             });
 
+            $('#giaBanXe').keyup(function(){
+                var cos = $('#giaBanXe').val();
+                $('#showCostCar').val("(" + DOCSO.doc(cos) + ")");
+            });
+
             var table = $('#dataTableCode').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,
@@ -625,8 +675,64 @@
                     },
                     {
                         "data": null,
-                        render: function(data, type, row) {
+                        render: function (data, type, row) {
                             if (row.complete == 0)
+                                return "<button class='btn btn-warning btn-sm'><span class='fas fa-eye-slash'></span></button>";
+                            else
+                                return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button>";
+                        }
+                    }
+                    // },
+                    // {
+                    //     "data": null,
+                    //     render: function(data, type, row) {
+                    //         if (row.admin_check == 1 || row.lead_sale_check == 1 || row.complete == 1) {
+                    //             return "<span class='badge badge-info'>Không được xóa</span>";
+                    //         }
+                    //         else {
+                    //             return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                    //         }
+                    //     }
+                    // }
+                ]
+            });
+
+            table.on( 'order.dt search.dt', function () {
+                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            var tableWait = $('#dataTableCodeWait').DataTable({
+                // paging: false,    use to show all data
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: "{{ url('management/hd/get/list/wait') }}",
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": null },
+                    { "data": "user_name" },
+                    { "data": "guestname" },
+                    { "data": "carname" },
+                    { "data": "color" },
+                    { "data": "giaXe", render: $.fn.dataTable.render.number(',','.',0,'')},
+                    { "data": "tamUng", render: $.fn.dataTable.render.number(',','.',0,'')},
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.admin_check == 0)
                                 return "<button class='btn btn-warning btn-sm'><span class='fas fa-eye-slash'></span></button>";
                             else
                                 return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button>";
@@ -635,21 +741,21 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            if (row.admin_check == 1 || row.lead_sale_check == 1 || row.complete == 1) {
+                            if (row.admin_check == 1) {
                                 return "<span class='badge badge-info'>Không được xóa</span>";
                             }
                             else {
-                                return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                                return "<button id='deleteWait' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
                             }
                         }
                     }
                 ]
             });
 
-            table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            tableWait.on( 'order.dt search.dt', function () {
+                tableWait.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                     cell.innerHTML = i+1;
-                    table.cell(cell).invalidate('dom');
+                    tableWait.cell(cell).invalidate('dom');
                 } );
             } ).draw();
 
@@ -664,9 +770,10 @@
                         $("#addPkForm")[0].reset();
                         Toast.fire({
                             icon: 'success',
-                            title: " Đã tạo mã hợp đồng "
+                            title: " Đã tạo đề nghị hợp đồng "
                         })
                         table.ajax.reload();
+                        tableWait.ajax.reload();
                         $("input[name=idCarSale]").val(0);
                         $("input[name=idGuest]").val(0);
                         $("#sHoTen").text("");
@@ -1115,6 +1222,34 @@
                                 title: "Đã xóa"
                             })
                             table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            //Delete data wait
+            $(document).on('click','#deleteWait', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/hd/deleteWait/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: "Đã xóa"
+                            })
+                            tableWait.ajax.reload();
                         },
                         error: function() {
                             Toast.fire({
