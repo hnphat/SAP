@@ -17,7 +17,7 @@ class CreateBhPkPackagesTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('name', 255);
             $table->integer('cost')->default(0);
-            $table->integer('profit')->default(0);
+//            $table->integer('profit')->default(0);
             $table->enum('type', ['free', 'pay', 'cost'])->default('free');
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');

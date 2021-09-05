@@ -8,6 +8,7 @@ use App\Guest;
 use App\RequestHD;
 use App\Sale;
 use App\SaleOff;
+use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -16,7 +17,8 @@ class HDController extends Controller
 {
     //
     public function index() {
-        $xeList = CarSale::where('order', 1)->orWhere('exist',1)->orderBy('id_type_car_detail','asc')->get();
+//        $xeList = CarSale::where('order', 1)->orWhere('exist',1)->orderBy('id_type_car_detail','asc')->get();
+        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
         return view('page.hd', ['xeList' => $xeList]);
     }
 
@@ -39,10 +41,12 @@ class HDController extends Controller
     }
 
     public function getListCode() {
-        $result = Sale::select('sale.id','g.name as surname', 'c.cost','t.name','sale.complete','sale.admin_check','sale.lead_sale_check')
+        $result = Sale::select('r.tamUng','r.giaXe','sale.created_at','sale.id','g.name as surname','t.name','sale.complete','sale.admin_check','sale.lead_sale_check')
+       // $result = Sale::select('r.tamUng','r.giaXe','sale.created_at','sale.id','g.name as surname','t.name','sale.complete','sale.admin_check','sale.lead_sale_check')
             ->join('guest as g','sale.id_guest','=','g.id')
             ->join('car_sale as c','sale.id_car_sale','=','c.id')
             ->join('type_car_detail as t','c.id_type_car_detail','=','t.id')
+            ->join('request_hd as r','sale.id','r.sale_id')
             ->where('sale.id_user_create', Auth::user()->id)
             ->orderby('sale.id','desc')->get();
         if($result) {
@@ -60,7 +64,7 @@ class HDController extends Controller
     }
 
     public function getListWait() {
-        $result = RequestHD::select('request_hd.id','request_hd.color','request_hd.tamUng','request_hd.giaXe','request_hd.admin_check','u.name as user_name','t.name as carname','g.name as guestname')
+        $result = RequestHD::select('request_hd.user_id','request_hd.guest_id','request_hd.id','request_hd.car_detail_id','request_hd.color','request_hd.tamUng','request_hd.giaXe','request_hd.admin_check','u.name as user_name','t.name as carname','g.name as guestname')
             ->join('guest as g','request_hd.guest_id','=','g.id')
             ->join('type_car_detail as t','request_hd.car_detail_id','=','t.id')
             ->join('users as u','request_hd.user_id','=', 'u.id')
@@ -239,7 +243,14 @@ class HDController extends Controller
     }
 
     public function detailHD($id) {
-        $result = Sale::select('sale.id as idsale','sale.admin_check','sale.lead_sale_check','sale.complete','sale.tamUng','g.*','g.name as surname', 'c.*','t.name as name_car')->join('guest as g','sale.id_guest','=','g.id')->join('car_sale as c','sale.id_car_sale','=','c.id')->join('type_car_detail as t','c.id_type_car_detail','=','t.id')->where('sale.id', $id)->orderby('sale.id','desc')->first();
+        $result = Sale::select('r.tamUng','r.giaXe','sale.id as idsale','sale.admin_check','sale.lead_sale_check','sale.complete','g.*','g.name as surname', 'c.*','t.name as name_car')
+            ->join('guest as g','sale.id_guest','=','g.id')
+            ->join('car_sale as c','sale.id_car_sale','=','c.id')
+            ->join('type_car_detail as t','c.id_type_car_detail','=','t.id')
+            ->join('request_hd as r','r.sale_id','=','sale.id')
+            ->where('sale.id', $id)
+            ->orderby('sale.id','desc')
+            ->first();
         if($result) {
             return response()->json([
                 'message' => 'Get Detail HD Success!',
@@ -275,7 +286,7 @@ class HDController extends Controller
 
     public function deletePkPay(Request $request) {
         $check = Sale::find($request->sale);
-        if ($check->admin_check != 1 && $check->lead_sale_check != 1 && $check->complete != 1)
+        if ($check->lead_sale_check != 1 && $check->complete != 1)
                 $result = SaleOff::where([
                     ['id_sale','=', $request->sale],
                     ['id_bh_pk_package','=', $request->id]
@@ -333,7 +344,7 @@ class HDController extends Controller
 
     public function deletePkFree(Request $request) {
         $check = Sale::find($request->sale);
-        if ($check->admin_check != 1 && $check->lead_sale_check != 1 && $check->complete != 1)
+        if ($check->lead_sale_check != 1 && $check->complete != 1)
             $result = SaleOff::where([
                 ['id_sale','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
@@ -353,7 +364,7 @@ class HDController extends Controller
 
     public function deletePkCost(Request $request) {
         $check = Sale::find($request->sale);
-        if ($check->admin_check != 1 && $check->lead_sale_check != 1 && $check->complete != 1)
+        if ($check->lead_sale_check != 1 && $check->complete != 1)
             $result = SaleOff::where([
                 ['id_sale','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
@@ -375,7 +386,6 @@ class HDController extends Controller
         $pkpay = new BhPkPackage();
         $pkpay->name = $request->namePkPay;
         $pkpay->cost = $request->giaPkPay;
-        $pkpay->profit = $request->hoaHongPkPay;
         $pkpay->id_user_create = Auth::user()->id;
         $pkpay->type = 'pay';
         $pkpay->save();
@@ -438,7 +448,6 @@ class HDController extends Controller
         $pkpay = new BhPkPackage();
         $pkpay->name = $request->namePkCost;
         $pkpay->cost = $request->giaPkCost;
-        $pkpay->profit = $request->hoaHongPkCost;
         $pkpay->id_user_create = Auth::user()->id;
         $pkpay->type = 'cost';
         $pkpay->save();
@@ -474,7 +483,7 @@ class HDController extends Controller
             if ($row->type == 'free') continue;
             $sum += $row->cost;
         }
-        echo $sum + $sale->carSale->cost;
+        echo $sum + $sale->requestHd->giaXe;
     }
 
     public function test() {

@@ -294,11 +294,11 @@
                                                 <option value="Điện/Xăng">Điện/Xăng</option>
                                             </select>
                                         </div>
-                                        <div class="form-group">
-                                            <label>Giá xe</label>
-                                            <input name="cost" value="0" id="cost" type="number" class="form-control" placeholder="Giá xe tối đa 2 tỷ 1">
-                                            <span id="showCost"></span>
-                                        </div>
+{{--                                        <div class="form-group">--}}
+{{--                                            <label>Giá xe</label>--}}
+{{--                                            <input name="cost" value="0" id="cost" type="number" class="form-control" placeholder="Giá xe tối đa 2 tỷ 1">--}}
+{{--                                            <span id="showCost"></span>--}}
+{{--                                        </div>--}}
                                         <div class="form-group">
                                             <input name="exist" id="oop1" type="radio" value="1" checked="checked">
                                             <label for="oop1">Đang có xe</label>
@@ -414,11 +414,11 @@
                                                 <option value="Điện/Xăng">Điện/Xăng</option>
                                             </select>
                                         </div>
-                                        <div class="form-group">
-                                            <label>Giá xe</label>
-                                            <input name="ecost" id="ecost" type="number" class="form-control" placeholder="Giá xe">
-                                            <span id="eshowCost"></span>
-                                        </div>
+{{--                                        <div class="form-group">--}}
+{{--                                            <label>Giá xe</label>--}}
+{{--                                            <input name="ecost" id="ecost" type="number" class="form-control" placeholder="Giá xe">--}}
+{{--                                            <span id="eshowCost"></span>--}}
+{{--                                        </div>--}}
                                         <div class="form-group">
                                             <input name="eexist" id="exist1" type="radio" value="1" checked="checked">
                                             <label for="exist1">Đang có xe</label>
@@ -721,7 +721,7 @@
                         $("input[name=emachine]").val(response.data.machine);
                         $("select[name=eseat]").val(response.data.seat);
                         $("select[name=efuel]").val(response.data.fuel);
-                        $("input[name=ecost]").val(response.data.cost);
+                        // $("input[name=ecost]").val(response.data.cost);
                         if (response.data.exist == 1)
                             $("#exist1").prop('checked',true);
                         if (response.data.order == 1)

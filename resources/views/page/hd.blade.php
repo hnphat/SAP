@@ -39,10 +39,10 @@
                                 <a class="nav-link active" id="so-00-tab" data-toggle="pill" href="#so-00" role="tab" aria-controls="so-00" aria-selected="true">Đề nghị hợp đồng</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-03" role="tab" aria-controls="so-01" aria-selected="true">Hợp đồng đợi duyệt</a>
+                                <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-03" role="tab" aria-controls="so-01" aria-selected="true">Đề nghị chờ duyệt</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="so-02-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-02" aria-selected="false">Danh sách hợp đồng</a>
+                                <a class="nav-link" id="so-02-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-02" aria-selected="false">Hợp đồng đã duyệt</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="so-03-tab" data-toggle="pill" href="#so-02" role="tab" aria-controls="so-03" aria-selected="false">Tạo hợp đồng bán lẻ</a>
@@ -94,7 +94,7 @@
                                                     <select name="chonXe" id="chonXe" class="form-control">
                                                         <option value="0">Chọn</option>
                                                         @foreach($xeList as $row)
-                                                            <option value="{{$row->id}}">{{$row->typeCarDetail->name}}</option>
+                                                            <option value="{{$row->id}}">{{$row->name}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -175,13 +175,14 @@
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
+                                        <th>Ngày</th>
                                         <th>Mã hợp đồng</th>
                                         <th>Khách hàng</th>
                                         <th>Xe bán</th>
                                         <th>Giá</th>
+                                        <th>Cọc</th>
                                         <th>Admin duyệt</th>
                                         <th>Quản lý duyệt</th>
-                                        <th>Kế toán duyệt</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -234,7 +235,6 @@
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
                                                 <th>Giá</th>
-                                                <th>Hoa hồng</th>
                                                 <th>Tác vụ</th>
                                             </tr>
                                             <tbody id="showPKPAY">
@@ -266,7 +266,6 @@
                                             <th>TT</th>
                                             <th>Nội dung</th>
                                             <th>Giá</th>
-                                            <th>Hoa hồng</th>
                                             <th>Tác vụ</th>
                                         </tr>
                                         <tbody id="showPKCOST">
@@ -362,10 +361,6 @@
                                     <label>Giá</label>
                                     <input name="giaPkPay" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
-                                <div class="form-group">
-                                    <label>Hoa hồng</label>
-                                    <input name="hoaHongPkPay" value="0" placeholder="Nhập hoa hồng" type="number" class="form-control">
-                                </div>
                             </div>
                         </form>
                     </div>
@@ -441,10 +436,6 @@
                                 <div class="form-group">
                                     <label>Giá</label>
                                     <input name="giaPkCost" value="0" placeholder="Nhập giá" type="number" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>Hoa hồng</label>
-                                    <input name="hoaHongPkCost" value="0" placeholder="Nhập hoa hồng" type="number" class="form-control">
                                 </div>
                             </div>
                         </form>
@@ -575,47 +566,47 @@
                 });
             });
 
-            $("#chonXe").change(function(){
-                $.ajax({
-                    url: "management/hd/get/car/" + $("select[name=chonXe]").val(),
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.code != 500) {
-                            $("#x_ten").text(response.name_car);
-                            $("#x_vin").text(response.data.vin);
-                            $("#x_frame").text(response.data.frame);
-                            let detail = "Màu xe: " + response.data.color +
-                                "; động cơ: " + response.data.machine +
-                                "; Số: " + response.data.gear +
-                                "; Chỗ ngồi: " + response.data.seat + " chỗ" +
-                                "; Nhiên liệu: " + response.data.fuel;
-                            $("#x_detail").text(detail);
-                            $("#x_cost").text(response.cost);
-                            $("#x_status").html(response.status);
-                            $("input[name=idCarSale]").val(response.data.id);
-
-                        } else {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Vui lòng chọn xe để lên hợp đồng"
-                            })
-                            $("#x_ten").text("");
-                            $("#x_vin").text("");
-                            $("#x_frame").text("");
-                            $("#x_detail").text("");
-                            $("#x_cost").text("");
-                            $("#x_status").text("");
-                            $("input[name=idCarSale]").val("");
-                        }
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Không lấy được dữ liệu xe cần bán"
-                        })
-                    }
-                });
-            });
+            // $("#chonXe").change(function(){
+            //     // $.ajax({
+            //     //     url: "management/hd/get/car/" + $("select[name=chonXe]").val(),
+            //     //     dataType: "json",
+            //     //     success: function(response) {
+            //     //         if (response.code != 500) {
+            //     //             $("#x_ten").text(response.name_car);
+            //     //             $("#x_vin").text(response.data.vin);
+            //     //             $("#x_frame").text(response.data.frame);
+            //     //             let detail = "Màu xe: " + response.data.color +
+            //     //                 "; động cơ: " + response.data.machine +
+            //     //                 "; Số: " + response.data.gear +
+            //     //                 "; Chỗ ngồi: " + response.data.seat + " chỗ" +
+            //     //                 "; Nhiên liệu: " + response.data.fuel;
+            //     //             $("#x_detail").text(detail);
+            //     //             $("#x_cost").text(response.cost);
+            //     //             $("#x_status").html(response.status);
+            //     //             $("input[name=idCarSale]").val(response.data.id);
+            //     //
+            //     //         } else {
+            //     //             Toast.fire({
+            //     //                 icon: 'warning',
+            //     //                 title: "Vui lòng chọn xe để lên hợp đồng"
+            //     //             })
+            //     //             $("#x_ten").text("");
+            //     //             $("#x_vin").text("");
+            //     //             $("#x_frame").text("");
+            //     //             $("#x_detail").text("");
+            //     //             $("#x_cost").text("");
+            //     //             $("#x_status").text("");
+            //     //             $("input[name=idCarSale]").val("");
+            //     //         }
+            //     //     },
+            //     //     error: function() {
+            //     //         Toast.fire({
+            //     //             icon: 'warning',
+            //     //             title: "Không lấy được dữ liệu xe cần bán"
+            //     //         })
+            //     //     }
+            //     // });
+            // });
 
             $('#tamUng').keyup(function(){
                 var cos = $('#tamUng').val();
@@ -649,12 +640,19 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
+                            return row.created_at.toString().slice(0, 10) ;
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
                             return "HAGI-0" + row.id + "/HDMB-PA";
                         }
                     },
                     { "data": "surname" },
                     { "data": "name" },
-                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
+                    { "data": "giaXe", render: $.fn.dataTable.render.number(',','.',0,'')},
+                    { "data": "tamUng", render: $.fn.dataTable.render.number(',','.',0,'')},
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -672,16 +670,17 @@
                             else
                                 return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button>";
                         }
-                    },
-                    {
-                        "data": null,
-                        render: function (data, type, row) {
-                            if (row.complete == 0)
-                                return "<button class='btn btn-warning btn-sm'><span class='fas fa-eye-slash'></span></button>";
-                            else
-                                return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button>";
-                        }
                     }
+                    // ,
+                    // {
+                    //     "data": null,
+                    //     render: function (data, type, row) {
+                    //         if (row.complete == 0)
+                    //             return "<button class='btn btn-warning btn-sm'><span class='fas fa-eye-slash'></span></button>";
+                    //         else
+                    //             return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button>";
+                    //     }
+                    // }
                     // },
                     // {
                     //     "data": null,
@@ -742,7 +741,8 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.admin_check == 1) {
-                                return "<span class='badge badge-info'>Không được xóa</span>";
+                               // return "<span class='badge badge-info'>Không được xóa</span>";
+                                return "";
                             }
                             else {
                                 return "<button id='deleteWait' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
@@ -761,45 +761,57 @@
 
             $("#addCodeHD").click(function(e){
                 e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/hd/add/code/')}}",
-                    type: "post",
-                    dataType: 'json',
-                    data: $("#addPkForm").serialize(),
-                    success: function(response) {
-                        $("#addPkForm")[0].reset();
-                        Toast.fire({
-                            icon: 'success',
-                            title: " Đã tạo đề nghị hợp đồng "
-                        })
-                        table.ajax.reload();
-                        tableWait.ajax.reload();
-                        $("input[name=idCarSale]").val(0);
-                        $("input[name=idGuest]").val(0);
-                        $("#sHoTen").text("");
-                        $("#sDienThoai").text("");
-                        $("#smst").text("");
-                        $("#scmnd").text("");
-                        $("#sNgayCap").text("");
-                        $("#sNoiCap").text("");
-                        $("#sNgaySinh").text("");
-                        $("#sDiaChi").text("");
-                        $("#sDaiDien").text("");
-                        $("#sChucVu").text("");
-                        $("#x_ten").text("");
-                        $("#x_vin").text("");
-                        $("#x_frame").text("");
-                        $("#x_detail").text("");
-                        $("#x_cost").text("");
-                        $("#x_status").text("");
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Không tạo được mã, vui lòng kiểm tra lại thông tin nhập liệu"
-                        })
-                    }
-                });
+                if ($("select[name=chonXe]").val() == 0) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Vui lòng chọn xe trước khi tạo đề nghị hợp đồng"
+                    })
+                } else if ($("select[name=chonMauXe]").val() == 0) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Vui lòng chọn màu xe trước khi tạo đề nghị hợp đồng"
+                    })
+                } else {
+                    $.ajax({
+                        url: "{{url('management/hd/add/code/')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: $("#addPkForm").serialize(),
+                        success: function(response) {
+                            $("#addPkForm")[0].reset();
+                            Toast.fire({
+                                icon: 'success',
+                                title: " Đã tạo đề nghị hợp đồng "
+                            })
+                            table.ajax.reload();
+                            tableWait.ajax.reload();
+                            $("input[name=idCarSale]").val(0);
+                            $("input[name=idGuest]").val(0);
+                            $("#sHoTen").text("");
+                            $("#sDienThoai").text("");
+                            $("#smst").text("");
+                            $("#scmnd").text("");
+                            $("#sNgayCap").text("");
+                            $("#sNoiCap").text("");
+                            $("#sNgaySinh").text("");
+                            $("#sDiaChi").text("");
+                            $("#sDaiDien").text("");
+                            $("#sChucVu").text("");
+                            $("#x_ten").text("");
+                            $("#x_vin").text("");
+                            $("#x_frame").text("");
+                            $("#x_detail").text("");
+                            $("#x_cost").text("");
+                            $("#x_status").text("");
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không tạo được mã, vui lòng kiểm tra lại thông tin nhập liệu"
+                            })
+                        }
+                    });
+                }
             });
 
             //load quickly PK Pay
@@ -816,7 +828,6 @@
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
                                 "<td>" + formatNumber(response.pkban[i].cost) + "</td>" +
-                                "<td>" + formatNumber(response.pkban[i].profit) + "</td>" +
                                 "<td><button id='delPKPAY' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
                                 "</tr>";
                             sum += response.pkban[i].cost;
@@ -876,7 +887,6 @@
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
                                 "<td>" + formatNumber(response.pkcost[i].cost) + "</td>" +
-                                "<td>" + formatNumber(response.pkcost[i].profit) + "</td>" +
                                 "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
                                 "</tr>";
                             sum += response.pkcost[i].cost;
@@ -1071,12 +1081,12 @@
                                 "; Chỗ ngồi: " + response.data.seat + " chỗ" +
                                 "; Nhiên liệu: " + response.data.fuel;
                             $("#xx_detail").text(detail);
-                            $("#xx_cost").text(formatNumber(response.data.cost));
+                            $("#xx_cost").text(formatNumber(response.data.giaXe));
                             loadPKPay($("select[name=chonHD]").val());
                             loadPKFree($("select[name=chonHD]").val());
                             loadPKCost($("select[name=chonHD]").val());
                             loadTotal($("select[name=chonHD]").val());
-                            if (response.data.admin_check == 1 || response.data.lead_sale_check == 1 || response.data.complete == 1) {
+                            if (response.data.lead_sale_check == 1 || response.data.complete == 1) {
                                 $("#pkPayAdd").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkCostAdd").hide();

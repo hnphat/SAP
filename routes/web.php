@@ -145,6 +145,18 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('get/pkcost/{id}','HDController@getpkcost');
         Route::get('get/total/{id}','HDController@getTotal');
     });
+
+    Route::group(['prefix' => 'denghi'], function(){
+        Route::get('list','DeNghiController@index')->name('denghi.list');
+        Route::post('pheduyet/show','DeNghiController@show');
+        Route::post('pheduyet','DeNghiController@pheDuyet');
+        Route::get('get/list/wait/all','DeNghiController@getListWaitAll');
+//        Route::get('detail/hd/{id}','DeNghiController@detailHD');
+//        Route::get('get/pkpay/{id}','DeNghiController@getpkpay');
+//        Route::get('get/pkfree/{id}','DeNghiController@getpkfree');
+//        Route::get('get/pkcost/{id}','DeNghiController@getpkcost');
+//        Route::get('get/total/{id}','DeNghiController@getTotal');
+    });
 });
 
 

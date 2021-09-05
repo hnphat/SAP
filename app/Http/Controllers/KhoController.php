@@ -81,7 +81,7 @@ class KhoController extends Controller
         $package->machine = $request->machine;
         $package->seat = $request->seat;
         $package->fuel = $request->fuel;
-        $package->cost = $request->cost;
+//        $package->cost = $request->cost;
         if ($request->exist == 1) {
             $package->exist = 1;
             $package->order = 0;
@@ -159,7 +159,7 @@ class KhoController extends Controller
             "machine" => $request->emachine,
             "seat" => $request->eseat,
             "fuel" => $request->efuel,
-            "cost" => $request->ecost,
+//            "cost" => $request->ecost,
             'exist' => $exist,
             'order' => $order
         ]);

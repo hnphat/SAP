@@ -21,8 +21,8 @@ class CreateSalesTable extends Migration
             $table->foreign('id_car_sale')->references('id')->on('car_sale');
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
-            $table->integer('tamUng')->nullable();
-            $table->integer('giaXe')->nullable();
+//            $table->integer('tamUng')->nullable();
+//            $table->integer('giaXe')->nullable();
             $table->boolean('complete')->default(false);
             $table->boolean('admin_check')->default(false);
             $table->boolean('lead_sale_check')->default(false);

@@ -27,4 +27,8 @@ class Sale extends Model
     public function package() {
         return $this->belongsToMany('App\BhPkPackage','sale_off','id_sale', 'id_bh_pk_package');
     }
+
+    public function requestHd() {
+        return $this->hasOne('App\RequestHD','sale_id','id');
+    }
 }

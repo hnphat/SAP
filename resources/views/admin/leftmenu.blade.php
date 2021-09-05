@@ -131,6 +131,15 @@
                                         </a>
                                     </li>
                             @endif
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                <li class="nav-item">
+                                    <a href="{{route('denghi.list')}}" class="nav-link">
+                                        <i class="fab fa-asymmetrik nav-icon"></i>
+                                        <p>Đề nghị hợp đồng</p>
+                                    </a>
+                                </li>
+                            @endif
                     </ul>
                 </li>
                 <li class="nav-item">
