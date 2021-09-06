@@ -66,26 +66,9 @@
                                         <th>Động cơ</th>
                                         <th>Số ghế</th>
                                         <th>Nhiên liệu</th>
-                                        <th>Giá</th>
                                         <th>Tác vụ</th>
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>Tên xe</th>
-                                        <th>Năm</th>
-                                        <th>Màu</th>
-                                        <th>VIN</th>
-                                        <th>Số máy</th>
-                                        <th>Hộp số</th>
-                                        <th>Động cơ</th>
-                                        <th>Số ghế</th>
-                                        <th>Nhiên liệu</th>
-                                        <th>Giá</th>
-                                        <th>Tác vụ</th>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
@@ -102,24 +85,8 @@
                                         <th>Động cơ</th>
                                         <th>Số ghế</th>
                                         <th>Nhiên liệu</th>
-                                        <th>Giá</th>
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>Tên xe</th>
-                                        <th>Năm</th>
-                                        <th>Màu</th>
-                                        <th>VIN</th>
-                                        <th>Số máy</th>
-                                        <th>Hộp số</th>
-                                        <th>Động cơ</th>
-                                        <th>Số ghế</th>
-                                        <th>Nhiên liệu</th>
-                                        <th>Giá</th>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3-tab">
@@ -136,26 +103,9 @@
                                         <th>Động cơ</th>
                                         <th>Số ghế</th>
                                         <th>Nhiên liệu</th>
-                                        <th>Giá</th>
                                         <th>Tác vụ</th>
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>Tên xe</th>
-                                        <th>Năm</th>
-                                        <th>Màu</th>
-                                        <th>VIN</th>
-                                        <th>Số máy</th>
-                                        <th>Hộp số</th>
-                                        <th>Động cơ</th>
-                                        <th>Số ghế</th>
-                                        <th>Nhiên liệu</th>
-                                        <th>Giá</th>
-                                        <th>Tác vụ</th>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="tab-4" role="tabpanel" aria-labelledby="tab-4-tab">
@@ -169,23 +119,9 @@
                                         <th>Số máy</th>
                                         <th>Màu</th>
                                         <th>Nhiên liệu</th>
-                                        <th>Giá</th>
                                         <th>Trạng thái</th>
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>Sale bán</th>
-                                        <th>Xe bán</th>
-                                        <th>Số VIN</th>
-                                        <th>Số máy</th>
-                                        <th>Màu</th>
-                                        <th>Nhiên liệu</th>
-                                        <th>Giá</th>
-                                        <th>Trạng thái</th>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -513,7 +449,6 @@
                     { "data": "machine" },
                     { "data": "seat" },
                     { "data": "fuel" },
-                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -557,22 +492,7 @@
                     { "data": "gear" },
                     { "data": "machine" },
                     { "data": "seat" },
-                    { "data": "fuel" },
-                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')}
-                    // {
-                    //     "data": null,
-                    //     render: function(data, type, row) {
-                    //         // return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#edit' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
-                    //         //     "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
-                    //         return "<div class='btn-group'>" +
-                    //             "<button type='button' class='btn btn-info btn-sm dropdown-toggle dropdown-icon' data-toggle='dropdown'></button>" +
-                    //             "<div class='dropdown-menu' role='menu'>" +
-                    //             "<button id='btnEdit' data-id='"+row.id+"'  data-toggle='modal' data-target='#editModal' class='dropdown-item' data-id='"+row.id+"'>Sửa</button>" +
-                    //             "<button id='delete' data-id='"+row.id+"' class='dropdown-item'>Xóa</button>" +
-                    //             "</div>" +
-                    //             "</div>";
-                    //     }
-                    // }
+                    { "data": "fuel" }
                 ]
             });
             var tableOrder = $('#dataTableOrder').DataTable({
@@ -603,7 +523,6 @@
                     { "data": "machine" },
                     { "data": "seat" },
                     { "data": "fuel" },
-                    { "data": "cost", render: $.fn.dataTable.render.number(',','.',0,'')},
                     {
                         "data": null,
                         render: function(data, type, row) {

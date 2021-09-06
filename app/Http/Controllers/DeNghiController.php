@@ -131,13 +131,16 @@ class DeNghiController extends Controller
         }
 
         // --------------- End add 05 phụ kiện theo xe
+        $carSale = CarSale::where('id', $request->duyetXe)->update([
+            'car_sale.exist' => false
+        ]);
 
         $rq = RequestHD::where('id', $request->idRequest)->update([
             'admin_check' => true,
             'sale_id' => $idSale
         ]);
 
-        if($rq) {
+        if($rq && $carSale) {
             return response()->json([
                 'message' => 'Update successfully!',
                 'code' => 200

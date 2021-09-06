@@ -142,6 +142,7 @@
                             @endif
                     </ul>
                 </li>
+                <!--
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                     <a href="#" class="nav-link">
@@ -169,6 +170,7 @@
                             @endif
                     </ul>
                 </li>
+                -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-car-side"></i>
@@ -210,6 +212,7 @@
                         </li>
                     </ul>
                 </li>
+                <!--
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-newspaper"></i>
@@ -233,6 +236,8 @@
                         </li>
                     </ul>
                 </li>
+                -->
+                <!--
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                          \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
@@ -280,11 +285,12 @@
                         @endif
                     </ul>
                 </li>
+                -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            TRUY CẬP NHANH
+                            GÓP Ý
                             <span class="right badge badge-danger">New</span>
                         </p>
                     </a>

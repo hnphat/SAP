@@ -172,7 +172,6 @@
                                         <th>TT</th>
                                         <th>Nội dung</th>
                                         <th>Giá</th>
-                                        <th>Hoa hồng</th>
                                     </tr>
                                     <tbody id="showPKPAY">
                                     </tbody>
@@ -200,7 +199,6 @@
                                         <th>TT</th>
                                         <th>Nội dung</th>
                                         <th>Giá</th>
-                                        <th>Hoa hồng</th>
                                     </tr>
                                     <tbody id="showPKCOST">
                                     </tbody>
@@ -346,7 +344,6 @@
                             "<td>" + (i+1) + "</td>" +
                             "<td>" + response.pkban[i].name + "</td>" +
                             "<td>" + formatNumber(response.pkban[i].cost) + "</td>" +
-                            "<td>" + formatNumber(response.pkban[i].profit) + "</td>" +
                             "</tr>";
                         sum += response.pkban[i].cost;
                     }
@@ -404,7 +401,6 @@
                             "<td>" + (i+1) + "</td>" +
                             "<td>" + response.pkcost[i].name + "</td>" +
                             "<td>" + formatNumber(response.pkcost[i].cost) + "</td>" +
-                            "<td>" + formatNumber(response.pkcost[i].profit) + "</td>" +
                             "</tr>";
                         sum += response.pkcost[i].cost;
                     }
@@ -453,7 +449,7 @@
                         $("#xDiaChi").text(response.data.address);
                         $("#xDaiDien").text(response.data.daiDien);
                         $("#xChucVu").text(response.data.chucVu);
-                        // $("#xtamUng").text(formatNumber(response.data.tamUng));
+                        $("#xtamUng").text(formatNumber(response.data.tamUng));
                         $("#x_ten").text(response.data.name_car);
                         $("#x_vin").text(response.data.vin);
                         $("#x_frame").text(response.data.frame);
@@ -463,7 +459,7 @@
                             "; Chỗ ngồi: " + response.data.seat + " chỗ" +
                             "; Nhiên liệu: " + response.data.fuel;
                         $("#x_detail").text(detail);
-                        $("#x_cost").text(formatNumber(response.data.cost));
+                        $("#x_cost").text(formatNumber(response.data.giaXe));
                         loadPKPay($("select[name=chonHD]").val());
                         loadPKFree($("select[name=chonHD]").val());
                         loadPKCost($("select[name=chonHD]").val());

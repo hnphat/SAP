@@ -32,7 +32,9 @@ class KhoController extends Controller
     }
 
     public function getListOut() {
-        $result = CarSale::select('car_sale.*','t.name as ten')->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')->where([
+        $result = CarSale::select('car_sale.*','t.name as ten')
+            ->join('type_car_detail as t','car_sale.id_type_car_detail','=','t.id')
+            ->where([
             ['car_sale.exist','=',0],
             ['car_sale.order','=',0]
         ])->get();
