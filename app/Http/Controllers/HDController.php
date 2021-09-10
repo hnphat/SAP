@@ -592,6 +592,7 @@ class HDController extends Controller
     }
 
     public function cntm($id) {
+        $outhd = "";
         $templateProcessor = new TemplateProcessor('template/CN_HD_TM_NO_PK.docx');
         $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
             ['sale_off.id_sale','=', $id],
@@ -603,16 +604,28 @@ class HDController extends Controller
             // Set data from database
             $sale = Sale::find($id);
             $sum = 0;
+            $sumpk = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
+                if ($row->type == 'pay')
+                    $sumpk += $row->cost;
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDTM ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -628,32 +641,49 @@ class HDController extends Controller
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
                 'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
-                'tenDaiDien' => $sale->guest->name,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'phuKien' => number_format($sum),
-                'giaPhuKien' => number_format($sum),
-                'tongCong' => number_format($sum + $car->cost),
+                'tenDaiDien' => $sale->guest->daiDien,
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'phuKien' => number_format($sumpk),
+                'giaPhuKien' => number_format($sumpk),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         } else {
             // Không phụ kiện
             $sale = Sale::find($id);
             $sum = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDTM ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -669,22 +699,34 @@ class HDController extends Controller
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
                 'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
-                'tenDaiDien' => $sale->guest->name,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'tongCong' => number_format($sum + $car->cost),
+                'tenDaiDien' => $sale->guest->daiDien,
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         }
         $pathToSave = 'template/CN_HD_TM_DOWN.docx';
         $templateProcessor->saveAs($pathToSave);
-        return response()->download($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     public function cnnh($id) {
+        $outhd = "";
         $templateProcessor = new TemplateProcessor('template/CN_HD_NH_NO_PK.docx');
         $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
             ['sale_off.id_sale','=', $id],
@@ -696,16 +738,28 @@ class HDController extends Controller
             // Set data from database
             $sale = Sale::find($id);
             $sum = 0;
+            $sumpk = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
+                if ($row->type == 'pay')
+                    $sumpk += $row->cost;
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDNH ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -721,32 +775,49 @@ class HDController extends Controller
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
                 'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
-                'tenDaiDien' => $sale->guest->name,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'phuKien' => number_format($sum),
-                'giaPhuKien' => number_format($sum),
-                'tongCong' => number_format($sum + $car->cost),
+                'tenDaiDien' => $sale->guest->daiDien,
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'phuKien' => number_format($sumpk),
+                'giaPhuKien' => number_format($sumpk),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         } else {
             // Không phụ kiện
             $sale = Sale::find($id);
             $sum = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDNH ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -762,22 +833,34 @@ class HDController extends Controller
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
                 'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
-                'tenDaiDien' => $sale->guest->name,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'tongCong' => number_format($sum + $car->cost),
+                'tenDaiDien' => $sale->guest->daiDien,
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         }
         $pathToSave = 'template/CN_HD_TM_DOWN.docx';
         $templateProcessor->saveAs($pathToSave);
-        return response()->download($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     public function cttm($id) {
+        $outhd = "";
         $templateProcessor = new TemplateProcessor('template/CT_HD_TM_NO_PK.docx');
         $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
             ['sale_off.id_sale','=', $id],
@@ -789,16 +872,28 @@ class HDController extends Controller
             // Set data from database
             $sale = Sale::find($id);
             $sum = 0;
+            $sumpk = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
+                if ($row->type == 'pay')
+                    $sumpk += $row->cost;
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDTM ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -813,31 +908,48 @@ class HDController extends Controller
                 'tenDaiDien' => $sale->guest->daiDien,
                 'chucVu' => $sale->guest->chucVu,
                 'mst' => $sale->guest->mst,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'phuKien' => number_format($sum),
-                'giaPhuKien' => number_format($sum),
-                'tongCong' => number_format($sum + $car->cost),
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'phuKien' => number_format($sumpk),
+                'giaPhuKien' => number_format($sumpk),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         } else {
             // Không phụ kiện
             $sale = Sale::find($id);
             $sum = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDTM ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -852,21 +964,33 @@ class HDController extends Controller
                 'tenDaiDien' => $sale->guest->daiDien,
                 'chucVu' => $sale->guest->chucVu,
                 'mst' => $sale->guest->mst,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'tongCong' => number_format($sum + $car->cost),
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         }
         $pathToSave = 'template/CT_HD_TM_DOWN.docx';
         $templateProcessor->saveAs($pathToSave);
-        return response()->download($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     public function ctnh($id) {
+        $outhd = "";
         $templateProcessor = new TemplateProcessor('template/CT_HD_NH_NO_PK.docx');
         $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
             ['sale_off.id_sale','=', $id],
@@ -878,16 +1002,28 @@ class HDController extends Controller
             // Set data from database
             $sale = Sale::find($id);
             $sum = 0;
+            $sumpk = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
+                if ($row->type == 'pay')
+                    $sumpk += $row->cost;
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDNH ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -902,31 +1038,48 @@ class HDController extends Controller
                 'tenDaiDien' => $sale->guest->daiDien,
                 'chucVu' => $sale->guest->chucVu,
                 'mst' => $sale->guest->mst,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'phuKien' => number_format($sum),
-                'giaPhuKien' => number_format($sum),
-                'tongCong' => number_format($sum + $car->cost),
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'phuKien' => number_format($sumpk),
+                'giaPhuKien' => number_format($sumpk),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         } else {
             // Không phụ kiện
             $sale = Sale::find($id);
             $sum = 0;
+            $tongChiPhi = 0;
             $pkfree = "";
+            $pkcost = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'free')
                     $pkfree .=  $row->name . ', ';
-                if ($row->type == 'free' || $row->type == 'cost') continue;
+                if ($row->type == 'free') continue;
+                if ($row->type == 'cost') {
+                    $pkcost .=  $row->name . ', ';
+                    $tongChiPhi += $row->cost;
+                }
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
             $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $sum += $giaXe->giaXe;
+            $outhd = 'HDNH ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
                 'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
@@ -941,18 +1094,29 @@ class HDController extends Controller
                 'tenDaiDien' => $sale->guest->daiDien,
                 'chucVu' => $sale->guest->chucVu,
                 'mst' => $sale->guest->mst,
-                'noiDung' => $car_detail->name . ' <w:br/>Số khung: '.
-                    $car->vin . ' <w:br/>Số máy: ' . $car->frame,
-                'donGia' => number_format($car->cost),
-                'thanhTien' => number_format($car->cost),
-                'tongCong' => number_format($sum + $car->cost),
+                'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
+                    '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
+                    '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Năm SX: ' . $car->year,
+                'donGia' => number_format($giaXe->giaXe),
+                'thanhTien' => number_format($giaXe->giaXe),
+                'tamUng' => number_format($giaXe->tamUng),
+                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                'chiPhi' => number_format($tongChiPhi),
+                'giaChiPhi' => number_format($tongChiPhi),
+                'tongCong' => number_format($sum),
+                'bangChuTongCong' => \HelpFunction::convert($sum),
                 'quaTang' => $pkfree,
-                'tamUng' => number_format($sale->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($sale->tamUng),
+                'cacLoaiPhi' => $pkcost,
             ]);
         }
         $pathToSave = 'template/CT_HD_TM_DOWN.docx';
         $templateProcessor->saveAs($pathToSave);
-        return response()->download($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 }
