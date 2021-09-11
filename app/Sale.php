@@ -31,4 +31,8 @@ class Sale extends Model
     public function requestHd() {
         return $this->hasOne('App\RequestHD','sale_id','id');
     }
+
+    public function cancelHd() {
+        return $this->hasOne('App\CancelHD','sale_id', 'id');
+    }
 }

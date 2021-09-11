@@ -144,6 +144,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('get/pkfree/{id}','HDController@getpkfree');
         Route::get('get/pkcost/{id}','HDController@getpkcost');
         Route::get('get/total/{id}','HDController@getTotal');
+        Route::get('huy/{sale}/{user}','PheDuyetController@huy')->name('pheduyet.huy');
     });
 
     Route::group(['prefix' => 'denghi'], function(){
@@ -151,11 +152,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('pheduyet/show','DeNghiController@show');
         Route::post('pheduyet','DeNghiController@pheDuyet');
         Route::get('get/list/wait/all','DeNghiController@getListWaitAll');
-//        Route::get('detail/hd/{id}','DeNghiController@detailHD');
-//        Route::get('get/pkpay/{id}','DeNghiController@getpkpay');
-//        Route::get('get/pkfree/{id}','DeNghiController@getpkfree');
-//        Route::get('get/pkcost/{id}','DeNghiController@getpkcost');
-//        Route::get('get/total/{id}','DeNghiController@getTotal');
+    });
+
+    Route::group(['prefix' => 'cancel'], function(){
+        Route::get('list','CancelHDController@index')->name('cancel.list');
+        Route::post('post','CancelHDController@postCancel')->name('cancel.post');
+        Route::get('del/{id}','CancelHDController@delCancel');
     });
 });
 

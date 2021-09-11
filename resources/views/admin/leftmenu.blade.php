@@ -110,6 +110,12 @@
                                         <p>Hợp đồng</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('cancel.list')}}" class="nav-link">
+                                        <i class="fas fa-radiation nav-icon"></i>
+                                        <p>Đề nghị hủy hợp đồng</p>
+                                    </a>
+                                </li>
                             @endif
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
@@ -127,7 +133,7 @@
                                     <li class="nav-item">
                                         <a href="{{route('pheduyet.list')}}" class="nav-link">
                                             <i class="fab fa-accusoft nav-icon"></i>
-                                            <p>Phê duyệt hợp đồng</p>
+                                            <p>Phê duyệt HĐ</p>
                                         </a>
                                     </li>
                             @endif
@@ -136,7 +142,7 @@
                                 <li class="nav-item">
                                     <a href="{{route('denghi.list')}}" class="nav-link">
                                         <i class="fab fa-asymmetrik nav-icon"></i>
-                                        <p>Đề nghị hợp đồng</p>
+                                        <p>Duyệt đề nghị HĐ</p>
                                     </a>
                                 </li>
                             @endif

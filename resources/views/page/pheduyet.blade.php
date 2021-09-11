@@ -52,6 +52,7 @@
                                 <thead>
                                 <tr class="bg-gradient-lightblue">
                                     <th>TT</th>
+                                    <th>Ngày</th>
                                     <th>Mã hợp đồng</th>
                                     <th>Khách hàng</th>
                                     <th>Xe bán</th>
@@ -82,6 +83,7 @@
                                         @endif
                                         <tr>
                                             <td>{{$loop->iteration}}</td>
+                                            <td>{{$row->created_at}}</td>
                                             <td>HAGI-0{{$row->id}}/HDMB-PA</td>
                                             <td>{{$row->surname}}</td>
                                             <td>{{$row->name}}</td>
@@ -115,7 +117,7 @@
                                             </td>
                                             @endif
                                             <td>
-                                                <button id="check" data-id="{{$row->id}}" class="btn btn-success btn-sm">Check</button>
+                                                <button id="check" data-id="{{$row->id}}" class="btn btn-success btn-sm">Duyệt HĐ</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -130,7 +132,7 @@
                                             <select name="chonHD" id="chonHD" class="form-control">
                                                 <option value="0" selected="selected">Chọn</option>
                                                 @foreach($hd as $row)
-                                                    <option value="{{$row->id}}">HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})</option>
+                                                    <option value="{{$row->id}}">[{{$row->created_at}}] HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})</option>
                                                 @endforeach
                                             </select>
                                     </div>
@@ -142,6 +144,7 @@
                                     <p>CMND: <strong id="xcmnd"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ngày Cấp: <strong id="xNgayCap"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nơi cấp: <strong id="xNoiCap"></strong></p>
                                     <p>Địa chỉ: <strong id="xDiaChi"></strong></p>
                                     <p>Đại diện: <strong id="xDaiDien"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chức vụ: <strong id="xChucVu"></strong></p>
+                                    <p>Sale bán: <strong id="xSaleBan"></strong></p>
                                 </div>
                                 <hr>
                                 <h5>THÔNG TIN XE BÁN</h5>
@@ -214,6 +217,7 @@
                                 <thead>
                                 <tr class="bg-gradient-lightblue">
                                     <th>TT</th>
+                                    <th>Ngày</th>
                                     <th>Mã hợp đồng</th>
                                     <th>Khách hàng</th>
                                     <th>Xe bán</th>
@@ -228,6 +232,7 @@
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
                                         <th>Đã duyệt</th>
                                     @endif
+                                    <th>Trạng thái</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -243,6 +248,7 @@
                                     @endif
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
+                                        <td>{{$row->created_at}}</td>
                                         <td>HAGI-0{{$row->id}}/HDMB-PA</td>
                                         <td>{{$row->surname}}</td>
                                         <td>{{$row->name}}</td>
@@ -263,10 +269,69 @@
                                                 <span style="color: green;" class="fas fa-check-circle"></span>
                                             </td>
                                         @endif
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                            <td>
+                                                @if($row->cancelHd && $row->cancelHD->cancel == false)
+                                                    <button id="cancelBtn" data-sale="{{$row->salemen}}" data-reason="{{$row->cancelHd->lyDoCancel}}" data-hd="[{{$row->created_at}}] HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})" data-id="{{$row->id}}" data-user="{{$row->cancelHd->user_id}}" class="btn btn-info btn-xs"  data-toggle="modal" data-target="#cancelModal">Yêu cầu hủy</button>
+                                                @elseif($row->cancelHd && $row->cancelHD->cancel == true)
+                                                    <button class="btn btn-danger btn-xs">Đã hủy</button>
+                                                @endif
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+                            <!-- Medal Cancel -->
+                            <div class="modal fade" id="cancelModal">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- general form elements -->
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">YÊU CẦU HỦY HỢP ĐỒNG</h3>
+                                                </div>
+                                                <!-- /.card-header -->
+                                                <!-- form start -->
+                                                <form method="post" autocomplete="off">
+                                                    {{csrf_field()}}
+                                                    <div class="card-body">
+                                                        <input type="hidden" name="idHuy">
+                                                        <input type="hidden" name="idUserHuy">
+                                                        <div class="form-group">
+                                                            <label>SALE YÊU CẦU</label>
+                                                            <input type="text" name="saleCancel" disabled="disabled" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>HỢP ĐỒNG</label>
+                                                            <input type="text" name="hdCancel" disabled="disabled" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Lý do hủy</label>
+                                                            <input type="text" name="lyDoCancel" disabled="disabled" class="form-control" required="required" placeholder="Nhập lý do hủy hợp đồng này">
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.card-body -->
+                                                    <div class="card-footer">
+                                                        <button id="btnHuy" class="btn btn-primary">Phê duyệt hủy hợp đồng</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <!-- /.card -->
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
                         </div>
                     </div>
                 </div>
@@ -433,6 +498,21 @@
             });
         }
 
+        $(document).on('click','#cancelBtn', function(){
+            $('input[name=idUserHuy]').val($(this).data('user'));
+            $('input[name=idHuy]').val($(this).data('id'));
+            $('input[name=hdCancel]').val($(this).data('hd'));
+            $('input[name=lyDoCancel]').val($(this).data('reason'));
+            $('input[name=saleCancel]').val($(this).data('sale'));
+        });
+
+        $('#btnHuy').click(function(e){
+            e.preventDefault();
+            if(confirm('Xác nhận phê duyệt hủy bỏ hợp đồng này! \nLưu ý: Khi đã phê duyệt hủy hợp đồng thì không thể hoàn trạng.')) {
+                open('management/pheduyet/huy/' + $('input[name=idHuy]').val() + '/' + $('input[name=idUserHuy]').val(),'_self');
+            }
+        });
+
         $(document).on('change','#chonHD', function(){
             $.ajax({
                 url: "management/pheduyet/detail/hd/" + $("select[name=chonHD]").val(),
@@ -448,6 +528,7 @@
                         $("#xNgaySinh").text(response.data.ngaySinh);
                         $("#xDiaChi").text(response.data.address);
                         $("#xDaiDien").text(response.data.daiDien);
+                        $("#xSaleBan").text(response.data.salemen);
                         $("#xChucVu").text(response.data.chucVu);
                         $("#xtamUng").text(formatNumber(response.data.tamUng));
                         $("#x_ten").text(response.data.name_car);
@@ -492,6 +573,7 @@
                         $("#xtongFree").text("");
                         $("#xtongPay").text("");
                         $("#xtotal").text("");
+                        $("#xSaleBan").text("");
                     }
                 },
                 error: function() {
