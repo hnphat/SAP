@@ -164,7 +164,7 @@
                             if (row.admin_check == 0)
                                 return "<button id='checkBtn' data-idrequest='"+row.id+"' data-guest='"+row.guest_id+"' data-user='"+row.user_id+"' data-id='"+row.car_detail_id+"' data-sale='"+row.user_name+"' data-car='"+row.carname+"' data-color='"+row.color+"' data-toggle='modal' data-target='#checkIn' class='btn btn-warning btn-sm'><span class='fas fa-eye-slash'></span></button>";
                             else
-                                return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button>";
+                                return "<button class='btn btn-success btn-sm'><span class='fas fa-eye'></span></button> &nbsp;&nbsp; <button id='thuHoi' data-idrequest='"+row.id+"' class='btn btn-danger btn-sm'>Thu hồi</button>";
                         }
                     }
                 ]
@@ -177,61 +177,35 @@
                 } );
             } ).draw();
 
-            // Add data
-            $("#btnAdd").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/package/add/')}}",
-                    type: "post",
-                    dataType: 'json',
-                    data: $("#addForm").serialize(),
-                    success: function(response) {
-                        $("#addForm")[0].reset();
-                        Toast.fire({
-                            icon: 'success',
-                            title: " Đã thêm " + response.noidung
-                        })
-                        table.ajax.reload();
-                        $('input[name=noiDung]').focus();
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Lỗi nhập liệu; Lỗi xử lý dữ liệu"
-                        })
-                    }
-                });
-            });
-
-            //Delete data
-            $(document).on('click','#delete', function(){
-                if(confirm('Bạn có chắc muốn xóa?')) {
+            $(document).on('click','#thuHoi',function(){
+                if(confirm('Xác nhận thu hồi phê duyệt cho đề nghị này?\nXe gán cho đề nghị sẽ được thu lại vào kho.')) {
                     $.ajax({
-                        url: "{{url('management/package/delete/')}}",
+                        url: "{{url('management/denghi/thuhoi/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
                             "_token": "{{csrf_token()}}",
-                            "id": $(this).data('id')
+                            "id": $(this).data('idrequest')
                         },
                         success: function(response) {
                             Toast.fire({
-                                icon: 'success',
-                                title: "Đã xóa"
+                                icon: 'info',
+                                title: response.message
                             })
                             table.ajax.reload();
                         },
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
-                                title: "Không thể xóa lúc này!"
+                                title: "Lỗi máy chủ: Không thể thu hồi phê duyệt đê nghị này!"
                             })
                         }
                     });
                 }
             });
 
-            // edit data
+
+            // show Data
             $(document).on('click','#checkBtn', function(){
                 $("#tenSale").text($(this).data('sale'));
                 $("#tenXe").text($(this).data('car'));

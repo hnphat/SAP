@@ -31,6 +31,16 @@
 
         <!-- Main content -->
         <div class="content">
+            @if(session('err'))
+                <div class="alert alert-warning">
+                    {{session('err')}}
+                </div>
+            @endif
+            @if(session('thongbao'))
+                <div class="alert alert-success">
+                    {{session('thongbao')}}
+                </div>
+            @endif
             <div class="card card-primary card-tabs">
                 <div class="card-header p-0 pt-1">
                     <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
@@ -132,7 +142,12 @@
                                             <select name="chonHD" id="chonHD" class="form-control">
                                                 <option value="0" selected="selected">Chọn</option>
                                                 @foreach($hd as $row)
-                                                    <option value="{{$row->id}}">[{{$row->created_at}}] HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})</option>
+                                                    <option value="{{$row->id}}">
+                                                        @if($row->cancelHd && $row->cancelHd->cancel == 1)
+                                                            (ĐÃ HỦY)
+                                                        @endif
+                                                        [{{$row->created_at}}] HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})
+                                                    </option>
                                                 @endforeach
                                             </select>
                                     </div>
@@ -144,7 +159,10 @@
                                     <p>CMND: <strong id="xcmnd"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ngày Cấp: <strong id="xNgayCap"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nơi cấp: <strong id="xNoiCap"></strong></p>
                                     <p>Địa chỉ: <strong id="xDiaChi"></strong></p>
                                     <p>Đại diện: <strong id="xDaiDien"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chức vụ: <strong id="xChucVu"></strong></p>
-                                    <p>Sale bán: <strong id="xSaleBan"></strong></p>
+                                    <p>Sale bán: <strong id="xSaleBan"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        Hủy (nếu có): <strong id="sttHuy"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        Lý do (nếu có): <strong id="lyDoHuy"></strong>
+                                    </p>
                                 </div>
                                 <hr>
                                 <h5>THÔNG TIN XE BÁN</h5>
@@ -529,6 +547,13 @@
                         $("#xDiaChi").text(response.data.address);
                         $("#xDaiDien").text(response.data.daiDien);
                         $("#xSaleBan").text(response.data.salemen);
+
+                        if (response.cancel.cancel == 1)
+                            $("#sttHuy").html("<button class='btn btn-danger btn-xs'>Đã hủy</button>");
+                        else
+                            $("#sttHuy").html("<span></span>");
+                        $("#lyDoHuy").text(response.cancel.lyDoCancel);
+
                         $("#xChucVu").text(response.data.chucVu);
                         $("#xtamUng").text(formatNumber(response.data.tamUng));
                         $("#x_ten").text(response.data.name_car);
@@ -560,6 +585,10 @@
                         $("#xDiaChi").text("");
                         $("#xDaiDien").text("");
                         $("#xChucVu").text("");
+
+                        $("#sttHuy").text("");
+                        $("#lyDoHuy").text("");
+
                         $("#x_ten").text("");
                         $("#x_vin").text("");
                         $("#x_frame").text("");

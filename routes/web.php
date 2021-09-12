@@ -151,6 +151,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','DeNghiController@index')->name('denghi.list');
         Route::post('pheduyet/show','DeNghiController@show');
         Route::post('pheduyet','DeNghiController@pheDuyet');
+        Route::post('thuhoi','DeNghiController@thuHoi');
         Route::get('get/list/wait/all','DeNghiController@getListWaitAll');
     });
 

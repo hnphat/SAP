@@ -234,7 +234,10 @@ class HDController extends Controller
             if($result) {
                 echo "<option value='0'>Chọn</option>";
                 foreach($result as $row){
-                    echo "<option value='".$row->id."'>HAGI-0".$row->id."/HDMB-PA</option>";
+                    if ($row->cancelHd && $row->cancelHd->cancel == 1)
+                        echo "<option disabled value='".$row->id."'>HAGI-0".$row->id."/HDMB-PA (Đã hủy)</option>";
+                    else
+                        echo "<option value='".$row->id."'>HAGI-0".$row->id."/HDMB-PA</option>";
                 }
             } else {
                 echo "<option value='0'>Không tìm thấy</option>";

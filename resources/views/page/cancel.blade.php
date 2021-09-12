@@ -120,13 +120,15 @@
                                         <td>{{$row->lyDoCancel}}</td>
                                         <td>
                                             @if($row->cancel == 0)
-                                                <span title="Chưa duyệt" style="color: orange; font-size:150%;" class="fas fa-question-circle"></span>
+                                                <span class="btn btn-info btn-xs">Đợi duyệt</span>
                                             @else
-                                                <span title="Đã duyệt duyệt" style="color: green; font-size:150%;" class="fas fa-check-circle"></span>
+                                                <span class="btn btn-danger btn-xs">Đã hủy</span>
                                             @endif
                                         </td>
                                         <td>
-                                            <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-sm">Xóa</button>
+                                            @if($row->cancel == 0)
+                                                <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-sm">Xóa</button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

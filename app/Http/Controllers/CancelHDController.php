@@ -17,9 +17,10 @@ class CancelHDController extends Controller
             ->join('request_hd as r','sale.id','=','r.sale_id')
             ->join('type_car_detail as t','c.id_type_car_detail','=','t.id')
             ->join('users as u','sale.id_user_create','=','u.id')
+            ->where('u.id','=', Auth::user()->id)
             ->orderby('sale.id','desc')
             ->get();
-        $cancel = CancelHD::all()->sortByDesc('id');
+        $cancel = CancelHD::all()->where('user_id',Auth::user()->id)->sortByDesc('id');
         return view('page.cancel', ['hd' => $result, 'cancel' => $cancel]);
     }
 
@@ -43,7 +44,13 @@ class CancelHDController extends Controller
     }
 
     public function delCancel($id) {
-        $cancel = CancelHD::where('id', $id)->delete();
+        $check = CancelHD::find($id);
+        if ($check->cancel == 1)
+            return $this->index();
+        else {
+            $cancel = CancelHD::where('id', $id)->delete();
+            return $this->index();
+        }
         return $this->index();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BhPkPackage;
+use App\CancelHD;
 use App\CarSale;
 use App\RequestHD;
 use App\Sale;
@@ -44,9 +45,57 @@ class DeNghiController extends Controller
         if($carSale) {
             foreach($carSale as $row) {
                 $checkExist = Sale::where('id_car_sale',$row->id)->exists();
-                if ($checkExist) continue;
+                if ($checkExist) {
+                    $sale = Sale::where('id_car_sale',$row->id)->first();
+                    if ($sale->cancelHd === null)
+                        continue;
+                    elseif ($sale->cancelHd->cancel == 0) continue;
+                }
                 echo "<option value='".$row->id."'>".$row->typeCarDetail->name." ".$row->color." VIN ".$row->vin."</option>";
             }
+        }
+    }
+
+    public function thuHoi(Request $request) {
+        $r = RequestHD::find($request->id);
+        $idSale = $r->sale_id;
+        $idUser = $r->user_id;
+        $check = Sale::where([
+            ['id','=',$idSale],
+            ['id_user_create','=',$idUser]
+        ])->first();
+        if ($check->lead_sale_check == 1)
+            return response()->json([
+                'message' => 'Quản lý đã phê duyệt hợp đồng không thể thu hồi!',
+                'code' => 200
+            ]);
+        else {
+            $car = CarSale::find($check->id_car_sale);
+            $car->exist = true;
+            $car->save();
+            $saleOff = SaleOff::where('id_sale',$idSale)->get();
+            foreach($saleOff as $row) {
+                $del = SaleOff::where([
+                    ['id_bh_pk_package','=',$row->id_bh_pk_package]
+                ])->delete();
+                $bhpk = BhPkPackage::where('id',$row->id_bh_pk_package)->delete();
+            }
+            $delCancel = CancelHD::where('sale_id',$idSale)->delete();
+            $delSale = Sale::find($idSale);
+            $delSale->delete();
+            if ($delSale) {
+                $r->admin_check = 0;
+                $r->save();
+                return response()->json([
+                    'message' => 'Đã thu hồi thành công!',
+                    'code' => 200
+                ]);
+            }
+            else
+                return response()->json([
+                    'message' => 'Thu hồi không thành công!',
+                    'code' => 500
+                ]);
         }
     }
 

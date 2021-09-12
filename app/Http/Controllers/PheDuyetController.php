@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\CancelHD;
+use App\CarSale;
 use App\Sale;
 use App\SaleOff;
 use Illuminate\Http\Request;
@@ -30,7 +32,26 @@ class PheDuyetController extends Controller
 
     public function huy($sale,$user)
     {
+        $cancel = CancelHD::where([
+            ['sale_id','=',$sale],
+            ['user_id','=',$user]
+        ])->update([
+            'cancel' => true
+        ]);
 
+        if ($cancel) {
+            $hd = Sale::find($sale);
+            $idCar = $hd->id_car_sale;
+            $car = CarSale::find($idCar);
+            $car->exist = 1;
+            $car->save();
+            if ($car)
+                return redirect()->route('pheduyet.list')->with('thongbao','Đã phê duyệt hủy hợp đồng HAGI-0'.$sale.'/HDMB-PA');
+            else
+                return redirect()->route('pheduyet.list')->with('err','Đã phê duyệt hủy hợp đồng HAGI-0'.$sale.'/HDMB-PA Nhưng chưa hoàn trạng kho xe! Vui lòng gửi quản trị viên để xử lý!');
+        }
+        else
+            return redirect()->route('pheduyet.list')->with('err','Phê duyệt hủy hợp đồng không thành côngc');
     }
 
     public function check($id) {
@@ -63,11 +84,23 @@ class PheDuyetController extends Controller
             ->orderby('sale.id','desc')
             ->first();
 
+        $existCancel = Sale::find($id);
+
         if($result) {
+            $cancel = [
+                'cancel' => 0,
+                'lyDoCancel' => null
+            ];
+            if($existCancel->cancelHd !== null)
+                $cancel = [
+                    'cancel' => $existCancel->cancelHd->cancel,
+                    'lyDoCancel' => $existCancel->cancelHd->lyDoCancel
+                ];
             return response()->json([
                 'message' => 'Get Detail HD Success!',
                 'code' => 200,
-                'data' => $result
+                'data' => $result,
+                'cancel' => $cancel
             ]);
         } else {
             return response()->json([
