@@ -127,7 +127,7 @@
                                             </td>
                                             @endif
                                             <td>
-                                                <button id="check" data-id="{{$row->id}}" class="btn btn-success btn-sm">Duyệt HĐ</button>
+                                                <button id="check" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt HĐ</button>
                                             </td>
                                         </tr>
                                     @endforeach

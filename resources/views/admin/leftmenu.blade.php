@@ -187,6 +187,12 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
+                            <a href="{{route('laithu.list')}}" class="nav-link">
+                                <i class="fas fa-car nav-icon"></i>
+                                <p>Quản lý xe</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-hand-point-right nav-icon"></i>
                                 <p>Duyệt lái thử</p>
@@ -199,7 +205,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('laithu.reg')}}" class="nav-link">
                                 <i class="fas fa-hand-holding nav-icon"></i>
                                 <p>Đăng ký sử dụng</p>
                             </a>

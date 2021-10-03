@@ -270,6 +270,34 @@
                                                 <th>Giá</th>
                                             </tr>
                                             </thead>
+                                            <tbody>
+                                                @foreach($sale as $row)
+                                                    @if ($row->lead_sale_check == 1 && ($row->cancelHd === null || $row->cancelHd->cancel == 0))
+                                                    <tr>
+                                                        <td>{{$loop->iteration}}</td>
+                                                        <td>HAGI-0{{$row->id}}/HDMB-PA</td>
+                                                        <td>{{$row->created_at}}</td>
+                                                        <td>
+                                                            <?php
+                                                                $tong = $row->requestHd->giaXe;
+                                                                $package = $row->package;
+                                                                foreach($package as $item) {
+                                                                    if ($item->type == 'cost' || $item->type == 'pay')
+                                                                        $tong += $item->cost;
+                                                                }
+                                                                echo number_format($tong);
+                                                            ?>
+                                                        </td>
+                                                        <td>{{$row->guest->name}}</td>
+                                                        <td>{{$row->guest->phone}}</td>
+                                                        <td>{{$row->carSale->typeCarDetail->name}}</td>
+                                                        <td>
+                                                            {{number_format($row->requestHd->giaXe)}}
+                                                        </td>
+                                                    </tr>
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -350,11 +378,34 @@
                     }
                 ]
             });
-
             table.on( 'order.dt search.dt', function () {
                 table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                     cell.innerHTML = i+1;
                     table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            var table2 = $('#dataTableOut').DataTable({
+                // paging: false,    use to show all data
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ]
+            });
+            table2.on( 'order.dt search.dt', function () {
+                table2.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table2.cell(cell).invalidate('dom');
                 } );
             } ).draw();
 
@@ -509,8 +560,8 @@
                             success: function(response) {
                                 $("#editForm")[0].reset();
                                 Toast.fire({
-                                    icon: 'success',
-                                    title: "Đã cập nhật!"
+                                    icon: 'info',
+                                    title: response.message
                                 })
                                 table.ajax.reload();
                                 $("#editModal").modal('hide');

@@ -1086,10 +1086,14 @@
                             loadPKFree($("select[name=chonHD]").val());
                             loadPKCost($("select[name=chonHD]").val());
                             loadTotal($("select[name=chonHD]").val());
-                            if (response.data.lead_sale_check == 1 || response.data.complete == 1) {
+                            if (response.data.lead_sale_check == 1) {
                                 $("#pkPayAdd").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkCostAdd").hide();
+                            } else {
+                                $("#pkPayAdd").show();
+                                $("#pkFreeAdd").show();
+                                $("#pkCostAdd").show();
                             }
                         } else {
                             Toast.fire({

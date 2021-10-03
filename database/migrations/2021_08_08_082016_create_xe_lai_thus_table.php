@@ -19,7 +19,7 @@ class CreateXeLaiThusTable extends Migration
             $table->string('number_car', 50)->nullable();
             $table->string('mau', 50)->nullable();
             $table->boolean('active')->default(true);
-            $table->integer('id_user_use')->unsigned();
+            $table->integer('id_user_use')->unsigned()->nullable();
             $table->foreign('id_user_use')->references('id')->on('users');
             $table->timestamps();
         });

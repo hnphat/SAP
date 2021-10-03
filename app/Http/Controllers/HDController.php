@@ -386,96 +386,117 @@ class HDController extends Controller
     }
 
     public function addPkPay(Request $request){
-        $pkpay = new BhPkPackage();
-        $pkpay->name = $request->namePkPay;
-        $pkpay->cost = $request->giaPkPay;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'pay';
-        $pkpay->save();
-        if($pkpay) {
-            $saleOff = new SaleOff;
-            $saleOff->id_sale = $request->idHD;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-            if($saleOff) {
-                return response()->json([
-                    'message' => 'Tạo phụ kiện bán thành công!',
-                    'code' => 200
-                ]);
+        $check = Sale::find($request->idHD);
+        if ($check->lead_sale_check != 1) {
+            $pkpay = new BhPkPackage();
+            $pkpay->name = $request->namePkPay;
+            $pkpay->cost = $request->giaPkPay;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->type = 'pay';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOff;
+                $saleOff->id_sale = $request->idHD;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    return response()->json([
+                        'message' => 'Tạo phụ kiện bán thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
             } else {
                 return response()->json([
                     'message' => 'Internal server fail!',
                     'code' => 500
                 ]);
             }
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
         }
+        return response()->json([
+            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
     }
 
     public function addPkFree(Request $request){
-        $pkpay = new BhPkPackage();
-        $pkpay->name = $request->namePkFree;
-        $pkpay->cost = $request->giaPkFree;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'free';
-        $pkpay->save();
-        if($pkpay) {
-            $saleOff = new SaleOff;
-            $saleOff->id_sale = $request->idHD2;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-            if($saleOff) {
-                return response()->json([
-                    'message' => 'Tạo phụ kiện tặng thành công!',
-                    'code' => 200
-                ]);
+        $check = Sale::find($request->idHD2);
+        if ($check->lead_sale_check != 1) {
+            $pkpay = new BhPkPackage();
+            $pkpay->name = $request->namePkFree;
+            $pkpay->cost = $request->giaPkFree;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->type = 'free';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOff;
+                $saleOff->id_sale = $request->idHD2;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    return response()->json([
+                        'message' => 'Tạo phụ kiện tặng thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
             } else {
                 return response()->json([
                     'message' => 'Internal server fail!',
                     'code' => 500
                 ]);
             }
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
         }
+        return response()->json([
+            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
     }
 
     public function addPkCost(Request $request){
-        $pkpay = new BhPkPackage();
-        $pkpay->name = $request->namePkCost;
-        $pkpay->cost = $request->giaPkCost;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'cost';
-        $pkpay->save();
-        if($pkpay) {
-            $saleOff = new SaleOff;
-            $saleOff->id_sale = $request->idHD3;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-            if($saleOff) {
-                return response()->json([
-                    'message' => 'Tạo các chi phí thành công!',
-                    'code' => 200
-                ]);
+        $check = Sale::find($request->idHD3);
+        if ($check->lead_sale_check != 1) {
+            $pkpay = new BhPkPackage();
+            $pkpay->name = $request->namePkCost;
+            $pkpay->cost = $request->giaPkCost;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->type = 'cost';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOff;
+                $saleOff->id_sale = $request->idHD3;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    return response()->json([
+                        'message' => 'Tạo các chi phí thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
             } else {
                 return response()->json([
                     'message' => 'Internal server fail!',
                     'code' => 500
                 ]);
             }
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
         }
+        return response()->json([
+            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
     }
 
     public function getTotal($id){

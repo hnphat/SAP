@@ -113,5 +113,27 @@ class HelpFunction {
             return $_day . "-" . $_month . "-" . $_year;
         }
     }
+
+    public static function revertDate($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode('-', $date);
+        return $arr[2] . '-' . $arr[1] . '-' . $arr[0];
+    }
+
+    public static function revertTimeInput($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode('T', $date);
+        $newDate = $arr[0];
+        $_time = $arr[1];
+        return $_time . ' ' . self::revertDate($newDate);
+    }
+
+    public static function revertCreatedAt($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $_time = $arr[1];
+        return $_time . ' ' . self::revertDate($newDate);
+    }
 }
 ?>
