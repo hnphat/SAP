@@ -193,9 +193,9 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('laithu.duyet')}}" class="nav-link">
                                 <i class="fas fa-hand-point-right nav-icon"></i>
-                                <p>Duyệt lái thử</p>
+                                <p>Duyệt đăng ký / trả</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -207,15 +207,15 @@
                         <li class="nav-item">
                             <a href="{{route('laithu.reg')}}" class="nav-link">
                                 <i class="fas fa-hand-holding nav-icon"></i>
-                                <p>Đăng ký sử dụng</p>
+                                <p>Đăng ký / Trả xe</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-hand-paper nav-icon"></i>
-                                <p>Trả xe</p>
-                            </a>
-                        </li>
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="#" class="nav-link">--}}
+{{--                                <i class="far fa-hand-paper nav-icon"></i>--}}
+{{--                                <p>Trả xe</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fab fa-creative-commons-remix nav-icon"></i>

@@ -69,4 +69,49 @@ class LaiThuController extends Controller
             return redirect()->route('laithu.reg')->with('err','Không thể đăng ký xe lái thử');
         }
     }
+
+    public function delReg(Request $request)
+    {
+        $car = DangKySuDung::where('id',$request->id)->delete();
+        if($car) {
+            return response()->json([
+                'message' => 'Delete successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function showDuyet() {
+        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+        return view('laithu.duyet', ['reg' => $reg]);
+    }
+
+    public function allowLaiThu(Request $request) {
+        $regInfo = DangKySuDung::find($request->id);
+        $reg = DangKySuDung::where('id', $request->id)->update([
+            "allow" => true
+        ]);
+
+        $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
+            'id_user_use' => $regInfo->id_user_reg,
+            'active' => false
+        ]);
+
+        if($reg && $upCar) {
+            return response()->json([
+                'message' => 'Allow successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
 }

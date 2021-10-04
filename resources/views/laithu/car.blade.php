@@ -224,7 +224,7 @@
                         })
                         setTimeout(function(){
                             open('{{route('laithu.list')}}','_self');
-                        }, 2000);
+                        }, 1000);
                     },
                     error: function() {
                         Toast.fire({

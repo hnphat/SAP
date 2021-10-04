@@ -48,6 +48,9 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="so-00-tab" data-toggle="pill" href="#so-00" role="tab" aria-controls="so-00" aria-selected="true">Đăng ký sử dụng</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-01" aria-selected="true">Trả xe</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="card-body">
@@ -171,7 +174,139 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                            @if($row->allow == 1)
+                                            @else
+                                                <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade show" id="so-01" role="tabpanel" aria-labelledby="so-01-tab">
+                            <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                            <!-- Medal Add -->
+                            <div class="modal fade" id="addModal">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- general form elements -->
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">ĐĂNG KÝ</h3>
+                                                </div>
+                                                <!-- /.card-header -->
+                                                <!-- form start -->
+                                                <form id="addForm" action="{{route('reg.post')}}" method="post" autocomplete="off">
+                                                    {{csrf_field()}}
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            <label>Chọn xe</label>
+                                                            <select name="xe" class="form-control">
+                                                                @foreach($car as $row)
+                                                                    <option value="{{$row->id}}">{{$row->name}}; Biển số: {{$row->number_car}}; Màu: {{$row->mau}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Lý do sử dụng</label>
+                                                            <input type="text" name="lyDo" placeholder="Lý do sử dụng" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Số km hiện tại (km)</label>
+                                                            <input type="number" name="km" placeholder="Số km hiện tại" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Số xăng hiện tại (lít)</label>
+                                                            <input type="number" name="xang" placeholder="Số xăng hiện tại" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Tình trạng xe</label>
+                                                            <input type="text" name="trangThaiXe" placeholder="Tình trạng xe" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Thời gian đi</label>
+                                                            <input type="datetime-local" name="timeGo" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Thời gian về</label>
+                                                            <input type="datetime-local" name="timeReturn" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.card-body -->
+                                                    <div class="card-footer">
+                                                        <button id="btnAdd" class="btn btn-primary">Lưu</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <!-- /.card -->
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr class="bg-gradient-lightblue">
+                                    <th>TT</th>
+                                    <th>Ngày đk</th>
+                                    <th>Sử dụng</th>
+                                    <th>Xe</th>
+                                    <th>Lý do</th>
+                                    <th>Km</th>
+                                    <th>Xăng</th>
+                                    <th>Tình trạng xe</th>
+                                    <th>TG Đi</th>
+                                    <th>TG Về</th>
+                                    <th>Trạng thái</th>
+                                    <th>Tác vụ</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($reg as $row)
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{\HelpFunction::revertCreatedAt($row->created_at)}}</td>
+                                        <td>
+                                            @if($row->user !== null)
+                                                {{$row->user->userDetail->surname}}
+                                            @else
+                                                Không
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($row->xeLaiThu !== null)
+                                                {{$row->xeLaiThu->name}}
+                                            @else
+                                                Không
+                                            @endif
+                                        </td>
+                                        <td>{{$row->lyDo}}</td>
+                                        <td>{{$row->km_current}}</td>
+                                        <td>{{$row->fuel_current}}</td>
+                                        <td>{{$row->car_status}}</td>
+                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                        <td>{{\HelpFunction::revertTimeInput($row->date_return)}}</td>
+                                        <td>
+                                            @if($row->allow == 1)
+                                                <span class="btn btn-info btn-xs">Đã duyệt</span>
+                                            @else
+                                                <span class="btn btn-warning btn-xs">Đợi duyệt</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($row->allow == 1)
+                                            @else
+                                                <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -233,7 +368,7 @@
         $(document).on('click','#del', function(){
             if(confirm('Bạn có chắc muốn xóa?')) {
                 $.ajax({
-                    url: "{{url('management/laithu/del/')}}",
+                    url: "{{url('management/reg/del/')}}",
                     type: "post",
                     dataType: "json",
                     data: {
@@ -246,8 +381,8 @@
                             title: "Đã xóa"
                         })
                         setTimeout(function(){
-                            open('{{route('laithu.list')}}','_self');
-                        }, 2000);
+                            open('{{route('laithu.reg')}}','_self');
+                        }, 1000);
                     },
                     error: function() {
                         Toast.fire({

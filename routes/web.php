@@ -170,6 +170,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'reg'], function(){
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
         Route::post('post','LaiThuController@postReg')->name('reg.post');
+        Route::post('del','LaiThuController@delReg');
+    });
+
+    Route::group(['prefix' => 'duyet'], function(){
+        Route::get('list','LaiThuController@showDuyet')->name('laithu.duyet');
+        Route::post('allow','LaiThuController@allowLaiThu');
+//        Route::post('del','LaiThuController@delReg');
     });
 });
 
