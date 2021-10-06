@@ -165,18 +165,21 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','LaiThuController@index')->name('laithu.list');
         Route::post('post','LaiThuController@store')->name('laithu.post');
         Route::post('del','LaiThuController@destroy');
+        Route::post('change','LaiThuController@change');
     });
 
     Route::group(['prefix' => 'reg'], function(){
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
         Route::post('post','LaiThuController@postReg')->name('reg.post');
+        Route::post('pay','LaiThuController@postPay')->name('reg.pay.post');
         Route::post('del','LaiThuController@delReg');
+        Route::get('pay/{id}','LaiThuController@pay');
     });
 
     Route::group(['prefix' => 'duyet'], function(){
         Route::get('list','LaiThuController@showDuyet')->name('laithu.duyet');
         Route::post('allow','LaiThuController@allowLaiThu');
-//        Route::post('del','LaiThuController@delReg');
+        Route::post('approve','LaiThuController@approve');
     });
 });
 

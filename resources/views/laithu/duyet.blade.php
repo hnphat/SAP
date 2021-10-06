@@ -48,6 +48,9 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="so-00-tab" data-toggle="pill" href="#so-00" role="tab" aria-controls="so-00" aria-selected="true">Duyệt lái thử</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-01" aria-selected="true">Duyệt trả xe</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="card-body">
@@ -65,7 +68,6 @@
                                     <th>Xăng</th>
                                     <th>Tình trạng xe</th>
                                     <th>TG Đi</th>
-                                    <th>TG Về</th>
                                     <th>Trạng thái</th>
                                     <th>Tác vụ</th>
                                 </tr>
@@ -94,7 +96,6 @@
                                         <td>{{$row->fuel_current}}</td>
                                         <td>{{$row->car_status}}</td>
                                         <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
-                                        <td>{{\HelpFunction::revertTimeInput($row->date_return)}}</td>
                                         <td>
                                             @if($row->allow == 1)
                                                 <span class="btn btn-info btn-xs">Đã duyệt</span>
@@ -106,6 +107,59 @@
                                             @if($row->allow == 1)
                                             @else
                                                 <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade show" id="so-01" role="tabpanel" aria-labelledby="so-01-tab">
+                            <table id="dataTable2" class="table table-bordered table-striped">
+                                <thead>
+                                <tr class="bg-gradient-lightblue">
+                                    <th>TT</th>
+                                    <th>Sử dụng</th>
+                                    <th>Ngày đi</th>
+                                    <th>Ngày trả</th>
+                                    <th>Xe</th>
+                                    <th>Km</th>
+                                    <th>Xăng</th>
+                                    <th>Tình trạng</th>
+                                    <th>Tác vụ</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($traXe as $row)
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>
+                                            @if($row->user !== null)
+                                                {{$row->user->userDetail->surname}}
+                                            @else
+                                                Không xác định
+                                            @endif
+                                        </td>
+                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                        <td>{{$row->date_return}}</td>
+                                        <td>
+                                            @if($row->xeLaiThu !== null)
+                                                {{$row->xeLaiThu->name}};
+                                                {{$row->xeLaiThu->number_car}};
+                                                {{$row->xeLaiThu->mau}}
+                                            @else
+                                                Không
+                                            @endif
+                                        </td>
+                                        {{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
+                                        <td>{{$row->tra_km_current}}</td>
+                                        <td>{{$row->tra_fuel_current}}</td>
+                                        <td>{{$row->tra_car_status}}</td>
+                                        <td>
+                                            @if($row->request_tra == 0)
+                                                <button id="duyetTra" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt trả</button>
+                                            @else
+                                                <button class="btn btn-warning btn-xs">Đã trả xe</button>
                                             @endif
                                         </td>
                                     </tr>
@@ -164,11 +218,48 @@
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
 
-        //Delete data
+        $(document).ready(function() {
+            $("#dataTable2").DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+
+        //Duyệt mượn
         $(document).on('click','#allow', function(){
             if(confirm('Xác nhận phê duyệt sử dụng xe lái thử?')) {
                 $.ajax({
                     url: "{{url('management/duyet/allow/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        })
+                        setTimeout(function(){
+                            open('{{route('laithu.duyet')}}','_self');
+                        }, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không phê duyệt lúc này!"
+                        })
+                    }
+                });
+            }
+        });
+
+        //Duyệt trả
+        $(document).on('click','#duyetTra', function(){
+            if(confirm('Phê duyệt trả xe và nhận xe!')) {
+                $.ajax({
+                    url: "{{url('management/duyet/approve/')}}",
                     type: "post",
                     dataType: "json",
                     data: {

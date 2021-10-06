@@ -24,8 +24,13 @@ class CreateDangKySuDungsTable extends Migration
             $table->integer('fuel_current')->nullable();
             $table->string('car_status', 255)->nullable();
             $table->string('date_go', 50)->nullable();
-            $table->string('date_return', 50)->nullable();
             $table->boolean('allow')->default(false);
+            $table->string('date_return', 50)->nullable();
+            $table->integer('tra_km_current')->nullable();
+            $table->integer('tra_fuel_current')->nullable();
+            $table->string('tra_car_status', 255)->nullable();
+            $table->boolean('tra_allow')->default(false);
+            $table->boolean('request_tra')->default(false);
             $table->timestamps();
         });
     }

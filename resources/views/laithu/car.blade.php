@@ -141,14 +141,17 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($row->active == 1)
+                                                @if($row->status == 'T')
                                                     <span class="btn btn-info btn-xs">Trống</span>
-                                                @else
+                                                @elseif($row->status == 'DSD')
                                                     <span class="btn btn-warning btn-xs">Đang sử dụng</span>
+                                                @else
+                                                    <span class="btn btn-danger btn-xs">Đang sửa chữa</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                                <button id="change" data-id="{{$row->id}}" class="btn btn-warning btn-xs">&nbsp;<span class="fas fa-exclamation">&nbsp;</span></button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -225,6 +228,37 @@
                         setTimeout(function(){
                             open('{{route('laithu.list')}}','_self');
                         }, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể xóa lúc này!"
+                        })
+                    }
+                });
+            }
+        });
+
+
+        //Change data
+        $(document).on('click','#change', function(){
+            if(confirm('Chuyển trạng thái xe?')) {
+                $.ajax({
+                    url: "{{url('management/laithu/change/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        })
+                        setTimeout(function(){
+                            open('{{route('laithu.list')}}','_self');
+                        }, 2000);
                     },
                     error: function() {
                         Toast.fire({

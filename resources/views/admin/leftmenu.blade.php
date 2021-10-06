@@ -216,12 +216,12 @@
 {{--                                <p>Trả xe</p>--}}
 {{--                            </a>--}}
 {{--                        </li>--}}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fab fa-creative-commons-remix nav-icon"></i>
-                                <p>Đề nghị cấp xăng</p>
-                            </a>
-                        </li>
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="#" class="nav-link">--}}
+{{--                                <i class="fab fa-creative-commons-remix nav-icon"></i>--}}
+{{--                                <p>Đề nghị cấp xăng</p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
                     </ul>
                 </li>
                 <!--

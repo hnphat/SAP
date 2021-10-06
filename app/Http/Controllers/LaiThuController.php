@@ -46,10 +46,68 @@ class LaiThuController extends Controller
         }
     }
 
+    public function change(Request $request) {
+        $check = XeLaiThu::find($request->id);
+        if ($check->status == 'DSD')
+            return response()->json([
+                'message' => 'Xe đang được sử dụng không thể chuyển trạng thái!',
+                'code' => 200
+            ]);
+        else {
+            $stt = ($check->status == 'T') ? 'DSC' : 'T';
+            $car = XeLaiThu::where('id', $request->id)->update([
+                'status' => $stt
+            ]);
+            if($car) {
+                return response()->json([
+                    'message' => 'Đã chuyển trạng thái xe!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
     public function showReg() {
         $car = XeLaiThu::all();
         $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        return view('laithu.reg', ['car' => $car, 'reg' => $reg]);
+        $traXe = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+        return view('laithu.reg', ['car' => $car, 'reg' => $reg, 'traXe' => $traXe]);
+    }
+
+    public function pay($id) {
+        $car = DangKySuDung::find($id);
+        if($car) {
+            return response()->json([
+                'message' => 'Get data successfully!',
+                'code' => 200,
+                'data' => $car
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function postPay(Request $request) {
+        $reg = DangKySuDung::find($request->_idOff);
+        $reg->tra_km_current = $request->_km;
+        $reg->tra_fuel_current = $request->_xang;
+        $reg->tra_car_status = $request->_trangThaiXe;
+        if ($reg->date_return == null)
+            $reg->date_return = Date('H:i d-m-Y');
+        $reg->save();
+        if($reg) {
+            return redirect()->route('laithu.reg')->with('succ','Đã gửi yêu cầu trả xe!');
+        } else {
+            return redirect()->route('laithu.reg')->with('err','Không thể gửi yêu cầu trả xe!');
+        }
     }
 
     public function postReg(Request $request) {
@@ -61,7 +119,6 @@ class LaiThuController extends Controller
         $reg->fuel_current = $request->xang;
         $reg->car_status = $request->trangThaiXe;
         $reg->date_go = $request->timeGo;
-        $reg->date_return = $request->timeReturn;
         $reg->save();
         if($reg) {
             return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
@@ -88,7 +145,8 @@ class LaiThuController extends Controller
 
     public function showDuyet() {
         $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        return view('laithu.duyet', ['reg' => $reg]);
+        $traXe = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+        return view('laithu.duyet', ['reg' => $reg, 'traXe' => $traXe]);
     }
 
     public function allowLaiThu(Request $request) {
@@ -105,6 +163,29 @@ class LaiThuController extends Controller
         if($reg && $upCar) {
             return response()->json([
                 'message' => 'Allow successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function approve(Request $request) {
+        $car = DangKySuDung::find($request->id);
+        $car->tra_allow = true;
+        $car->request_tra = true;
+        $car->save();
+
+        $upCar = XeLaiThu::where('id', $car->id_xe_lai_thu)->update([
+            'status' => 'T'
+        ]);
+
+        if($car && $upCar) {
+            return response()->json([
+                'message' => 'Nhận xe thành công',
                 'code' => 200
             ]);
         } else {
