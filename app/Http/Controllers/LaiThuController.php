@@ -75,7 +75,7 @@ class LaiThuController extends Controller
     public function showReg() {
         $car = XeLaiThu::all();
         $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        $traXe = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+        $traXe = DangKySuDung::select('*')->where('allow', true)->orderBy('id', 'DESC')->get();
         return view('laithu.reg', ['car' => $car, 'reg' => $reg, 'traXe' => $traXe]);
     }
 
@@ -100,6 +100,7 @@ class LaiThuController extends Controller
         $reg->tra_km_current = $request->_km;
         $reg->tra_fuel_current = $request->_xang;
         $reg->tra_car_status = $request->_trangThaiXe;
+        $reg->request_tra = true;
         if ($reg->date_return == null)
             $reg->date_return = Date('H:i d-m-Y');
         $reg->save();
@@ -111,19 +112,32 @@ class LaiThuController extends Controller
     }
 
     public function postReg(Request $request) {
-        $reg = new DangKySuDung();
-        $reg->id_user_reg = Auth::user()->id;
-        $reg->id_xe_lai_thu = $request->xe;
-        $reg->lyDo = $request->lyDo;
-        $reg->km_current = $request->km;
-        $reg->fuel_current = $request->xang;
-        $reg->car_status = $request->trangThaiXe;
-        $reg->date_go = $request->timeGo;
-        $reg->save();
-        if($reg) {
-            return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
+        $check = XeLaiThu::find($request->xe);
+        if ($check->status == 'T') {
+            $reg = new DangKySuDung();
+            $reg->id_user_reg = Auth::user()->id;
+            $reg->id_xe_lai_thu = $request->xe;
+            $reg->lyDo = $request->lyDo;
+            $reg->km_current = $request->km;
+            $reg->fuel_current = $request->xang;
+            $reg->car_status = $request->trangThaiXe;
+            $reg->date_go = $request->timeGo;
+            if ($request->fuelRequest == 'on') {
+                $reg->fuel_request = true;
+                $reg->fuel_type = $request->fuelType;
+                $reg->fuel_num = $request->fuelNum;
+                $reg->fuel_lyDo = $request->fuelLyDo;
+            }
+            $reg->save();
+            if($reg) {
+                return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
+            } else {
+                return redirect()->route('laithu.reg')->with('err','Không thể đăng ký xe lái thử');
+            }
+        } elseif($check->status == 'DSC') {
+            return redirect()->route('laithu.reg')->with('err','Xe này đăng trong tình trạng sửa chữa không thể đăng ký sử dụng');
         } else {
-            return redirect()->route('laithu.reg')->with('err','Không thể đăng ký xe lái thử');
+            return redirect()->route('laithu.reg')->with('err','Xe này đang được sử dụng bởi ' .$check->user->userDetail->surname. ' không thể đăng ký');
         }
     }
 
@@ -145,30 +159,48 @@ class LaiThuController extends Controller
 
     public function showDuyet() {
         $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        $traXe = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+        $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->get();
         return view('laithu.duyet', ['reg' => $reg, 'traXe' => $traXe]);
+    }
+
+    public function showCapXang() {
+        $reg = DangKySuDung::select('*')->where('fuel_request', true)->orderBy('id', 'DESC')->get();
+        return view('laithu.capxang', ['reg' => $reg]);
     }
 
     public function allowLaiThu(Request $request) {
         $regInfo = DangKySuDung::find($request->id);
-        $reg = DangKySuDung::where('id', $request->id)->update([
-            "allow" => true
-        ]);
+        $check = XeLaiThu::find($regInfo->id_xe_lai_thu);
+        if ($check->status == 'T') {
+            $reg = DangKySuDung::where('id', $request->id)->update([
+                "allow" => true
+            ]);
 
-        $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
-            'id_user_use' => $regInfo->id_user_reg,
-            'active' => false
-        ]);
+            $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
+                'id_user_use' => $regInfo->id_user_reg,
+                'status' => 'DSD'
+            ]);
 
-        if($reg && $upCar) {
+            if($reg && $upCar) {
+                return response()->json([
+                    'message' => 'Đã phê duyệt sử dụng xe lái thử!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } elseif($check->status == 'DSC') {
             return response()->json([
-                'message' => 'Allow successfully!',
+                'message' => 'Xe đang được sửa chữa!',
                 'code' => 200
             ]);
         } else {
             return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
+                'message' => 'Xe đang được sử dụng!',
+                'code' => 200
             ]);
         }
     }
@@ -194,5 +226,10 @@ class LaiThuController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    public function getStatus() {
+        $car = XeLaiThu::all();
+        return view('laithu.status',['car' => $car]);
     }
 }

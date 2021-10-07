@@ -168,6 +168,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('change','LaiThuController@change');
     });
 
+    Route::group(['prefix' => 'status'], function(){
+        Route::get('list','LaiThuController@getStatus')->name('status.list');
+    });
+
     Route::group(['prefix' => 'reg'], function(){
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
         Route::post('post','LaiThuController@postReg')->name('reg.post');
@@ -180,6 +184,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','LaiThuController@showDuyet')->name('laithu.duyet');
         Route::post('allow','LaiThuController@allowLaiThu');
         Route::post('approve','LaiThuController@approve');
+    });
+
+    Route::group(['prefix' => 'capxang'], function(){
+        Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
+//        Route::post('allow','LaiThuController@allowLaiThu');
+//        Route::post('approve','LaiThuController@approve');
     });
 });
 

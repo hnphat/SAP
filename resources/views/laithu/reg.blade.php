@@ -87,27 +87,39 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Lý do sử dụng</label>
-                                                            <input type="text" name="lyDo" placeholder="Lý do sử dụng" class="form-control">
+                                                            <input required="required" type="text" name="lyDo" placeholder="Lý do sử dụng" class="form-control">
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Số km hiện tại (km)</label>
-                                                            <input type="number" name="km" placeholder="Số km hiện tại" class="form-control">
+                                                            <input required="required" type="number" name="km" placeholder="Số km hiện tại" class="form-control">
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Số xăng hiện tại (km xăng)</label>
-                                                            <input type="number" name="xang" placeholder="Số xăng hiện tại" class="form-control">
+                                                            <input required="required" type="number" name="xang" placeholder="Số xăng hiện tại" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>
+                                                                <input type="checkbox" name="fuelRequest" id="fuelRequest" />
+                                                                Đề nghị cấp xăng
+                                                            </label>
+                                                            <input name="fuelLyDo" type="text" class="form-control pass" placeholder="Lý do cấp xăng"
+                                                                   required="required" disabled="disabled"/>
+                                                            <input name="fuelNum" type="number" class="form-control pass" placeholder="Số lít"
+                                                                   required="required" disabled="disabled"/>
+                                                            <select name="fuelType" class="form-control pass" required="required" disabled="disabled">
+                                                                <option value="">Loại nhiên liệu</option>
+                                                                <option value="X">Xăng</option>
+                                                                <option value="D">Dầu</option>
+                                                            </select>
+
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Tình trạng xe</label>
-                                                            <input type="text" name="trangThaiXe" placeholder="Tình trạng xe" class="form-control">
+                                                            <input required="required" type="text" name="trangThaiXe" placeholder="Tình trạng xe" class="form-control">
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Thời gian đi</label>
-                                                            <input type="datetime-local" name="timeGo" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Thời gian về</label>
-                                                            <input type="datetime-local" name="timeReturn" class="form-control">
+                                                            <input required="required" type="datetime-local" name="timeGo" class="form-control">
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->
@@ -142,42 +154,48 @@
                                 </thead>
                                 <tbody>
                                 @foreach($reg as $row)
-                                    <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td>{{\HelpFunction::revertCreatedAt($row->created_at)}}</td>
-                                        <td>
-                                            @if($row->user !== null)
-                                                {{$row->user->userDetail->surname}}
-                                            @else
-                                                Không
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($row->xeLaiThu !== null)
-                                                {{$row->xeLaiThu->name}}
-                                            @else
-                                                Không
-                                            @endif
-                                        </td>
-                                        <td>{{$row->lyDo}}</td>
-                                        <td>{{$row->km_current}}</td>
-                                        <td>{{$row->fuel_current}}</td>
-                                        <td>{{$row->car_status}}</td>
-                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
-                                        <td>
-                                            @if($row->allow == 1)
-                                                <span class="btn btn-info btn-xs">Đã duyệt</span>
-                                            @else
-                                                <span class="btn btn-warning btn-xs">Đợi duyệt</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($row->allow == 1)
-                                            @else
-                                                <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
-                                            @endif
-                                        </td>
-                                    </tr>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                       $row->id_user_reg == \Illuminate\Support\Facades\Auth::user()->id)
+                                        <tr>
+                                            <td>{{$loop->iteration}}</td>
+                                            <td>{{\HelpFunction::revertCreatedAt($row->created_at)}}</td>
+                                            <td>
+                                                @if($row->user !== null)
+                                                    {{$row->user->userDetail->surname}}
+                                                @else
+                                                    Không
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($row->xeLaiThu !== null)
+                                                    {{$row->xeLaiThu->name}}
+                                                @else
+                                                    Không
+                                                @endif
+                                            </td>
+                                            <td>{{$row->lyDo}}</td>
+                                            <td>{{$row->km_current}}</td>
+                                            <td>{{$row->fuel_current}}</td>
+                                            <td>{{$row->car_status}}</td>
+                                            <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                            <td>
+                                                @if($row->allow == 1)
+                                                    <span class="btn btn-info btn-xs">Đã duyệt</span>
+                                                @else
+                                                    <span class="btn btn-warning btn-xs">Đợi duyệt</span>
+                                                @endif
+                                                    @if($row->fuel_request == 1)
+                                                        <span class="btn btn-secondary btn-xs">Yêu cầu cấp xăng</span>
+                                                    @endif
+                                            </td>
+                                            <td>
+                                                @if($row->allow == 1)
+                                                @else
+                                                    <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @endforeach
                                 </tbody>
                             </table>
@@ -187,7 +205,7 @@
                                 <thead>
                                 <tr class="bg-gradient-lightblue">
                                     <th>TT</th>
-                                    <th>Ngày đk</th>
+                                    <th>Ngày đi</th>
                                     <th>Xe</th>
                                     <th>Trạng thái</th>
                                     <th>Ngày trả</th>
@@ -199,37 +217,40 @@
                                 </thead>
                                 <tbody>
                                 @foreach($traXe as $row)
-                                    <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td>{{\HelpFunction::revertCreatedAt($row->created_at)}}</td>
-                                        <td>
-                                            @if($row->xeLaiThu !== null)
-                                                {{$row->xeLaiThu->name}};
-                                                {{$row->xeLaiThu->number_car}};
-                                                {{$row->xeLaiThu->mau}}
-                                            @else
-                                                Không
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($row->tra_allow == 1)
-                                                <span class="btn btn-success btn-xs">Đã trả</span>
-                                            @else
-                                                <span class="btn btn-warning btn-xs">Đang sử dụng</span>
-                                            @endif
-                                        </td>
-{{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
-                                        <td>{{$row->date_return}}</td>
-                                        <td>{{$row->tra_km_current}}</td>
-                                        <td>{{$row->tra_fuel_current}}</td>
-                                        <td>{{$row->tra_car_status}}</td>
-                                        <td>
-                                            @if($row->request_tra == 0)
-                                                <button id="tra" data-toggle="modal" data-target="#offCar" data-id="{{$row->id}}" class="btn btn-success btn-xs">Trả xe</button>
-                                            @else
-                                            @endif
-                                        </td>
-                                    </tr>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        $row->id_user_reg == \Illuminate\Support\Facades\Auth::user()->id)
+                                        <tr>
+                                            <td>{{$loop->iteration}}</td>
+                                            <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                            <td>
+                                                @if($row->xeLaiThu !== null)
+                                                    {{$row->xeLaiThu->name}};
+                                                    {{$row->xeLaiThu->number_car}};
+                                                    {{$row->xeLaiThu->mau}}
+                                                @else
+                                                    Không
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($row->tra_allow == 1)
+                                                    <span class="btn btn-success btn-xs">Đã trả</span>
+                                                @else
+                                                    <span class="btn btn-warning btn-xs">Đang sử dụng</span>
+                                                @endif
+                                            </td>
+                                            {{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
+                                            <td>{{$row->date_return}}</td>
+                                            <td>{{$row->tra_km_current}}</td>
+                                            <td>{{$row->tra_fuel_current}}</td>
+                                            <td>{{$row->tra_car_status}}</td>
+                                            <td>
+                                                @if($row->tra_allow == false)
+                                                    <button id="tra" data-toggle="modal" data-target="#offCar" data-id="{{$row->id}}" class="btn btn-success btn-xs">Trả xe</button>
+                                                @else
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @endforeach
                                 </tbody>
                             </table>
@@ -256,15 +277,15 @@
                                                         <input type="hidden" name="_idOff" id="_idOff">
                                                         <div class="form-group">
                                                             <label>Số km hiện tại (km)</label>
-                                                            <input type="number" name="_km" placeholder="Số km hiện tại" class="form-control">
+                                                            <input required="required" type="number" name="_km" placeholder="Số km hiện tại" class="form-control">
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Số xăng hiện tại (km xăng)</label>
-                                                            <input type="number" name="_xang" placeholder="Số xăng hiện tại" class="form-control">
+                                                            <input required="required" type="number" name="_xang" placeholder="Số xăng hiện tại" class="form-control">
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Tình trạng xe</label>
-                                                            <input type="text" name="_trangThaiXe" placeholder="Tình trạng xe" class="form-control">
+                                                            <input required="required" type="text" name="_trangThaiXe" placeholder="Tình trạng xe" class="form-control">
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->
@@ -392,6 +413,13 @@
                     })
                 }
             });
+        });
+
+        $(document).on('change','#fuelRequest', function(){
+            if($(this).is(':checked'))
+                $('.pass').removeAttr('disabled');
+            else
+                $('.pass').attr('disabled','disabled');
         });
     </script>
 @endsection

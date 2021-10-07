@@ -186,20 +186,25 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('laithu.list')}}" class="nav-link">
                                 <i class="fas fa-car nav-icon"></i>
                                 <p>Quản lý xe</p>
                             </a>
                         </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
                         <li class="nav-item">
                             <a href="{{route('laithu.duyet')}}" class="nav-link">
                                 <i class="fas fa-hand-point-right nav-icon"></i>
                                 <p>Duyệt đăng ký / trả</p>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('status.list')}}" class="nav-link">
                                 <i class="fas fa-hdd nav-icon"></i>
                                 <p>Tình trạng xe</p>
                             </a>
@@ -210,12 +215,12 @@
                                 <p>Đăng ký / Trả xe</p>
                             </a>
                         </li>
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="#" class="nav-link">--}}
-{{--                                <i class="far fa-hand-paper nav-icon"></i>--}}
-{{--                                <p>Trả xe</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
+                        <li class="nav-item">
+                            <a href="{{route('capxang.duyet')}}" class="nav-link">
+                                <i class="far fa-hand-paper nav-icon"></i>
+                                <p>Duyệt cấp xăng</p>
+                            </a>
+                        </li>
 {{--                        <li class="nav-item">--}}
 {{--                            <a href="#" class="nav-link">--}}
 {{--                                <i class="fab fa-creative-commons-remix nav-icon"></i>--}}
