@@ -180,16 +180,19 @@
                                             <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
                                             <td>
                                                 @if($row->allow == 1)
-                                                    <span class="btn btn-info btn-xs">Đã duyệt</span>
+                                                    <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
                                                 @else
-                                                    <span class="btn btn-warning btn-xs">Đợi duyệt</span>
+                                                    <span class="btn btn-warning btn-xs">Xe: Đợi duyệt</span>
                                                 @endif
-                                                    @if($row->fuel_request == 1)
-                                                        <span class="btn btn-secondary btn-xs">Yêu cầu cấp xăng</span>
+                                                    @if($row->fuel_request == true && $row->fuel_allow == false)
+                                                        <span class="btn btn-secondary btn-xs">Xăng: Yêu cầu</span>
+                                                    @elseif($row->fuel_allow == true)
+                                                        <a href="{{route('xang.in', ['id' => $row->id])}}" target="_blank" class="btn btn-success btn-xs">Xăng: Đã duyệt</a>
                                                     @endif
                                             </td>
                                             <td>
                                                 @if($row->allow == 1)
+                                                    <a target="_blank" href="{{route('qrcode', ['content' => url("/show/{$row->id}")])}}" class="btn btn-dark btn-xs">QR Code</a>
                                                 @else
                                                     <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
                                                 @endif
@@ -374,8 +377,8 @@
                     },
                     success: function(response) {
                         Toast.fire({
-                            icon: 'success',
-                            title: "Đã xóa"
+                            icon: 'info',
+                            title: response.message
                         })
                         setTimeout(function(){
                             open('{{route('laithu.reg')}}','_self');

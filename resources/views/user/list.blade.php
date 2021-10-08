@@ -75,14 +75,6 @@
                                 </tr>
                             @endforeach
                             </tbody>
-                            <tfoot>
-                            <tr>
-                                <th>STT</th>
-                                <th>Tài khoản</th>
-                                <th>Email</th>
-                                <th>Tác vụ</th>
-                            </tr>
-                            </tfoot>
                         </table>
                     </div>
                     <!-- /.card-body -->

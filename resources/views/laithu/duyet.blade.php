@@ -98,12 +98,14 @@
                                         <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
                                         <td>
                                             @if($row->allow == 1)
-                                                <span class="btn btn-info btn-xs">Đã duyệt</span>
+                                                <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
                                             @else
-                                                <span class="btn btn-warning btn-xs">Đợi duyệt</span>
+                                                <span class="btn btn-warning btn-xs">Xe: Đợi duyệt</span>
                                             @endif
-                                                @if($row->fuel_request == 1)
-                                                    <span class="btn btn-secondary btn-xs">Yêu cầu cấp xăng</span>
+                                                @if($row->fuel_request == true && $row->fuel_allow == false)
+                                                    <span class="btn btn-secondary btn-xs">Xăng: Yêu cầu</span>
+                                                @elseif($row->fuel_allow == true)
+                                                    <span class="btn btn-success btn-xs">Xăng: Đã duyệt</span>
                                                 @endif
                                         </td>
                                         <td>

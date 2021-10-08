@@ -65,6 +65,7 @@
                                     <th>Xăng hiện tại</th>
                                     <th>Số lít yêu cầu</th>
                                     <th>Loại</th>
+                                    <th>Trạng thái</th>
                                     <th>Tác vụ</th>
                                 </tr>
                                 </thead>
@@ -101,7 +102,14 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($row->allow == 1)
+                                            @if($row->fuel_allow == false)
+                                                <span class="btn btn-dark btn-xs">Chưa duyệt</span>
+                                            @else
+                                                <span class="btn btn-success btn-xs">Đã duyệt</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($row->fuel_allow == true)
                                             @else
                                                 <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
                                             @endif
@@ -151,51 +159,39 @@
             timer: 3000
         });
 
-        function formatNumber(num) {
-            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-        }
-
         $(document).ready(function() {
             $("#dataTable").DataTable({
-                "responsive": true, "lengthChange": true, "autoWidth": false,
+                "responsive": true, "lengthChange": false, "autoWidth": false,
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
         });
 
-        $(document).ready(function() {
-            $("#dataTable2").DataTable({
-                "responsive": true, "lengthChange": true, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-
-        //Duyệt mượn
         $(document).on('click','#allow', function(){
-            if(confirm('Xác nhận phê duyệt sử dụng xe lái thử?')) {
-                {{--$.ajax({--}}
-                {{--    url: "{{url('management/duyet/allow/')}}",--}}
-                {{--    type: "post",--}}
-                {{--    dataType: "json",--}}
-                {{--    data: {--}}
-                {{--        "_token": "{{csrf_token()}}",--}}
-                {{--        "id": $(this).data('id')--}}
-                {{--    },--}}
-                {{--    success: function(response) {--}}
-                {{--        Toast.fire({--}}
-                {{--            icon: 'info',--}}
-                {{--            title: response.message--}}
-                {{--        })--}}
-                {{--        setTimeout(function(){--}}
-                {{--            open('{{route('laithu.duyet')}}','_self');--}}
-                {{--        }, 2000);--}}
-                {{--    },--}}
-                {{--    error: function() {--}}
-                {{--        Toast.fire({--}}
-                {{--            icon: 'warning',--}}
-                {{--            title: "Không phê duyệt lúc này!"--}}
-                {{--        })--}}
-                {{--    }--}}
-                {{--});--}}
+            if (confirm('Xác nhận duyệt phiếu cấp xăng này!')) {
+                $.ajax({
+                    url: "{{url('management/capxang/allow/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        })
+                        setTimeout(function(){
+                            open('{{route('capxang.duyet')}}','_self');
+                        }, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không phê duyệt lúc này!"
+                        })
+                    }
+                });
             }
         });
 

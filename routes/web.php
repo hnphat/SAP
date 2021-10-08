@@ -188,9 +188,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'capxang'], function(){
         Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
-//        Route::post('allow','LaiThuController@allowLaiThu');
+        Route::post('allow','LaiThuController@allowCapXang');
 //        Route::post('approve','LaiThuController@approve');
     });
+
+    Route::get('qr/{content}', function ($content) {
+//        return QrCode::size(200)->generate('https://google.com');
+        return view('qr', ['content' => $content]);
+    })->where('content', '.*')->name('qrcode');
+
+    Route::get('xang/{id}', 'LaiThuController@inXang')->name('xang.in');
 });
-
-
+    Route::get('show/{id}', 'LaiThuController@showQR');

@@ -143,17 +143,25 @@ class LaiThuController extends Controller
 
     public function delReg(Request $request)
     {
-        $car = DangKySuDung::where('id',$request->id)->delete();
-        if($car) {
+        $check = DangKySuDung::find($request->id);
+        if ($check->fuel_allow == true) {
             return response()->json([
-                'message' => 'Delete successfully!',
+                'message' => 'Yêu cầu cấp xăng đã được duyệt, không thể xóa!',
                 'code' => 200
             ]);
         } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
+            $car = DangKySuDung::where('id',$request->id)->delete();
+            if($car) {
+                return response()->json([
+                    'message' => 'Đã xóa đề nghị sử dụng xe!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
         }
     }
 
@@ -231,5 +239,36 @@ class LaiThuController extends Controller
     public function getStatus() {
         $car = XeLaiThu::all();
         return view('laithu.status',['car' => $car]);
+    }
+
+    public function showQR($id) {
+        $car = DangKySuDung::find($id);
+        if ($car !== null && $car->allow == true) {
+            return view('showQR', ['car' => $car]);
+        } else {
+            return "<h2>LỖI KHÔNG TỒN TẠI</h2>";
+        }
+    }
+
+    public function allowCapXang(Request $request) {
+        $car = DangKySuDung::where('id', $request->id)->update([
+           'fuel_allow' => true
+        ]);
+        if($car) {
+            return response()->json([
+                'message' => 'Đã duyệt đề nghị cấp xăng',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function inXang($id) {
+        $car = DangKySuDung::find($id);
+        return view('laithu.in', ['car' => $car, 'content' => $car]);
     }
 }
