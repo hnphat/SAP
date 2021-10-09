@@ -36,6 +36,9 @@ class CreateDangKySuDungsTable extends Migration
             $table->enum('fuel_type', ['X', 'D'])->nullable();
             $table->integer('fuel_num')->default(0);
             $table->string('fuel_lyDo')->nullable();
+            $table->boolean('lead_check')->default(0);
+            $table->integer('id_user_check')->unsigned()->nullable();
+            $table->foreign('id_user_check')->references('id')->on('users');
             $table->timestamps();
         });
     }

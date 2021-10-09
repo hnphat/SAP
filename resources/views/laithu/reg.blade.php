@@ -100,16 +100,24 @@
                                                         <div class="form-group">
                                                             <label>
                                                                 <input type="checkbox" name="fuelRequest" id="fuelRequest" />
-                                                                Đề nghị cấp xăng
+                                                                Đề nghị cấp nhiên liệu
                                                             </label>
-                                                            <input name="fuelLyDo" type="text" class="form-control pass" placeholder="Lý do cấp xăng"
+                                                            <input name="fuelLyDo" type="text" class="form-control pass" placeholder="Lý do cấp"
                                                                    required="required" disabled="disabled"/>
                                                             <input name="fuelNum" type="number" class="form-control pass" placeholder="Số lít"
                                                                    required="required" disabled="disabled"/>
                                                             <select name="fuelType" class="form-control pass" required="required" disabled="disabled">
-                                                                <option value="">Loại nhiên liệu</option>
+                                                                <option value="">Chọn loại nhiên liệu</option>
                                                                 <option value="X">Xăng</option>
                                                                 <option value="D">Dầu</option>
+                                                            </select>
+                                                            <select name="leadCheck" class="form-control pass" required="required" disabled="disabled">
+                                                                <option value="">Chọn người duyệt</option>
+                                                                @foreach($lead as $row)
+                                                                    @if($row->hasRole('lead'))
+                                                                        <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                                                    @endif
+                                                                @endforeach
                                                             </select>
 
                                                         </div>
@@ -185,7 +193,7 @@
                                                     <span class="btn btn-warning btn-xs">Xe: Đợi duyệt</span>
                                                 @endif
                                                     @if($row->fuel_request == true && $row->fuel_allow == false)
-                                                        <span class="btn btn-secondary btn-xs">Xăng: Yêu cầu</span>
+                                                        <span class="btn btn-secondary btn-xs">Nhiên liệu: Đợi duyệt</span>
                                                     @elseif($row->fuel_allow == true)
                                                         <a href="{{route('xang.in', ['id' => $row->id])}}" target="_blank" class="btn btn-success btn-xs">Xăng: Đã duyệt</a>
                                                     @endif

@@ -2,41 +2,39 @@
 <html>
 <head>
     <title>PHIẾU CẤP XĂNG</title>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body>
-<div class="w3-row">
-    <div class="w3-twothird">
-        <img src="{{asset('images/logo/hyundaiag.png')}}" style="width: 200px; height: auto;" alt="Logo">
-        <h3 style="text-align: center;">PHIẾU ĐỀ NGHỊ CẤP XĂNG XE</h3>
+<div class="row">
+    <div class="col-md-8">
+        <img src="{{asset('images/logo/tc.png')}}" style="width: 200px; height: auto;" alt="Logo">
+        <h3 style="text-align: center;"><strong>PHIẾU ĐỀ NGHỊ CẤP NHIÊN LIỆU</strong></h3>
         <h5 style="text-align: right;">{{\HelpFunction::revertCreatedAt($car->created_at)}}</h5>
-        <p>Họ và tên: {{$car->user->userDetail->surname}}</p>
-        <p>Khách hàng:</p>
-        <p>Số lít đề nghị: {{$car->fuel_num}} lít; Loại:
+        <p><strong>Họ và tên:</strong> {{$car->user->userDetail->surname}}</p>
+        <p><strong>Khách hàng:</strong></p>
+        <p><strong>Số lít đề nghị:</strong> {{$car->fuel_num}} lít; <strong>Loại:</strong>
             @if($car->fuel_type == 'X')
                 Xăng
             @else
                 Dầu
             @endif
         </p>
-        <p>Loại xe: {{$car->xeLaiThu->name}}; Biển số: {{$car->xeLaiThu->number_car}}</p>
-        <p>Lý do cấp: {{$car->fuel_lyDo}}</p>
-        <p>Số km hiện tại: {{$car->km_current}} km; Số xăng: {{$car->fuel_current}} km.</p>
-        <div class="w3-row">
-            <div class="w3-third">
-                <p style="text-align: center;">NGƯỜI ĐỀ NGHỊ</p>
-                <br><br><br>
-                <p style="text-align: center;"> {{$car->user->userDetail->surname}} </p>
-            </div>
-            <div class="w3-third"><p style="text-align: center;">T. BỘ PHẬN</p></div>
-            <div class="w3-third"><p style="text-align: center;">HCNS</p></div>
+        <p><strong>Loại xe:</strong> {{$car->xeLaiThu->name}}; <strong>Biển số:</strong> {{$car->xeLaiThu->number_car}}</p>
+        <p><strong>Lý do cấp:</strong> {{$car->fuel_lyDo}}</p>
+        <p><strong>Số km hiện tại:</strong> {{$car->km_current}} km; <strong>Số xăng:</strong> {{$car->fuel_current}} km.</p>
+        <div class="col">
+                <strong>NGƯỜI ĐỀ NGHỊ</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;<strong>T. BỘ PHẬN (Đã duyệt)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;<strong>HCNS (Đã duyệt)</strong><br/><br/><br/>
+                {{$car->user->userDetail->surname}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp; {{$tbp}}
         </div>
     </div>
-    <div class="w3-third">
-        <h3 style="text-align: center;">QR CODE</h3>
-        <h1 style="text-align: center;">
-            {!! QrCode::size(200)->generate(url("/show/{$car->id}")); !!}
-        </h1>
+    <div class="col-md-4">
+{{--        <h3 style="text-align: center;">QR CODE</h3>--}}
+{{--        <h1 style="text-align: center;">--}}
+{{--            {!! QrCode::size(200)->generate(url("/show/{$car->id}")); !!}--}}
+{{--        </h1>--}}
     </div>
 </div>
 </body>

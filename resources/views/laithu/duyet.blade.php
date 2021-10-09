@@ -103,9 +103,9 @@
                                                 <span class="btn btn-warning btn-xs">Xe: Đợi duyệt</span>
                                             @endif
                                                 @if($row->fuel_request == true && $row->fuel_allow == false)
-                                                    <span class="btn btn-secondary btn-xs">Xăng: Yêu cầu</span>
+                                                    <span class="btn btn-secondary btn-xs">Nhiên liệu: Đợi duyệt</span>
                                                 @elseif($row->fuel_allow == true)
-                                                    <span class="btn btn-success btn-xs">Xăng: Đã duyệt</span>
+                                                    <span class="btn btn-success btn-xs">Nhiên liệu: Đã duyệt</span>
                                                 @endif
                                         </td>
                                         <td>

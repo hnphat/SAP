@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DangKySuDung;
+use App\User;
 use App\XeLaiThu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -74,9 +75,18 @@ class LaiThuController extends Controller
 
     public function showReg() {
         $car = XeLaiThu::all();
-        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        $traXe = DangKySuDung::select('*')->where('allow', true)->orderBy('id', 'DESC')->get();
-        return view('laithu.reg', ['car' => $car, 'reg' => $reg, 'traXe' => $traXe]);
+        $lead = User::all();
+        if (Auth::user()->hasRole('system')) {
+            $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+            $traXe = DangKySuDung::select('*')->where('allow', true)->orderBy('id', 'DESC')->get();
+        } else {
+            $reg = DangKySuDung::select('*')->where('id_user_reg', Auth::user()->id)->orderBy('id', 'DESC')->get();
+            $traXe = DangKySuDung::select('*')->where([
+                ['allow', true],
+                ['id_user_reg', Auth::user()->id]
+            ])->orderBy('id', 'DESC')->get();
+        }
+        return view('laithu.reg', ['lead' => $lead,'car' => $car, 'reg' => $reg, 'traXe' => $traXe]);
     }
 
     public function pay($id) {
@@ -127,6 +137,7 @@ class LaiThuController extends Controller
                 $reg->fuel_type = $request->fuelType;
                 $reg->fuel_num = $request->fuelNum;
                 $reg->fuel_lyDo = $request->fuelLyDo;
+                $reg->id_user_check = $request->leadCheck;
             }
             $reg->save();
             if($reg) {
@@ -172,7 +183,14 @@ class LaiThuController extends Controller
     }
 
     public function showCapXang() {
-        $reg = DangKySuDung::select('*')->where('fuel_request', true)->orderBy('id', 'DESC')->get();
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns')) {
+            $reg = DangKySuDung::select('*')->where('fuel_request', true)->orderBy('id', 'DESC')->get();
+        } elseif (Auth::user()->hasRole('lead')) {
+            $reg = DangKySuDung::select('*')->where([
+             ['fuel_request', true],
+             ['id_user_check',Auth::user()->id]
+            ])->orderBy('id', 'DESC')->get();
+        }
         return view('laithu.capxang', ['reg' => $reg]);
     }
 
@@ -244,7 +262,7 @@ class LaiThuController extends Controller
     public function showQR($id) {
         $car = DangKySuDung::find($id);
         if ($car !== null && $car->allow == true) {
-            return view('showQR', ['car' => $car]);
+            return view('showqr', ['car' => $car]);
         } else {
             return "<h2>LỖI KHÔNG TỒN TẠI</h2>";
         }
@@ -267,8 +285,26 @@ class LaiThuController extends Controller
         }
     }
 
+    public function leadAllowCapXang(Request $request) {
+        $car = DangKySuDung::where('id', $request->id)->update([
+            'lead_check' => true
+        ]);
+        if($car) {
+            return response()->json([
+                'message' => 'Đã duyệt đề nghị cấp xăng',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function inXang($id) {
         $car = DangKySuDung::find($id);
-        return view('laithu.in', ['car' => $car, 'content' => $car]);
+        $tbp = User::find($car->id_user_check)->userDetail->surname;
+        return view('laithu.in', ['car' => $car, 'content' => $car, 'tbp' => $tbp]);
     }
 }

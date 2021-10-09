@@ -51,6 +51,21 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'normal'
+            ],
+            [
+                'name' => 'sub1'
+            ],
+            [
+                'name' => 'sub2'
+            ],
+            [
+                'name' => 'lead_sub1'
+            ],
+            [
+                'name' => 'lead_sub2'
+            ],
+            [
+                'name' => 'lead'
             ]
         ]);
 

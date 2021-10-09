@@ -57,15 +57,19 @@
                                 <thead>
                                 <tr class="bg-gradient-lightblue">
                                     <th>TT</th>
-                                    <th>Ngày đk</th>
+                                    <th>Ngày</th>
                                     <th>Sử dụng</th>
                                     <th>Xe</th>
                                     <th>Lý do</th>
                                     <th>Km hiện tại</th>
                                     <th>Xăng hiện tại</th>
-                                    <th>Số lít yêu cầu</th>
+                                    <th>Số lít</th>
                                     <th>Loại</th>
-                                    <th>Trạng thái</th>
+                                    <th>Trưởng BP</th>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                        <th>HCNS</th>
+                                    @endif
                                     <th>Tác vụ</th>
                                 </tr>
                                 </thead>
@@ -102,18 +106,39 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($row->fuel_allow == false)
+                                            @if($row->lead_check == false)
                                                 <span class="btn btn-dark btn-xs">Chưa duyệt</span>
                                             @else
                                                 <span class="btn btn-success btn-xs">Đã duyệt</span>
                                             @endif
                                         </td>
-                                        <td>
-                                            @if($row->fuel_allow == true)
-                                            @else
-                                                <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
-                                            @endif
-                                        </td>
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                            <td>
+                                                @if($row->fuel_allow == false)
+                                                    <span class="btn btn-dark btn-xs">Chưa duyệt</span>
+                                                @else
+                                                    <span class="btn btn-success btn-xs">Đã duyệt</span>
+                                                @endif
+                                            </td>
+                                        @endif
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                            <td>
+                                                @if($row->fuel_allow == true)
+                                                @else
+                                                    <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                @endif
+                                            </td>
+                                        @endif
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
+                                            <td>
+                                                @if($row->lead_check == true)
+                                                @else
+                                                    <button id="leadAllow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                @endif
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -170,6 +195,34 @@
             if (confirm('Xác nhận duyệt phiếu cấp xăng này!')) {
                 $.ajax({
                     url: "{{url('management/capxang/allow/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        })
+                        setTimeout(function(){
+                            open('{{route('capxang.duyet')}}','_self');
+                        }, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không phê duyệt lúc này!"
+                        })
+                    }
+                });
+            }
+        });
+        $(document).on('click','#leadAllow', function(){
+            if (confirm('Xác nhận duyệt phiếu cấp xăng này!')) {
+                $.ajax({
+                    url: "{{url('management/capxang/leadallow/')}}",
                     type: "post",
                     dataType: "json",
                     data: {

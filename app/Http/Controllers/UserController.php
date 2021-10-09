@@ -99,6 +99,9 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        $check = User::find($id);
+        if ($check->hasRole('system'))
+            return redirect()->route('user.list')->with('loi','Không thể xóa tài khoản hệ thống');
         try {
             $user = User::where('id', $id)->delete();
             if ($user)
@@ -111,6 +114,8 @@ class UserController extends Controller
     public function lock($id)
     {
         $user = User::find($id);
+        if ($user->hasRole('system'))
+            return redirect()->route('user.list')->with('loi','Không thể khóa tài khoản hệ thống');
         $active = $user->active;
         $active = ($active == 1) ? 0 : 1;
         $user->active = $active;

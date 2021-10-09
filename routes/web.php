@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use \Illuminate\Support\Facades\Auth;
+
+Route::get('show/{id}', 'LaiThuController@showQR');
+
 Route::get('/', function () {
     if (Auth::check()) {
         return view('admin.home');
@@ -27,19 +30,19 @@ Route::get('/out',function(){
 
 Route::post('/login', 'UserController@login')->name('login');
 Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
-   Route::group(['prefix' => 'user'], function(){
+   Route::group(['prefix' => 'user', 'middleware' => ['f_roleuser']], function(){
         Route::get('list', 'UserController@index')->name('user.list');
         Route::get('del/{id}', 'UserController@destroy');
         Route::get('lock/{id}', 'UserController@lock');
         Route::post('create', 'UserController@store')->name('ajax.user.create');
         Route::post('update', 'UserController@update')->name('ajax.user.update');
    });
-    Route::group(['prefix' => 'roles'], function(){
+    Route::group(['prefix' => 'roles', 'middleware' => ['f_role']], function(){
         Route::get('list','RolesController@index')->name('roles.list');
         Route::post('add','RolesController@add')->name('roles.add');
         Route::get('rm/{role_id}/{user_id}','RolesController@rm');
     });
-    Route::group(['prefix' => 'hoso'], function(){
+    Route::group(['prefix' => 'hoso', 'middleware' => ['f_hoso']], function(){
         Route::get('list','HoSoController@index')->name('hoso.list');
         Route::get('users','HoSoController@getUser')->name('hoso.users');
         Route::post('add', 'HoSoController@store')->name('ajax.hoso.add');
@@ -48,7 +51,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('update', 'HoSoController@updateHoSo')->name('ajax.hoso.update');
         Route::post('delete', 'HoSoController@deleteHoSo')->name('ajax.hoso.delete');
     });
-    Route::group(['prefix' => 'typecar'], function(){
+    Route::group(['prefix' => 'typecar', 'middleware' => ['f_typecar']], function(){
         Route::get('list','TypeCarController@index')->name('typecar.list');
         Route::get('getlist','TypeCarController@getList')->name('typecar.getlist');
         Route::post('add', 'TypeCarController@add')->name('typecar.add');
@@ -62,7 +65,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('more/editshowplus', 'TypeCarController@getEditShowPlus')->name('typecar.more.editshowplus');
         Route::post('more/editaddplus', 'TypeCarController@editAddPlus')->name('typecar.more.editaddplus');
     });
-    Route::group(['prefix' => 'package'], function(){
+    Route::group(['prefix' => 'package', 'middleware' => ['f_package']], function(){
         Route::get('list','PackageController@index')->name('package.list');
         Route::get('get/list','PackageController@getList');
         Route::post('add','PackageController@add');
@@ -85,7 +88,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit/show','PhuTungController@editShow');
         Route::post('update','PhuTungController@update');
     });
-    Route::group(['prefix' => 'guest'], function(){
+    Route::group(['prefix' => 'guest', 'middleware' => ['f_guest']], function(){
         Route::get('list','GuestController@index')->name('guest.list');
         Route::get('get/list','GuestController@getList');
         Route::get('check/{num}','GuestController@checkPhone');
@@ -94,7 +97,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit/show','GuestController@editShow');
         Route::post('update','GuestController@update');
     });
-    Route::group(['prefix' => 'kho'], function(){
+    Route::group(['prefix' => 'kho', 'middleware' => ['f_kho']], function(){
         Route::get('list','KhoController@index')->name('kho.list');
         Route::get('get/list','KhoController@getList');
         Route::get('get/list/out','KhoController@getListOut');
@@ -104,7 +107,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit/show','KhoController@editShow');
         Route::post('update','KhoController@update');
     });
-    Route::group(['prefix' => 'hd'], function(){
+    Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
         Route::get('list','HDController@index')->name('hd.list');
         Route::get('get/list','HDController@getList');
         Route::get('get/list/code','HDController@getListCode');
@@ -136,7 +139,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('banle/congty/tienmat/down/{id}','HDController@cttm');
         Route::get('banle/congty/nganhang/down/{id}','HDController@ctnh');
     });
-    Route::group(['prefix' => 'pheduyet'], function(){
+    Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');
         Route::get('check/{id}','PheDuyetController@check');
         Route::get('detail/hd/{id}','PheDuyetController@detailHD');
@@ -147,7 +150,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('huy/{sale}/{user}','PheDuyetController@huy')->name('pheduyet.huy');
     });
 
-    Route::group(['prefix' => 'denghi'], function(){
+    Route::group(['prefix' => 'denghi', 'middleware' => ['f_denghi']], function(){
         Route::get('list','DeNghiController@index')->name('denghi.list');
         Route::post('pheduyet/show','DeNghiController@show');
         Route::post('pheduyet','DeNghiController@pheDuyet');
@@ -155,13 +158,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('get/list/wait/all','DeNghiController@getListWaitAll');
     });
 
-    Route::group(['prefix' => 'cancel'], function(){
+    Route::group(['prefix' => 'cancel', 'middleware' => ['f_cancel']], function(){
         Route::get('list','CancelHDController@index')->name('cancel.list');
         Route::post('post','CancelHDController@postCancel')->name('cancel.post');
         Route::get('del/{id}','CancelHDController@delCancel');
     });
 
-    Route::group(['prefix' => 'laithu'], function(){
+    Route::group(['prefix' => 'laithu', 'middleware' => ['f_laithu']], function(){
         Route::get('list','LaiThuController@index')->name('laithu.list');
         Route::post('post','LaiThuController@store')->name('laithu.post');
         Route::post('del','LaiThuController@destroy');
@@ -180,16 +183,16 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('pay/{id}','LaiThuController@pay');
     });
 
-    Route::group(['prefix' => 'duyet'], function(){
+    Route::group(['prefix' => 'duyet', 'middleware' => ['f_duyet']], function(){
         Route::get('list','LaiThuController@showDuyet')->name('laithu.duyet');
         Route::post('allow','LaiThuController@allowLaiThu');
         Route::post('approve','LaiThuController@approve');
     });
 
-    Route::group(['prefix' => 'capxang'], function(){
+    Route::group(['prefix' => 'capxang', 'middleware' => ['f_capxang']], function(){
         Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
         Route::post('allow','LaiThuController@allowCapXang');
-//        Route::post('approve','LaiThuController@approve');
+        Route::post('leadallow','LaiThuController@leadAllowCapXang');
     });
 
     Route::get('qr/{content}', function ($content) {
@@ -199,4 +202,3 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::get('xang/{id}', 'LaiThuController@inXang')->name('xang.in');
 });
-    Route::get('show/{id}', 'LaiThuController@showQR');

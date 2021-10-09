@@ -204,23 +204,27 @@
                         </li>
                         @endif
                         <li class="nav-item">
-                            <a href="{{route('status.list')}}" class="nav-link">
-                                <i class="fas fa-hdd nav-icon"></i>
-                                <p>Tình trạng xe</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="{{route('laithu.reg')}}" class="nav-link">
                                 <i class="fas fa-hand-holding nav-icon"></i>
                                 <p>Đăng ký / Trả xe</p>
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{route('status.list')}}" class="nav-link">
+                                <i class="fas fa-hdd nav-icon"></i>
+                                <p>Tình trạng xe</p>
+                            </a>
+                        </li>
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
+                        <li class="nav-item">
                             <a href="{{route('capxang.duyet')}}" class="nav-link">
                                 <i class="far fa-hand-paper nav-icon"></i>
                                 <p>Duyệt cấp xăng</p>
                             </a>
                         </li>
+                        @endif
 {{--                        <li class="nav-item">--}}
 {{--                            <a href="#" class="nav-link">--}}
 {{--                                <i class="fab fa-creative-commons-remix nav-icon"></i>--}}
