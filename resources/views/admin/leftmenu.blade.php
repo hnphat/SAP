@@ -258,7 +258,7 @@
                     </ul>
                 </li>
                 -->
-                <!--
+
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                          \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
@@ -275,38 +275,120 @@
                              \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                                 <a href="{{route("package.list")}}" class="nav-link">
-                                    <i class="fas fa-business-time nav-icon"></i>
-                                    <p>Bảo hiểm - Phụ kiện</p>
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Phòng Kinh Doanh</p>
                                 </a>
                             </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Tồn kho xe</p>
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Phòng Dịch Vụ</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Khách hàng</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Kinh doanh</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Dịch vụ</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Xưởng</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Marketing</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>CSKH</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Hành chính - Nhân sự</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>IT</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Phát triển đại lý</p>
+                                </a>
+                            </li>
                         @endif
                     </ul>
                 </li>
-                -->
+                <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                         \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-binoculars"></i>
+                            <p>
+                                <strong>BÁO CÁO TỔNG</strong>
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                    @endif
+                    <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            <li class="nav-item">
+                                <a href="{{route("package.list")}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Phòng Kinh Doanh</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Phòng Dịch Vụ</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Xưởng</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Marketing</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>CSKH</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Hành chính - Nhân sự</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>IT</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Phát triển đại lý</p>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>

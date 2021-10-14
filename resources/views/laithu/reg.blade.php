@@ -127,7 +127,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Thời gian đi</label>
-                                                            <input required="required" type="datetime-local" name="timeGo" class="form-control">
+                                                            <input required="required" type="date" name="timeGo" class="form-control">
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->
@@ -185,7 +185,7 @@
                                             <td>{{$row->km_current}}</td>
                                             <td>{{$row->fuel_current}}</td>
                                             <td>{{$row->car_status}}</td>
-                                            <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                            <td class="text-fuchsia"><strong>{{\HelpFunction::revertDate($row->date_go)}}</strong></td>
                                             <td>
                                                 @if($row->allow == 1)
                                                     <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>

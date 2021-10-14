@@ -95,7 +95,7 @@
                                         <td>{{$row->km_current}}</td>
                                         <td>{{$row->fuel_current}}</td>
                                         <td>{{$row->car_status}}</td>
-                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                        <td>{{\HelpFunction::revertDate($row->date_go)}}</td>
                                         <td>
                                             @if($row->allow == 1)
                                                 <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
