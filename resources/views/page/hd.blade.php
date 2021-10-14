@@ -487,7 +487,6 @@
 
         // show data
         $(document).ready(function() {
-
             // get type guest
             $("#loaiKhachHang").change(function (){
                 if ($("#loaiKhachHang").val() == 'personal') {

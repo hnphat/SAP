@@ -201,4 +201,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     })->where('content', '.*')->name('qrcode');
 
     Route::get('xang/{id}', 'LaiThuController@inXang')->name('xang.in');
+
+    Route::group(['prefix' => 'report'], function(){
+        Route::get('list','ReportController@showReport')->name('report');
+    });
 });
