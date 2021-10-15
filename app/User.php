@@ -27,6 +27,10 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function report() {
+        return $this->hasMany('App\Report','user_report','id');
+    }
+
     public function roles() {
         return $this->belongsToMany('App\Roles','role_user', 'user_id', 'role_id');
     }

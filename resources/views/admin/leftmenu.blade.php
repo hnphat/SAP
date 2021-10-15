@@ -262,67 +262,16 @@
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                          \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            <strong>BÁO CÁO</strong>
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    @endif
-                    <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
-                                <a href="{{route("report")}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Phòng Kinh Doanh</p>
-                                </a>
-                            </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Phòng Dịch Vụ</p>
+                            <a href="{{route("report")}}" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>
+                                    <strong>BÁO CÁO NGÀY</strong>
+{{--                                    <span class="right badge badge-danger">New</span>--}}
+                                </p>
                             </a>
                         </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Xưởng</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Marketing</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>CSKH</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Hành chính - Nhân sự</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>IT</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Phát triển đại lý</p>
-                                </a>
-                            </li>
-                        @endif
-                    </ul>
+                    @endif
                 </li>
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||

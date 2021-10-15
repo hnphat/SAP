@@ -17,6 +17,8 @@ class Report extends Migration
             $table->increments('id');
             $table->enum('type', ['pkd', 'pdv', 'mkt', 'xuong', 'cskh', 'hcns', 'it', 'ptdl'])->nullable();
             $table->string('ngayReport')->nullable();
+            $table->integer('user_report')->unsigned();
+            $table->foreign('user_report')->references('id')->on('users');
             //------------------ PKD
             $table->integer('doanhSoThang')->nullable();
             $table->integer('thiPhanThang')->nullable();
@@ -83,10 +85,8 @@ class Report extends Migration
             //-------------- MKT
             $table->integer('khBanGiao')->nullable();
             $table->integer('khSuKien')->nullable();
-            $table->string('imgOne')->nullable();
-            $table->string('imgTwo')->nullable();
-            $table->string('imgThree')->nullable();
-            $table->string('imgFour')->nullable();
+            //----------------
+            $table->boolean('clock')->default(false);
             $table->timestamps();
         });
     }

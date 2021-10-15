@@ -219,7 +219,7 @@
                     </div>
                     <div class="card card-blue">
                         <div class="card-header">
-                            <h3>XƯỞNG</h3>
+                            <h3>Xưởng</h3>
                         </div>
                         <div class="card-body">
                             <h5 class="text-blue">XE TỒN</h5>
@@ -379,7 +379,7 @@
                     </div>
                     <div class="card card-blue">
                         <div class="card-header">
-                            <h3>MARKETING</h3>
+                            <h3>Marketing</h3>
                         </div>
                         <div class="card-body">
                             <div class="row p-1">
@@ -399,28 +399,334 @@
                         <div class="card-header">
                             <h3>Hành chính - nhân sự</h3>
                         </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h5>CÔNG VIỆC TRONG NGÀY</h5>
+                        </div>
                         <div class="card-body">
-                            <div class="row p-1">
-                                <div class="col-md-3">
-                                    <label for="imageOne">Hình ảnh 1: </label>
-                                    <input id="imageOne" name="imageOne" type="file" class="form-control" required="required">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="imageTwo">Hình ảnh 2: </label>
-                                    <input id="imageTwo" name="imageTwo" type="file" class="form-control" required="required">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="imageThree">Hình ảnh 3: </label>
-                                    <input id="imageThree" name="imageThree" type="file" class="form-control" required="required">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="imageFour">Hình ảnh 4: </label>
-                                    <input id="imageFour" name="imageFour" type="file" class="form-control" required="required">
-                                </div>
+                            <button type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button>
+                            <br><br>
+                            <div id="showCV">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Loại</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Mua cơm cháy chiên</td>
+                                        <td>100%</td>
+                                        <td>Công việc</td>
+                                        <td>15/10/2021</td>
+                                        <td>Hoàn thành</td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    <!-- Medal Add Work-->
+                    <div class="modal fade" id="addWork">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">THÊM CÔNG VIỆC</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="addWorkForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="idReport">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Tên công việc</label>
+                                                    <input name="tenCongViec" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tiến độ</label>
+                                                    <input value="0" oninput="this.nextElementSibling.value = this.value" name="tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
+                                                    <output></output>%
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Deadline</label>
+                                                    <input name="deadLine" type="date" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Kết quả</label>
+                                                    <input name="ketQua" placeholder="Nhập kết quả công việc" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ghi chú</label>
+                                                    <input name="ghiChu" placeholder="Nếu có" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button id="btnAddWork" class="btn btn-primary" form="addWorkForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <div class="card card-fuchsia">
+                        <div class="card-header">
+                            <h5>CHI TIẾT HỢP ĐỒNG KÝ</h5>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" data-toggle="modal" data-target="#addCar" class="btn btn-success">Thêm</button>
+                            <br><br>
+                            <div id="showCar">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>Dòng xe</th>
+                                        <th>Accent</th>
+                                        <th>Santafe</th>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Số lượng</strong></td>
+                                        <td>23 <button class="badge badge-danger">Xóa</button></td>
+                                        <td>15 <button class="badge badge-danger">Xóa</button></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- Medal Add Car-->
+                    <div class="modal fade" id="addCar">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CHI TIẾT HỢP ĐỒNG</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="addCarForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="idReport">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Số lượng</label>
+                                                    <input name="soLuong" type="number" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Dòng xe</label>
+                                                    <select name="dongXe" class="form-control">
+                                                        <option value="Accent">Accent</option>
+                                                        <option value="Santafe">Santafe</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button id="btnAddCar" class="btn btn-primary" form="addCarForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h5>NHẬP KHO</h5>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" data-toggle="modal" data-target="#addNhap" class="btn btn-success">Thêm</button>
+                            <br><br>
+                            <div id="showNhap">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Nhà cung cấp</th>
+                                        <th>Hạn mục</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng tồn</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>T&D</td>
+                                        <td>VPP</td>
+                                        <td>10</td>
+                                        <td>0</td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- Medal Add Nhap-->
+                    <div class="modal fade" id="addNhap">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">NHẬP KHO</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="addNhapForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="idReport">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Nhà cung cấp</label>
+                                                    <input name="nhaCungCap" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Hạn mục</label>
+                                                    <select name="hanMuc" class="form-control">
+                                                        <option value="">VPP</option>
+                                                        <option value="">Covid</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Số lượng</label>
+                                                    <input name="soLuong" type="number" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tổng tồn</label>
+                                                    <input name="tongTon" type="number" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ghi chú</label>
+                                                    <input name="ghiChu" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button id="btnAddNhap" class="btn btn-primary" form="addNhapForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h5>XUẤT KHO</h5>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" data-toggle="modal" data-target="#addXuat" class="btn btn-success">Thêm</button>
+                            <br><br>
+                            <div id="showXuat">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên nhân viên</th>
+                                        <th>Hạn mục</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng tồn</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Nguyễn Hải Đăng</td>
+                                        <td>VPP</td>
+                                        <td>10</td>
+                                        <td>0</td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- Medal Add Xuat-->
+                    <div class="modal fade" id="addXuat">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">XUẤT KHO</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="addXuatForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="idReport">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Tên nhân viên</label>
+                                                    <input name="tenNhanVien" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Hạn mục</label>
+                                                    <select name="hanMuc" class="form-control">
+                                                        <option value="">VPP</option>
+                                                        <option value="">Covid</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Số lượng</label>
+                                                    <input name="soLuong" type="number" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tổng tồn</label>
+                                                    <input name="tongTon" type="number" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ghi chú</label>
+                                                    <input name="ghiChu" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button id="btnAddXuat" class="btn btn-primary" form="addXuatForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
                     <button class="btn btn-info">LƯU</button>
                     <button class="btn btn-warning">GỬI BÁO CÁO</button>
                 </form>
