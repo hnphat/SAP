@@ -17,6 +17,7 @@ class Report extends Migration
             $table->increments('id');
             $table->enum('type', ['pkd', 'pdv', 'mkt', 'xuong', 'cskh', 'hcns', 'it', 'ptdl'])->nullable();
             $table->string('ngayReport')->nullable();
+            $table->string('timeReport')->nullable();
             $table->integer('user_report')->unsigned();
             $table->foreign('user_report')->references('id')->on('users');
             //------------------ PKD
@@ -50,7 +51,6 @@ class Report extends Migration
             $table->integer('dtDauNhotBan')->nullable();
             $table->integer('phuTungMua')->nullable();
             $table->integer('dauNhotMua')->nullable();
-            $table->string('imageBaoHiem')->nullable();
             //------------- XUONG
             $table->integer('tonBaoDuong')->nullable();
             $table->integer('tonSuaChuaChung')->nullable();

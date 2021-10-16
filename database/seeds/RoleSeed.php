@@ -29,6 +29,9 @@ class RoleSeed extends Seeder
                 'name' => 'tpdv'
             ],
             [
+                'name' => 'xuong'
+            ],
+            [
                 'name' => 'sale'
             ],
             [
@@ -66,6 +69,12 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'lead'
+            ],
+            [
+                'name' => 'report'
+            ],
+            [
+                'name' => 'watch'
             ]
         ]);
 

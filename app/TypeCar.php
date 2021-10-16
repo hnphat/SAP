@@ -11,4 +11,8 @@ class TypeCar extends Model
     public function typeCarDetail() {
         return $this->hasMany('App\TypeCarDetail', 'id_type_car', 'id');
     }
+
+    public function reportCar() {
+        return $this->hasMany('App\ReportCar', 'dongXe', 'id');
+    }
 }

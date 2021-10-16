@@ -204,5 +204,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'report'], function(){
         Route::get('list','ReportController@showReport')->name('report');
+        Route::post('khoitao','ReportController@khoiTao')->name('report.init');
+        Route::get('load','ReportController@loadReport')->name('report.load');
+        Route::post('save','ReportController@saveReport')->name('report.save');
+        // --- thêm hợp đồng chi tiết
+        Route::post('addcar','ReportController@addCar')->name('add.car');
+        Route::get('loadaddcar/{id}','ReportController@loadAddCar')->name('add.car.load');
+        Route::post('deletecar','ReportController@deleteCar')->name('add.car.delete');
+
     });
 });

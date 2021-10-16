@@ -44,11 +44,13 @@
             @endif
             <div class="container">
                 <h5><strong>Ngày: </strong> <?php echo Date('d-m-Y');?></h5>
-                <h5><strong>Trạng thái: </strong> Chưa báo cáo</h5>
-                <h5><strong>Phòng ban: </strong>Phòng kinh doanh</h5>
-                <button class="btn btn-success">KHỞI TẠO BÁO CÁO</button>
+                <h5><strong>Thời gian báo cáo: </strong> <span id="setTime"></span></h5>
+                <button id="khoiTao" class="btn btn-success">KHỞI TẠO BÁO CÁO</button>
                 <br><br>
                 <form id="reportForm" action="#" method="post" enctype="multipart/form-data">
+                  {{csrf_field()}}
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>Phòng kinh doanh</h3>
@@ -132,6 +134,9 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv'))
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>Phòng dịch vụ</h3>
@@ -208,15 +213,12 @@
                                     <input id="dauNhotMua" name="dauNhotMua" type="number" class="form-control">
                                 </div>
                             </div>
-                            <div class="row p-1">
-                                <div class="col-md-3">
-                                    <label for="imageBaoHiem">Theo dõi bảo hiểm: </label>
-                                    <input id="imageBaoHiem" name="imageBaoHiem" type="file" class="form-control">
-                                </div>
-                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('xuong'))
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>Xưởng</h3>
@@ -284,6 +286,9 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('cskh'))
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>CSKH</h3>
@@ -377,6 +382,9 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>Marketing</h3>
@@ -395,99 +403,18 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>Hành chính - nhân sự</h3>
                         </div>
                         <!-- /.card-body -->
                     </div>
-                    <div class="card card-warning">
-                        <div class="card-header">
-                            <h5>CÔNG VIỆC TRONG NGÀY</h5>
-                        </div>
-                        <div class="card-body">
-                            <button type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button>
-                            <br><br>
-                            <div id="showCV">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Loại</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Mua cơm cháy chiên</td>
-                                        <td>100%</td>
-                                        <td>Công việc</td>
-                                        <td>15/10/2021</td>
-                                        <td>Hoàn thành</td>
-                                        <td></td>
-                                        <td>
-                                            <button class="btn btn-danger btn-sm">Xóa</button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- Medal Add Work-->
-                    <div class="modal fade" id="addWork">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">THÊM CÔNG VIỆC</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card">
-                                        <form id="addWorkForm" autocomplete="off">
-                                            {{csrf_field()}}
-                                            <input type="hidden" name="idReport">
-                                            <div class="card-body">
-                                                <div class="form-group">
-                                                    <label>Tên công việc</label>
-                                                    <input name="tenCongViec" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Tiến độ</label>
-                                                    <input value="0" oninput="this.nextElementSibling.value = this.value" name="tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
-                                                    <output></output>%
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Deadline</label>
-                                                    <input name="deadLine" type="date" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Kết quả</label>
-                                                    <input name="ketQua" placeholder="Nhập kết quả công việc" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input name="ghiChu" placeholder="Nếu có" type="text" class="form-control">
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                                    <button id="btnAddWork" class="btn btn-primary" form="addWorkForm">Lưu</button>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
-                    <!-- /.modal -->
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                     <div class="card card-fuchsia">
                         <div class="card-header">
                             <h5>CHI TIẾT HỢP ĐỒNG KÝ</h5>
@@ -495,19 +422,8 @@
                         <div class="card-body">
                             <button type="button" data-toggle="modal" data-target="#addCar" class="btn btn-success">Thêm</button>
                             <br><br>
-                            <div id="showCar">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>Dòng xe</th>
-                                        <th>Accent</th>
-                                        <th>Santafe</th>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Số lượng</strong></td>
-                                        <td>23 <button class="badge badge-danger">Xóa</button></td>
-                                        <td>15 <button class="badge badge-danger">Xóa</button></td>
-                                    </tr>
-                                </table>
+                            <div id="showCar" class="table-responsive">
+
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -535,8 +451,9 @@
                                                 <div class="form-group">
                                                     <label>Dòng xe</label>
                                                     <select name="dongXe" class="form-control">
-                                                        <option value="Accent">Accent</option>
-                                                        <option value="Santafe">Santafe</option>
+                                                        @foreach($typeCar as $row)
+                                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -553,6 +470,9 @@
                         <!-- /.modal-dialog -->
                     </div>
                     <!-- /.modal -->
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                       \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                     <div class="card card-secondary">
                         <div class="card-header">
                             <h5>NHẬP KHO</h5>
@@ -560,7 +480,7 @@
                         <div class="card-body">
                             <button type="button" data-toggle="modal" data-target="#addNhap" class="btn btn-success">Thêm</button>
                             <br><br>
-                            <div id="showNhap">
+                            <div id="showNhap" class="table-responsive">
                                 <table class="table table-striped">
                                     <tr>
                                         <th>STT</th>
@@ -601,7 +521,7 @@
                                     <div class="card">
                                         <form id="addNhapForm" autocomplete="off">
                                             {{csrf_field()}}
-                                            <input type="hidden" name="idReport">
+                                            <input type="hidden" name="idReport2">
                                             <div class="card-body">
                                                 <div class="form-group">
                                                     <label>Nhà cung cấp</label>
@@ -647,7 +567,7 @@
                         <div class="card-body">
                             <button type="button" data-toggle="modal" data-target="#addXuat" class="btn btn-success">Thêm</button>
                             <br><br>
-                            <div id="showXuat">
+                            <div id="showXuat" class="table-responsive">
                                 <table class="table table-striped">
                                     <tr>
                                         <th>STT</th>
@@ -688,7 +608,7 @@
                                     <div class="card">
                                         <form id="addXuatForm" autocomplete="off">
                                             {{csrf_field()}}
-                                            <input type="hidden" name="idReport">
+                                            <input type="hidden" name="idReport3">
                                             <div class="card-body">
                                                 <div class="form-group">
                                                     <label>Tên nhân viên</label>
@@ -727,8 +647,96 @@
                         <!-- /.modal-dialog -->
                     </div>
                     <!-- /.modal -->
-                    <button class="btn btn-info">LƯU</button>
-                    <button class="btn btn-warning">GỬI BÁO CÁO</button>
+                    @endif
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h5>CÔNG VIỆC TRONG NGÀY</h5>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button>
+                            <br><br>
+                            <div id="showCV" class="table-responsive">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Loại</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Mua cơm cháy chiên</td>
+                                        <td>100%</td>
+                                        <td>Công việc</td>
+                                        <td>15/10/2021</td>
+                                        <td>Hoàn thành</td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- Medal Add Work-->
+                    <div class="modal fade" id="addWork">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">THÊM CÔNG VIỆC</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="addWorkForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="idReport4">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Tên công việc</label>
+                                                    <input name="tenCongViec" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tiến độ</label>
+                                                    <input value="0" oninput="this.nextElementSibling.value = this.value" name="tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
+                                                    <output></output>%
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Deadline</label>
+                                                    <input name="deadLine" type="date" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Kết quả</label>
+                                                    <input name="ketQua" placeholder="Nhập kết quả công việc" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ghi chú</label>
+                                                    <input name="ghiChu" placeholder="Nếu có" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button id="btnAddWork" class="btn btn-primary" form="addWorkForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <button id="saveReport" class="btn btn-info" form="reportForm">LƯU</button>
+                    <button id="sendReport" class="btn btn-warning" form="reportForm">GỬI BÁO CÁO</button>
                 </form>
             </div>
         </div>
@@ -760,6 +768,243 @@
             showConfirmButton: false,
             timer: 3000
         });
+        $(document).ready(function(){
+            function load() {
+                /// load report
+                $.ajax({
+                    url: "{{url('management/report/load')}}",
+                    type: "get",
+                    dataType: 'json',
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#setTime").text(response.data.timeReport);
+
+                        $('input[name=idReport]').val(response.data.id);
+                        $('input[name=idReport2]').val(response.data.id);
+                        $('input[name=idReport3]').val(response.data.id);
+                        $('input[name=idReport4]').val(response.data.id);
+
+                        loadHD(response.data.id);
+
+                        //---------PKD
+                        $('input[name=doanhSoThang]').val(response.data.doanhSoThang);
+                        $('input[name=thiPhanThang]').val(response.data.thiPhanThang);
+                        if (response.ds == 1)
+                            $('input[name=doanhSoThang]').prop('readonly', true);
+                        if (response.tp == 1)
+                            $('input[name=thiPhanThang]').prop('readonly', true);
+
+                        $('input[name=xuatHoaDon]').val(response.data.xuatHoaDon);
+                        $('input[name=xuatTrongTinh]').val(response.data.xuatTrongTinh);
+                        $('input[name=xuatNgoaiTinh]').val(response.data.xuatNgoaiTinh);
+                        $('input[name=hdHuy]').val(response.data.hdHuy);
+                        $('input[name=ctInternet]').val(response.data.ctInternet);
+                        $('input[name=ctShowroom]').val(response.data.ctShowroom);
+                        $('input[name=ctHotline]').val(response.data.ctHotline);
+                        $('input[name=ctSuKien]').val(response.data.ctSuKien);
+                        $('input[name=ctBLD]').val(response.data.ctBLD);
+                        $('input[name=saleInternet]').val(response.data.saleInternet);
+                        $('input[name=saleMoiGioi]').val(response.data.saleMoiGioi);
+                        $('input[name=saleThiTruong]').val(response.data.saleThiTruong);
+                        $('input[name=khShowRoom]').val(response.data.khShowRoom);
+
+                        //---------PDV
+                        $('input[name=baoDuong]').val(response.data.baoDuong);
+                        $('input[name=suaChua]').val(response.data.suaChua);
+                        $('input[name=dong]').val(response.data.Dong);
+                        $('input[name=son]').val(response.data.Son);
+                        $('input[name=congBaoDuong]').val(response.data.congBaoDuong);
+                        $('input[name=congSuaChuaChung]').val(response.data.congSuaChuaChung);
+                        $('input[name=congDong]').val(response.data.congDong);
+                        $('input[name=congSon]').val(response.data.congSon);
+                        $('input[name=dtPhuTung]').val(response.data.dtPhuTung);
+                        $('input[name=dtDauNhot]').val(response.data.dtDauNhot);
+                        $('input[name=dtPhuTungBan]').val(response.data.dtPhuTungBan);
+                        $('input[name=dtDauNhotBan]').val(response.data.dtDauNhotBan);
+                        $('input[name=phuTungMua]').val(response.data.phuTungMua);
+                        $('input[name=dauNhotMua]').val(response.data.dauNhotMua);
+
+                        //---------XUONG
+                        $('input[name=tonBaoDuong]').val(response.data.tonBaoDuong);
+                        $('input[name=tonSuaChuaChung]').val(response.data.tonSuaChuaChung);
+                        $('input[name=tonDong]').val(response.data.tonDong);
+                        $('input[name=tonSong]').val(response.data.tonSong);
+                        $('input[name=tiepNhanBaoDuong]').val(response.data.tiepNhanBaoDuong);
+                        $('input[name=tiepNhanSuaChuaChung]').val(response.data.tiepNhanSuaChuaChung);
+                        $('input[name=tiepNhanDong]').val(response.data.tiepNhanDong);
+                        $('input[name=tiepNhanSon]').val(response.data.tiepNhanSon);
+                        $('input[name=hoanThanhBaoDuong]').val(response.data.hoanThanhBaoDuong);
+                        $('input[name=hoanThanhSuaChuaChung]').val(response.data.hoanThanhSuaChuaChung);
+                        $('input[name=hoanThanhDong]').val(response.data.hoanThanhDong);
+                        $('input[name=hoanThanhSon]').val(response.data.hoanThanhSon);
+
+                        //---------CSKH
+                        $('input[name=callDatHenSuccess]').val(response.data.callDatHenSuccess);
+                        $('input[name=callDatHenFail]').val(response.data.callDatHenFail);
+                        $('input[name=datHen]').val(response.data.datHen);
+                        $('input[name=dvHaiLong]').val(response.data.dvHaiLong);
+                        $('input[name=dvKhongHaiLong]').val(response.data.dvKhongHaiLong);
+                        $('input[name=dvKhongThanhCong]').val(response.data.dvKhongThanhCong);
+                        $('input[name=muaXeSuccess]').val(response.data.muaXeSuccess);
+                        $('input[name=muaXeFail]').val(response.data.muaXeFail);
+                        $('input[name=duyetBanLe]').val(response.data.duyetBanLe);
+                        $('input[name=knThaiDo]').val(response.data.knThaiDo);
+                        $('input[name=knChatLuong]').val(response.data.knChatLuong);
+                        $('input[name=knThoiGian]').val(response.data.knThoiGian);
+                        $('input[name=knVeSinh]').val(response.data.knVeSinh);
+                        $('input[name=knGiaCa]').val(response.data.knGiaCa);
+                        $('input[name=knKhuyenMai]').val(response.data.knKhuyenMai);
+                        $('input[name=knDatHen]').val(response.data.knDatHen);
+                        $('input[name=knTraiNghiem]').val(response.data.knTraiNghiem);
+                        $('input[name=knTraiNghiem]').val(response.data.knTraiNghiem);
+
+                        //---------MKT
+                        $('input[name=khBanGiao]').val(response.data.khBanGiao);
+                        $('input[name=khSuKien]').val(response.data.khSuKien);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi máy chủ!"
+                        })
+                    }
+                });
+            }
+
+            function loadHD(id) {
+                /// load hợp đồng xe
+                $.ajax({
+                    url: 'management/report/loadaddcar/' + id,
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#showCar').html(response);
+
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi máy chủ!"
+                        })
+                    }
+                });
+            }
+
+            load();
+            // Khởi tạo report mẫu
+            $('#khoiTao').click(function(){
+                if(confirm("Bạn có chắc muốn khởi tạo báo cáo?\nLưu ý: Thời gian khởi tạo sẽ bằng với thời gian bắt đầu báo cáo")) {
+                    $.ajax({
+                        url: "{{url('management/report/khoitao')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: " " + response.message
+                            })
+                            setTimeout(load, 2000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Lỗi! Không thể khởi tạo báo cáo!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            // Lưu report
+            $('#saveReport').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/report/save')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#reportForm").serialize(),
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        setTimeout(load, 2000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi! Không thể lưu report!"
+                        })
+                    }
+                });
+            });
+
+            // Lưu hợp đồng xe
+            $('#btnAddCar').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/report/addcar')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idReport": $("input[name=idReport]").val(),
+                        "soLuong": $("input[name=soLuong]").val(),
+                        "typeCar": $("select[name=dongXe]").val()
+                    },
+                    success: function(response) {
+                        $("input[name=soLuong]").val(null);
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#addCar").modal('hide');
+                        setTimeout(load, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi! Không thể lưu hợp đồng chi tiết!"
+                        })
+                    }
+                });
+            });
+
+            // Delete hợp đồng xe chi tiết
+            $(document).on('click','#delCar', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/report/deletecar/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message
+                            })
+                            setTimeout(load, 1000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa!"
+                            })
+                        }
+                    });
+                }
+            });
+        });
+
 
     </script>
 @endsection

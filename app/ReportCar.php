@@ -12,4 +12,8 @@ class ReportCar extends Model
     public function report() {
         return $this->belongsTo('App\Report', 'id_report', 'id');
     }
+
+    public function typeCar() {
+        return $this->belongsTo('App\TypeCar', 'dongXe', 'id');
+    }
 }

@@ -260,8 +260,8 @@
                 -->
 
                 <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                         \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                         \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
                         <li class="nav-item">
                             <a href="{{route("report")}}" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -274,8 +274,8 @@
                     @endif
                 </li>
                 <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                         \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                         \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-binoculars"></i>
                             <p>
@@ -285,7 +285,7 @@
                         </a>
                     @endif
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('watch') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                             <li class="nav-item">
                                 <a href="{{route("package.list")}}" class="nav-link">

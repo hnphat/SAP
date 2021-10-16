@@ -15,10 +15,12 @@ class ReportCar extends Migration
     {
         Schema::create('report_car', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('ngayTao')->nullable();
             $table->integer('id_report')->unsigned();
             $table->foreign('id_report')->references('id')->on('report');
             $table->integer('soLuong');
-            $table->string('dongXe');
+            $table->integer('dongXe')->unsigned();
+            $table->foreign('dongXe')->references('id')->on('type_car');
             $table->timestamps();
         });
     }
