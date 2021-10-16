@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Report;
+use App\ReportNhap;
+use App\ReportWork;
 use App\ReportCar;
+use App\ReportXuat;
 use App\TypeCar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -276,6 +279,211 @@ class ReportController extends Controller
     public function deleteCar(Request $request) {
         $reportCar = ReportCar::where('id', $request->id)->delete();
         if($reportCar) {
+            return response()->json([
+                'message' => 'Đã xóa!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addWork(Request $request) {
+        $reportWork = new ReportWork();
+        $reportWork->id_report = $request->idReport;
+        $reportWork->tenCongViec = $request->tenCongViec;
+        $reportWork->tienDo = $request->tienDo;
+        $reportWork->deadLine = $request->deadLine;
+        $reportWork->type = "cv";
+        $reportWork->ketQua = $request->ketQua;
+        $reportWork->ghiChu = $request->ghiChu;
+        $reportWork->save();
+        if($reportWork) {
+            return response()->json([
+                'type' => 'success',
+                'message' => " Đã thêm công việc",
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => " Không thể thêm công việc",
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function loadWork($id) {
+        $i = 1;
+        $reportWork = ReportWork::where('id_report', $id)->get();
+        echo "<table class='table table-striped'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>";
+                foreach ($reportWork as $row) {
+                    echo "<tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->tenCongViec."</td>
+                                        <td>".$row->tienDo."%</td>
+                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
+                                        <td>".$row->ketQua."</td>
+                                        <td>".$row->ghiChu."</td>
+                                        <td>
+                                            <button id='delWork' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
+                                        </td>
+                                    </tr>";
+                }
+        echo "</table>";
+    }
+
+    public function deleteWork(Request $request) {
+        $reportWork = ReportWork::where('id', $request->id)->delete();
+        if($reportWork) {
+            return response()->json([
+                'message' => 'Đã xóa!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addNhap(Request $request) {
+        $reportNhap = new ReportNhap();
+        $reportNhap->id_report = $request->idReport;
+        $reportNhap->nhaCungCap = $request->nhaCungCap;
+        $reportNhap->hanMuc = $request->hanMuc;
+        $reportNhap->soLuong = $request->soLuong;
+        $reportNhap->tongTon = $request->tongTon;
+        $reportNhap->ghiChu = $request->ghiChu;
+        $reportNhap->save();
+        if($reportNhap) {
+            return response()->json([
+                'type' => 'success',
+                'message' => " Đã nhập kho",
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => " Không thể nhập kho",
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function loadNhap($id) {
+        $i = 1;
+        $reportNhap = ReportNhap::where('id_report', $id)->get();
+        echo "<table class='table table-striped'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Nhà cung cấp</th>
+                                        <th>Hạn mục</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng tồn</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>";
+                foreach($reportNhap as $row) {
+                    echo " <tr>
+                                <td>".$i++."</td>
+                                <td>".$row->nhaCungCap."</td>
+                                <td>".$row->hanMuc."</td>
+                                <td>".$row->soLuong."</td>
+                                <td>".$row->tongTon."</td>
+                                <td>".$row->ghiChu."</td>
+                                <td>
+                                    <button id='delNhap' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
+                                </td>
+                            </tr>";
+                }
+        echo "</table>";
+    }
+
+    public function deleteNhap(Request $request) {
+        $reportNhap = ReportNhap::where('id', $request->id)->delete();
+        if($reportNhap) {
+            return response()->json([
+                'message' => 'Đã xóa!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addXuat(Request $request) {
+        $reportXuat = new ReportXuat();
+        $reportXuat->id_report = $request->idReport;
+        $reportXuat->tenNhanVien = $request->tenNhanVien;
+        $reportXuat->hanMuc = $request->hanMuc;
+        $reportXuat->soLuong = $request->soLuong;
+        $reportXuat->tongTon = $request->tongTon;
+        $reportXuat->ghiChu = $request->ghiChu;
+        $reportXuat->save();
+        if($reportXuat) {
+            return response()->json([
+                'type' => 'success',
+                'message' => " Đã xuất kho",
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => " Không thể xuất kho",
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function loadXuat($id) {
+        $i = 1;
+        $reportXuat = ReportXuat::where('id_report', $id)->get();
+        echo "<table class='table table-striped'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên nhân viên</th>
+                                        <th>Hạn mục</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng tồn</th>
+                                        <th>Ghi chú</th>
+                                        <th>Hành động</th>
+                                    </tr>";
+                      foreach ($reportXuat as $row) {
+                          echo " <tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->tenNhanVien."</td>
+                                        <td>".$row->hanMuc."</td>
+                                        <td>".$row->soLuong."</td>
+                                        <td>".$row->tongTon."</td>
+                                        <td>".$row->ghiChu."</td>
+                                        <td>
+                                            <button id='delXuat' data-id='".$row->id."' type='button'  class='btn btn-danger btn-sm'>Xóa</button>
+                                        </td>
+                                    </tr>";
+                      }
+        echo "</table>";
+    }
+
+    public function deleteXuat(Request $request) {
+        $reportXuat = ReportXuat::where('id', $request->id)->delete();
+        if($reportXuat) {
             return response()->json([
                 'message' => 'Đã xóa!',
                 'code' => 200

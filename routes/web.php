@@ -212,5 +212,20 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('loadaddcar/{id}','ReportController@loadAddCar')->name('add.car.load');
         Route::post('deletecar','ReportController@deleteCar')->name('add.car.delete');
 
+        //--- thêm công việc
+        Route::post('addwork','ReportController@addWork')->name('add.work');
+        Route::get('loadwork/{id}','ReportController@loadWork')->name('add.work.load');
+        Route::post('deletework','ReportController@deleteWork')->name('add.work.delete');
+
+        //--- nhập kho
+        Route::post('addnhap','ReportController@addNhap')->name('add.nhap');
+        Route::get('loadnhap/{id}','ReportController@loadNhap')->name('add.nhap.load');
+        Route::post('deletenhap','ReportController@deleteNhap')->name('add.nhap.delete');
+
+        //--- xuất kho
+        Route::post('addxuat','ReportController@addXuat')->name('add.xuat');
+        Route::get('loadxuat/{id}','ReportController@loadXuat')->name('add.xuat.load');
+        Route::post('deletexuat','ReportController@deleteXuat')->name('add.xuat.delete');
+
     });
 });

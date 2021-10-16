@@ -481,28 +481,7 @@
                             <button type="button" data-toggle="modal" data-target="#addNhap" class="btn btn-success">Thêm</button>
                             <br><br>
                             <div id="showNhap" class="table-responsive">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Nhà cung cấp</th>
-                                        <th>Hạn mục</th>
-                                        <th>Số lượng</th>
-                                        <th>Tổng tồn</th>
-                                        <th>Ghi chú</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>T&D</td>
-                                        <td>VPP</td>
-                                        <td>10</td>
-                                        <td>0</td>
-                                        <td></td>
-                                        <td>
-                                            <button class="btn btn-danger btn-sm">Xóa</button>
-                                        </td>
-                                    </tr>
-                                </table>
+
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -530,8 +509,9 @@
                                                 <div class="form-group">
                                                     <label>Hạn mục</label>
                                                     <select name="hanMuc" class="form-control">
-                                                        <option value="">VPP</option>
-                                                        <option value="">Covid</option>
+                                                        <option value="VPP">VPP</option>
+                                                        <option value="Vệ sinh">Vệ sinh</option>
+                                                        <option value="Covid">Covid</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -568,28 +548,7 @@
                             <button type="button" data-toggle="modal" data-target="#addXuat" class="btn btn-success">Thêm</button>
                             <br><br>
                             <div id="showXuat" class="table-responsive">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên nhân viên</th>
-                                        <th>Hạn mục</th>
-                                        <th>Số lượng</th>
-                                        <th>Tổng tồn</th>
-                                        <th>Ghi chú</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Nguyễn Hải Đăng</td>
-                                        <td>VPP</td>
-                                        <td>10</td>
-                                        <td>0</td>
-                                        <td></td>
-                                        <td>
-                                            <button class="btn btn-danger btn-sm">Xóa</button>
-                                        </td>
-                                    </tr>
-                                </table>
+
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -617,21 +576,22 @@
                                                 <div class="form-group">
                                                     <label>Hạn mục</label>
                                                     <select name="hanMuc" class="form-control">
-                                                        <option value="">VPP</option>
-                                                        <option value="">Covid</option>
+                                                        <option value="VPP">VPP</option>
+                                                        <option value="Vệ sinh">Vệ sinh</option>
+                                                        <option value="Covid">Covid</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Số lượng</label>
-                                                    <input name="soLuong" type="number" class="form-control">
+                                                    <input name="soLuong2" type="number" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Tổng tồn</label>
-                                                    <input name="tongTon" type="number" class="form-control">
+                                                    <input name="tongTon2" type="number" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ghi chú</label>
-                                                    <input name="ghiChu" type="text" class="form-control">
+                                                    <input name="ghiChu2" type="text" class="form-control">
                                                 </div>
                                             </div>
                                         </form>
@@ -656,30 +616,7 @@
                             <button type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button>
                             <br><br>
                             <div id="showCV" class="table-responsive">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Loại</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                        <th>Hành động</th>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Mua cơm cháy chiên</td>
-                                        <td>100%</td>
-                                        <td>Công việc</td>
-                                        <td>15/10/2021</td>
-                                        <td>Hoàn thành</td>
-                                        <td></td>
-                                        <td>
-                                            <button class="btn btn-danger btn-sm">Xóa</button>
-                                        </td>
-                                    </tr>
-                                </table>
+
                             </div>
                         </div>
                         <!-- /.card-body -->
@@ -788,6 +725,9 @@
                         $('input[name=idReport4]').val(response.data.id);
 
                         loadHD(response.data.id);
+                        loadWork(response.data.id);
+                        loadNhap(response.data.id);
+                        loadXuat(response.data.id);
 
                         //---------PKD
                         $('input[name=doanhSoThang]').val(response.data.doanhSoThang);
@@ -893,6 +833,58 @@
                 });
             }
 
+            function loadWork(id) {
+                /// load hợp đồng xe
+                $.ajax({
+                    url: 'management/report/loadwork/' + id,
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#showCV').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi máy chủ!"
+                        })
+                    }
+                });
+            }
+            function loadNhap(id) {
+                /// load hợp đồng xe
+                $.ajax({
+                    url: 'management/report/loadnhap/' + id,
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#showNhap').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi máy chủ!"
+                        })
+                    }
+                });
+            }
+            function loadXuat(id) {
+                /// load xuất
+                $.ajax({
+                    url: 'management/report/loadxuat/' + id,
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#showXuat').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi máy chủ!"
+                        })
+                    }
+                });
+            }
+
             load();
             // Khởi tạo report mẫu
             $('#khoiTao').click(function(){
@@ -981,6 +973,198 @@
                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
                         url: "{{url('management/report/deletecar/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message
+                            })
+                            setTimeout(load, 1000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            // Lưu công việc
+            $('#btnAddWork').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/report/addwork')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idReport": $("input[name=idReport4]").val(),
+                        "tenCongViec": $("input[name=tenCongViec]").val(),
+                        "deadLine": $("input[name=deadLine]").val(),
+                        "tienDo": $("input[name=tienDo]").val(),
+                        "ketQua": $("input[name=ketQua]").val(),
+                        "ghiChu": $("input[name=ghiChu]").val()
+                    },
+                    success: function(response) {
+                        $("input[name=tenCongViec]").val(null);
+                        $("input[name=deadLine]").val(null);
+                        $("input[name=ketQua]").val(null);
+                        $("input[name=ghiChu]").val(null);
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#addWork").modal('hide');
+                        setTimeout(load, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi! Không thể lưu công việc!"
+                        })
+                    }
+                });
+            });
+
+            // Delete công việc
+            $(document).on('click','#delWork', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/report/deletework/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message
+                            })
+                            setTimeout(load, 1000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            // Nhập kho
+            $('#btnAddNhap').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/report/addnhap')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idReport": $("input[name=idReport2]").val(),
+                        "nhaCungCap": $("input[name=nhaCungCap]").val(),
+                        "hanMuc": $("select[name=hanMuc]").val(),
+                        "soLuong": $("input[name=soLuong]").val(),
+                        "tongTon": $("input[name=tongTon]").val(),
+                        "ghiChu": $("input[name=ghiChu]").val()
+                    },
+                    success: function(response) {
+                        $("input[name=soLuong]").val(null);
+                        $("input[name=nhaCungCap").val(null);
+                        $("input[name=tongTon]").val(null);
+                        $("input[name=ghiChu]").val(null);
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#addNhap").modal('hide');
+                        setTimeout(load, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi! Không thể lưu nhập kho!"
+                        })
+                    }
+                });
+            });
+            // Delete nhập kho
+            $(document).on('click','#delNhap', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/report/deletenhap/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message
+                            })
+                            setTimeout(load, 1000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa!"
+                            })
+                        }
+                    });
+                }
+            });
+            // Xuất kho
+            $('#btnAddXuat').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/report/addxuat')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idReport": $("input[name=idReport3]").val(),
+                        "tenNhanVien": $("input[name=tenNhanVien]").val(),
+                        "hanMuc": $("select[name=hanMuc]").val(),
+                        "soLuong": $("input[name=soLuong2]").val(),
+                        "tongTon": $("input[name=tongTon2]").val(),
+                        "ghiChu": $("input[name=ghiChu2]").val()
+                    },
+                    success: function(response) {
+                        $("input[name=tenNhanVien]").val(null);
+                        $("input[name=soLuong2]").val(null);
+                        $("input[name=tongTon2]").val(null);
+                        $("input[name=ghiChu2]").val(null);
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#addXuat").modal('hide');
+                        setTimeout(load, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi! Không thể lưu xuất kho!"
+                        })
+                    }
+                });
+            });
+            // Delete xuất kho
+            $(document).on('click','#delXuat', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/report/deletexuat/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
