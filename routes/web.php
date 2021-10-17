@@ -231,5 +231,24 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'overview'], function(){
         Route::get('list','ReportController@overviewList')->name('overview.list');
+        //-- pkd
+        Route::get('getpkd/{_date}','ReportController@getPKD');
+        Route::get('getpkdall/{_month}','ReportController@getPKDAll');
+
+        //-- pdv
+        Route::get('getpdv/{_date}','ReportController@getPDV');
+        Route::get('getpdvall/{_month}','ReportController@getPDVAll');
+
+        //-- xuong
+        Route::get('getxuong/{_date}','ReportController@getXuong');
+        Route::get('getxuongall/{_month}','ReportController@getXuongAll');
+
+        //-- cskh
+        Route::get('getcskh/{_date}','ReportController@getCSKH');
+        Route::get('getcskhall/{_month}','ReportController@getCSKHAll');
+
+        //-- hcns
+        Route::get('gethcns/{_date}','ReportController@getHCNS');
+        Route::get('gethcnsall/{_month}','ReportController@getHCNSAll');
     });
 });

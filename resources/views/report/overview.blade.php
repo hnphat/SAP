@@ -45,38 +45,49 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
-                        <form id="xemNgay">
+                        <form id="phongBan">
                             <div class="form-group">
-                                <select id="phongBan" name="phongBan" class="form-control">
-                                    <option value="" selected="selected">Chọn phòng ban</option>
+                                <select name="chonPhong" id="chonPhong" class="form-control">
                                     <option value="pkd">Phòng kinh doanh</option>
                                     <option value="pdv">Phòng dịch vụ</option>
-                                </select> 
+                                    <option value="xuong">Xưởng</option>
+                                    <option value="mkt">Marketing</option>
+                                    <option value="cskh">CSKH</option>
+                                    <option value="hcns">Hành chính - Nhân sự</option>
+                                    <option value="it">IT</option>
+                                    <option value="ptdl">Phát triển đại lý</option>
+                                </select>
                             </div>
                         </form>
                     </div>
                     <div class="col-md-4">
                         <form id="xemNgay">
-                            <div class="form-group">
-                                <label>Ngày: </label>
-                                <input type="date" name="chonNgay" value="<?php echo Date('Y-m-d');?>" class=="form-control">
-                                <button id="watchDay" class="btn btn-success">Xem</button>      
+                            <div class="form-group row">
+                                <div class="col-8">
+                                    <input type="date" name="chonNgay" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" id="watchDay" class="btn btn-success">Xem</button>
+                                </div>
                             </div>
                         </form>
                     </div>
                     <div class="col-md-4">
                         <form id="xemThang">
-                            <div class="form-group">
-                                <label>Tháng: </label>
-                                <input type="month" name="chonThang" value="<?php echo Date('Y-m');?>" class=="form-control">
-                                <button id="watchMonth" class="btn btn-success">Xem</button>      
+                            <div class="form-group row">
+                                <div class="col-8">
+                                    <input type="month" name="chonThang" value="<?php echo Date('Y-m');?>" class="form-control">
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" id="watchMonth" class="btn btn-success">Xem</button>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <div class="row" id="show">
-                    
+                <div class="container" id="show">
+
                 </div>
             </div>
         </div>
@@ -109,7 +120,92 @@
             timer: 3000
         });
         $(document).ready(function(){
-
+            $("#watchDay").click(function(){
+                let url = "";
+                switch ($("select[name=chonPhong]").val()) {
+                    case "pkd": {
+                        url = "management/overview/getpkd/";
+                    } break;
+                    case "pdv": {
+                        url = "management/overview/getpdv/";
+                    } break;
+                    case "xuong": {
+                        url = "management/overview/getxuong/";
+                    } break;
+                    case "mkt": {
+                        url = "management/overview/getmkt/";
+                    } break;
+                    case "cskh": {
+                        url = "management/overview/getcskh/";
+                    } break;
+                    case "hcns": {
+                        url = "management/overview/gethcns/";
+                    } break;
+                    case "it": {
+                        url = "management/overview/getit/";
+                    } break;
+                    case "ptdl": {
+                        url = "management/overview/getptdl/";
+                    } break;
+                }
+                $.ajax({
+                    url: url + $('input[name=chonNgay]').val(),
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#show').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy báo cáo!"
+                        })
+                    }
+                });
+            });
+            $("#watchMonth").click(function(){
+                let url = "";
+                switch ($("select[name=chonPhong]").val()) {
+                    case "pkd": {
+                        url = "management/overview/getpkdall/";
+                    } break;
+                    case "pdv": {
+                        url = "management/overview/getpdvall/";
+                    } break;
+                    case "xuong": {
+                        url = "management/overview/getxuongall/";
+                    } break;
+                    case "mkt": {
+                        url = "management/overview/getmktall/";
+                    } break;
+                    case "cskh": {
+                        url = "management/overview/getcskhall/";
+                    } break;
+                    case "hcns": {
+                        url = "management/overview/gethcnsall/";
+                    } break;
+                    case "it": {
+                        url = "management/overview/getitall/";
+                    } break;
+                    case "ptdl": {
+                        url = "management/overview/getptdlall/";
+                    } break;
+                }
+                $.ajax({
+                    url: url + $('input[name=chonThang]').val(),
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#show').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy báo cáo!"
+                        })
+                    }
+                });
+            });
         });
     </script>
 @endsection

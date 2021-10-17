@@ -258,86 +258,32 @@
                     </ul>
                 </li>
                 -->
-
-                <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                          \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
-                        <li class="nav-item">
-                            <a href="{{route("report")}}" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>
-                                    <strong>BÁO CÁO NGÀY</strong>
-{{--                                    <span class="right badge badge-danger">New</span>--}}
-                                </p>
-                            </a>
-                        </li>
-                    @endif
-                </li>
                 <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                         \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-binoculars"></i>
-                            <p>
-                                <strong>BÁO CÁO TỔNG</strong>
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                    @endif
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-binoculars"></i>
+                        <p>
+                            <strong>BÁO CÁO</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('watch') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            <li class="nav-item">
+                                <a href="{{route("report")}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Báo cáo ngày</p>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{{route("overview.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Phòng Kinh Doanh</p>
+                                    <p>Báo cáo tổng</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Phòng Dịch Vụ</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Xưởng</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Marketing</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>CSKH</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Hành chính - Nhân sự</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>IT</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Phát triển đại lý</p>
-                                </a>
-                            </li>
-                        @endif
                     </ul>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>

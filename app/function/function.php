@@ -114,6 +114,12 @@ class HelpFunction {
         }
     }
 
+    public static function revertMonth($date = '2020-01') {
+        if ($date == null) return "";
+        $arr = explode('-', $date);
+        return $arr[1] . '-' . $arr[0];
+    }
+
     public static function revertDate($date = '2020-01-01') {
         if ($date == null) return "";
         $arr = explode('-', $date);

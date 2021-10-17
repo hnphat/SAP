@@ -771,7 +771,7 @@
                         $('input[name=tonBaoDuong]').val(response.data.tonBaoDuong);
                         $('input[name=tonSuaChuaChung]').val(response.data.tonSuaChuaChung);
                         $('input[name=tonDong]').val(response.data.tonDong);
-                        $('input[name=tonSong]').val(response.data.tonSong);
+                        $('input[name=tonSong]').val(response.data.tonSon);
                         $('input[name=tiepNhanBaoDuong]').val(response.data.tiepNhanBaoDuong);
                         $('input[name=tiepNhanSuaChuaChung]').val(response.data.tiepNhanSuaChuaChung);
                         $('input[name=tiepNhanDong]').val(response.data.tiepNhanDong);
@@ -1079,7 +1079,7 @@
                     },
                     success: function(response) {
                         $("input[name=soLuong]").val(null);
-                        $("input[name=nhaCungCap").val(null);
+                        $("input[name=nhaCungCap]").val(null);
                         $("input[name=tongTon]").val(null);
                         $("input[name=ghiChu]").val(null);
                         Toast.fire({
