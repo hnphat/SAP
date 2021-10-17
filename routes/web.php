@@ -202,7 +202,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::get('xang/{id}', 'LaiThuController@inXang')->name('xang.in');
 
-    Route::group(['prefix' => 'report'], function(){
+    Route::group(['prefix' => 'report', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@showReport')->name('report');
         Route::post('khoitao','ReportController@khoiTao')->name('report.init');
         Route::get('load','ReportController@loadReport')->name('report.load');
@@ -229,7 +229,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     });
 
-    Route::group(['prefix' => 'overview'], function(){
+    Route::group(['prefix' => 'overview', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@overviewList')->name('overview.list');
         //-- pkd
         Route::get('getpkd/{_date}','ReportController@getPKD');

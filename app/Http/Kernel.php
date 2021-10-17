@@ -78,5 +78,6 @@ class Kernel extends HttpKernel
         'f_role' => \App\Http\Middleware\RoleMiddleWare::class,
         'f_roleuser' => \App\Http\Middleware\RoleUserMiddleWare::class,
         'f_typecar' => \App\Http\Middleware\TypeCarMiddleWare::class,
+        'f_report' => \App\Http\Middleware\ReportMiddleWare::class,
     ];
 }
