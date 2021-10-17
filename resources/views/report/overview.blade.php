@@ -48,14 +48,54 @@
                         <form id="phongBan">
                             <div class="form-group">
                                 <select name="chonPhong" id="chonPhong" class="form-control">
-                                    <option value="pkd">Phòng kinh doanh</option>
-                                    <option value="pdv">Phòng dịch vụ</option>
-                                    <option value="xuong">Xưởng</option>
-                                    <option value="mkt">Marketing</option>
-                                    <option value="cskh">CSKH</option>
-                                    <option value="hcns">Hành chính - Nhân sự</option>
-                                    <option value="it">IT</option>
-                                    <option value="ptdl">Phát triển đại lý</option>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                                        <option value="pkd">Phòng kinh doanh</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv'))
+                                        <option value="pdv">Phòng dịch vụ</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('xuong'))
+                                        <option value="xuong">Xưởng</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
+                                        <option value="mkt">Marketing</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('cskh'))
+                                        <option value="cskh">CSKH</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
+                                        <option value="hcns">Hành chính - Nhân sự</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('it'))
+                                        <option value="it">IT</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('drp'))
+                                        <option value="ptdl">Phát triển đại lý</option>
+                                    @endif
                                 </select>
                             </div>
                         </form>

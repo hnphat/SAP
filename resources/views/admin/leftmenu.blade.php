@@ -258,9 +258,10 @@
                     </ul>
                 </li>
                 -->
-                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                         \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
                 <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('report') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-binoculars"></i>
                         <p>
@@ -268,22 +269,29 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
                             <li class="nav-item">
                                 <a href="{{route("report")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Báo cáo ngày</p>
                                 </a>
                             </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
                             <li class="nav-item">
                                 <a href="{{route("overview.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Báo cáo tổng</p>
                                 </a>
                             </li>
+                        @endif
                     </ul>
                 </li>
-                @endif
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
