@@ -120,6 +120,7 @@
                             </table>
                         </div>
                         <div class="tab-pane fade show" id="so-01" role="tabpanel" aria-labelledby="so-01-tab">
+                            <div class="table-responsive">
                             <table id="dataTable2" class="table table-bordered table-striped">
                                 <thead>
                                 <tr class="bg-gradient-lightblue">
@@ -171,6 +172,7 @@
                                 @endforeach
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>

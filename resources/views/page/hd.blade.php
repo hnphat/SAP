@@ -171,21 +171,23 @@
                                 </form>
                             </div>
                             <div class="tab-pane fade" id="so-01" role="tabpanel" aria-labelledby="so-01-tab">
-                                <table id="dataTableCode" class="display" style="width:100%">
-                                    <thead>
-                                    <tr class="bg-gradient-lightblue">
-                                        <th>TT</th>
-                                        <th>Ngày</th>
-                                        <th>Mã hợp đồng</th>
-                                        <th>Khách hàng</th>
-                                        <th>Xe bán</th>
-                                        <th>Giá</th>
-                                        <th>Cọc</th>
-                                        <th>Admin duyệt</th>
-                                        <th>Quản lý duyệt</th>
-                                    </tr>
-                                    </thead>
-                                </table>
+                                <div class="table-responsive">
+                                    <table id="dataTableCode" class="display" style="width:100%">
+                                        <thead>
+                                        <tr class="bg-gradient-lightblue">
+                                            <th>TT</th>
+                                            <th>Ngày</th>
+                                            <th>Mã hợp đồng</th>
+                                            <th>Khách hàng</th>
+                                            <th>Xe bán</th>
+                                            <th>Giá</th>
+                                            <th>Cọc</th>
+                                            <th>Admin duyệt</th>
+                                            <th>Quản lý duyệt</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="so-02" role="tabpanel" aria-labelledby="so-02-tab">
                                 <div>
@@ -278,21 +280,23 @@
                                 </h4>
                             </div>
                             <div class="tab-pane fade" id="so-03" role="tabpanel" aria-labelledby="so-03-tab">
-                                <table id="dataTableCodeWait" class="display" style="width:100%">
-                                    <thead>
-                                    <tr class="bg-gradient-lightblue">
-                                        <th>TT</th>
-                                        <th>Sale bán</th>
-                                        <th>Khách hàng</th>
-                                        <th>Xe bán</th>
-                                        <th>Màu sắc</th>
-                                        <th>Giá</th>
-                                        <th>Tiền cọc</th>
-                                        <th>Admin duyệt</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                    </thead>
-                                </table>
+                                <div class="table-responsive">
+                                    <table id="dataTableCodeWait" class="display" style="width:100%">
+                                        <thead>
+                                        <tr class="bg-gradient-lightblue">
+                                            <th>TT</th>
+                                            <th>Sale bán</th>
+                                            <th>Khách hàng</th>
+                                            <th>Xe bán</th>
+                                            <th>Màu sắc</th>
+                                            <th>Giá</th>
+                                            <th>Tiền cọc</th>
+                                            <th>Admin duyệt</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="so-04" role="tabpanel" aria-labelledby="so-04-tab">
                                 <form id="inForm">

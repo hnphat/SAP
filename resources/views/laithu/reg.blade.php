@@ -212,59 +212,61 @@
                             </table>
                         </div>
                         <div class="tab-pane fade show" id="so-01" role="tabpanel" aria-labelledby="so-01-tab">
-                            <table id="dataTable2" class="table table-bordered table-striped">
-                                <thead>
-                                <tr class="bg-gradient-lightblue">
-                                    <th>TT</th>
-                                    <th>Ngày đi</th>
-                                    <th>Xe</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày trả</th>
-                                    <th>Km</th>
-                                    <th>Xăng</th>
-                                    <th>Stt xe</th>
-                                    <th>Tác vụ</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($traXe as $row)
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                        $row->id_user_reg == \Illuminate\Support\Facades\Auth::user()->id)
-                                        <tr>
-                                            <td>{{$loop->iteration}}</td>
-                                            <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
-                                            <td>
-                                                @if($row->xeLaiThu !== null)
-                                                    {{$row->xeLaiThu->name}};
-                                                    {{$row->xeLaiThu->number_car}};
-                                                    {{$row->xeLaiThu->mau}}
-                                                @else
-                                                    Không
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($row->tra_allow == 1)
-                                                    <span class="btn btn-success btn-xs">Đã trả</span>
-                                                @else
-                                                    <span class="btn btn-warning btn-xs">Đang sử dụng</span>
-                                                @endif
-                                            </td>
-                                            {{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
-                                            <td>{{$row->date_return}}</td>
-                                            <td>{{$row->tra_km_current}}</td>
-                                            <td>{{$row->tra_fuel_current}}</td>
-                                            <td>{{$row->tra_car_status}}</td>
-                                            <td>
-                                                @if($row->tra_allow == false)
-                                                    <button id="tra" data-toggle="modal" data-target="#offCar" data-id="{{$row->id}}" class="btn btn-success btn-xs">Trả xe</button>
-                                                @else
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table id="dataTable2" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>TT</th>
+                                        <th>Ngày đi</th>
+                                        <th>Xe</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày trả</th>
+                                        <th>Km</th>
+                                        <th>Xăng</th>
+                                        <th>Stt xe</th>
+                                        <th>Tác vụ</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($traXe as $row)
+                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                            $row->id_user_reg == \Illuminate\Support\Facades\Auth::user()->id)
+                                            <tr>
+                                                <td>{{$loop->iteration}}</td>
+                                                <td>{{\HelpFunction::revertDate($row->date_go)}}</td>
+                                                <td>
+                                                    @if($row->xeLaiThu !== null)
+                                                        {{$row->xeLaiThu->name}};
+                                                        {{$row->xeLaiThu->number_car}};
+                                                        {{$row->xeLaiThu->mau}}
+                                                    @else
+                                                        Không
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($row->tra_allow == 1)
+                                                        <span class="btn btn-success btn-xs">Đã trả</span>
+                                                    @else
+                                                        <span class="btn btn-warning btn-xs">Đang sử dụng</span>
+                                                    @endif
+                                                </td>
+                                                {{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
+                                                <td>{{$row->date_return}}</td>
+                                                <td>{{$row->tra_km_current}}</td>
+                                                <td>{{$row->tra_fuel_current}}</td>
+                                                <td>{{$row->tra_car_status}}</td>
+                                                <td>
+                                                    @if($row->tra_allow == false)
+                                                        <button id="tra" data-toggle="modal" data-target="#offCar" data-id="{{$row->id}}" class="btn btn-success btn-xs">Trả xe</button>
+                                                    @else
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                             <!-- Medal trả xe -->
                             <div class="modal fade" id="offCar">
                                 <div class="modal-dialog modal-lg">
