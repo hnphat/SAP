@@ -250,5 +250,17 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         //-- hcns
         Route::get('gethcns/{_date}','ReportController@getHCNS');
         Route::get('gethcnsall/{_month}','ReportController@getHCNSAll');
+
+        //-- mkt
+        Route::get('getmkt/{_date}','ReportController@getMkt');
+        Route::get('getmktall/{_month}','ReportController@getMktAll');
+
+        //-- it
+        Route::get('getit/{_date}','ReportController@getIt');
+        Route::get('getitall/{_month}','ReportController@getItAll');
+
+        //-- ptdl
+        Route::get('getptdl/{_date}','ReportController@getPtdl');
+        Route::get('getptdlall/{_month}','ReportController@getPtdlAll');
     });
 });

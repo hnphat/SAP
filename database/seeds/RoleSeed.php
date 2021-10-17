@@ -53,6 +53,9 @@ class RoleSeed extends Seeder
                 'name' => 'hcns'
             ],
             [
+                'name' => 'it'
+            ],
+            [
                 'name' => 'normal'
             ],
             [

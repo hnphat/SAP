@@ -63,7 +63,6 @@ class ReportController extends Controller
             $report->type = $typeUser;
             $report->user_report = Auth::user()->id;
             $report->ngayReport = Date('d-m-Y');
-            $report->timeReport = Date('H:s:i');
             $report->doanhSoThang = ($doanhSo != 0) ? $doanhSo : null;
             $report->thiPhanThang = ($thiPhan != 0) ? $thiPhan : null;
             $report->save();
@@ -167,6 +166,7 @@ class ReportController extends Controller
             ['type','like', $typeUser]
         ])->update([
            'doanhSoThang' => $request->doanhSoThang,
+           'timeReport' => Date('H:s'),
             'thiPhanThang' => $request->thiPhanThang,
             'xuatHoaDon' => $request->xuatHoaDon,
             'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
@@ -225,12 +225,13 @@ class ReportController extends Controller
             'knDatHen' => $request->knDatHen,
             'knTraiNghiem' => $request->knTraiNghiem,
             'khBanGiao' => $request->khBanGiao,
-            'khSuKien' => $request->khSuKien
+            'khSuKien' => $request->khSuKien,
+            'clock' => true
         ]);
         if ($report) {
             return response()->json([
                 'type' => 'success',
-                'message' => ' Đã lưu báo cáo!',
+                'message' => ' Đã lưu và gửi báo cáo!',
                 'code' => 200
             ]);
         } else {
@@ -266,13 +267,20 @@ class ReportController extends Controller
 
     public function loadAddCar($id) {
         $reportCar = ReportCar::where('id_report', $id)->get();
+        $checkExist = ReportCar::where('id_report', $id)->exists();
+        if($checkExist)
+            $checkClock = $reportCar->first()->report->clock;
         echo "<table class='table table-striped'><tr>
                <th>Dòng xe</th>";
                 foreach($reportCar as $row)
                     echo "<th>".$row->typeCar->name."</th>";
             echo "</tr><tr><td><strong>Số lượng</strong></td>";
-                foreach($reportCar as $row)
-                    echo "<td>".$row->soLuong." <button type='button' id='delCar' data-id='".$row->id."' class='badge badge-danger'>Xóa</button></td>";
+                foreach($reportCar as $row) {
+                        if (!$checkClock)
+                            echo "<td>".$row->soLuong." <button type='button' id='delCar' data-id='".$row->id."' class='badge badge-danger'>Xóa</button></td>";
+                        else
+                            echo "<td>".$row->soLuong."</td>";
+                }
                 echo "</tr></table>";
     }
 
@@ -319,6 +327,9 @@ class ReportController extends Controller
     public function loadWork($id) {
         $i = 1;
         $reportWork = ReportWork::where('id_report', $id)->get();
+        $checkExist = ReportWork::where('id_report', $id)->exists();
+        if($checkExist)
+        $checkClock = $reportWork->first()->report->clock;
         echo "<table class='table table-striped'>
                                     <tr>
                                         <th>STT</th>
@@ -330,7 +341,8 @@ class ReportController extends Controller
                                         <th>Hành động</th>
                                     </tr>";
                 foreach ($reportWork as $row) {
-                    echo "<tr>
+                    if (!$checkClock)
+                        echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->tenCongViec."</td>
                                         <td>".$row->tienDo."%</td>
@@ -339,6 +351,17 @@ class ReportController extends Controller
                                         <td>".$row->ghiChu."</td>
                                         <td>
                                             <button id='delWork' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
+                                        </td>
+                                    </tr>";
+                    else
+                        echo "<tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->tenCongViec."</td>
+                                        <td>".$row->tienDo."%</td>
+                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
+                                        <td>".$row->ketQua."</td>
+                                        <td>".$row->ghiChu."</td>
+                                        <td>
                                         </td>
                                     </tr>";
                 }
@@ -387,6 +410,9 @@ class ReportController extends Controller
     public function loadNhap($id) {
         $i = 1;
         $reportNhap = ReportNhap::where('id_report', $id)->get();
+        $checkExist = ReportNhap::where('id_report', $id)->exists();
+        if($checkExist)
+        $checkClock = $reportNhap->first()->report->clock;
         echo "<table class='table table-striped'>
                                     <tr>
                                         <th>STT</th>
@@ -398,7 +424,8 @@ class ReportController extends Controller
                                         <th>Hành động</th>
                                     </tr>";
                 foreach($reportNhap as $row) {
-                    echo " <tr>
+                    if (!$checkClock)
+                        echo " <tr>
                                 <td>".$i++."</td>
                                 <td>".$row->nhaCungCap."</td>
                                 <td>".$row->hanMuc."</td>
@@ -406,7 +433,18 @@ class ReportController extends Controller
                                 <td>".$row->tongTon."</td>
                                 <td>".$row->ghiChu."</td>
                                 <td>
-                                    <button id='delNhap' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
+                                   <button id='delNhap' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
+                                </td>
+                            </tr>";
+                    else
+                        echo " <tr>
+                                <td>".$i++."</td>
+                                <td>".$row->nhaCungCap."</td>
+                                <td>".$row->hanMuc."</td>
+                                <td>".$row->soLuong."</td>
+                                <td>".$row->tongTon."</td>
+                                <td>".$row->ghiChu."</td>
+                                <td>
                                 </td>
                             </tr>";
                 }
@@ -455,6 +493,9 @@ class ReportController extends Controller
     public function loadXuat($id) {
         $i = 1;
         $reportXuat = ReportXuat::where('id_report', $id)->get();
+        $checkExist = ReportXuat::where('id_report', $id)->exists();
+        if($checkExist)
+        $checkClock = $reportXuat->first()->report->clock;
         echo "<table class='table table-striped'>
                                     <tr>
                                         <th>STT</th>
@@ -466,7 +507,8 @@ class ReportController extends Controller
                                         <th>Hành động</th>
                                     </tr>";
                       foreach ($reportXuat as $row) {
-                          echo " <tr>
+                          if (!$checkClock)
+                            echo " <tr>
                                         <td>".$i++."</td>
                                         <td>".$row->tenNhanVien."</td>
                                         <td>".$row->hanMuc."</td>
@@ -475,6 +517,17 @@ class ReportController extends Controller
                                         <td>".$row->ghiChu."</td>
                                         <td>
                                             <button id='delXuat' data-id='".$row->id."' type='button'  class='btn btn-danger btn-sm'>Xóa</button>
+                                        </td>
+                                    </tr>";
+                          else
+                              echo " <tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->tenNhanVien."</td>
+                                        <td>".$row->hanMuc."</td>
+                                        <td>".$row->soLuong."</td>
+                                        <td>".$row->tongTon."</td>
+                                        <td>".$row->ghiChu."</td>
+                                        <td>
                                         </td>
                                     </tr>";
                       }
@@ -1367,6 +1420,253 @@ class ReportController extends Controller
                 }
             }
             echo "</table></div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getMkt($_date) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', \HelpFunction::revertDate($_date)],
+            ['type','like', 'mkt']
+        ])->first();
+        if ($report !== null) {
+            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
+                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
+                <div>
+                    <h5>- KHTN bàn giao: <span class='text-success'><strong>".$report->khBanGiao."</strong></span></h5>
+                    <h5>- KHTN sự kiện: <span class='text-success'><strong>".$report->khSuKien."</strong></span></h5>
+                </div>
+                <br>
+                <h4>CÔNG VIỆC</h4>
+                <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                        <tr>
+                        <th>STT</th>
+                        <th>Tên công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        </tr>";
+            foreach ($report->reportWork as $row) {
+                echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->tenCongViec."</td>
+                            <td>".$row->tienDo."%</td>
+                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
+                            <td>".$row->ketQua."</td>
+                            <td>".$row->ghiChu."</td>
+                        </tr>";
+            }
+            echo "</table></div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getMktAll($_month) {
+        $i = 1;
+        $khBanGiao = 0;
+        $khSuKien = 0;
+        $report = Report::where([
+            ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
+            ['type','like', 'mkt']
+        ])->get();
+        if ($report !== null) {
+
+            foreach ($report as $row) {
+                $khBanGiao += $row->khBanGiao;
+                $khSuKien += $row->khSuKien;
+            }
+
+            echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
+                    <div>
+                        <h5>- KHTN bàn giao: <span class='text-success'><strong>".$khBanGiao."</strong></span></h5>
+                        <h5>- KHTN sự kiện: <span class='text-success'><strong>".$khSuKien."</strong></span></h5>
+                    </div>
+                    <h4>CÔNG VIỆC</h4>
+                    <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Ngày</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                    </tr>";
+            foreach($report as $row){
+                foreach ($row->reportWork as $row2) {
+                    echo "<tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->ngayReport."</td>
+                                        <td>".$row2->tenCongViec."</td>
+                                        <td>".$row2->tienDo."%</td>
+                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
+                                        <td>".$row2->ketQua."</td>
+                                        <td>".$row2->ghiChu."</td>
+                                    </tr>";
+                }
+            }
+            echo "</table>";
+            echo "</div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getIt($_date) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', \HelpFunction::revertDate($_date)],
+            ['type','like', 'it']
+        ])->first();
+        if ($report !== null) {
+            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
+                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
+                <br>
+                <h4>CÔNG VIỆC</h4>
+                <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                        <tr>
+                        <th>STT</th>
+                        <th>Tên công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        </tr>";
+            foreach ($report->reportWork as $row) {
+                echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->tenCongViec."</td>
+                            <td>".$row->tienDo."%</td>
+                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
+                            <td>".$row->ketQua."</td>
+                            <td>".$row->ghiChu."</td>
+                        </tr>";
+            }
+            echo "</table></div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getItAll($_month) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
+            ['type','like', 'it']
+        ])->get();
+        if ($report !== null) {
+            echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
+                    <h4>CÔNG VIỆC</h4>
+                    <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Ngày</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                    </tr>";
+            foreach($report as $row){
+                foreach ($row->reportWork as $row2) {
+                    echo "<tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->ngayReport."</td>
+                                        <td>".$row2->tenCongViec."</td>
+                                        <td>".$row2->tienDo."%</td>
+                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
+                                        <td>".$row2->ketQua."</td>
+                                        <td>".$row2->ghiChu."</td>
+                                    </tr>";
+                }
+            }
+            echo "</table>";
+            echo "</div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getPtdl($_date) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', \HelpFunction::revertDate($_date)],
+            ['type','like', 'ptdl']
+        ])->first();
+        if ($report !== null) {
+            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
+                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
+                <br>
+                <h4>CÔNG VIỆC</h4>
+                <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                        <tr>
+                        <th>STT</th>
+                        <th>Tên công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        </tr>";
+            foreach ($report->reportWork as $row) {
+                echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->tenCongViec."</td>
+                            <td>".$row->tienDo."%</td>
+                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
+                            <td>".$row->ketQua."</td>
+                            <td>".$row->ghiChu."</td>
+                        </tr>";
+            }
+            echo "</table></div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getPtdlAll($_month) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
+            ['type','like', 'ptdl']
+        ])->get();
+        if ($report !== null) {
+            echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
+                    <h4>CÔNG VIỆC</h4>
+                    <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Ngày</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                    </tr>";
+            foreach($report as $row){
+                foreach ($row->reportWork as $row2) {
+                    echo "<tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->ngayReport."</td>
+                                        <td>".$row2->tenCongViec."</td>
+                                        <td>".$row2->tienDo."%</td>
+                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
+                                        <td>".$row2->ketQua."</td>
+                                        <td>".$row2->ghiChu."</td>
+                                    </tr>";
+                }
+            }
+            echo "</table>";
+            echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }

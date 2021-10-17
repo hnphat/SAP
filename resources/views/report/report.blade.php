@@ -492,7 +492,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title">NHẬP KHO</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button id="addNhapBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -545,7 +545,7 @@
                             <h5>XUẤT KHO</h5>
                         </div>
                         <div class="card-body">
-                            <button type="button" data-toggle="modal" data-target="#addXuat" class="btn btn-success">Thêm</button>
+                            <button id="addXuatBtn" type="button" data-toggle="modal" data-target="#addXuat" class="btn btn-success">Thêm</button>
                             <br><br>
                             <div id="showXuat" class="table-responsive">
 
@@ -613,7 +613,7 @@
                             <h5>CÔNG VIỆC TRONG NGÀY</h5>
                         </div>
                         <div class="card-body">
-                            <button type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button>
+                            <button id="addWorkBtn" type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button>
                             <br><br>
                             <div id="showCV" class="table-responsive">
 
@@ -672,8 +672,7 @@
                         <!-- /.modal-dialog -->
                     </div>
                     <!-- /.modal -->
-                    <button id="saveReport" class="btn btn-info" form="reportForm">LƯU</button>
-                    <button id="sendReport" class="btn btn-warning" form="reportForm">GỬI BÁO CÁO</button>
+                    <button id="saveReport" class="btn btn-info" form="reportForm">LƯU & GỬI BÁO CÁO</button>
                 </form>
             </div>
         </div>
@@ -717,6 +716,15 @@
                             icon: response.type,
                             title: response.message
                         })
+
+                        if (response.data.clock == true) {
+                            $("#saveReport").prop("disabled", true);
+                            $("#reportForm :input").prop("disabled", true);
+                            $("#addWorkBtn").prop("disabled", true);
+                            $("#addXuatBtn").prop("disabled", true);
+                            $("#addNhapBtn").prop("disabled", true);
+                        }
+
                         $("#setTime").text(response.data.timeReport);
 
                         $('input[name=idReport]').val(response.data.id);
@@ -827,7 +835,7 @@
                     error: function() {
                         Toast.fire({
                             icon: 'warning',
-                            title: " Lỗi máy chủ!"
+                            title: " Internal Server Fail!"
                         })
                     }
                 });
@@ -888,8 +896,7 @@
             load();
             // Khởi tạo report mẫu
             $('#khoiTao').click(function(){
-                if(confirm("Bạn có chắc muốn khởi tạo báo cáo?\nLưu ý: Thời gian khởi tạo sẽ bằng với thời gian bắt đầu báo cáo")) {
-                    $.ajax({
+               $.ajax({
                         url: "{{url('management/report/khoitao')}}",
                         type: "post",
                         dataType: 'json',
@@ -910,31 +917,32 @@
                             })
                         }
                     });
-                }
             });
 
             // Lưu report
             $('#saveReport').click(function(e){
                 e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/report/save')}}",
-                    type: "post",
-                    dataType: 'json',
-                    data: $("#reportForm").serialize(),
-                    success: function(response) {
-                        Toast.fire({
-                            icon: response.type,
-                            title: " " + response.message
-                        })
-                        setTimeout(load, 2000);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Lỗi! Không thể lưu report!"
-                        })
-                    }
-                });
+                if(confirm("Bạn có chắc muốn gửi báo cáo?\nLưu ý: \n- Kiểm tra chính xác nội dung báo cáo \n- Báo cáo sau khi gửi sẽ không thể chỉnh sửa\n- Thời gian báo cáo sẽ bằng với thời gian gửi!")) {
+                    $.ajax({
+                        url: "{{url('management/report/save')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: $("#reportForm").serialize(),
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: " " + response.message
+                            })
+                            setTimeout(load, 2000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Lỗi! Không thể lưu report!"
+                            })
+                        }
+                    });
+                }
             });
 
             // Lưu hợp đồng xe
