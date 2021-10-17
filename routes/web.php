@@ -207,6 +207,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('khoitao','ReportController@khoiTao')->name('report.init');
         Route::get('load','ReportController@loadReport')->name('report.load');
         Route::post('save','ReportController@saveReport')->name('report.save');
+        Route::post('savenotsend','ReportController@saveNotSend');
         // --- thêm hợp đồng chi tiết
         Route::post('addcar','ReportController@addCar')->name('add.car');
         Route::get('loadaddcar/{id}','ReportController@loadAddCar')->name('add.car.load');

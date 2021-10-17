@@ -672,7 +672,8 @@
                         <!-- /.modal-dialog -->
                     </div>
                     <!-- /.modal -->
-                    <button id="saveReport" class="btn btn-info" form="reportForm">LƯU & GỬI BÁO CÁO</button>
+                    <button id="saveNotSend" class="btn btn-info" form="reportForm">LƯU</button>
+                    <button id="saveReport" class="btn btn-warning" form="reportForm">LƯU & GỬI BÁO CÁO</button>
                 </form>
             </div>
         </div>
@@ -718,6 +719,7 @@
                         })
 
                         if (response.data.clock == true) {
+                            $("#saveNotSend").prop("disabled", true);
                             $("#saveReport").prop("disabled", true);
                             $("#reportForm :input").prop("disabled", true);
                             $("#addWorkBtn").prop("disabled", true);
@@ -919,7 +921,31 @@
                     });
             });
 
-            // Lưu report
+            // Lưu  report
+            $('#saveNotSend').click(function(e){
+                e.preventDefault();
+                    $.ajax({
+                        url: "{{url('management/report/savenotsend')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: $("#reportForm").serialize(),
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: " " + response.message
+                            })
+                            setTimeout(load, 2000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Lỗi! Không thể lưu report!"
+                            })
+                        }
+                    });
+            });
+
+            // Lưu và gửi report
             $('#saveReport').click(function(e){
                 e.preventDefault();
                 if(confirm("Bạn có chắc muốn gửi báo cáo?\nLưu ý: \n- Kiểm tra chính xác nội dung báo cáo \n- Báo cáo sau khi gửi sẽ không thể chỉnh sửa\n- Thời gian báo cáo sẽ bằng với thời gian gửi!")) {

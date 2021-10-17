@@ -14,7 +14,6 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>SAP HYUNDAI AN GIANG</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -30,7 +29,7 @@
 
         <!-- Main content -->
         <div class="content">
-
+            <img src="{{asset('images/bg/bg.jpg')}}" alt="background" style="width: 100%; height:auto;">
         </div>
         <!-- /.content -->
     </div>

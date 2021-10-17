@@ -242,6 +242,105 @@ class ReportController extends Controller
             ]);
         }
     }
+    public function saveNotSend(Request $request) {
+        $today = Date('d-m-Y');
+        $typeUser = "";
+        if (Auth::user()->hasRole('tpkd'))
+            $typeUser = "pkd";
+        elseif (Auth::user()->hasRole('tpdv'))
+            $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('mkt'))
+            $typeUser = "mkt";
+        elseif (Auth::user()->hasRole('xuong'))
+            $typeUser = "xuong";
+        elseif (Auth::user()->hasRole('cskh'))
+            $typeUser = "cskh";
+        elseif (Auth::user()->hasRole('hcns'))
+            $typeUser = "hcns";
+        elseif (Auth::user()->hasRole('it'))
+            $typeUser = "it";
+        elseif (Auth::user()->hasRole('drp'))
+            $typeUser = "ptdl";
+
+        $report = Report::where([
+            ['ngayReport','like', $today],
+            ['type','like', $typeUser]
+        ])->update([
+           'doanhSoThang' => $request->doanhSoThang,
+            'thiPhanThang' => $request->thiPhanThang,
+            'xuatHoaDon' => $request->xuatHoaDon,
+            'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+            'xuatTrongTinh' => $request->xuatTrongTinh,
+            'hdHuy' => $request->hdHuy,
+            'ctInternet' => $request->ctInternet,
+            'ctShowroom' => $request->ctShowroom,
+            'ctHotline' => $request->ctHotline,
+            'ctSuKien' => $request->ctSuKien,
+            'ctBLD' => $request->ctBLD,
+            'saleInternet' => $request->saleInternet,
+            'saleMoiGioi' => $request->saleMoiGioi,
+            'saleThiTruong' => $request->saleThiTruong,
+            'khShowRoom' => $request->khShowRoom,
+            'baoDuong' => $request->baoDuong,
+            'suaChua' => $request->suaChua,
+            'Dong' => $request->dong,
+            'Son' => $request->son,
+            'congBaoDuong' => $request->congBaoDuong,
+            'congSuaChuaChung' => $request->congSuaChuaChung,
+            'congDong' => $request->congDong,
+            'congSon' => $request->congSon,
+            'dtPhuTung' => $request->dtPhuTung,
+            'dtDauNhot' => $request->dtDauNhot,
+            'dtPhuTungBan' => $request->dtPhuTungBan,
+            'dtDauNhotBan' => $request->dtDauNhotBan,
+            'phuTungMua' => $request->phuTungMua,
+            'dauNhotMua' => $request->dauNhotMua,
+            'tonBaoDuong' => $request->tonBaoDuong,
+            'tonSuaChuaChung' => $request->tonSuaChuaChung,
+            'tonDong' => $request->tonDong,
+            'tonSon' => $request->tonSong,
+            'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+            'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+            'tiepNhanDong' => $request->tiepNhanDong,
+            'tiepNhanSon' => $request->tiepNhanSon,
+            'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+            'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+            'hoanThanhDong' => $request->hoanThanhDong,
+            'hoanThanhSon' => $request->hoanThanhSon,
+            'callDatHenSuccess' => $request->callDatHenSuccess,
+            'callDatHenFail' => $request->callDatHenFail,
+            'datHen' => $request->datHen,
+            'dvHaiLong' => $request->dvHaiLong,
+            'dvKhongHaiLong' => $request->dvKhongHaiLong,
+            'dvKhongThanhCong' => $request->dvKhongThanhCong,
+            'muaXeSuccess' => $request->muaXeSuccess,
+            'muaXeFail' => $request->muaXeFail,
+            'duyetBanLe' => $request->duyetBanLe,
+            'knThaiDo' => $request->knThaiDo,
+            'knChatLuong' => $request->knChatLuong,
+            'knThoiGian' => $request->knThoiGian,
+            'knVeSinh' => $request->knVeSinh,
+            'knGiaCa' => $request->knGiaCa,
+            'knKhuyenMai' => $request->knKhuyenMai,
+            'knDatHen' => $request->knDatHen,
+            'knTraiNghiem' => $request->knTraiNghiem,
+            'khBanGiao' => $request->khBanGiao,
+            'khSuKien' => $request->khSuKien
+        ]);
+        if ($report) {
+            return response()->json([
+                'type' => 'success',
+                'message' => ' Đã lưu!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => ' Lỗi! Bạn phải khởi tạo báo cáo trước!',
+                'code' => 500
+            ]);
+        }
+    }
 
     public function addCar(Request $request) {
         $reportCar = new ReportCar();
@@ -558,13 +657,14 @@ class ReportController extends Controller
         $sum = 0;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'pkd']
+            ['type','like', 'pkd'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
                 <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
                 <h5>Doanh số tháng: <span class='text-blue'><strong>".$report->doanhSoThang."</strong></span></h5>
-                    <h5>Thị phần tháng: <span class='text-blue'><strong>".$report->thiPhanThang."</strong></span></h5><br>
+                    <h5>Thị phần tháng: <span class='text-blue'><strong>".$report->thiPhanThang."%</strong></span></h5><br>
                     <div class='row'>
                         <div class='col-md-8'>
                             <h4>Xuất hóa đơn</h4>
@@ -659,7 +759,8 @@ class ReportController extends Controller
 
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'pkd']
+            ['type','like', 'pkd'],
+            ['clock','=', true]
         ])->get();
 
         if ($report !== null) {
@@ -681,8 +782,8 @@ class ReportController extends Controller
 
 
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
-                    <h5>Doanh số tháng: <span class='text-blue'><strong>".$doanhSoThang."</strong></span></h5>
-                    <h5>Thị phần tháng: <span class='text-blue'><strong>".$thiPhanThang."</strong></span></h5><br>
+                    <h5>Doanh số tháng: <span class='text-blue'><strong>".$doanhSoThang." (".number_format((($xuatNgoaiTinh+$xuatTrongTinh)*100/$doanhSoThang),2)."%)</strong></span></h5>
+                    <h5>Thị phần tháng: <span class='text-blue'><strong>".$thiPhanThang."%</strong></span></h5><br>
                     <div class='row'>
                         <div class='col-md-8'>
                             <h4>Xuất hóa đơn</h4>
@@ -743,7 +844,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'pdv']
+            ['type','like', 'pdv'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -825,7 +927,8 @@ class ReportController extends Controller
         $dauNhotMua = 0;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'pdv']
+            ['type','like', 'pdv'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
             foreach ($report as $row) {
@@ -913,7 +1016,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'xuong']
+            ['type','like', 'xuong'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -986,7 +1090,8 @@ class ReportController extends Controller
         $hoanThanhSon = 0;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'xuong']
+            ['type','like', 'xuong'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
             foreach ($report as $row) {
@@ -1064,7 +1169,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'cskh']
+            ['type','like', 'cskh'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -1152,7 +1258,8 @@ class ReportController extends Controller
         $knTraiNghiem = 0;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'cskh']
+            ['type','like', 'cskh'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
             foreach ($report as $row) {
@@ -1247,7 +1354,8 @@ class ReportController extends Controller
         $k = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'hcns']
+            ['type','like', 'hcns'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -1334,7 +1442,8 @@ class ReportController extends Controller
         $k = 1;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'hcns']
+            ['type','like', 'hcns'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
@@ -1429,7 +1538,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'mkt']
+            ['type','like', 'mkt'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -1472,7 +1582,8 @@ class ReportController extends Controller
         $khSuKien = 0;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'mkt']
+            ['type','like', 'mkt'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
 
@@ -1522,7 +1633,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'it']
+            ['type','like', 'it'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -1559,7 +1671,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'it']
+            ['type','like', 'it'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
@@ -1599,7 +1712,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'ptdl']
+            ['type','like', 'ptdl'],
+            ['clock','=', true]
         ])->first();
         if ($report !== null) {
             echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
@@ -1636,7 +1750,8 @@ class ReportController extends Controller
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'ptdl']
+            ['type','like', 'ptdl'],
+            ['clock','=', true]
         ])->get();
         if ($report !== null) {
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
