@@ -228,4 +228,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('deletexuat','ReportController@deleteXuat')->name('add.xuat.delete');
 
     });
+
+    Route::group(['prefix' => 'overview'], function(){
+        Route::get('list','ReportController@overviewList')->name('overview.list');
+    });
 });

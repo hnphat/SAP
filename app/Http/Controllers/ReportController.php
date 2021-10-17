@@ -495,4 +495,8 @@ class ReportController extends Controller
             ]);
         }
     }
+
+    public function overviewList() {
+        return view('report.overview');
+    }
 }
