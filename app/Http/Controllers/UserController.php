@@ -7,9 +7,11 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use App\UsersDetail;
 
 class UserController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -148,5 +150,64 @@ class UserController extends Controller
                     <td>Xoa</td>
               </tr>";
         }
+    }
+
+    public function changePass() {
+        $user = User::find(Auth::user()->id);
+        return view('user.pass', ['user' => $user]);
+    }
+
+    public function change(Request $request) {
+        $user = User::find(Auth::user()->id);
+        if ($request->passRequest == 'on') {
+            $data = ['name' => Auth::user()->name, 'password' => $request->oldPass];
+            if (Auth::attempt($data)) {
+                if ($request->newPass == $request->newPassAgain) {
+                    if(strlen($request->newPassAgain) < 6) {
+                        return response()->json([
+                            'type' => 'warning',
+                            'message' => 'Mật khẩu mới tối thiểu 06 ký tự!',
+                            'code' => 100
+                        ]);
+                    } else {
+                        $user->password = bcrypt($request->newPassAgain);
+                    }
+                } else {
+                    return response()->json([
+                            'type' => 'warning',
+                            'message' => 'Mật khẩu mới không trùng khớp!',
+                            'code' => 100
+                    ]);
+                }
+            } else {
+                return response()->json([
+                            'type' => 'error',
+                            'message' => 'Mật khẩu cũ không đúng!',
+                            'code' => 100
+                    ]);
+            }
+        } 
+
+        $user->email = $request->email;
+        $user->save();
+        $userDetail = UsersDetail::where('id_user', Auth::user()->id)->first();
+        $userDetail->phone = $request->phone;
+        $userDetail->address = $request->address;
+        $userDetail->birthday = $request->birthday;
+        $userDetail->save();
+        if($user) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã cập nhật thông tin',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi: Không thể cập nhật!',
+                'code' => 500
+            ]);
+        }      
+        
     }
 }

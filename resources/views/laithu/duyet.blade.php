@@ -146,7 +146,7 @@
                                                 Không xác định
                                             @endif
                                         </td>
-                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>
+                                        <td>{{\HelpFunction::revertDate($row->date_go)}}</td>
                                         <td>{{$row->date_return}}</td>
                                         <td>
                                             @if($row->xeLaiThu !== null)

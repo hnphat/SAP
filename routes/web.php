@@ -30,12 +30,15 @@ Route::get('/out',function(){
 
 Route::post('/login', 'UserController@login')->name('login');
 Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
+   Route::get('user/changepass','UserController@changePass')->name('changepass.list');
+   Route::post('user/change','UserController@change')->name('change');
    Route::group(['prefix' => 'user', 'middleware' => ['f_roleuser']], function(){
         Route::get('list', 'UserController@index')->name('user.list');
         Route::get('del/{id}', 'UserController@destroy');
         Route::get('lock/{id}', 'UserController@lock');
         Route::post('create', 'UserController@store')->name('ajax.user.create');
         Route::post('update', 'UserController@update')->name('ajax.user.update');
+        Route::get('lock/{id}', 'UserController@lock');
    });
     Route::group(['prefix' => 'roles', 'middleware' => ['f_role']], function(){
         Route::get('list','RolesController@index')->name('roles.list');
