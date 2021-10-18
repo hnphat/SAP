@@ -713,10 +713,13 @@ class ReportController extends Controller
                                         <th>Ghi chú</th>
                                     </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->tenCongViec."</td>
-                                        <td>".$row->tienDo."%</td>
+                                        <td $color>".$row->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                                         <td>".$row->ketQua."</td>
                                         <td>".$row->ghiChu."</td>
@@ -822,11 +825,14 @@ class ReportController extends Controller
                                                     </tr>";
                     foreach($report as $row) {
                         foreach ($row->reportWork as $row2) {
+                            $color = "";
+                            if ($row->tienDo < 100)
+                                $color = "class='text-red text-bold'";
                             echo "<tr>
                                                 <td>" . $i++ . "</td>
                                                 <td>" . $row->ngayReport . "</td>
                                                 <td>" . $row2->tenCongViec . "</td>
-                                                <td>" . $row2->tienDo . "%</td>
+                                                <td $color>" . $row2->tienDo . "%</td>
                                                 <td>" . \HelpFunction::revertDate($row2->deadLine) . "</td>
                                                 <td>" . $row2->ketQua . "</td>
                                                 <td>" . $row2->ghiChu . "</td>
@@ -893,10 +899,13 @@ class ReportController extends Controller
                                         <th>Ghi chú</th>
                                     </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->tenCongViec."</td>
-                                        <td>".$row->tienDo."%</td>
+                                        <td $color>".$row->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                                         <td>".$row->ketQua."</td>
                                         <td>".$row->ghiChu."</td>
@@ -994,11 +1003,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
@@ -1058,10 +1070,13 @@ class ReportController extends Controller
                                         <th>Ghi chú</th>
                                     </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->tenCongViec."</td>
-                                        <td>".$row->tienDo."%</td>
+                                        <td $color>".$row->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                                         <td>".$row->ketQua."</td>
                                         <td>".$row->ghiChu."</td>
@@ -1147,11 +1162,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
@@ -1221,10 +1239,13 @@ class ReportController extends Controller
                                         <th>Ghi chú</th>
                                     </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->tenCongViec."</td>
-                                        <td>".$row->tienDo."%</td>
+                                        <td $color>".$row->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                                         <td>".$row->ketQua."</td>
                                         <td>".$row->ghiChu."</td>
@@ -1330,11 +1351,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
@@ -1373,10 +1397,13 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                         </tr>";
                             foreach ($report->reportWork as $row) {
+                                $color = "";
+                                if ($row->tienDo < 100)
+                                    $color = "class='text-red text-bold'";
                             echo "<tr>
                             <td>".$i++."</td>
                             <td>".$row->tenCongViec."</td>
-                            <td>".$row->tienDo."%</td>
+                            <td $color>".$row->tienDo."%</td>
                             <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                             <td>".$row->ketQua."</td>
                             <td>".$row->ghiChu."</td>
@@ -1461,11 +1488,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
@@ -1561,10 +1591,13 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                         </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                             <td>".$i++."</td>
                             <td>".$row->tenCongViec."</td>
-                            <td>".$row->tienDo."%</td>
+                            <td $color>".$row->tienDo."%</td>
                             <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                             <td>".$row->ketQua."</td>
                             <td>".$row->ghiChu."</td>
@@ -1611,11 +1644,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
@@ -1652,10 +1688,13 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                         </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                             <td>".$i++."</td>
                             <td>".$row->tenCongViec."</td>
-                            <td>".$row->tienDo."%</td>
+                            <td $color>".$row->tienDo."%</td>
                             <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                             <td>".$row->ketQua."</td>
                             <td>".$row->ghiChu."</td>
@@ -1690,11 +1729,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
@@ -1731,10 +1773,13 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                         </tr>";
             foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
                 echo "<tr>
                             <td>".$i++."</td>
                             <td>".$row->tenCongViec."</td>
-                            <td>".$row->tienDo."%</td>
+                            <td $color>".$row->tienDo."%</td>
                             <td>".\HelpFunction::revertDate($row->deadLine)."</td>
                             <td>".$row->ketQua."</td>
                             <td>".$row->ghiChu."</td>
@@ -1769,11 +1814,14 @@ class ReportController extends Controller
                                     </tr>";
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row->tienDo < 100)
+                        $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
                                         <td>".$row->ngayReport."</td>
                                         <td>".$row2->tenCongViec."</td>
-                                        <td>".$row2->tienDo."%</td>
+                                        <td $color>".$row2->tienDo."%</td>
                                         <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
                                         <td>".$row2->ketQua."</td>
                                         <td>".$row2->ghiChu."</td>
