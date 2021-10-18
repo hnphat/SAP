@@ -826,7 +826,7 @@ class ReportController extends Controller
                     foreach($report as $row) {
                         foreach ($row->reportWork as $row2) {
                             $color = "";
-                            if ($row->tienDo < 100)
+                            if ($row2->tienDo < 100)
                                 $color = "class='text-red text-bold'";
                             echo "<tr>
                                                 <td>" . $i++ . "</td>
@@ -1004,7 +1004,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
@@ -1163,7 +1163,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
@@ -1352,7 +1352,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
@@ -1489,7 +1489,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
@@ -1645,7 +1645,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
@@ -1730,7 +1730,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
@@ -1815,7 +1815,7 @@ class ReportController extends Controller
             foreach($report as $row){
                 foreach ($row->reportWork as $row2) {
                     $color = "";
-                    if ($row->tienDo < 100)
+                    if ($row2->tienDo < 100)
                         $color = "class='text-red text-bold'";
                     echo "<tr>
                                         <td>".$i++."</td>
