@@ -1834,4 +1834,150 @@ class ReportController extends Controller
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
     }
+
+    public function status() {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
+             $_date = Date('d-m-Y');
+        $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh', 'hcns', 'it', 'ptdl'];
+        echo "<table class='table table-striped table-border'>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Phòng ban</th>
+                                    <th>Trạng thái</th>
+                                </tr>";
+        for ($i = 0; $i < count($arr); $i++) { 
+            $phong = "";
+            $check = Report::where([
+                ['ngayReport','like', $_date],
+                ['type','like', $arr[$i]],
+                ['clock','=', true]
+            ])->exists();
+            switch ($arr[$i]) {
+                case 'pkd':
+                    $phong = "Phòng kinh doanh";
+                    break;
+                case 'pdv':
+                    $phong = "Phòng dịch vụ";
+                    break;
+                case 'mkt':
+                    $phong = "Marketing";
+                    break;
+                case 'xuong':
+                    $phong = "Xưởng";
+                    break;
+                case 'cskh':
+                    $phong = "CSKH";
+                    break;
+                case 'hcns':
+                    $phong = "Hành chính - Nhân sự";
+                    break;
+                case 'it':
+                    $phong = "IT";
+                    break;   
+                case 'ptdl':
+                    $phong = "Phát triển đại lý";
+                    break;     
+            }
+            if ($check) {
+                echo "<tr>
+                        <td>".$_date."</td>
+                        <td>".$phong."</td>
+                        <td class='text-success'><strong>Đã gửi báo cáo</strong></td>
+                    </tr>";
+            } else {
+                echo "<tr>
+                        <td>".$_date."</td>
+                        <td>".$phong."</td>
+                        <td class='text-danger'><strong>Chưa gửi báo cáo</strong></td>
+                    </tr>";
+            }
+
+        }
+        echo "</table>";
+        }
+        echo "<div><div class='col-md-4'><form id='statusThang'>
+                    <div class='form-group row'>
+                        <div class='col-8'>
+                            <input type='month' name='monthStatus' value='".Date('Y-m')."' class='form-control'>
+                        </div>
+                        <div class='col-2'>
+                            <button type='button' id='watchMonthStatus' class='btn btn-success'>Xem tháng</button>
+                        </div>
+                    </div>
+                </form></div></div>";
+    }
+
+     public function statusMonth($_month, $_room) {
+        $phong = "";
+        $month = explode('-', $_month)[1];
+        $year = explode('-', $_month)[0];
+        $sumDay = \HelpFunction::countDayInMonth($month, $year);
+        switch ($_room) {
+                case 'pkd':
+                    $phong = "Phòng kinh doanh";
+                    break;
+                case 'pdv':
+                    $phong = "Phòng dịch vụ";
+                    break;
+                case 'mkt':
+                    $phong = "Marketing";
+                    break;
+                case 'xuong':
+                    $phong = "Xưởng";
+                    break;
+                case 'cskh':
+                    $phong = "CSKH";
+                    break;
+                case 'hcns':
+                    $phong = "Hành chính - Nhân sự";
+                    break;
+                case 'it':
+                    $phong = "IT";
+                    break;   
+                case 'ptdl':
+                    $phong = "Phát triển đại lý";
+                    break;     
+            }
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
+        echo "<table class='table table-striped table-border'>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Phòng ban</th>
+                                    <th>Trạng thái</th>
+                                </tr>";
+        for ($i = 1; $i <= $sumDay; $i++) { 
+            $_date = str_pad($i .'-' . $month . '-' . $year,10,"0",STR_PAD_LEFT); 
+            $check = Report::where([
+                ['ngayReport','like',$_date],
+                ['type','like', $_room],
+                ['clock','=', true]
+            ])->exists();
+            if ($check) {
+                echo "<tr>
+                        <td>".$i."-".$month."-".$year."</td>
+                        <td>".$phong."</td>
+                        <td class='text-success'><strong>Đã gửi báo cáo</strong></td>
+                    </tr>";
+            } else {
+                echo "<tr>
+                        <td>".$i."-".$month."-".$year."</td>
+                        <td>".$phong."</td>
+                        <td class='text-danger'><strong>Chưa gửi báo cáo</strong></td>
+                    </tr>";
+            }
+
+        }
+        echo "</table>";
+        }
+        echo "<div><div class='col-md-4'><form id='statusThang'>
+                    <div class='form-group row'>
+                        <div class='col-8'>
+                            <input type='month' name='monthStatus' value='".Date('Y-m')."' class='form-control'>
+                        </div>
+                        <div class='col-2'>
+                            <button type='button' id='watchMonthStatus' class='btn btn-success'>Xem tháng</button>
+                        </div>
+                    </div>
+                </form></div></div>";
+    }
 }

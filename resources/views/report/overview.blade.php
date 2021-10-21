@@ -127,7 +127,6 @@
                 </div>
 
                 <div class="container" id="show">
-
                 </div>
             </div>
         </div>
@@ -242,6 +241,46 @@
                         Toast.fire({
                             icon: 'warning',
                             title: " Không tìm thấy báo cáo!"
+                        })
+                    }
+                });
+            });
+
+            function loadStatus() {
+                $.ajax({
+                    url: "management/overview/status/",
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'info',
+                            title: " Đã tải thông tin báo cáo!"
+                        })
+                        $('#show').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy báo cáo!"
+                        })
+                    }
+                });
+            }
+
+            loadStatus();
+
+            $(document).on("click","#watchMonthStatus",function(){
+                $.ajax({
+                    url: "management/overview/statusmonth/" + $('input[name=monthStatus]').val() + "/" + "room" + "/" + $('select[name=chonPhong]').val(),
+                    type: "get",
+                    dataType: 'text',
+                    success: function(response) {
+                        $('#show').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tải thông tin tình trạng báo cáo!"
                         })
                     }
                 });

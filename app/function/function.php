@@ -141,5 +141,9 @@ class HelpFunction {
         $_time = $arr[1];
         return $_time . ' ' . self::revertDate($newDate);
     }
+
+    public static function countDayInMonth($month = 1, $year = 2020) {
+        return cal_days_in_month(CAL_GREGORIAN, $month, $year);
+    }
 }
 ?>

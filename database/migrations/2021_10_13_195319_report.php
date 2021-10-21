@@ -15,7 +15,7 @@ class Report extends Migration
     {
         Schema::create('report', function (Blueprint $table) {
             $table->increments('id');
-            $table->enum('type', ['pkd', 'pdv', 'mkt', 'xuong', 'cskh', 'hcns', 'it', 'ptdl'])->nullable();
+            $table->enum('type', ['pkd', 'pdv', 'mkt', 'ketoan', 'xuong', 'cskh', 'hcns', 'it', 'ptdl'])->nullable();
             $table->string('ngayReport')->nullable();
             $table->string('timeReport')->nullable();
             $table->integer('user_report')->unsigned();
