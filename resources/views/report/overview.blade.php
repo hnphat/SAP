@@ -63,6 +63,12 @@
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
+                                        <option value="ketoan">Phòng kế toán</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('xuong'))
                                         <option value="xuong">Xưởng</option>
                                     @endif
@@ -186,6 +192,9 @@
                     case "ptdl": {
                         url = "management/overview/getptdl/";
                     } break;
+                    case "ketoan": {
+                        url = "management/overview/getketoan/";
+                    } break;
                 }
                 $.ajax({
                     url: url + $('input[name=chonNgay]').val(),
@@ -228,6 +237,9 @@
                     } break;
                     case "ptdl": {
                         url = "management/overview/getptdlall/";
+                    } break;
+                    case "ketoan": {
+                        url = "management/overview/getketoanall/";
                     } break;
                 }
                 $.ajax({

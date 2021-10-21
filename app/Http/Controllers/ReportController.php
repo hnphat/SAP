@@ -28,6 +28,8 @@ class ReportController extends Controller
             $typeUser = "pkd";
         elseif (Auth::user()->hasRole('tpdv'))
             $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
         elseif (Auth::user()->hasRole('mkt'))
             $typeUser = "mkt";
         elseif (Auth::user()->hasRole('xuong'))
@@ -97,6 +99,8 @@ class ReportController extends Controller
             $typeUser = "pkd";
         elseif (Auth::user()->hasRole('tpdv'))
             $typeUser = "pdv";
+         elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
         elseif (Auth::user()->hasRole('mkt'))
             $typeUser = "mkt";
         elseif (Auth::user()->hasRole('xuong'))
@@ -148,6 +152,8 @@ class ReportController extends Controller
             $typeUser = "pkd";
         elseif (Auth::user()->hasRole('tpdv'))
             $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
         elseif (Auth::user()->hasRole('mkt'))
             $typeUser = "mkt";
         elseif (Auth::user()->hasRole('xuong'))
@@ -249,6 +255,8 @@ class ReportController extends Controller
             $typeUser = "pkd";
         elseif (Auth::user()->hasRole('tpdv'))
             $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
         elseif (Auth::user()->hasRole('mkt'))
             $typeUser = "mkt";
         elseif (Auth::user()->hasRole('xuong'))
@@ -1979,5 +1987,90 @@ class ReportController extends Controller
                     </div>
                 </form></div></div>";
        }  
+    }
+
+     public function getKetoan($_date) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', \HelpFunction::revertDate($_date)],
+            ['type','like', 'ketoan'],
+            ['clock','=', true]
+        ])->first();
+        if ($report !== null) {
+            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
+                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
+                <br>
+                <h4>CÔNG VIỆC</h4>
+                <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                        <tr>
+                        <th>STT</th>
+                        <th>Tên công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        </tr>";
+            foreach ($report->reportWork as $row) {
+                $color = "";
+                if ($row->tienDo < 100)
+                    $color = "class='text-red text-bold'";
+                echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->tenCongViec."</td>
+                            <td $color>".$row->tienDo."%</td>
+                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
+                            <td>".$row->ketQua."</td>
+                            <td>".$row->ghiChu."</td>
+                        </tr>";
+            }
+            echo "</table></div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getKetoanAll($_month) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
+            ['type','like', 'ketoan'],
+            ['clock','=', true]
+        ])->get();
+        if ($report !== null) {
+            echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
+                    <h4>CÔNG VIỆC</h4>
+                    <div class='table-responsive'>";
+            echo "<table class='table table-striped table-bordered'>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Ngày</th>
+                                        <th>Tên công việc</th>
+                                        <th>Tiến độ</th>
+                                        <th>Deadline</th>
+                                        <th>Kết quả</th>
+                                        <th>Ghi chú</th>
+                                    </tr>";
+            foreach($report as $row){
+                foreach ($row->reportWork as $row2) {
+                    $color = "";
+                    if ($row2->tienDo < 100)
+                        $color = "class='text-red text-bold'";
+                    echo "<tr>
+                                        <td>".$i++."</td>
+                                        <td>".$row->ngayReport."</td>
+                                        <td>".$row2->tenCongViec."</td>
+                                        <td $color>".$row2->tienDo."%</td>
+                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
+                                        <td>".$row2->ketQua."</td>
+                                        <td>".$row2->ghiChu."</td>
+                                    </tr>";
+                }
+            }
+            echo "</table>";
+            echo "</div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
     }
 }

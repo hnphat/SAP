@@ -268,5 +268,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         //-- ptdl
         Route::get('getptdl/{_date}','ReportController@getPtdl');
         Route::get('getptdlall/{_month}','ReportController@getPtdlAll');
+
+         //-- ketoan
+        Route::get('getketoan/{_date}','ReportController@getKetoan');
+        Route::get('getketoanlall/{_month}','ReportController@getKetoanAll');
     });
 });
