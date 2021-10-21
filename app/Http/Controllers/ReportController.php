@@ -1894,7 +1894,6 @@ class ReportController extends Controller
 
         }
         echo "</table>";
-        }
         echo "<div><div class='col-md-4'><form id='statusThang'>
                     <div class='form-group row'>
                         <div class='col-8'>
@@ -1905,6 +1904,7 @@ class ReportController extends Controller
                         </div>
                     </div>
                 </form></div></div>";
+        }
     }
 
      public function statusMonth($_month, $_room) {
@@ -1968,8 +1968,7 @@ class ReportController extends Controller
 
         }
         echo "</table>";
-        }
-        echo "<div><div class='col-md-4'><form id='statusThang'>
+            echo "<div><div class='col-md-4'><form id='statusThang'>
                     <div class='form-group row'>
                         <div class='col-8'>
                             <input type='month' name='monthStatus' value='".Date('Y-m')."' class='form-control'>
@@ -1979,5 +1978,6 @@ class ReportController extends Controller
                         </div>
                     </div>
                 </form></div></div>";
+       }  
     }
 }
