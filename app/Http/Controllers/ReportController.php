@@ -1867,6 +1867,9 @@ class ReportController extends Controller
                 case 'pdv':
                     $phong = "Phòng dịch vụ";
                     break;
+                case 'ketoan':
+                    $phong = "Phòng kế toán";
+                    break;
                 case 'mkt':
                     $phong = "Marketing";
                     break;
@@ -1926,6 +1929,9 @@ class ReportController extends Controller
                     break;
                 case 'pdv':
                     $phong = "Phòng dịch vụ";
+                    break;
+                case 'ketoan':
+                    $phong = "Phòng kế toán";
                     break;
                 case 'mkt':
                     $phong = "Marketing";
