@@ -1846,7 +1846,7 @@ class ReportController extends Controller
     public function status() {
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
              $_date = Date('d-m-Y');
-        $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh', 'hcns', 'it', 'ptdl'];
+        $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh', 'hcns', 'ketoan','it', 'ptdl'];
         echo "<table class='table table-striped table-border'>
                                 <tr>
                                     <th>Thời gian</th>
