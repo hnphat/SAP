@@ -54,6 +54,10 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label>Nội dung quyền</label>
+                                <input class="form-control" type="text" name="noiDung" value="Không" readonly="readonly">
+                            </div>
+                            <div class="form-group">
                                 <input type="submit" value="Thêm" class="btn btn-success">
                             </div>
                         </div>
@@ -129,6 +133,23 @@
            if (confirm("Bạn có chắc muốn bỏ quyền cho người dùng này?")) {
                open("management/roles/rm/" + role_id + "/" + user_id,"_self");
            }
+        });
+
+        $(document).on('change','select[name=chonQuyen]', function(){
+            $.ajax({
+                url: "management/roles/showdetail/" + $('select[name=chonQuyen]').val(),
+                type: "get",
+                dataType: 'text',
+                success: function(response) {
+                    $('input[name=noiDung]').val(response);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Không thể tải chi tiết phân quyền!"
+                    })
+                }
+            });
         });
     </script>
 @endsection

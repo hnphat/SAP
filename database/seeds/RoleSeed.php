@@ -14,71 +14,73 @@ class RoleSeed extends Seeder
         //
         DB::table('roles')->insert([
             [
-                'name' => 'system'
+                'name' => 'system',
+                'description' => 'TK hệ thống, full quyền'
             ],
             [
-                'name' => 'adminsale'
+                'name' => 'adminsale',
+                'description' => 'Model xe, Kho Xe, Phê duyệt hđ, Duyệt đề nghị hđ'
             ],
             [
-                'name' => 'admindv'
+                'name' => 'tpkd',
+                'description' => 'Phê duyệt hợp đồng, báo cáo ngày'
             ],
             [
-                'name' => 'tpkd'
+                'name' => 'tpdv',
+                'description' => 'Không'
             ],
             [
-                'name' => 'tpdv'
+                'name' => 'xuong',
+                'description' => 'Không'
             ],
             [
-                'name' => 'xuong'
+                'name' => 'sale',
+                'description' => 'Hợp đồng, Đề nghị hủy hợp đồng'
             ],
             [
-                'name' => 'sale'
+                'name' => 'boss',
+                'description' => 'Xem báo cáo'
             ],
             [
-                'name' => 'boss'
+                'name' => 'mkt',
+                'description' => 'Duyệt đăng ký, trả xe'
             ],
             [
-                'name' => 'mkt'
+                'name' => 'ketoan',
+                'description' => 'Không'
             ],
             [
-                'name' => 'ketoan'
+                'name' => 'cskh',
+                'description' => 'Không'
             ],
             [
-                'name' => 'cskh'
+                'name' => 'drp',
+                'description' => 'Không'
             ],
             [
-                'name' => 'drp'
+                'name' => 'hcns',
+                'description' => 'Duyệt đề nghị cấp xăng'
             ],
             [
-                'name' => 'hcns'
+                'name' => 'it',
+                'description' => 'Không'
             ],
             [
-                'name' => 'it'
+                'name' => 'normal',
+                'description' => 'Đề nghị sử dụng/trả xe'
             ],
             [
-                'name' => 'normal'
+                'name' => 'lead',
+                'description' => 'Phê duyệt đề nghị cấp xăng'
             ],
             [
-                'name' => 'sub1'
+                'name' => 'report',
+                'description' => 'Được phép báo cáo ngày'
             ],
             [
-                'name' => 'sub2'
+                'name' => 'watch',
+                'description' => 'Được phép xem báo cáo ngày/tháng của các phòng ban'
             ],
-            [
-                'name' => 'lead_sub1'
-            ],
-            [
-                'name' => 'lead_sub2'
-            ],
-            [
-                'name' => 'lead'
-            ],
-            [
-                'name' => 'report'
-            ],
-            [
-                'name' => 'watch'
-            ]
         ]);
 
         DB::table('role_user')->insert([

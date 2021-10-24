@@ -44,6 +44,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','RolesController@index')->name('roles.list');
         Route::post('add','RolesController@add')->name('roles.add');
         Route::get('rm/{role_id}/{user_id}','RolesController@rm');
+        Route::get('showdetail/{id}','RolesController@showDetail');
     });
     Route::group(['prefix' => 'hoso', 'middleware' => ['f_hoso']], function(){
         Route::get('list','HoSoController@index')->name('hoso.list');

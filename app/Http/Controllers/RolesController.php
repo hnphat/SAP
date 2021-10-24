@@ -92,4 +92,9 @@ class RolesController extends Controller
         $user->roles()->detach($role->id);
         return redirect()->route('roles.list');
     }
+
+    public function showDetail($id) {
+        $role = Roles::find($id);
+        echo $role->description;
+    }
 }
