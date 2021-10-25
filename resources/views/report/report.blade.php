@@ -45,8 +45,8 @@
             <div class="container">
                 <h5><strong>Ngày: </strong> <?php echo Date('d-m-Y');?></h5>
                 <h5><strong>Thời gian báo cáo: </strong> <span id="setTime"></span></h5>
-                <button id="khoiTao" class="btn btn-success">KHỞI TẠO BÁO CÁO</button>
-                <br><br>
+{{--                <button id="khoiTao" class="btn btn-success">KHỞI TẠO BÁO CÁO</button>--}}
+{{--                <br><br>--}}
                 <form id="reportForm" action="#" method="post" enctype="multipart/form-data">
                   {{csrf_field()}}
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
@@ -598,9 +598,6 @@
                         $('input[name=idReport4]').val(response.data.id);
 
                         loadHD(response.data.id);
-                        loadWork(response.data.id);
-                        loadNhap(response.data.id);
-                        loadXuat(response.data.id);
 
                         //---------PKD
                         $('input[name=doanhSoThang]').val(response.data.doanhSoThang);
@@ -686,7 +683,6 @@
                     }
                 });
             }
-
             function loadHD(id) {
                 /// load hợp đồng xe
                 $.ajax({
@@ -705,11 +701,9 @@
                     }
                 });
             }
-
-            function loadWork(id) {
-                /// load hợp đồng xe
+            function loadWork() {
                 $.ajax({
-                    url: 'management/report/loadwork/' + id,
+                    url: 'management/report/loadwork/',
                     type: "get",
                     dataType: 'text',
                     success: function(response) {
@@ -723,66 +717,32 @@
                     }
                 });
             }
-            function loadNhap(id) {
-                /// load hợp đồng xe
-                $.ajax({
-                    url: 'management/report/loadnhap/' + id,
-                    type: "get",
-                    dataType: 'text',
-                    success: function(response) {
-                        $('#showNhap').html(response);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Lỗi máy chủ!"
-                        })
-                    }
-                });
-            }
-            function loadXuat(id) {
-                /// load xuất
-                $.ajax({
-                    url: 'management/report/loadxuat/' + id,
-                    type: "get",
-                    dataType: 'text',
-                    success: function(response) {
-                        $('#showXuat').html(response);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Lỗi máy chủ!"
-                        })
-                    }
-                });
-            }
-
             load();
-            // Khởi tạo report mẫu
-            $('#khoiTao').click(function(){
-               $.ajax({
-                        url: "{{url('management/report/khoitao')}}",
-                        type: "post",
-                        dataType: 'json',
-                        data: {
-                            "_token": "{{csrf_token()}}"
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: " " + response.message
-                            })
-                            setTimeout(load, 2000);
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: " Lỗi! Không thể khởi tạo báo cáo!"
-                            })
-                        }
-                    });
-            });
+            loadWork();
+            {{--// Khởi tạo report mẫu--}}
+            {{--$('#khoiTao').click(function(){--}}
+            {{--   $.ajax({--}}
+            {{--            url: "{{url('management/report/khoitao')}}",--}}
+            {{--            type: "post",--}}
+            {{--            dataType: 'json',--}}
+            {{--            data: {--}}
+            {{--                "_token": "{{csrf_token()}}"--}}
+            {{--            },--}}
+            {{--            success: function(response) {--}}
+            {{--                Toast.fire({--}}
+            {{--                    icon: response.type,--}}
+            {{--                    title: " " + response.message--}}
+            {{--                })--}}
+            {{--                setTimeout(load, 2000);--}}
+            {{--            },--}}
+            {{--            error: function() {--}}
+            {{--                Toast.fire({--}}
+            {{--                    icon: 'warning',--}}
+            {{--                    title: " Lỗi! Không thể khởi tạo báo cáo!"--}}
+            {{--                })--}}
+            {{--            }--}}
+            {{--        });--}}
+            {{--});--}}
 
             // Lưu  report
             $('#saveNotSend').click(function(e){
@@ -902,17 +862,15 @@
                     dataType: 'json',
                     data: {
                         "_token": "{{csrf_token()}}",
-                        "idReport": $("input[name=idReport4]").val(),
                         "tenCongViec": $("input[name=tenCongViec]").val(),
-                        "deadLine": $("input[name=deadLine]").val(),
+                        "ngayStart": $("input[name=ngayStart]").val(),
+                        "ngayEnd": $("input[name=ngayEnd]").val(),
                         "tienDo": $("input[name=tienDo]").val(),
-                        "ketQua": $("input[name=ketQua]").val(),
                         "ghiChu": $("input[name=ghiChu]").val()
                     },
                     success: function(response) {
                         $("input[name=tenCongViec]").val(null);
-                        $("input[name=deadLine]").val(null);
-                        $("input[name=ketQua]").val(null);
+                        $("input[name=tienDo]").val(null);
                         $("input[name=ghiChu]").val(null);
                         Toast.fire({
                             icon: response.type,
@@ -920,6 +878,7 @@
                         })
                         $("#addWork").modal('hide');
                         setTimeout(load, 1000);
+                        loadWork();
                     },
                     error: function() {
                         Toast.fire({
@@ -946,7 +905,7 @@
                                 icon: 'success',
                                 title: response.message
                             })
-                            setTimeout(load, 1000);
+                            setTimeout(loadWork, 1000);
                         },
                         error: function() {
                             Toast.fire({

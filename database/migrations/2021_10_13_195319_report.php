@@ -21,8 +21,8 @@ class Report extends Migration
             $table->integer('user_report')->unsigned();
             $table->foreign('user_report')->references('id')->on('users');
             //------------------ PKD
-            $table->integer('doanhSoThang')->nullable();
-            $table->float('thiPhanThang', 8, 2)->nullable();
+            $table->integer('doanhSoThang');
+            $table->float('thiPhanThang', 8, 2);
 //            $table->integer('thiPhanThang')->nullable();
             $table->integer('xuatHoaDon')->nullable();
             $table->integer('xuatNgoaiTinh')->nullable();

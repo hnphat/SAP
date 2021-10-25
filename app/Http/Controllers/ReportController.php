@@ -19,81 +19,11 @@ class ReportController extends Controller
         return view('report.report', ['typeCar' => $typeCar]);
     }
 
-    public function khoiTao(Request $request) {
-        $doanhSo = 0;
-        $thiPhan = 0;
-        $month = Date('m-Y');
-        $typeUser = "";
-        if (Auth::user()->hasRole('tpkd'))
-            $typeUser = "pkd";
-        elseif (Auth::user()->hasRole('tpdv'))
-            $typeUser = "pdv";
-        elseif (Auth::user()->hasRole('ketoan'))
-            $typeUser = "ketoan";
-        elseif (Auth::user()->hasRole('mkt'))
-            $typeUser = "mkt";
-        elseif (Auth::user()->hasRole('xuong'))
-            $typeUser = "xuong";
-        elseif (Auth::user()->hasRole('cskh'))
-            $typeUser = "cskh";
-        elseif (Auth::user()->hasRole('hcns'))
-            $typeUser = "hcns";
-        elseif (Auth::user()->hasRole('it'))
-            $typeUser = "it";
-        elseif (Auth::user()->hasRole('drp'))
-            $typeUser = "ptdl";
-
-        $checkSale = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
-            ['doanhSoThang', '!=', null],
-            ['thiPhanThang', '!=', null]
-        ])->first();
-
-        if ($checkSale !== null && $checkSale->count() > 0) {
-            $doanhSo = $checkSale->doanhSoThang;
-            $thiPhan = $checkSale->thiPhanThang;
-        }
-
-        $today = Date('d-m-Y');
-        $checkIn = Report::where([
-            ['ngayReport','like', $today],
-            ['type','like', $typeUser]
-        ])->exists();
-        if (!$checkIn) {
-            $report = new Report();
-            $report->type = $typeUser;
-            $report->user_report = Auth::user()->id;
-            $report->ngayReport = Date('d-m-Y');
-            $report->doanhSoThang = ($doanhSo != 0) ? $doanhSo : null;
-            $report->thiPhanThang = ($thiPhan != 0) ? $thiPhan : null;
-            $report->save();
-            if ($report) {
-                return response()->json([
-                    'type' => 'success',
-                    'message' => 'Hệ thống đã khởi tạo báo cáo hôm nay!',
-                    'code' => 200
-                ]);
-            } else {
-                return response()->json([
-                    'type' => 'danger',
-                    'message' => 'Internal server fail!',
-                    'code' => 500
-                ]);
-            }
-        } else {
-            return response()->json([
-                'type' => 'warning',
-                'message' => ' Báo cáo hôm nay đã được tạo!',
-                'code' => 200
-            ]);
-        }
-    }
-
     public function loadReport() {
         $ds = 0;
         $tp = 0;
         $today = Date('d-m-Y');
+        $month = Date('m-Y');
         $typeUser = "";
         if (Auth::user()->hasRole('tpkd'))
             $typeUser = "pkd";
@@ -118,15 +48,16 @@ class ReportController extends Controller
             ['ngayReport','like', $today],
             ['type','like', $typeUser]
         ])->exists();
-
+        $report = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['doanhSoThang', '!=', null],
+            ['thiPhanThang', '!=', null]
+        ])->first();
         if ($checkIn) {
-            $report = Report::select('*')->where([
-                ['ngayReport','like', $today],
-                ['type','like', $typeUser]
-            ])->first();
             if ($report !== null) {
-                $ds = ($report->doanhSoThang != null) ? 1 : 0;
-                $tp = ($report->thiPhanThang != null) ? 1 : 0;
+                $ds = 1;
+                $tp = 1;
             }
             return response()->json([
                 'ds' => $ds,
@@ -137,14 +68,19 @@ class ReportController extends Controller
                 'data' => $report
             ]);
         } else {
+            if ($report !== null) {
+                $ds = 1;
+                $tp = 1;
+            }
             return response()->json([
+                'ds' => $ds,
+                'tp' => $tp,
                 'type' => 'warning',
                 'message' => ' Chưa có báo cáo nào trong hôm nay!',
                 'code' => 500
             ]);
         }
     }
-
     public function saveReport(Request $request) {
         $today = Date('d-m-Y');
         $typeUser = "";
@@ -249,6 +185,9 @@ class ReportController extends Controller
         }
     }
     public function saveNotSend(Request $request) {
+        $doanhSo = 0;
+        $thiPhan = 0;
+        $month = Date('m-Y');
         $today = Date('d-m-Y');
         $typeUser = "";
         if (Auth::user()->hasRole('tpkd'))
@@ -270,82 +209,165 @@ class ReportController extends Controller
         elseif (Auth::user()->hasRole('drp'))
             $typeUser = "ptdl";
 
-        $report = Report::where([
+        $checkSale = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['doanhSoThang', '!=', null],
+            ['thiPhanThang', '!=', null]
+        ])->first();
+
+        if ($checkSale !== null && $checkSale->count() > 0) {
+            $doanhSo = $checkSale->doanhSoThang;
+            $thiPhan = $checkSale->thiPhanThang;
+        }
+
+        $checkIn = Report::where([
             ['ngayReport','like', $today],
             ['type','like', $typeUser]
-        ])->update([
-           'doanhSoThang' => $request->doanhSoThang,
-            'thiPhanThang' => $request->thiPhanThang,
-            'xuatHoaDon' => $request->xuatHoaDon,
-            'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
-            'xuatTrongTinh' => $request->xuatTrongTinh,
-            'hdHuy' => $request->hdHuy,
-            'ctInternet' => $request->ctInternet,
-            'ctShowroom' => $request->ctShowroom,
-            'ctHotline' => $request->ctHotline,
-            'ctSuKien' => $request->ctSuKien,
-            'ctBLD' => $request->ctBLD,
-            'saleInternet' => $request->saleInternet,
-            'saleMoiGioi' => $request->saleMoiGioi,
-            'saleThiTruong' => $request->saleThiTruong,
-            'khShowRoom' => $request->khShowRoom,
-            'baoDuong' => $request->baoDuong,
-            'suaChua' => $request->suaChua,
-            'Dong' => $request->dong,
-            'Son' => $request->son,
-            'congBaoDuong' => $request->congBaoDuong,
-            'congSuaChuaChung' => $request->congSuaChuaChung,
-            'congDong' => $request->congDong,
-            'congSon' => $request->congSon,
-            'dtPhuTung' => $request->dtPhuTung,
-            'dtDauNhot' => $request->dtDauNhot,
-            'dtPhuTungBan' => $request->dtPhuTungBan,
-            'dtDauNhotBan' => $request->dtDauNhotBan,
-            'phuTungMua' => $request->phuTungMua,
-            'dauNhotMua' => $request->dauNhotMua,
-            'tonBaoDuong' => $request->tonBaoDuong,
-            'tonSuaChuaChung' => $request->tonSuaChuaChung,
-            'tonDong' => $request->tonDong,
-            'tonSon' => $request->tonSong,
-            'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
-            'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
-            'tiepNhanDong' => $request->tiepNhanDong,
-            'tiepNhanSon' => $request->tiepNhanSon,
-            'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
-            'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
-            'hoanThanhDong' => $request->hoanThanhDong,
-            'hoanThanhSon' => $request->hoanThanhSon,
-            'callDatHenSuccess' => $request->callDatHenSuccess,
-            'callDatHenFail' => $request->callDatHenFail,
-            'datHen' => $request->datHen,
-            'dvHaiLong' => $request->dvHaiLong,
-            'dvKhongHaiLong' => $request->dvKhongHaiLong,
-            'dvKhongThanhCong' => $request->dvKhongThanhCong,
-            'muaXeSuccess' => $request->muaXeSuccess,
-            'muaXeFail' => $request->muaXeFail,
-            'duyetBanLe' => $request->duyetBanLe,
-            'knThaiDo' => $request->knThaiDo,
-            'knChatLuong' => $request->knChatLuong,
-            'knThoiGian' => $request->knThoiGian,
-            'knVeSinh' => $request->knVeSinh,
-            'knGiaCa' => $request->knGiaCa,
-            'knKhuyenMai' => $request->knKhuyenMai,
-            'knDatHen' => $request->knDatHen,
-            'knTraiNghiem' => $request->knTraiNghiem,
-            'khBanGiao' => $request->khBanGiao,
-            'khSuKien' => $request->khSuKien
-        ]);
-        if ($report) {
-            return response()->json([
-                'type' => 'success',
-                'message' => ' Đã lưu!',
-                'code' => 200
+        ])->exists();
+
+        if (!$checkIn) {
+            $report = Report::insert([
+                'type' => $typeUser,
+                'user_report' => Auth::user()->id,
+                'ngayReport' => Date('d-m-Y'),
+                'doanhSoThang' => ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang,
+                'thiPhanThang' => ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang,
+                'xuatHoaDon' => $request->xuatHoaDon,
+                'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+                'xuatTrongTinh' => $request->xuatTrongTinh,
+                'hdHuy' => $request->hdHuy,
+                'ctInternet' => $request->ctInternet,
+                'ctShowroom' => $request->ctShowroom,
+                'ctHotline' => $request->ctHotline,
+                'ctSuKien' => $request->ctSuKien,
+                'ctBLD' => $request->ctBLD,
+                'saleInternet' => $request->saleInternet,
+                'saleMoiGioi' => $request->saleMoiGioi,
+                'saleThiTruong' => $request->saleThiTruong,
+                'khShowRoom' => $request->khShowRoom,
+                'baoDuong' => $request->baoDuong,
+                'suaChua' => $request->suaChua,
+                'Dong' => $request->dong,
+                'Son' => $request->son,
+                'congBaoDuong' => $request->congBaoDuong,
+                'congSuaChuaChung' => $request->congSuaChuaChung,
+                'congDong' => $request->congDong,
+                'congSon' => $request->congSon,
+                'dtPhuTung' => $request->dtPhuTung,
+                'dtDauNhot' => $request->dtDauNhot,
+                'dtPhuTungBan' => $request->dtPhuTungBan,
+                'dtDauNhotBan' => $request->dtDauNhotBan,
+                'phuTungMua' => $request->phuTungMua,
+                'dauNhotMua' => $request->dauNhotMua,
+                'tonBaoDuong' => $request->tonBaoDuong,
+                'tonSuaChuaChung' => $request->tonSuaChuaChung,
+                'tonDong' => $request->tonDong,
+                'tonSon' => $request->tonSong,
+                'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+                'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+                'tiepNhanDong' => $request->tiepNhanDong,
+                'tiepNhanSon' => $request->tiepNhanSon,
+                'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+                'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+                'hoanThanhDong' => $request->hoanThanhDong,
+                'hoanThanhSon' => $request->hoanThanhSon,
+                'callDatHenSuccess' => $request->callDatHenSuccess,
+                'callDatHenFail' => $request->callDatHenFail,
+                'datHen' => $request->datHen,
+                'dvHaiLong' => $request->dvHaiLong,
+                'dvKhongHaiLong' => $request->dvKhongHaiLong,
+                'dvKhongThanhCong' => $request->dvKhongThanhCong,
+                'muaXeSuccess' => $request->muaXeSuccess,
+                'muaXeFail' => $request->muaXeFail,
+                'duyetBanLe' => $request->duyetBanLe,
+                'knThaiDo' => $request->knThaiDo,
+                'knChatLuong' => $request->knChatLuong,
+                'knThoiGian' => $request->knThoiGian,
+                'knVeSinh' => $request->knVeSinh,
+                'knGiaCa' => $request->knGiaCa,
+                'knKhuyenMai' => $request->knKhuyenMai,
+                'knDatHen' => $request->knDatHen,
+                'knTraiNghiem' => $request->knTraiNghiem,
+                'khBanGiao' => $request->khBanGiao,
+                'khSuKien' => $request->khSuKien
             ]);
+            if ($report) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã lưu!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Liên hệ quản trị viên!',
+                    'code' => 500
+                ]);
+            }
         } else {
-            return response()->json([
-                'type' => 'warning',
-                'message' => ' Lỗi! Bạn phải khởi tạo báo cáo trước!',
-                'code' => 500
+            $report = Report::where([
+                ['ngayReport','like', $today],
+                ['type','like', $typeUser]
+            ])->update([
+                'xuatHoaDon' => $request->xuatHoaDon,
+                'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+                'xuatTrongTinh' => $request->xuatTrongTinh,
+                'hdHuy' => $request->hdHuy,
+                'ctInternet' => $request->ctInternet,
+                'ctShowroom' => $request->ctShowroom,
+                'ctHotline' => $request->ctHotline,
+                'ctSuKien' => $request->ctSuKien,
+                'ctBLD' => $request->ctBLD,
+                'saleInternet' => $request->saleInternet,
+                'saleMoiGioi' => $request->saleMoiGioi,
+                'saleThiTruong' => $request->saleThiTruong,
+                'khShowRoom' => $request->khShowRoom,
+                'baoDuong' => $request->baoDuong,
+                'suaChua' => $request->suaChua,
+                'Dong' => $request->dong,
+                'Son' => $request->son,
+                'congBaoDuong' => $request->congBaoDuong,
+                'congSuaChuaChung' => $request->congSuaChuaChung,
+                'congDong' => $request->congDong,
+                'congSon' => $request->congSon,
+                'dtPhuTung' => $request->dtPhuTung,
+                'dtDauNhot' => $request->dtDauNhot,
+                'dtPhuTungBan' => $request->dtPhuTungBan,
+                'dtDauNhotBan' => $request->dtDauNhotBan,
+                'phuTungMua' => $request->phuTungMua,
+                'dauNhotMua' => $request->dauNhotMua,
+                'tonBaoDuong' => $request->tonBaoDuong,
+                'tonSuaChuaChung' => $request->tonSuaChuaChung,
+                'tonDong' => $request->tonDong,
+                'tonSon' => $request->tonSong,
+                'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+                'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+                'tiepNhanDong' => $request->tiepNhanDong,
+                'tiepNhanSon' => $request->tiepNhanSon,
+                'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+                'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+                'hoanThanhDong' => $request->hoanThanhDong,
+                'hoanThanhSon' => $request->hoanThanhSon,
+                'callDatHenSuccess' => $request->callDatHenSuccess,
+                'callDatHenFail' => $request->callDatHenFail,
+                'datHen' => $request->datHen,
+                'dvHaiLong' => $request->dvHaiLong,
+                'dvKhongHaiLong' => $request->dvKhongHaiLong,
+                'dvKhongThanhCong' => $request->dvKhongThanhCong,
+                'muaXeSuccess' => $request->muaXeSuccess,
+                'muaXeFail' => $request->muaXeFail,
+                'duyetBanLe' => $request->duyetBanLe,
+                'knThaiDo' => $request->knThaiDo,
+                'knChatLuong' => $request->knChatLuong,
+                'knThoiGian' => $request->knThoiGian,
+                'knVeSinh' => $request->knVeSinh,
+                'knGiaCa' => $request->knGiaCa,
+                'knKhuyenMai' => $request->knKhuyenMai,
+                'knDatHen' => $request->knDatHen,
+                'knTraiNghiem' => $request->knTraiNghiem,
+                'khBanGiao' => $request->khBanGiao,
+                'khSuKien' => $request->khSuKien
             ]);
         }
     }
@@ -411,9 +433,9 @@ class ReportController extends Controller
         $reportWork->user_tao = Auth::user()->id;
         $reportWork->ngayTao = Date('d-m-Y');
         $reportWork->tenCongViec = $request->tenCongViec;
-        $reportWork->deadLine = $request->deadLine;
-        $reportWork->type = "cv";
-        $reportWork->ketQua = $request->ketQua;
+        $reportWork->tienDo = $request->tienDo;
+        $reportWork->ngayStart = $request->ngayStart;
+        $reportWork->ngayEnd = $request->ngayEnd;
         $reportWork->ghiChu = $request->ghiChu;
         $reportWork->save();
         if($reportWork) {
@@ -431,44 +453,34 @@ class ReportController extends Controller
         }
     }
 
-    public function loadWork($id) {
+    public function loadWork() {
         $i = 1;
-        $reportWork = ReportWork::where('id_report', $id)->get();
-        $checkExist = ReportWork::where('id_report', $id)->exists();
-        if($checkExist)
-        $checkClock = $reportWork->first()->report->clock;
+        $reportWork = ReportWork::where([
+            ['ngayTao','like', Date('d-m-Y')],
+            ['user_tao','=',Auth::user()->id]
+        ])->get();
         echo "<table class='table table-striped'>
                                     <tr>
                                         <th>STT</th>
+                                        <th>Ngày</th>
                                         <th>Tên công việc</th>
                                         <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
+                                        <th>Ngày bắt đầu</th>
+                                        <th>Ngày kết thúc</th>
                                         <th>Ghi chú</th>
                                         <th>Hành động</th>
                                     </tr>";
                 foreach ($reportWork as $row) {
-                    if (!$checkClock)
-                        echo "<tr>
+                    echo "<tr>
                                         <td>".$i++."</td>
+                                        <td>".$row->ngayTao."</td>
                                         <td>".$row->tenCongViec."</td>
                                         <td>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                                        <td>".$row->ketQua."</td>
+                                        <td>".\HelpFunction::revertDate($row->ngayStart)."</td>
+                                        <td>".\HelpFunction::revertDate($row->ngayEnd)."</td>
                                         <td>".$row->ghiChu."</td>
                                         <td>
                                             <button id='delWork' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
-                                        </td>
-                                    </tr>";
-                    else
-                        echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenCongViec."</td>
-                                        <td>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                                        <td>".$row->ketQua."</td>
-                                        <td>".$row->ghiChu."</td>
-                                        <td>
                                         </td>
                                     </tr>";
                 }
@@ -1687,7 +1699,7 @@ class ReportController extends Controller
                                     <th>Phòng ban</th>
                                     <th>Trạng thái</th>
                                 </tr>";
-        for ($i = 0; $i < count($arr); $i++) { 
+        for ($i = 0; $i < count($arr); $i++) {
             $phong = "";
             $check = Report::where([
                 ['ngayReport','like', $_date],
@@ -1718,10 +1730,10 @@ class ReportController extends Controller
                     break;
                 case 'it':
                     $phong = "IT";
-                    break;   
+                    break;
                 case 'ptdl':
                     $phong = "Phát triển đại lý";
-                    break;     
+                    break;
             }
             if ($check) {
                 echo "<tr>
@@ -1781,10 +1793,10 @@ class ReportController extends Controller
                     break;
                 case 'it':
                     $phong = "IT";
-                    break;   
+                    break;
                 case 'ptdl':
                     $phong = "Phát triển đại lý";
-                    break;     
+                    break;
             }
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
         echo "<table class='table table-striped table-border'>
@@ -1793,8 +1805,8 @@ class ReportController extends Controller
                                     <th>Phòng ban</th>
                                     <th>Trạng thái</th>
                                 </tr>";
-        for ($i = 1; $i <= $sumDay; $i++) { 
-            $_date = str_pad($i .'-' . $month . '-' . $year,10,"0",STR_PAD_LEFT); 
+        for ($i = 1; $i <= $sumDay; $i++) {
+            $_date = str_pad($i .'-' . $month . '-' . $year,10,"0",STR_PAD_LEFT);
             $check = Report::where([
                 ['ngayReport','like',$_date],
                 ['type','like', $_room],
@@ -1826,7 +1838,7 @@ class ReportController extends Controller
                         </div>
                     </div>
                 </form></div></div>";
-        }  
+        }
     }
 
     public function getKetoan($_date) {

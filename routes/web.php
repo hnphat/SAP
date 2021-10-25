@@ -208,7 +208,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'report', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@showReport')->name('report');
-        Route::post('khoitao','ReportController@khoiTao')->name('report.init');
+//        Route::post('khoitao','ReportController@khoiTao')->name('report.init');
         Route::get('load','ReportController@loadReport')->name('report.load');
         Route::post('save','ReportController@saveReport')->name('report.save');
         Route::post('savenotsend','ReportController@saveNotSend');
@@ -219,7 +219,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         //--- thêm công việc
         Route::post('addwork','ReportController@addWork')->name('add.work');
-        Route::get('loadwork/{id}','ReportController@loadWork')->name('add.work.load');
+        Route::get('loadwork','ReportController@loadWork')->name('add.work.load');
         Route::post('deletework','ReportController@deleteWork')->name('add.work.delete');
 
     });

@@ -24,6 +24,7 @@ class ReportWorkV2 extends Migration
             $table->foreign('user_nhan')->references('id')->on('users');
             $table->string('ngayStart');
             $table->string('ngayEnd');
+            $table->string('ghiChu')->nullable();
             $table->boolean('status')->nullable();
             $table->string('strStatus')->nullable();
             $table->boolean('isPersonal')->default(true);
