@@ -408,9 +408,9 @@ class ReportController extends Controller
 
     public function addWork(Request $request) {
         $reportWork = new ReportWork();
-        $reportWork->id_report = $request->idReport;
+        $reportWork->user_tao = Auth::user()->id;
+        $reportWork->ngayTao = Date('d-m-Y');
         $reportWork->tenCongViec = $request->tenCongViec;
-        $reportWork->tienDo = $request->tienDo;
         $reportWork->deadLine = $request->deadLine;
         $reportWork->type = "cv";
         $reportWork->ketQua = $request->ketQua;
@@ -478,172 +478,6 @@ class ReportController extends Controller
     public function deleteWork(Request $request) {
         $reportWork = ReportWork::where('id', $request->id)->delete();
         if($reportWork) {
-            return response()->json([
-                'message' => 'Đã xóa!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function addNhap(Request $request) {
-        $reportNhap = new ReportNhap();
-        $reportNhap->id_report = $request->idReport;
-        $reportNhap->nhaCungCap = $request->nhaCungCap;
-        $reportNhap->hanMuc = $request->hanMuc;
-        $reportNhap->soLuong = $request->soLuong;
-        $reportNhap->tongTon = $request->tongTon;
-        $reportNhap->ghiChu = $request->ghiChu;
-        $reportNhap->save();
-        if($reportNhap) {
-            return response()->json([
-                'type' => 'success',
-                'message' => " Đã nhập kho",
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'type' => 'warning',
-                'message' => " Không thể nhập kho",
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function loadNhap($id) {
-        $i = 1;
-        $reportNhap = ReportNhap::where('id_report', $id)->get();
-        $checkExist = ReportNhap::where('id_report', $id)->exists();
-        if($checkExist)
-        $checkClock = $reportNhap->first()->report->clock;
-        echo "<table class='table table-striped'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Nhà cung cấp</th>
-                                        <th>Hạn mục</th>
-                                        <th>Số lượng</th>
-                                        <th>Tổng tồn</th>
-                                        <th>Ghi chú</th>
-                                        <th>Hành động</th>
-                                    </tr>";
-                foreach($reportNhap as $row) {
-                    if (!$checkClock)
-                        echo " <tr>
-                                <td>".$i++."</td>
-                                <td>".$row->nhaCungCap."</td>
-                                <td>".$row->hanMuc."</td>
-                                <td>".$row->soLuong."</td>
-                                <td>".$row->tongTon."</td>
-                                <td>".$row->ghiChu."</td>
-                                <td>
-                                   <button id='delNhap' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
-                                </td>
-                            </tr>";
-                    else
-                        echo " <tr>
-                                <td>".$i++."</td>
-                                <td>".$row->nhaCungCap."</td>
-                                <td>".$row->hanMuc."</td>
-                                <td>".$row->soLuong."</td>
-                                <td>".$row->tongTon."</td>
-                                <td>".$row->ghiChu."</td>
-                                <td>
-                                </td>
-                            </tr>";
-                }
-        echo "</table>";
-    }
-
-    public function deleteNhap(Request $request) {
-        $reportNhap = ReportNhap::where('id', $request->id)->delete();
-        if($reportNhap) {
-            return response()->json([
-                'message' => 'Đã xóa!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function addXuat(Request $request) {
-        $reportXuat = new ReportXuat();
-        $reportXuat->id_report = $request->idReport;
-        $reportXuat->tenNhanVien = $request->tenNhanVien;
-        $reportXuat->hanMuc = $request->hanMuc;
-        $reportXuat->soLuong = $request->soLuong;
-        $reportXuat->tongTon = $request->tongTon;
-        $reportXuat->ghiChu = $request->ghiChu;
-        $reportXuat->save();
-        if($reportXuat) {
-            return response()->json([
-                'type' => 'success',
-                'message' => " Đã xuất kho",
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'type' => 'warning',
-                'message' => " Không thể xuất kho",
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function loadXuat($id) {
-        $i = 1;
-        $reportXuat = ReportXuat::where('id_report', $id)->get();
-        $checkExist = ReportXuat::where('id_report', $id)->exists();
-        if($checkExist)
-        $checkClock = $reportXuat->first()->report->clock;
-        echo "<table class='table table-striped'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên nhân viên</th>
-                                        <th>Hạn mục</th>
-                                        <th>Số lượng</th>
-                                        <th>Tổng tồn</th>
-                                        <th>Ghi chú</th>
-                                        <th>Hành động</th>
-                                    </tr>";
-                      foreach ($reportXuat as $row) {
-                          if (!$checkClock)
-                            echo " <tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenNhanVien."</td>
-                                        <td>".$row->hanMuc."</td>
-                                        <td>".$row->soLuong."</td>
-                                        <td>".$row->tongTon."</td>
-                                        <td>".$row->ghiChu."</td>
-                                        <td>
-                                            <button id='delXuat' data-id='".$row->id."' type='button'  class='btn btn-danger btn-sm'>Xóa</button>
-                                        </td>
-                                    </tr>";
-                          else
-                              echo " <tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenNhanVien."</td>
-                                        <td>".$row->hanMuc."</td>
-                                        <td>".$row->soLuong."</td>
-                                        <td>".$row->tongTon."</td>
-                                        <td>".$row->ghiChu."</td>
-                                        <td>
-                                        </td>
-                                    </tr>";
-                      }
-        echo "</table>";
-    }
-
-    public function deleteXuat(Request $request) {
-        $reportXuat = ReportXuat::where('id', $request->id)->delete();
-        if($reportXuat) {
             return response()->json([
                 'message' => 'Đã xóa!',
                 'code' => 200
@@ -1918,7 +1752,7 @@ class ReportController extends Controller
         }
     }
 
-     public function statusMonth($_month, $_room) {
+    public function statusMonth($_month, $_room) {
         $phong = "";
         $month = explode('-', $_month)[1];
         $year = explode('-', $_month)[0];
@@ -1992,10 +1826,10 @@ class ReportController extends Controller
                         </div>
                     </div>
                 </form></div></div>";
-       }  
+        }  
     }
 
-     public function getKetoan($_date) {
+    public function getKetoan($_date) {
         $i = 1;
         $report = Report::where([
             ['ngayReport','like', \HelpFunction::revertDate($_date)],
@@ -2079,4 +1913,5 @@ class ReportController extends Controller
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
     }
+
 }

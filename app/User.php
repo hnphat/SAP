@@ -90,5 +90,12 @@ class User extends Authenticatable
         return $this->belongsTo('App\Quyen','rule', 'id');
     }
 
+    public function workPersonal() {
+        return $this->hasMany('App\ReportWork','user_tao','id');
+    }
+
+    public function workOther() {
+        return $this->hasMany('App\ReportWork','user_nhan','id');
+    }
 
 }

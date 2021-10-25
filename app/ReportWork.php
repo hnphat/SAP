@@ -8,7 +8,13 @@ class ReportWork extends Model
 {
     //
     protected $table = "report_work";
-    public function report() {
-        return $this->belongsTo('App\Report', 'id_report', 'id');
+
+    public function userTao() {
+    	return $this->belongsTo('App\User','user_tao','id');
     }
+
+    public function userNhan() {
+    	return $this->belongsTo('App\User','user_nhan','id');
+    }
+
 }

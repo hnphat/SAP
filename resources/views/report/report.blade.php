@@ -471,143 +471,6 @@
                     </div>
                     <!-- /.modal -->
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                       \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
-                    <div class="card card-secondary">
-                        <div class="card-header">
-                            <h5>NHẬP KHO</h5>
-                        </div>
-                        <div class="card-body">
-                            <button type="button" data-toggle="modal" data-target="#addNhap" class="btn btn-success">Thêm</button>
-                            <br><br>
-                            <div id="showNhap" class="table-responsive">
-
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- Medal Add Nhap-->
-                    <div class="modal fade" id="addNhap">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">NHẬP KHO</h4>
-                                    <button id="addNhapBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card">
-                                        <form id="addNhapForm" autocomplete="off">
-                                            {{csrf_field()}}
-                                            <input type="hidden" name="idReport2">
-                                            <div class="card-body">
-                                                <div class="form-group">
-                                                    <label>Nhà cung cấp</label>
-                                                    <input name="nhaCungCap" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Hạn mục</label>
-                                                    <select name="hanMuc" class="form-control">
-                                                        <option value="VPP">VPP</option>
-                                                        <option value="Vệ sinh">Vệ sinh</option>
-                                                        <option value="Covid">Covid</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Số lượng</label>
-                                                    <input name="soLuong" type="number" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Tổng tồn</label>
-                                                    <input name="tongTon" type="number" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input name="ghiChu" type="text" class="form-control">
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                                    <button id="btnAddNhap" class="btn btn-primary" form="addNhapForm">Lưu</button>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
-                    <!-- /.modal -->
-                    <div class="card card-secondary">
-                        <div class="card-header">
-                            <h5>XUẤT KHO</h5>
-                        </div>
-                        <div class="card-body">
-                            <button id="addXuatBtn" type="button" data-toggle="modal" data-target="#addXuat" class="btn btn-success">Thêm</button>
-                            <br><br>
-                            <div id="showXuat" class="table-responsive">
-
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- Medal Add Xuat-->
-                    <div class="modal fade" id="addXuat">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">XUẤT KHO</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card">
-                                        <form id="addXuatForm" autocomplete="off">
-                                            {{csrf_field()}}
-                                            <input type="hidden" name="idReport3">
-                                            <div class="card-body">
-                                                <div class="form-group">
-                                                    <label>Tên nhân viên</label>
-                                                    <input name="tenNhanVien" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Hạn mục</label>
-                                                    <select name="hanMuc" class="form-control">
-                                                        <option value="VPP">VPP</option>
-                                                        <option value="Vệ sinh">Vệ sinh</option>
-                                                        <option value="Covid">Covid</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Số lượng</label>
-                                                    <input name="soLuong2" type="number" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Tổng tồn</label>
-                                                    <input name="tongTon2" type="number" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input name="ghiChu2" type="text" class="form-control">
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                                    <button id="btnAddXuat" class="btn btn-primary" form="addXuatForm">Lưu</button>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
-                    <!-- /.modal -->
-                    @endif
                     <div class="card card-warning">
                         <div class="card-header">
                             <h5>CÔNG VIỆC TRONG NGÀY</h5>
@@ -647,12 +510,12 @@
                                                     <output></output>%
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Deadline</label>
-                                                    <input name="deadLine" type="date" class="form-control">
+                                                    <label>Ngày bắt đầu</label>
+                                                    <input name="ngayStart" type="date" class="form-control">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Kết quả</label>
-                                                    <input name="ketQua" placeholder="Nhập kết quả công việc" type="text" class="form-control">
+                                                    <label>Ngày kết thúc</label>
+                                                    <input name="ngayEnd" type="date" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ghi chú</label>

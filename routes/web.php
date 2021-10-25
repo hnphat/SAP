@@ -222,16 +222,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('loadwork/{id}','ReportController@loadWork')->name('add.work.load');
         Route::post('deletework','ReportController@deleteWork')->name('add.work.delete');
 
-        //--- nhập kho
-        Route::post('addnhap','ReportController@addNhap')->name('add.nhap');
-        Route::get('loadnhap/{id}','ReportController@loadNhap')->name('add.nhap.load');
-        Route::post('deletenhap','ReportController@deleteNhap')->name('add.nhap.delete');
-
-        //--- xuất kho
-        Route::post('addxuat','ReportController@addXuat')->name('add.xuat');
-        Route::get('loadxuat/{id}','ReportController@loadXuat')->name('add.xuat.load');
-        Route::post('deletexuat','ReportController@deleteXuat')->name('add.xuat.delete');
-
     });
 
     Route::group(['prefix' => 'overview', 'middleware' => ['f_report']], function(){
