@@ -23,6 +23,9 @@ class Report extends Migration
             //------------------ PKD
             $table->integer('doanhSoThang');
             $table->float('thiPhanThang', 8, 2);
+            //------------------ PDV
+            $table->integer('luotXeDV');
+            $table->float('doanhThuDV', 8, 2);
 //            $table->integer('thiPhanThang')->nullable();
             $table->integer('xuatHoaDon')->nullable();
             $table->integer('xuatNgoaiTinh')->nullable();

@@ -208,7 +208,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'report', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@showReport')->name('report');
-//        Route::post('khoitao','ReportController@khoiTao')->name('report.init');
         Route::get('load','ReportController@loadReport')->name('report.load');
         Route::post('save','ReportController@saveReport')->name('report.save');
         Route::post('savenotsend','ReportController@saveNotSend');
@@ -263,5 +262,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
          //-- ketoan
         Route::get('getketoan/{_date}','ReportController@getKetoan');
         Route::get('getketoanlall/{_month}','ReportController@getKetoanAll');
+    });
+
+    Route::group(['prefix' => 'work'], function(){
+        Route::get('list','WorkController@show')->name('worktohard');
     });
 });

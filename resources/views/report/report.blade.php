@@ -59,11 +59,11 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="doanhSoThang">Doanh số tháng: </label>
-                                    <input id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required">
+                                    <input id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required" value="0">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="thiPhanThang">Thị phần tháng: </label>
-                                    <input id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required">
+                                    <input id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required" value="0">
                                 </div>
                             </div>
                             <div class="row p-1">
@@ -140,6 +140,18 @@
                     <div class="card card-blue">
                         <div class="card-header">
                             <h3>Phòng dịch vụ</h3>
+                        </div>
+                         <div class="card-body">
+                            <div class="row p-1">
+                                <div class="col-md-3">
+                                    <label for="luotXeDV">Lượt xe tháng: </label>
+                                    <input id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required" value="0">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="doanhThuDV">Doanh thu tháng: </label>
+                                    <input id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required" value="0">
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <h5 class="text-blue">LƯỢT XE</h5>
@@ -581,6 +593,15 @@
                             title: response.message
                         })
 
+                        if (response.ds == 1) {
+                            $('input[name=doanhSoThang]').val(response.ds_num);
+                            $('input[name=doanhSoThang]').prop('readonly', true);
+                        }
+                        if (response.tp == 1) {
+                            $('input[name=thiPhanThang]').val(response.tp_num);
+                            $('input[name=thiPhanThang]').prop('readonly', true);
+                        }
+
                         if (response.data.clock == true) {
                             $("#saveNotSend").prop("disabled", true);
                             $("#saveReport").prop("disabled", true);
@@ -602,10 +623,7 @@
                         //---------PKD
                         $('input[name=doanhSoThang]').val(response.data.doanhSoThang);
                         $('input[name=thiPhanThang]').val(response.data.thiPhanThang);
-                        if (response.ds == 1)
-                            $('input[name=doanhSoThang]').prop('readonly', true);
-                        if (response.tp == 1)
-                            $('input[name=thiPhanThang]').prop('readonly', true);
+                        
 
                         $('input[name=xuatHoaDon]').val(response.data.xuatHoaDon);
                         $('input[name=xuatTrongTinh]').val(response.data.xuatTrongTinh);
@@ -719,30 +737,6 @@
             }
             load();
             loadWork();
-            {{--// Khởi tạo report mẫu--}}
-            {{--$('#khoiTao').click(function(){--}}
-            {{--   $.ajax({--}}
-            {{--            url: "{{url('management/report/khoitao')}}",--}}
-            {{--            type: "post",--}}
-            {{--            dataType: 'json',--}}
-            {{--            data: {--}}
-            {{--                "_token": "{{csrf_token()}}"--}}
-            {{--            },--}}
-            {{--            success: function(response) {--}}
-            {{--                Toast.fire({--}}
-            {{--                    icon: response.type,--}}
-            {{--                    title: " " + response.message--}}
-            {{--                })--}}
-            {{--                setTimeout(load, 2000);--}}
-            {{--            },--}}
-            {{--            error: function() {--}}
-            {{--                Toast.fire({--}}
-            {{--                    icon: 'warning',--}}
-            {{--                    title: " Lỗi! Không thể khởi tạo báo cáo!"--}}
-            {{--                })--}}
-            {{--            }--}}
-            {{--        });--}}
-            {{--});--}}
 
             // Lưu  report
             $('#saveNotSend').click(function(e){

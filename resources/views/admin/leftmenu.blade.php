@@ -276,7 +276,7 @@
                             <li class="nav-item">
                                 <a href="{{route("report")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Công việc trong ngày</p>
+                                    <p>Báo cáo ngày</p>
                                 </a>
                             </li>
                         @endif
@@ -286,19 +286,13 @@
                             <li class="nav-item">
                                 <a href="{{route("overview.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Báo cáo phòng ban</p>
+                                    <p>Báo cáo tổng</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route("overview.list")}}" class="nav-link">
+                                <a href="{{route("worktohard")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Báo cáo ngày</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route("report")}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Giao/nhận việc</p>
+                                    <p>Công việc</p>
                                 </a>
                             </li>
                         @endif

@@ -31,39 +31,6 @@
         <!-- Main content -->
         <div class="content">
             <div class="row container">
-{{--                <div class="col-sm-4">--}}
-{{--                    <form id="addForm" autocomplete="off">--}}
-{{--                        {{csrf_field()}}--}}
-{{--                        <div class="card-body">--}}
-{{--                            <input type="hidden" name="idObject">--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>Nội dung</label>--}}
-{{--                                <input name="noiDung" type="text" class="form-control" placeholder="Nhập nội dung" autofocus="autofocus">--}}
-{{--                            </div>--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>Giá</label>--}}
-{{--                                <input name="gia" type="number" class="form-control" placeholder="Nhập giá (nếu có)">--}}
-{{--                            </div>--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>Hoa hồng</label>--}}
-{{--                                <input name="hoaHong" type="number" class="form-control" placeholder="Nhập hoa hồng (nếu có)" >--}}
-{{--                            </div>--}}
-{{--                            <div class="form-group">--}}
-{{--                                <label>Loại</label>--}}
-{{--                                <select name="loai" class="form-control">--}}
-{{--                                    <option value="free">Phụ kiện - Quà tặng (free)</option>--}}
-{{--                                    <option value="pay">Phụ kiện bán (pay)</option>--}}
-{{--                                    <option value="cost">Các loại phí (cost)</option>--}}
-{{--                                </select>--}}
-{{--                            </div>--}}
-{{--                            <div class="form-group">--}}
-{{--                                <button id="btnAdd" class="btn btn-primary">Thêm mới</button>--}}
-{{--                                <button id="btnUpdate" style="display: none;" disabled="disabled" class="btn btn-success">Cập nhật</button>--}}
-{{--                                <button id="btnCancel" style="display: none;" disabled="disabled" class="btn btn-secondary">Hủy</button>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </form>--}}
-{{--                </div>--}}
                 <div class="col-sm-12">
                     <table id="dataTable" class="display" style="width:100%">
                         <thead>

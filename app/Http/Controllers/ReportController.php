@@ -48,17 +48,22 @@ class ReportController extends Controller
             ['ngayReport','like', $today],
             ['type','like', $typeUser]
         ])->exists();
-        $report = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
-            ['doanhSoThang', '!=', null],
-            ['thiPhanThang', '!=', null]
-        ])->first();
+
         if ($checkIn) {
-            if ($report !== null) {
+            $checkReport = Report::where([
+                ['ngayReport','like', '%'.$month],
+                ['type','like', $typeUser],
+                ['doanhSoThang', '!=', null],
+                ['thiPhanThang', '!=', null]
+            ])->first();
+            if ($checkReport !== null) {
                 $ds = 1;
                 $tp = 1;
             }
+            $report = Report::where([
+                ['ngayReport','like', $today],
+                ['type','like', $typeUser]
+            ])->first();
             return response()->json([
                 'ds' => $ds,
                 'tp' => $tp,
@@ -68,123 +73,33 @@ class ReportController extends Controller
                 'data' => $report
             ]);
         } else {
+            $ds_num = 0;
+            $tp_num = 0;
+            $report = Report::where([
+                ['ngayReport','like', '%'.$month],
+                ['type','like', $typeUser],
+                ['doanhSoThang', '!=', null],
+                ['thiPhanThang', '!=', null]
+            ])->first();
             if ($report !== null) {
                 $ds = 1;
                 $tp = 1;
+                $ds_num = $report->doanhSoThang;
+                $tp_num = $report->thiPhanThang;
             }
             return response()->json([
                 'ds' => $ds,
                 'tp' => $tp,
+                'ds_num' => $ds_num,
+                'tp_num' => $tp_num,
                 'type' => 'warning',
                 'message' => ' Chưa có báo cáo nào trong hôm nay!',
                 'code' => 500
             ]);
         }
     }
-    public function saveReport(Request $request) {
-        $today = Date('d-m-Y');
-        $typeUser = "";
-        if (Auth::user()->hasRole('tpkd'))
-            $typeUser = "pkd";
-        elseif (Auth::user()->hasRole('tpdv'))
-            $typeUser = "pdv";
-        elseif (Auth::user()->hasRole('ketoan'))
-            $typeUser = "ketoan";
-        elseif (Auth::user()->hasRole('mkt'))
-            $typeUser = "mkt";
-        elseif (Auth::user()->hasRole('xuong'))
-            $typeUser = "xuong";
-        elseif (Auth::user()->hasRole('cskh'))
-            $typeUser = "cskh";
-        elseif (Auth::user()->hasRole('hcns'))
-            $typeUser = "hcns";
-        elseif (Auth::user()->hasRole('it'))
-            $typeUser = "it";
-        elseif (Auth::user()->hasRole('drp'))
-            $typeUser = "ptdl";
 
-        $report = Report::where([
-            ['ngayReport','like', $today],
-            ['type','like', $typeUser]
-        ])->update([
-           'doanhSoThang' => $request->doanhSoThang,
-           'timeReport' => Date('H:s'),
-            'thiPhanThang' => $request->thiPhanThang,
-            'xuatHoaDon' => $request->xuatHoaDon,
-            'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
-            'xuatTrongTinh' => $request->xuatTrongTinh,
-            'hdHuy' => $request->hdHuy,
-            'ctInternet' => $request->ctInternet,
-            'ctShowroom' => $request->ctShowroom,
-            'ctHotline' => $request->ctHotline,
-            'ctSuKien' => $request->ctSuKien,
-            'ctBLD' => $request->ctBLD,
-            'saleInternet' => $request->saleInternet,
-            'saleMoiGioi' => $request->saleMoiGioi,
-            'saleThiTruong' => $request->saleThiTruong,
-            'khShowRoom' => $request->khShowRoom,
-            'baoDuong' => $request->baoDuong,
-            'suaChua' => $request->suaChua,
-            'Dong' => $request->dong,
-            'Son' => $request->son,
-            'congBaoDuong' => $request->congBaoDuong,
-            'congSuaChuaChung' => $request->congSuaChuaChung,
-            'congDong' => $request->congDong,
-            'congSon' => $request->congSon,
-            'dtPhuTung' => $request->dtPhuTung,
-            'dtDauNhot' => $request->dtDauNhot,
-            'dtPhuTungBan' => $request->dtPhuTungBan,
-            'dtDauNhotBan' => $request->dtDauNhotBan,
-            'phuTungMua' => $request->phuTungMua,
-            'dauNhotMua' => $request->dauNhotMua,
-            'tonBaoDuong' => $request->tonBaoDuong,
-            'tonSuaChuaChung' => $request->tonSuaChuaChung,
-            'tonDong' => $request->tonDong,
-            'tonSon' => $request->tonSong,
-            'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
-            'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
-            'tiepNhanDong' => $request->tiepNhanDong,
-            'tiepNhanSon' => $request->tiepNhanSon,
-            'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
-            'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
-            'hoanThanhDong' => $request->hoanThanhDong,
-            'hoanThanhSon' => $request->hoanThanhSon,
-            'callDatHenSuccess' => $request->callDatHenSuccess,
-            'callDatHenFail' => $request->callDatHenFail,
-            'datHen' => $request->datHen,
-            'dvHaiLong' => $request->dvHaiLong,
-            'dvKhongHaiLong' => $request->dvKhongHaiLong,
-            'dvKhongThanhCong' => $request->dvKhongThanhCong,
-            'muaXeSuccess' => $request->muaXeSuccess,
-            'muaXeFail' => $request->muaXeFail,
-            'duyetBanLe' => $request->duyetBanLe,
-            'knThaiDo' => $request->knThaiDo,
-            'knChatLuong' => $request->knChatLuong,
-            'knThoiGian' => $request->knThoiGian,
-            'knVeSinh' => $request->knVeSinh,
-            'knGiaCa' => $request->knGiaCa,
-            'knKhuyenMai' => $request->knKhuyenMai,
-            'knDatHen' => $request->knDatHen,
-            'knTraiNghiem' => $request->knTraiNghiem,
-            'khBanGiao' => $request->khBanGiao,
-            'khSuKien' => $request->khSuKien,
-            'clock' => true
-        ]);
-        if ($report) {
-            return response()->json([
-                'type' => 'success',
-                'message' => ' Đã lưu và gửi báo cáo!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'type' => 'warning',
-                'message' => ' Lỗi! Bạn phải khởi tạo báo cáo trước!',
-                'code' => 500
-            ]);
-        }
-    }
-    public function saveNotSend(Request $request) {
+    public function saveReport(Request $request) {
         $doanhSo = 0;
         $thiPhan = 0;
         $month = Date('m-Y');
@@ -233,6 +148,214 @@ class ReportController extends Controller
                 'ngayReport' => Date('d-m-Y'),
                 'doanhSoThang' => ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang,
                 'thiPhanThang' => ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang,
+                'xuatHoaDon' => $request->xuatHoaDon,
+                'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+                'xuatTrongTinh' => $request->xuatTrongTinh,
+                'hdHuy' => $request->hdHuy,
+                'ctInternet' => $request->ctInternet,
+                'ctShowroom' => $request->ctShowroom,
+                'ctHotline' => $request->ctHotline,
+                'ctSuKien' => $request->ctSuKien,
+                'ctBLD' => $request->ctBLD,
+                'saleInternet' => $request->saleInternet,
+                'saleMoiGioi' => $request->saleMoiGioi,
+                'saleThiTruong' => $request->saleThiTruong,
+                'khShowRoom' => $request->khShowRoom,
+                'baoDuong' => $request->baoDuong,
+                'suaChua' => $request->suaChua,
+                'Dong' => $request->dong,
+                'Son' => $request->son,
+                'congBaoDuong' => $request->congBaoDuong,
+                'congSuaChuaChung' => $request->congSuaChuaChung,
+                'congDong' => $request->congDong,
+                'congSon' => $request->congSon,
+                'dtPhuTung' => $request->dtPhuTung,
+                'dtDauNhot' => $request->dtDauNhot,
+                'dtPhuTungBan' => $request->dtPhuTungBan,
+                'dtDauNhotBan' => $request->dtDauNhotBan,
+                'phuTungMua' => $request->phuTungMua,
+                'dauNhotMua' => $request->dauNhotMua,
+                'tonBaoDuong' => $request->tonBaoDuong,
+                'tonSuaChuaChung' => $request->tonSuaChuaChung,
+                'tonDong' => $request->tonDong,
+                'tonSon' => $request->tonSong,
+                'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+                'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+                'tiepNhanDong' => $request->tiepNhanDong,
+                'tiepNhanSon' => $request->tiepNhanSon,
+                'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+                'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+                'hoanThanhDong' => $request->hoanThanhDong,
+                'hoanThanhSon' => $request->hoanThanhSon,
+                'callDatHenSuccess' => $request->callDatHenSuccess,
+                'callDatHenFail' => $request->callDatHenFail,
+                'datHen' => $request->datHen,
+                'dvHaiLong' => $request->dvHaiLong,
+                'dvKhongHaiLong' => $request->dvKhongHaiLong,
+                'dvKhongThanhCong' => $request->dvKhongThanhCong,
+                'muaXeSuccess' => $request->muaXeSuccess,
+                'muaXeFail' => $request->muaXeFail,
+                'duyetBanLe' => $request->duyetBanLe,
+                'knThaiDo' => $request->knThaiDo,
+                'knChatLuong' => $request->knChatLuong,
+                'knThoiGian' => $request->knThoiGian,
+                'knVeSinh' => $request->knVeSinh,
+                'knGiaCa' => $request->knGiaCa,
+                'knKhuyenMai' => $request->knKhuyenMai,
+                'knDatHen' => $request->knDatHen,
+                'knTraiNghiem' => $request->knTraiNghiem,
+                'khBanGiao' => $request->khBanGiao,
+                'khSuKien' => $request->khSuKien,
+                'clock' => true
+            ]);
+            if ($report) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã lưu và gửi báo cáo!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Liên hệ quản trị viên!',
+                    'code' => 500
+                ]);
+            }
+        } else {
+            $report = Report::where([
+                ['ngayReport','like', $today],
+                ['type','like', $typeUser]
+            ])->update([
+                'xuatHoaDon' => $request->xuatHoaDon,
+                'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+                'xuatTrongTinh' => $request->xuatTrongTinh,
+                'hdHuy' => $request->hdHuy,
+                'ctInternet' => $request->ctInternet,
+                'ctShowroom' => $request->ctShowroom,
+                'ctHotline' => $request->ctHotline,
+                'ctSuKien' => $request->ctSuKien,
+                'ctBLD' => $request->ctBLD,
+                'saleInternet' => $request->saleInternet,
+                'saleMoiGioi' => $request->saleMoiGioi,
+                'saleThiTruong' => $request->saleThiTruong,
+                'khShowRoom' => $request->khShowRoom,
+                'baoDuong' => $request->baoDuong,
+                'suaChua' => $request->suaChua,
+                'Dong' => $request->dong,
+                'Son' => $request->son,
+                'congBaoDuong' => $request->congBaoDuong,
+                'congSuaChuaChung' => $request->congSuaChuaChung,
+                'congDong' => $request->congDong,
+                'congSon' => $request->congSon,
+                'dtPhuTung' => $request->dtPhuTung,
+                'dtDauNhot' => $request->dtDauNhot,
+                'dtPhuTungBan' => $request->dtPhuTungBan,
+                'dtDauNhotBan' => $request->dtDauNhotBan,
+                'phuTungMua' => $request->phuTungMua,
+                'dauNhotMua' => $request->dauNhotMua,
+                'tonBaoDuong' => $request->tonBaoDuong,
+                'tonSuaChuaChung' => $request->tonSuaChuaChung,
+                'tonDong' => $request->tonDong,
+                'tonSon' => $request->tonSong,
+                'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+                'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+                'tiepNhanDong' => $request->tiepNhanDong,
+                'tiepNhanSon' => $request->tiepNhanSon,
+                'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+                'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+                'hoanThanhDong' => $request->hoanThanhDong,
+                'hoanThanhSon' => $request->hoanThanhSon,
+                'callDatHenSuccess' => $request->callDatHenSuccess,
+                'callDatHenFail' => $request->callDatHenFail,
+                'datHen' => $request->datHen,
+                'dvHaiLong' => $request->dvHaiLong,
+                'dvKhongHaiLong' => $request->dvKhongHaiLong,
+                'dvKhongThanhCong' => $request->dvKhongThanhCong,
+                'muaXeSuccess' => $request->muaXeSuccess,
+                'muaXeFail' => $request->muaXeFail,
+                'duyetBanLe' => $request->duyetBanLe,
+                'knThaiDo' => $request->knThaiDo,
+                'knChatLuong' => $request->knChatLuong,
+                'knThoiGian' => $request->knThoiGian,
+                'knVeSinh' => $request->knVeSinh,
+                'knGiaCa' => $request->knGiaCa,
+                'knKhuyenMai' => $request->knKhuyenMai,
+                'knDatHen' => $request->knDatHen,
+                'knTraiNghiem' => $request->knTraiNghiem,
+                'khBanGiao' => $request->khBanGiao,
+                'khSuKien' => $request->khSuKien,
+                'clock' => true
+            ]);
+            if ($report) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã lưu và gửi báo cáo!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Máy chủ!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
+    public function saveNotSend(Request $request) {
+        $doanhSo = 0;
+        $thiPhan = 0;
+        $month = Date('m-Y');
+        $today = Date('d-m-Y');
+        $typeUser = "";
+        if (Auth::user()->hasRole('tpkd'))
+            $typeUser = "pkd";
+        elseif (Auth::user()->hasRole('tpdv'))
+            $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
+        elseif (Auth::user()->hasRole('mkt'))
+            $typeUser = "mkt";
+        elseif (Auth::user()->hasRole('xuong'))
+            $typeUser = "xuong";
+        elseif (Auth::user()->hasRole('cskh'))
+            $typeUser = "cskh";
+        elseif (Auth::user()->hasRole('hcns'))
+            $typeUser = "hcns";
+        elseif (Auth::user()->hasRole('it'))
+            $typeUser = "it";
+        elseif (Auth::user()->hasRole('drp'))
+            $typeUser = "ptdl";
+
+        $checkSale = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['doanhSoThang', '!=', null],
+            ['thiPhanThang', '!=', null]
+        ])->first();
+
+        if ($checkSale !== null && $checkSale->count() > 0) {
+            $doanhSo = $checkSale->doanhSoThang;
+            $thiPhan = $checkSale->thiPhanThang;
+        }
+
+        $checkIn = Report::where([
+            ['ngayReport','like', $today],
+            ['type','like', $typeUser]
+        ])->exists();
+
+        if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
+            $doanhSo = ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang;
+            $thiPhan = ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang;
+        }
+
+        if (!$checkIn) {
+            $report = Report::insert([
+                'type' => $typeUser,
+                'user_report' => Auth::user()->id,
+                'ngayReport' => Date('d-m-Y'),
+                'doanhSoThang' => $doanhSo,
+                'thiPhanThang' => $thiPhan,
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
@@ -369,6 +492,19 @@ class ReportController extends Controller
                 'khBanGiao' => $request->khBanGiao,
                 'khSuKien' => $request->khSuKien
             ]);
+            if ($report) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã lưu!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Máy chủ!',
+                    'code' => 500
+                ]);
+            }
         }
     }
 
@@ -557,29 +693,6 @@ class ReportController extends Controller
                     <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenCongViec."</td>
-                                        <td $color>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                                        <td>".$row->ketQua."</td>
-                                        <td>".$row->ghiChu."</td>
-                                    </tr>";
-            }
-            echo "</table>";
                     echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -667,33 +780,7 @@ class ReportController extends Controller
                     <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-                    echo "<table class='table table-striped table-bordered'>
-                                                    <tr>
-                                                        <th>STT</th>
-                                                        <th>Ngày</th>
-                                                        <th>Tên công việc</th>
-                                                        <th>Tiến độ</th>
-                                                        <th>Deadline</th>
-                                                        <th>Kết quả</th>
-                                                        <th>Ghi chú</th>
-                                                    </tr>";
-                    foreach($report as $row) {
-                        foreach ($row->reportWork as $row2) {
-                            $color = "";
-                            if ($row2->tienDo < 100)
-                                $color = "class='text-red text-bold'";
-                            echo "<tr>
-                                                <td>" . $i++ . "</td>
-                                                <td>" . $row->ngayReport . "</td>
-                                                <td>" . $row2->tenCongViec . "</td>
-                                                <td $color>" . $row2->tienDo . "%</td>
-                                                <td>" . \HelpFunction::revertDate($row2->deadLine) . "</td>
-                                                <td>" . $row2->ketQua . "</td>
-                                                <td>" . $row2->ghiChu . "</td>
-                                            </tr>";
-                        }
-                    }
-            echo "</table>";
+                   
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -743,29 +830,7 @@ class ReportController extends Controller
                     <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenCongViec."</td>
-                                        <td $color>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                                        <td>".$row->ketQua."</td>
-                                        <td>".$row->ghiChu."</td>
-                                    </tr>";
-            }
-            echo "</table>";
+           
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -845,33 +910,7 @@ class ReportController extends Controller
                     <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
+           
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -914,29 +953,7 @@ class ReportController extends Controller
                     <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenCongViec."</td>
-                                        <td $color>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                                        <td>".$row->ketQua."</td>
-                                        <td>".$row->ghiChu."</td>
-                                    </tr>";
-            }
-            echo "</table>";
+           
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1004,33 +1021,7 @@ class ReportController extends Controller
                 </div>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
+           
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1083,29 +1074,7 @@ class ReportController extends Controller
                     <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->tenCongViec."</td>
-                                        <td $color>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                                        <td>".$row->ketQua."</td>
-                                        <td>".$row->ghiChu."</td>
-                                    </tr>";
-            }
-            echo "</table>";
+           
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1193,33 +1162,7 @@ class ReportController extends Controller
                 </div>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
+          
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1241,77 +1184,8 @@ class ReportController extends Controller
                 <br>
                 <h4>CÔNG VIỆC</h4>
                 <div class='table-responsive'>";
-                echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Tên công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-                            foreach ($report->reportWork as $row) {
-                                $color = "";
-                                if ($row->tienDo < 100)
-                                    $color = "class='text-red text-bold'";
-                            echo "<tr>
-                            <td>".$i++."</td>
-                            <td>".$row->tenCongViec."</td>
-                            <td $color>".$row->tienDo."%</td>
-                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                            <td>".$row->ketQua."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-                        }
-                echo "</table></div>";
-
-                            echo "<br>
-                <h4>NHẬP KHO</h4>
-                <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Nhà cung cấp</th>
-                        <th>Hạn mục</th>
-                        <th>Số lượng</th>
-                        <th>Tổng tồn</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach ($report->reportNhap as $row) {
-                echo "<tr>
-                            <td>".$j++."</td>
-                            <td>".$row->nhaCungCap."</td>
-                            <td>".$row->hanMuc."</td>
-                            <td>".$row->soLuong."</td>
-                            <td>".$row->tongTon."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-            }
-            echo "</table></div>";
-
-            echo "<br>
-                <h4>XUẤT KHO</h4>
-                <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Tên nhân viên</th>
-                        <th>Hạn mục</th>
-                        <th>Số lượng</th>
-                        <th>Tổng tồn</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach ($report->reportXuat as $row) {
-                echo "<tr>
-                            <td>".$k++."</td>
-                            <td>".$row->tenNhanVien."</td>
-                            <td>".$row->hanMuc."</td>
-                            <td>".$row->soLuong."</td>
-                            <td>".$row->tongTon."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-            }
-            echo "</table></div>";
+              
+            echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
@@ -1330,89 +1204,8 @@ class ReportController extends Controller
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
+           
             echo "</div>";
-            echo "<br>
-                <h4>NHẬP KHO</h4>
-                <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Ngày</th>
-                        <th>Nhà cung cấp</th>
-                        <th>Hạn mục</th>
-                        <th>Số lượng</th>
-                        <th>Tổng tồn</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach($report as $row){
-                foreach ($row->reportNhap as $row2) {
-                    echo "<tr>
-                            <td>".$j++."</td>
-                            <td>".$row->ngayReport."</td>
-                            <td>".$row2->nhaCungCap."</td>
-                            <td>".$row2->hanMuc."</td>
-                            <td>".$row2->soLuong."</td>
-                            <td>".$row2->tongTon."</td>
-                            <td>".$row2->ghiChu."</td>
-                        </tr>";
-                }
-            }
-            echo "</table></div>";
-
-            echo "<br>
-                <h4>XUẤT KHO</h4>
-                <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Ngày</th>
-                        <th>Tên nhân viên</th>
-                        <th>Hạn mục</th>
-                        <th>Số lượng</th>
-                        <th>Tổng tồn</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach($report as $row){
-                foreach ($row->reportXuat as $row2) {
-                    echo "<tr>
-                            <td>".$k++."</td>
-                            <td>".$row->ngayReport."</td>
-                            <td>".$row2->tenNhanVien."</td>
-                            <td>".$row2->hanMuc."</td>
-                            <td>".$row2->soLuong."</td>
-                            <td>".$row2->tongTon."</td>
-                            <td>".$row2->ghiChu."</td>
-                        </tr>";
-                }
-            }
-            echo "</table></div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
@@ -1435,29 +1228,8 @@ class ReportController extends Controller
                 <br>
                 <h4>CÔNG VIỆC</h4>
                 <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Tên công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                            <td>".$i++."</td>
-                            <td>".$row->tenCongViec."</td>
-                            <td $color>".$row->tienDo."%</td>
-                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                            <td>".$row->ketQua."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-            }
-            echo "</table></div>";
+           
+            echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
@@ -1486,33 +1258,6 @@ class ReportController extends Controller
                     </div>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1532,29 +1277,8 @@ class ReportController extends Controller
                 <br>
                 <h4>CÔNG VIỆC</h4>
                 <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Tên công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                            <td>".$i++."</td>
-                            <td>".$row->tenCongViec."</td>
-                            <td $color>".$row->tienDo."%</td>
-                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                            <td>".$row->ketQua."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-            }
-            echo "</table></div>";
+           
+            echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
@@ -1571,33 +1295,7 @@ class ReportController extends Controller
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
+           
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1617,29 +1315,8 @@ class ReportController extends Controller
                 <br>
                 <h4>CÔNG VIỆC</h4>
                 <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Tên công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                            <td>".$i++."</td>
-                            <td>".$row->tenCongViec."</td>
-                            <td $color>".$row->tienDo."%</td>
-                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                            <td>".$row->ketQua."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-            }
-            echo "</table></div>";
+           
+            echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
@@ -1656,33 +1333,7 @@ class ReportController extends Controller
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
+        
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1854,29 +1505,8 @@ class ReportController extends Controller
                 <br>
                 <h4>CÔNG VIỆC</h4>
                 <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                        <tr>
-                        <th>STT</th>
-                        <th>Tên công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        </tr>";
-            foreach ($report->reportWork as $row) {
-                $color = "";
-                if ($row->tienDo < 100)
-                    $color = "class='text-red text-bold'";
-                echo "<tr>
-                            <td>".$i++."</td>
-                            <td>".$row->tenCongViec."</td>
-                            <td $color>".$row->tienDo."%</td>
-                            <td>".\HelpFunction::revertDate($row->deadLine)."</td>
-                            <td>".$row->ketQua."</td>
-                            <td>".$row->ghiChu."</td>
-                        </tr>";
-            }
-            echo "</table></div>";
+           
+            echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
         }
@@ -1893,33 +1523,6 @@ class ReportController extends Controller
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Ngày</th>
-                                        <th>Tên công việc</th>
-                                        <th>Tiến độ</th>
-                                        <th>Deadline</th>
-                                        <th>Kết quả</th>
-                                        <th>Ghi chú</th>
-                                    </tr>";
-            foreach($report as $row){
-                foreach ($row->reportWork as $row2) {
-                    $color = "";
-                    if ($row2->tienDo < 100)
-                        $color = "class='text-red text-bold'";
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayReport."</td>
-                                        <td>".$row2->tenCongViec."</td>
-                                        <td $color>".$row2->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row2->deadLine)."</td>
-                                        <td>".$row2->ketQua."</td>
-                                        <td>".$row2->ghiChu."</td>
-                                    </tr>";
-                }
-            }
-            echo "</table>";
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
