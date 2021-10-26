@@ -573,6 +573,7 @@ class ReportController extends Controller
         $reportWork->ngayStart = $request->ngayStart;
         $reportWork->ngayEnd = $request->ngayEnd;
         $reportWork->ghiChu = $request->ghiChu;
+        $reportWork->ketQua = $request->ketQua;
         $reportWork->save();
         if($reportWork) {
             return response()->json([

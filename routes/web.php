@@ -265,6 +265,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'work'], function(){
+        //--- Công việc trong ngày
         Route::get('list','WorkController@show')->name('worktohard');
+        Route::get('getworklist','WorkController@getWorkList');
+        Route::post('addwork','WorkController@addWork');
+        Route::post('delwork','WorkController@delWork');
+        Route::get('getworkedit/{id}','WorkController@getWorkEdit');
+
+
     });
 });

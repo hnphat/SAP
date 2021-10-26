@@ -529,6 +529,10 @@
                                                     <label>Ngày kết thúc</label>
                                                     <input name="ngayEnd" type="date" class="form-control">
                                                 </div>
+                                                 <div class="form-group">
+                                                    <label>Kết quả</label>
+                                                    <input name="ketQua" placeholder="Kết quả công việc" type="text" class="form-control">
+                                                </div>
                                                 <div class="form-group">
                                                     <label>Ghi chú</label>
                                                     <input name="ghiChu" placeholder="Nếu có" type="text" class="form-control">

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -41,10 +42,9 @@
                     {{session('err')}}
                 </div>
             @endif
-            <div class="container">
                  <div class="card card-info">
                         <div class="card-header">
-                            <h5>CÔNG VIỆC</h5>
+                            <h5>CÔNG VIỆC NGÀY</h5>
                         </div>
                         <div class="card-body">
                             <button id="addWorkBtn" type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button><br><br>
@@ -52,11 +52,13 @@
                                 <thead>
                                 <tr class="bg-gray">
                                     <th>STT</th>
+                                    <th>Báo cáo</th>
                                     <th>Ngày</th>
                                     <th>Tên công việc</th>
                                     <th>Tiến độ</th>
                                     <th>Ngày bắt đầu</th>
                                     <th>Ngày kết thúc</th>
+                                    <th>Kết quả</th>
                                     <th>Ghi chú</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -92,11 +94,15 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày bắt đầu</label>
-                                                    <input name="ngayStart" type="date" class="form-control">
+                                                    <input name="ngayStart" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày kết thúc</label>
-                                                    <input name="ngayEnd" type="date" class="form-control">
+                                                    <input name="ngayEnd" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Kết quả</label>
+                                                    <input name="ketQua" placeholder="Kết quả công việc" type="text" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ghi chú</label>
@@ -117,17 +123,59 @@
                     </div>
                     <!-- /.modal -->
 
-                     <div class="card card-info">
-                        <div class="card-header">
-                            <h5>CÔNG VIỆC TỔNG HỢP</h5>
+                     <!-- Medal Edit Work-->
+                    <div class="modal fade" id="editWork">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">SỬA CÔNG VIỆC</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="editWorkForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="idReport4">
+                                            <div class="card-body">
+                                                <input type="hidden" name="_id">
+                                                <div class="form-group">
+                                                    <label>Tên công việc</label>
+                                                    <input name="_tenCongViec" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tiến độ</label>
+                                                    <input value="0" oninput="this.nextElementSibling.value = this.value" name="_tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
+                                                    <output></output>%
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ngày kết thúc</label>
+                                                    <input name="_ngayEnd" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Kết quả</label>
+                                                    <input name="_ketQua" placeholder="Kết quả công việc" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Ghi chú</label>
+                                                    <input name="_ghiChu" placeholder="Nếu có" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                    <button id="btnEditWork" class="btn btn-primary" form="addWorkForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
                         </div>
-                        <div class="card-body">
-                           
-                        </div>
-                        <!-- /.card-body -->
+                        <!-- /.modal-dialog -->
                     </div>
+                    <!-- /.modal -->
             </div>
-        </div>
         <!-- /.content -->
     </div>
 @endsection
@@ -141,6 +189,14 @@
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
+    <!-- Below is plugin for datatables -->
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -151,251 +207,151 @@
 
         $(document).ready(function() {
             //Display data onload
-            var table = $('#dataTable').DataTable({
-                ajax: "{{ url('management/typecar/getlist/') }}",
+            var table = $('#dataTable').DataTable({   
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: "{{ url('management/work/getworklist/') }}",
+                "columnDefs": [ 
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },{
+                        "targets": 1,
+                        "className": "text-center",
+                    } 
+                ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
-                    { "data": "name"},
+                    { "data": null },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#edit' id='btnEdit'><span class='far fa-edit'></span></button>&nbsp;";
-
+                                return "<input id='_check' type='checkbox' data-id="+row.id+">";
+                        }
+                    },
+                    { "data": "ngayTao"},
+                    { "data": "tenCongViec"},
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.tienDo < 100)
+                                return "<span class='text-danger'><strong>"+row.tienDo+"%</strong></span>";
+                            else
+                                return "<span class='text-info'><strong>"+row.tienDo+"%</strong></span>";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button data-id='"+row.id+"' class='btn btn-danger btn-sm' id='delete'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                            return ""+row.ngayStart+"";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button data-id='"+row.id+"' class='btn btn-info btn-sm' id='more'>Chi tiết</button>&nbsp;" +
-                                "<button data-id='"+row.id+"' class='btn btn-success btn-sm' id='addplus' data-toggle='modal' data-target='#addPlusModal'><span class='fas fa-plus-circle'></span></button>&nbsp;";
+                            return ""+row.ngayEnd+"";
+                        }
+                    },
+                    { "data": "ketQua"},
+                    { "data": "ghiChu"},
+                    {
+                       "data": null,
+                        render: function(data, type, row) {
+                                return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
                         }
                     }
                 ]
             });
 
-            //Insert data
-            $("#btnAdd").click(function(e){
+            table.on( 'order.dt search.dt', function () {
+                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+
+             // Lưu công việc
+            $('#btnAddWork').click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/typecar/add/')}}",
-                    type: "POST",
-                    dataType: "json",
-                    data: $("#addForm").serialize(),
+                    url: "{{url('management/work/addwork')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#addWorkForm").serialize(),
                     success: function(response) {
-                        $("#addForm")[0].reset();
+                        $("#addWorkForm")[0].reset();
                         Toast.fire({
-                            icon: 'success',
-                            title: "Đã thêm!"
+                            icon: response.type,
+                            title: " " + response.message
                         })
+                        $("#addWork").modal('hide');
                         table.ajax.reload();
                     },
                     error: function() {
                         Toast.fire({
-                            icon: 'warning',
-                            title: "Trùng tên hoặc chưa nhập liệu"
+                            icon: 'error',
+                            title: " Lỗi! Không thể lưu công việc!"
                         })
-                        $("#addForm")[0].reset();
                     }
                 });
             });
 
-            // Edit data
-            $(document).on('click','#btnEdit', function (){
-               $.ajax({
-                   url: "{{url('management/typecar/edit/')}}",
-                   type: "post",
-                   dataType: "json",
-                   data: {
-                        "_token": "{{csrf_token()}}",
-                        "id": $(this).data('id')
-                   },
-                   success: function(response) {
-                       console.log(response.data);
-                       $("input[name=tenXeE]").val(response.data.name);
-                       $("input[name=idMasterXe]").val(response.data.id);
-                   }
-               });
-            });
-
-            // Update data
-            $('#btnUpdate').click(function(e){
-                e.preventDefault();
-                if(confirm('Bạn có chắc muốn thay đổi')) {
+            $(document).on("click","#delWork", function(){
+                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
-                       url: '{{url('management/typecar/update')}}',
-                       type: 'post',
-                       dataType: 'json',
-                       data: $('#editForm').serialize(),
-                       success: function(response) {
-                           $('#editForm')[0].reset();
-                           $('#edit').modal('hide');
-                           Toast.fire({
-                               icon: 'success',
-                               title: "Đã cập nhật!"
-                           })
-                           table.ajax.reload();
-                       },
-                       error: function() {
-                           Toast.fire({
-                               icon: 'warning',
-                               title: "Lỗi 500 Cập nhật không thành công!"
-                           })
-                       }
-                    });
-                }
-            });
-
-            //Delete data
-            $(document).on("click","#delete",function(){
-               if (confirm("Bạn có chắc muốn xóa?")) {
-                   $.ajax({
-                      url: "{{url('management/typecar/delete')}}",
-                      type: "post",
-                      dataType: "json",
-                      data: {
-                          "_token": "{{csrf_token()}}",
-                          "id": $(this).data('id')
-                      },
-                      success: function(response){
-                          console.log(response);
-                          Toast.fire({
-                              icon: 'success',
-                              title: "Đã xóa!"
-                          })
-                          table.ajax.reload();
-                      },
-                      error: function() {
-                          Toast.fire({
-                              icon: 'warning',
-                              title: "Dữ liệu đang được sử dụng ở nơi khác, không thể xóa!"
-                          })
-                      }
-                   });
-               }
-            });
-
-            // show plus data
-            $(document).on('click','#more', function(){
-                $.get("management/typecar/more/" + $(this).data('id'), function(data){
-                    $("#showMore").html(data);
-                });
-            });
-
-            // delete plus more
-            $(document).on('click', '#deletePlus', function(){
-                if (confirm("Bạn có chắc muốn xóa?")) {
-                    $.ajax({
-                        url: "{{url('management/typecar/more/delete/')}}",
+                        url: "{{url('management/work/delwork/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
                             "_token": "{{csrf_token()}}",
-                            "id": $(this).data('id'),
-                            "master": $(this).data('idmaster')
+                            "id": $(this).data('id')
                         },
-                        success: function(response){
-                            console.log(response);
+                        success: function(response) {
                             Toast.fire({
-                                icon: 'success',
-                                title: "Đã xóa!"
+                                icon: response.type,
+                                title: " " + response.message
                             })
-                            $.get("management/typecar/more/" + response.id, function(data){
-                                $("#showMore").html(data);
-                            });
+                            table.ajax.reload();
                         },
                         error: function() {
                             Toast.fire({
-                                icon: 'warning',
-                                title: "Dữ liệu đang được sử dụng ở nơi khác, không thể xóa!"
+                                icon: 'error',
+                                title: "Lỗi: Không thể xóa!"
                             })
                         }
                     });
                 }
             });
 
-            // Add plus show data
-            $(document).on('click','#addplus', function(){
-                $.ajax({
-                    url: "{{url('management/typecar/more/add/')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        '_token': "{{csrf_token()}}",
-                        'id': $(this).data('id')
-                    },
-                    success: function(response){
-                        console.log(response.data);
-                        $("input[name=idAddPlus]").val(response.data.id);
-                        $("input[name=tenDongXe]").val(response.data.name);
-                    }
-                });
+            $(document).on("change","#_check", function(){
+               
             });
 
-            // Add plus data
-            $("#btnAddPlus").click(function(e){
-                e.preventDefault();
+            $(document).on("click","#showEdit", function(){
                 $.ajax({
-                    url: "{{url('management/typecar/more/addplus/')}}",
-                    type: "POST",
+                    url: "{{url('management/work/getworkedit/')}}" + "/" + $(this).data('id'),
                     dataType: "json",
-                    data: $("#addPlusForm").serialize(),
                     success: function(response) {
-                        console.log(response);
                         Toast.fire({
-                            icon: 'success',
-                            title: "Đã thêm loại xe! "
+                            icon: response.type,
+                            title: " " + response.message
                         })
-                        $("#addPlusForm")[0].reset();
-                        $("#addPlusModal").modal('hide');
-                        $.get("management/typecar/more/" + response.id, function(data){
-                            $("#showMore").html(data);
-                        });
-                    }
-                });
-            });
-
-            // edit add plus show form
-            $(document).on('click','#showEditPlus', function(){
-                $.ajax({
-                    url: "{{url('management/typecar/more/editshowplus/')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        '_token': "{{csrf_token()}}",
-                        'id': $(this).data('id')
+                        $('input[name=_tenCongViec]').val(response.data.tenCongViec);
+                        $('input[name=_tienDo]').val(response.data.tienDo);
                     },
-                    success: function(response){
-                        $("input[name=idEditAddPlus]").val(response.data.id);
-                        $("input[name=idMaster]").val(response.data.id_type_car);
-                        $("input[name=_tenLoaiXe]").val(response.data.name);
-                    }
-                });
-            });
-
-            // update add plus data
-            $("#btnUpdateAddPlus").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/typecar/more/editaddplus/')}}",
-                    type: "POST",
-                    dataType: "json",
-                    data: $("#editAddPlusForm").serialize(),
-                    success: function(response) {
-                        console.log(response);
+                    error: function() {
                         Toast.fire({
-                            icon: 'success',
-                            title: "Đã sữa loại xe! "
+                            icon: 'error',
+                            title: "Lỗi: Không tải được công việc!"
                         })
-                        $("#editAddPlusForm")[0].reset();
-                        $("#editPlusModal").modal('hide');
-                        $.get("management/typecar/more/" + response.id, function(data){
-                            $("#showMore").html(data);
-                        });
                     }
                 });
             });
