@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>CÔNG VIỆC</strong></h1>
+                        <h1 class="m-0"><strong>CÔNG VIỆC TỔNG</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Báo cáo</li>
                             <li class="breadcrumb-item active">Công việc</li>
+                            <li class="breadcrumb-item active">Công việc tổng</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -44,7 +44,7 @@
             @endif
                  <div class="card card-info">
                         <div class="card-header">
-                            <h5>CÔNG VIỆC NGÀY</h5>
+                            <h5>CÔNG VIỆC TỔNG</h5>
                         </div>
                         <div class="card-body">
                             <button id="addWorkBtn" type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button><br><br>
@@ -205,16 +205,21 @@
             timer: 3000
         });
 
+        function revertDate(str) {
+            let myArr = str.split("-");
+            return myArr[2] + "-" + myArr[1] + "-" + myArr[0];
+        }
+
         $(document).ready(function() {
             //Display data onload
-            var table = $('#dataTable').DataTable({   
+            var table = $('#dataTable').DataTable({
                 responsive: true,
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 ajax: "{{ url('management/work/getworklist/') }}",
-                "columnDefs": [ 
+                "columnDefs": [
                     {
                         "searchable": false,
                         "orderable": false,
@@ -222,7 +227,7 @@
                     },{
                         "targets": 1,
                         "className": "text-center",
-                    } 
+                    }
                 ],
                 "order": [
                     [ 0, 'desc' ]
@@ -233,6 +238,9 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
+                            if (row.isReport == true)
+                                return "<input id='_check' type='checkbox' checked='checked' data-id="+row.id+">";
+                            else
                                 return "<input id='_check' type='checkbox' data-id="+row.id+">";
                         }
                     },
@@ -250,13 +258,13 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return ""+row.ngayStart+"";
+                            return ""+revertDate(row.ngayStart)+"";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return ""+row.ngayEnd+"";
+                            return ""+revertDate(row.ngayEnd)+"";
                         }
                     },
                     { "data": "ketQua"},
@@ -304,6 +312,32 @@
                 });
             });
 
+            // Sửa công việc
+            $('#btnEditWork').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/work/editwork')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#editWorkForm").serialize(),
+                    success: function(response) {
+                        $("#editWorkForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#editWork").modal('hide');
+                        table.ajax.reload();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: " Lỗi! Không thể chỉnh sửa công việc!"
+                        })
+                    }
+                });
+            });
+
             $(document).on("click","#delWork", function(){
                  if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
@@ -332,7 +366,28 @@
             });
 
             $(document).on("change","#_check", function(){
-               
+                $.ajax({
+                    url: "{{url('management/work/check/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        table.ajax.reload();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi: Không thể xóa!"
+                        })
+                    }
+                });
             });
 
             $(document).on("click","#showEdit", function(){
@@ -345,7 +400,11 @@
                             title: " " + response.message
                         })
                         $('input[name=_tenCongViec]').val(response.data.tenCongViec);
+                        $('input[name=_id]').val(response.data.id);
                         $('input[name=_tienDo]').val(response.data.tienDo);
+                        $('input[name=_ngayEnd]').val(response.data.ngayEnd);
+                        $('input[name=_ketQua]').val(response.data.ketQua);
+                        $('input[name=_ghiChu]').val(response.data.ghiChu);
                     },
                     error: function() {
                         Toast.fire({

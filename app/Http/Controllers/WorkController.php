@@ -66,7 +66,7 @@ class WorkController extends Controller
     		['isPersonal','=', true],
     		['id','=', $request->id]
         ])->delete();
-        
+
         if($reportWork) {
             return response()->json([
                 'type' => 'success',
@@ -95,6 +95,118 @@ class WorkController extends Controller
             return response()->json([
                 'type' => 'warning',
                 'message' => " Không thể load công việc",
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function editWork(Request $request) {
+        $reportWork = ReportWork::where([
+            ['user_tao','=',Auth::user()->id],
+            ['id','=', $request->_id]
+        ])->update([
+            "tenCongViec" => $request->_tenCongViec,
+            "tienDo" => $request->_tienDo,
+            "ngayEnd" => $request->_ngayEnd,
+            "ketQua" => $request->_ketQua,
+            "ghiChu" => $request->_ghiChu
+        ]);
+        if($reportWork) {
+            return response()->json([
+                'type' => 'success',
+                'message' => " Đã chỉnh sửa công việc",
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => " Không thể chỉnh sửa công việc",
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function checkWork(Request $request) {
+        $current = ReportWork::where([
+            ['user_tao','=',Auth::user()->id],
+            ['isPersonal','=', true],
+            ['id','=', $request->id]
+        ])->first();
+        $newVal = ($current->isReport == true) ? false : true;
+        $reportWork = ReportWork::where([
+            ['user_tao','=',Auth::user()->id],
+            ['isPersonal','=', true],
+            ['id','=', $request->id]
+        ])->update([
+            'isReport' => $newVal
+        ]);
+
+        if($reportWork) {
+            return response()->json([
+                'type' => 'success',
+                'message' => ($newVal == true) ? "Đã thêm" : " Đã loại",
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => " Không thao tác trên báo cáo",
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function complete() {
+        return view('work.complete');
+    }
+
+    public function showComplete() {
+        $result = ReportWork::where([
+            ['user_tao','=',Auth::user()->id],
+            ['tienDo','=', 100]
+        ])->orWhere([
+            ['user_nhan','=',Auth::user()->id],
+            ['tienDo','=', 100]
+        ])->orderBy('id', 'desc')->get();
+        if($result) {
+            return response()->json([
+                'type' => "success",
+                'message' => 'Get reports successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Internal Server fail',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function working() {
+        return view('work.working');
+    }
+
+    public function showWorking() {
+        $result = ReportWork::where([
+            ['user_tao','=',Auth::user()->id],
+            ['tienDo','<', 100]
+        ])->orWhere([
+            ['user_nhan','=',Auth::user()->id],
+            ['tienDo','<', 100]
+        ])->orderBy('id', 'desc')->get();
+        if($result) {
+            return response()->json([
+                'type' => "success",
+                'message' => 'Get reports successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Internal Server fail',
                 'code' => 500
             ]);
         }

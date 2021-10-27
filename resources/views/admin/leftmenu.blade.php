@@ -309,17 +309,17 @@
                             <li class="nav-item">
                                 <a href="{{route("worktohard")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Công việc</p>
+                                    <p>Công việc tổng</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route("complete.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Đã hoàn thành</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route("working.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Đang thực hiện</p>
                                 </a>

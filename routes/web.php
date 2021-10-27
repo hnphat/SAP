@@ -271,7 +271,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('addwork','WorkController@addWork');
         Route::post('delwork','WorkController@delWork');
         Route::get('getworkedit/{id}','WorkController@getWorkEdit');
+        Route::post('editwork','WorkController@editWork');
+        Route::post('check','WorkController@checkWork');
 
+        //--- Công việc trong ngày
+        Route::get('complete','WorkController@complete')->name('complete.list');
+        Route::get('complete/list','WorkController@showComplete')->name('complete');
 
+        //--- Công việc trong ngày
+        Route::get('working','WorkController@working')->name('working.list');
+        Route::get('working/list','WorkController@showWorking');
     });
 });
