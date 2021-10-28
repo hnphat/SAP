@@ -295,7 +295,8 @@
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('report') ||
-                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('normal'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-cannabis"></i>
                         <p>
@@ -305,7 +306,8 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('normal'))
                             <li class="nav-item">
                                 <a href="{{route("worktohard")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
@@ -325,13 +327,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route("work.get")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Nhận việc</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route("work.push")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Giao việc</p>
                                 </a>

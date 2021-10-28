@@ -1,7 +1,7 @@
 
 @extends('admin.index')
 @section('title')
-   Công việc
+   Giao việc
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>CÔNG VIỆC TỔNG</strong></h1>
+                        <h1 class="m-0"><strong>GIAO VIỆC</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Công việc</li>
-                            <li class="breadcrumb-item active">Công việc tổng</li>
+                            <li class="breadcrumb-item active">Giao việc</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -44,7 +44,7 @@
             @endif
                  <div class="card card-info">
                         <div class="card-header">
-                            <h5>CÔNG VIỆC TỔNG</h5>
+                            <h5>GIAO VIỆC</h5>
                         </div>
                         <div class="card-body">
                             <button id="addWorkBtn" type="button" data-toggle="modal" data-target="#addWork" class="btn btn-success">Thêm</button><br><br>
@@ -54,12 +54,13 @@
                                     <th>STT</th>
                                     <th>Báo cáo</th>
                                     <th>Ngày</th>
+                                    <th>Giao cho</th>
                                     <th>Tên công việc</th>
+                                    <th>Yêu cầu</th>
                                     <th>Tiến độ</th>
-                                    <th>Ngày bắt đầu</th>
-                                    <th>Ngày kết thúc</th>
-                                    <th>Kết quả</th>
-                                    <th>Ghi chú</th>
+                                    <th>Deadline</th>
+                                    <th>Phản hồi</th>
+                                    <th>Trạng thái</th>
                                     <th>Hành động</th>
                                 </tr>
                                 </thead>
@@ -83,13 +84,16 @@
                                             {{csrf_field()}}
                                             <div class="card-body">
                                                 <div class="form-group">
-                                                    <label>Tên công việc</label>
-                                                    <input name="tenCongViec" type="text" class="form-control">
+                                                    <label>Giao cho</label>
+                                                    <select name="giaoCho" class="form-control">
+                                                        @foreach($user as $row)
+                                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Tiến độ</label>
-                                                    <input value="0" oninput="this.nextElementSibling.value = this.value" name="tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
-                                                    <output></output>%
+                                                    <label>Tên công việc</label>
+                                                    <input name="tenCongViec" type="text" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày bắt đầu</label>
@@ -100,13 +104,9 @@
                                                     <input name="ngayEnd" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Kết quả</label>
-                                                    <input name="ketQua" placeholder="Kết quả công việc" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input name="ghiChu" placeholder="Nếu có" type="text" class="form-control">
-                                                </div>
+                                                    <label>Yêu cầu công việc</label>
+                                                    <input name="yeuCau" placeholder="Yêu cầu công việc" type="text" class="form-control">
+                                                </div>                                            
                                             </div>
                                         </form>
                                     </div>
@@ -138,27 +138,26 @@
                                             {{csrf_field()}}
                                             <div class="card-body">
                                                 <input type="hidden" name="_id">
+                                                 <div class="form-group">
+                                                    <label>Người nhận việc</label>
+                                                    <input name="_nguoiNhan" readonly="readonly" type="text" class="form-control">
+                                                </div>
                                                 <div class="form-group">
                                                     <label>Tên công việc</label>
                                                     <input name="_tenCongViec" type="text" class="form-control">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>Tiến độ</label>
-                                                    <input value="0" oninput="this.nextElementSibling.value = this.value" name="_tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
-                                                    <output></output>%
+                                                 <div class="form-group">
+                                                    <label>Ngày bắt đầu</label>
+                                                    <input name="_ngayStart" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày kết thúc</label>
                                                     <input name="_ngayEnd" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label>Kết quả</label>
-                                                    <input name="_ketQua" placeholder="Kết quả công việc" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Ghi chú</label>
-                                                    <input name="_ghiChu" placeholder="Nếu có" type="text" class="form-control">
-                                                </div>
+                                               <div class="form-group">
+                                                    <label>Yêu cầu công việc</label>
+                                                    <input name="_yeuCau" placeholder="Yêu cầu công việc" type="text" class="form-control">
+                                                </div>      
                                             </div>
                                         </form>
                                     </div>
@@ -166,6 +165,67 @@
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                                     <button id="btnEditWork" class="btn btn-primary" form="addWorkForm">Lưu</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+
+                    <!-- Medal SHOW Work-->
+                    <div class="modal fade" id="dataShowResult">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">PHẢN HỒI CÔNG VIỆC</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="p-4">
+                                           <h5>Phản hồi</h5>
+                                            <p id="lyDo"></p>
+                                            <h5>GHI CHÚ</h5>
+                                            <p id="lyDoGhiChu"></p> 
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+
+                    <!-- Medal Reponse Work-->
+                    <div class="modal fade" id="approveWork">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">XEM XÉT KẾT QUẢ</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <form id="responseForm" autocomplete="off">
+                                            {{csrf_field()}}
+                                            <div class="card-body">
+                                                <input type="hidden" name="_idPhanHoi">
+                                                <div class="form-group">
+                                                    <label>Phản hồi (nếu có)</label>
+                                                    <input name="phanHoi" placeholder="Phản hồi từ người giao việc (nếu có)" type="text" class="form-control">
+                                                </div>   
+                                                <button id="approve" class="btn btn-primary">Đạt yêu cầu</button>
+                                             <button id="noapprove" class="btn btn-warning">Chưa đạt yêu cầu</button>                              
+                                            </div>       
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /.modal-content -->
@@ -216,7 +276,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/work/getworklist/') }}",
+                ajax: "{{ url('management/work/pushwork/list') }}",
                 "columnDefs": [
                     {
                         "searchable": false,
@@ -224,6 +284,9 @@
                         "targets": 0
                     },{
                         "targets": 1,
+                        "className": "text-center",
+                    },{
+                        "targets": 6,
                         "className": "text-center",
                     }
                 ],
@@ -236,14 +299,16 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            if (row.isReport == true)
+                            if (row.isReportPush == true)
                                 return "<input id='_check' type='checkbox' checked='checked' data-id="+row.id+">";
                             else
                                 return "<input id='_check' type='checkbox' data-id="+row.id+">";
                         }
                     },
                     { "data": "ngayTao"},
+                    { "data": "surname"},
                     { "data": "tenCongViec"},
+                    { "data": "requestWork"},
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -256,21 +321,42 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return ""+revertDate(row.ngayStart)+"";
+                            return revertDate(row.ngayStart)+"<br/>"+revertDate(row.ngayEnd)+"<br/> <strong>(Muộn)</strong>";
                         }
                     },
-                    {
+                    { 
+                      "data": null,
+                        render: function(data, type, row) {
+                                return "<button id='viewMore' data-id='"+row.id+"' data-toggle='modal' data-target='#dataShowResult' id='showResult' class='btn btn-info btn-sm'>Xem</button>";
+                       }      
+                    },
+                    { 
                         "data": null,
                         render: function(data, type, row) {
-                            return ""+revertDate(row.ngayEnd)+"";
-                        }
+                            if (row.apply == null)
+                               return "<span class='text-warning'><strong>Chưa nhận</strong></span>";
+                            else if (row.apply == false)
+                               return "<span class='text-secondary'><strong>Từ chối</strong></span>";
+                            else if (row.apply == true && row.tienDo == 100 && row.acceptApply == false)
+                               return "<span class='text-success'><strong>Hoàn tất</strong></span>";
+                            else if (row.apply == true && row.tienDo == 100 && row.acceptApply == true)
+                               return "<span class='text-pink'><strong>Kết thúc</strong></span>";
+                            else if (row.apply == true && row.tienDo < 100)
+                              return "<span class='text-info'><strong>Đang thực hiện</strong></span>";
+                       }   
                     },
-                    { "data": "ketQua"},
-                    { "data": "ghiChu"},
                     {
                        "data": null,
                         render: function(data, type, row) {
-                                return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
+                            if (row.apply != true)
+                                return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id='"+row.id+"' data-surname='"+row.surname+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
+                            else if (row.apply == true && row.tienDo == 100 && row.acceptApply == false)
+                                return "<button id='showXemXet' data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#approveWork'>Xem xét</button>";
+                            else if (row.apply == true && row.tienDo == 100 && row.acceptApply == true)
+                                return "";
+                            else if (row.apply == true && row.tienDo < 100)
+                                return "<button id='huy' data-id='"+row.id+"' class='btn btn-warning btn-sm'>Bỏ giao việc</button>";
+                            else return "";
                         }
                     }
                 ]
@@ -288,7 +374,7 @@
             $('#btnAddWork').click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/work/addwork')}}",
+                    url: "{{url('management/work/addpushwork')}}",
                     type: "post",
                     dataType: 'json',
                     data: $("#addWorkForm").serialize(),
@@ -304,7 +390,7 @@
                     error: function() {
                         Toast.fire({
                             icon: 'error',
-                            title: " Lỗi! Không thể lưu công việc!"
+                            title: " Lỗi! Không thể giao công việc!"
                         })
                     }
                 });
@@ -314,7 +400,7 @@
             $('#btnEditWork').click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/work/editwork')}}",
+                    url: "{{url('management/work/editpushwork')}}",
                     type: "post",
                     dataType: 'json',
                     data: $("#editWorkForm").serialize(),
@@ -339,7 +425,7 @@
             $(document).on("click","#delWork", function(){
                  if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
-                        url: "{{url('management/work/delwork/')}}",
+                        url: "{{url('management/work/delpushwork/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
@@ -365,7 +451,7 @@
 
             $(document).on("change","#_check", function(){
                 $.ajax({
-                    url: "{{url('management/work/check/')}}",
+                    url: "{{url('management/work/checkpush/')}}",
                     type: "post",
                     dataType: "json",
                     data: {
@@ -389,6 +475,7 @@
             });
 
             $(document).on("click","#showEdit", function(){
+                let _name = $(this).data('surname');
                 $.ajax({
                     url: "{{url('management/work/getworkedit/')}}" + "/" + $(this).data('id'),
                     dataType: "json",
@@ -399,15 +486,123 @@
                         })
                         $('input[name=_tenCongViec]').val(response.data.tenCongViec);
                         $('input[name=_id]').val(response.data.id);
-                        $('input[name=_tienDo]').val(response.data.tienDo);
+                        $('input[name=_ngayStart]').val(response.data.ngayStart);
                         $('input[name=_ngayEnd]').val(response.data.ngayEnd);
-                        $('input[name=_ketQua]').val(response.data.ketQua);
-                        $('input[name=_ghiChu]').val(response.data.ghiChu);
+                        $('input[name=_yeuCau]').val(response.data.requestWork);
+                        $('input[name=_nguoiNhan]').val(_name);
                     },
                     error: function() {
                         Toast.fire({
                             icon: 'error',
                             title: "Lỗi: Không tải được công việc!"
+                        })
+                    }
+                });
+            });
+
+            $(document).on("click","#showResult", function(){
+                
+            });
+
+            $(document).on("click","#showXemXet", function(){
+                $('input[name=_idPhanHoi]').val($(this).data('id'));
+            });
+
+             // Chấp nhận
+            $('#approve').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/work/approve')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#responseForm").serialize(),
+                    success: function(response) {
+                        $("#responseForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#approveWork").modal('hide');
+                        table.ajax.reload();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: " Lỗi! Không thể cập nhận xem xét kết quả!"
+                        })
+                    }
+                });
+            });
+
+            // Từ chối
+            $('#noapprove').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/work/noapprove')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#responseForm").serialize(),
+                    success: function(response) {
+                        $("#responseForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $("#approveWork").modal('hide');
+                        table.ajax.reload();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: " Lỗi! Không thể cập nhận xem xét kết quả!"
+                        })
+                    }
+                });
+            });
+
+            $(document).on("click","#huy", function(){
+                 if(confirm('Xác nhận hủy bỏ công việc đã giao\nCông việc sau khi hủy sẽ bị xóa khỏi hệ thống?')) {
+                    $.ajax({
+                        url: "{{url('management/work/delpushwork/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: " " + response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'error',
+                                title: "Lỗi: Không thể xóa!"
+                            })
+                        }
+                    });
+                }
+            });
+
+             $(document).on("click","#viewMore", function(){
+                $.ajax({
+                    url: "{{url('management/work/viewmore/')}}" + "/" + $(this).data('id'),
+                    dataType: "json",
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: " " + response.message
+                        })
+                        $('#lyDo').text(response.data.ketQua);
+                        $('#lyDoGhiChu').text(response.data.ghiChu);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi: Không tải được!"
                         })
                     }
                 });

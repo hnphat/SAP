@@ -80,7 +80,6 @@
                             <div class="card">
                                 <form id="editWorkForm" autocomplete="off">
                                     {{csrf_field()}}
-                                    <input type="hidden" name="idReport4">
                                     <div class="card-body">
                                         <input type="hidden" name="_id">
                                         <div class="form-group">
@@ -91,6 +90,10 @@
                                             <label>Tiến độ</label>
                                             <input value="0" oninput="this.nextElementSibling.value = this.value" name="_tienDo" placeholder="% hoàn thành" min="0" max="100" type="range" class="form-control">
                                             <output></output>%
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Ngày kết thúc</label>
+                                            <input name="_ngayEnd" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                         </div>
                                         <div class="form-group">
                                             <label>Kết quả</label>
@@ -166,6 +169,9 @@
                     },{
                         "targets": 1,
                         "className": "text-center",
+                    },{
+                        "targets": 8,
+                        "className": "text-center",
                     }
                 ],
                 "order": [
@@ -204,10 +210,10 @@
                     { "data": "ghiChu"},
                     {  "data": null,
                         render: function(data, type, row) {
-                            if (row.isPersonal == true)
-                                return "<button class='btn btn-secondary btn-sm'>Cá nhân</button>";
+                           if (row.isPersonal == true)
+                                return "<span class='text-info'>Cá nhân";
                             else
-                                return "<button id='showWork' data-id="+row.id+" class='btn btn-info btn-sm'>Giao việc</button>";
+                                return "<span class='text-pink'>Được giao</span><br/><i>("+row.surname+")</i>";
                         }
                     },
                     {

@@ -281,5 +281,23 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         //--- Công việc trong ngày
         Route::get('working','WorkController@working')->name('working.list');
         Route::get('working/list','WorkController@showWorking');
+
+        //--- Giao việc
+        Route::get('pushwork','WorkController@pushWork')->name('work.push');
+        Route::get('pushwork/list','WorkController@showPushWork');
+        Route::post('addpushwork','WorkController@addPushWork');
+        Route::post('editpushwork','WorkController@editPushWork');
+        Route::post('delpushwork','WorkController@delPushWork');
+        Route::post('pushcheck','WorkController@pushCheckWork');
+        Route::post('approve','WorkController@approve');
+        Route::post('noapprove','WorkController@noApprove');
+        Route::post('checkpush','WorkController@checkPushWork');
+        Route::get('viewmore/{id}','WorkController@viewMore');
+
+        //--- Nhận việc
+        Route::get('getwork','WorkController@getWork')->name('work.get');
+        Route::get('getworkdetail','WorkController@getWorkDetail');
+        Route::post('getnoapprove','WorkController@getNoApprove');
+        Route::post('getapprove','WorkController@getApprove');
     });
 });

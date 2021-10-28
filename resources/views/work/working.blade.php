@@ -44,7 +44,7 @@
             @endif
             <div class="card card-info">
                 <div class="card-header">
-                    <h5>Đã hoàn thành</h5>
+                    <h5>Đang thực hiện</h5>
                 </div>
                 <div class="card-body">
                     <table id="dataTable" class="display" style="width:100%">
@@ -166,6 +166,9 @@
                     },{
                         "targets": 1,
                         "className": "text-center",
+                    },{
+                        "targets": 8,
+                        "className": "text-center",
                     }
                 ],
                 "order": [
@@ -205,15 +208,18 @@
                     {  "data": null,
                         render: function(data, type, row) {
                             if (row.isPersonal == true)
-                                return "<button class='btn btn-secondary btn-sm'>Cá nhân</button>";
+                                return "<span class='text-info'>Cá nhân";
                             else
-                                return "<button id='showWork' data-id="+row.id+" class='btn btn-info btn-sm'>Giao việc</button>";
+                                return "<span class='text-pink'>Được giao</span><br/><i>("+row.surname+")</i>";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
+                            if (row.isPersonal == true)
+                                return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Cập nhật</button>";
+                            else
+                                return "<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Cập nhật</button>";
                         }
                     }
                 ]
@@ -313,12 +319,19 @@
                             icon: response.type,
                             title: " " + response.message
                         })
-                        $('input[name=_tenCongViec]').val(response.data.tenCongViec);
                         $('input[name=_id]').val(response.data.id);
                         $('input[name=_tienDo]').val(response.data.tienDo);
-                        $('input[name=_ngayEnd]').val(response.data.ngayEnd);
                         $('input[name=_ketQua]').val(response.data.ketQua);
                         $('input[name=_ghiChu]').val(response.data.ghiChu);
+                        if (response.data.isPersonal == true) {
+                            $('input[name=_tenCongViec]').val(response.data.tenCongViec);
+                            $('input[name=_tenCongViec]').prop('readonly', false);
+                         }   
+                         else {
+                            $('input[name=_tenCongViec]').val(response.data.tenCongViec);
+                            $('input[name=_tenCongViec]').prop('readonly', true);
+                         }
+                            
                     },
                     error: function() {
                         Toast.fire({

@@ -28,9 +28,11 @@ class ReportWorkV2 extends Migration
             $table->string('ghiChu')->nullable();
             $table->string('requestWork')->nullable();
             $table->boolean('apply')->nullable();
+            $table->boolean('acceptApply')->default(false);
             $table->string('replyWork')->nullable();
             $table->boolean('isPersonal')->default(true);
             $table->boolean('isReport')->default(false);
+            $table->boolean('isReportPush')->default(false);
             $table->timestamps();
         });
     }
