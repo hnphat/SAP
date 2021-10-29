@@ -45,8 +45,6 @@
             <div class="container">
                 <h5><strong>Ngày: </strong> <?php echo Date('d-m-Y');?></h5>
                 <h5><strong>Thời gian báo cáo: </strong> <span id="setTime"></span></h5>
-{{--                <button id="khoiTao" class="btn btn-success">KHỞI TẠO BÁO CÁO</button>--}}
-{{--                <br><br>--}}
                 <form id="reportForm" action="#" method="post" enctype="multipart/form-data">
                   {{csrf_field()}}
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
@@ -605,6 +603,14 @@
                             $('input[name=thiPhanThang]').val(response.tp_num);
                             $('input[name=thiPhanThang]').prop('readonly', true);
                         }
+                        if (response.lxdv == 1) {
+                            $('input[name=luotXeDV]').val(response.lxdv_num);
+                            $('input[name=luotXeDV]').prop('readonly', true);
+                        }
+                        if (response.dtdv == 1) {
+                            $('input[name=doanhThuDV]').val(response.dtdv_num);
+                            $('input[name=doanhThuDV]').prop('readonly', true);
+                        }
 
                         if (response.data.clock == true) {
                             $("#saveNotSend").prop("disabled", true);
@@ -627,6 +633,10 @@
                         //---------PKD
                         $('input[name=doanhSoThang]').val(response.data.doanhSoThang);
                         $('input[name=thiPhanThang]').val(response.data.thiPhanThang);
+
+                        //---------PDV
+                        $('input[name=luotXeDV]').val(response.data.luotXeDV);
+                        $('input[name=doanhThuDV]').val(response.data.doanhThuDV);
                         
 
                         $('input[name=xuatHoaDon]').val(response.data.xuatHoaDon);

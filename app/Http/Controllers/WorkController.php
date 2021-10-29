@@ -111,6 +111,35 @@ class WorkController extends Controller
         ])->update([
             "tenCongViec" => $request->_tenCongViec,
             "tienDo" => $request->_tienDo,
+            "ngayEnd" => $request->_ngayEnd,
+            "ketQua" => $request->_ketQua,
+            "ghiChu" => $request->_ghiChu
+        ]);
+        if($reportWork) {
+            return response()->json([
+                'type' => 'success',
+                'message' => " Đã chỉnh sửa công việc",
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => " Không thể chỉnh sửa công việc",
+                'code' => 500
+            ]);
+        }
+    }
+
+      public function editWorking(Request $request) {
+        $reportWork = ReportWork::where([
+            ['user_tao','=',Auth::user()->id],
+            ['id','=', $request->_id]
+        ])->orWhere([
+            ['user_nhan','=',Auth::user()->id],
+            ['id','=', $request->_id]
+        ])->update([
+            "tenCongViec" => $request->_tenCongViec,
+            "tienDo" => $request->_tienDo,
             "ketQua" => $request->_ketQua,
             "ghiChu" => $request->_ghiChu
         ]);

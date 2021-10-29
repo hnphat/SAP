@@ -228,39 +228,30 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('status','ReportController@status')->name('overview.status');
         Route::get('statusmonth/{_month}/room/{_room}','ReportController@statusMonth')->name('overview.status.month');
         //-- pkd
-        Route::get('getpkd/{_date}','ReportController@getPKD');
-        Route::get('getpkdall/{_month}','ReportController@getPKDAll');
+        Route::get('getpkdall/{_from}/to/{_to}','ReportController@getPKDAll');
 
         //-- pdv
-        Route::get('getpdv/{_date}','ReportController@getPDV');
-        Route::get('getpdvall/{_month}','ReportController@getPDVAll');
+        Route::get('getpdvall/{_from}/to/{_to}','ReportController@getPDVAll');
 
         //-- xuong
-        Route::get('getxuong/{_date}','ReportController@getXuong');
         Route::get('getxuongall/{_month}','ReportController@getXuongAll');
 
         //-- cskh
-        Route::get('getcskh/{_date}','ReportController@getCSKH');
         Route::get('getcskhall/{_month}','ReportController@getCSKHAll');
 
         //-- hcns
-        Route::get('gethcns/{_date}','ReportController@getHCNS');
         Route::get('gethcnsall/{_month}','ReportController@getHCNSAll');
 
         //-- mkt
-        Route::get('getmkt/{_date}','ReportController@getMkt');
         Route::get('getmktall/{_month}','ReportController@getMktAll');
 
         //-- it
-        Route::get('getit/{_date}','ReportController@getIt');
         Route::get('getitall/{_month}','ReportController@getItAll');
 
         //-- ptdl
-        Route::get('getptdl/{_date}','ReportController@getPtdl');
         Route::get('getptdlall/{_month}','ReportController@getPtdlAll');
 
          //-- ketoan
-        Route::get('getketoan/{_date}','ReportController@getKetoan');
         Route::get('getketoanlall/{_month}','ReportController@getKetoanAll');
     });
 
@@ -278,9 +269,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('complete','WorkController@complete')->name('complete.list');
         Route::get('complete/list','WorkController@showComplete')->name('complete');
 
-        //--- Công việc trong ngày
+        //--- Đang thực hiện
         Route::get('working','WorkController@working')->name('working.list');
         Route::get('working/list','WorkController@showWorking');
+        Route::post('editworking','WorkController@editWorking');
 
         //--- Giao việc
         Route::get('pushwork','WorkController@pushWork')->name('work.push');

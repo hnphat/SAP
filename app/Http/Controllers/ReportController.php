@@ -19,9 +19,239 @@ class ReportController extends Controller
         return view('report.report', ['typeCar' => $typeCar]);
     }
 
+    public function khoiTao(Request $request) {
+        $doanhSo = 0;
+        $thiPhan = 0;
+        $luotXeDV = 0;
+        $doanhThuDV = 0;
+        $month = Date('m-Y');
+        $today = Date('d-m-Y');
+        $typeUser = "";
+        if (Auth::user()->hasRole('tpkd'))
+            $typeUser = "pkd";
+        elseif (Auth::user()->hasRole('tpdv'))
+            $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
+        elseif (Auth::user()->hasRole('mkt'))
+            $typeUser = "mkt";
+        elseif (Auth::user()->hasRole('xuong'))
+            $typeUser = "xuong";
+        elseif (Auth::user()->hasRole('cskh'))
+            $typeUser = "cskh";
+        elseif (Auth::user()->hasRole('hcns'))
+            $typeUser = "hcns";
+        elseif (Auth::user()->hasRole('it'))
+            $typeUser = "it";
+        elseif (Auth::user()->hasRole('drp'))
+            $typeUser = "ptdl";
+
+        $checkSale = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['doanhSoThang', '!=', null],
+            ['thiPhanThang', '!=', null]
+        ])->first();
+
+        $checkDV = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['luotXeDV', '!=', null],
+            ['doanhThuDV', '!=', null]
+        ])->first();
+
+        if ($checkSale !== null && $checkSale->count() > 0) {
+            $doanhSo = $checkSale->doanhSoThang;
+            $thiPhan = $checkSale->thiPhanThang;
+        }
+
+        if ($checkDV !== null && $checkDV->count() > 0) {
+            $luotXeDV = $checkDV->luotXeDV;
+            $doanhThuDV = $checkDV->doanhThuDV;
+        }
+
+        $checkIn = Report::where([
+            ['ngayReport','like', $today],
+            ['type','like', $typeUser]
+        ])->exists();
+
+        if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
+            $doanhSo = ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang;
+            $thiPhan = ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang;
+        }
+
+        if ($request->luotXeDV != null && $request->doanhThuDV != null) {
+            $luotXeDV = ($luotXeDV != 0) ? $luotXeDV : $request->luotXeDV;
+            $doanhThuDV = ($doanhThuDV != 0) ? $doanhThuDV : $request->doanhThuDV;
+        }
+
+
+        if (!$checkIn) {
+            $report = Report::insert([
+                'type' => $typeUser,
+                'user_report' => Auth::user()->id,
+                'ngayReport' => Date('d-m-Y'),
+                'doanhSoThang' => $doanhSo,
+                'thiPhanThang' => $thiPhan,
+                'luotXeDV' => $luotXeDV,
+                'doanhThuDV' => $doanhThuDV,
+                'xuatHoaDon' => $request->xuatHoaDon,
+                'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+                'xuatTrongTinh' => $request->xuatTrongTinh,
+                'hdHuy' => $request->hdHuy,
+                'ctInternet' => $request->ctInternet,
+                'ctShowroom' => $request->ctShowroom,
+                'ctHotline' => $request->ctHotline,
+                'ctSuKien' => $request->ctSuKien,
+                'ctBLD' => $request->ctBLD,
+                'saleInternet' => $request->saleInternet,
+                'saleMoiGioi' => $request->saleMoiGioi,
+                'saleThiTruong' => $request->saleThiTruong,
+                'khShowRoom' => $request->khShowRoom,
+                'baoDuong' => $request->baoDuong,
+                'suaChua' => $request->suaChua,
+                'Dong' => $request->dong,
+                'Son' => $request->son,
+                'congBaoDuong' => $request->congBaoDuong,
+                'congSuaChuaChung' => $request->congSuaChuaChung,
+                'congDong' => $request->congDong,
+                'congSon' => $request->congSon,
+                'dtPhuTung' => $request->dtPhuTung,
+                'dtDauNhot' => $request->dtDauNhot,
+                'dtPhuTungBan' => $request->dtPhuTungBan,
+                'dtDauNhotBan' => $request->dtDauNhotBan,
+                'phuTungMua' => $request->phuTungMua,
+                'dauNhotMua' => $request->dauNhotMua,
+                'tonBaoDuong' => $request->tonBaoDuong,
+                'tonSuaChuaChung' => $request->tonSuaChuaChung,
+                'tonDong' => $request->tonDong,
+                'tonSon' => $request->tonSong,
+                'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+                'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+                'tiepNhanDong' => $request->tiepNhanDong,
+                'tiepNhanSon' => $request->tiepNhanSon,
+                'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+                'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+                'hoanThanhDong' => $request->hoanThanhDong,
+                'hoanThanhSon' => $request->hoanThanhSon,
+                'callDatHenSuccess' => $request->callDatHenSuccess,
+                'callDatHenFail' => $request->callDatHenFail,
+                'datHen' => $request->datHen,
+                'dvHaiLong' => $request->dvHaiLong,
+                'dvKhongHaiLong' => $request->dvKhongHaiLong,
+                'dvKhongThanhCong' => $request->dvKhongThanhCong,
+                'muaXeSuccess' => $request->muaXeSuccess,
+                'muaXeFail' => $request->muaXeFail,
+                'duyetBanLe' => $request->duyetBanLe,
+                'knThaiDo' => $request->knThaiDo,
+                'knChatLuong' => $request->knChatLuong,
+                'knThoiGian' => $request->knThoiGian,
+                'knVeSinh' => $request->knVeSinh,
+                'knGiaCa' => $request->knGiaCa,
+                'knKhuyenMai' => $request->knKhuyenMai,
+                'knDatHen' => $request->knDatHen,
+                'knTraiNghiem' => $request->knTraiNghiem,
+                'khBanGiao' => $request->khBanGiao,
+                'khSuKien' => $request->khSuKien
+            ]);
+            if ($report) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã khởi tạo báo cáo!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Liên hệ quản trị viên!',
+                    'code' => 500
+                ]);
+            }
+        } else {
+            $report = Report::where([
+                ['ngayReport','like', $today],
+                ['type','like', $typeUser]
+            ])->update([
+                'xuatHoaDon' => $request->xuatHoaDon,
+                'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
+                'xuatTrongTinh' => $request->xuatTrongTinh,
+                'hdHuy' => $request->hdHuy,
+                'ctInternet' => $request->ctInternet,
+                'ctShowroom' => $request->ctShowroom,
+                'ctHotline' => $request->ctHotline,
+                'ctSuKien' => $request->ctSuKien,
+                'ctBLD' => $request->ctBLD,
+                'saleInternet' => $request->saleInternet,
+                'saleMoiGioi' => $request->saleMoiGioi,
+                'saleThiTruong' => $request->saleThiTruong,
+                'khShowRoom' => $request->khShowRoom,
+                'baoDuong' => $request->baoDuong,
+                'suaChua' => $request->suaChua,
+                'Dong' => $request->dong,
+                'Son' => $request->son,
+                'congBaoDuong' => $request->congBaoDuong,
+                'congSuaChuaChung' => $request->congSuaChuaChung,
+                'congDong' => $request->congDong,
+                'congSon' => $request->congSon,
+                'dtPhuTung' => $request->dtPhuTung,
+                'dtDauNhot' => $request->dtDauNhot,
+                'dtPhuTungBan' => $request->dtPhuTungBan,
+                'dtDauNhotBan' => $request->dtDauNhotBan,
+                'phuTungMua' => $request->phuTungMua,
+                'dauNhotMua' => $request->dauNhotMua,
+                'tonBaoDuong' => $request->tonBaoDuong,
+                'tonSuaChuaChung' => $request->tonSuaChuaChung,
+                'tonDong' => $request->tonDong,
+                'tonSon' => $request->tonSong,
+                'tiepNhanBaoDuong' => $request->tiepNhanBaoDuong,
+                'tiepNhanSuaChuaChung' => $request->tiepNhanSuaChuaChung,
+                'tiepNhanDong' => $request->tiepNhanDong,
+                'tiepNhanSon' => $request->tiepNhanSon,
+                'hoanThanhBaoDuong' => $request->hoanThanhBaoDuong,
+                'hoanThanhSuaChuaChung' => $request->hoanThanhSuaChuaChung,
+                'hoanThanhDong' => $request->hoanThanhDong,
+                'hoanThanhSon' => $request->hoanThanhSon,
+                'callDatHenSuccess' => $request->callDatHenSuccess,
+                'callDatHenFail' => $request->callDatHenFail,
+                'datHen' => $request->datHen,
+                'dvHaiLong' => $request->dvHaiLong,
+                'dvKhongHaiLong' => $request->dvKhongHaiLong,
+                'dvKhongThanhCong' => $request->dvKhongThanhCong,
+                'muaXeSuccess' => $request->muaXeSuccess,
+                'muaXeFail' => $request->muaXeFail,
+                'duyetBanLe' => $request->duyetBanLe,
+                'knThaiDo' => $request->knThaiDo,
+                'knChatLuong' => $request->knChatLuong,
+                'knThoiGian' => $request->knThoiGian,
+                'knVeSinh' => $request->knVeSinh,
+                'knGiaCa' => $request->knGiaCa,
+                'knKhuyenMai' => $request->knKhuyenMai,
+                'knDatHen' => $request->knDatHen,
+                'knTraiNghiem' => $request->knTraiNghiem,
+                'khBanGiao' => $request->khBanGiao,
+                'khSuKien' => $request->khSuKien
+            ]);
+            if ($report) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã lưu!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Máy chủ!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
     public function loadReport() {
         $ds = 0;
         $tp = 0;
+        $dtdv = 0;
+        $lxdv = 0;
         $today = Date('d-m-Y');
         $month = Date('m-Y');
         $typeUser = "";
@@ -56,17 +286,35 @@ class ReportController extends Controller
                 ['doanhSoThang', '!=', null],
                 ['thiPhanThang', '!=', null]
             ])->first();
+
+            $checkReport2 = Report::where([
+                ['ngayReport','like', '%'.$month],
+                ['type','like', $typeUser],
+                ['luotXeDV', '!=', null],
+                ['doanhThuDV', '!=', null]
+            ])->first();
+
+
             if ($checkReport !== null) {
                 $ds = 1;
                 $tp = 1;
             }
+
+            if ($checkReport2 !== null) {
+                $lxdv = 1;
+                $dtdv = 1;
+            }
+
             $report = Report::where([
                 ['ngayReport','like', $today],
                 ['type','like', $typeUser]
             ])->first();
+
             return response()->json([
                 'ds' => $ds,
                 'tp' => $tp,
+                'dtdv' => $dtdv,
+                'lxdv' => $lxdv,
                 'type' => 'info',
                 'message' => ' Tải báo cáo thành công!',
                 'code' => 200,
@@ -75,11 +323,19 @@ class ReportController extends Controller
         } else {
             $ds_num = 0;
             $tp_num = 0;
+            $lxdv_num = 0;
+            $dtdv_num = 0;
             $report = Report::where([
                 ['ngayReport','like', '%'.$month],
                 ['type','like', $typeUser],
                 ['doanhSoThang', '!=', null],
                 ['thiPhanThang', '!=', null]
+            ])->first();
+            $report2 = Report::where([
+                ['ngayReport','like', '%'.$month],
+                ['type','like', $typeUser],
+                ['luotXeDV', '!=', null],
+                ['doanhThuDV', '!=', null]
             ])->first();
             if ($report !== null) {
                 $ds = 1;
@@ -87,11 +343,21 @@ class ReportController extends Controller
                 $ds_num = $report->doanhSoThang;
                 $tp_num = $report->thiPhanThang;
             }
+            if ($report2 !== null) {
+                $dtdv = 1;
+                $lxdv = 1;
+                $lxdv_num = $report2->luotXeDV;
+                $dtdv_num = $report2->doanhThuDV;
+            }
             return response()->json([
                 'ds' => $ds,
                 'tp' => $tp,
+                'dtdv' => $dtdv,
+                'lxdv' => $lxdv,
                 'ds_num' => $ds_num,
                 'tp_num' => $tp_num,
+                'lxdv_num' => $lxdv_num,
+                'dtdv_num' => $dtdv_num,
                 'type' => 'warning',
                 'message' => ' Chưa có báo cáo nào trong hôm nay!',
                 'code' => 500
@@ -102,6 +368,8 @@ class ReportController extends Controller
     public function saveReport(Request $request) {
         $doanhSo = 0;
         $thiPhan = 0;
+        $luotXeDV = 0;
+        $doanhThuDV = 0;
         $month = Date('m-Y');
         $today = Date('d-m-Y');
         $typeUser = "";
@@ -131,9 +399,21 @@ class ReportController extends Controller
             ['thiPhanThang', '!=', null]
         ])->first();
 
+        $checkDV = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['luotXeDV', '!=', null],
+            ['doanhThuDV', '!=', null]
+        ])->first();
+
         if ($checkSale !== null && $checkSale->count() > 0) {
             $doanhSo = $checkSale->doanhSoThang;
             $thiPhan = $checkSale->thiPhanThang;
+        }
+
+        if ($checkDV !== null && $checkDV->count() > 0) {
+            $luotXeDV = $checkDV->luotXeDV;
+            $doanhThuDV = $checkDV->doanhThuDV;
         }
 
         $checkIn = Report::where([
@@ -141,13 +421,26 @@ class ReportController extends Controller
             ['type','like', $typeUser]
         ])->exists();
 
+        if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
+            $doanhSo = ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang;
+            $thiPhan = ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang;
+        }
+
+        if ($request->luotXeDV != null && $request->doanhThuDV != null) {
+            $luotXeDV = ($luotXeDV != 0) ? $luotXeDV : $request->luotXeDV;
+            $doanhThuDV = ($doanhThuDV != 0) ? $doanhThuDV : $request->doanhThuDV;
+        }
+
+
         if (!$checkIn) {
             $report = Report::insert([
                 'type' => $typeUser,
                 'user_report' => Auth::user()->id,
                 'ngayReport' => Date('d-m-Y'),
-                'doanhSoThang' => ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang,
-                'thiPhanThang' => ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang,
+                'doanhSoThang' => $doanhSo,
+                'thiPhanThang' => $thiPhan,
+                'luotXeDV' => $luotXeDV,
+                'doanhThuDV' => $doanhThuDV,
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
@@ -211,7 +504,7 @@ class ReportController extends Controller
             if ($report) {
                 return response()->json([
                     'type' => 'success',
-                    'message' => ' Đã lưu và gửi báo cáo!',
+                    'message' => ' Đã lưu!',
                     'code' => 200
                 ]);
             } else {
@@ -289,7 +582,7 @@ class ReportController extends Controller
             if ($report) {
                 return response()->json([
                     'type' => 'success',
-                    'message' => ' Đã lưu và gửi báo cáo!',
+                    'message' => ' Đã lưu!',
                     'code' => 200
                 ]);
             } else {
@@ -305,6 +598,8 @@ class ReportController extends Controller
     public function saveNotSend(Request $request) {
         $doanhSo = 0;
         $thiPhan = 0;
+        $luotXeDV = 0;
+        $doanhThuDV = 0;
         $month = Date('m-Y');
         $today = Date('d-m-Y');
         $typeUser = "";
@@ -334,9 +629,21 @@ class ReportController extends Controller
             ['thiPhanThang', '!=', null]
         ])->first();
 
+        $checkDV = Report::where([
+            ['ngayReport','like', '%'.$month],
+            ['type','like', $typeUser],
+            ['luotXeDV', '!=', null],
+            ['doanhThuDV', '!=', null]
+        ])->first();
+
         if ($checkSale !== null && $checkSale->count() > 0) {
             $doanhSo = $checkSale->doanhSoThang;
             $thiPhan = $checkSale->thiPhanThang;
+        }
+
+        if ($checkDV !== null && $checkDV->count() > 0) {
+            $luotXeDV = $checkDV->luotXeDV;
+            $doanhThuDV = $checkDV->doanhThuDV;
         }
 
         $checkIn = Report::where([
@@ -349,6 +656,12 @@ class ReportController extends Controller
             $thiPhan = ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang;
         }
 
+        if ($request->luotXeDV != null && $request->doanhThuDV != null) {
+            $luotXeDV = ($luotXeDV != 0) ? $luotXeDV : $request->luotXeDV;
+            $doanhThuDV = ($doanhThuDV != 0) ? $doanhThuDV : $request->doanhThuDV;
+        }
+
+
         if (!$checkIn) {
             $report = Report::insert([
                 'type' => $typeUser,
@@ -356,6 +669,8 @@ class ReportController extends Controller
                 'ngayReport' => Date('d-m-Y'),
                 'doanhSoThang' => $doanhSo,
                 'thiPhanThang' => $thiPhan,
+                'luotXeDV' => $luotXeDV,
+                'doanhThuDV' => $doanhThuDV,
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
@@ -643,63 +958,6 @@ class ReportController extends Controller
         return view('report.overview');
     }
 
-    public function getPKD($_date) {
-        $i = 1;
-        $sum = 0;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'pkd'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <h5>Doanh số tháng: <span class='text-blue'><strong>".$report->doanhSoThang."</strong></span></h5>
-                    <h5>Thị phần tháng: <span class='text-blue'><strong>".$report->thiPhanThang."%</strong></span></h5><br>
-                    <div class='row'>
-                        <div class='col-md-8'>
-                            <h4>Xuất hóa đơn</h4>
-                            <h5>- Xuất hóa đơn: <span class='text-success'><strong>".$report->xuatHoaDon."</strong></span></h5>
-                            <h5>- Xuất trong tỉnh: <span class='text-success'><strong>".$report->xuatNgoaiTinh."</strong></span></h5>
-                            <h5>- Xuất ngoài tỉnh: <span class='text-success'><strong>".$report->xuatTrongTinh."</strong></span></h5>
-                            <div class='table-responsive'>";
-            echo "<table class='table table-striped table-bordered'><tr>
-               <th>Ký hợp đồng</th>";
-            foreach($report->reportCar as $row)
-                echo "<th>".$row->typeCar->name."</th>";
-            echo "</tr><tr><td><strong>Số lượng</strong></td>";
-            foreach($report->reportCar as $row) {
-                echo "<td>".$row->soLuong."</td>";
-                $sum+=$row->soLuong;
-            }
-            echo "</tr></table>";
-                            echo "</div>
-                            <h5>- Ký hợp đồng: <span class='text-success'><strong>".$sum."</strong></span></h5>
-                            <h5>- Hủy hợp đồng: <span class='text-success'><strong>".$report->hdHuy."</strong></span></h5>
-                        </div>
-                        <div class='col-md-4'>
-                            <h4>KHTN Công ty</h4>
-                            <h5>- Internet: <span class='text-success'><strong>".$report->ctInternet."</strong></span></h5>
-                            <h5>- Showroom: <span class='text-success'><strong>".$report->ctShowroom."</strong></span></h5>
-                            <h5>- Hotline: <span class='text-success'><strong>".$report->ctHotline."</strong></span></h5>
-                            <h5>- Sự kiện: <span class='text-success'><strong>".$report->ctSuKien."</strong></span></h5>
-                            <h5>- Ban lãnh đạo: <span class='text-success'><strong>".$report->ctBLD."</strong></span></h5>
-                            <h4>KHTN SALER</h4>
-                            <h5>- Internet: <span class='text-success'><strong>".$report->saleInternet."</strong></span></h5>
-                            <h5>- Môi giới: <span class='text-success'><strong>".$report->saleMoiGioi."</strong></span></h5>
-                            <h5>- Thị trường: <span class='text-success'><strong>".$report->saleThiTruong."</strong></span></h5>
-                        </div>
-                    </div>
-                    <h5>Lượt khách showroom: <span class='text-success'><strong>".$report->khShowRoom."</strong></span></h5>
-                    <br>
-                    <h4>CÔNG VIỆC</h4>
-                    <div class='table-responsive'>";
-                    echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
     public function getPKDAll($_month) {
         $i = 1;
         $sum = 0;
@@ -788,57 +1046,10 @@ class ReportController extends Controller
         }
     }
 
-    public function getPDV($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'pdv'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <div class='row'>
-                        <div class='col-md-6'>
-                            <h4>LƯỢT XE</h4>
-                            <h5>- Bảo dưỡng: <span class='text-success'><strong>".$report->baoDuong."</strong></span></h5>
-                            <h5>- Sữa chữa: <span class='text-success'><strong>".$report->suaChua."</strong></span></h5>
-                            <h5>- Đồng: <span class='text-success'><strong>".$report->Dong."</strong></span></h5>
-                            <h5>- Sơn: <span class='text-success'><strong>".$report->Son."</strong></span></h5>
-                        </div>
-                        <div class='col-md-6'>
-                            <h4>DOANH THU DỊCH VỤ</h4>
-                            <h5>- Công bảo dưỡng: <span class='text-success'><strong>".number_format($report->congBaoDuong)."</strong></span></h5>
-                            <h5>- Công sữa chữa: <span class='text-success'><strong>".number_format($report->congSuaChuaChung)."</strong></span></h5>
-                            <h5>- Công đồng: <span class='text-success'><strong>".number_format($report->congDong)."</strong></span></h5>
-                            <h5>- Công sơn: <span class='text-success'><strong>".number_format($report->congSon)."</strong></span></h5>
-                        </div>
-                        </div>
-                        <div class='row'>
-                        <div class='col-md-6'>
-                            <h4>DOANH THU PHỤ TÙNG - DẦU NHỚT</h4>
-                            <h5>- Phụ tùng sửa chữa: <span class='text-success'><strong>".number_format($report->dtPhuTung)."</strong></span></h5>
-                            <h5>- Dầu nhớt sữa chữa: <span class='text-success'><strong>".number_format($report->dtDauNhot)."</strong></span></h5>
-                            <h5>- Phụ tùng bán ngoài: <span class='text-success'><strong>".number_format($report->dtPhuTungBan)."</strong></span></h5>
-                            <h5>- Dầu nhớt bán ngoài: <span class='text-success'><strong>".number_format($report->dtDauNhotBan)."</strong></span></h5>
-                        </div>
-                        <div class='col-md-6'>
-                            <h4>MUA PHỤ TÙNG/DẦU NHỚT HTV/TST</h4>
-                            <h5>- Tiền mua phụ tùng: <span class='text-success'><strong>".number_format($report->phuTungMua)."</strong></span></h5>
-                            <h5>- Tiền mua dầu nhớt: <span class='text-success'><strong>".number_format($report->dauNhotMua)."</strong></span></h5>
-                        </div>
-                    </div>
-                    <br>
-                    <h4>CÔNG VIỆC</h4>
-                    <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
-    public function getPDVAll($_month) {
+    public function getPDVAll($_from, $_to) {
+        // select * from report where ngayReport between '27/10/2021' and '29/10/2021'
+        // ->where
+        // ->whereBetween('age', [$ageFrom, $ageTo]);
         $i = 1;
         $baoDuong = 0;
         $suaChua = 0;
@@ -918,49 +1129,6 @@ class ReportController extends Controller
         }
     }
 
-    public function getXuong($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'xuong'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <div class='row'>
-                    <div class='col-md-4'>
-                        <h4>XE TỒN</h4>
-                        <h5>- Bảo dưỡng: <span class='text-success'><strong>".$report->tonBaoDuong."</strong></span></h5>
-                        <h5>- Sữa chữa chung: <span class='text-success'><strong>".$report->tonSuaChuaChung."</strong></span></h5>
-                        <h5>- Đồng: <span class='text-success'><strong>".$report->tonDong."</strong></span></h5>
-                        <h5>- Sơn: <span class='text-success'><strong>".$report->tonSon."</strong></span></h5>
-                    </div>
-                    <div class='col-md-4'>
-                        <h4>LƯỢT XE TIẾP NHẬN</h4>
-                        <h5>- Bảo dưỡng: <span class='text-success'><strong>".$report->tiepNhanBaoDuong."</strong></span></h5>
-                        <h5>- Sữa chữa chung: <span class='text-success'><strong>".$report->tiepNhanSuaChuaChung."</strong></span></h5>
-                        <h5>- Đồng: <span class='text-success'><strong>".$report->tiepNhanDong."</strong></span></h5>
-                        <h5>- Sơn: <span class='text-success'><strong>".$report->tiepNhanSon."</strong></span></h5>
-                    </div>
-                    <div class='col-md-4'>
-                        <h4>HOÀN THÀNH</h4>
-                        <h5>- Bảo dưỡng: <span class='text-success'><strong>".$report->hoanThanhBaoDuong."</strong></span></h5>
-                        <h5>- Sữa chữa chung: <span class='text-success'><strong>".$report->hoanThanhSuaChuaChung."</strong></span></h5>
-                        <h5>- Đồng: <span class='text-success'><strong>".$report->hoanThanhDong."</strong></span></h5>
-                        <h5>- Sơn: <span class='text-success'><strong>".$report->hoanThanhSon."</strong></span></h5>
-                    </div>
-                </div>
-                    <br>
-                    <h4>CÔNG VIỆC</h4>
-                    <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
     public function getXuongAll($_month) {
         $i = 1;
         $tonBaoDuong = 0;
@@ -1020,59 +1188,6 @@ class ReportController extends Controller
                         <h5>- Sơn: <span class='text-success'><strong>".$hoanThanhSon."</strong></span></h5>
                     </div>
                 </div>
-                    <h4>CÔNG VIỆC</h4>
-                    <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
-    public function getCSKH($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'cskh'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <div class='row'>
-                    <div class='col-md-6'>
-                        <h4>NHẮC BẢO DƯỠNG / ĐẶT HẸN</h4>
-                        <h5>- Cuộc gọi thành công: <span class='text-success'><strong>".$report->callDatHenSuccess."</strong></span></h5>
-                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>".$report->callDatHenFail."</strong></span></h5>
-                        <h5>- Đặt hẹn: <span class='text-success'><strong>".$report->datHen."</strong></span></h5>
-                    </div>
-                    <div class='col-md-6'>
-                        <h4>THEO DÕI SAU DỊCH VỤ</h4>
-                        <h5>- Khách hàng hài lòng: <span class='text-success'><strong>".$report->dvHaiLong."</strong></span></h5>
-                        <h5>- Khách hàng không hài lòng: <span class='text-success'><strong>".$report->dvKhongHaiLong."</strong></span></h5>
-                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>".$report->dvKhongThanhCong."</strong></span></h5>
-                    </div>
-                </div>
-                 <div class='row'>
-                    <div class='col-md-6'>
-                        <h4>THEO DÕI SAU MUA XE</h4>
-                        <h5>- Cuộc gọi thành công: <span class='text-success'><strong>".$report->muaXeSuccess."</strong></span></h5>
-                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>".$report->muaXeFail."</strong></span></h5>
-                        <h5>- Kiểm chứng bán lẻ: <span class='text-success'><strong>".$report->duyetBanLe."</strong></span></h5>
-                    </div>
-                    <div class='col-md-6'>
-                        <h4>KHIẾU NẠI</h4>
-                        <h5>- Thái độ nhân viên: <span class='text-success'><strong>".$report->knThaiDo."</strong></span></h5>
-                        <h5>- Chất lượng sửa chữa: <span class='text-success'><strong>".$report->knChatLuong."</strong></span></h5>
-                        <h5>- Thời gian sửa chữa: <span class='text-success'><strong>".$report->knThoiGian."</strong></span></h5>
-                        <h5>- Vệ sinh: <span class='text-success'><strong>".$report->knVeSinh."</strong></span></h5>
-                        <h5>- Giá cả: <span class='text-success'><strong>".$report->knGiaCa."</strong></span></h5>
-                        <h5>- Hậu mãi - khuyến mãi: <span class='text-success'><strong>".$report->knKhuyenMai."</strong></span></h5>
-                        <h5>- Đặt hẹn - tiếp nhận: <span class='text-success'><strong>".$report->knDatHen."</strong></span></h5>
-                        <h5>- Trải nghiệm khách hàng: <span class='text-success'><strong>".$report->knTraiNghiem."</strong></span></h5>
-                    </div>
-                </div>
-                    <br>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
            
@@ -1170,28 +1285,6 @@ class ReportController extends Controller
         }
     }
 
-    public function getHCNS($_date) {
-        $i = 1;
-        $j = 1;
-        $k = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'hcns'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <br>
-                <h4>CÔNG VIỆC</h4>
-                <div class='table-responsive'>";
-              
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
     public function getHCNSAll($_month) {
         $i = 1;
         $j = 1;
@@ -1205,30 +1298,6 @@ class ReportController extends Controller
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
-    public function getMkt($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'mkt'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <div>
-                    <h5>- KHTN bàn giao: <span class='text-success'><strong>".$report->khBanGiao."</strong></span></h5>
-                    <h5>- KHTN sự kiện: <span class='text-success'><strong>".$report->khSuKien."</strong></span></h5>
-                </div>
-                <br>
-                <h4>CÔNG VIỆC</h4>
-                <div class='table-responsive'>";
            
             echo "</div>";
         } else {
@@ -1265,26 +1334,6 @@ class ReportController extends Controller
         }
     }
 
-    public function getIt($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'it'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <br>
-                <h4>CÔNG VIỆC</h4>
-                <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
     public function getItAll($_month) {
         $i = 1;
         $report = Report::where([
@@ -1296,26 +1345,6 @@ class ReportController extends Controller
             echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
-    public function getPtdl($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'ptdl'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <br>
-                <h4>CÔNG VIỆC</h4>
-                <div class='table-responsive'>";
            
             echo "</div>";
         } else {
@@ -1335,6 +1364,23 @@ class ReportController extends Controller
                     <h4>CÔNG VIỆC</h4>
                     <div class='table-responsive'>";
         
+            echo "</div>";
+        } else {
+            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
+        }
+    }
+
+    public function getKetoanAll($_month) {
+        $i = 1;
+        $report = Report::where([
+            ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
+            ['type','like', 'ketoan'],
+            ['clock','=', true]
+        ])->get();
+        if ($report !== null) {
+            echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
+                    <h4>CÔNG VIỆC</h4>
+                    <div class='table-responsive'>";
             echo "</div>";
         } else {
             echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
@@ -1492,42 +1538,4 @@ class ReportController extends Controller
                 </form></div></div>";
         }
     }
-
-    public function getKetoan($_date) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', \HelpFunction::revertDate($_date)],
-            ['type','like', 'ketoan'],
-            ['clock','=', true]
-        ])->first();
-        if ($report !== null) {
-            echo "<h5>Thời gian báo cáo: <span class='text-red'><strong>".$report->timeReport."</strong></span></h5>
-                <h5>Ngày báo cáo: <span class='text-red'><strong>".$report->ngayReport."</strong></span></h5>
-                <br>
-                <h4>CÔNG VIỆC</h4>
-                <div class='table-responsive'>";
-           
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
-    public function getKetoanAll($_month) {
-        $i = 1;
-        $report = Report::where([
-            ['ngayReport','like', '%'.\HelpFunction::revertMonth($_month)],
-            ['type','like', 'ketoan'],
-            ['clock','=', true]
-        ])->get();
-        if ($report !== null) {
-            echo "<h5>Báo cáo tháng: <span class='text-red'><strong>".\HelpFunction::revertMonth($_month)."</strong></span></h5>
-                    <h4>CÔNG VIỆC</h4>
-                    <div class='table-responsive'>";
-            echo "</div>";
-        } else {
-            echo "<br/><h4 class='center text-red'>Không có báo cáo!</h4>";
-        }
-    }
-
 }

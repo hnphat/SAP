@@ -106,26 +106,17 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-4">
-                        <form id="xemNgay">
+                    <div class="col-md-8">
+                        <form id="xemFull">
                             <div class="form-group row">
-                                <div class="col-8">
-                                    <input type="date" name="chonNgay" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                <div class="col-4">
+                                    <input type="date" name="chonNgayOne" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                 </div>
-                                <div class="col-2">
-                                    <button type="button" id="watchDay" class="btn btn-success">Xem</button>
+                                <div class="col-4">
+                                    <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                 </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-md-4">
-                        <form id="xemThang">
-                            <div class="form-group row">
-                                <div class="col-8">
-                                    <input type="month" name="chonThang" value="<?php echo Date('Y-m');?>" class="form-control">
-                                </div>
-                                <div class="col-2">
-                                    <button type="button" id="watchMonth" class="btn btn-success">Xem</button>
+                                <div class="col-4">
+                                    <button type="button" id="watchFull" class="btn btn-success">Xem</button>
                                 </div>
                             </div>
                         </form>
@@ -165,53 +156,7 @@
             timer: 3000
         });
         $(document).ready(function(){
-            $("#watchDay").click(function(){
-                let url = "";
-                switch ($("select[name=chonPhong]").val()) {
-                    case "pkd": {
-                        url = "management/overview/getpkd/";
-                    } break;
-                    case "pdv": {
-                        url = "management/overview/getpdv/";
-                    } break;
-                    case "xuong": {
-                        url = "management/overview/getxuong/";
-                    } break;
-                    case "mkt": {
-                        url = "management/overview/getmkt/";
-                    } break;
-                    case "cskh": {
-                        url = "management/overview/getcskh/";
-                    } break;
-                    case "hcns": {
-                        url = "management/overview/gethcns/";
-                    } break;
-                    case "it": {
-                        url = "management/overview/getit/";
-                    } break;
-                    case "ptdl": {
-                        url = "management/overview/getptdl/";
-                    } break;
-                    case "ketoan": {
-                        url = "management/overview/getketoan/";
-                    } break;
-                }
-                $.ajax({
-                    url: url + $('input[name=chonNgay]').val(),
-                    type: "get",
-                    dataType: 'text',
-                    success: function(response) {
-                        $('#show').html(response);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Không tìm thấy báo cáo!"
-                        })
-                    }
-                });
-            });
-            $("#watchMonth").click(function(){
+            $("#watchFull").click(function(){
                 let url = "";
                 switch ($("select[name=chonPhong]").val()) {
                     case "pkd": {
@@ -243,7 +188,7 @@
                     } break;
                 }
                 $.ajax({
-                    url: url + $('input[name=chonThang]').val(),
+                    url: url + $('input[name=chonNgayOne]').val() + "/to/" + $('input[name=chonNgayTwo]').val(),
                     type: "get",
                     dataType: 'text',
                     success: function(response) {

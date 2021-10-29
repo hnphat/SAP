@@ -100,6 +100,10 @@
                                             <label>Ghi chú</label>
                                             <input name="_ghiChu" placeholder="Nếu có" type="text" class="form-control">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Phản hồi từ người giao việc (Nếu có)</label>
+                                            <input name="_phanHoi" readonly="readonly" type="text" class="form-control">
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -236,7 +240,7 @@
             $('#btnEditWork').click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/work/editwork')}}",
+                    url: "{{url('management/work/editworking')}}",
                     type: "post",
                     dataType: 'json',
                     data: $("#editWorkForm").serialize(),
@@ -331,6 +335,7 @@
                             $('input[name=_tenCongViec]').val(response.data.tenCongViec);
                             $('input[name=_tenCongViec]').prop('readonly', true);
                          }
+                          $('input[name=_phanHoi]').val(response.data.replyWork);
                             
                     },
                     error: function() {

@@ -21,11 +21,11 @@ class Report extends Migration
             $table->integer('user_report')->unsigned();
             $table->foreign('user_report')->references('id')->on('users');
             //------------------ PKD
-            $table->integer('doanhSoThang');
-            $table->float('thiPhanThang', 8, 2);
+            $table->integer('doanhSoThang')->nullable();
+            $table->float('thiPhanThang', 8, 2)->nullable();
             //------------------ PDV
-            $table->integer('luotXeDV');
-            $table->float('doanhThuDV', 8, 2);
+            $table->integer('luotXeDV')->nullable();
+            $table->integer('doanhThuDV')->nullable();
 //            $table->integer('thiPhanThang')->nullable();
             $table->integer('xuatHoaDon')->nullable();
             $table->integer('xuatNgoaiTinh')->nullable();

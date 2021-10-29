@@ -59,6 +59,7 @@
                             <th>Kết quả</th>
                             <th>Ghi chú</th>
                             <th>Loại</th>
+                            <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -186,7 +187,7 @@
                             if (row.isReport == true)
                                 return "<input id='_check' type='checkbox' checked='checked' data-id="+row.id+">";
                             else
-                                return "<input id='_check' type='checkbox' data-id="+row.id+">";
+                            return "<input id='_check' type='checkbox' data-id="+row.id+">";        
                         }
                     },
                     { "data": "ngayTao"},
@@ -211,15 +212,28 @@
                     {  "data": null,
                         render: function(data, type, row) {
                            if (row.isPersonal == true)
-                                return "<span class='text-info'>Cá nhân";
+                                return "<span class='text-info'>Cá nhân</span>";
                             else
                                 return "<span class='text-pink'>Được giao</span><br/><i>("+row.surname+")</i>";
+                        }
+                    },
+                    {  "data": null,
+                        render: function(data, type, row) {
+                           if (row.isPersonal == false && row.acceptApply == true)
+                                return "<span class='text-success'><i>Đã xác nhận</i></span>";
+                            else if (row.isPersonal == false && row.acceptApply == false)
+                                return "<span class='text-secondary'><i>Đợi xác nhận</i></span>";
+                            else return "";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
+                            if (row.isPersonal == true)
+                                return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id="+row.id+" class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
+                            else if (row.replyWork != null)
+                                return "Người giao: '" + row.replyWork +"'";
+                            else return "";
                         }
                     }
                 ]
@@ -303,8 +317,8 @@
                     },
                     error: function() {
                         Toast.fire({
-                            icon: 'error',
-                            title: "Lỗi: Không thể xóa!"
+                            icon: 'info',
+                            title: "Lỗi: Công việc này thuộc tab giao việc. Qua tab giao việc để check!"
                         })
                     }
                 });

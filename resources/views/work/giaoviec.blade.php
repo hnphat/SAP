@@ -206,7 +206,7 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title">XEM XÉT KẾT QUẢ</h4>
+                                    <h4 class="modal-title">XÁC NHẬN KẾT QUẢ</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -351,7 +351,7 @@
                             if (row.apply != true)
                                 return "<button id='delWork' data-id="+row.id+" class='btn btn-danger btn-sm'>Xóa</button>&nbsp;<button id='showEdit' data-id='"+row.id+"' data-surname='"+row.surname+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#editWork'>Sửa</button>";
                             else if (row.apply == true && row.tienDo == 100 && row.acceptApply == false)
-                                return "<button id='showXemXet' data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#approveWork'>Xem xét</button>";
+                                return "<button id='showXemXet' data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#approveWork'>Xác nhận</button>";
                             else if (row.apply == true && row.tienDo == 100 && row.acceptApply == true)
                                 return "";
                             else if (row.apply == true && row.tienDo < 100)
