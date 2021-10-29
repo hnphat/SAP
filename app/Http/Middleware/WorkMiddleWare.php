@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class ReportMiddleWare
+class WorkMiddleWare
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,7 @@ class ReportMiddleWare
         if (Auth::user()->hasRole('system') ||
             Auth::user()->hasRole('watch') ||
             Auth::user()->hasRole('boss') ||
-            Auth::user()->hasRole('report'))
+            Auth::user()->hasRole('work'))
             return $next($request);
         else abort(403);
     }

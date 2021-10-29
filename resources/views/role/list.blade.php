@@ -40,7 +40,7 @@
                                 <select name="chonTaiKhoan" class="form-control">
                                     @foreach($users as $user)
                                         @if($user->name != 'admin')
-                                            <option value="{{$user->id}}">{{$user->name}}</option>
+                                            <option value="{{$user->id}}">{{$user->name}} ({{$user->userDetail->surname}})</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -76,7 +76,7 @@
                             @foreach($users as $row)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
-                                        <td>{{$row->name}}</td>
+                                        <td>{{$row->name}} ({{$row->userDetail->surname}})</td>
                                         <td>
                                             @if($row->name != 'admin')
                                                 @foreach($row->roles as $role)

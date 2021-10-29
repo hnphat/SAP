@@ -87,7 +87,9 @@
                                                     <label>Giao cho</label>
                                                     <select name="giaoCho" class="form-control">
                                                         @foreach($user as $row)
-                                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                                            @if($row->hasRole('work'))
+                                                                <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -106,7 +108,7 @@
                                                 <div class="form-group">
                                                     <label>Yêu cầu công việc</label>
                                                     <input name="yeuCau" placeholder="Yêu cầu công việc" type="text" class="form-control">
-                                                </div>                                            
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -157,7 +159,7 @@
                                                <div class="form-group">
                                                     <label>Yêu cầu công việc</label>
                                                     <input name="_yeuCau" placeholder="Yêu cầu công việc" type="text" class="form-control">
-                                                </div>      
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -189,9 +191,9 @@
                                            <h5>Phản hồi</h5>
                                             <p id="lyDo"></p>
                                             <h5>GHI CHÚ</h5>
-                                            <p id="lyDoGhiChu"></p> 
+                                            <p id="lyDoGhiChu"></p>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -220,10 +222,10 @@
                                                 <div class="form-group">
                                                     <label>Phản hồi (nếu có)</label>
                                                     <input name="phanHoi" placeholder="Phản hồi từ người giao việc (nếu có)" type="text" class="form-control">
-                                                </div>   
+                                                </div>
                                                 <button id="approve" class="btn btn-primary">Đạt yêu cầu</button>
-                                             <button id="noapprove" class="btn btn-warning">Chưa đạt yêu cầu</button>                              
-                                            </div>       
+                                             <button id="noapprove" class="btn btn-warning">Chưa đạt yêu cầu</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -324,13 +326,13 @@
                             return revertDate(row.ngayStart)+"<br/>"+revertDate(row.ngayEnd)+"<br/> <strong>(Muộn)</strong>";
                         }
                     },
-                    { 
+                    {
                       "data": null,
                         render: function(data, type, row) {
                                 return "<button id='viewMore' data-id='"+row.id+"' data-toggle='modal' data-target='#dataShowResult' id='showResult' class='btn btn-info btn-sm'>Xem</button>";
-                       }      
+                       }
                     },
-                    { 
+                    {
                         "data": null,
                         render: function(data, type, row) {
                             if (row.apply == null)
@@ -343,7 +345,7 @@
                                return "<span class='text-pink'><strong>Kết thúc</strong></span>";
                             else if (row.apply == true && row.tienDo < 100)
                               return "<span class='text-info'><strong>Đang thực hiện</strong></span>";
-                       }   
+                       }
                     },
                     {
                        "data": null,
@@ -501,7 +503,7 @@
             });
 
             $(document).on("click","#showResult", function(){
-                
+
             });
 
             $(document).on("click","#showXemXet", function(){

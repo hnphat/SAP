@@ -10,7 +10,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                <img src="images/noavatar.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <a href="{{route('changepass.list')}}" class="d-block">
@@ -304,9 +304,8 @@
                 </li>
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                     \Illuminate\Support\Facades\Auth::user()->hasRole('report') ||
-                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                     \Illuminate\Support\Facades\Auth::user()->hasRole('normal'))
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('work') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-cannabis"></i>
                         <p>
@@ -317,7 +316,8 @@
                     @endif
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                     \Illuminate\Support\Facades\Auth::user()->hasRole('normal'))
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('work') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                             <li class="nav-item">
                                 <a href="{{route("worktohard")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>

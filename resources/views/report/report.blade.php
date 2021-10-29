@@ -57,29 +57,29 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="doanhSoThang">Doanh số tháng: </label>
-                                    <input id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required" value="0">
+                                    <input min="0" id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required" value="0">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="thiPhanThang">Thị phần tháng: </label>
-                                    <input id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required" value="0">
+                                    <input min="0" id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required" value="0">
                                 </div>
                             </div>
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="xuatHoaDon">Xuất hóa đơn: </label>
-                                    <input id="xuatHoaDon" name="xuatHoaDon" type="number" class="form-control">
+                                    <input min="0" id="xuatHoaDon" name="xuatHoaDon" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="xuatTrongTinh">Xuất trong tỉnh: </label>
-                                    <input id="xuatTrongTinh" name="xuatTrongTinh" type="number" class="form-control">
+                                    <input min="0" id="xuatTrongTinh" name="xuatTrongTinh" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="xuatNgoaiTinh">Xuất ngoài tỉnh: </label>
-                                    <input id="xuatNgoaiTinh" name="xuatNgoaiTinh" type="number" class="form-control">
+                                    <input min="0" id="xuatNgoaiTinh" name="xuatNgoaiTinh" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="hdHuy">Hợp đồng hủy: </label>
-                                    <input id="hdHuy" name="hdHuy" type="number" class="form-control">
+                                    <input min="0" id="hdHuy" name="hdHuy" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -87,23 +87,23 @@
                             <div class="row p-1">
                                 <div class="col-md-2">
                                     <label for="ctInternet">Internet: </label>
-                                    <input id="ctInternet" name="ctInternet" type="number" class="form-control">
+                                    <input min="0" id="ctInternet" name="ctInternet" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="ctShowroom">Showroom: </label>
-                                    <input id="ctShowroom" name="ctShowroom" type="number" class="form-control">
+                                    <input min="0" id="ctShowroom" name="ctShowroom" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="ctHotline">Hotline: </label>
-                                    <input id="ctHotline" name="ctHotline" type="number" class="form-control">
+                                    <input min="0" id="ctHotline" name="ctHotline" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="ctSuKien">Sự kiện: </label>
-                                    <input id="ctSuKien" name="ctSuKien" type="number" class="form-control">
+                                    <input min="0" id="ctSuKien" name="ctSuKien" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="ctBLD">Ban lãnh đạo: </label>
-                                    <input id="ctBLD" name="ctBLD" type="number" class="form-control">
+                                    <input min="0" id="ctBLD" name="ctBLD" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -111,22 +111,22 @@
                             <div class="row p-1">
                                 <div class="col-md-2">
                                     <label for="saleInternet">Internet: </label>
-                                    <input id="saleInternet" name="saleInternet" type="number" class="form-control">
+                                    <input min="0" id="saleInternet" name="saleInternet" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="saleMoiGioi">Môi giới: </label>
-                                    <input id="saleMoiGioi" name="saleMoiGioi" type="number" class="form-control">
+                                    <input min="0" id="saleMoiGioi" name="saleMoiGioi" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="saleThiTruong">Thị trường: </label>
-                                    <input id="saleThiTruong" name="saleThiTruong" type="number" class="form-control">
+                                    <input min="0" id="saleThiTruong" name="saleThiTruong" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
                             <div class="row p-1">
                                 <div class="col-md-4">
                                     <label for="khShowRoom">Lượt khách showroom: </label>
-                                    <input id="khShowRoom" name="khShowRoom" type="number" class="form-control">
+                                    <input min="0" id="khShowRoom" name="khShowRoom" type="number" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -143,11 +143,11 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="luotXeDV">Lượt xe tháng: </label>
-                                    <input id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required" value="0">
+                                    <input min="0" id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required" value="0">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="doanhThuDV">Doanh thu tháng: </label>
-                                    <input id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required" value="0">
+                                    <input min="0" id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required" value="0">
                                 </div>
                             </div>
                         </div>
@@ -156,19 +156,19 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="baoDuong">Bảo dưỡng: </label>
-                                    <input id="baoDuong" name="baoDuong" type="number" class="form-control">
+                                    <input min="0" id="baoDuong" name="baoDuong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="suaChua">Sửa chửa: </label>
-                                    <input id="suaChua" name="suaChua" type="number" class="form-control">
+                                    <input min="0" id="suaChua" name="suaChua" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dong">Đồng: </label>
-                                    <input id="dong" name="dong" type="number" class="form-control">
+                                    <input min="0" id="dong" name="dong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="son">Sơn: </label>
-                                    <input id="son" name="son" type="number" class="form-control">
+                                    <input min="0" id="son" name="son" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -176,19 +176,19 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="congBaoDuong">Công bảo dưỡng: </label>
-                                    <input id="congBaoDuong" name="congBaoDuong" type="number" class="form-control">
+                                    <input min="0" id="congBaoDuong" name="congBaoDuong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="congSuaChuaChung">Công sửa chửa: </label>
-                                    <input id="congSuaChuaChung" name="congSuaChuaChung" type="number" class="form-control">
+                                    <input min="0" id="congSuaChuaChung" name="congSuaChuaChung" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="congDong">Công đồng: </label>
-                                    <input id="congDong" name="congDong" type="number" class="form-control">
+                                    <input min="0" id="congDong" name="congDong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="congSon">Công Sơn: </label>
-                                    <input id="congSon" name="congSon" type="number" class="form-control">
+                                    <input min="0" id="congSon" name="congSon" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -196,19 +196,19 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="dtPhuTung">Phụ tùng sửa chữa: </label>
-                                    <input id="dtPhuTung" name="dtPhuTung" type="number" class="form-control">
+                                    <input min="0" id="dtPhuTung" name="dtPhuTung" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dtDauNhot">Dầu nhớt sửa chữa: </label>
-                                    <input id="dtDauNhot" name="dtDauNhot" type="number" class="form-control">
+                                    <input min="0" id="dtDauNhot" name="dtDauNhot" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dtPhuTungBan">Phụ tùng bán ngoài: </label>
-                                    <input id="dtPhuTungBan" name="dtPhuTungBan" type="number" class="form-control">
+                                    <input min="0" id="dtPhuTungBan" name="dtPhuTungBan" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dtDauNhotBan">Dầu nhớt bán ngoài: </label>
-                                    <input id="dtDauNhotBan" name="dtDauNhotBan" type="number" class="form-control">
+                                    <input min="0" id="dtDauNhotBan" name="dtDauNhotBan" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -216,11 +216,11 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="phuTungMua">Tiền mua phụ tùng: </label>
-                                    <input id="phuTungMua" name="phuTungMua" type="number" class="form-control">
+                                    <input min="0" id="phuTungMua" name="phuTungMua" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dauNhotMua">Tiền mua dầu nhớt: </label>
-                                    <input id="dauNhotMua" name="dauNhotMua" type="number" class="form-control">
+                                    <input min="0" id="dauNhotMua" name="dauNhotMua" type="number" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -238,19 +238,19 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="tonBaoDuong">Bảo dưỡng: </label>
-                                    <input id="tonBaoDuong" name="tonBaoDuong" type="number" class="form-control">
+                                    <input min="0" id="tonBaoDuong" name="tonBaoDuong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tonSuaChuaChung">Sửa chửa chung: </label>
-                                    <input id="tonSuaChuaChung" name="tonSuaChuaChung" type="number" class="form-control">
+                                    <input min="0" id="tonSuaChuaChung" name="tonSuaChuaChung" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tonDong">Đồng: </label>
-                                    <input id="tonDong" name="tonDong" type="number" class="form-control">
+                                    <input min="0" id="tonDong" name="tonDong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tonSong">Sơn: </label>
-                                    <input id="tonSong" name="tonSong" type="number" class="form-control">
+                                    <input min="0" id="tonSong" name="tonSong" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -258,19 +258,19 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="tiepNhanBaoDuong">Bảo dưỡng: </label>
-                                    <input id="tiepNhanBaoDuong" name="tiepNhanBaoDuong" type="number" class="form-control">
+                                    <input min="0" id="tiepNhanBaoDuong" name="tiepNhanBaoDuong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tiepNhanSuaChuaChung">Sửa chửa chung: </label>
-                                    <input id="tiepNhanSuaChuaChung" name="tiepNhanSuaChuaChung" type="number" class="form-control">
+                                    <input min="0" id="tiepNhanSuaChuaChung" name="tiepNhanSuaChuaChung" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tiepNhanDong">Đồng: </label>
-                                    <input id="tiepNhanDong" name="tiepNhanDong" type="number" class="form-control">
+                                    <input min="0" id="tiepNhanDong" name="tiepNhanDong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tiepNhanSon">Sơn: </label>
-                                    <input id="tiepNhanSon" name="tiepNhanSon" type="number" class="form-control">
+                                    <input min="0" id="tiepNhanSon" name="tiepNhanSon" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -278,19 +278,19 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="hoanThanhBaoDuong">Bảo dưỡng: </label>
-                                    <input id="hoanThanhBaoDuong" name="hoanThanhBaoDuong" type="number" class="form-control">
+                                    <input min="0" id="hoanThanhBaoDuong" name="hoanThanhBaoDuong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="hoanThanhSuaChuaChung">Sửa chửa chung: </label>
-                                    <input id="hoanThanhSuaChuaChung" name="hoanThanhSuaChuaChung" type="number" class="form-control">
+                                    <input min="0" id="hoanThanhSuaChuaChung" name="hoanThanhSuaChuaChung" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="hoanThanhDong">Đồng: </label>
-                                    <input id="hoanThanhDong" name="hoanThanhDong" type="number" class="form-control">
+                                    <input min="0" id="hoanThanhDong" name="hoanThanhDong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="hoanThanhSon">Sơn: </label>
-                                    <input id="hoanThanhSon" name="hoanThanhSon" type="number" class="form-control">
+                                    <input min="0" id="hoanThanhSon" name="hoanThanhSon" type="number" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -308,15 +308,15 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="callDatHenSuccess">Cuộc gọi thành công: </label>
-                                    <input id="callDatHenSuccess" name="callDatHenSuccess" type="number" class="form-control">
+                                    <input min="0" id="callDatHenSuccess" name="callDatHenSuccess" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="callDatHenFail">Cuộc gọi không thành công: </label>
-                                    <input id="callDatHenFail" name="callDatHenFail" type="number" class="form-control">
+                                    <input min="0" id="callDatHenFail" name="callDatHenFail" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="datHen">Đặt hẹn: </label>
-                                    <input id="datHen" name="datHen" type="number" class="form-control">
+                                    <input min="0" id="datHen" name="datHen" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -324,15 +324,15 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="dvHaiLong">Khách hàng hài lòng: </label>
-                                    <input id="dvHaiLong" name="dvHaiLong" type="number" class="form-control">
+                                    <input min="0" id="dvHaiLong" name="dvHaiLong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dvKhongHaiLong">Khách hàng không hài lòng: </label>
-                                    <input id="dvKhongHaiLong" name="dvKhongHaiLong" type="number" class="form-control">
+                                    <input min="0" id="dvKhongHaiLong" name="dvKhongHaiLong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="dvKhongThanhCong">Cuộc gọi không thành công: </label>
-                                    <input id="dvKhongThanhCong" name="dvKhongThanhCong" type="number" class="form-control">
+                                    <input min="0" id="dvKhongThanhCong" name="dvKhongThanhCong" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -340,15 +340,15 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="muaXeSuccess">Cuộc gọi thành công: </label>
-                                    <input id="muaXeSuccess" name="muaXeSuccess" type="number" class="form-control">
+                                    <input min="0" id="muaXeSuccess" name="muaXeSuccess" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="muaXeFail">Cuộc gọi không thành công: </label>
-                                    <input id="muaXeFail" name="muaXeFail" type="number" class="form-control">
+                                    <input min="0" id="muaXeFail" name="muaXeFail" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="duyetBanLe">Duyệt kiểm chứng bán lẻ: </label>
-                                    <input id="duyetBanLe" name="duyetBanLe" type="number" class="form-control">
+                                    <input min="0" id="duyetBanLe" name="duyetBanLe" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -356,37 +356,37 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="knThaiDo">Thái độ nhân viên:  </label>
-                                    <input id="knThaiDo" name="knThaiDo" type="number" class="form-control">
+                                    <input min="0" id="knThaiDo" name="knThaiDo" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="knChatLuong">Chất lượng sửa chữa: </label>
-                                    <input id="knChatLuong" name="knChatLuong" type="number" class="form-control">
+                                    <input min="0" id="knChatLuong" name="knChatLuong" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="knThoiGian">Thời gian sửa chữa: </label>
-                                    <input id="knThoiGian" name="knThoiGian" type="number" class="form-control">
+                                    <input min="0" id="knThoiGian" name="knThoiGian" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="knVeSinh">Vệ sinh: </label>
-                                    <input id="knVeSinh" name="knVeSinh" type="number" class="form-control">
+                                    <input min="0" id="knVeSinh" name="knVeSinh" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="knGiaCa">Giá cả:  </label>
-                                    <input id="knGiaCa" name="knGiaCa" type="number" class="form-control">
+                                    <input min="0" id="knGiaCa" name="knGiaCa" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="knKhuyenMai">Hậu mãi - khuyến mãi: </label>
-                                    <input id="knKhuyenMai" name="knKhuyenMai" type="number" class="form-control">
+                                    <input min="0" id="knKhuyenMai" name="knKhuyenMai" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="knDatHen">Đặt hẹn - tiếp nhận: </label>
-                                    <input id="knDatHen" name="knDatHen" type="number" class="form-control">
+                                    <input min="0" id="knDatHen" name="knDatHen" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="knTraiNghiem">Trải nghiệm KH: </label>
-                                    <input id="knTraiNghiem" name="knTraiNghiem" type="number" class="form-control">
+                                    <input min="0" id="knTraiNghiem" name="knTraiNghiem" type="number" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -403,11 +403,11 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="khBanGiao">KHTN Bàn giao: </label>
-                                    <input id="khBanGiao" name="khBanGiao" type="number" class="form-control" required="required">
+                                    <input min="0" id="khBanGiao" name="khBanGiao" type="number" class="form-control" required="required">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="khSuKien">KHTN Sự kiện: </label>
-                                    <input id="khSuKien" name="khSuKien" type="number" class="form-control" required="required">
+                                    <input min="0" id="khSuKien" name="khSuKien" type="number" class="form-control" required="required">
                                 </div>
                             </div>
                         </div>
@@ -521,11 +521,11 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày bắt đầu</label>
-                                                    <input name="ngayStart" type="date" class="form-control">
+                                                    <input name="ngayStart" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Ngày kết thúc</label>
-                                                    <input name="ngayEnd" type="date" class="form-control">
+                                                    <input name="ngayEnd" min="<?php echo Date('Y-m-d');?>" type="date" class="form-control">
                                                 </div>
                                                  <div class="form-group">
                                                     <label>Kết quả</label>
@@ -637,7 +637,7 @@
                         //---------PDV
                         $('input[name=luotXeDV]').val(response.data.luotXeDV);
                         $('input[name=doanhThuDV]').val(response.data.doanhThuDV);
-                        
+
 
                         $('input[name=xuatHoaDon]').val(response.data.xuatHoaDon);
                         $('input[name=xuatTrongTinh]').val(response.data.xuatTrongTinh);

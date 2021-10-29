@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Auth;
 class ReportController extends Controller
 {
     //
-    public function showReport() {
+    public function showReport()
+    {
         $typeCar = TypeCar::all();
         return view('report.report', ['typeCar' => $typeCar]);
     }
 
-    public function khoiTao(Request $request) {
+    public function khoiTao(Request $request)
+    {
         $doanhSo = 0;
         $thiPhan = 0;
         $luotXeDV = 0;
@@ -48,15 +50,15 @@ class ReportController extends Controller
             $typeUser = "ptdl";
 
         $checkSale = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
+            ['ngayReport', 'like', '%' . $month],
+            ['type', 'like', $typeUser],
             ['doanhSoThang', '!=', null],
             ['thiPhanThang', '!=', null]
         ])->first();
 
         $checkDV = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
+            ['ngayReport', 'like', '%' . $month],
+            ['type', 'like', $typeUser],
             ['luotXeDV', '!=', null],
             ['doanhThuDV', '!=', null]
         ])->first();
@@ -72,8 +74,8 @@ class ReportController extends Controller
         }
 
         $checkIn = Report::where([
-            ['ngayReport','like', $today],
-            ['type','like', $typeUser]
+            ['ngayReport', 'like', $today],
+            ['type', 'like', $typeUser]
         ])->exists();
 
         if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
@@ -170,8 +172,8 @@ class ReportController extends Controller
             }
         } else {
             $report = Report::where([
-                ['ngayReport','like', $today],
-                ['type','like', $typeUser]
+                ['ngayReport', 'like', $today],
+                ['type', 'like', $typeUser]
             ])->update([
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
@@ -248,7 +250,8 @@ class ReportController extends Controller
         }
     }
 
-    public function loadReport() {
+    public function loadReport()
+    {
         $ds = 0;
         $tp = 0;
         $dtdv = 0;
@@ -260,7 +263,7 @@ class ReportController extends Controller
             $typeUser = "pkd";
         elseif (Auth::user()->hasRole('tpdv'))
             $typeUser = "pdv";
-         elseif (Auth::user()->hasRole('ketoan'))
+        elseif (Auth::user()->hasRole('ketoan'))
             $typeUser = "ketoan";
         elseif (Auth::user()->hasRole('mkt'))
             $typeUser = "mkt";
@@ -276,21 +279,21 @@ class ReportController extends Controller
             $typeUser = "ptdl";
 
         $checkIn = Report::where([
-            ['ngayReport','like', $today],
-            ['type','like', $typeUser]
+            ['ngayReport', 'like', $today],
+            ['type', 'like', $typeUser]
         ])->exists();
 
         if ($checkIn) {
             $checkReport = Report::where([
-                ['ngayReport','like', '%'.$month],
-                ['type','like', $typeUser],
+                ['ngayReport', 'like', '%' . $month],
+                ['type', 'like', $typeUser],
                 ['doanhSoThang', '!=', null],
                 ['thiPhanThang', '!=', null]
             ])->first();
 
             $checkReport2 = Report::where([
-                ['ngayReport','like', '%'.$month],
-                ['type','like', $typeUser],
+                ['ngayReport', 'like', '%' . $month],
+                ['type', 'like', $typeUser],
                 ['luotXeDV', '!=', null],
                 ['doanhThuDV', '!=', null]
             ])->first();
@@ -307,8 +310,8 @@ class ReportController extends Controller
             }
 
             $report = Report::where([
-                ['ngayReport','like', $today],
-                ['type','like', $typeUser]
+                ['ngayReport', 'like', $today],
+                ['type', 'like', $typeUser]
             ])->first();
 
             return response()->json([
@@ -327,14 +330,14 @@ class ReportController extends Controller
             $lxdv_num = 0;
             $dtdv_num = 0;
             $report = Report::where([
-                ['ngayReport','like', '%'.$month],
-                ['type','like', $typeUser],
+                ['ngayReport', 'like', '%' . $month],
+                ['type', 'like', $typeUser],
                 ['doanhSoThang', '!=', null],
                 ['thiPhanThang', '!=', null]
             ])->first();
             $report2 = Report::where([
-                ['ngayReport','like', '%'.$month],
-                ['type','like', $typeUser],
+                ['ngayReport', 'like', '%' . $month],
+                ['type', 'like', $typeUser],
                 ['luotXeDV', '!=', null],
                 ['doanhThuDV', '!=', null]
             ])->first();
@@ -366,7 +369,8 @@ class ReportController extends Controller
         }
     }
 
-    public function saveReport(Request $request) {
+    public function saveReport(Request $request)
+    {
         $doanhSo = 0;
         $thiPhan = 0;
         $luotXeDV = 0;
@@ -394,15 +398,15 @@ class ReportController extends Controller
             $typeUser = "ptdl";
 
         $checkSale = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
+            ['ngayReport', 'like', '%' . $month],
+            ['type', 'like', $typeUser],
             ['doanhSoThang', '!=', null],
             ['thiPhanThang', '!=', null]
         ])->first();
 
         $checkDV = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
+            ['ngayReport', 'like', '%' . $month],
+            ['type', 'like', $typeUser],
             ['luotXeDV', '!=', null],
             ['doanhThuDV', '!=', null]
         ])->first();
@@ -418,8 +422,8 @@ class ReportController extends Controller
         }
 
         $checkIn = Report::where([
-            ['ngayReport','like', $today],
-            ['type','like', $typeUser]
+            ['ngayReport', 'like', $today],
+            ['type', 'like', $typeUser]
         ])->exists();
 
         if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
@@ -517,8 +521,8 @@ class ReportController extends Controller
             }
         } else {
             $report = Report::where([
-                ['ngayReport','like', $today],
-                ['type','like', $typeUser]
+                ['ngayReport', 'like', $today],
+                ['type', 'like', $typeUser]
             ])->update([
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
@@ -596,7 +600,8 @@ class ReportController extends Controller
         }
     }
 
-    public function saveNotSend(Request $request) {
+    public function saveNotSend(Request $request)
+    {
         $doanhSo = 0;
         $thiPhan = 0;
         $luotXeDV = 0;
@@ -624,15 +629,15 @@ class ReportController extends Controller
             $typeUser = "ptdl";
 
         $checkSale = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
+            ['ngayReport', 'like', '%' . $month],
+            ['type', 'like', $typeUser],
             ['doanhSoThang', '!=', null],
             ['thiPhanThang', '!=', null]
         ])->first();
 
         $checkDV = Report::where([
-            ['ngayReport','like', '%'.$month],
-            ['type','like', $typeUser],
+            ['ngayReport', 'like', '%' . $month],
+            ['type', 'like', $typeUser],
             ['luotXeDV', '!=', null],
             ['doanhThuDV', '!=', null]
         ])->first();
@@ -648,8 +653,8 @@ class ReportController extends Controller
         }
 
         $checkIn = Report::where([
-            ['ngayReport','like', $today],
-            ['type','like', $typeUser]
+            ['ngayReport', 'like', $today],
+            ['type', 'like', $typeUser]
         ])->exists();
 
         if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
@@ -746,8 +751,8 @@ class ReportController extends Controller
             }
         } else {
             $report = Report::where([
-                ['ngayReport','like', $today],
-                ['type','like', $typeUser]
+                ['ngayReport', 'like', $today],
+                ['type', 'like', $typeUser]
             ])->update([
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
@@ -824,14 +829,15 @@ class ReportController extends Controller
         }
     }
 
-    public function addCar(Request $request) {
+    public function addCar(Request $request)
+    {
         $reportCar = new ReportCar();
         $reportCar->ngayTao = Date('d-m-Y');
         $reportCar->id_report = $request->idReport;
         $reportCar->soLuong = $request->soLuong;
         $reportCar->dongXe = $request->typeCar;
         $reportCar->save();
-        if($reportCar) {
+        if ($reportCar) {
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã thêm chi tiết hợp đồng",
@@ -846,28 +852,30 @@ class ReportController extends Controller
         }
     }
 
-    public function loadAddCar($id) {
+    public function loadAddCar($id)
+    {
         $reportCar = ReportCar::where('id_report', $id)->get();
         $checkExist = ReportCar::where('id_report', $id)->exists();
-        if($checkExist)
+        if ($checkExist)
             $checkClock = $reportCar->first()->report->clock;
         echo "<table class='table table-striped'><tr>
                <th>Dòng xe</th>";
-                foreach($reportCar as $row)
-                    echo "<th>".$row->typeCar->name."</th>";
-            echo "</tr><tr><td><strong>Số lượng</strong></td>";
-                foreach($reportCar as $row) {
-                        if (!$checkClock)
-                            echo "<td>".$row->soLuong." <button type='button' id='delCar' data-id='".$row->id."' class='badge badge-danger'>Xóa</button></td>";
-                        else
-                            echo "<td>".$row->soLuong."</td>";
-                }
-                echo "</tr></table>";
+        foreach ($reportCar as $row)
+            echo "<th>" . $row->typeCar->name . "</th>";
+        echo "</tr><tr><td><strong>Số lượng</strong></td>";
+        foreach ($reportCar as $row) {
+            if (!$checkClock)
+                echo "<td>" . $row->soLuong . " <button type='button' id='delCar' data-id='" . $row->id . "' class='badge badge-danger'>Xóa</button></td>";
+            else
+                echo "<td>" . $row->soLuong . "</td>";
+        }
+        echo "</tr></table>";
     }
 
-    public function deleteCar(Request $request) {
+    public function deleteCar(Request $request)
+    {
         $reportCar = ReportCar::where('id', $request->id)->delete();
-        if($reportCar) {
+        if ($reportCar) {
             return response()->json([
                 'message' => 'Đã xóa!',
                 'code' => 200
@@ -880,7 +888,8 @@ class ReportController extends Controller
         }
     }
 
-    public function addWork(Request $request) {
+    public function addWork(Request $request)
+    {
         $reportWork = new ReportWork();
         $reportWork->user_tao = Auth::user()->id;
         $reportWork->ngayTao = Date('d-m-Y');
@@ -891,7 +900,7 @@ class ReportController extends Controller
         $reportWork->ghiChu = $request->ghiChu;
         $reportWork->ketQua = $request->ketQua;
         $reportWork->save();
-        if($reportWork) {
+        if ($reportWork) {
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã thêm công việc",
@@ -906,11 +915,12 @@ class ReportController extends Controller
         }
     }
 
-    public function loadWork() {
+    public function loadWork()
+    {
         $i = 1;
         $reportWork = ReportWork::where([
-            ['ngayTao','like', Date('d-m-Y')],
-            ['user_tao','=',Auth::user()->id]
+            ['ngayTao', 'like', Date('d-m-Y')],
+            ['user_tao', '=', Auth::user()->id]
         ])->get();
         echo "<table class='table table-striped'>
                                     <tr>
@@ -923,26 +933,27 @@ class ReportController extends Controller
                                         <th>Ghi chú</th>
                                         <th>Hành động</th>
                                     </tr>";
-                foreach ($reportWork as $row) {
-                    echo "<tr>
-                                        <td>".$i++."</td>
-                                        <td>".$row->ngayTao."</td>
-                                        <td>".$row->tenCongViec."</td>
-                                        <td>".$row->tienDo."%</td>
-                                        <td>".\HelpFunction::revertDate($row->ngayStart)."</td>
-                                        <td>".\HelpFunction::revertDate($row->ngayEnd)."</td>
-                                        <td>".$row->ghiChu."</td>
+        foreach ($reportWork as $row) {
+            echo "<tr>
+                                        <td>" . $i++ . "</td>
+                                        <td>" . $row->ngayTao . "</td>
+                                        <td>" . $row->tenCongViec . "</td>
+                                        <td>" . $row->tienDo . "%</td>
+                                        <td>" . \HelpFunction::revertDate($row->ngayStart) . "</td>
+                                        <td>" . \HelpFunction::revertDate($row->ngayEnd) . "</td>
+                                        <td>" . $row->ghiChu . "</td>
                                         <td>
-                                            <button id='delWork' data-id='".$row->id."' type='button' class='btn btn-danger btn-sm'>Xóa</button>
+                                            <button id='delWork' data-id='" . $row->id . "' type='button' class='btn btn-danger btn-sm'>Xóa</button>
                                         </td>
                                     </tr>";
-                }
+        }
         echo "</table>";
     }
 
-    public function deleteWork(Request $request) {
+    public function deleteWork(Request $request)
+    {
         $reportWork = ReportWork::where('id', $request->id)->delete();
-        if($reportWork) {
+        if ($reportWork) {
             return response()->json([
                 'message' => 'Đã xóa!',
                 'code' => 200
@@ -955,16 +966,19 @@ class ReportController extends Controller
         }
     }
 
-    public function overviewList() {
+    public function overviewList()
+    {
         return view('report.overview');
     }
 
-    public function overviewWorkList() {
+    public function overviewWorkList()
+    {
         $user = User::all();
         return view('report.reportwork', ['user' => $user]);
     }
 
-    public function getPKDAll($_from, $_to) {
+    public function getPKDAll($_from, $_to)
+    {
         $i = 1;
         $sum = 0;
         $doanhSoThang = 0;
@@ -991,7 +1005,7 @@ class ReportController extends Controller
         $thiPhanThang = 0;
         $thang = "";
         $ds = Report::where([
-            ['type','like', 'pkd']
+            ['type', 'like', 'pkd']
         ])->whereBetween('ngayReport', [$_from, $_to])->first();
 
         if ($ds !== null) {
@@ -1005,30 +1019,30 @@ class ReportController extends Controller
         //-------------------
 
         $report = Report::where([
-            ['type','like', 'pkd'],
-            ['clock','=', true]
+            ['type', 'like', 'pkd'],
+            ['clock', '=', true]
         ])->whereBetween('ngayReport', [$_from, $_to])->get();
- 
+
         $personal = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', true],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', true],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $getWork = ReportWork::where([
-            ['user_nhan','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_nhan', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $pushWork = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReportPush','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReportPush', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         if ($report !== null) {
-            foreach($report as $row) {
+            foreach ($report as $row) {
                 $xuatHoaDon += $row->xuatHoaDon;
                 $xuatNgoaiTinh += $row->xuatNgoaiTinh;
                 $xuatTrongTinh += $row->xuatTrongTinh;
@@ -1045,39 +1059,40 @@ class ReportController extends Controller
             }
 
 
-            echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
 
-            <h5>Doanh số (chỉ tiêu tháng <strong>".$thang."</strong>): <span class='text-blue'><strong>".(($doanhSoThang == 1) ? "0" : $doanhSoThang)." (".number_format((($xuatNgoaiTinh+$xuatTrongTinh)*100/$doanhSoThang),2)."%)</strong></span></h5>
-                    <h5>Thị phần tháng (chỉ tiêu tháng <strong>".$thang."</strong>): <span class='text-blue'><strong>".number_format(($thiPhanThang == 1) ? "0" : $thiPhanThang)."</strong></span></h5><br>
+            <h5>Doanh số (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . (($doanhSoThang == 1) ? "0" : $doanhSoThang) . " (" . number_format((($xuatNgoaiTinh + $xuatTrongTinh) * 100 / $doanhSoThang), 2) . "%)</strong></span></h5>
+                    <h5>Thị phần tháng (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . number_format((($thiPhanThang == 1) ? "0" : $thiPhanThang),2) . "</strong></span></h5><br>
 
                     <div class='row'>
                         <div class='col-md-8'>
                             <h4>Xuất hóa đơn</h4>
-                            <h5>- Xuất hóa đơn: <span class='text-success'><strong>".$xuatHoaDon."</strong></span></h5>
-                            <h5>- Xuất trong tỉnh: <span class='text-success'><strong>".$xuatNgoaiTinh."</strong></span></h5>
-                            <h5>- Xuất ngoài tỉnh: <span class='text-success'><strong>".$xuatTrongTinh."</strong></span></h5>
+                            <h5>- Xuất hóa đơn: <span class='text-success'><strong>" . $xuatHoaDon . "</strong></span></h5>
+                            <h5>- Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span></h5>
+                            <h5>- Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></h5>
                             ";
-            echo "<h5>- Hủy hợp đồng: <span class='text-success'><strong>".$hdHuy."</strong></span></h5>
+            echo "<h5>- Hủy hợp đồng: <span class='text-success'><strong>" . $hdHuy . "</strong></span></h5>
                         </div>
                         <div class='col-md-4'>
                             <h4>KHTN Công ty</h4>
-                            <h5>- Internet: <span class='text-success'><strong>".$ctInternet."</strong></span></h5>
-                            <h5>- Showroom: <span class='text-success'><strong>".$ctShowroom."</strong></span></h5>
-                            <h5>- Hotline: <span class='text-success'><strong>".$ctHotline."</strong></span></h5>
-                            <h5>- Sự kiện: <span class='text-success'><strong>".$ctSuKien."</strong></span></h5>
-                            <h5>- Ban lãnh đạo: <span class='text-success'><strong>".$ctBLD."</strong></span></h5>
+                            <h5>- Internet: <span class='text-success'><strong>" . $ctInternet . "</strong></span></h5>
+                            <h5>- Showroom: <span class='text-success'><strong>" . $ctShowroom . "</strong></span></h5>
+                            <h5>- Hotline: <span class='text-success'><strong>" . $ctHotline . "</strong></span></h5>
+                            <h5>- Sự kiện: <span class='text-success'><strong>" . $ctSuKien . "</strong></span></h5>
+                            <h5>- Ban lãnh đạo: <span class='text-success'><strong>" . $ctBLD . "</strong></span></h5>
                             <h4>KHTN SALER</h4>
-                            <h5>- Internet: <span class='text-success'><strong>".$saleInternet."</strong></span></h5>
-                            <h5>- Môi giới: <span class='text-success'><strong>".$saleMoiGioi."</strong></span></h5>
-                            <h5>- Thị trường: <span class='text-success'><strong>".$saleThiTruong."</strong></span></h5>
+                            <h5>- Internet: <span class='text-success'><strong>" . $saleInternet . "</strong></span></h5>
+                            <h5>- Môi giới: <span class='text-success'><strong>" . $saleMoiGioi . "</strong></span></h5>
+                            <h5>- Thị trường: <span class='text-success'><strong>" . $saleThiTruong . "</strong></span></h5>
                         </div>
                     </div>
-                    <h5>Lượt khách showroom: <span class='text-success'><strong>".$khShowRoom."</strong></span></h5>
+                    <h5>Lượt khách showroom: <span class='text-success'><strong>" . $khShowRoom . "</strong></span></h5>
                     <br>";
-        } 
+        }
     }
 
-    public function getPDVAll($_from, $_to) {
+    public function getPDVAll($_from, $_to)
+    {
         $i = 1;
         $baoDuong = 0;
         $suaChua = 0;
@@ -1102,7 +1117,7 @@ class ReportController extends Controller
         $luotXeDV = 0;
         $thang = "";
         $dv = Report::where([
-            ['type','like', 'pdv']
+            ['type', 'like', 'pdv']
         ])->whereBetween('ngayReport', [$_from, $_to])->first();
 
         if ($dv !== null) {
@@ -1115,27 +1130,27 @@ class ReportController extends Controller
         }
         //-------------------
         $report = Report::where([
-            ['type','like', 'pdv'],
-            ['clock','=', true]
+            ['type', 'like', 'pdv'],
+            ['clock', '=', true]
         ])->whereBetween('ngayReport', [$_from, $_to])->get();
- 
+
         $personal = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', true],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', true],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $getWork = ReportWork::where([
-            ['user_nhan','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_nhan', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $pushWork = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReportPush','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReportPush', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         if ($report !== null) {
             foreach ($report as $row) {
@@ -1155,48 +1170,49 @@ class ReportController extends Controller
                 $dauNhotMua += $row->dauNhotMua;
             }
 
-            echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
 
 
-            <h5>Lượt xe (chỉ tiêu tháng <strong>".$thang."</strong>): <span class='text-blue'><strong>".(($luotXeDV == 1) ? "0" : $luotXeDV)." (".number_format((($baoDuong+$suaChua+$Dong+$Son)*100/$luotXeDV),2)."%)</strong></span></h5>
-                    <h5>Doanh thu (chỉ tiêu tháng <strong>".$thang."</strong>): <span class='text-blue'><strong>".number_format(($doanhThuDV == 1) ? "0" : $doanhThuDV)." (".number_format((($dtPhuTung+$dtDauNhot+$dtPhuTungBan+$dtDauNhotBan+$congBaoDuong+$congSuaChuaChung+$congDong+$congSon)*100/$doanhThuDV),2)."%)</strong></span></h5><br>
+            <h5>Lượt xe (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . (($luotXeDV == 1) ? "0" : $luotXeDV) . " (" . number_format((($baoDuong + $suaChua + $Dong + $Son) * 100 / $luotXeDV), 2) . "%)</strong></span></h5>
+                    <h5>Doanh thu (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . number_format(($doanhThuDV == 1) ? "0" : $doanhThuDV) . " (" . number_format((($dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan + $congBaoDuong + $congSuaChuaChung + $congDong + $congSon) * 100 / $doanhThuDV), 2) . "%)</strong></span></h5><br>
 
 
                 <div class='row'>
                         <div class='col-md-6'>
                             <h4>LƯỢT XE</h4>
-                            <h5>- Bảo dưỡng: <span class='text-success'><strong>".$baoDuong."</strong></span></h5>
-                            <h5>- Sữa chữa: <span class='text-success'><strong>".$suaChua."</strong></span></h5>
-                            <h5>- Đồng: <span class='text-success'><strong>".$Dong."</strong></span></h5>
-                            <h5>- Sơn: <span class='text-success'><strong>".$Son."</strong></span></h5>
+                            <h5>- Bảo dưỡng: <span class='text-success'><strong>" . $baoDuong . "</strong></span></h5>
+                            <h5>- Sữa chữa: <span class='text-success'><strong>" . $suaChua . "</strong></span></h5>
+                            <h5>- Đồng: <span class='text-success'><strong>" . $Dong . "</strong></span></h5>
+                            <h5>- Sơn: <span class='text-success'><strong>" . $Son . "</strong></span></h5>
                         </div>
                         <div class='col-md-6'>
                             <h4>DOANH THU DỊCH VỤ</h4>
-                            <h5>- Công bảo dưỡng: <span class='text-success'><strong>".number_format($congBaoDuong)."</strong></span></h5>
-                            <h5>- Công sữa chữa: <span class='text-success'><strong>".number_format($congSuaChuaChung)."</strong></span></h5>
-                            <h5>- Công đồng: <span class='text-success'><strong>".number_format($congDong)."</strong></span></h5>
-                            <h5>- Công sơn: <span class='text-success'><strong>".number_format($congSon)."</strong></span></h5>
+                            <h5>- Công bảo dưỡng: <span class='text-success'><strong>" . number_format($congBaoDuong) . "</strong></span></h5>
+                            <h5>- Công sữa chữa: <span class='text-success'><strong>" . number_format($congSuaChuaChung) . "</strong></span></h5>
+                            <h5>- Công đồng: <span class='text-success'><strong>" . number_format($congDong) . "</strong></span></h5>
+                            <h5>- Công sơn: <span class='text-success'><strong>" . number_format($congSon) . "</strong></span></h5>
                         </div>
                         </div>
                         <div class='row'>
                         <div class='col-md-6'>
                             <h4>DOANH THU PHỤ TÙNG - DẦU NHỚT</h4>
-                            <h5>- Phụ tùng sửa chữa: <span class='text-success'><strong>".number_format($dtPhuTung)."</strong></span></h5>
-                            <h5>- Dầu nhớt sữa chữa: <span class='text-success'><strong>".number_format($dtDauNhot)."</strong></span></h5>
-                            <h5>- Phụ tùng bán ngoài: <span class='text-success'><strong>".number_format($dtPhuTungBan)."</strong></span></h5>
-                            <h5>- Dầu nhớt bán ngoài: <span class='text-success'><strong>".number_format($dtDauNhotBan)."</strong></span></h5>
+                            <h5>- Phụ tùng sửa chữa: <span class='text-success'><strong>" . number_format($dtPhuTung) . "</strong></span></h5>
+                            <h5>- Dầu nhớt sữa chữa: <span class='text-success'><strong>" . number_format($dtDauNhot) . "</strong></span></h5>
+                            <h5>- Phụ tùng bán ngoài: <span class='text-success'><strong>" . number_format($dtPhuTungBan) . "</strong></span></h5>
+                            <h5>- Dầu nhớt bán ngoài: <span class='text-success'><strong>" . number_format($dtDauNhotBan) . "</strong></span></h5>
                         </div>
                         <div class='col-md-6'>
                             <h4>MUA PHỤ TÙNG/DẦU NHỚT HTV/TST</h4>
-                            <h5>- Tiền mua phụ tùng: <span class='text-success'><strong>".number_format($phuTungMua)."</strong></span></h5>
-                            <h5>- Tiền mua dầu nhớt: <span class='text-success'><strong>".number_format($dauNhotMua)."</strong></span></h5>
+                            <h5>- Tiền mua phụ tùng: <span class='text-success'><strong>" . number_format($phuTungMua) . "</strong></span></h5>
+                            <h5>- Tiền mua dầu nhớt: <span class='text-success'><strong>" . number_format($dauNhotMua) . "</strong></span></h5>
                         </div>
                     </div>
                     <br>";
-        } 
+        }
     }
 
-    public function getXuongAll($_from, $_to) {
+    public function getXuongAll($_from, $_to)
+    {
         $i = 1;
         $tonBaoDuong = 0;
         $tonSuaChuaChung = 0;
@@ -1215,27 +1231,27 @@ class ReportController extends Controller
         $_to = \HelpFunction::revertDate($_to);
 
         $report = Report::where([
-            ['type','like', 'xuong'],
-            ['clock','=', true]
+            ['type', 'like', 'xuong'],
+            ['clock', '=', true]
         ])->whereBetween('ngayReport', [$_from, $_to])->get();
- 
+
         $personal = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', true],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', true],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $getWork = ReportWork::where([
-            ['user_nhan','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_nhan', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $pushWork = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReportPush','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReportPush', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
 
         if ($report !== null) {
@@ -1254,34 +1270,35 @@ class ReportController extends Controller
                 $hoanThanhSon += $row->hoanThanhSon;
             }
 
-            echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
                 <div class='row'>
                     <div class='col-md-4'>
                         <h4>XE TỒN</h4>
-                        <h5>- Bảo dưỡng: <span class='text-success'><strong>".$tonBaoDuong."</strong></span></h5>
-                        <h5>- Sữa chữa chung: <span class='text-success'><strong>".$tonSuaChuaChung."</strong></span></h5>
-                        <h5>- Đồng: <span class='text-success'><strong>".$tonDong."</strong></span></h5>
-                        <h5>- Sơn: <span class='text-success'><strong>".$tonSon."</strong></span></h5>
+                        <h5>- Bảo dưỡng: <span class='text-success'><strong>" . $tonBaoDuong . "</strong></span></h5>
+                        <h5>- Sữa chữa chung: <span class='text-success'><strong>" . $tonSuaChuaChung . "</strong></span></h5>
+                        <h5>- Đồng: <span class='text-success'><strong>" . $tonDong . "</strong></span></h5>
+                        <h5>- Sơn: <span class='text-success'><strong>" . $tonSon . "</strong></span></h5>
                     </div>
                     <div class='col-md-4'>
                         <h4>LƯỢT XE TIẾP NHẬN</h4>
-                        <h5>- Bảo dưỡng: <span class='text-success'><strong>".$tiepNhanBaoDuong."</strong></span></h5>
-                        <h5>- Sữa chữa chung: <span class='text-success'><strong>".$tiepNhanSuaChuaChung."</strong></span></h5>
-                        <h5>- Đồng: <span class='text-success'><strong>".$tiepNhanDong."</strong></span></h5>
-                        <h5>- Sơn: <span class='text-success'><strong>".$tiepNhanSon."</strong></span></h5>
+                        <h5>- Bảo dưỡng: <span class='text-success'><strong>" . $tiepNhanBaoDuong . "</strong></span></h5>
+                        <h5>- Sữa chữa chung: <span class='text-success'><strong>" . $tiepNhanSuaChuaChung . "</strong></span></h5>
+                        <h5>- Đồng: <span class='text-success'><strong>" . $tiepNhanDong . "</strong></span></h5>
+                        <h5>- Sơn: <span class='text-success'><strong>" . $tiepNhanSon . "</strong></span></h5>
                     </div>
                     <div class='col-md-4'>
                         <h4>HOÀN THÀNH</h4>
-                        <h5>- Bảo dưỡng: <span class='text-success'><strong>".$hoanThanhBaoDuong."</strong></span></h5>
-                        <h5>- Sữa chữa chung: <span class='text-success'><strong>".$hoanThanhSuaChuaChung."</strong></span></h5>
-                        <h5>- Đồng: <span class='text-success'><strong>".$hoanThanhDong."</strong></span></h5>
-                        <h5>- Sơn: <span class='text-success'><strong>".$hoanThanhSon."</strong></span></h5>
+                        <h5>- Bảo dưỡng: <span class='text-success'><strong>" . $hoanThanhBaoDuong . "</strong></span></h5>
+                        <h5>- Sữa chữa chung: <span class='text-success'><strong>" . $hoanThanhSuaChuaChung . "</strong></span></h5>
+                        <h5>- Đồng: <span class='text-success'><strong>" . $hoanThanhDong . "</strong></span></h5>
+                        <h5>- Sơn: <span class='text-success'><strong>" . $hoanThanhSon . "</strong></span></h5>
                     </div>
                 </div>";
-        } 
+        }
     }
 
-    public function getCSKHAll($_from, $_to) {
+    public function getCSKHAll($_from, $_to)
+    {
         $i = 1;
         $callDatHenSuccess = 0;
         $callDatHenFail = 0;
@@ -1305,27 +1322,27 @@ class ReportController extends Controller
         $_to = \HelpFunction::revertDate($_to);
 
         $report = Report::where([
-            ['type','like', 'cskh'],
-            ['clock','=', true]
+            ['type', 'like', 'cskh'],
+            ['clock', '=', true]
         ])->whereBetween('ngayReport', [$_from, $_to])->get();
- 
+
         $personal = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', true],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', true],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $getWork = ReportWork::where([
-            ['user_nhan','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_nhan', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $pushWork = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReportPush','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();  
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReportPush', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
         if ($report !== null) {
             foreach ($report as $row) {
                 $callDatHenSuccess += $row->callDatHenSuccess;
@@ -1347,44 +1364,45 @@ class ReportController extends Controller
                 $knTraiNghiem += $row->knTraiNghiem;
             }
 
-          echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
                 <div class='row'>
                     <div class='col-md-6'>
                         <h4>NHẮC BẢO DƯỠNG / ĐẶT HẸN</h4>
-                        <h5>- Cuộc gọi thành công: <span class='text-success'><strong>".$callDatHenSuccess."</strong></span></h5>
-                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>".$callDatHenFail."</strong></span></h5>
-                        <h5>- Đặt hẹn: <span class='text-success'><strong>".$datHen."</strong></span></h5>
+                        <h5>- Cuộc gọi thành công: <span class='text-success'><strong>" . $callDatHenSuccess . "</strong></span></h5>
+                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>" . $callDatHenFail . "</strong></span></h5>
+                        <h5>- Đặt hẹn: <span class='text-success'><strong>" . $datHen . "</strong></span></h5>
                     </div>
                     <div class='col-md-6'>
                         <h4>THEO DÕI SAU DỊCH VỤ</h4>
-                        <h5>- Khách hàng hài lòng: <span class='text-success'><strong>".$dvHaiLong."</strong></span></h5>
-                        <h5>- Khách hàng không hài lòng: <span class='text-success'><strong>".$dvKhongHaiLong."</strong></span></h5>
-                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>".$dvKhongThanhCong."</strong></span></h5>
+                        <h5>- Khách hàng hài lòng: <span class='text-success'><strong>" . $dvHaiLong . "</strong></span></h5>
+                        <h5>- Khách hàng không hài lòng: <span class='text-success'><strong>" . $dvKhongHaiLong . "</strong></span></h5>
+                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>" . $dvKhongThanhCong . "</strong></span></h5>
                     </div>
                 </div>
                  <div class='row'>
                     <div class='col-md-6'>
                         <h4>THEO DÕI SAU MUA XE</h4>
-                        <h5>- Cuộc gọi thành công: <span class='text-success'><strong>".$muaXeSuccess."</strong></span></h5>
-                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>".$muaXeFail."</strong></span></h5>
-                        <h5>- Kiểm chứng bán lẻ: <span class='text-success'><strong>".$duyetBanLe."</strong></span></h5>
+                        <h5>- Cuộc gọi thành công: <span class='text-success'><strong>" . $muaXeSuccess . "</strong></span></h5>
+                        <h5>- Cuộc gọi không thành công: <span class='text-success'><strong>" . $muaXeFail . "</strong></span></h5>
+                        <h5>- Kiểm chứng bán lẻ: <span class='text-success'><strong>" . $duyetBanLe . "</strong></span></h5>
                     </div>
                     <div class='col-md-6'>
                         <h4>KHIẾU NẠI</h4>
-                        <h5>- Thái độ nhân viên: <span class='text-success'><strong>".$knThaiDo."</strong></span></h5>
-                        <h5>- Chất lượng sửa chữa: <span class='text-success'><strong>".$knChatLuong."</strong></span></h5>
-                        <h5>- Thời gian sửa chữa: <span class='text-success'><strong>".$knThoiGian."</strong></span></h5>
-                        <h5>- Vệ sinh: <span class='text-success'><strong>".$knVeSinh."</strong></span></h5>
-                        <h5>- Giá cả: <span class='text-success'><strong>".$knGiaCa."</strong></span></h5>
-                        <h5>- Hậu mãi - khuyến mãi: <span class='text-success'><strong>".$knKhuyenMai."</strong></span></h5>
-                        <h5>- Đặt hẹn - tiếp nhận: <span class='text-success'><strong>".$knDatHen."</strong></span></h5>
-                        <h5>- Trải nghiệm khách hàng: <span class='text-success'><strong>".$knTraiNghiem."</strong></span></h5>
+                        <h5>- Thái độ nhân viên: <span class='text-success'><strong>" . $knThaiDo . "</strong></span></h5>
+                        <h5>- Chất lượng sửa chữa: <span class='text-success'><strong>" . $knChatLuong . "</strong></span></h5>
+                        <h5>- Thời gian sửa chữa: <span class='text-success'><strong>" . $knThoiGian . "</strong></span></h5>
+                        <h5>- Vệ sinh: <span class='text-success'><strong>" . $knVeSinh . "</strong></span></h5>
+                        <h5>- Giá cả: <span class='text-success'><strong>" . $knGiaCa . "</strong></span></h5>
+                        <h5>- Hậu mãi - khuyến mãi: <span class='text-success'><strong>" . $knKhuyenMai . "</strong></span></h5>
+                        <h5>- Đặt hẹn - tiếp nhận: <span class='text-success'><strong>" . $knDatHen . "</strong></span></h5>
+                        <h5>- Trải nghiệm khách hàng: <span class='text-success'><strong>" . $knTraiNghiem . "</strong></span></h5>
                     </div>
                 </div>";
-        } 
+        }
     }
 
-    public function getMktAll($_from, $_to) {
+    public function getMktAll($_from, $_to)
+    {
         $i = 1;
         $khBanGiao = 0;
         $khSuKien = 0;
@@ -1393,27 +1411,27 @@ class ReportController extends Controller
         $_to = \HelpFunction::revertDate($_to);
 
         $report = Report::where([
-            ['type','like', 'mkt'],
-            ['clock','=', true]
+            ['type', 'like', 'mkt'],
+            ['clock', '=', true]
         ])->whereBetween('ngayReport', [$_from, $_to])->get();
- 
+
         $personal = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', true],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', true],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $getWork = ReportWork::where([
-            ['user_nhan','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReport','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_nhan', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReport', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         $pushWork = ReportWork::where([
-            ['user_tao','=', Auth::user()->id],
-            ['isPersonal','=', false],
-            ['isReportPush','=', true]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();   
+            ['user_tao', '=', Auth::user()->id],
+            ['isPersonal', '=', false],
+            ['isReportPush', '=', true]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
         if ($report !== null) {
 
@@ -1422,69 +1440,70 @@ class ReportController extends Controller
                 $khSuKien += $row->khSuKien;
             }
 
-            echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
                     <div>
-                        <h5>- KHTN bàn giao: <span class='text-success'><strong>".$khBanGiao."</strong></span></h5>
-                        <h5>- KHTN sự kiện: <span class='text-success'><strong>".$khSuKien."</strong></span></h5>
+                        <h5>- KHTN bàn giao: <span class='text-success'><strong>" . $khBanGiao . "</strong></span></h5>
+                        <h5>- KHTN sự kiện: <span class='text-success'><strong>" . $khSuKien . "</strong></span></h5>
                     </div>";
-        } 
+        }
     }
 
 
-    public function status() {
+    public function status()
+    {
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
-        $_date = Date('d-m-Y');
-        $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh'];
-        echo "<h3>BÁO CÁO SỐ LIỆU</h3><table class='table table-striped table-border'>
+            $_date = Date('d-m-Y');
+            $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh'];
+            echo "<h3>BÁO CÁO SỐ LIỆU</h3><table class='table table-striped table-border'>
                                 <tr>
                                     <th>Thời gian</th>
                                     <th>Phòng ban</th>
                                     <th>Trạng thái</th>
                                 </tr>";
-        for ($i = 0; $i < count($arr); $i++) {
-            $phong = "";
-            $check = Report::where([
-                ['ngayReport','like', $_date],
-                ['type','like', $arr[$i]],
-                ['clock','=', true]
-            ])->exists();
-            switch ($arr[$i]) {
-                case 'pkd':
-                    $phong = "Phòng kinh doanh";
-                    break;
-                case 'pdv':
-                    $phong = "Phòng dịch vụ";
-                    break;
-                case 'mkt':
-                    $phong = "Marketing";
-                    break;
-                case 'xuong':
-                    $phong = "Xưởng";
-                    break;
-                case 'cskh':
-                    $phong = "CSKH";
-                    break;
-            }
-            if ($check) {
-                echo "<tr>
-                        <td>".$_date."</td>
-                        <td>".$phong."</td>
+            for ($i = 0; $i < count($arr); $i++) {
+                $phong = "";
+                $check = Report::where([
+                    ['ngayReport', 'like', $_date],
+                    ['type', 'like', $arr[$i]],
+                    ['clock', '=', true]
+                ])->exists();
+                switch ($arr[$i]) {
+                    case 'pkd':
+                        $phong = "Phòng kinh doanh";
+                        break;
+                    case 'pdv':
+                        $phong = "Phòng dịch vụ";
+                        break;
+                    case 'mkt':
+                        $phong = "Marketing";
+                        break;
+                    case 'xuong':
+                        $phong = "Xưởng";
+                        break;
+                    case 'cskh':
+                        $phong = "CSKH";
+                        break;
+                }
+                if ($check) {
+                    echo "<tr>
+                        <td>" . $_date . "</td>
+                        <td>" . $phong . "</td>
                         <td class='text-success'><strong>Đã gửi báo cáo</strong></td>
                     </tr>";
-            } else {
-                echo "<tr>
-                        <td>".$_date."</td>
-                        <td>".$phong."</td>
+                } else {
+                    echo "<tr>
+                        <td>" . $_date . "</td>
+                        <td>" . $phong . "</td>
                         <td class='text-danger'><strong>Chưa gửi báo cáo</strong></td>
                     </tr>";
-            }
+                }
 
-        }
-        echo "</table>";
-        echo "<div><div class='col-md-4'><form id='statusThang'>
+            }
+            echo "</table>";
+            echo "<div><div class='col-md-4'><form id='statusThang'>
                     <div class='form-group row'>
                         <div class='col-8'>
-                            <input type='month' name='monthStatus' value='".Date('Y-m')."' class='form-control'>
+                            <input type='month' name='monthStatus' value='" . Date('Y-m') . "' class='form-control'>
                         </div>
                         <div class='col-2'>
                             <button type='button' id='watchMonthStatus' class='btn btn-success'>Xem tháng</button>
@@ -1494,63 +1513,64 @@ class ReportController extends Controller
         }
     }
 
-    public function statusMonth($_month, $_room) {
+    public function statusMonth($_month, $_room)
+    {
         $phong = "";
         $month = explode('-', $_month)[1];
         $year = explode('-', $_month)[0];
         $sumDay = \HelpFunction::countDayInMonth($month, $year);
         switch ($_room) {
-                case 'pkd':
-                    $phong = "Phòng kinh doanh";
-                    break;
-                case 'pdv':
-                    $phong = "Phòng dịch vụ";
-                    break;
-                case 'mkt':
-                    $phong = "Marketing";
-                    break;
-                case 'xuong':
-                    $phong = "Xưởng";
-                    break;
-                case 'cskh':
-                    $phong = "CSKH";
-                    break;
-            }
+            case 'pkd':
+                $phong = "Phòng kinh doanh";
+                break;
+            case 'pdv':
+                $phong = "Phòng dịch vụ";
+                break;
+            case 'mkt':
+                $phong = "Marketing";
+                break;
+            case 'xuong':
+                $phong = "Xưởng";
+                break;
+            case 'cskh':
+                $phong = "CSKH";
+                break;
+        }
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
-        echo "<table class='table table-striped table-border'>
+            echo "<table class='table table-striped table-border'>
                                 <tr>
                                     <th>Thời gian</th>
                                     <th>Phòng ban</th>
                                     <th>Trạng thái</th>
                                 </tr>";
-        for ($i = 1; $i <= $sumDay; $i++) {
-            $_date = str_pad($i .'-' . $month . '-' . $year,10,"0",STR_PAD_LEFT);
-            $check = Report::where([
-                ['ngayReport','like',$_date],
-                ['type','like', $_room],
-                ['clock','=', true]
-            ])->exists();
-            if ($phong != "")
-                if ($check) {
-                    echo "<tr>
-                            <td>".$i."-".$month."-".$year."</td>
-                            <td>".$phong."</td>
+            for ($i = 1; $i <= $sumDay; $i++) {
+                $_date = str_pad($i . '-' . $month . '-' . $year, 10, "0", STR_PAD_LEFT);
+                $check = Report::where([
+                    ['ngayReport', 'like', $_date],
+                    ['type', 'like', $_room],
+                    ['clock', '=', true]
+                ])->exists();
+                if ($phong != "")
+                    if ($check) {
+                        echo "<tr>
+                            <td>" . $i . "-" . $month . "-" . $year . "</td>
+                            <td>" . $phong . "</td>
                             <td class='text-success'><strong>Đã gửi báo cáo</strong></td>
                         </tr>";
-                } else {
-                    echo "<tr>
-                            <td>".$i."-".$month."-".$year."</td>
-                            <td>".$phong."</td>
+                    } else {
+                        echo "<tr>
+                            <td>" . $i . "-" . $month . "-" . $year . "</td>
+                            <td>" . $phong . "</td>
                             <td class='text-danger'><strong>Chưa gửi báo cáo</strong></td>
                         </tr>";
-                }
+                    }
 
-        }
-        echo "</table>";
+            }
+            echo "</table>";
             echo "<div><div class='col-md-4'><form id='statusThang'>
                     <div class='form-group row'>
                         <div class='col-8'>
-                            <input type='month' name='monthStatus' value='".Date('Y-m')."' class='form-control'>
+                            <input type='month' name='monthStatus' value='" . Date('Y-m') . "' class='form-control'>
                         </div>
                         <div class='col-2'>
                             <button type='button' id='watchMonthStatus' class='btn btn-success'>Xem tháng</button>
@@ -1560,292 +1580,158 @@ class ReportController extends Controller
         }
     }
 
-    public function getReportWorkAdmin($id, $_from, $_to) {
+    public function getReportWorkAdmin($id, $_from, $_to, $check)
+    {
         $i = 1;
         $_from = \HelpFunction::revertDate($_from);
         $_to = \HelpFunction::revertDate($_to);
-
+        $check = ($check == "true") ? true : false;
+        $check = ($check == "false") ? false : true;
+        $_user = Auth::user()->id;
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('watch') || Auth::user()->hasRole('boss')) {
-            $personal = ReportWork::where([
-                ['user_tao','=', $id],
-                ['isPersonal','=', true]
-            ])->whereBetween('ngayTao', [$_from, $_to])->get();   
-
-            $getWork = ReportWork::where([
-                ['user_nhan','=', $id],
-                ['isPersonal','=', false]
-            ])->whereBetween('ngayTao', [$_from, $_to])->get();   
-
-            $pushWork = ReportWork::where([
-                ['user_tao','=', $id],
-                ['isPersonal','=', false]
-            ])->whereBetween('ngayTao', [$_from, $_to])->get();   
-
-            echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>";
-
-             echo "<h4>CÔNG VIỆC CÁ NHÂN</h4>
-            <div class='table-responsive'>
-                <table class='table table-striped table-bordered'>
-                    <tr class='bg-info'>
-                        <th>STT</th>
-                        <th>Ngày BC</th>
-                        <th>Công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                    </tr>";
-
-            foreach ($personal as $row) {
-                echo "
-                    <tr>
-                        <td>".$i++."</td>
-                        <td>".$row->ngayTao."</td>
-                        <td>".$row->tenCongViec."</td>
-                        <td>".(($row->tienDo == 100) ? "<strong class='text-info'>".$row->tienDo."%</strong>" : "<strong class='text-danger'>".$row->tienDo."%</strong>")."</td>
-                        <td class='text-bold' style='font-size:70%;'>"
-                            .\HelpFunction::revertDate($row->ngayStart)."<br/>
-                            "
-                            .\HelpFunction::revertDate($row->ngayEnd)."
-                        </td>
-                        <td class='text-info'><i>".$row->ketQua."</i></td>
-                        <td class='text-info'><i>".$row->ghiChu."</i></td>
-                    </tr>
-                ";
-            }
-            echo"</table></div>";
-
-            echo "<h4>CÔNG VIỆC ĐƯỢC GIAO</h4>
-            <div class='table-responsive'>
-                <table class='table table-striped table-bordered'>
-                    <tr class='bg-primary'>
-                        <th>STT</th>
-                        <th>Người giao<br/>(Ngày tạo)</th>
-                        <th>Công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Yêu cầu</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        <th>Trạng thái</th>
-                    </tr>";
-            $i = 1;
-            foreach ($getWork as $row) {
-                if ($row->tienDo == 100 && $row->acceptApply == true)
-                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
-                elseif ($row->tienDo == 100 && $row->acceptApply == false)
-                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
-                elseif ($row->tienDo < 100)
-                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
-                else $stt = "<td></td>";
-                echo "
-                    <tr>
-                        <td>".$i++."</td>
-                        <td>".$row->userTao->userDetail->surname."<br/>(".$row->ngayTao.")</td>
-                        <td>".$row->tenCongViec."</td>
-                        <td>".(($row->tienDo == 100) ? "<strong class='text-info'>".$row->tienDo."%</strong>" : "<strong class='text-danger'>".$row->tienDo."%</strong>")."</td>
-                        <td class='text-bold' style='font-size:70%;'>"
-                            .\HelpFunction::revertDate($row->ngayStart)."<br/>
-                            "
-                            .\HelpFunction::revertDate($row->ngayEnd)."
-                        </td>
-                        <td class='text-orange'><i>".$row->requestWork."</i></td>
-                        <td class='text-info'><i>".$row->ketQua."</i></td>
-                        <td class='text-info'><i>".$row->ghiChu."</i></td>
-                        $stt
-                    </tr>
-                ";
-            }
-            echo"</table></div>";
-
-            echo "<h4>CÔNG VIỆC ĐÃ GIAO</h4>
-            <div class='table-responsive'>
-                <table class='table table-striped table-bordered'>
-                    <tr class='bg-success'>
-                        <th>STT</th>
-                        <th>Người nhận<br/>(Ngày tạo)</th>
-                        <th>Công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Yêu cầu</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        <th>Trạng thái</th>
-                    </tr>";
-            $i = 1;
-            foreach ($pushWork as $row) {
-                if ($row->tienDo == 100 && $row->acceptApply == true)
-                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
-                elseif ($row->tienDo == 100 && $row->acceptApply == false)
-                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
-                elseif ($row->tienDo < 100 && $row->apply == true)
-                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
-                elseif ($row->apply !== null && $row->apply == false)
-                    $stt = "<td class='text-danger'><strong>Đã từ chối</strong></td>";
-                elseif ($row->apply === null)
-                    $stt = "<td class='text-primary'><strong>Chưa nhận</strong></td>";
-                else $stt = "<td></td>";
-                echo "
-                    <tr>
-                        <td>".$i++."</td>
-                        <td>".$row->userNhan->userDetail->surname."<br/>(".$row->ngayTao.")</td>
-                        <td>".$row->tenCongViec."</td>
-                        <td>".(($row->tienDo == 100) ? "<strong class='text-info'>".$row->tienDo."%</strong>" : "<strong class='text-danger'>".$row->tienDo."%</strong>")."</td>
-                        <td class='text-bold' style='font-size:70%;'>"
-                            .\HelpFunction::revertDate($row->ngayStart)."<br/>
-                            "
-                            .\HelpFunction::revertDate($row->ngayEnd)."
-                        </td>
-                        <td class='text-orange'><i>".$row->requestWork."</i></td>
-                        <td class='text-info'><i>".$row->ketQua."</i></td>
-                        <td class='text-info'><i>".$row->ghiChu."</i></td>
-                        $stt
-                    </tr>
-                ";
-            }
-           echo"</table></div>";
-        } else {
-            $personal = ReportWork::where([
-                ['user_tao','=', Auth::user()->id],
-                ['isPersonal','=', true],
-                ['isReport','=', true]
-            ])->whereBetween('ngayTao', [$_from, $_to])->get();   
-
-            $getWork = ReportWork::where([
-                ['user_nhan','=', Auth::user()->id],
-                ['isPersonal','=', false],
-                ['isReport','=', true]
-            ])->whereBetween('ngayTao', [$_from, $_to])->get();   
-
-            $pushWork = ReportWork::where([
-                ['user_tao','=', Auth::user()->id],
-                ['isPersonal','=', false],
-                ['isReportPush','=', true]
-            ])->whereBetween('ngayTao', [$_from, $_to])->get();  
-
-            echo "<h5>Báo cáo từ: <span class='text-red'><strong>".$_from."</strong> đến <strong>".$_to."</strong></span></h5>";
-
-             echo "<h4>CÔNG VIỆC CÁ NHÂN</h4>
-            <div class='table-responsive'>
-                <table class='table table-striped table-bordered'>
-                    <tr class='bg-info'>
-                        <th>STT</th>
-                        <th>Ngày BC</th>
-                        <th>Công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                    </tr>";
-
-            foreach ($personal as $row) {
-                echo "
-                    <tr>
-                        <td>".$i++."</td>
-                        <td>".$row->ngayTao."</td>
-                        <td>".$row->tenCongViec."</td>
-                        <td>".(($row->tienDo == 100) ? "<strong class='text-info'>".$row->tienDo."%</strong>" : "<strong class='text-danger'>".$row->tienDo."%</strong>")."</td>
-                        <td class='text-bold' style='font-size:70%;'>"
-                            .\HelpFunction::revertDate($row->ngayStart)."<br/>
-                            "
-                            .\HelpFunction::revertDate($row->ngayEnd)."
-                        </td>
-                        <td class='text-info'><i>".$row->ketQua."</i></td>
-                        <td class='text-info'><i>".$row->ghiChu."</i></td>
-                    </tr>
-                ";
-            }
-            echo"</table></div>";
-
-            echo "<h4>CÔNG VIỆC ĐƯỢC GIAO</h4>
-            <div class='table-responsive'>
-                <table class='table table-striped table-bordered'>
-                    <tr class='bg-primary'>
-                        <th>STT</th>
-                        <th>Người giao<br/>(Ngày tạo)</th>
-                        <th>Công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Yêu cầu</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        <th>Trạng thái</th>
-                    </tr>";
-            $i = 1;
-            foreach ($getWork as $row) {
-                if ($row->tienDo == 100 && $row->acceptApply == true)
-                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
-                elseif ($row->tienDo == 100 && $row->acceptApply == false)
-                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
-                elseif ($row->tienDo < 100)
-                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
-                else $stt = "<td></td>";
-                echo "
-                    <tr>
-                        <td>".$i++."</td>
-                        <td>".$row->userTao->userDetail->surname."<br/>(".$row->ngayTao.")</td>
-                        <td>".$row->tenCongViec."</td>
-                        <td>".(($row->tienDo == 100) ? "<strong class='text-info'>".$row->tienDo."%</strong>" : "<strong class='text-danger'>".$row->tienDo."%</strong>")."</td>
-                        <td class='text-bold' style='font-size:70%;'>"
-                            .\HelpFunction::revertDate($row->ngayStart)."<br/>
-                            "
-                            .\HelpFunction::revertDate($row->ngayEnd)."
-                        </td>
-                        <td class='text-orange'><i>".$row->requestWork."</i></td>
-                        <td class='text-info'><i>".$row->ketQua."</i></td>
-                        <td class='text-info'><i>".$row->ghiChu."</i></td>
-                        $stt
-                    </tr>
-                ";
-            }
-            echo"</table></div>";
-
-            echo "<h4>CÔNG VIỆC ĐÃ GIAO</h4>
-            <div class='table-responsive'>
-                <table class='table table-striped table-bordered'>
-                    <tr class='bg-success'>
-                        <th>STT</th>
-                        <th>Người nhận<br/>(Ngày tạo)</th>
-                        <th>Công việc</th>
-                        <th>Tiến độ</th>
-                        <th>Deadline</th>
-                        <th>Yêu cầu</th>
-                        <th>Kết quả</th>
-                        <th>Ghi chú</th>
-                        <th>Trạng thái</th>
-                    </tr>";
-            $i = 1;
-            foreach ($pushWork as $row) {
-                if ($row->tienDo == 100 && $row->acceptApply == true)
-                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
-                elseif ($row->tienDo == 100 && $row->acceptApply == false)
-                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
-                elseif ($row->tienDo < 100 && $row->apply == true)
-                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
-                elseif ($row->apply !== null && $row->apply == false)
-                    $stt = "<td class='text-danger'><strong>Đã từ chối</strong></td>";
-                elseif ($row->apply === null)
-                    $stt = "<td class='text-primary'><strong>Chưa nhận</strong></td>";
-                else $stt = "<td></td>";
-                echo "
-                    <tr>
-                        <td>".$i++."</td>
-                        <td>".$row->userNhan->userDetail->surname."<br/>(".$row->ngayTao.")</td>
-                        <td>".$row->tenCongViec."</td>
-                        <td>".(($row->tienDo == 100) ? "<strong class='text-info'>".$row->tienDo."%</strong>" : "<strong class='text-danger'>".$row->tienDo."%</strong>")."</td>
-                        <td class='text-bold' style='font-size:70%;'>"
-                            .\HelpFunction::revertDate($row->ngayStart)."<br/>
-                            "
-                            .\HelpFunction::revertDate($row->ngayEnd)."
-                        </td>
-                        <td class='text-orange'><i>".$row->requestWork."</i></td>
-                        <td class='text-info'><i>".$row->ketQua."</i></td>
-                        <td class='text-info'><i>".$row->ghiChu."</i></td>
-                        $stt
-                    </tr>
-                ";
-            }
-           echo"</table></div>";
-            }
+            $_user = $id;
         }
+
+        $personal = ReportWork::where([
+            ['user_tao', '=', $_user],
+            ['isPersonal', '=', true],
+            ['isReport', '=', $check]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
+
+        $getWork = ReportWork::where([
+            ['user_nhan', '=', $_user],
+            ['isPersonal', '=', false],
+            ['isReport', '=', $check]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
+
+        $pushWork = ReportWork::where([
+            ['user_tao', '=', $_user],
+            ['isPersonal', '=', false],
+            ['isReportPush', '=', $check]
+        ])->whereBetween('ngayTao', [$_from, $_to])->get();
+
+        echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>";
+
+        echo "<h4>CÔNG VIỆC CÁ NHÂN</h4>
+            <div class='table-responsive'>
+                <table class='table table-striped table-bordered'>
+                    <tr class='bg-info'>
+                        <th>STT</th>
+                        <th>Ngày BC</th>
+                        <th>Công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                    </tr>";
+
+        foreach ($personal as $row) {
+            echo "
+                    <tr>
+                        <td>" . $i++ . "</td>
+                        <td>" . $row->ngayTao . "</td>
+                        <td>" . $row->tenCongViec . "</td>
+                        <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
+                        <td class='text-bold' style='font-size:70%;'>"
+                . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                            "
+                . \HelpFunction::revertDate($row->ngayEnd) . "
+                        </td>
+                        <td class='text-info'><i>" . $row->ketQua . "</i></td>
+                        <td class='text-info'><i>" . $row->ghiChu . "</i></td>
+                    </tr>
+                ";
+        }
+        echo "</table></div>";
+
+        echo "<h4>CÔNG VIỆC ĐƯỢC GIAO</h4>
+            <div class='table-responsive'>
+                <table class='table table-striped table-bordered'>
+                    <tr class='bg-primary'>
+                        <th>STT</th>
+                        <th>Người giao<br/>(Ngày tạo)</th>
+                        <th>Công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Yêu cầu</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                    </tr>";
+        $i = 1;
+        foreach ($getWork as $row) {
+            if ($row->tienDo == 100 && $row->acceptApply == true)
+                $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
+            elseif ($row->tienDo == 100 && $row->acceptApply == false)
+                $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
+            elseif ($row->tienDo < 100)
+                $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
+            else $stt = "<td></td>";
+            echo "
+                    <tr>
+                        <td>" . $i++ . "</td>
+                        <td>" . $row->userTao->userDetail->surname . "<br/>(" . $row->ngayTao . ")</td>
+                        <td>" . $row->tenCongViec . "</td>
+                        <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
+                        <td class='text-bold' style='font-size:70%;'>"
+                . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                            "
+                . \HelpFunction::revertDate($row->ngayEnd) . "
+                        </td>
+                        <td class='text-orange'><i>" . $row->requestWork . "</i></td>
+                        <td class='text-info'><i>" . $row->ketQua . "</i></td>
+                        <td class='text-info'><i>" . $row->ghiChu . "</i></td>
+                        $stt
+                    </tr>
+                ";
+        }
+        echo "</table></div>";
+
+        echo "<h4>CÔNG VIỆC ĐÃ GIAO</h4>
+            <div class='table-responsive'>
+                <table class='table table-striped table-bordered'>
+                    <tr class='bg-success'>
+                        <th>STT</th>
+                        <th>Người nhận<br/>(Ngày tạo)</th>
+                        <th>Công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Yêu cầu</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                    </tr>";
+        $i = 1;
+        foreach ($pushWork as $row) {
+            if ($row->tienDo == 100 && $row->acceptApply == true)
+                $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
+            elseif ($row->tienDo == 100 && $row->acceptApply == false)
+                $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
+            elseif ($row->tienDo < 100 && $row->apply == true)
+                $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
+            elseif ($row->apply !== null && $row->apply == false)
+                $stt = "<td class='text-danger'><strong>Đã từ chối</strong></td>";
+            elseif ($row->apply === null)
+                $stt = "<td class='text-primary'><strong>Chưa nhận</strong></td>";
+            else $stt = "<td></td>";
+            echo "
+                    <tr>
+                        <td>" . $i++ . "</td>
+                        <td>" . $row->userNhan->userDetail->surname . "<br/>(" . $row->ngayTao . ")</td>
+                        <td>" . $row->tenCongViec . "</td>
+                        <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
+                        <td class='text-bold' style='font-size:70%;'>"
+                . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                            "
+                . \HelpFunction::revertDate($row->ngayEnd) . "
+                        </td>
+                        <td class='text-orange'><i>" . $row->requestWork . "</i></td>
+                        <td class='text-info'><i>" . $row->ketQua . "</i></td>
+                        <td class='text-info'><i>" . $row->ghiChu . "</i></td>
+                        $stt
+                    </tr>
+                ";
+        }
+        echo "</table></div>";
+    }
 }

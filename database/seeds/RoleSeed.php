@@ -27,11 +27,11 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'tpdv',
-                'description' => 'Không'
+                'description' => 'Chức năng tpdv'
             ],
             [
                 'name' => 'xuong',
-                'description' => 'Không'
+                'description' => 'Chức năng xưởng'
             ],
             [
                 'name' => 'sale',
@@ -39,7 +39,7 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'boss',
-                'description' => 'Xem báo cáo'
+                'description' => 'Xem tất cả báo cáo'
             ],
             [
                 'name' => 'mkt',
@@ -47,15 +47,15 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'ketoan',
-                'description' => 'Không'
+                'description' => 'Chức năng kế toán'
             ],
             [
                 'name' => 'cskh',
-                'description' => 'Không'
+                'description' => 'Chức năng CSKH'
             ],
             [
                 'name' => 'drp',
-                'description' => 'Không'
+                'description' => 'Chức năng DRP'
             ],
             [
                 'name' => 'hcns',
@@ -63,7 +63,7 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'it',
-                'description' => 'Không'
+                'description' => 'Chức năng IT'
             ],
             [
                 'name' => 'normal',
@@ -75,11 +75,15 @@ class RoleSeed extends Seeder
             ],
             [
                 'name' => 'report',
-                'description' => 'Được phép báo cáo ngày'
+                'description' => 'Được phép báo cáo ngày, xem báo cáo công việc'
             ],
             [
                 'name' => 'watch',
                 'description' => 'Được phép xem báo cáo ngày/tháng của các phòng ban'
+            ],
+            [
+                'name' => 'work',
+                'description' => 'Quản lý Công việc'
             ],
         ]);
 

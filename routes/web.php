@@ -244,10 +244,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('getmktall/{_from}/to/{_to}','ReportController@getMktAll');
 
         // -- All Report Work
-        Route::get('reportworkadmin/{id}/date/{_from}/to/{_to}','ReportController@getReportWorkAdmin');
+        Route::get('reportworkadmin/{id}/date/{_from}/to/{_to}/check/{check}','ReportController@getReportWorkAdmin');
     });
 
-    Route::group(['prefix' => 'work'], function(){
+    Route::group(['prefix' => 'work', 'middleware' => ['f_work']], function(){
         //--- Công việc trong ngày
         Route::get('list','WorkController@show')->name('worktohard');
         Route::get('getworklist','WorkController@getWorkList');

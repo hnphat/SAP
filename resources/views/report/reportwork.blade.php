@@ -70,7 +70,10 @@
                                 <div class="col-4">
                                     <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                 </div>
-                                <div class="col-4">
+                                <div class="col-2 text-center">
+                                    <input type="checkbox" name="_all"> <br/>Tất cả
+                                </div>
+                                <div class="col-2">
                                     <button type="button" id="watchFull" class="btn btn-success">Xem</button>
                                 </div>
                             </div>
@@ -113,8 +116,13 @@
         $(document).ready(function(){
             $("#watchFull").click(function(){
                 let url = "";
+                let _check = false;
+                if ($('input[name=_all]').is(":checked"))
+                {
+                    _check = true;
+                }
                 $.ajax({
-                    url: "management/overview/reportworkadmin/" +$("select[name=chonUser]").val() + "/date/"+ $('input[name=chonNgayOne]').val() + "/to/" + $('input[name=chonNgayTwo]').val(),
+                    url: "management/overview/reportworkadmin/" +$("select[name=chonUser]").val() + "/date/"+ $('input[name=chonNgayOne]').val() + "/to/" + $('input[name=chonNgayTwo]').val() + "/check/" + _check,
                     type: "get",
                     dataType: 'text',
                     success: function(response) {
