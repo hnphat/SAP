@@ -126,6 +126,12 @@ class HelpFunction {
         return $arr[2] . '-' . $arr[1] . '-' . $arr[0];
     }
 
+    public static function getMonthInDay($date = '01-01-2021') {
+        if ($date == null) return "";
+        $arr = explode('-', $date);
+        return $arr[1] . '-' . $arr[2];
+    }
+
     public static function revertTimeInput($date = '2020-01-01') {
         if ($date == null) return "";
         $arr = explode('T', $date);

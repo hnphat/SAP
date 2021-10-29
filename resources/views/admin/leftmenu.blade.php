@@ -181,7 +181,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-car-side"></i>
                         <p>
-                            <strong>QUẢN LÝ LÁI THỬ</strong>
+                            <strong>QL XE DEMO</strong>
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -286,7 +286,17 @@
                             <li class="nav-item">
                                 <a href="{{route("overview.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Báo cáo tổng</p>
+                                    <p>Báo cáo số liệu</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
+                            <li class="nav-item">
+                                <a href="{{route("overview.worklist")}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Báo cáo công việc</p>
                                 </a>
                             </li>
                         @endif

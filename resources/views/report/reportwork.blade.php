@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>BÁO CÁO SỐ LIỆU</strong></h1>
+                        <h1 class="m-0"><strong>BÁO CÁO CÔNG VIỆC</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Báo cáo</li>
-                            <li class="breadcrumb-item active">BÁO CÁO SỐ LIỆU</li>
+                            <li class="breadcrumb-item active">Báo cáo công việc</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -47,37 +47,16 @@
                     <div class="col-md-4">
                         <form id="phongBan">
                             <div class="form-group">
-                                <select name="chonPhong" id="chonPhong" class="form-control">
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                <select name="chonUser" id="chonUser" class="form-control">
+                                    @foreach($user as $row)
+                                        @if($row->hasRole('report') && $row->id == \Illuminate\Support\Facades\Auth::user()->id)
+                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                        @elseif($row->id != 1 && (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
-                                        <option value="pkd">Phòng kinh doanh</option>
-                                    @endif
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv'))
-                                        <option value="pdv">Phòng dịch vụ</option>
-                                    @endif
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('xuong'))
-                                        <option value="xuong">Xưởng</option>
-                                    @endif
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
-                                        <option value="mkt">Marketing</option>
-                                    @endif
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                    \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                    \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
-                                    \Illuminate\Support\Facades\Auth::user()->hasRole('cskh'))
-                                        <option value="cskh">CSKH</option>
-                                    @endif
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')))
+                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                        @endif
+                                    @endforeach
                                 </select>
                             </div>
                         </form>
@@ -134,25 +113,8 @@
         $(document).ready(function(){
             $("#watchFull").click(function(){
                 let url = "";
-                switch ($("select[name=chonPhong]").val()) {
-                    case "pkd": {
-                        url = "management/overview/getpkdall/";
-                    } break;
-                    case "pdv": {
-                        url = "management/overview/getpdvall/";
-                    } break;
-                    case "xuong": {
-                        url = "management/overview/getxuongall/";
-                    } break;
-                    case "mkt": {
-                        url = "management/overview/getmktall/";
-                    } break;
-                    case "cskh": {
-                        url = "management/overview/getcskhall/";
-                    } break;
-                }
                 $.ajax({
-                    url: url + $('input[name=chonNgayOne]').val() + "/to/" + $('input[name=chonNgayTwo]').val(),
+                    url: "management/overview/reportworkadmin/" +$("select[name=chonUser]").val() + "/date/"+ $('input[name=chonNgayOne]').val() + "/to/" + $('input[name=chonNgayTwo]').val(),
                     type: "get",
                     dataType: 'text',
                     success: function(response) {
@@ -162,46 +124,6 @@
                         Toast.fire({
                             icon: 'warning',
                             title: " Không tìm thấy báo cáo!"
-                        })
-                    }
-                });
-            });
-
-            function loadStatus() {
-                $.ajax({
-                    url: "management/overview/status/",
-                    type: "get",
-                    dataType: 'text',
-                    success: function(response) {
-                        Toast.fire({
-                            icon: 'info',
-                            title: " Đã tải thông tin báo cáo!"
-                        })
-                        $('#show').html(response);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Không tìm thấy báo cáo!"
-                        })
-                    }
-                });
-            }
-
-            loadStatus();
-
-            $(document).on("click","#watchMonthStatus",function(){
-                $.ajax({
-                    url: "management/overview/statusmonth/" + $('input[name=monthStatus]').val() + "/" + "room" + "/" + $('select[name=chonPhong]').val(),
-                    type: "get",
-                    dataType: 'text',
-                    success: function(response) {
-                        $('#show').html(response);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Không thể tải thông tin tình trạng báo cáo!"
                         })
                     }
                 });

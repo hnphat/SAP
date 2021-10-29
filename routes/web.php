@@ -225,6 +225,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'overview', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@overviewList')->name('overview.list');
+        Route::get('worklist','ReportController@overviewWorkList')->name('overview.worklist');
         Route::get('status','ReportController@status')->name('overview.status');
         Route::get('statusmonth/{_month}/room/{_room}','ReportController@statusMonth')->name('overview.status.month');
         //-- pkd
@@ -234,25 +235,16 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('getpdvall/{_from}/to/{_to}','ReportController@getPDVAll');
 
         //-- xuong
-        Route::get('getxuongall/{_month}','ReportController@getXuongAll');
+        Route::get('getxuongall/{_from}/to/{_to}','ReportController@getXuongAll');
 
         //-- cskh
-        Route::get('getcskhall/{_month}','ReportController@getCSKHAll');
-
-        //-- hcns
-        Route::get('gethcnsall/{_month}','ReportController@getHCNSAll');
+        Route::get('getcskhall/{_from}/to/{_to}','ReportController@getCSKHAll');
 
         //-- mkt
-        Route::get('getmktall/{_month}','ReportController@getMktAll');
+        Route::get('getmktall/{_from}/to/{_to}','ReportController@getMktAll');
 
-        //-- it
-        Route::get('getitall/{_month}','ReportController@getItAll');
-
-        //-- ptdl
-        Route::get('getptdlall/{_month}','ReportController@getPtdlAll');
-
-         //-- ketoan
-        Route::get('getketoanlall/{_month}','ReportController@getKetoanAll');
+        // -- All Report Work
+        Route::get('reportworkadmin/{id}/date/{_from}/to/{_to}','ReportController@getReportWorkAdmin');
     });
 
     Route::group(['prefix' => 'work'], function(){
