@@ -181,6 +181,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'reg'], function(){
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
+        Route::get('list/pay','LaiThuController@showPay')->name('laithu.pay');
         Route::post('post','LaiThuController@postReg')->name('reg.post');
         Route::post('pay','LaiThuController@postPay')->name('reg.pay.post');
         Route::post('del','LaiThuController@delReg');
@@ -189,6 +190,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'duyet', 'middleware' => ['f_duyet']], function(){
         Route::get('list','LaiThuController@showDuyet')->name('laithu.duyet');
+        Route::get('list/pay','LaiThuController@showDuyetPay')->name('laithu.duyet.pay');
         Route::post('allow','LaiThuController@allowLaiThu');
         Route::post('approve','LaiThuController@approve');
     });

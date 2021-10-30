@@ -49,11 +49,13 @@
                             <div class="form-group">
                                 <select name="chonUser" id="chonUser" class="form-control">
                                     @foreach($user as $row)
-                                        @if($row->hasRole('report') && $row->id == \Illuminate\Support\Facades\Auth::user()->id)
-                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                        @elseif($row->id != 1 && (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                        \Illuminate\Support\Facades\Auth::user()->hasRole('watch')))
+                                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                            \Illuminate\Support\Facades\Auth::user()->hasRole('watch'))
+                                            @if($row->hasRole('report'))
+                                                <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                            @endif
+                                        @elseif($row->hasRole('report') && $row->id == \Illuminate\Support\Facades\Auth::user()->id)
                                             <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
                                         @endif
                                     @endforeach

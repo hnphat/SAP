@@ -1,7 +1,7 @@
 
 @extends('admin.index')
 @section('title')
-    Đăng ký sử dụng
+    Đăng ký xe
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Đăng ký sử dụng</strong></h1>
+                        <h1 class="m-0"><strong>Đăng ký xe</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Quản lý lái thử</li>
-                            <li class="breadcrumb-item active">Đăng ký sử dụng</li>
+                            <li class="breadcrumb-item active">Quản lý xe demo</li>
+                            <li class="breadcrumb-item active">Đăng ký xe</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -47,9 +47,6 @@
                     <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="so-00-tab" data-toggle="pill" href="#so-00" role="tab" aria-controls="so-00" aria-selected="true">Đăng ký sử dụng</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="so-01-tab" data-toggle="pill" href="#so-01" role="tab" aria-controls="so-01" aria-selected="true">Trả xe</a>
                         </li>
                     </ul>
                 </div>
@@ -211,111 +208,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade show" id="so-01" role="tabpanel" aria-labelledby="so-01-tab">
-                            <div class="table-responsive">
-                                <table id="dataTable2" class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr class="bg-gradient-lightblue">
-                                        <th>TT</th>
-                                        <th>Ngày đi</th>
-                                        <th>Xe</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày trả</th>
-                                        <th>Km</th>
-                                        <th>Xăng</th>
-                                        <th>Stt xe</th>
-                                        <th>Tác vụ</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($traXe as $row)
-                                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                            $row->id_user_reg == \Illuminate\Support\Facades\Auth::user()->id)
-                                            <tr>
-                                                <td>{{$loop->iteration}}</td>
-                                                <td>{{\HelpFunction::revertDate($row->date_go)}}</td>
-                                                <td>
-                                                    @if($row->xeLaiThu !== null)
-                                                        {{$row->xeLaiThu->name}};
-                                                        {{$row->xeLaiThu->number_car}};
-                                                        {{$row->xeLaiThu->mau}}
-                                                    @else
-                                                        Không
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($row->tra_allow == 1)
-                                                        <span class="btn btn-success btn-xs">Đã trả</span>
-                                                    @else
-                                                        <span class="btn btn-warning btn-xs">Đang sử dụng</span>
-                                                    @endif
-                                                </td>
-                                                {{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
-                                                <td>{{$row->date_return}}</td>
-                                                <td>{{$row->tra_km_current}}</td>
-                                                <td>{{$row->tra_fuel_current}}</td>
-                                                <td>{{$row->tra_car_status}}</td>
-                                                <td>
-                                                    @if($row->tra_allow == false)
-                                                        <button id="tra" data-toggle="modal" data-target="#offCar" data-id="{{$row->id}}" class="btn btn-success btn-xs">Trả xe</button>
-                                                    @else
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Medal trả xe -->
-                            <div class="modal fade" id="offCar">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- general form elements -->
-                                            <div class="card card-success">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">TRẢ XE</h3>
-                                                </div>
-                                                <!-- /.card-header -->
-                                                <!-- form start -->
-                                                <form id="offForm" action="{{route('reg.pay.post')}}" method="post" autocomplete="off">
-                                                    {{csrf_field()}}
-                                                    <div class="card-body">
-                                                        <input type="hidden" name="_idOff" id="_idOff">
-                                                        <div class="form-group">
-                                                            <label>Số km hiện tại (km)</label>
-                                                            <input required="required" type="number" name="_km" placeholder="Số km hiện tại" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Số xăng hiện tại (km xăng)</label>
-                                                            <input required="required" type="number" name="_xang" placeholder="Số xăng hiện tại" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Tình trạng xe</label>
-                                                            <input required="required" type="text" name="_trangThaiXe" placeholder="Tình trạng xe" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                    <!-- /.card-body -->
-                                                    <div class="card-footer">
-                                                        <button id="btnOff" class="btn btn-success">Xác nhận trả</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- /.card -->
-                                        </div>
-                                    </div>
-                                    <!-- /.modal-content -->
-                                </div>
-                                <!-- /.modal-dialog -->
-                            </div>
-                            <!-- /.modal -->
-                        </div>
                     </div>
                 </div>
                 <!-- /.card -->
@@ -367,13 +259,6 @@
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
 
-        $(document).ready(function() {
-            $("#dataTable2").DataTable({
-                "responsive": true, "lengthChange": true, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-
         //Delete data
         $(document).on('click','#del', function(){
             if(confirm('Bạn có chắc muốn xóa?')) {
@@ -402,30 +287,6 @@
                     }
                 });
             }
-        });
-
-        //Trả xe
-        $(document).on('click','#tra', function(){
-            $.ajax({
-                url: "management/reg/pay/" + $(this).data('id'),
-                dataType: "json",
-                success: function(response) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: response.message
-                    })
-                    $("input[name=_km]").val(response.data.tra_km_current);
-                    $("input[name=_xang]").val(response.data.tra_fuel_current);
-                    $("input[name=_trangThaiXe]").val(response.data.tra_car_status);
-                    $("input[name=_idOff]").val(response.data.id);
-                },
-                error: function() {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Lỗi client liên hệ IT để được hỗ trợ!"
-                    })
-                }
-            });
         });
 
         $(document).on('change','#fuelRequest', function(){

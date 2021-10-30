@@ -148,35 +148,6 @@
                             @endif
                     </ul>
                 </li>
-                <!--
-                <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-hammer"></i>
-                        <p>
-                            <strong>DỊCH VỤ</strong>
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    @endif
-                    <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-people-arrows nav-icon"></i>
-                                <p>Khách hàng</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-hand-holding-usd nav-icon"></i>
-                                <p>Báo giá thực hiện</p>
-                            </a>
-                        </li>
-                            @endif
-                    </ul>
-                </li>
-                -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-car-side"></i>
@@ -199,14 +170,26 @@
                         <li class="nav-item">
                             <a href="{{route('laithu.duyet')}}" class="nav-link">
                                 <i class="fas fa-hand-point-right nav-icon"></i>
-                                <p>Duyệt đăng ký / trả</p>
+                                <p>Duyệt đăng ký</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('laithu.duyet.pay')}}" class="nav-link">
+                                <i class="fas fa-hand-point-left nav-icon"></i>
+                                <p>Duyệt trả</p>
                             </a>
                         </li>
                         @endif
                         <li class="nav-item">
                             <a href="{{route('laithu.reg')}}" class="nav-link">
                                 <i class="fas fa-hand-holding nav-icon"></i>
-                                <p>Đăng ký / Trả xe</p>
+                                <p>Đăng ký xe</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('laithu.pay')}}" class="nav-link">
+                                <i class="fas fa-hand-rock nav-icon"></i>
+                                <p>Trả xe</p>
                             </a>
                         </li>
                         <li class="nav-item">

@@ -89,6 +89,22 @@ class LaiThuController extends Controller
         return view('laithu.reg', ['lead' => $lead,'car' => $car, 'reg' => $reg, 'traXe' => $traXe]);
     }
 
+    public function showPay() {
+        $car = XeLaiThu::all();
+        $lead = User::all();
+        if (Auth::user()->hasRole('system')) {
+            $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+            $traXe = DangKySuDung::select('*')->where('allow', true)->orderBy('id', 'DESC')->get();
+        } else {
+            $reg = DangKySuDung::select('*')->where('id_user_reg', Auth::user()->id)->orderBy('id', 'DESC')->get();
+            $traXe = DangKySuDung::select('*')->where([
+                ['allow', true],
+                ['id_user_reg', Auth::user()->id]
+            ])->orderBy('id', 'DESC')->get();
+        }
+        return view('laithu.pay', ['lead' => $lead,'car' => $car, 'reg' => $reg, 'traXe' => $traXe]);
+    }
+
     public function pay($id) {
         $car = DangKySuDung::find($id);
         if($car) {
@@ -115,9 +131,9 @@ class LaiThuController extends Controller
             $reg->date_return = Date('H:i d-m-Y');
         $reg->save();
         if($reg) {
-            return redirect()->route('laithu.reg')->with('succ','Đã gửi yêu cầu trả xe!');
+            return redirect()->route('laithu.pay')->with('succ','Đã gửi yêu cầu trả xe!');
         } else {
-            return redirect()->route('laithu.reg')->with('err','Không thể gửi yêu cầu trả xe!');
+            return redirect()->route('laithu.pay')->with('err','Không thể gửi yêu cầu trả xe!');
         }
     }
 
@@ -180,6 +196,12 @@ class LaiThuController extends Controller
         $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
         $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->get();
         return view('laithu.duyet', ['reg' => $reg, 'traXe' => $traXe]);
+    }
+
+    public function showDuyetPay() {
+        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
+        $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->get();
+        return view('laithu.duyettra', ['reg' => $reg, 'traXe' => $traXe]);
     }
 
     public function showCapXang() {

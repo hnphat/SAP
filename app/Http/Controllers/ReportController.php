@@ -1591,28 +1591,25 @@ class ReportController extends Controller
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('watch') || Auth::user()->hasRole('boss')) {
             $_user = $id;
         }
+        if (!$check) {
+            $personal = ReportWork::where([
+                ['user_tao', '=', $_user],
+                ['isPersonal', '=', true]
+            ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
-        $personal = ReportWork::where([
-            ['user_tao', '=', $_user],
-            ['isPersonal', '=', true],
-            ['isReport', '=', $check]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();
+            $getWork = ReportWork::where([
+                ['user_nhan', '=', $_user],
+                ['isPersonal', '=', false]
+            ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
-        $getWork = ReportWork::where([
-            ['user_nhan', '=', $_user],
-            ['isPersonal', '=', false],
-            ['isReport', '=', $check]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();
+            $pushWork = ReportWork::where([
+                ['user_tao', '=', $_user],
+                ['isPersonal', '=', false]
+            ])->whereBetween('ngayTao', [$_from, $_to])->get();
 
-        $pushWork = ReportWork::where([
-            ['user_tao', '=', $_user],
-            ['isPersonal', '=', false],
-            ['isReportPush', '=', $check]
-        ])->whereBetween('ngayTao', [$_from, $_to])->get();
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>";
 
-        echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>";
-
-        echo "<h4>CÔNG VIỆC CÁ NHÂN</h4>
+            echo "<h4>CÔNG VIỆC CÁ NHÂN</h4>
             <div class='table-responsive'>
                 <table class='table table-striped table-bordered'>
                     <tr class='bg-info'>
@@ -1625,26 +1622,26 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                     </tr>";
 
-        foreach ($personal as $row) {
-            echo "
+            foreach ($personal as $row) {
+                echo "
                     <tr>
                         <td>" . $i++ . "</td>
                         <td>" . $row->ngayTao . "</td>
                         <td>" . $row->tenCongViec . "</td>
                         <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
                         <td class='text-bold' style='font-size:70%;'>"
-                . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                    . \HelpFunction::revertDate($row->ngayStart) . "<br/>
                             "
-                . \HelpFunction::revertDate($row->ngayEnd) . "
+                    . \HelpFunction::revertDate($row->ngayEnd) . "
                         </td>
                         <td class='text-info'><i>" . $row->ketQua . "</i></td>
                         <td class='text-info'><i>" . $row->ghiChu . "</i></td>
                     </tr>
                 ";
-        }
-        echo "</table></div>";
+            }
+            echo "</table></div>";
 
-        echo "<h4>CÔNG VIỆC ĐƯỢC GIAO</h4>
+            echo "<h4>CÔNG VIỆC ĐƯỢC GIAO</h4>
             <div class='table-responsive'>
                 <table class='table table-striped table-bordered'>
                     <tr class='bg-primary'>
@@ -1658,25 +1655,25 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                         <th>Trạng thái</th>
                     </tr>";
-        $i = 1;
-        foreach ($getWork as $row) {
-            if ($row->tienDo == 100 && $row->acceptApply == true)
-                $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
-            elseif ($row->tienDo == 100 && $row->acceptApply == false)
-                $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
-            elseif ($row->tienDo < 100)
-                $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
-            else $stt = "<td></td>";
-            echo "
+            $i = 1;
+            foreach ($getWork as $row) {
+                if ($row->tienDo == 100 && $row->acceptApply == true)
+                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
+                elseif ($row->tienDo == 100 && $row->acceptApply == false)
+                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
+                elseif ($row->tienDo < 100)
+                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
+                else $stt = "<td></td>";
+                echo "
                     <tr>
                         <td>" . $i++ . "</td>
                         <td>" . $row->userTao->userDetail->surname . "<br/>(" . $row->ngayTao . ")</td>
                         <td>" . $row->tenCongViec . "</td>
                         <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
                         <td class='text-bold' style='font-size:70%;'>"
-                . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                    . \HelpFunction::revertDate($row->ngayStart) . "<br/>
                             "
-                . \HelpFunction::revertDate($row->ngayEnd) . "
+                    . \HelpFunction::revertDate($row->ngayEnd) . "
                         </td>
                         <td class='text-orange'><i>" . $row->requestWork . "</i></td>
                         <td class='text-info'><i>" . $row->ketQua . "</i></td>
@@ -1684,10 +1681,10 @@ class ReportController extends Controller
                         $stt
                     </tr>
                 ";
-        }
-        echo "</table></div>";
+            }
+            echo "</table></div>";
 
-        echo "<h4>CÔNG VIỆC ĐÃ GIAO</h4>
+            echo "<h4>CÔNG VIỆC ĐÃ GIAO</h4>
             <div class='table-responsive'>
                 <table class='table table-striped table-bordered'>
                     <tr class='bg-success'>
@@ -1701,29 +1698,29 @@ class ReportController extends Controller
                         <th>Ghi chú</th>
                         <th>Trạng thái</th>
                     </tr>";
-        $i = 1;
-        foreach ($pushWork as $row) {
-            if ($row->tienDo == 100 && $row->acceptApply == true)
-                $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
-            elseif ($row->tienDo == 100 && $row->acceptApply == false)
-                $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
-            elseif ($row->tienDo < 100 && $row->apply == true)
-                $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
-            elseif ($row->apply !== null && $row->apply == false)
-                $stt = "<td class='text-danger'><strong>Đã từ chối</strong></td>";
-            elseif ($row->apply === null)
-                $stt = "<td class='text-primary'><strong>Chưa nhận</strong></td>";
-            else $stt = "<td></td>";
-            echo "
+            $i = 1;
+            foreach ($pushWork as $row) {
+                if ($row->tienDo == 100 && $row->acceptApply == true)
+                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
+                elseif ($row->tienDo == 100 && $row->acceptApply == false)
+                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
+                elseif ($row->tienDo < 100 && $row->apply == true)
+                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
+                elseif ($row->apply !== null && $row->apply == false)
+                    $stt = "<td class='text-danger'><strong>Đã từ chối</strong></td>";
+                elseif ($row->apply === null)
+                    $stt = "<td class='text-primary'><strong>Chưa nhận</strong></td>";
+                else $stt = "<td></td>";
+                echo "
                     <tr>
                         <td>" . $i++ . "</td>
                         <td>" . $row->userNhan->userDetail->surname . "<br/>(" . $row->ngayTao . ")</td>
                         <td>" . $row->tenCongViec . "</td>
                         <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
                         <td class='text-bold' style='font-size:70%;'>"
-                . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                    . \HelpFunction::revertDate($row->ngayStart) . "<br/>
                             "
-                . \HelpFunction::revertDate($row->ngayEnd) . "
+                    . \HelpFunction::revertDate($row->ngayEnd) . "
                         </td>
                         <td class='text-orange'><i>" . $row->requestWork . "</i></td>
                         <td class='text-info'><i>" . $row->ketQua . "</i></td>
@@ -1731,7 +1728,150 @@ class ReportController extends Controller
                         $stt
                     </tr>
                 ";
+            }
+            echo "</table></div>";
+        } else {
+            $personal = ReportWork::where([
+                ['user_tao', '=', $_user],
+                ['isPersonal', '=', true],
+                ['isReport','=', true]
+            ])->whereBetween('ngayTao', [$_from, $_to])->get();
+
+            $getWork = ReportWork::where([
+                ['user_nhan', '=', $_user],
+                ['isPersonal', '=', false],
+                ['isReport','=', true]
+            ])->whereBetween('ngayTao', [$_from, $_to])->get();
+
+            $pushWork = ReportWork::where([
+                ['user_tao', '=', $_user],
+                ['isPersonal', '=', false],
+                ['isReportPush','=', true]
+            ])->whereBetween('ngayTao', [$_from, $_to])->get();
+
+            echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>";
+
+            echo "<h4>CÔNG VIỆC CÁ NHÂN</h4>
+            <div class='table-responsive'>
+                <table class='table table-striped table-bordered'>
+                    <tr class='bg-info'>
+                        <th>STT</th>
+                        <th>Ngày BC</th>
+                        <th>Công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                    </tr>";
+
+            foreach ($personal as $row) {
+                echo "
+                    <tr>
+                        <td>" . $i++ . "</td>
+                        <td>" . $row->ngayTao . "</td>
+                        <td>" . $row->tenCongViec . "</td>
+                        <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
+                        <td class='text-bold' style='font-size:70%;'>"
+                    . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                            "
+                    . \HelpFunction::revertDate($row->ngayEnd) . "
+                        </td>
+                        <td class='text-info'><i>" . $row->ketQua . "</i></td>
+                        <td class='text-info'><i>" . $row->ghiChu . "</i></td>
+                    </tr>
+                ";
+            }
+            echo "</table></div>";
+
+            echo "<h4>CÔNG VIỆC ĐƯỢC GIAO</h4>
+            <div class='table-responsive'>
+                <table class='table table-striped table-bordered'>
+                    <tr class='bg-primary'>
+                        <th>STT</th>
+                        <th>Người giao<br/>(Ngày tạo)</th>
+                        <th>Công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Yêu cầu</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                    </tr>";
+            $i = 1;
+            foreach ($getWork as $row) {
+                if ($row->tienDo == 100 && $row->acceptApply == true)
+                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
+                elseif ($row->tienDo == 100 && $row->acceptApply == false)
+                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
+                elseif ($row->tienDo < 100)
+                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
+                else $stt = "<td></td>";
+                echo "
+                    <tr>
+                        <td>" . $i++ . "</td>
+                        <td>" . $row->userTao->userDetail->surname . "<br/>(" . $row->ngayTao . ")</td>
+                        <td>" . $row->tenCongViec . "</td>
+                        <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
+                        <td class='text-bold' style='font-size:70%;'>"
+                    . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                            "
+                    . \HelpFunction::revertDate($row->ngayEnd) . "
+                        </td>
+                        <td class='text-orange'><i>" . $row->requestWork . "</i></td>
+                        <td class='text-info'><i>" . $row->ketQua . "</i></td>
+                        <td class='text-info'><i>" . $row->ghiChu . "</i></td>
+                        $stt
+                    </tr>
+                ";
+            }
+            echo "</table></div>";
+
+            echo "<h4>CÔNG VIỆC ĐÃ GIAO</h4>
+            <div class='table-responsive'>
+                <table class='table table-striped table-bordered'>
+                    <tr class='bg-success'>
+                        <th>STT</th>
+                        <th>Người nhận<br/>(Ngày tạo)</th>
+                        <th>Công việc</th>
+                        <th>Tiến độ</th>
+                        <th>Deadline</th>
+                        <th>Yêu cầu</th>
+                        <th>Kết quả</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                    </tr>";
+            $i = 1;
+            foreach ($pushWork as $row) {
+                if ($row->tienDo == 100 && $row->acceptApply == true)
+                    $stt = "<td class='text-success'><strong>Đã xác nhận</strong></td>";
+                elseif ($row->tienDo == 100 && $row->acceptApply == false)
+                    $stt = "<td class='text-warning'><strong>Đợi xác nhận</strong></td>";
+                elseif ($row->tienDo < 100 && $row->apply == true)
+                    $stt = "<td class='text-info'><strong>Đang thực hiện</strong></td>";
+                elseif ($row->apply !== null && $row->apply == false)
+                    $stt = "<td class='text-danger'><strong>Đã từ chối</strong></td>";
+                elseif ($row->apply === null)
+                    $stt = "<td class='text-primary'><strong>Chưa nhận</strong></td>";
+                else $stt = "<td></td>";
+                echo "
+                    <tr>
+                        <td>" . $i++ . "</td>
+                        <td>" . $row->userNhan->userDetail->surname . "<br/>(" . $row->ngayTao . ")</td>
+                        <td>" . $row->tenCongViec . "</td>
+                        <td>" . (($row->tienDo == 100) ? "<strong class='text-info'>" . $row->tienDo . "%</strong>" : "<strong class='text-danger'>" . $row->tienDo . "%</strong>") . "</td>
+                        <td class='text-bold' style='font-size:70%;'>"
+                    . \HelpFunction::revertDate($row->ngayStart) . "<br/>
+                            "
+                    . \HelpFunction::revertDate($row->ngayEnd) . "
+                        </td>
+                        <td class='text-orange'><i>" . $row->requestWork . "</i></td>
+                        <td class='text-info'><i>" . $row->ketQua . "</i></td>
+                        <td class='text-info'><i>" . $row->ghiChu . "</i></td>
+                        $stt
+                    </tr>
+                ";
+            }
+            echo "</table></div>";
         }
-        echo "</table></div>";
     }
 }

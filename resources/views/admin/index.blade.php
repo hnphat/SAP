@@ -15,6 +15,30 @@
     <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/adminlte.min.css">
+    <style>
+        .notification {
+            color: white;
+            text-decoration: none;
+            padding: 15px 26px;
+            position: relative;
+            display: inline-block;
+            border-radius: 2px;
+        }
+
+        .notification:hover {
+            background: gray;
+        }
+
+        .notification .badge {
+            position: absolute;
+            top: 0;
+            right: -5px;
+            padding: 2px 5px;
+            border-radius: 50%;
+            background: red;
+            color: white;
+        }
+    </style>
     @yield('script_head')
 </head>
 <body class="hold-transition sidebar-mini">

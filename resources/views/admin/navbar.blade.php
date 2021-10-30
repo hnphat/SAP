@@ -57,8 +57,9 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                <i class="fas fa-th-large"></i>
+            <a class="nav-link notification" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">10</span>
             </a>
         </li>
     </ul>
