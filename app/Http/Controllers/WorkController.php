@@ -337,33 +337,48 @@ class WorkController extends Controller
     }
 
     public function editPushWork(Request $request) {
-        $reportWork = ReportWork::where([
+
+        $checkGetWork = ReportWork::where([
             ['user_tao','=',Auth::user()->id],
-            ['id','=', $request->_id]
-        ])->update([
-            "tenCongViec" => $request->_tenCongViec,
-            "ngayStart" => $request->_ngayStart,
-            "ngayEnd" => $request->_ngayEnd,
-            "requestWork" => $request->_yeuCau,
-            "apply" => null
-        ]);
-        if($reportWork) {
-            return response()->json([
-                'type' => 'success',
-                'message' => " Đã chỉnh sửa giao việc",
-                'code' => 200
+            ['id','=', $request->_id],
+            ['apply','=',true]
+        ])->exists();
+
+        if (!$checkGetWork) {
+            $reportWork = ReportWork::where([
+                ['user_tao','=',Auth::user()->id],
+                ['id','=', $request->_id]
+            ])->update([
+                "tenCongViec" => $request->_tenCongViec,
+                "ngayStart" => $request->_ngayStart,
+                "ngayEnd" => $request->_ngayEnd,
+                "requestWork" => $request->_yeuCau,
+                "apply" => null
             ]);
+            if($reportWork) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => " Đã chỉnh sửa giao việc",
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => " Không thể chỉnh sửa giao việc",
+                    'code' => 500
+                ]);
+            }
         } else {
             return response()->json([
-                'type' => 'warning',
-                'message' => " Không thể chỉnh sửa giao việc",
-                'code' => 500
+                'type' => 'info',
+                'message' => " Công việc đã được nhận không thể chỉnh sửa",
+                'code' => 200
             ]);
         }
     }
 
     public function delPushWork(Request $request) {
-         $reportWork = ReportWork::where([
+            $reportWork = ReportWork::where([
                 ['user_tao','=',Auth::user()->id],
                 ['isPersonal','=', false],
                 ['id','=', $request->id]

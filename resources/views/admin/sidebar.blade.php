@@ -72,7 +72,6 @@
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script>
     $(document).ready(function() {
-
         let es = new EventSource("{{route('action')}}");
         es.onmessage = function(e) {
             console.log(e.data);

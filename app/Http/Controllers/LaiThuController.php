@@ -174,6 +174,12 @@ class LaiThuController extends Controller
     public function delReg(Request $request)
     {
         $check = DangKySuDung::find($request->id);
+        if ($check->allow == true) {
+            return response()->json([
+                'message' => 'Xe đã được duyệt, không thể xóa!',
+                'code' => 200
+            ]);
+        }
         if ($check->fuel_allow == true) {
             return response()->json([
                 'message' => 'Yêu cầu cấp xăng đã được duyệt, không thể xóa!',
