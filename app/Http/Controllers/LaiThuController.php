@@ -126,6 +126,7 @@ class LaiThuController extends Controller
         $reg->tra_km_current = $request->_km;
         $reg->tra_fuel_current = $request->_xang;
         $reg->tra_car_status = $request->_trangThaiXe;
+        $reg->hoSoVe = $request->_hoSoVe;
         $reg->request_tra = true;
         if ($reg->date_return == null)
             $reg->date_return = Date('H:i d-m-Y');
@@ -147,7 +148,9 @@ class LaiThuController extends Controller
             $reg->km_current = $request->km;
             $reg->fuel_current = $request->xang;
             $reg->car_status = $request->trangThaiXe;
+            $reg->time_go = $request->timeHourGo;
             $reg->date_go = $request->timeGo;
+            $reg->date_duKien = $request->timeReturn . " " . \HelpFunction::revertDate($request->dateDuKien);
             if ($request->fuelRequest == 'on') {
                 $reg->fuel_request = true;
                 $reg->fuel_type = $request->fuelType;
@@ -221,12 +224,14 @@ class LaiThuController extends Controller
         $check = XeLaiThu::find($regInfo->id_xe_lai_thu);
         if ($check->status == 'T') {
             $reg = DangKySuDung::where('id', $request->id)->update([
-                "allow" => true
+                "allow" => true,
+                "hoSoDi" => $request->hoSoDi
             ]);
 
             $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
                 'id_user_use' => $regInfo->id_user_reg,
-                'status' => 'DSD'
+                'status' => 'DSD',
+                'duKien' => $regInfo->date_duKien
             ]);
 
             if($reg && $upCar) {
@@ -260,7 +265,8 @@ class LaiThuController extends Controller
         $car->save();
 
         $upCar = XeLaiThu::where('id', $car->id_xe_lai_thu)->update([
-            'status' => 'T'
+            'status' => 'T',
+            'duKien' => null
         ]);
 
         if($car && $upCar) {

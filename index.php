@@ -1,4 +1,4 @@
 <?php
 header('Location: http://localhost/SAP/public');
-// header('Location: http://sap.hyundaiangiang.com/public');
+// header('Location: http://oto.hyundaiangiang.com/public');
 ?>

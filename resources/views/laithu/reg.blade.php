@@ -124,7 +124,19 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Thời gian đi</label>
+                                                            <input required="required" type="time" name="timeHourGo" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Ngày đi</label>
                                                             <input required="required" type="date" name="timeGo" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Thời gian về (dự kiến)</label>
+                                                            <input required="required" type="time" name="timeReturn" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Ngày về (dự kiến)</label>
+                                                            <input required="required" type="date" name="dateDuKien" class="form-control">
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->
@@ -154,6 +166,7 @@
                                     <th>Tình trạng xe</th>
                                     <th>TG Đi</th>
                                     <th>Trạng thái</th>
+                                    <th>Hồ sơ (nhận)</th>
                                     <th>Tác vụ</th>
                                 </tr>
                                 </thead>
@@ -182,7 +195,7 @@
                                             <td>{{$row->km_current}}</td>
                                             <td>{{$row->fuel_current}}</td>
                                             <td>{{$row->car_status}}</td>
-                                            <td class="text-fuchsia"><strong>{{\HelpFunction::revertDate($row->date_go)}}</strong></td>
+                                            <td class="text-fuchsia"><strong>{{$row->time_go}} {{\HelpFunction::revertDate($row->date_go)}}</strong></td>
                                             <td>
                                                 @if($row->allow == 1)
                                                     <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
@@ -195,6 +208,7 @@
                                                         <a href="{{route('xang.in', ['id' => $row->id])}}" target="_blank" class="btn btn-success btn-xs">Xăng: Đã duyệt</a>
                                                     @endif
                                             </td>
+                                            <td>{{$row->hoSoDi}}</td>
                                             <td>
                                                 @if($row->allow == 1)
                                                     <a target="_blank" href="{{route('qrcode', ['content' => url("/show/{$row->id}")])}}" class="btn btn-dark btn-xs">QR Code</a>

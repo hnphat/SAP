@@ -21,6 +21,7 @@ class CreateXeLaiThusTable extends Migration
             $table->enum('status', ['DSC', 'DSD', 'T'])->default('T');
             $table->integer('id_user_use')->unsigned()->nullable();
             $table->foreign('id_user_use')->references('id')->on('users');
+            $table->string('duKien',255)->nullable();
             $table->timestamps();
         });
     }

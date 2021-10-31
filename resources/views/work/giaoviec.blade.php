@@ -323,7 +323,12 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return revertDate(row.ngayStart)+"<br/>"+revertDate(row.ngayEnd)+"<br/> <strong>(Muộn)</strong>";
+                            let _stt = "";
+                            if((new Date() > new Date(row.ngayEnd)) && row.tienDo < 100 && row.acceptApply == false)
+                            {
+                                _stt = "(Trể)"
+                            }
+                            return revertDate(row.ngayStart)+"<br/>"+revertDate(row.ngayEnd)+"<br/> <strong>"+_stt+"</strong>";
                         }
                     },
                     {

@@ -65,6 +65,7 @@
                                         <th>Km</th>
                                         <th>Xăng</th>
                                         <th>Stt xe</th>
+                                        <th>Hồ sơ (trả)</th>
                                         <th>Tác vụ</th>
                                     </tr>
                                     </thead>
@@ -96,6 +97,7 @@
                                                 <td>{{$row->tra_km_current}}</td>
                                                 <td>{{$row->tra_fuel_current}}</td>
                                                 <td>{{$row->tra_car_status}}</td>
+                                                <td>{{$row->hoSoVe}}</td>
                                                 <td>
                                                     @if($row->tra_allow == false)
                                                         <button id="tra" data-toggle="modal" data-target="#offCar" data-id="{{$row->id}}" class="btn btn-success btn-xs">Trả xe</button>
@@ -140,6 +142,10 @@
                                                         <div class="form-group">
                                                             <label>Tình trạng xe</label>
                                                             <input required="required" type="text" name="_trangThaiXe" placeholder="Tình trạng xe" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Hồ sơ xe (trả)</label>
+                                                            <input required="required" type="text" name="_hoSoVe" placeholder="Hồ sơ trả" class="form-control">
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->
@@ -222,6 +228,7 @@
                     $("input[name=_xang]").val(response.data.tra_fuel_current);
                     $("input[name=_trangThaiXe]").val(response.data.tra_car_status);
                     $("input[name=_idOff]").val(response.data.id);
+                    $("input[name=_hoSoVe]").val(response.data.hoSoVe);
                 },
                 error: function() {
                     Toast.fire({

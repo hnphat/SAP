@@ -9,14 +9,11 @@
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="images/noavatar.jpg" class="img-circle elevation-2" alt="User Image">
-            </div>
             <div class="info">
                 <a href="{{route('changepass.list')}}" class="d-block">
                     <?php
                         try {
-                            echo \Illuminate\Support\Facades\Auth::user()->userDetail->surname;
+                            echo 'Tài khoản: '.\Illuminate\Support\Facades\Auth::user()->name . "<br/>(" . \Illuminate\Support\Facades\Auth::user()->userDetail->surname . ")";
                         } catch (Throwable $ex) {
                             echo \Illuminate\Support\Facades\Auth::user()->name;
                         }
@@ -46,19 +43,19 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route("user.list")}}" class="nav-link">
-                                <i class="fas fa-user-alt nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Người dùng</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('roles.list')}}" class="nav-link">
-                                <i class="fas fa-drafting-compass nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Phân quyền</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route("hoso.list")}}" class="nav-link">
-                                <i class="far fa-newspaper nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Hồ sơ</p>
                             </a>
                         </li>
@@ -67,7 +64,7 @@
                             \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                 <li class="nav-item">
                                     <a href="{{route("typecar.list")}}" class="nav-link">
-                                        <i class="fas fa-car nav-icon"></i>
+                                        <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Model Xe</p>
                                     </a>
                                 </li>
@@ -75,7 +72,7 @@
                         @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
                                     <a href="{{route('cong.list')}}" class="nav-link">
-                                        <i class="fas fa-diagnoses nav-icon"></i>
+                                        <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Loại công - phụ tùng</p>
                                     </a>
                                 </li>
@@ -100,19 +97,19 @@
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('sale'))
                                 <li class="nav-item">
                                     <a href="{{route('guest.list')}}" class="nav-link">
-                                        <i class="fas fa-people-arrows nav-icon"></i>
+                                        <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Khách hàng</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{route('hd.list')}}" class="nav-link">
-                                        <i class="fas fa-allergies nav-icon"></i>
+                                        <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Hợp đồng</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{route('cancel.list')}}" class="nav-link">
-                                        <i class="fas fa-radiation nav-icon"></i>
+                                        <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Đề nghị hủy hợp đồng</p>
                                     </a>
                                 </li>
@@ -121,7 +118,7 @@
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                             <li class="nav-item">
                                 <a href="{{route('kho.list')}}" class="nav-link">
-                                    <i class="fas fa-columns nav-icon"></i>
+                                    <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Kho xe</p>
                                 </a>
                             </li>
@@ -132,7 +129,7 @@
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                     <li class="nav-item">
                                         <a href="{{route('pheduyet.list')}}" class="nav-link">
-                                            <i class="fab fa-accusoft nav-icon"></i>
+                                            <i class="fas fa-caret-right nav-icon"></i>
                                             <p>Phê duyệt HĐ</p>
                                         </a>
                                     </li>
@@ -141,7 +138,7 @@
                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
                                     <a href="{{route('denghi.list')}}" class="nav-link">
-                                        <i class="fab fa-asymmetrik nav-icon"></i>
+                                        <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Duyệt đề nghị HĐ</p>
                                     </a>
                                 </li>
@@ -160,7 +157,7 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('laithu.list')}}" class="nav-link">
-                                <i class="fas fa-car nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý xe</p>
                             </a>
                         </li>
@@ -169,32 +166,32 @@
                              \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
                         <li class="nav-item">
                             <a href="{{route('laithu.duyet')}}" class="nav-link">
-                                <i class="fas fa-hand-point-right nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Duyệt đăng ký</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('laithu.duyet.pay')}}" class="nav-link">
-                                <i class="fas fa-hand-point-left nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Duyệt trả</p>
                             </a>
                         </li>
                         @endif
                         <li class="nav-item">
                             <a href="{{route('laithu.reg')}}" class="nav-link">
-                                <i class="fas fa-hand-holding nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Đăng ký xe</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('laithu.pay')}}" class="nav-link">
-                                <i class="fas fa-hand-rock nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Trả xe</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('status.list')}}" class="nav-link">
-                                <i class="fas fa-hdd nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Tình trạng xe</p>
                             </a>
                         </li>
@@ -203,7 +200,7 @@
                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
                         <li class="nav-item">
                             <a href="{{route('capxang.duyet')}}" class="nav-link">
-                                <i class="far fa-hand-paper nav-icon"></i>
+                                <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Duyệt cấp xăng</p>
                             </a>
                         </li>

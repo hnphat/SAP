@@ -1,24 +1,123 @@
 <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
     <div class="p-3">
+        <div id="real_work" style="display: none;">
         <h5>CÔNG VIỆC</h5>
-        <table class="table table-striped table-bordered">
-            <tr>
-                <td>Đang thực hiện</td>
-                <td align="center"><span class="badge badge-danger">5</span></td>
-            </tr>
-            <tr>
-                <td>Công việc mới</td>
-                <td align="center"><span class="badge badge-danger">5</span></td>
-            </tr>
-            <tr>
-                <td>Đã giao việc</td>
-                <td align="center"><span class="badge badge-secondary">5</span></td>
-            </tr>
-            <tr>
-                <td>Đã nhận việc</td>
-                <td align="center"><span class="badge badge-secondary">5</span></td>
-            </tr>
-        </table>
+            <p>
+                <a style="text-decoration: none;" href="{{route('work.get')}}" class="left">
+                    Công việc mới &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_newWork"></span>
+                </a>
+            </p>
+            <p>
+                <a style="text-decoration: none;" href="{{route("working.list")}}" class="left">
+                    Đang thực hiện &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-warning" id="r_working"></span>
+                </a>
+            </p>
+            <p>
+                <a style="text-decoration: none;" href="{{route('work.push')}}" class="left">
+                    Xác nhận công việc &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_checkWork"></span>
+                </a>
+            </p>
+        </div>
+        <div id="real_xedemo" style="display: none;">
+            <h5>XE DEMO</h5>
+            <p>
+                <a style="text-decoration: none;" href="{{route('laithu.duyet')}}" class="left">
+                    Chờ phê duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_duyet"></span>
+                </a>
+            </p>
+            <p>
+                <a style="text-decoration: none;" href="{{route('laithu.duyet.pay')}}" class="left">
+                    Chờ duyệt trả &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_tra"></span>
+                </a>
+            </p>
+        </div>
+        <div id="real_capxang" style="display: none;">
+            <h5>CẤP XĂNG</h5>
+            <p>
+                <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
+                    Chờ duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_capXang"></span>
+                </a>
+            </p>
+        </div>
+        <div id="real_hd" style="display: none;">
+            <h5>HỢP ĐỒNG</h5>
+            <p>
+                <a style="text-decoration: none;" href="#" class="left">
+                    Đề nghị hợp đồng &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger">5</span>
+                </a>
+            </p>
+            <p>
+                <a style="text-decoration: none;" href="#" class="left">
+                    Đề nghị hủy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger">5</span>
+                </a>
+            </p>
+            <p>
+                <a style="text-decoration: none;" href="#" class="left">
+                    Hợp đồng chờ duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger">5</span>
+                </a>
+            </p>
+        </div>
     </div>
 </aside>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+    $(document).ready(function() {
+
+        let es = new EventSource("{{route('action')}}");
+        es.onmessage = function(e) {
+            console.log(e.data);
+            let fullData = JSON.parse(e.data);
+            if (fullData.s_work == 1)
+                $('#real_work').show();
+            else
+                $('#real_work').hide();
+            if (fullData.s_xedemo == 1)
+                $('#real_xedemo').show();
+            else
+                $('#real_xedemo').hide();
+
+            if (fullData.s_xang == 1)
+                $('#real_capxang').show();
+            else
+                $('#real_capxang').hide();
+            if (fullData.newWork != 0)
+                $('#r_newWork').text(fullData.newWork);
+            else
+                $('#r_newWork').text("");
+            if (fullData.working != 0)
+                $('#r_working').text(fullData.working);
+            else
+                $('#r_working').text("");
+            if (fullData.checkWork != 0)
+                $('#r_checkWork').text(fullData.checkWork);
+            else
+                $('#r_checkWork').text("");
+            if (fullData.duyet != 0)
+                $('#r_duyet').text(fullData.duyet);
+            else
+                $('#r_duyet').text("");
+            if (fullData.tra != 0)
+                $('#r_tra').text(fullData.tra);
+            else
+                $('#r_tra').text("");
+            if (fullData.duyetXang != 0)
+                $('#r_capXang').text(fullData.duyetXang);
+            else
+                $('#r_capXang').text("");
+            if (fullData.total_full != 0)
+                $('#r_total_full').text(fullData.total_full);
+            else
+                $('#r_total_full').text("");
+        }
+    });
+</script>

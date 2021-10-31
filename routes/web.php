@@ -30,6 +30,7 @@ Route::get('/out',function(){
 
 Route::post('/login', 'UserController@login')->name('login');
 Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
+   Route::get('run', 'EventRealController@realTime')->name('action');
    Route::get('user/changepass','UserController@changePass')->name('changepass.list');
    Route::post('user/change','UserController@change')->name('change');
    Route::group(['prefix' => 'user', 'middleware' => ['f_roleuser']], function(){
@@ -287,3 +288,4 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('getapprove','WorkController@getApprove');
     });
 });
+

@@ -13,14 +13,16 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background: #60a3bc !important;
+            /*background: #60a3bc !important;*/
+            background: white !important;
         }
         .user_card {
             height: 400px;
             width: 350px;
             margin-top: auto;
             margin-bottom: auto;
-            background: #f39c12;
+            /*background: #f39c12;*/
+            background: #002c5f;
             position: relative;
             display: flex;
             justify-content: center;
@@ -38,7 +40,7 @@
             width: 170px;
             top: -75px;
             border-radius: 50%;
-            background: #60a3bc;
+            background: white;
             padding: 10px;
             text-align: center;
         }
@@ -53,7 +55,8 @@
         }
         .login_btn {
             width: 100%;
-            background: #c0392b !important;
+            /*background: #c0392b !important;*/
+            background: #a36b4f !important;
             color: white !important;
         }
         .login_btn:focus {
@@ -64,7 +67,8 @@
             padding: 0 2rem;
         }
         .input-group-text {
-            background: #c0392b !important;
+            /*background: #c0392b !important;*/
+            background: #a36b4f !important;
             color: white !important;
             border: 0 !important;
             border-radius: 0.25rem 0 0 0.25rem !important;
@@ -75,7 +79,8 @@
             outline: 0px !important;
         }
         .custom-checkbox .custom-control-input:checked~.custom-control-label::before {
-            background-color: #c0392b !important;
+            /*background-color: #c0392b !important;*/
+            background-color: #a36b4f !important;
         }
     </style>
 </head>

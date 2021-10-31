@@ -64,6 +64,7 @@
                                         <th>Km</th>
                                         <th>Xăng</th>
                                         <th>Tình trạng</th>
+                                        <th>Hồ sơ (trả)</th>
                                         <th>Tác vụ</th>
                                     </tr>
                                     </thead>
@@ -78,7 +79,7 @@
                                                     Không xác định
                                                 @endif
                                             </td>
-                                            <td>{{\HelpFunction::revertDate($row->date_go)}}</td>
+                                            <td>{{$row->time_go}} {{\HelpFunction::revertDate($row->date_go)}}</td>
                                             <td>{{$row->date_return}}</td>
                                             <td>
                                                 @if($row->xeLaiThu !== null)
@@ -93,6 +94,7 @@
                                             <td>{{$row->tra_km_current}}</td>
                                             <td>{{$row->tra_fuel_current}}</td>
                                             <td>{{$row->tra_car_status}}</td>
+                                            <td>{{$row->hoSoVe}}</td>
                                             <td>
                                                 @if($row->request_tra == true && $row->tra_allow == false)
                                                     <button id="duyetTra" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt trả</button>

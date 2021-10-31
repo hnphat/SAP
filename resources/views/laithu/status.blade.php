@@ -61,6 +61,7 @@
                                     <th>Biển số</th>
                                     <th>Màu sắc</th>
                                     <th>Người sử dụng cuối</th>
+                                    <th>Dự kiến thời gian về</th>
                                     <th>Trạng thái</th>
                                 </tr>
                                 </thead>
@@ -78,6 +79,7 @@
                                                 Không
                                             @endif
                                         </td>
+                                        <td>{{$row->duKien}}</td>
                                         <td>
                                             @if($row->status == 'T')
                                                 <span class="btn btn-info btn-xs">Trống</span>

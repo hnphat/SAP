@@ -65,7 +65,9 @@
                                     <th>Xăng</th>
                                     <th>Tình trạng xe</th>
                                     <th>TG Đi</th>
+                                    <th>TG Về</th>
                                     <th>Trạng thái</th>
+                                    <th>Hồ sơ (giao)</th>
                                     <th>Tác vụ</th>
                                 </tr>
                                 </thead>
@@ -92,7 +94,8 @@
                                         <td>{{$row->km_current}}</td>
                                         <td>{{$row->fuel_current}}</td>
                                         <td>{{$row->car_status}}</td>
-                                        <td>{{\HelpFunction::revertDate($row->date_go)}}</td>
+                                        <td>{{$row->time_go}} {{\HelpFunction::revertDate($row->date_go)}}</td>
+                                        <td>{{$row->date_return}}</td>
                                         <td>
                                             @if($row->allow == 1)
                                                 <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
@@ -105,6 +108,7 @@
                                                     <span class="btn btn-success btn-xs">Nhiên liệu: Đã duyệt</span>
                                                 @endif
                                         </td>
+                                        <td>{{$row->hoSoDi}}</td>
                                         <td>
                                             @if($row->allow == 1)
                                             @else
@@ -172,14 +176,16 @@
 
         //Duyệt mượn
         $(document).on('click','#allow', function(){
-            if(confirm('Xác nhận phê duyệt sử dụng xe lái thử?')) {
+            var duyet = prompt("Nhập hồ sơ bàn giao và xác nhận duyệt sử dụng");
+            if(duyet != null) {
                 $.ajax({
                     url: "{{url('management/duyet/allow/')}}",
                     type: "post",
                     dataType: "json",
                     data: {
                         "_token": "{{csrf_token()}}",
-                        "id": $(this).data('id')
+                        "id": $(this).data('id'),
+                        "hoSoDi": duyet
                     },
                     success: function(response) {
                         Toast.fire({
