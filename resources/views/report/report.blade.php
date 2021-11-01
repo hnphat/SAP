@@ -57,11 +57,11 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="doanhSoThang">Doanh số tháng: </label>
-                                    <input min="0" id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required" value="0">
+                                    <input min="1" id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required" value="1">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="thiPhanThang">Thị phần tháng: </label>
-                                    <input min="0" id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required" value="0">
+                                    <input min="1" id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required" value="1">
                                 </div>
                             </div>
                             <div class="row p-1">
@@ -143,11 +143,11 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="luotXeDV">Lượt xe tháng: </label>
-                                    <input min="0" id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required" value="0">
+                                    <input min="1" id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required" value="1">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="doanhThuDV">Doanh thu tháng: </label>
-                                    <input min="0" id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required" value="0">
+                                    <input min="1" id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required" value="1">
                                 </div>
                             </div>
                         </div>

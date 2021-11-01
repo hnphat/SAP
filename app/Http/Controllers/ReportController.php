@@ -1176,7 +1176,6 @@ class ReportController extends Controller
             <h5>Lượt xe (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . (($luotXeDV == 1) ? "0" : $luotXeDV) . " (" . number_format((($baoDuong + $suaChua + $Dong + $Son) * 100 / $luotXeDV), 2) . "%)</strong></span></h5>
                     <h5>Doanh thu (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . number_format(($doanhThuDV == 1) ? "0" : $doanhThuDV) . " (" . number_format((($dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan + $congBaoDuong + $congSuaChuaChung + $congDong + $congSon) * 100 / $doanhThuDV), 2) . "%)</strong></span></h5><br>
 
-
                 <div class='row'>
                         <div class='col-md-6'>
                             <h4>LƯỢT XE</h4>

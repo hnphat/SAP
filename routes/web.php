@@ -43,6 +43,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
    });
     Route::group(['prefix' => 'roles', 'middleware' => ['f_role']], function(){
         Route::get('list','RolesController@index')->name('roles.list');
+        Route::get('showlist','RolesController@showList');
         Route::post('add','RolesController@add')->name('roles.add');
         Route::get('rm/{role_id}/{user_id}','RolesController@rm');
         Route::get('showdetail/{id}','RolesController@showDetail');

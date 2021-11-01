@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Roles;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RolesController extends Controller
 {
@@ -34,57 +35,23 @@ class RolesController extends Controller
         return redirect()->route('roles.list');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function showList() {
+//        $role = User::select("users.*","r.name as rolename")
+//            ->join('role_user as ru','ru.user_id','=','users.id')
+//            ->join('roles as r','r.id','=','ru.role_id')
+//            ->get();
+        $user = User::with('roles.users')->get();
+        dd($user);
+        if($user) {
+            return response()->json([
+                'type' => "success",
+                'message' => 'Get reports successfully!',
+                'code' => 200,
+                'data' => $user
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function rm($role_id,$user_id)
     {
         $user = User::where('id', $user_id)->firstOrFail();
