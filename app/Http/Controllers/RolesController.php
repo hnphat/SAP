@@ -35,23 +35,6 @@ class RolesController extends Controller
         return redirect()->route('roles.list');
     }
 
-    public function showList() {
-//        $role = User::select("users.*","r.name as rolename")
-//            ->join('role_user as ru','ru.user_id','=','users.id')
-//            ->join('roles as r','r.id','=','ru.role_id')
-//            ->get();
-        $user = User::with('roles.users')->get();
-        dd($user);
-        if($user) {
-            return response()->json([
-                'type' => "success",
-                'message' => 'Get reports successfully!',
-                'code' => 200,
-                'data' => $user
-            ]);
-        }
-    }
-
     public function rm($role_id,$user_id)
     {
         $user = User::where('id', $user_id)->firstOrFail();

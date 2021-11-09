@@ -228,21 +228,102 @@ class LaiThuController extends Controller
     public function allowLaiThu(Request $request) {
         $regInfo = DangKySuDung::find($request->id);
         $check = XeLaiThu::find($regInfo->id_xe_lai_thu);
-        if ($check->status == 'T') {
-            $reg = DangKySuDung::where('id', $request->id)->update([
-                "allow" => true,
-                "hoSoDi" => $request->hoSoDi
-            ]);
 
-            $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
-                'id_user_use' => $regInfo->id_user_reg,
-                'status' => 'DSD',
-                'duKien' => $regInfo->date_duKien
-            ]);
+        if ($check->mau != 'Xe tải' && Auth::user()->hasRole('mkt')) {
+            if ($check->status == 'T') {
+                $reg = DangKySuDung::where('id', $request->id)->update([
+                    "allow" => true,
+                    "hoSoDi" => $request->hoSoDi
+                ]);
 
-            if($reg && $upCar) {
+                $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
+                    'id_user_use' => $regInfo->id_user_reg,
+                    'status' => 'DSD',
+                    'duKien' => $regInfo->date_duKien
+                ]);
+
+                if($reg && $upCar) {
+                    return response()->json([
+                        'message' => 'Đã phê duyệt sử dụng xe lái thử!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } elseif($check->status == 'DSC') {
                 return response()->json([
-                    'message' => 'Đã phê duyệt sử dụng xe lái thử!',
+                    'message' => 'Xe đang được sửa chữa!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Xe đang được sử dụng!',
+                    'code' => 200
+                ]);
+            }
+        } 
+     
+        if ($check->mau == 'Xe tải' && Auth::user()->hasRole('tpdv')) {
+            if ($check->status == 'T') {
+                $reg = DangKySuDung::where('id', $request->id)->update([
+                    "allow" => true,
+                    "hoSoDi" => $request->hoSoDi
+                ]);
+
+                $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
+                    'id_user_use' => $regInfo->id_user_reg,
+                    'status' => 'DSD',
+                    'duKien' => $regInfo->date_duKien
+                ]);
+
+                if($reg && $upCar) {
+                    return response()->json([
+                        'message' => 'Đã phê duyệt sử dụng xe lái thử!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } elseif($check->status == 'DSC') {
+                return response()->json([
+                    'message' => 'Xe đang được sửa chữa!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Xe đang được sử dụng!',
+                    'code' => 200
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Không có quyền duyệt xe này!',
+            'code' => 200
+        ]);      
+    }
+
+    public function approve(Request $request) {
+        $car = DangKySuDung::find($request->id);
+         $check = $car->xeLaiThu;
+         if ($check->mau != 'Xe tải' && Auth::user()->hasRole('mkt')) {
+             $car->tra_allow = true;
+            $car->request_tra = true;
+            $car->save();
+            $upCar = XeLaiThu::where('id', $car->id_xe_lai_thu)->update([
+                'status' => 'T',
+                'duKien' => null
+            ]);
+
+            if($car && $upCar) {
+                return response()->json([
+                    'message' => 'Nhận xe thành công',
                     'code' => 200
                 ]);
             } else {
@@ -251,41 +332,35 @@ class LaiThuController extends Controller
                     'code' => 500
                 ]);
             }
-        } elseif($check->status == 'DSC') {
-            return response()->json([
-                'message' => 'Xe đang được sửa chữa!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Xe đang được sử dụng!',
-                'code' => 200
-            ]);
-        }
-    }
+         }
 
-    public function approve(Request $request) {
-        $car = DangKySuDung::find($request->id);
-        $car->tra_allow = true;
-        $car->request_tra = true;
-        $car->save();
-
-        $upCar = XeLaiThu::where('id', $car->id_xe_lai_thu)->update([
-            'status' => 'T',
-            'duKien' => null
-        ]);
-
-        if($car && $upCar) {
-            return response()->json([
-                'message' => 'Nhận xe thành công',
-                'code' => 200
+         if ($check->mau == 'Xe tải' && Auth::user()->hasRole('tpdv')) {
+             $car->tra_allow = true;
+            $car->request_tra = true;
+            $car->save();
+            $upCar = XeLaiThu::where('id', $car->id_xe_lai_thu)->update([
+                'status' => 'T',
+                'duKien' => null
             ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
+
+            if($car && $upCar) {
+                return response()->json([
+                    'message' => 'Nhận xe thành công',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+         }
+
+         return response()->json([
+            'message' => 'Không có quyền nhận trả xe này!',
+            'code' => 200
+         ]);   
+        
     }
 
     public function getStatus() {

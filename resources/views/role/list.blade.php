@@ -72,21 +72,21 @@
                             <th>Quyền</th>
                         </tr>
                         </thead>
-{{--                        <tbody>--}}
-{{--                            @foreach($users as $row)--}}
-{{--                                    <tr>--}}
-{{--                                        <td>{{$loop->iteration}}</td>--}}
-{{--                                        <td>{{$row->name}} ({{$row->userDetail->surname}})</td>--}}
-{{--                                        <td>--}}
-{{--                                            @if($row->name != 'admin')--}}
-{{--                                                @foreach($row->roles as $role)--}}
-{{--                                                    <span style="cursor: pointer;" id="del" data-id="{{$role->id}}" data-user="{{$row->id}}" class='badge badge-info'>{{$role->name}}</span>--}}
-{{--                                                @endforeach--}}
-{{--                                            @endif--}}
-{{--                                        </td>--}}
-{{--                                    </tr>--}}
-{{--                            @endforeach--}}
-{{--                        </tbody>--}}
+                        <tbody>
+                            @foreach($users as $row)
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{$row->name}} ({{$row->userDetail->surname}})</td>
+                                        <td>
+                                            @if($row->name != 'admin')
+                                                @foreach($row->roles as $role)
+                                                    <span style="cursor: pointer;" id="del" data-id="{{$role->id}}" data-user="{{$row->id}}" class='badge badge-info'>{{$role->name}}</span>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                    </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -121,49 +121,11 @@
 
         // show data
         $(document).ready(function() {
-            let table = $("#dataTable").DataTable({
-                responsive: true,
-                dom: 'Blfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                ajax: "{{ url('management/work/getworklist/') }}",
-                "columnDefs": [
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 0
-                    },{
-                        "targets": 1,
-                        "className": "text-center",
-                    }
-                ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
-                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
-                columns: [
-                    { "data": null },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {
-                            if (row.isReport == true)
-                                return "<input id='_check' type='checkbox' checked='checked' data-id="+row.id+">";
-                            else
-                                return "<input id='_check' type='checkbox' data-id="+row.id+">";
-                        }
-                    },
-                    { "data": "ngayTao"}
-                ]
-            });
+            $("#dataTable").DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
-
-        table.on( 'order.dt search.dt', function () {
-            table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                cell.innerHTML = i+1;
-                table.cell(cell).invalidate('dom');
-            } );
-        } ).draw();
 
         $(document).on('click','#del', function() {
            role_id = $(this).data('id');

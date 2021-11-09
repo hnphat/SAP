@@ -66,10 +66,6 @@
                             </div>
                             <div class="row p-1">
                                 <div class="col-md-3">
-                                    <label for="xuatHoaDon">Xuất hóa đơn: </label>
-                                    <input min="0" id="xuatHoaDon" name="xuatHoaDon" type="number" class="form-control">
-                                </div>
-                                <div class="col-md-3">
                                     <label for="xuatTrongTinh">Xuất trong tỉnh: </label>
                                     <input min="0" id="xuatTrongTinh" name="xuatTrongTinh" type="number" class="form-control">
                                 </div>

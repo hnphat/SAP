@@ -17,7 +17,8 @@ class DuyetMiddleWare
     public function handle($request, Closure $next)
     {
         if (Auth::user()->hasRole('system') ||
-            Auth::user()->hasRole('mkt'))
+            Auth::user()->hasRole('mkt') ||
+            Auth::user()->hasRole('tpdv'))
             return $next($request);
         else abort(403);
     }

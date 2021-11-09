@@ -95,6 +95,7 @@
                                                                 <option value="Xám">Xám</option>
                                                                 <option value="Đen">Đen</option>
                                                                 <option value="Vàng cát">Vàng cát</option>
+                                                                <option value="Xe tải">Xe tải</option>
                                                             </select>
                                                         </div>
                                                     </div>

@@ -996,6 +996,7 @@ class ReportController extends Controller
         $saleMoiGioi = 0;
         $saleThiTruong = 0;
         $khShowRoom = 0;
+        $kyHopDong = 0;
 
         $_from = \HelpFunction::revertDate($_from);
         $_to = \HelpFunction::revertDate($_to);
@@ -1057,6 +1058,17 @@ class ReportController extends Controller
                 $saleThiTruong += $row->saleThiTruong;
                 $khShowRoom += $row->khShowRoom;
             }
+            $arrIndex = [];
+            $arrName = [];
+            $arrValue = [];
+            $list = 0;
+            $carList = TypeCar::all();
+               foreach($carList as $row) {
+                    $arrName[$list] = $row->name;
+                    $arrIndex[$list] = $row->id;
+                    $arrValue[$list] = 0;
+                    $list++;
+               }
 
 
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
@@ -1066,11 +1078,29 @@ class ReportController extends Controller
 
                     <div class='row'>
                         <div class='col-md-8'>
-                            <h4>Xuất hóa đơn</h4>
-                            <h5>- Xuất hóa đơn: <span class='text-success'><strong>" . $xuatHoaDon . "</strong></span></h5>
-                            <h5>- Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span></h5>
-                            <h5>- Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></h5>
+                            <h5>- Xuất hóa đơn: <span class='text-success'><strong>" . ($xuatNgoaiTinh + $xuatTrongTinh) . "</strong></span></h5>
+                            <p>+ Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span><br/>
+                            + Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></p>
                             ";
+
+
+            foreach ($report as $row) {
+                foreach ($row->reportCar as $item) {
+                    for ($i = 0; $i < count($arrIndex); $i++) { 
+                        if ($arrIndex[$i] == $item->dongXe) {
+                            $kyHopDong += $item->soLuong;
+                            $arrValue[$i] += $item->soLuong;
+                        }
+                        continue;
+                    }
+                }
+            }
+          
+            echo "<h5>- Ký hợp đồng: <span class='text-success'><strong>".$kyHopDong."</strong></span></h5><p>";
+            for ($i = 0; $i < count($arrIndex); $i++) { 
+                echo "+ " . $arrName[$i] . ": <span class='text-success'><strong>" . $arrValue[$i] . "</strong></span><br/>";
+            }
+            echo "</p>";
             echo "<h5>- Hủy hợp đồng: <span class='text-success'><strong>" . $hdHuy . "</strong></span></h5>
                         </div>
                         <div class='col-md-4'>
