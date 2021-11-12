@@ -112,13 +112,66 @@
                                         <td>
                                             @if($row->allow == 1)
                                             @else
-                                                <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                <button id="showPay" data-toggle="modal" data-target="#showPayModal" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
                                             @endif
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+
+                            <!-- Medal Add -->
+                            <div class="modal fade" id="showPayModal">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- general form elements -->
+                                            <div class="card card-success">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">PHÊ DUYỆT</h3>
+                                                </div>
+                                                <!-- /.card-header -->
+                                                <!-- form start -->
+                                                <form id="pheDuyetForm" method="post" autocomplete="off">
+                                                    {{csrf_field()}}
+                                                    <input type="hidden" name="_id" id="_idXe">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <h4><strong>Hồ sơ bàn giao gồm: </strong></h4>
+                                       <input id="_caVet" type="checkbox" name="_caVet">  
+                                       <label for="_caVet">Cà vẹt (giấy đi đường) </label><br/>
+                                       <input id="_dangKiem" type="checkbox" name="_dangKiem">  
+                                       <label for="_dangKiem">Đăng kiểm </label><br/>
+                                        <input id="_BHTX" type="checkbox" name="_BHTX"> 
+                                        <label for="_BHTX">Bảo hiểm thân xe </label><br/>
+                                        <input id="_BHTNDS" type="checkbox" name="_BHTNDS"> 
+                                        <label for="_BHTNDS">Bảo hiểm TNDS </label><br/>
+                                        <input id="_chiaKhoaChinh" type="checkbox" name="_chiaKhoaChinh"> 
+                                        <label for="_chiaKhoaChinh">Chìa khóa chính </label><br/>
+                                         <input id="_chiaKhoaPhu" type="checkbox" name="_chiaKhoaPhu"> 
+                                         <label for="_chiaKhoaPhu">Chìa khóa phụ</label><br/>
+                                    </div>
+                                </div>
+                                                    <!-- /.card-body -->
+                                                    <div class="card-footer">
+                                                        <button id="btnAdd" class="btn btn-primary">Duyệt</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <!-- /.card -->
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+
                         </div>
                     </div>
                 </div>
@@ -175,23 +228,19 @@
         });
 
         //Duyệt mượn
-        $(document).on('click','#allow', function(){
-            var duyet = prompt("Nhập hồ sơ bàn giao và xác nhận duyệt sử dụng");
-            if(duyet != null) {
+        $(document).on('click','#btnAdd', function(e){
+                e.preventDefault();
                 $.ajax({
                     url: "{{url('management/duyet/allow/')}}",
                     type: "post",
                     dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "id": $(this).data('id'),
-                        "hoSoDi": duyet
-                    },
+                    data: $("#pheDuyetForm").serialize(),
                     success: function(response) {
                         Toast.fire({
                             icon: 'info',
                             title: response.message
                         })
+                        $("#showPayModal").modal('hide');
                         setTimeout(function(){
                             open('{{route('laithu.duyet')}}','_self');
                         }, 2000);
@@ -203,7 +252,10 @@
                         })
                     }
                 });
-            }
+        });
+
+        $(document).on('click','#showPay', function() {
+            $("input[name=_id]").val($(this).data('id'));
         });
     </script>
 @endsection

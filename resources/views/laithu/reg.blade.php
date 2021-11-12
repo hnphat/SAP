@@ -118,25 +118,39 @@
                                                             </select>
 
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label>Tình trạng xe</label>
-                                                            <input required="required" type="text" name="trangThaiXe" placeholder="Tình trạng xe" class="form-control">
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-4">
+                                                                <label>Tình trạng xe</label> <br/>
+                                                                Vệ sinh: &nbsp;&nbsp;<input type="radio" name="veSinh" value="1" checked="checked"> Sạch &nbsp;&nbsp;
+                                                                <input type="radio" name="veSinh" value="0"> Dơ
+                                                                <input type="text" name="ghiChuVeSinh" placeholder="Ghi chú" class="form-control">
+                                                            </div>
+                                                            <div class="form-group col-sm-6">
+                                                                <label>&nbsp;</label> <br/>
+                                                                Bên ngoài: &nbsp;&nbsp;<input type="radio" name="benNgoai" value="1"checked="checked"> Bình thường &nbsp;&nbsp;
+                                                                <input type="radio" name="benNgoai" value="0"> Trầy
+                                                                <input type="text" name="ghiChuBenNgoai" placeholder="Ghi chú" class="form-control">
+                                                            </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label>Thời gian đi</label>
-                                                            <input required="required" type="time" name="timeHourGo" class="form-control">
+                                                        <div class="row">
+                                                            <div class="form-group col">
+                                                                <label>Thời gian đi</label>
+                                                                <input required="required" type="time" name="timeHourGo" class="form-control">
+                                                            </div>
+                                                            <div class="form-group col">
+                                                                <label>Ngày đi</label>
+                                                                <input required="required" min="<?php echo Date('Y-m-d');?>" type="date" name="timeGo" class="form-control">
+                                                            </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label>Ngày đi</label>
-                                                            <input required="required" type="date" name="timeGo" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Thời gian về (dự kiến)</label>
-                                                            <input required="required" type="time" name="timeReturn" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Ngày về (dự kiến)</label>
-                                                            <input required="required" type="date" name="dateDuKien" class="form-control">
+                                                        <div class="row">
+                                                             <div class="form-group col">
+                                                                <label>Thời gian về (dự kiến)</label>
+                                                                <input required="required" type="time" name="timeReturn" class="form-control">
+                                                            </div>
+                                                            <div class="form-group col">
+                                                                <label>Ngày về (dự kiến)</label>
+                                                                <input required="required" min="<?php echo Date('Y-m-d');?>" type="date" name="dateDuKien" class="form-control">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->

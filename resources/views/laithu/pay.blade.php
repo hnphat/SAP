@@ -139,14 +139,35 @@
                                                             <label>Số xăng hiện tại (km xăng)</label>
                                                             <input required="required" type="number" name="_xang" placeholder="Số xăng hiện tại" class="form-control">
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label>Tình trạng xe</label>
-                                                            <input required="required" type="text" name="_trangThaiXe" placeholder="Tình trạng xe" class="form-control">
+                                                          <div class="row">
+                                                            <div class="form-group col-sm-4">
+                                                                <label>Tình trạng xe</label> <br/>
+                                                                Vệ sinh: &nbsp;&nbsp;<input type="radio" name="veSinh" value="1" checked="checked"> Sạch &nbsp;&nbsp;
+                                                                <input type="radio" name="veSinh" value="0"> Dơ
+                                                                <input type="text" name="ghiChuVeSinh" placeholder="Ghi chú" class="form-control">
+                                                            </div>
+                                                            <div class="form-group col-sm-6">
+                                                                <label>&nbsp;</label> <br/>
+                                                                Bên ngoài: &nbsp;&nbsp;<input type="radio" name="benNgoai" value="1"checked="checked"> Bình thường &nbsp;&nbsp;
+                                                                <input type="radio" name="benNgoai" value="0"> Trầy
+                                                                <input type="text" name="ghiChuBenNgoai" placeholder="Ghi chú" class="form-control">
+                                                            </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Hồ sơ xe (trả)</label>
-                                                            <input required="required" type="text" name="_hoSoVe" placeholder="Hồ sơ trả" class="form-control">
-                                                        </div>
+                                        <h4><strong>Hồ sơ trả gồm: </strong></h4>
+                                       <input id="_caVet" type="checkbox" name="_caVet">  
+                                       <label for="_caVet">Cà vẹt (giấy đi đường) </label><br/>
+                                       <input id="_dangKiem" type="checkbox" name="_dangKiem">  
+                                       <label for="_dangKiem">Đăng kiểm </label><br/>
+                                        <input id="_BHTX" type="checkbox" name="_BHTX"> 
+                                        <label for="_BHTX">Bảo hiểm thân xe </label><br/>
+                                        <input id="_BHTNDS" type="checkbox" name="_BHTNDS"> 
+                                        <label for="_BHTNDS">Bảo hiểm TNDS </label><br/>
+                                        <input id="_chiaKhoaChinh" type="checkbox" name="_chiaKhoaChinh"> 
+                                        <label for="_chiaKhoaChinh">Chìa khóa chính </label><br/>
+                                         <input id="_chiaKhoaPhu" type="checkbox" name="_chiaKhoaPhu"> 
+                                         <label for="_chiaKhoaPhu">Chìa khóa phụ</label><br/>
+                                    </div>
                                                     </div>
                                                     <!-- /.card-body -->
                                                     <div class="card-footer">

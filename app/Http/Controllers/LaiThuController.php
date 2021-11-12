@@ -125,8 +125,40 @@ class LaiThuController extends Controller
         $reg = DangKySuDung::find($request->_idOff);
         $reg->tra_km_current = $request->_km;
         $reg->tra_fuel_current = $request->_xang;
-        $reg->tra_car_status = $request->_trangThaiXe;
-        $reg->hoSoVe = $request->_hoSoVe;
+        $str = "";
+        if ($request->veSinh == 1)
+            $str .= "Vệ sinh: Sạch(" . $request->ghiChuVeSinh . ")";
+        else 
+            $str .= "Vệ sinh: Dơ(" . $request->ghiChuVeSinh . ")";
+
+        if ($request->benNgoai == 1)
+            $str .= "; Bên ngoài: Bình thường(" . $request->ghiChuBenNgoai . ")";
+        else 
+            $str .= "; Bên ngoài: Trầy(" . $request->ghiChuBenNgoai . ")";
+        $reg->tra_car_status = $str;
+
+        $hoSo = "";
+        if ($request->_caVet == "on") {
+            $hoSo .= "Cà vẹt (giấy đi đường); ";
+        }
+        if ($request->_dangKiem == "on") {
+            $hoSo .= "Đăng kiểm; ";
+        }
+        if ($request->_BHTX == "on") {
+            $hoSo .= "BH thân xe; ";
+        }
+        if ($request->_BHTNDS == "on") {
+            $hoSo .= "BH TNNS; ";
+        }
+        if ($request->_chiaKhoaChinh == "on") {
+            $hoSo .= "Chìa khóa chính; ";
+        }
+        if ($request->_chiaKhoaPhu == "on") {
+            $hoSo .= "Chìa khóa phụ; ";
+        }
+
+        $reg->hoSoVe = $hoSo;
+
         $reg->request_tra = true;
         if ($reg->date_return == null)
             $reg->date_return = Date('H:i d-m-Y');
@@ -140,6 +172,7 @@ class LaiThuController extends Controller
 
     public function postReg(Request $request) {
         $check = XeLaiThu::find($request->xe);
+        $str = "";
         if ($check->status == 'T') {
             $reg = new DangKySuDung();
             $reg->id_user_reg = Auth::user()->id;
@@ -147,7 +180,17 @@ class LaiThuController extends Controller
             $reg->lyDo = $request->lyDo;
             $reg->km_current = $request->km;
             $reg->fuel_current = $request->xang;
-            $reg->car_status = $request->trangThaiXe;
+            if ($request->veSinh == 1)
+                $str .= "Vệ sinh: Sạch(" . $request->ghiChuVeSinh . ")";
+            else 
+                $str .= "Vệ sinh: Dơ(" . $request->ghiChuVeSinh . ")";
+
+            if ($request->benNgoai == 1)
+                $str .= "; Bên ngoài: Bình thường(" . $request->ghiChuBenNgoai . ")";
+            else 
+                $str .= "; Bên ngoài: Trầy(" . $request->ghiChuBenNgoai . ")";
+
+            $reg->car_status = $str;
             $reg->time_go = $request->timeHourGo;
             $reg->date_go = $request->timeGo;
             $reg->date_duKien = $request->timeReturn . " " . \HelpFunction::revertDate($request->dateDuKien);
@@ -225,15 +268,51 @@ class LaiThuController extends Controller
         return view('laithu.capxang', ['reg' => $reg]);
     }
 
+    public function getPayId($id) {
+        $getReg = DangKySuDung::find($id);
+         if ($getReg) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => ' Đã lấy thông tin duyệt!',
+                    'code' => 200,
+                    'data' => $getReg
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Lỗi! Máy chủ!',
+                    'code' => 500
+                ]);
+            }
+    }    
     public function allowLaiThu(Request $request) {
-        $regInfo = DangKySuDung::find($request->id);
+        $regInfo = DangKySuDung::find($request->_id);
         $check = XeLaiThu::find($regInfo->id_xe_lai_thu);
+        $hoSo = "";
+        if ($request->_caVet == "on") {
+            $hoSo .= "Cà vẹt (giấy đi đường); ";
+        }
+        if ($request->_dangKiem == "on") {
+            $hoSo .= "Đăng kiểm; ";
+        }
+        if ($request->_BHTX == "on") {
+            $hoSo .= "BH thân xe; ";
+        }
+        if ($request->_BHTNDS == "on") {
+            $hoSo .= "BH TNNS; ";
+        }
+        if ($request->_chiaKhoaChinh == "on") {
+            $hoSo .= "Chìa khóa chính; ";
+        }
+        if ($request->_chiaKhoaPhu == "on") {
+            $hoSo .= "Chìa khóa phụ; ";
+        }
 
         if ($check->mau != 'Xe tải' && Auth::user()->hasRole('mkt')) {
             if ($check->status == 'T') {
-                $reg = DangKySuDung::where('id', $request->id)->update([
+                $reg = DangKySuDung::where('id', $request->_id)->update([
                     "allow" => true,
-                    "hoSoDi" => $request->hoSoDi
+                    "hoSoDi" => $hoSo
                 ]);
 
                 $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
@@ -268,9 +347,9 @@ class LaiThuController extends Controller
      
         if ($check->mau == 'Xe tải' && Auth::user()->hasRole('tpdv')) {
             if ($check->status == 'T') {
-                $reg = DangKySuDung::where('id', $request->id)->update([
+                $reg = DangKySuDung::where('id', $request->_id)->update([
                     "allow" => true,
-                    "hoSoDi" => $request->hoSoDi
+                    "hoSoDi" => $hoSo
                 ]);
 
                 $upCar = XeLaiThu::where('id', $regInfo->id_xe_lai_thu)->update([
