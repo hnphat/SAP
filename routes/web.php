@@ -195,8 +195,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'duyet', 'middleware' => ['f_duyet']], function(){
         Route::get('list','LaiThuController@showDuyet')->name('laithu.duyet');
+        Route::get('list/tbp','LaiThuController@showDuyetTBP')->name('laithu.tbp.duyet');
         Route::get('list/pay','LaiThuController@showDuyetPay')->name('laithu.duyet.pay');
         Route::get('list/getpay/{id}','LaiThuController@getPayId');
+        Route::post('tbp/duyet','LaiThuController@allowLaiThuTBP');
         Route::post('allow','LaiThuController@allowLaiThu')->name('laithu.pay.post');
         Route::post('approve','LaiThuController@approve');
     });

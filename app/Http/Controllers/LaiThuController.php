@@ -201,6 +201,7 @@ class LaiThuController extends Controller
                 $reg->fuel_lyDo = $request->fuelLyDo;
                 $reg->id_user_check = $request->leadCheck;
             }
+            $reg->id_lead_check = $request->tbpCheck;
             $reg->save();
             if($reg) {
                 return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
@@ -250,6 +251,11 @@ class LaiThuController extends Controller
         return view('laithu.duyet', ['reg' => $reg, 'traXe' => $traXe]);
     }
 
+    public function showDuyetTBP() {
+        $reg = DangKySuDung::select('*')->where('id_lead_check', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        return view('laithu.duyettbp', ['reg' => $reg]);
+    }
+
     public function showDuyetPay() {
         $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
         $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->get();
@@ -284,7 +290,8 @@ class LaiThuController extends Controller
                     'code' => 500
                 ]);
             }
-    }    
+    }  
+
     public function allowLaiThu(Request $request) {
         $regInfo = DangKySuDung::find($request->_id);
         $check = XeLaiThu::find($regInfo->id_xe_lai_thu);
@@ -386,6 +393,23 @@ class LaiThuController extends Controller
             'message' => 'Không có quyền duyệt xe này!',
             'code' => 200
         ]);      
+    }
+
+    public function allowLaiThuTBP(Request $request) {
+        $regInfo = DangKySuDung::find($request->id);
+        $regInfo->id_lead_check_status = true;
+        $regInfo->save();
+           if($regInfo) {
+                return response()->json([
+                    'message' => 'Đã phê duyệt sử dụng xe lái thử!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
     }
 
     public function approve(Request $request) {

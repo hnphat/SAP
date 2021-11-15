@@ -178,6 +178,14 @@
                             </a>
                         </li>
                         @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
+                        <li class="nav-item">
+                            <a href="{{route('laithu.tbp.duyet')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Duyệt đăng ký (TBP)</p>
+                            </a>
+                        </li>
+                        @endif
                         <li class="nav-item">
                             <a href="{{route('laithu.reg')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

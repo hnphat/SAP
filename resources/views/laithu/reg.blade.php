@@ -151,6 +151,14 @@
                                                                 <label>Ngày về (dự kiến)</label>
                                                                 <input required="required" min="<?php echo Date('Y-m-d');?>" type="date" name="dateDuKien" class="form-control">
                                                             </div>
+                                                            <select name="tbpCheck" class="form-control">
+                                                                <option value="">Chọn người duyệt</option>
+                                                                @foreach($lead as $row)
+                                                                    @if($row->hasRole('lead'))
+                                                                        <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                                                    @endif
+                                                                @endforeach
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <!-- /.card-body -->
@@ -211,6 +219,14 @@
                                             <td>{{$row->car_status}}</td>
                                             <td class="text-fuchsia"><strong>{{$row->time_go}} {{\HelpFunction::revertDate($row->date_go)}}</strong></td>
                                             <td>
+                                                @if($row->id_lead_check == null)
+                                                    <span class="btn btn-secondary btn-xs">TBP: Không có</span>
+                                                @elseif($row->id_lead_check_status == 1)
+                                                    <span class="btn btn-info btn-xs">TBP: Đã duyệt</span>
+                                                @else
+                                                    <span class="btn btn-danger btn-xs">TBP: Chưa</span>
+                                                @endif
+                                            
                                                 @if($row->allow == 1)
                                                     <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
                                                 @else

@@ -43,6 +43,8 @@ class CreateDangKySuDungsTable extends Migration
             $table->boolean('lead_check')->default(0);
             $table->integer('id_user_check')->unsigned()->nullable();
             $table->foreign('id_user_check')->references('id')->on('users');
+            $table->integer('id_lead_check')->unsigned()->nullable();
+            $table->boolean('id_lead_check_status')->default(false);
             $table->timestamps();
         });
     }

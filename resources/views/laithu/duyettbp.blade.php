@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Duyệt xe</strong></h1>
+                        <h1 class="m-0"><strong>Duyệt xe (TBP)</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -97,15 +97,7 @@
                                         <td>{{$row->time_go}} {{\HelpFunction::revertDate($row->date_go)}}</td>
                                         <td>{{$row->date_return}}</td>
                                         <td>
-                                            @if($row->id_lead_check == null)
-                                                <span class="btn btn-secondary btn-xs">TBP: Không có</span>
-                                            @elseif($row->id_lead_check_status == 1)
-                                                <span class="btn btn-info btn-xs">TBP: Đã duyệt</span>
-                                            @else
-                                                <span class="btn btn-danger btn-xs">TBP: Chưa</span>
-                                            @endif
-
-                                            @if($row->allow == 1)
+                                            @if($row->id_lead_check_status == 1)
                                                 <span class="btn btn-info btn-xs">Xe: Đã duyệt</span>
                                             @else
                                                 <span class="btn btn-warning btn-xs">Xe: Đợi duyệt</span>
@@ -118,67 +110,15 @@
                                         </td>
                                         <td>{{$row->hoSoDi}}</td>
                                         <td>
-                                            @if($row->allow == 1)
+                                            @if($row->id_lead_check_status == 1)
                                             @else
-                                                <button id="showPay" data-toggle="modal" data-target="#showPayModal" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                <button id="showPay" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
                                             @endif
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
-
-                            <!-- Medal Add -->
-                            <div class="modal fade" id="showPayModal">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- general form elements -->
-                                            <div class="card card-success">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">PHÊ DUYỆT</h3>
-                                                </div>
-                                                <!-- /.card-header -->
-                                                <!-- form start -->
-                                                <form id="pheDuyetForm" method="post" autocomplete="off">
-                                                    {{csrf_field()}}
-                                                    <input type="hidden" name="_id" id="_idXe">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <h4><strong>Hồ sơ bàn giao gồm: </strong></h4>
-                                       <input id="_caVet" type="checkbox" name="_caVet">  
-                                       <label for="_caVet">Cà vẹt (giấy đi đường) </label><br/>
-                                       <input id="_dangKiem" type="checkbox" name="_dangKiem">  
-                                       <label for="_dangKiem">Đăng kiểm </label><br/>
-                                        <input id="_BHTX" type="checkbox" name="_BHTX"> 
-                                        <label for="_BHTX">Bảo hiểm thân xe </label><br/>
-                                        <input id="_BHTNDS" type="checkbox" name="_BHTNDS"> 
-                                        <label for="_BHTNDS">Bảo hiểm TNDS </label><br/>
-                                        <input id="_chiaKhoaChinh" type="checkbox" name="_chiaKhoaChinh"> 
-                                        <label for="_chiaKhoaChinh">Chìa khóa chính </label><br/>
-                                         <input id="_chiaKhoaPhu" type="checkbox" name="_chiaKhoaPhu"> 
-                                         <label for="_chiaKhoaPhu">Chìa khóa phụ</label><br/>
-                                    </div>
-                                </div>
-                                                    <!-- /.card-body -->
-                                                    <div class="card-footer">
-                                                        <button id="btnAdd" class="btn btn-primary">Duyệt</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- /.card -->
-                                        </div>
-                                    </div>
-                                    <!-- /.modal-content -->
-                                </div>
-                                <!-- /.modal-dialog -->
-                            </div>
-                            <!-- /.modal -->
 
                         </div>
                     </div>
@@ -235,22 +175,23 @@
             });
         });
 
-        //Duyệt mượn
-        $(document).on('click','#btnAdd', function(e){
-                e.preventDefault();
+        $(document).on('click','#showPay', function() {
+            if (confirm('Xác nhận phê duyệt cho xe lái thử này!')) {
                 $.ajax({
-                    url: "{{url('management/duyet/allow/')}}",
+                    url: "{{url('management/duyet/tbp/duyet/')}}",
                     type: "post",
                     dataType: "json",
-                    data: $("#pheDuyetForm").serialize(),
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
                     success: function(response) {
                         Toast.fire({
                             icon: 'info',
                             title: response.message
                         })
-                        $("#showPayModal").modal('hide');
                         setTimeout(function(){
-                            open('{{route('laithu.duyet')}}','_self');
+                            open('{{route('laithu.tbp.duyet')}}','_self');
                         }, 2000);
                     },
                     error: function() {
@@ -260,10 +201,7 @@
                         })
                     }
                 });
-        });
-
-        $(document).on('click','#showPay', function() {
-            $("input[name=_id]").val($(this).data('id'));
+            }
         });
     </script>
 @endsection
