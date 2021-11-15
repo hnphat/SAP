@@ -287,6 +287,12 @@
              // Lưu công việc
             $('#btnAddWork').click(function(e){
                 e.preventDefault();
+                // prevent double click
+                   var el = $(this);
+                   el.prop('disabled', true);
+                   setTimeout(function(){el.prop('disabled', false); }, 3000);
+                // prevent double click   
+
                 $.ajax({
                     url: "{{url('management/work/addwork')}}",
                     type: "post",

@@ -143,6 +143,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('banle/canhan/nganhang/down/{id}','HDController@cnnh');
         Route::get('banle/congty/tienmat/down/{id}','HDController@cttm');
         Route::get('banle/congty/nganhang/down/{id}','HDController@ctnh');
+
+        // --- 
+        Route::get('banle/phuluc/canhan/down/{id}','HDController@inPhuLucCaNhan');
+        Route::get('banle/phuluc/congty/down/{id}','HDController@inPhuLucCongTy');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

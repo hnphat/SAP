@@ -31,7 +31,7 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="card card-primary card-tabs">
                     <div class="card-header p-0 pt-1">
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
@@ -321,8 +321,8 @@
                                                 <select name="mauHD" class="form-control">
                                                     <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option>
-                                                    <option value="3">Chi tiết phụ kiện bán</option>
-                                                    <option value="4">Chi tiết phụ kiện, quà tặng</option>
+                                                   <!--  <option value="3">Chi tiết phụ kiện bán</option>
+                                                    <option value="4">Chi tiết phụ kiện, quà tặng</option> -->
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -1282,12 +1282,23 @@
             $("#in").click(function(e){
                e.preventDefault();
                if ($("select[name=chonHDIN]").val() !== null && $("select[name=chonHDIN]").val() != 0) {
+                 if ($("select[name=mauHD]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
                         case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
                         case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
                     }
+                 }
+
+                 if ($("select[name=mauHD]").val() == 2) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("select[name=chonHDIN]").val(),"_blank"); break;
+                    }
+                 }
                } else {
                    Toast.fire({
                        icon: 'warning',

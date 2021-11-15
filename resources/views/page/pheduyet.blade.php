@@ -146,7 +146,7 @@
                                                         @if($row->cancelHd && $row->cancelHd->cancel == 1)
                                                             (ĐÃ HỦY)
                                                         @endif
-                                                        [{{$row->created_at}}] HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})
+                                                        [{{\HelpFunction::revertCreatedAt($row->created_at)}}] HAGI-0{{$row->id}}/HDMB-PA ({{$row->surname}})
                                                     </option>
                                                 @endforeach
                                             </select>

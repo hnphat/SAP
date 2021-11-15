@@ -1143,4 +1143,116 @@ class HDController extends Controller
         );
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
+
+    public function inPhuLucCaNhan($id) {
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/PHULUC.docx');
+            // Set data from database
+            $sale = Sale::find($id);
+            $tongChiPhi = 0;
+            $i = 1;
+            $stt = "";
+            $chiPhiChiTiet = "";
+            $pkcost = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'cost') {
+                    $stt .= $i . '<w:br/>';
+                    $pkcost .=  $row->name . '<w:br/>';
+                    $chiPhiChiTiet .=  number_format($row->cost) . '<w:br/>';
+                    $tongChiPhi += $row->cost;
+                    $i++;
+                }
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
+            $outhd = 'PHỤ LỤC ' . $sale->guest->name;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'cmnd' => $sale->guest->cmnd,
+                'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noiCap' => $sale->guest->noiCap,
+                'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                'tenDaiDien' => $sale->guest->name,
+                'phuLucLoaiXe' => $tenXe,
+                'stt' => $stt,
+                'cacLoaiPhi' => $pkcost,
+                'thanhTienPhi' => $chiPhiChiTiet,
+                'tongPhi' => number_format($tongChiPhi),
+                'bangChuTongPhi' => \HelpFunction::convert($tongChiPhi),
+            ]);
+
+        $pathToSave = 'template/PHULUCDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+     public function inPhuLucCongTy($id) {
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/PHULUCCONGTY.docx');
+            // Set data from database
+            $sale = Sale::find($id);
+            $tongChiPhi = 0;
+            $i = 1;
+            $stt = "";
+            $chiPhiChiTiet = "";
+            $pkcost = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'cost') {
+                    $stt .= $i . '<w:br/>';
+                    $pkcost .=  $row->name . '<w:br/>';
+                    $chiPhiChiTiet .=  number_format($row->cost) . '<w:br/>';
+                    $tongChiPhi += $row->cost;
+                    $i++;
+                }
+            }
+            $car_detail = $sale->carSale->typeCarDetail;
+            $car = $sale->carSale;
+            $giaXe = $sale->requestHd;
+            $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
+            $outhd = 'PHỤ LỤC ' . $sale->guest->name;
+            // Cá nhân
+            $templateProcessor->setValues([
+                'soHopDong' => 'HAGI-0' . $sale->id . "/HDMB-PA",
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'dienThoai' => $sale->guest->phone,
+                'tenDaiDien' => $sale->guest->daiDien,
+                'chucVu' => $sale->guest->chucVu,
+                'mst' => $sale->guest->mst,
+                'phuLucLoaiXe' => $tenXe,
+                'stt' => $stt,
+                'cacLoaiPhi' => $pkcost,
+                'thanhTienPhi' => $chiPhiChiTiet,
+                'tongPhi' => number_format($tongChiPhi),
+                'bangChuTongPhi' => \HelpFunction::convert($tongChiPhi),
+            ]);
+
+        $pathToSave = 'template/PHULUCCONGTYDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
 }

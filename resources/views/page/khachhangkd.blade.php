@@ -31,8 +31,8 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container row">
-                    <div class="col-12 col-sm-12">
+            <div class="container-fluid">
+                    <div>
                         <div class="card card-primary card-tabs">
                             <div class="card-header p-0 pt-1">
                                 <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
@@ -372,7 +372,7 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;" +
+                            return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
                         }
                     }

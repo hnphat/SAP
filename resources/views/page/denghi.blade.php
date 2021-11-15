@@ -30,7 +30,7 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="row container">
+            <div class="row container-fluid">
                 <div class="col-sm-12">
                     <table id="dataTableCodeWait" class="display" style="width:100%">
                         <thead>

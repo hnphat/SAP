@@ -31,7 +31,7 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container">
+            <div class="container-fluid">
                 <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
                 <div class="card card-info card-tabs">
                     <div class="card-header p-0 pt-1">
@@ -45,9 +45,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" id="tab-3-tab" data-toggle="pill" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false"><strong>Đang đặt hàng</strong></a>
                             </li>
-                            <li class="nav-item">
+                           <!--  <li class="nav-item">
                                 <a class="nav-link" id="tab-4-tab" data-toggle="pill" href="#tab-4" role="tab" aria-controls="tab-4" aria-selected="false"><strong>Đang lên hợp đồng</strong></a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                     <div class="card-body">
