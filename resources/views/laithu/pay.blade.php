@@ -259,5 +259,16 @@
                 }
             });
         });
+
+        // -- event realtime
+        let es = new EventSource("{{route('action.reg')}}");
+        es.onmessage = function(e) {
+            console.log(e.data);
+            let fullData = JSON.parse(e.data);
+            if (fullData.flag == true) {
+               open('{{route('laithu.pay')}}','_self');
+            }
+        }
+        // -- event realtime
     </script>
 @endsection

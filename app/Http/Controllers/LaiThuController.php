@@ -429,6 +429,10 @@ class LaiThuController extends Controller
                 'duKien' => null
             ]);
 
+            $eventReal = new EventReal;
+            $eventReal->name = "Allow Demo";
+            $eventReal->save();
+
             if($car && $upCar) {
                 return response()->json([
                     'message' => 'Nhận xe thành công',
@@ -450,6 +454,10 @@ class LaiThuController extends Controller
                 'status' => 'T',
                 'duKien' => null
             ]);
+
+            $eventReal = new EventReal;
+            $eventReal->name = "Allow Demo";
+            $eventReal->save();
 
             if($car && $upCar) {
                 return response()->json([
@@ -489,6 +497,9 @@ class LaiThuController extends Controller
         $car = DangKySuDung::where('id', $request->id)->update([
            'fuel_allow' => true
         ]);
+        $eventReal = new EventReal;
+        $eventReal->name = "Allow Demo";
+        $eventReal->save();
         if($car) {
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',
@@ -507,6 +518,9 @@ class LaiThuController extends Controller
            'fuel_allow' => false,
            'fuel_request' => false
         ]);
+        $eventReal = new EventReal;
+        $eventReal->name = "Allow Demo";
+        $eventReal->save();
         if($car) {
             return response()->json([
                 'message' => 'Đã hủy đề nghị cấp xăng',
@@ -525,6 +539,9 @@ class LaiThuController extends Controller
         $car = DangKySuDung::where('id', $request->id)->update([
             'lead_check' => true
         ]);
+        $eventReal = new EventReal;
+        $eventReal->name = "Allow Demo";
+        $eventReal->save();
         if($car) {
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\ReportWork;
 use App\User;
+use App\EventReal;
 
 class WorkController extends Controller
 {
@@ -115,6 +116,11 @@ class WorkController extends Controller
             "ketQua" => $request->_ketQua,
             "ghiChu" => $request->_ghiChu
         ]);
+
+        $eventReal = new EventReal;
+        $eventReal->name = "Work";
+        $eventReal->save();
+
         if($reportWork) {
             return response()->json([
                 'type' => 'success',
@@ -143,6 +149,11 @@ class WorkController extends Controller
             "ketQua" => $request->_ketQua,
             "ghiChu" => $request->_ghiChu
         ]);
+
+        $eventReal = new EventReal;
+        $eventReal->name = "Work";
+        $eventReal->save();
+
         if($reportWork) {
             return response()->json([
                 'type' => 'success',
@@ -321,6 +332,9 @@ class WorkController extends Controller
         $reportWork->requestWork = $request->yeuCau;
         $reportWork->isPersonal = false;
         $reportWork->save();
+        $eventReal = new EventReal;
+        $eventReal->name = "Work";
+        $eventReal->save();
         if($reportWork) {
             return response()->json([
                 'type' => 'success',
@@ -355,6 +369,9 @@ class WorkController extends Controller
                 "requestWork" => $request->_yeuCau,
                 "apply" => null
             ]);
+            $eventReal = new EventReal;
+            $eventReal->name = "Work";
+            $eventReal->save();
             if($reportWork) {
                 return response()->json([
                     'type' => 'success',
@@ -383,7 +400,9 @@ class WorkController extends Controller
                 ['isPersonal','=', false],
                 ['id','=', $request->id]
             ])->delete();
-
+            $eventReal = new EventReal;
+            $eventReal->name = "Work";
+            $eventReal->save();
             if($reportWork) {
                 return response()->json([
                     'type' => 'success',
@@ -437,6 +456,9 @@ class WorkController extends Controller
             "replyWork" => $request->phanHoi,
             "acceptApply" => true
         ]);
+        $eventReal = new EventReal;
+        $eventReal->name = "Work";
+        $eventReal->save();
         if($reportWork) {
             return response()->json([
                 'type' => 'success',
@@ -460,6 +482,9 @@ class WorkController extends Controller
             "replyWork" => $request->phanHoi,
             "tienDo" => 99
         ]);
+        $eventReal = new EventReal;
+        $eventReal->name = "Work";
+        $eventReal->save();
         if($reportWork) {
             return response()->json([
                 'type' => 'success',
