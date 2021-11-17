@@ -185,6 +185,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'reg'], function(){
+        Route::get('run', 'EventRealController@realTimeReg')->name('action.reg');
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
         Route::get('list/pay','LaiThuController@showPay')->name('laithu.pay');
         Route::post('post','LaiThuController@postReg')->name('reg.post');
@@ -206,6 +207,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'capxang', 'middleware' => ['f_capxang']], function(){
         Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
         Route::post('allow','LaiThuController@allowCapXang');
+        Route::post('cancel','LaiThuController@cancelCapXang');
         Route::post('leadallow','LaiThuController@leadAllowCapXang');
     });
 

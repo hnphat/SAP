@@ -292,6 +292,16 @@
             timer: 3000
         });
 
+        // -- event realtime
+        let es = new EventSource("{{route('action.reg')}}");
+        es.onmessage = function(e) {
+            console.log(e.data);
+            let fullData = JSON.parse(e.data);
+            if (fullData.flag == true) {
+               open('{{route('laithu.reg')}}','_self');
+            }
+        }
+        // -- event realtime
         function formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }

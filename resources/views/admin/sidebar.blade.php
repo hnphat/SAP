@@ -37,12 +37,30 @@
                 </a>
             </p>
         </div>
+        <div id="real_xedemo_tbp" style="display: none;">
+            <h5>XE DEMO TBP</h5>
+            <p>
+                <a style="text-decoration: none;" href="{{route('laithu.tbp.duyet')}}" class="left">
+                    Chờ phê duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_duyet_tbp"></span>
+                </a>
+            </p>
+        </div>
         <div id="real_capxang" style="display: none;">
             <h5>CẤP XĂNG</h5>
             <p>
                 <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
                     Chờ duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="badge badge-danger" id="r_capXang"></span>
+                </a>
+            </p>
+        </div>
+        <div id="real_capxang_lead" style="display: none;">
+            <h5>CẤP XĂNG TBP</h5>
+            <p>
+                <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
+                    Chờ duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_capXang_lead"></span>
                 </a>
             </p>
         </div>
@@ -89,6 +107,17 @@
                 $('#real_capxang').show();
             else
                 $('#real_capxang').hide();
+
+            if (fullData.s_xang_lead == 1)
+                $('#real_capxang_lead').show();
+            else
+                $('#real_capxang_lead').hide();
+
+            if (fullData.s_duyet_tbp == 1)
+                $('#real_xedemo_tbp').show();
+            else
+                $('#real_xedemo_tbp').hide();
+
             if (fullData.newWork != 0)
                 $('#r_newWork').text(fullData.newWork);
             else
@@ -105,6 +134,10 @@
                 $('#r_duyet').text(fullData.duyet);
             else
                 $('#r_duyet').text("");
+            if (fullData.duyettbp != 0)
+                $('#r_duyet_tbp').text(fullData.duyettbp);
+            else
+                $('#r_duyet_tbp').text("");
             if (fullData.tra != 0)
                 $('#r_tra').text(fullData.tra);
             else
@@ -113,6 +146,10 @@
                 $('#r_capXang').text(fullData.duyetXang);
             else
                 $('#r_capXang').text("");
+            if (fullData.duyetXangLead != 0)
+                $('#r_capXang_lead').text(fullData.duyetXangLead);
+            else
+                $('#r_capXang_lead').text("");
             if (fullData.total_full != 0)
                 $('#r_total_full').text(fullData.total_full);
             else

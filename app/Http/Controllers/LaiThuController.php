@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DangKySuDung;
 use App\User;
+use App\EventReal;
 use App\XeLaiThu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -328,6 +329,10 @@ class LaiThuController extends Controller
                     'duKien' => $regInfo->date_duKien
                 ]);
 
+                $eventReal = new EventReal;
+                $eventReal->name = "Allow Demo";
+                $eventReal->save();
+
                 if($reg && $upCar) {
                     return response()->json([
                         'message' => 'Đã phê duyệt sử dụng xe lái thử!',
@@ -496,6 +501,25 @@ class LaiThuController extends Controller
             ]);
         }
     }
+
+    public function cancelCapXang(Request $request) {
+        $car = DangKySuDung::where('id', $request->id)->update([
+           'fuel_allow' => false,
+           'fuel_request' => false
+        ]);
+        if($car) {
+            return response()->json([
+                'message' => 'Đã hủy đề nghị cấp xăng',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
 
     public function leadAllowCapXang(Request $request) {
         $car = DangKySuDung::where('id', $request->id)->update([

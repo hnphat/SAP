@@ -128,6 +128,7 @@
                                                 @if($row->fuel_allow == true)
                                                 @else
                                                     <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                    <button id="cancel" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Hủy</button>
                                                 @endif
                                             </td>
                                         @endif
@@ -219,6 +220,36 @@
                 });
             }
         });
+
+        $(document).on('click','#cancel', function(){
+            if (confirm('Xác nhận không duyệt và hủy phiếu cấp xăng này!')) {
+                $.ajax({
+                    url: "{{url('management/capxang/cancel/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        })
+                        setTimeout(function(){
+                            open('{{route('capxang.duyet')}}','_self');
+                        }, 1000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không phê duyệt lúc này!"
+                        })
+                    }
+                });
+            }
+        });
+
         $(document).on('click','#leadAllow', function(){
             if (confirm('Xác nhận duyệt phiếu cấp xăng này!')) {
                 $.ajax({
