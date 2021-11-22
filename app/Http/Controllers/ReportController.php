@@ -450,6 +450,7 @@ class ReportController extends Controller
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
                 'hdHuy' => $request->hdHuy,
+                'hdDaiLy' => $request->hdDaiLy,
                 'ctInternet' => $request->ctInternet,
                 'ctShowroom' => $request->ctShowroom,
                 'ctHotline' => $request->ctHotline,
@@ -528,6 +529,7 @@ class ReportController extends Controller
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
                 'hdHuy' => $request->hdHuy,
+                'hdDaiLy' => $request->hdDaiLy,
                 'ctInternet' => $request->ctInternet,
                 'ctShowroom' => $request->ctShowroom,
                 'ctHotline' => $request->ctHotline,
@@ -681,6 +683,7 @@ class ReportController extends Controller
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
                 'hdHuy' => $request->hdHuy,
+                'hdDaiLy' => $request->hdDaiLy,
                 'ctInternet' => $request->ctInternet,
                 'ctShowroom' => $request->ctShowroom,
                 'ctHotline' => $request->ctHotline,
@@ -758,6 +761,7 @@ class ReportController extends Controller
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
                 'hdHuy' => $request->hdHuy,
+                'hdDaiLy' => $request->hdDaiLy,
                 'ctInternet' => $request->ctInternet,
                 'ctShowroom' => $request->ctShowroom,
                 'ctHotline' => $request->ctHotline,
@@ -987,6 +991,7 @@ class ReportController extends Controller
         $xuatNgoaiTinh = 0;
         $xuatTrongTinh = 0;
         $hdHuy = 0;
+        $hdDaiLy = 0;
         $ctInternet = 0;
         $ctShowroom = 0;
         $ctHotline = 0;
@@ -1048,6 +1053,7 @@ class ReportController extends Controller
                 $xuatNgoaiTinh += $row->xuatNgoaiTinh;
                 $xuatTrongTinh += $row->xuatTrongTinh;
                 $hdHuy += $row->hdHuy;
+                $hdDaiLy += $row->hdDaiLy;
                 $ctInternet += $row->ctInternet;
                 $ctShowroom += $row->ctShowroom;
                 $ctHotline += $row->ctHotline;
@@ -1101,7 +1107,8 @@ class ReportController extends Controller
                 echo "+ " . $arrName[$i] . ": <span class='text-success'><strong>" . $arrValue[$i] . "</strong></span><br/>";
             }
             echo "</p>";
-            echo "<h5>- Hủy hợp đồng: <span class='text-success'><strong>" . $hdHuy . "</strong></span></h5>
+            echo "<h5>- Hợp đồng Đại lý: <span class='text-success'><strong>" . $hdDaiLy . "</strong></span></h5>
+            <h5>- Hủy hợp đồng: <span class='text-success'><strong>" . $hdHuy . "</strong></span></h5>
                         </div>
                         <div class='col-md-4'>
                             <h4>KHTN Công ty</h4>

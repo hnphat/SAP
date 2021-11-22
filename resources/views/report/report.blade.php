@@ -74,6 +74,10 @@
                                     <input min="0" id="xuatNgoaiTinh" name="xuatNgoaiTinh" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-3">
+                                    <label for="hdDaiLy">Hợp đồng đại lý: </label>
+                                    <input min="0" id="hdDaiLy" name="hdDaiLy" type="number" class="form-control">
+                                </div>
+                                <div class="col-md-3">
                                     <label for="hdHuy">Hợp đồng hủy: </label>
                                     <input min="0" id="hdHuy" name="hdHuy" type="number" class="form-control">
                                 </div>
@@ -639,6 +643,7 @@
                         $('input[name=xuatTrongTinh]').val(response.data.xuatTrongTinh);
                         $('input[name=xuatNgoaiTinh]').val(response.data.xuatNgoaiTinh);
                         $('input[name=hdHuy]').val(response.data.hdHuy);
+                        $('input[name=hdDaiLy]').val(response.data.hdDaiLy);
                         $('input[name=ctInternet]').val(response.data.ctInternet);
                         $('input[name=ctShowroom]').val(response.data.ctShowroom);
                         $('input[name=ctHotline]').val(response.data.ctHotline);

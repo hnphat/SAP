@@ -76,6 +76,7 @@
                             @foreach($users as $row)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
+                                        <!-- <td>{{$row->name}} ({{$row->userDetail->surname}})</td> -->
                                         <td>{{$row->name}} ({{$row->userDetail->surname}})</td>
                                         <td>
                                             @if($row->name != 'admin')

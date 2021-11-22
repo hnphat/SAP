@@ -150,6 +150,7 @@ class HelpFunction {
 
     public static function countDayInMonth($month = 1, $year = 2020) {
         return cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        // return date('t', mktime(0, 0, 0, $month, 1, $year)); 
     }
 }
 ?>

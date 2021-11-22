@@ -31,6 +31,7 @@ class Report extends Migration
             $table->integer('xuatNgoaiTinh')->nullable();
             $table->integer('xuatTrongTinh')->nullable();
             $table->integer('hdHuy')->nullable();
+            $table->integer('hdDaiLy')->nullable();
             $table->integer('ctInternet')->nullable();
             $table->integer('ctShowroom')->nullable();
             $table->integer('ctHotline')->nullable();
