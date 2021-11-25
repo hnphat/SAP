@@ -94,7 +94,7 @@
                                                             <label>Số xăng hiện tại (km xăng)</label>
                                                             <input required="required" type="number" name="xang" placeholder="Số xăng hiện tại" class="form-control">
                                                         </div>
-                                                        <div class="form-group">
+                                                        <!-- <div class="form-group">
                                                             <label>
                                                                 <input type="checkbox" name="fuelRequest" id="fuelRequest" />
                                                                 Đề nghị cấp nhiên liệu
@@ -117,7 +117,7 @@
                                                                 @endforeach
                                                             </select>
 
-                                                        </div>
+                                                        </div> -->
                                                         <div class="row">
                                                             <div class="form-group col-sm-4">
                                                                 <label>Tình trạng xe</label> <br/>

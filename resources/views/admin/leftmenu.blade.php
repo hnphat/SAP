@@ -207,19 +207,13 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
-                        <li class="nav-item">
-                            <a href="{{route('capxang.duyet')}}" class="nav-link">
+                        <!-- <li class="nav-item">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Duyệt cấp xăng</p>
                             </a>
-                        </li>
+                        </li> -->
                         @endif
-{{--                        <li class="nav-item">--}}
-{{--                            <a href="#" class="nav-link">--}}
-{{--                                <i class="fab fa-creative-commons-remix nav-icon"></i>--}}
-{{--                                <p>Đề nghị cấp xăng</p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
                     </ul>
                 </li>
                 <!--
@@ -247,6 +241,33 @@
                     </ul>
                 </li>
                 -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-address-book"></i>
+                        <p>
+                            <strong>HÀNH CHÍNH</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                               <li class="nav-item">
+                                    <a href="{{route('capxang.denghi')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Đề nghị nhiên liệu</p>
+                                    </a>
+                                </li>
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))                    
+                            <li class="nav-item">
+                                <a href="{{route('capxang.duyet')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Duyệt cấp xăng</p>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('report') ||

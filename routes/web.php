@@ -30,7 +30,10 @@ Route::get('/out',function(){
 
 Route::post('/login', 'UserController@login')->name('login');
 Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
+    // Realtime
    Route::get('run', 'EventRealController@realTime')->name('action');
+   Route::get('runreg', 'EventRealController@realTimeReg')->name('action.reg');
+    // Realtime
    Route::get('user/changepass','UserController@changePass')->name('changepass.list');
    Route::post('user/change','UserController@change')->name('change');
    Route::group(['prefix' => 'user', 'middleware' => ['f_roleuser']], function(){
@@ -185,7 +188,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'reg'], function(){
-        Route::get('run', 'EventRealController@realTimeReg')->name('action.reg');
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
         Route::get('list/pay','LaiThuController@showPay')->name('laithu.pay');
         Route::post('post','LaiThuController@postReg')->name('reg.post');
@@ -204,19 +206,31 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('approve','LaiThuController@approve');
     });
 
-    Route::group(['prefix' => 'capxang', 'middleware' => ['f_capxang']], function(){
-        Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
-        Route::post('allow','LaiThuController@allowCapXang');
-        Route::post('cancel','LaiThuController@cancelCapXang');
-        Route::post('leadallow','LaiThuController@leadAllowCapXang');
+    // Route::group(['prefix' => 'capxang', 'middleware' => ['f_capxang']], function(){
+    //     Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
+    //     Route::post('allow','LaiThuController@allowCapXang');
+    //     Route::post('cancel','LaiThuController@cancelCapXang');
+    //     Route::post('leadallow','LaiThuController@leadAllowCapXang');
+    // });
+
+    Route::group(['prefix' => 'capxang'], function(){
+        Route::get('list','DeNghiCapXangController@showCapXang')->name('capxang.denghi');
+        Route::post('reg','DeNghiCapXangController@postDeNghi')->name('capxang.post');
+        Route::post('del','DeNghiCapXangController@del');
+        // In xăng
+        Route::get('xang/{id}', 'DeNghiCapXangController@inXang')->name('xang.in');
+
+        // duyet
+        Route::get('duyet','DeNghiCapXangController@showDuyetCapXang')->name('capxang.duyet')->middleware(['f_capxang']);
+        Route::post('allow','DeNghiCapXangController@allowCapXang')->middleware(['f_capxang']);
+        Route::post('cancel','DeNghiCapXangController@cancelCapXang')->middleware(['f_capxang']);
+        Route::post('leadallow','DeNghiCapXangController@leadAllowCapXang');
     });
 
     Route::get('qr/{content}', function ($content) {
 //        return QrCode::size(200)->generate('https://google.com');
         return view('qr', ['content' => $content]);
     })->where('content', '.*')->name('qrcode');
-
-    Route::get('xang/{id}', 'LaiThuController@inXang')->name('xang.in');
 
     Route::group(['prefix' => 'report', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@showReport')->name('report');

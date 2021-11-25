@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DangKySuDung;
+use App\DeNghiCapXang;
 use App\ReportWork;
 use App\EventReal;
 use Session;
@@ -26,14 +27,13 @@ class EventRealController extends Controller
             ['id_lead_check_status','=', false]
         ])->orderBy('id', 'DESC')->get()->count();
 
-        $duyetXang = DangKySuDung::where([
-            ['fuel_request','=', true],
+        $duyetXang = DeNghiCapXang::where([
             ['fuel_allow','=', false]
         ])->orderBy('id', 'DESC')->get()->count();
 
-        $duyetXangLead = DangKySuDung::where([
-            ['fuel_request','=', true],
-            ['lead_check','=', false]
+        $duyetXangLead = DeNghiCapXang::where([
+            ['lead_id','!=', null],
+            ['lead_check','=',   false]
         ])->orderBy('id', 'DESC')->get()->count();
 
         $reg = DangKySuDung::where([

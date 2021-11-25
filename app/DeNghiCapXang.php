@@ -11,4 +11,8 @@ class DeNghiCapXang extends Model
     public function user() {
         return $this->belongsTo('App\User', 'id_user', 'id');
     }
+
+    public function userLead() {
+        return $this->belongsTo('App\User', 'lead_id', 'id');
+    }
 }

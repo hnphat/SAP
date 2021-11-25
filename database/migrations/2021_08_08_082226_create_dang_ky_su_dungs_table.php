@@ -35,12 +35,6 @@ class CreateDangKySuDungsTable extends Migration
             $table->string('tra_car_status', 255)->nullable();
             $table->boolean('tra_allow')->default(false);
             $table->boolean('request_tra')->default(false);
-            $table->boolean('fuel_request')->default(false);
-            $table->boolean('fuel_allow')->default(false);
-            $table->enum('fuel_type', ['X', 'D'])->nullable();
-            $table->integer('fuel_num')->default(0);
-            $table->string('fuel_lyDo')->nullable();
-            $table->boolean('lead_check')->default(0);
             $table->integer('id_user_check')->unsigned()->nullable();
             $table->foreign('id_user_check')->references('id')->on('users');
             $table->integer('id_lead_check')->unsigned()->nullable();

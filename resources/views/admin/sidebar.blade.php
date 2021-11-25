@@ -58,7 +58,7 @@
         <div id="real_capxang_lead" style="display: none;">
             <h5>CẤP XĂNG TBP</h5>
             <p>
-                <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
+            <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
                     Chờ duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="badge badge-danger" id="r_capXang_lead"></span>
                 </a>
