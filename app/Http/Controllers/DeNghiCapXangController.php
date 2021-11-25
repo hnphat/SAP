@@ -26,6 +26,7 @@ class DeNghiCapXangController extends Controller
         $deNghi->fuel_guest = $request->khachHang;
         $deNghi->fuel_frame = $request->bienSo;
         $deNghi->fuel_lyDo = $request->lyDoCap;
+        $deNghi->ghiChu = $request->ghiChu;
         $deNghi->fuel_km = $request->km;
         $deNghi->lead_id = $request->leadCheck;
         $deNghi->duongDi = "Từ " . $request->from . " đến " . $request->to;

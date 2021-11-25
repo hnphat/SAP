@@ -64,7 +64,7 @@
                                     <th>Số lít</th>
                                     <th>Khách hàng</th>
                                     <th>Lý do cấp</th>
-                                    <th>Km (dự kiến)</th>
+                                    <th>Ghi chú</th>
                                     <th>Trưởng bộ phận</th>
                                     <th>Hành chính</th>
                                     <th>Tác vụ</th>
@@ -80,14 +80,14 @@
                                                 @else
                                                     Không
                                                 @endif</td>
-                                        <td>{{$row->fuel_car}} - {{$row->fuel_frame}}</td>
+                                        <td>{{$row->fuel_car}}; {{$row->fuel_frame}}</td>
                                         <td>
                                             {{$row->fuel_type == 'X' ? "Xăng" : "Dầu"}}
                                         </td>
                                         <td>{{$row->fuel_num}}</td>
                                         <td>{{$row->fuel_guest}}</td>
                                         <td>{{$row->fuel_lyDo}}</td>
-                                        <td>{{$row->fuel_km}} km ({{$row->duongDi}})</td>
+                                        <td>{{$row->ghiChu}}</td>
                                         <td>@if($row->lead_id !== null)
                                                 {{$row->userLead->userDetail->surname}}
                                                 @if($row->lead_check == true)

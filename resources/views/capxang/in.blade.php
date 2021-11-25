@@ -21,13 +21,14 @@
         </p>
         <p><strong>Loại xe:</strong> {{$car->fuel_car}}; <strong>Biển số:</strong> {{$car->fuel_frame}}</p>
         <p><strong>Lý do cấp:</strong> {{$car->fuel_lyDo}}</p>
-        <p><strong>Số km (dự kiến)):</strong> {{$car->fuel_km}} km <strong></strong> ({{$car->duongDi}}).</p>
+        <p><strong>Ghi chú:</strong> {{$car->ghiChu}}</p>
+        <!-- <p><strong>Số km (dự kiến)):</strong> {{$car->fuel_km}} km <strong></strong> ({{$car->duongDi}}).</p> -->
         <div class="col">
                 <strong>NGƯỜI ĐỀ NGHỊ</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;<strong>T. BỘ PHẬN (Đã duyệt)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;<strong><?php if ($car->lead_id != null) echo "T. BỘ PHẬN (Đã duyệt)";?></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;<strong>HCNS (Đã duyệt)</strong><br/><br/><br/>
                 {{$car->user->userDetail->surname}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp; {{$tbp}}
+             <?php if ($car->lead_id != null) echo $tbp;?>
         </div>
     </div>
     <div class="col-md-4">

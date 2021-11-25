@@ -24,6 +24,7 @@ class DeNghiCapXang extends Migration
             $table->string('fuel_guest')->nullable();
             $table->string('fuel_frame')->nullable();
             $table->string('fuel_lyDo')->nullable();
+            $table->string('fuel_ghiChu')->nullable();
             $table->integer('fuel_km')->nullable();
             $table->integer('lead_id')->nullable();
             $table->boolean('lead_check')->default(0);

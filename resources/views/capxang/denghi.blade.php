@@ -77,11 +77,11 @@
                                                         <div class="row">
                                                             <div class="form-group col-sm-6">
                                                                 <label>Loại xe:</label>                                                        
-                                                                <input type="text" name="loaiXe" class="form-control" required="required"/>
+                                                                <input placeholder="Accent, Santafe,..." type="text" name="loaiXe" class="form-control" required="required"/>
                                                             </div>
                                                             <div class="form-group col-sm-6">
                                                                 <label>Biển số/số khung: </label>                                                        
-                                                                <input type="text" name="bienSo" class="form-control" required="required"/>
+                                                                <input placeholder="Biển số/Số khung" type="text" name="bienSo" class="form-control" required="required"/>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -94,31 +94,46 @@
                                                         <div class="row">
                                                             <div class="form-group col-sm-6">
                                                                 <label>Số lít:</label>                                                        
-                                                                <input type="number" min="0" name="soLit" required="required" class="form-control"/>
+                                                                <input placeholder="Số lít" type="number" min="0" name="soLit" required="required" class="form-control"/>
                                                             </div>
                                                             <div class="form-group col-sm-6">
-                                                                <label>Khách hàng: </label>                                                        
-                                                                <input type="text" name="khachHang" class="form-control"/>
+                                                                <label>Khách hàng (nếu có): </label>                                                        
+                                                                <input placeholder="Thông tin khách hàng" type="text" name="khachHang" class="form-control"/>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
+                                                        <!-- <div class="form-group">
                                                             <label>Lý do cấp:</label>                                                        
                                                             <input type="text" name="lyDoCap" required="required" class="form-control">
+                                                        </div> -->
+                                                        <div class="form-group">
+                                                            <label>Lý do cấp:</label>                                                        
+                                                            <select name="lyDoCap" class="form-control">
+                                                                <option value="Xe showroom">Xe showroom</option>
+                                                                <option value="Công tác + sếp">Công tác + sếp</option>
+                                                                <option value="Lái thử + thị trường">Lái thử + thị trường</option>
+                                                                <option value="Giao xe mới">Giao xe mới</option>
+                                                                <option value="Xe lưu kho">Xe lưu kho</option>
+                                                                <option value="Dịch vụ">Dịch vụ</option>
+                                                            </select>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="form-group">
+                                                            <label>Ghi chú:</label>                                                        
+                                                            <input placeholder="Ghi chú (nếu có)" type="text" name="ghiChu" class="form-control">
+                                                        </div>
+                                                        <!-- <div class="row">
                                                             <div class="form-group col-sm-4">
                                                                 <label>Số km đi (dự kiến):</label>                                                        
-                                                                <input type="number" min="0" name="km" class="form-control"/>
+                                                                <input placeholder="Số km" type="number" min="0" name="km" class="form-control"/>
                                                             </div>
                                                             <div class="form-group col-sm-4">
                                                                 <label>Từ: </label>                                                        
-                                                                <input type="text" name="from" class="form-control"/>
+                                                                <input placeholder="Điểm đi" type="text" name="from" class="form-control"/>
                                                             </div>
                                                             <div class="form-group col-sm-4">
                                                                 <label>Đến: </label>                                                        
-                                                                <input type="text" name="to" class="form-control"/>
+                                                                <input placeholder="Điểm đến" type="text" name="to" class="form-control"/>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                         <div class="form-group">
                                                             <select name="leadCheck" class="form-control">
                                                                 <option value="">Chọn người duyệt</option>
@@ -155,7 +170,7 @@
                                     <th>Số lít</th>
                                     <th>Khách hàng</th>
                                     <th>Lý do cấp</th>
-                                    <th>Km (dự kiến)</th>
+                                    <th>Ghi chú</th>
                                     <th>Trưởng bộ phận</th>
                                     <th>Hành chính</th>
                                     <th>Tác vụ</th>
@@ -171,14 +186,14 @@
                                                 @else
                                                     Không
                                                 @endif</td>
-                                        <td>{{$row->fuel_car}} - {{$row->fuel_frame}}</td>
+                                        <td>{{$row->fuel_car}}; {{$row->fuel_frame}}</td>
                                         <td>
                                             {{$row->fuel_type == 'X' ? "Xăng" : "Dầu"}}
                                         </td>
                                         <td>{{$row->fuel_num}}</td>
                                         <td>{{$row->fuel_guest}}</td>
                                         <td>{{$row->fuel_lyDo}}</td>
-                                        <td>{{$row->fuel_km}} km ({{$row->duongDi}})</td>
+                                        <td>{{$row->ghiChu}}</td>
                                         <td>@if($row->lead_id !== null)
                                                 {{$row->userLead->userDetail->surname}}
                                                 @if($row->lead_check == true)
@@ -197,7 +212,7 @@
                                         </td>
                                         <td>
                                                 @if($row->fuel_allow == false)
-                                                    <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                                <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
                                                 @else
                                                 <a href="{{route('xang.in', ['id' => $row->id])}}" target="_blank" class="btn btn-success btn-xs">IN PHIẾU</a>
                                                 @endif
