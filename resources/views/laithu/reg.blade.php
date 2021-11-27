@@ -349,5 +349,6 @@
             else
                 $('.pass').attr('disabled','disabled');
         });
+        
     </script>
 @endsection

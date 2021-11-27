@@ -114,6 +114,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('delete','KhoController@delete');
         Route::post('edit/show','KhoController@editShow');
         Route::post('update','KhoController@update');
+
+
+        // Kho remake v2
+        Route::get('getkho','KhoController@getKho')->name('get.kho.v2');
+        Route::get('getkho/list','KhoController@getKhoList');
+        Route::post('getkho/add','KhoController@addV2');
+        Route::post('getkho/delete','KhoController@deleteV2');
+        Route::post('getkho/edit/show','KhoController@editShowV2');
+        Route::post('getkho/update','KhoController@updateV2');
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
         Route::get('list','HDController@index')->name('hd.list');

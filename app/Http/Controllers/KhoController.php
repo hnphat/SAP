@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CarSale;
+use App\KhoV2;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -168,6 +169,131 @@ class KhoController extends Controller
         if($result) {
             return response()->json([
                 'message' => 'Updated successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+
+    //-------------------------------------- KHO V2
+    public function getKho() {
+        $type_detail = TypeCarDetail::all()->sortBy('name');
+        return view('khoxe.khoxe', ['typecar' =>  $type_detail]);
+    }
+
+    public function getKhoList() {
+        $result = KhoV2::select('kho_v2.*','t.name as ten')->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')->orderBy('id', 'desc')->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addV2(Request $request) {
+        $kho = new KhoV2;
+
+        $kho->id_type_car_detail = $request->tenXe;
+        $kho->year = $request->nam;
+        $kho->vin = $request->vin;
+        $kho->frame = $request->frame;
+        $kho->color = $request->color;
+        $kho->gear = $request->gear;
+        $kho->machine = $request->machine;
+        $kho->seat = $request->seat;
+        $kho->fuel = $request->fuel;
+        $kho->type = $request->trangThai;
+        $kho->soDonHang = $request->soDonHang;
+        $kho->soBaoLanh = $request->soBaoLanh;
+        $kho->ngayNhanXe = $request->ngayNhanXe;
+        $kho->ngayDat = $request->ngayDat;
+        $kho->nganHang = $request->nganHang;
+
+        $kho->id_user_create = Auth::user()->id;
+        $kho->save();
+
+        if($kho) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã thêm!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deleteV2(Request $request) {
+        $kho = KhoV2::where('id', $request->id)->delete();
+        if($kho) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã xóa!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function editShowV2(Request $request) {
+        $result = KhoV2::where('id', $request->id)->first();
+        if($result) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã load dữ liệu!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function updateV2(Request $request) {
+        $kho = KhoV2::where('id', $request->eid)->update([
+            "id_type_car_detail" => $request->etenXe,
+            "year" => $request->enam,
+            "vin" => $request->evin,
+            "frame" => $request->eframe,
+            "color" => $request->ecolor,
+            "gear" => $request->egear,
+            "machine" => $request->emachine,
+            "seat" => $request->eseat,
+            "fuel" => $request->efuel,
+            "type" => $request->etrangThai,
+            "soDonHang" => $request->esoDonHang,
+            "soBaoLanh" => $request->esoBaoLanh,
+            "ngayNhanXe" => $request->engayNhanXe,
+            "ngayDat" => $request->engayDat,
+            "nganHang" => $request->enganHang
+        ]);
+        if($kho) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã cập nhật!',
                 'code' => 200
             ]);
         } else {

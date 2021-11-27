@@ -13,7 +13,7 @@ class DeNghiCapXangController extends Controller
     //
     public function showCapXang() {
         $lead = User::all();
-        $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->get();
+        $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
         return view('capxang.denghi', ['lead' => $lead, 'deNghi' => $deNghi]);
     }
 
@@ -65,9 +65,9 @@ class DeNghiCapXangController extends Controller
 
     public function showDuyetCapXang() {
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns'))
-            $deNghi = DeNghiCapXang::all();
+            $deNghi = DeNghiCapXang::select('*')->orderBy('id', 'DESC')->get();
         elseif (Auth::user()->hasRole('lead'))   
-            $deNghi = DeNghiCapXang::where('lead_id', Auth::user()->id)->get();
+            $deNghi = DeNghiCapXang::where('lead_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
         return view('capxang.duyet', ['deNghi' => $deNghi]);
     }
 

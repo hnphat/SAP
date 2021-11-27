@@ -145,6 +145,32 @@
                             @endif
                     </ul>
                 </li>
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-car"></i>
+                        <p>
+                            <strong>KHO XE</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('get.kho.v2')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý kho</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Báo cáo</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endif
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-car-side"></i>
@@ -262,7 +288,7 @@
                             <li class="nav-item">
                                 <a href="{{route('capxang.duyet')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Duyệt cấp xăng</p>
+                                    <p>Duyệt nhiên liệu</p>
                                 </a>
                             </li>
                         @endif
