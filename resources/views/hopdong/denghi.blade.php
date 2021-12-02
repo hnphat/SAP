@@ -154,6 +154,14 @@
                                                     <input name="hoaHongMoiGioi" id="hoaHongMoiGioi" value="0" placeholder="Nhập hoa hồng môi giới" type="number" class="form-control"/>
                                                 </div>
                                             </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="text" id="showHoaHongMoiGioi" class="form-control" disabled="disabled" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Họ và tên:</label>
@@ -174,10 +182,11 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <button id="taoMau" class="btn btn-warning">B1. TẠO MẪU</button>
+                                            <button type="button" id="taoMau" class="btn btn-warning">B1. TẠO MẪU</button>
                                         </div>
                                     </div>
                                 </form>
+                                <!-- <button type="button" id="reload"  class="btn btn-info">Tải lại</button><br/><br/> -->
                                 <h5>CÁC LOẠI PHÍ</h5>
                                         <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/>
                                         <table class="table table-bordered table-striped">
@@ -220,9 +229,8 @@
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
-                                        <button id="addCodeHD" class="btn btn-success">B2. ĐỀ NGHỊ HỢP ĐỒNG</button>
-
                             </div>
+                            <button id="deNghiHopDong" class="btn btn-warning">B2. ĐỀ NGHỊ HỢP ĐỒNG</button><br/>
                         </div>
                     </div>
                     <!-- /.card -->
@@ -475,6 +483,129 @@
                 $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
             });
 
+            $('#hoaHongMoiGioi').keyup(function(){
+                var cos = $('#hoaHongMoiGioi').val();
+                $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
+            });
+
+            //load quickly PK Free
+            function loadPKFree(id) {
+                $.ajax({
+                    url: 'management/hd/get/pkfree/' + id,
+                    dataType: 'json',
+                    success: function(response){
+                        // Show package pay
+                        txt = "";
+                        sum = 0;
+                        for(let i = 0; i < response.pkfree.length; i++) {
+                            txt += "<tr>" +
+                                "<td>" + (i+1) + "</td>" +
+                                "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
+                                "</tr>";
+                        }
+                        $("#showPKFREE").html(txt);
+                        // Toast.fire({
+                        //     icon: 'info',
+                        //     title: "Loaded! Free Gift!"
+                        // })
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải"
+                        })
+                    }
+                });
+            }
+
+            //load quickly PK Pay
+            function loadPKPay(id) {
+                $.ajax({
+                    url: 'management/hd/get/pkpay/' + id,
+                    dataType: 'json',
+                    success: function(response){
+                        // Show package pay
+                        txt = "";
+                        sum = 0;
+                        for(i = 0; i < response.pkban.length; i++) {
+                            txt += "<tr>" +
+                                "<td>" + (i+1) + "</td>" +
+                                "<td>" + response.pkban[i].name + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
+                                "<td><button id='delPKPAY' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
+                                "</tr>";
+                            sum += response.pkban[i].cost;
+                        }
+                        $("#showPKPAY").html(txt);
+                        $("#xtongPay").text(formatNumber(sum));
+                        // loadTotal($("select[name=chonHD]").val());
+                        // Toast.fire({
+                        //     icon: 'info',
+                        //     title: "Loaded! Pay Gift!"
+                        // })
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải"
+                        })
+                    }
+                });
+            }
+
+             //load quickly PK Cost
+             function loadPKCost(id) {
+                $.ajax({
+                    url: 'management/hd/get/pkcost/' + id,
+                    dataType: 'json',
+                    success: function(response){
+                        // Show package pay
+                        txt = "";
+                        sum = 0;
+                        for(let i = 0; i < response.pkcost.length; i++) {
+                            txt += "<tr>" +
+                                "<td>" + (i+1) + "</td>" +
+                                "<td>" + response.pkcost[i].name + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
+                                "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
+                                "</tr>";
+                            sum += response.pkcost[i].cost;
+                        }
+                        $("#showPKCOST").html(txt);
+                        $("#xtongCost").text(formatNumber(sum));
+                        // loadTotal($("select[name=chonHD]").val());
+                        // Toast.fire({
+                        //     icon: 'info',
+                        //     title: "Loaded! Cost Gift!"
+                        // })
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải"
+                        })
+                    }
+                });
+            }
+
+            //Load total
+            function loadTotal(id) {
+                $.ajax({
+                    url: 'management/hd/get/total/' + id,
+                    dataType: 'text',
+                    success: function(response){
+                        $("#xtotal").text(formatNumber(response));
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tổng cộng chi phí"
+                        })
+                    }
+                });
+            }
+
             $("#taoMau").click(function(e){
                 e.preventDefault();
                 if ($("select[name=chonXe]").val() == 0) {
@@ -502,6 +633,9 @@
                             })
                             $("input[name=idHopDong]").val(response.idInserted);
                             $("#taoMau").prop('disabled', true);
+                            loadPKFree(response.idInserted);
+                            loadPKPay(response.idInserted);
+                            loadPKCost(response.idInserted);
                         },
                         error: function() {
                             Toast.fire({
@@ -513,6 +647,197 @@
                 }
             });
 
+             
+            $('#reload').click(function(e) {
+                e.preventDefault();
+                loadPKFree($("input[name=idHopDong]").val());
+                loadPKPay($("input[name=idHopDong]").val());
+                loadPKCost($("input[name=idHopDong]").val());
+            })
+
+            //Add show pk pay
+            $("#pkPayAdd").click(function(){
+               $('input[name=idHD]').val($("input[name=idHopDong]").val());
+            });
+
+            //Add show pk pay
+            $("#pkFreeAdd").click(function(){
+                $('input[name=idHD2]').val($("input[name=idHopDong]").val());
+            });
+
+            //Add show pk cost
+            $("#pkCostAdd").click(function(){
+                $('input[name=idHD3]').val($("input[name=idHopDong]").val());
+            });
+
+            $("#btnAddPKCost").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/add/pkcost/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#addPkFormCost").serialize(),
+                    success: function(response) {
+                        $("#addPkFormCost")[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: " Đã thêm chi phí "
+                        })
+                        loadPKCost($("input[name=idHopDong]").val());
+                        loadTotal($("input[name=idHopDong]").val());
+                        $("#addPkCost").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể thêm!"
+                        })
+                    }
+                });
+            });
+
+            // Add data
+            $("#btnAddPK").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/add/pkpay/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#addPkFormPay").serialize(),
+                    success: function(response) {
+                        $("#addPkFormPay")[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: " Đã thêm phụ kiện bán "
+                        })
+                        loadPKPay($("input[name=idHopDong]").val());
+                        loadTotal($("input[name=idHopDong]").val());
+                        $("#addPkPay").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể thêm!"
+                        })
+                    }
+                });
+            });
+
+            // Add data
+            $("#btnAddPKFree").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/add/pkfree/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#addPkFormFree").serialize(),
+                    success: function(response) {
+                        $("#addPkFormFree")[0].reset();
+                        Toast.fire({
+                            icon: 'success',
+                            title: " Đã thêm phụ kiện quà tặng miễn phí "
+                        })
+                        loadPKFree($("input[name=idHopDong]").val());
+                        loadTotal($("input[name=idHopDong]").val());
+                        $("#addPkFree").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể thêm"
+                        })
+                    }
+                });
+            });
+
+
+            // Delete PK Pay
+            $(document).on('click','#delPKPAY', function(){
+                if(confirm('Bạn có chắc muốn xóa phụ kiện bán?')) {
+                    $.ajax({
+                        url: "{{url('management/hd/delete/pkpay/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKPay($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#delPKFREE', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/hd/delete/pkfree/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKFree($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#delPKCOST', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/hd/delete/pkcost/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKCost($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection

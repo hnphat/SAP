@@ -272,248 +272,6 @@ class HDController extends Controller
         }
     }
 
-    public function getpkpay($id) {
-        $pkban = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
-            ['sale_off.id_sale','=', $id],
-            ['package.type','=','pay']
-        ])->get();
-        if($pkban) {
-            return response()->json([
-                'message' => 'Get PK Pay Success!',
-                'code' => 200,
-                'pkban' => $pkban
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function deletePkPay(Request $request) {
-        $check = Sale::find($request->sale);
-        if ($check->lead_sale_check != 1 && $check->complete != 1)
-                $result = SaleOff::where([
-                    ['id_sale','=', $request->sale],
-                    ['id_bh_pk_package','=', $request->id]
-                ])->delete();
-        if($result) {
-            return response()->json([
-                'message' => 'Delete PK Pay successfully!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function getpkfree($id) {
-        $pkban = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
-            ['sale_off.id_sale','=', $id],
-            ['package.type','=','free']
-        ])->get();
-        if($pkban) {
-            return response()->json([
-                'message' => 'Get PK Free Success!',
-                'code' => 200,
-                'pkfree' => $pkban
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function getpkcost($id) {
-        $pkcost = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
-            ['sale_off.id_sale','=', $id],
-            ['package.type','=','cost']
-        ])->get();
-        if($pkcost) {
-            return response()->json([
-                'message' => 'Get PK Cost Success!',
-                'code' => 200,
-                'pkcost' => $pkcost
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function deletePkFree(Request $request) {
-        $check = Sale::find($request->sale);
-        if ($check->lead_sale_check != 1 && $check->complete != 1)
-            $result = SaleOff::where([
-                ['id_sale','=', $request->sale],
-                ['id_bh_pk_package','=', $request->id]
-            ])->delete();
-        if($result) {
-            return response()->json([
-                'message' => 'Delete PK Free successfully!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function deletePkCost(Request $request) {
-        $check = Sale::find($request->sale);
-        if ($check->lead_sale_check != 1 && $check->complete != 1)
-            $result = SaleOff::where([
-                ['id_sale','=', $request->sale],
-                ['id_bh_pk_package','=', $request->id]
-            ])->delete();
-        if($result) {
-            return response()->json([
-                'message' => 'Delete PK Cost successfully!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
-    }
-
-    public function addPkPay(Request $request){
-        $check = Sale::find($request->idHD);
-        if ($check->lead_sale_check != 1) {
-            $pkpay = new BhPkPackage();
-            $pkpay->name = $request->namePkPay;
-            $pkpay->cost = $request->giaPkPay;
-            $pkpay->id_user_create = Auth::user()->id;
-            $pkpay->type = 'pay';
-            $pkpay->save();
-            if($pkpay) {
-                $saleOff = new SaleOff;
-                $saleOff->id_sale = $request->idHD;
-                $saleOff->id_bh_pk_package = $pkpay->id;
-                $saleOff->save();
-                if($saleOff) {
-                    return response()->json([
-                        'message' => 'Tạo phụ kiện bán thành công!',
-                        'code' => 200
-                    ]);
-                } else {
-                    return response()->json([
-                        'message' => 'Internal server fail!',
-                        'code' => 500
-                    ]);
-                }
-            } else {
-                return response()->json([
-                    'message' => 'Internal server fail!',
-                    'code' => 500
-                ]);
-            }
-        }
-        return response()->json([
-            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
-            'code' => 200
-        ]);
-    }
-
-    public function addPkFree(Request $request){
-        $check = Sale::find($request->idHD2);
-        if ($check->lead_sale_check != 1) {
-            $pkpay = new BhPkPackage();
-            $pkpay->name = $request->namePkFree;
-            $pkpay->cost = $request->giaPkFree;
-            $pkpay->id_user_create = Auth::user()->id;
-            $pkpay->type = 'free';
-            $pkpay->save();
-            if($pkpay) {
-                $saleOff = new SaleOff;
-                $saleOff->id_sale = $request->idHD2;
-                $saleOff->id_bh_pk_package = $pkpay->id;
-                $saleOff->save();
-                if($saleOff) {
-                    return response()->json([
-                        'message' => 'Tạo phụ kiện tặng thành công!',
-                        'code' => 200
-                    ]);
-                } else {
-                    return response()->json([
-                        'message' => 'Internal server fail!',
-                        'code' => 500
-                    ]);
-                }
-            } else {
-                return response()->json([
-                    'message' => 'Internal server fail!',
-                    'code' => 500
-                ]);
-            }
-        }
-        return response()->json([
-            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
-            'code' => 200
-        ]);
-    }
-
-    public function addPkCost(Request $request){
-        $check = Sale::find($request->idHD3);
-        if ($check->lead_sale_check != 1) {
-            $pkpay = new BhPkPackage();
-            $pkpay->name = $request->namePkCost;
-            $pkpay->cost = $request->giaPkCost;
-            $pkpay->id_user_create = Auth::user()->id;
-            $pkpay->type = 'cost';
-            $pkpay->save();
-            if($pkpay) {
-                $saleOff = new SaleOff;
-                $saleOff->id_sale = $request->idHD3;
-                $saleOff->id_bh_pk_package = $pkpay->id;
-                $saleOff->save();
-                if($saleOff) {
-                    return response()->json([
-                        'message' => 'Tạo các chi phí thành công!',
-                        'code' => 200
-                    ]);
-                } else {
-                    return response()->json([
-                        'message' => 'Internal server fail!',
-                        'code' => 500
-                    ]);
-                }
-            } else {
-                return response()->json([
-                    'message' => 'Internal server fail!',
-                    'code' => 500
-                ]);
-            }
-        }
-        return response()->json([
-            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
-            'code' => 200
-        ]);
-    }
-
-    public function getTotal($id){
-        $sale = Sale::find($id);
-        $sum = 0;
-        $package = $sale->package;
-        foreach($package as $row) {
-            if ($row->type == 'free') continue;
-            $sum += $row->cost;
-        }
-        echo $sum + $sale->requestHd->giaXe;
-    }
-
     public function test() {
 //        $phpWord = new PhpWord();
 //
@@ -1369,5 +1127,257 @@ class HDController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    public function getpkfree($id) {
+        $pkban = SaleOffV2::select('saleoffv2.*','package.name as name')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+            ['saleoffv2.id_hd','=', $id],
+            ['package.type','=','free']
+        ])->get();
+        if($pkban) {
+            return response()->json([
+                'message' => 'Get PK Free Success!',
+                'code' => 200,
+                'pkfree' => $pkban
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getpkpay($id) {
+        $pkban = SaleOffV2::select('package.*')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+            ['saleoffv2.id_hd','=', $id],
+            ['package.type','=','pay']
+        ])->get();
+        if($pkban) {
+            return response()->json([
+                'message' => 'Get PK Pay Success!',
+                'code' => 200,
+                'pkban' => $pkban
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getpkcost($id) {
+        $pkcost = SaleOffV2::select('package.*')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+            ['saleoffv2.id_hd','=', $id],
+            ['package.type','=','cost']
+        ])->get();
+        if($pkcost) {
+            return response()->json([
+                'message' => 'Get PK Cost Success!',
+                'code' => 200,
+                'pkcost' => $pkcost
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function addPkCost(Request $request){
+        $check = HopDong::find($request->idHD3);
+        if ($check->lead_check != 1) {
+            $pkpay = new PackageV2;
+            $pkpay->name = $request->namePkCost;
+            $pkpay->cost = $request->giaPkCost;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->type = 'cost';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOffV2;
+                $saleOff->id_hd = $request->idHD3;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    return response()->json([
+                        'message' => 'Tạo các chi phí thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
+    }
+
+    public function addPkPay(Request $request){
+        $check = HopDong::find($request->idHD);
+        if ($check->lead_check != 1) {
+            $pkpay = new PackageV2;
+            $pkpay->name = $request->namePkPay;
+            $pkpay->cost = $request->giaPkPay;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->type = 'pay';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOffV2;
+                $saleOff->id_hd = $request->idHD;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    return response()->json([
+                        'message' => 'Tạo phụ kiện bán thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
+    }
+
+    public function addPkFree(Request $request){
+        $check = HopDong::find($request->idHD2);
+        if ($check->lead_check != 1) {
+            $pkpay = new PackageV2;
+            $pkpay->name = $request->namePkFree;
+            $pkpay->cost = $request->giaPkFree;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->type = 'free';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOffV2;
+                $saleOff->id_hd = $request->idHD2;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    return response()->json([
+                        'message' => 'Tạo phụ kiện tặng thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
+    }
+
+    public function deletePkPay(Request $request) {
+        $check = HopDong::find($request->sale);
+        if ($check->lead_check != 1) {
+            $result = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->delete();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Delete PK Pay successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }   
+    }
+
+  
+    public function deletePkFree(Request $request) {
+        $check = HopDong::find($request->sale);
+        if ($check->lead_check != 1) {
+            $result = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->delete();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Delete PK Free successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
+    public function deletePkCost(Request $request) {
+        $check = HopDong::find($request->sale);
+        if ($check->lead_check != 1) {
+            $result = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->delete();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Delete PK Cost successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }      
+    }
+
+    public function getTotal($id){
+        $sale = HopDong::find($id);
+        $sum = 0;
+        $package = $sale->package;
+        foreach($package as $row) {
+            if ($row->type == 'free') continue;
+            $sum += $row->cost;
+        }
+        echo $sum + $sale->giaXe;
     }
 }
