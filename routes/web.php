@@ -159,6 +159,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // --- 
         Route::get('banle/phuluc/canhan/down/{id}','HDController@inPhuLucCaNhan');
         Route::get('banle/phuluc/congty/down/{id}','HDController@inPhuLucCongTy');
+
+
+
+        //-------------- HD v2
+        Route::get('hd/denghi','HDController@getHDDeNghi')->name('hd.denghi');
+        Route::post('hd/taomau','HDController@taoMau');
+
+
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

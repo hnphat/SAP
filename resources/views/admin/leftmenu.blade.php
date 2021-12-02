@@ -102,6 +102,12 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{route('hd.denghi')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Đề nghị t/h hợp đồng</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{route('hd.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Hợp đồng</p>

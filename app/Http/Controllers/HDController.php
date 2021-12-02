@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\BhPkPackage;
+use App\PackageV2;
+use App\SaleOffV2;
 use App\CarSale;
 use App\Guest;
 use App\RequestHD;
 use App\Sale;
+use App\KhoV2;
+use App\HopDong;
 use App\SaleOff;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
@@ -1254,5 +1258,116 @@ class HDController extends Controller
             'Content-Type: application/docx',
         );
         return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+
+    //------------------------- HD V2
+    public function getHDDeNghi() {
+        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
+        return view('hopdong.denghi', ['xeList' => $xeList]);
+    }
+
+
+    public function taoMau(Request $request) {
+        $code = new HopDong();
+        $code->id_user_create = Auth::user()->id;
+        $code->id_car_sale = $request->chonXe;
+        $code->mau = $request->chonMauXe;
+        $code->tienCoc = $request->tamUng;
+        $code->giaXe = $request->giaBanXe;
+        $code->giaNiemYet = $request->giaNiemYet;
+        $code->id_guest = $request->khachHang;
+        $code->hoaHongMoiGioi = $request->hoaHongMoiGioi;
+        $code->hoTen = $request->hoTen;
+        $code->CMND = $request->cmnd;
+        $code->dienThoai = $request->dienThoai;
+        $code->save();
+        $idSale = $code->id;
+
+        // --------------- Add 05 phụ kiện theo xe
+        $pkpay = new PackageV2;
+        $pkpay->name = "Áo trùm xe";
+        $pkpay->cost = 0;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'free';
+        $pkpay->save();
+
+        if($pkpay) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+        }
+
+        $pkpay = new PackageV2;
+        $pkpay->name = "Bao tay lái";
+        $pkpay->cost = 0;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'free';
+        $pkpay->save();
+
+        if($pkpay) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+        }
+
+        $pkpay = new PackageV2;
+        $pkpay->name = "Tappi sàn";
+        $pkpay->cost = 0;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'free';
+        $pkpay->save();
+
+        if($pkpay) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+        }
+
+        $pkpay = new PackageV2;
+        $pkpay->name = "Khăn lau xe";
+        $pkpay->cost = 0;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'free';
+        $pkpay->save();
+
+        if($pkpay) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+        }
+
+        $pkpay = new PackageV2;
+        $pkpay->name = "Bình chữa cháy";
+        $pkpay->cost = 0;
+        $pkpay->id_user_create = Auth::user()->id;
+        $pkpay->type = 'free';
+        $pkpay->save();
+
+        if($pkpay) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkpay->id;
+            $saleOff->save();
+        }
+
+        // --------------- End add 05 phụ kiện theo xe
+        if($code) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã tạo mẫu!',
+                'code' => 200,
+                'idInserted' => $idSale
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
     }
 }
