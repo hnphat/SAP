@@ -168,6 +168,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('delete/pkfree/','HDController@deletePkFree');
         Route::post('delete/pkcost/','HDController@deletePkCost');
 
+        //----- quản lý đề nghị
+        Route::get('hd/denghi/quanly','HDController@getHDQuanLyDeNghi')->name('hd.quanly.denghi');
+        Route::get('hd/denghi/chondenghi/{id}','HDController@chonDeNghi');
+        Route::get('hd/danhsach','HDController@getDanhSach');
+        Route::post('hd/denghi/guidenghi','HDController@guiDeNghi');
+        Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
+
+        //----- phê duyệt đề nghị
+        Route::get('hd/denghi/pheduyet','HDController@getHDPheDuyetDeNghi')->name('hd.quanly.pheduyet');
 
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){

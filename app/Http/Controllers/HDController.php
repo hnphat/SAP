@@ -16,6 +16,7 @@ use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Illuminate\Support\Facades\Log;
 
 class HDController extends Controller
 {
@@ -1025,6 +1026,43 @@ class HDController extends Controller
         return view('hopdong.denghi', ['xeList' => $xeList]);
     }
 
+    public function getHDQuanLyDeNghi() {
+        $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
+        ->orderby('id','desc')->get();
+        return view('hopdong.quanlydenghi', ['hopdong' => $hopdong]);
+    }
+
+    public function getHDPheDuyetDeNghi() {
+        $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
+        ->orderby('id','desc')->get();
+        Log::debug('Xin chao.');
+        return view('hopdong.pheduyet', ['hopdong' => $hopdong]);
+    }
+
+    public function getDanhSach() {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale'))
+            $result = HopDong::select('*')->orderby('id','desc')->get();
+        else 
+            $result = HopDong::select('*')->where('id_user_create', Auth::user()->id)
+            ->orderby('id','desc')->get();
+        if($result) {
+                echo "<option value='0'>Chọn</option>";
+            foreach($result as $row){
+                if($row->lead_check_cancel	== true) 
+                echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy)</option>";
+                elseif ($row->requestCheck == false)
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi)</option>";
+                elseif($row->requestCheck == true && $row->admin_check == false) 
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt)</option>";
+                elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt)</option>";
+                elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt)</option>";
+            }
+        } else {
+            echo "<option value='0'>Không tìm thấy</option>";
+        }
+    }
 
     public function taoMau(Request $request) {
         $code = new HopDong();
@@ -1302,7 +1340,7 @@ class HDController extends Controller
 
     public function deletePkPay(Request $request) {
         $check = HopDong::find($request->sale);
-        if ($check->lead_check != 1) {
+        if ($check->lead_check != 1 && $check->requestCheck != 1) {
             $result = SaleOffV2::where([
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
@@ -1326,7 +1364,7 @@ class HDController extends Controller
   
     public function deletePkFree(Request $request) {
         $check = HopDong::find($request->sale);
-        if ($check->lead_check != 1) {
+        if ($check->lead_check != 1 && $check->requestCheck != 1) {
             $result = SaleOffV2::where([
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
@@ -1349,7 +1387,7 @@ class HDController extends Controller
 
     public function deletePkCost(Request $request) {
         $check = HopDong::find($request->sale);
-        if ($check->lead_check != 1) {
+        if ($check->lead_check != 1 && $check->requestCheck != 1) {
             $result = SaleOffV2::where([
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
@@ -1379,5 +1417,93 @@ class HDController extends Controller
             $sum += $row->cost;
         }
         echo $sum + $sale->giaXe;
+    }
+
+    public function chonDeNghi($id){
+        $result = HopDong::select('hop_dong.*','c.name as namecar', 'g.name as guestname', 
+        'g.phone', 'g.address', 'g.daiDien', 'g.chucVu', 'g.mst', 'g.cmnd', 'g.ngayCap', 'g.noiCap', 
+        'g.ngaySinh')
+            ->join('guest as g','hop_dong.id_guest','=','g.id')
+            ->join('type_car_detail as c','hop_dong.id_car_sale','=','c.id')
+            // ->where('hop_dong.id_user_create', Auth::user()->id)
+            ->where('hop_dong.id', $id)
+            ->orderby('hop_dong.id','desc')
+            ->first();
+
+            // $result = HopDong::select('hop_dong.*','c.name as namecar', 'g.name as guestname', 
+            // 'g.phone', 'g.address', 'g.daiDien', 'g.chucVu', 'g.mst', 'g.cmnd', 'g.ngayCap', 'g.noiCap', 
+            // 'g.ngaySinh', 'k.year', 'k.vin', 'k.frame', 'k.color', 'k.gear', 'k.machine', 'k.seat', 'k.fuel',
+            // 'k.type')
+            //     ->join('guest as g','hop_dong.id_guest','=','g.id')
+            //     ->join('type_car_detail as c','hop_dong.id_car_sale','=','c.id')
+            //     ->join('kho_v2 as k','hop_dong.id_car_kho','=','k.id')
+            //     // ->where('hop_dong.id_user_create', Auth::user()->id)
+            //     ->where('hop_dong.id', $id)
+            //     ->orderby('hop_dong.id','desc')
+            //     ->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get HD Success!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function guiDeNghi(Request $request){
+        $result = HopDong::find($request->idHopDong);
+        $result->requestCheck = true;
+        $result->tienCoc = $request->tamUng;
+        $result->giaXe = $request->giaBanXe;
+        $result->giaNiemYet = $request->giaNiemYet;
+        $result->hoaHongMoiGioi = $request->hoaHongMoiGioi;
+        $result->hoTen = $request->hoTen;
+        $result->CMND = $request->cmnd;
+        $result->dienThoai = $request->dienThoai;
+        $result->save();
+        if($result) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã gửi đề nghị hợp đồng!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function xoaDeNghi(Request $request){
+        $result = HopDong::find($request->id);
+        if($result->admin_check == false && $result->lead_check == false) {
+            $result->delete();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã xóa!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'type' => 'info',
+            'message' => 'Không thể xóa!',
+            'code' => 200
+        ]);
     }
 }

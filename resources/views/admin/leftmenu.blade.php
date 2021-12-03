@@ -108,6 +108,24 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{route('hd.quanly.denghi')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Quản lý đề nghị</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('hd.quanly.pheduyet')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Phê duyệt đề nghị</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('hd.quanly.denghi')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Phê duyệt hợp đồng</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{route('hd.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Hợp đồng</p>

@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-   Quản lý hợp đồng
+   Quản lý đề nghị
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Đề nghị thực hiện hợp đồng</strong></h1>
+                        <h1 class="m-0"><strong>Quản lý đề nghị hợp đồng</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Kinh doanh</li>
-                            <li class="breadcrumb-item active">Đề nghị thực hiện hợp đồng</li>
+                            <li class="breadcrumb-item active">Quản lý đề nghị hợp đồng</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -45,24 +45,13 @@
                             <div class="tab-pane fade show active" id="so-00" role="tabpanel" aria-labelledby="so-00-tab">
                                 <form id="addPkForm">
                                     {{csrf_field()}}
-                                    <input type="hidden" name="idGuest" id="idGuest">
-                                    <input type="hidden" name="idCarSale" id="idCarSale">
                                     <input type="hidden" name="idHopDong" id="idHopDong">
                                     <div class="row">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-12">
                                             <div class="form-group">
-                                                <label>Loại khách hàng</label>
-                                                <select name="loaiKhachHang" id="loaiKhachHang" class="form-control">
-                                                    <option value="0">Chọn</option>
-                                                    <option value="personal">Cá nhân</option>
-                                                    <option value="company">Công ty</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label>Chọn khách hàng</label>
-                                                <select name="khachHang" id="khachHang" class="form-control">
+                                                <label>Chọn đề nghị</label>
+                                                <select name="chonDeNghi" id="chonDeNghi" class="form-control">
+                                                    
                                                 </select>
                                             </div>
                                         </div>
@@ -79,13 +68,8 @@
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label>Chọn xe</label>
-                                                    <select name="chonXe" id="chonXe" class="form-control">
-                                                        <option value="0">Chọn</option>
-                                                        @foreach($xeList as $row)
-                                                            <option value="{{$row->id}}">{{$row->name}}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label>Xe bán</label>
+                                                    <input id="xeBan" class="form-control" type="text" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -105,19 +89,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Màu sắc</label>
-                                                    <select name="chonMauXe" id="chonMauXe" class="form-control">
-                                                        <option value="0">Chọn</option>
-                                                        <option value="Đỏ">Đỏ</option>
-                                                        <option value="Xanh">Xanh</option>
-                                                        <option value="Trắng">Trắng</option>
-                                                        <option value="Vàng">Vàng</option>
-                                                        <option value="Ghi">Ghi</option>
-                                                        <option value="Nâu">Nâu</option>
-                                                        <option value="Bạc">Bạc</option>
-                                                        <option value="Xám">Xám</option>
-                                                        <option value="Đen">Đen</option>
-                                                        <option value="Vàng cát">Vàng cát</option>
-                                                    </select>
+                                                    <input id="mauSac" class="form-control" type="text" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -181,9 +153,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <button type="button" id="taoMau" class="btn btn-warning">B1. TẠO MẪU</button>
-                                        </div>
                                     </div>
                                 </form>
                                 <!-- <button type="button" id="reload"  class="btn btn-info">Tải lại</button><br/><br/> -->
@@ -200,7 +169,7 @@
                                             </tbody>
                                         </table>
                                         <p>Tổng cộng: <strong id="xtongCost"></strong></p>
-                                        <!-- <h5>PHỤ KIỆN BÁN</h5>
+                                        <h5>PHỤ KIỆN BÁN</h5>
                                         <button id="pkPayAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkPay"><span class="fas fa-plus-circle"></span></button><br/><br/>
                                         <table class="table table-striped table-bordered">
                                             <thead>
@@ -214,8 +183,8 @@
                                                 </tbody>
                                             </thead>
                                         </table>
-                                        <p>Tổng cộng: <strong id="xtongPay"></strong></p> -->
-                                        <!-- <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
+                                        <p>Tổng cộng: <strong id="xtongPay"></strong></p>
+                                        <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
                                         <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/>
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
@@ -225,13 +194,15 @@
                                             </tr>
                                             <tbody id="showPKFREE">
                                             </tbody>
-                                        </table> 
-                            -->
+                                        </table>
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
                             </div>
-                            <a href="{{route('hd.quanly.denghi')}}" class="btn btn-warning">B2. QUẢN LÝ ĐỀ NGHỊ</a><br/>
+                            <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
+                            <button id="deNghiHuy" class="btn btn-warning">YÊU CẦU HỦY</button>
+                            <button id="deNghiChinhSua" class="btn btn-success">YÊU CẦU CHỈNH SỬA</button>
+                            <button id="xoaDeNghi" class="btn btn-danger">XÓA</button>
                         </div>
                     </div>
                     <!-- /.card -->
@@ -391,83 +362,44 @@
 
         // show data
         $(document).ready(function() {
-            // get type guest
-            $("#loaiKhachHang").change(function (){
-                if ($("#loaiKhachHang").val() == 'personal') {
-                    $.ajax({
-                        url: "management/hd/get/guest/personal/",
-                        dataType: "text",
-                        success: function(response) {
-                            $('#khachHang').html(response);
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không lấy được dữ liệu khách hàng cá nhân"
-                            })
-                        }
-                    });
-                }
-                if ($("#loaiKhachHang").val() == 'company') {
-                    $.ajax({
-                        url: "management/hd/get/guest/company/",
-                        dataType: "text",
-                        success: function(response) {
-                            $('#khachHang').html(response);
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không lấy được dữ liệu khách hàng doanh nghiệp"
-                            })
-                        }
-                    });
-                }
-            });
+            // default set
+            $("#deNghiHopDong").hide();
+            $("#deNghiHuy").hide();
+            $("#deNghiChinhSua").hide();
+            $("#xoaDeNghi").hide();
+            $("#pkCostAdd").hide();
+            $("#pkFreeAdd").hide();
+            $("#pkPayAdd").hide();
 
-            $("#khachHang").change(function(){
+            // load list hợp đồng
+            function loadList() {
                 $.ajax({
-                    url: "management/hd/get/guest/" + $("select[name=khachHang]").val(),
-                    dataType: "json",
+                    url: "management/hd/hd/danhsach/",
+                    dataType: "text",
                     success: function(response) {
-                        if (response.code != 500) {
-                            $("#sHoTen").text(response.data.name);
-                            $("#sDienThoai").text(response.data.phone);
-                            $("#smst").text(response.data.mst);
-                            $("#scmnd").text(response.data.cmnd);
-                            $("#sNgayCap").text(response.data.ngayCap);
-                            $("#sNoiCap").text(response.data.noiCap);
-                            $("#sNgaySinh").text(response.data.ngaySinh);
-                            $("#sDiaChi").text(response.data.address);
-                            $("#sDaiDien").text(response.data.daiDien);
-                            $("#sChucVu").text(response.data.chucVu);
-                            $("input[name=idGuest]").val(response.data.id);
-                        } else {
-                            Toast.fire({
-                                icon: 'info',
-                                title: "Chọn khách hàng để biết thông tin"
-                            })
-                            $("#sHoTen").text("");
-                            $("#sDienThoai").text("");
-                            $("#smst").text("");
-                            $("#scmnd").text("");
-                            $("#sNgayCap").text("");
-                            $("#sNoiCap").text("");
-                            $("#sNgaySinh").text("");
-                            $("#sDiaChi").text("");
-                            $("#sDaiDien").text("");
-                            $("#sChucVu").text("");
-                            $("input[name=idGuest]").val("");
-                        }
+                        $('#chonDeNghi').html(response);
                     },
                     error: function() {
                         Toast.fire({
                             icon: 'warning',
-                            title: "Không lấy được dữ liệu khách hàng doanh nghiệp"
+                            title: "Không lấy được danh sách hợp đồng"
                         })
                     }
                 });
-            });
+            }
+            loadList();
+            // --- end load list hợp đồng
+            //--- end default
+            function showSoTien() {
+                var cos = $('#tamUng').val();
+                $('#showCost').val("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#giaBanXe').val();
+                $('#showCostCar').val("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#giaNiemYet').val();
+                $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#hoaHongMoiGioi').val();
+                $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
+            }
 
             $('#tamUng').keyup(function(){
                 var cos = $('#tamUng').val();
@@ -487,6 +419,195 @@
             $('#hoaHongMoiGioi').keyup(function(){
                 var cos = $('#hoaHongMoiGioi').val();
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
+            });
+
+            function reloadStatus() {
+                $.ajax({
+                    url: "management/hd/hd/denghi/chondenghi/" + $("select[name=chonDeNghi]").val(),
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code != 500) {
+                            // BUTTON
+                            if (response.data.requestCheck == false) {
+                                $("#deNghiHopDong").show();
+                                $("#deNghiHuy").hide();
+                                $("#deNghiChinhSua").hide();
+                                $("#xoaDeNghi").show();
+                                $("#pkCostAdd").show();
+                                $("#pkFreeAdd").show();
+                                $("#pkPayAdd").show();
+
+                                $("#tamUng").prop('disabled', false);
+                                $("#giaBanXe").prop('disabled', false);
+                                $("#giaNiemYet").prop('disabled', false);
+                                $("#hoaHongMoiGioi").prop('disabled', false);
+                                $("#hoTen").prop('disabled', false);
+                                $("#cmnd").prop('disabled', false);
+                                $("#dienThoai").prop('disabled', false);
+
+                            } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
+                                $("#deNghiHopDong").hide();
+                                $("#deNghiHuy").hide();
+                                $("#deNghiChinhSua").hide();
+                                $("#xoaDeNghi").show();
+                                $("#pkCostAdd").hide();
+                                $("#pkFreeAdd").hide();
+                                $("#pkPayAdd").hide();
+
+                                $("#tamUng").prop('disabled', true);
+                                $("#giaBanXe").prop('disabled', true);
+                                $("#giaNiemYet").prop('disabled', true);
+                                $("#hoaHongMoiGioi").prop('disabled', true);
+                                $("#hoTen").prop('disabled', true);
+                                $("#cmnd").prop('disabled', true);
+                                $("#dienThoai").prop('disabled', true);
+                            } else if (response.data.requestCheck == true 
+                            && response.data.admin_check == true && response.data.lead_check == false) {
+                                $("#deNghiHopDong").hide();
+                                $("#deNghiHuy").hide();
+                                $("#deNghiChinhSua").show();
+                                $("#xoaDeNghi").hide();
+                                $("#pkCostAdd").hide();
+                                $("#pkFreeAdd").hide();
+                                $("#pkPayAdd").hide();
+                                $("#tamUng").prop('disabled', true);
+                                $("#giaBanXe").prop('disabled', true);
+                                $("#giaNiemYet").prop('disabled', true);
+                                $("#hoaHongMoiGioi").prop('disabled', true);
+                                $("#hoTen").prop('disabled', true);
+                                $("#cmnd").prop('disabled', true);
+                                $("#dienThoai").prop('disabled', true);
+                            } else if (response.data.requestCheck == true 
+                            && response.data.admin_check == true && response.data.lead_check == true) {
+                                $("#deNghiHopDong").hide();
+                                $("#deNghiHuy").show();
+                                $("#xoaDeNghi").hide();
+                                $("#pkCostAdd").hide();
+                                $("#pkFreeAdd").hide();
+                                $("#pkPayAdd").hide();
+                                $("#tamUng").prop('disabled', true);
+                                $("#giaBanXe").prop('disabled', true);
+                                $("#giaNiemYet").prop('disabled', true);
+                                $("#hoaHongMoiGioi").prop('disabled', true);
+                                $("#hoTen").prop('disabled', true);
+                                $("#cmnd").prop('disabled', true);
+                                $("#dienThoai").prop('disabled', true);
+                            } else {
+                                $("#deNghiHopDong").hide();
+                                $("#deNghiHuy").hide();
+                                $("#deNghiChinhSua").hide();
+                                $("#xoaDeNghi").hide();
+                                $("#pkCostAdd").hide();
+                                $("#pkFreeAdd").hide();
+                                $("#pkPayAdd").hide();
+                                $("#tamUng").prop('disabled', true);
+                                $("#giaBanXe").prop('disabled', true);
+                                $("#giaNiemYet").prop('disabled', true);
+                                $("#hoaHongMoiGioi").prop('disabled', true);
+                                $("#hoTen").prop('disabled', true);
+                                $("#cmnd").prop('disabled', true);
+                                $("#dienThoai").prop('disabled', true);
+                            }
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không lấy được dữ liệu"
+                        })
+                    }
+                });
+            }
+
+            $("#chonDeNghi").change(function(){
+                $.ajax({
+                    url: "management/hd/hd/denghi/chondenghi/" + $("select[name=chonDeNghi]").val(),
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code != 500) {
+                            $("#sHoTen").text(response.data.guestname);
+                            $("#sDienThoai").text(response.data.phone);
+                            $("#smst").text(response.data.mst);
+                            $("#scmnd").text(response.data.cmnd);
+                            $("#sNgayCap").text(response.data.ngayCap);
+                            $("#sNoiCap").text(response.data.noiCap);
+                            $("#sNgaySinh").text(response.data.ngaySinh);
+                            $("#sDiaChi").text(response.data.address);
+                            $("#sDaiDien").text(response.data.daiDien);
+                            $("#sChucVu").text(response.data.chucVu);
+                            $("#mauSac").val(response.data.mau);
+                            $("#xeBan").val(response.data.namecar);
+                            $("#tamUng").val(response.data.tienCoc);
+                            $("#giaBanXe").val(response.data.giaXe);
+                            $("#giaNiemYet").val(response.data.giaNiemYet);
+                            $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
+                            $("#hoTen").val(response.data.hoTen);
+                            $("#cmnd").val(response.data.cmnd);
+                            $("#dienThoai").val(response.data.dienThoai);
+                            $("input[name=idHopDong]").val(response.data.id);
+
+                            // BUTTON
+                            reloadStatus();
+                            showSoTien();
+                            Toast.fire({
+                                icon: 'info',
+                                title: "Đã load dữ liệu"
+                            })
+                            loadPKFree(response.data.id);
+                            loadPKPay(response.data.id);
+                            loadPKCost(response.data.id);
+                            loadTotal(response.data.id);
+                        } else {
+                            Toast.fire({
+                                icon: 'info',
+                                title: "Chọn đề nghị để biết thông tin"
+                            })
+                            $("#sHoTen").text("");
+                            $("#sDienThoai").text("");
+                            $("#smst").text("");
+                            $("#scmnd").text("");
+                            $("#sNgayCap").text("");
+                            $("#sNoiCap").text("");
+                            $("#sNgaySinh").text("");
+                            $("#sDiaChi").text("");
+                            $("#sDaiDien").text("");
+                            $("#sChucVu").text("");
+                            $("#mauSac").val("");
+                            $("#xeBan").val("");
+                            $("#tamUng").val("");
+                            $("#giaBanXe").val("");
+                            $("#giaNiemYet").val("");
+                            $("#hoaHongMoiGioi").val("");
+                            $("#hoTen").val("");
+                            $("#cmnd").val("");
+                            $("#dienThoai").val("");
+                            loadPKFree(null);
+                            loadPKPay(null);
+                            loadPKCost(null);
+                            $("#deNghiHopDong").hide();
+                            $("#deNghiHuy").hide();
+                            $("#deNghiChinhSua").hide();
+                            $("#xoaDeNghi").hide();
+                            $("#deNghiHopDong").hide();
+                            $("#pkCostAdd").hide();
+                            $("#pkFreeAdd").hide();
+                            $("#pkPayAdd").hide();
+                            $("#tamUng").prop('disabled', true);
+                            $("#giaBanXe").prop('disabled', true);
+                            $("#giaNiemYet").prop('disabled', true);
+                            $("#hoaHongMoiGioi").prop('disabled', true);
+                            $("#hoTen").prop('disabled', true);
+                            $("#cmnd").prop('disabled', true);
+                            $("#dienThoai").prop('disabled', true);
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không lấy được dữ liệu"
+                        })
+                    }
+                });
             });
 
             //load quickly PK Free
@@ -607,49 +728,6 @@
                 });
             }
 
-            $("#taoMau").click(function(e){
-                e.preventDefault();
-                if ($("select[name=chonXe]").val() == 0) {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Vui lòng chọn xe trước khi tạo đề nghị hợp đồng"
-                    })
-                } else if ($("select[name=chonMauXe]").val() == 0) {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Vui lòng chọn màu xe trước khi tạo đề nghị hợp đồng"
-                    })
-                } else {
-                    $.ajax({
-                        url: "{{url('management/hd/hd/taomau/')}}",
-                        type: "post",
-                        dataType: 'json',
-                        data: $("#addPkForm").serialize(),
-                        success: function(response) {
-                            // $("#addPkForm")[0].reset();
-                            $("#addPkForm :input").prop("disabled", true);
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            $("input[name=idHopDong]").val(response.idInserted);
-                            $("#taoMau").prop('disabled', true);
-                            loadPKFree(response.idInserted);
-                            loadPKPay(response.idInserted);
-                            loadPKCost(response.idInserted);
-                            loadTotal(response.idInserted);
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không tạo được mã, vui lòng kiểm tra lại thông tin nhập liệu"
-                            })
-                        }
-                    });
-                }
-            });
-
-             
             $('#reload').click(function(e) {
                 e.preventDefault();
                 loadPKFree($("input[name=idHopDong]").val());
@@ -835,6 +913,96 @@
                             Toast.fire({
                                 icon: 'warning',
                                 title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $("#deNghiHopDong").click(function(){
+                if(confirm('Xác nhận gửi đề nghị thực hiện hợp đồng?\nLưu ý: Không thể chỉnh sửa sau khi gửi!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/guidenghi/')}}",
+                        type: "post",
+                        dataType: "json",
+                        // data: {
+                        //     "_token": "{{csrf_token()}}",
+                        //     "id": $("input[name=idHopDong]").val(),
+                        // },
+                        data: $("#addPkForm").serialize(),
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reloadStatus();
+                            loadList();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể gửi đề nghị!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $("#xoaDeNghi").click(function(){
+                if(confirm('Xác nhận xóa đề nghị (hợp đồng) này!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/xoa/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $("input[name=idHopDong]").val(),
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadList();
+                            $("#sHoTen").text("");
+                            $("#sDienThoai").text("");
+                            $("#smst").text("");
+                            $("#scmnd").text("");
+                            $("#sNgayCap").text("");
+                            $("#sNoiCap").text("");
+                            $("#sNgaySinh").text("");
+                            $("#sDiaChi").text("");
+                            $("#sDaiDien").text("");
+                            $("#sChucVu").text("");
+                            $("#mauSac").val("");
+                            $("#xeBan").val("");
+                            $("#tamUng").val("");
+                            $("#giaBanXe").val("");
+                            $("#giaNiemYet").val("");
+                            $("#hoaHongMoiGioi").val("");
+                            $("#hoTen").val("");
+                            $("#cmnd").val("");
+                            $("#dienThoai").val("");
+                            $("#deNghiHopDong").hide();
+                            $("#deNghiHuy").hide();
+                            $("#deNghiChinhSua").hide();
+                            $("#xoaDeNghi").hide();
+                            $("#deNghiHopDong").hide();
+                            $("#pkCostAdd").hide();
+                            $("#pkFreeAdd").hide();
+                            $("#pkPayAdd").hide();
+                            $("#tamUng").prop('disabled', true);
+                            $("#giaBanXe").prop('disabled', true);
+                            $("#giaNiemYet").prop('disabled', true);
+                            $("#hoaHongMoiGioi").prop('disabled', true);
+                            $("#hoTen").prop('disabled', true);
+                            $("#cmnd").prop('disabled', true);
+                            $("#dienThoai").prop('disabled', true);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa đề nghị này!"
                             })
                         }
                     });
