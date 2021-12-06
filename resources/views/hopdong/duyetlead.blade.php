@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-   Phê duyệt đề nghị
+   Phê duyệt hợp đồng
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Phê duyệt đề nghị</strong></h1>
+                        <h1 class="m-0"><strong>Phê duyệt hợp đồng</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Kinh doanh</li>
-                            <li class="breadcrumb-item active">Phê duyệt đề nghị</li>
+                            <li class="breadcrumb-item active">Phê duyệt hợp đồng</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -49,7 +49,7 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <label>Chọn đề nghị</label>
+                                                <label>Chọn hợp đồng</label>
                                                 <select name="chonDeNghi" id="chonDeNghi" class="form-control">
                                                     
                                                 </select>
@@ -64,7 +64,7 @@
                                         <p>Đại diện: <strong id="sDaiDien"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chức vụ: <strong id="sChucVu"></strong></p>
                                     </div>
                                     <div>
-                                        <h5>THÔNG TIN XE BÁN <button type="button" id="checkTonKho" data-toggle="modal" data-target="#checkTonKhoModal" class="btn btn-success btn-xs">KIỂM TRA TỒN KHO</button></h5>
+                                        <h5>THÔNG TIN XE BÁN</h5>
                                         <hr>
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -211,10 +211,9 @@
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
-                                        <h5>Sale yêu cầu sửa: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
-                                        <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA</button>
-                                        <button id="huyDeNghi" class="btn btn-danger">BỎ DUYỆT ĐỀ NGHỊ</button>
+                                        <button id="choPhepHuy" class="btn btn-warning">CHO PHÉP HỦY</button>
                             </div>
                         </div>
                     </div>
@@ -224,46 +223,6 @@
         </div>
         <!-- /.content -->
     </div>
-    <!-- Medal check tồn kho-->
-    <div class="modal fade" id="checkTonKhoModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">KIỂM TRA TỒN KHO</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <form id="checkTonKhoForm" autocomplete="off">
-                            {{csrf_field()}}
-                            <input type="hidden" name="idHD">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <h5>Xe: <strong id="xeCheck"></strong></h5>
-                                    <h5>Màu: <strong id="xeCheckMau"></strong></h5>
-                                </div>
-                                <div class="form-group">
-                                    <h5>XE ĐANG CÓ: <strong class="text-danger" id="existXe"></strong></h5>
-                                    <select name="chonXeDuyet" class="form-control">
-                                        
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                    <button id="checkTonKhoBtn" class="btn btn-primary" form="checkTonKhoForm">XÁC NHẬN</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -301,8 +260,7 @@
         $(document).ready(function() {
             // default set
             $("#duyetDeNghi").hide();
-            $("#choPhepSua").hide();
-            $("#huyDeNghi").hide();
+            $("#choPhepHuy").hide();
             // load list hợp đồng
             function loadList() {
                 $.ajax({
@@ -354,22 +312,17 @@
             });
 
             function reloadSS(request, admin, lead) {
-                if (lead == true) {
+                if (lead == true && request == false) {
                     $("#duyetDeNghi").hide();
-                    $("#choPhepSua").hide();
-                    $("#huyDeNghi").hide();
-                }else if (request == true && admin == false) {
-                    $("#duyetDeNghi").show();
-                    $("#choPhepSua").show();
-                    $("#huyDeNghi").hide();
-                }else if (request == true && admin == true) {
+                    $("#choPhepHuy").hide();
+                }else if (lead == true && request == true) {
                     $("#duyetDeNghi").hide();
-                    $("#choPhepSua").show();
-                    $("#huyDeNghi").show();
-                }else if (request == false) {
+                    $("#choPhepHuy").show();
+                }else if (lead == false && admin == true) {
                     $("#duyetDeNghi").show();
-                    $("#choPhepSua").hide();
-                    $("#huyDeNghi").hide();
+                }else {
+                    $("#duyetDeNghi").hide();
+                    $("#choPhepHuy").hide();
                 }
             }
 
@@ -403,8 +356,8 @@
                             $("input[name=idHopDong]").val(response.data.id);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
-                            if (response.data.lyDoEdit != null)
-                                $("#requestSaleEdit").text(response.data.lyDoEdit);
+                            if (response.data.lyDoCancel != null)
+                                $("#requestSaleEdit").text(response.data.lyDoCancel);
                             else
                                 $("#requestSaleEdit").text("Không");
 
@@ -418,7 +371,7 @@
                             loadPKPay(response.data.id);
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
-                            reloadSS(response.data.requestCheck, response.data.admin_check, response.data.lead_check);
+                            reloadSS(response.data.requestCancel, response.data.admin_check, response.data.lead_check);
 
                             // show xe gán
                             txt = "<tr>"+
@@ -487,8 +440,7 @@
                         })
                         $("#showXeGan").html("");
                         $("#duyetDeNghi").hide();
-                        $("#choPhepSua").hide();
-                        $("#huyDeNghi").hide();
+                        $("#choPhepHuy").hide();
                     }
                 });
             });
@@ -596,14 +548,13 @@
 
             $("#duyetDeNghi").click(function(e){
                 e.preventDefault();
-                if(confirm('Xác nhận phê duyệt đề nghị này!')){
+                if(confirm('Xác nhận phê duyệt hợp đồng này này!\nLưu ý: Phê duyệt sẽ không thể thu hồi được.')){
                     $.ajax({
-                        url: "{{url('management/hd/hd/denghi/pheduyet/ok/')}}",
+                        url: "{{url('management/hd/hd/denghi/pheduyetlead/ok/')}}",
                         type: "post",
                         dataType: 'json',
                         data: {
                             "_token": "{{csrf_token()}}",
-                            "idXeGan": $("input[name=xeGan]").val(),
                             "id": $("input[name=idHopDong]").val()
                         },
                         success: function(response) {
@@ -611,7 +562,7 @@
                                 icon: response.type,
                                 title: response.message
                             })
-                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
+                            reloadSS(response.data.requestCancel,response.data.admin_check,response.data.lead_check);
                             loadList();
                         },
                         error: function() {
@@ -640,7 +591,7 @@
                                 icon: response.type,
                                 title: response.message
                             })
-                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
+                            reloadSS(response.data.requestCancel,response.data.admin_check,response.data.lead_check);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             loadList();
@@ -649,120 +600,6 @@
                             Toast.fire({
                                 icon: 'warning',
                                 title: "Không thể duyệt yêu cầu chỉnh sửa!"
-                            })
-                        }
-                    });
-                }
-            });
-
-            $("#huyDeNghi").click(function(e){
-                e.preventDefault();
-                if(confirm("Xác nhận hủy duyệt đề nghị này?")) {
-                    $.ajax({
-                        url: "{{url('management/hd/hd/denghi/huydenghi/ok')}}",
-                        type: "post",
-                        dataType: 'json',
-                        data: {
-                            "_token": "{{csrf_token()}}",
-                            "id": $("input[name=idHopDong]").val()
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
-                            $("#showXeGan").html("");
-                            $("input[name=xeGan]").val("");
-                            loadList();
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không thể duyệt yêu cầu chỉnh sửa!"
-                            })
-                        }
-                    });
-                }
-            });
-
-
-            //Show check tồn kho
-            $("#checkTonKho").click(function(){
-                $('input[name=idHD]').val($("input[name=idHopDong]").val());
-                $.ajax({
-                    url: "management/hd/hd/denghi/checktonkho/" + $("input[name=idHopDong]").val(),
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.code != 500) {
-                           txt = "";
-                           if (response.exist == true) {
-                                for(i = 0; i < response.car.length; i++) {
-                                    if (response.car[i].type == "STORE" || response.car[i].type == "MAP")
-                                        txt += "<option value='"+response.car[i].id+
-                                    "'>[Trạng thái: "+response.car[i].type+"] VIN: "+response.car[i].vin+
-                                    "; SỐ KHUNG/SỐ MÁY: "+response.car[i].frame+"</option>";
-                                    else
-                                        txt += "<option value=''>[Trạng thái: "+response.car[i].type+"] VIN: "+response.car[i].vin+
-                                    "; SỐ KHUNG/SỐ MÁY: "+response.car[i].frame+"</option>";
-                                }
-                                $("select[name=chonXeDuyet]").show();
-                                $("select[name=chonXeDuyet]").html(txt);
-                                $("#existXe").text("");
-                                $("#checkTonKhoBtn").show();
-                           } else {
-                               $("#existXe").text("Không có!");
-                               $("select[name=chonXeDuyet]").hide();
-                               $("#checkTonKhoBtn").hide();
-                           }
-                        } else {
-                            Toast.fire({
-                                icon: 'info',
-                                title: "Chọn đề nghị để biết thông tin"
-                            })
-                        }
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Không lấy được dữ liệu"
-                        })
-                        $("select[name=chonXeDuyet]").hide();
-                        $("#checkTonKhoBtn").hide();
-                    }
-                });
-            });
-
-            $("#checkTonKhoBtn").click(function(e){
-                e.preventDefault();
-                if (!$('select[name=chonXeDuyet]').val()) {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Xe này không đủ điều kiện để gán"
-                    })
-                } else {
-                    $("input[name=xeGan]").val($('select[name=chonXeDuyet]').val());
-                    $("#checkTonKhoModal").modal('hide');
-                    $.ajax({
-                        url: "management/hd/hd/denghi/checktonkho/ok/" + $("input[name=xeGan]").val() ,
-                        dataType: "json",
-                        success: function(response) {
-                           txt = "<tr>"+
-                            "<td>"+ response.namecar +"</td>"+
-                           "<td>"+ response.data.vin +"</td>"+
-                            "<td>"+ response.data.frame +"</td>"+
-                            "<td>Màu: "+ response.data.color +"; Năm SX: "+ response.data.year +"; Hộp số: "+ response.data.gear +"; Chỗ ngồi: "+ response.data.seat +"; Động cơ: "+ response.data.machine +"; Nhiên liệu: "+ response.data.fuel +"</td>"+
-                           "</tr>";
-                            $("#showXeGan").html(txt);
-                            Toast.fire({
-                                icon: 'success',
-                                title: "Đã gán xe"
-                            })
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không lấy được dữ liệu"
                             })
                         }
                     });

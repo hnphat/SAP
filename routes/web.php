@@ -174,9 +174,20 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hd/danhsach','HDController@getDanhSach');
         Route::post('hd/denghi/guidenghi','HDController@guiDeNghi');
         Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
+        Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
 
         //----- phê duyệt đề nghị
         Route::get('hd/denghi/pheduyet','HDController@getHDPheDuyetDeNghi')->name('hd.quanly.pheduyet');
+        Route::post('hd/denghi/pheduyet/ok','HDController@duyetDeNghi');
+        Route::post('hd/denghi/yeucausua/ok','HDController@duyetYeuCauSua');
+        Route::get('hd/denghi/checktonkho/{id}','HDController@checkTonKho');
+        Route::get('hd/denghi/checktonkho/ok/{id}','HDController@checkTonKhoOk');
+        Route::post('hd/denghi/huydenghi/ok','HDController@huyDeNghi');
+
+        //----- phê duyệt hợp đồng
+        Route::get('hd/denghi/pheduyethopdong','HDController@getHDPheDuyetHopDong')->name('hd.quanly.pheduyet.hopdong');
+        Route::post('hd/denghi/pheduyetlead/ok','HDController@duyetDeNghiLead');
+
 
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){

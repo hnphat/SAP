@@ -1033,10 +1033,15 @@ class HDController extends Controller
     }
 
     public function getHDPheDuyetDeNghi() {
-        $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
+        $hopdong = HopDong::select('*')
         ->orderby('id','desc')->get();
-        Log::debug('Xin chao.');
         return view('hopdong.pheduyet', ['hopdong' => $hopdong]);
+    }
+
+    public function getHDPheDuyetHopDong() {
+        $hopdong = HopDong::select('*')
+        ->orderby('id','desc')->get();
+        return view('hopdong.duyetlead', ['hopdong' => $hopdong]);
     }
 
     public function getDanhSach() {
@@ -1441,11 +1446,14 @@ class HDController extends Controller
             //     ->where('hop_dong.id', $id)
             //     ->orderby('hop_dong.id','desc')
             //     ->get();
+        
+        $car = KhoV2::find($result->id_car_kho);
         if($result) {
             return response()->json([
                 'message' => 'Get HD Success!',
                 'code' => 200,
-                'data' => $result
+                'data' => $result,
+                'car' => $car
             ]);
         } else {
             return response()->json([
@@ -1505,5 +1513,196 @@ class HDController extends Controller
             'message' => 'Không thể xóa!',
             'code' => 200
         ]);
+    }
+
+    public function duyetDeNghi(Request $request){
+        $result = HopDong::find($request->id);
+        if((Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) && $result->requestCheck == true) {
+            if ($request->idXeGan == null) {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => 'Bạn chưa gán xe cho đề nghị này!',
+                    'code' => 200
+                ]);
+            } else {
+                $result->admin_check = true;
+                $result->id_car_kho = $request->idXeGan;
+                    $car = KhoV2::find($request->idXeGan);
+                    $car->type = "HD";
+                    $car->save();
+                $result->save();
+                if($result) {
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Đã duyệt!',
+                        'code' => 200,
+                        'data' => $result
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            }
+        }
+        return response()->json([
+            'type' => 'info',
+            'message' => 'Lỗi! Sale chưa gửi đề nghị!',
+            'code' => 200,
+            'data' => null
+        ]);
+    }
+
+    public function duyetDeNghiLead(Request $request){
+        $result = HopDong::find($request->id);
+        if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
+            $result->lead_check = true;
+            $result->save();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã duyệt hợp đồng!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'type' => 'info',
+            'message' => 'Lỗi! Không xác định!',
+            'code' => 200,
+            'data' => null
+        ]);
+    }
+
+    public function yeuCauSua(Request $request){
+        $result = HopDong::find($request->idRequestEdit);
+        $result->requestEditHD = true;
+        $result->lyDoEdit = $request->lyDoChinhSua;
+        $result->save();
+        if($result) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã gửi yêu cầu sửa!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function duyetYeuCauSua(Request $request){
+        $result = HopDong::find($request->id);
+        if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
+            $result->requestCheck = false;
+            $result->admin_check = false;
+                    $car = KhoV2::find($result->id_car_kho);
+                    $car->type = "STORE";
+                    $car->save();
+            $result->id_car_kho = null;
+            $result->save();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã duyệt yêu cầu chỉnh sửa!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            }
+        }
+    }
+
+    public function huyDeNghi(Request $request){
+        $result = HopDong::find($request->id);
+        if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
+            $result->admin_check = false;
+                    $car = KhoV2::find($result->id_car_kho);
+                    $car->type = "STORE";
+                    $car->save();
+            $result->id_car_kho = null;
+            $result->save();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã bỏ phê duyệt cho đề nghị!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            }
+        }
+    }
+
+    public function checkTonKho($id){
+        $exist = false;
+        $result = HopDong::find($id);
+        $car = KhoV2::select('*')->where([
+            ['id_type_car_detail','=', $result->id_car_sale],
+            ['color', '=' , $result->mau]
+        ])->get();
+       
+        if ($car->count() <= 0) {
+            $exist = false;
+        } else {
+            $exist = true;
+        }
+        if($result) {
+            return response()->json([
+                'message' => 'Đã kiểm tra tồn kho!',
+                'code' => 200,
+                'exist' => $exist,
+                'data' => $result,
+                'car' => $car,
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function checkTonKhoOk($id){
+        $result = KhoV2::find($id);
+        if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
+            if($result) {
+                return response()->json([
+                    'message' => 'Đã gán xe!',
+                    'code' => 200,
+                    'data' => $result,
+                    'namecar' => $result->typeCarDetail->name
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } 
     }
 }

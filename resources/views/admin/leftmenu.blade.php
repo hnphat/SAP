@@ -120,9 +120,15 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{route('hd.quanly.denghi')}}" class="nav-link">
+                                    <a href="{{route('hd.quanly.pheduyet.hopdong')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Phê duyệt hợp đồng</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('hd.quanly.denghi')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Phê duyệt hợp đồng old</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">

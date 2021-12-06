@@ -29,7 +29,7 @@ class HopDong extends Migration
             $table->string('lyDoCancel')->nullable();
             $table->boolean('lead_check_cancel')->default(false);
             $table->boolean('requestCancel')->default(false);
-            $table->boolean('lyDoEdit')->default(false);
+            $table->string('lyDoEdit')->default(false);
             $table->boolean('requestEditHD')->default(false);
             $table->boolean('lead_check_edit')->default(false);
             $table->integer('tienCoc')->default(0);

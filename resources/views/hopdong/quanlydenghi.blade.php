@@ -153,8 +153,27 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label>ĐÃ DUYỆT XE:</label>
+                                                </div>
+                                                <table class="table table-bordered table-striped">
+                                                    <tr class="bg-success">
+                                                        <th>Tên xe</th>
+                                                        <th>VIN</th>
+                                                        <th>Số khung/số máy</th>
+                                                        <th>Thông tin khác</th>
+                                                    </tr>
+                                                    <tbody id="showXeGan"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <hr>
                                     </div>
                                 </form>
+            
                                 <!-- <button type="button" id="reload"  class="btn btn-info">Tải lại</button><br/><br/> -->
                                 <h5>CÁC LOẠI PHÍ</h5>
                                         <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/>
@@ -201,7 +220,7 @@
                             </div>
                             <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
                             <button id="deNghiHuy" class="btn btn-warning">YÊU CẦU HỦY</button>
-                            <button id="deNghiChinhSua" class="btn btn-success">YÊU CẦU CHỈNH SỬA</button>
+                            <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button>
                             <button id="xoaDeNghi" class="btn btn-danger">XÓA</button>
                         </div>
                     </div>
@@ -319,6 +338,40 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                     <button id="btnAddPKCost" class="btn btn-primary" form="addPkFormCost">Lưu</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- Medal Yêu cầu chỉnh sửa-->
+    <div class="modal fade" id="requestEdit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Yêu cầu chỉnh sửa</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <form id="requestEditForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="idRequestEdit">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Lý do chỉnh sửa: </label>
+                                    <input name="lyDoChinhSua" placeholder="Nhập lý do yêu cầu chỉnh sửa" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    <button id="requestEditBtn" class="btn btn-primary" form="requestEditForm">Gửi</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -515,6 +568,13 @@
                             icon: 'warning',
                             title: "Không lấy được dữ liệu"
                         })
+                        $("#deNghiHopDong").hide();
+                        $("#deNghiHuy").hide();
+                        $("#deNghiChinhSua").hide();
+                        $("#xoaDeNghi").hide();
+                        $("#pkCostAdd").hide();
+                        $("#pkFreeAdd").hide();
+                        $("#pkPayAdd").hide();
                     }
                 });
             }
@@ -557,6 +617,16 @@
                             loadPKPay(response.data.id);
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
+
+                            // show xe gán
+                            $("#showXeGan").html("");
+                            txt = "<tr>"+
+                            "<td>"+ response.data.namecar +"</td>"+
+                            "<td>"+ response.car.vin +"</td>"+
+                            "<td>"+ response.car.frame +"</td>"+
+                            "<td>Màu: "+ response.car.color +"; Năm SX: "+ response.car.year +"; Hộp số: "+ response.car.gear +"; Chỗ ngồi: "+ response.car.seat +"; Động cơ: "+ response.car.machine +"; Nhiên liệu: "+ response.car.fuel +"</td>"+
+                            "</tr>";
+                            $("#showXeGan").html(txt);
                         } else {
                             Toast.fire({
                                 icon: 'info',
@@ -599,6 +669,7 @@
                             $("#hoTen").prop('disabled', true);
                             $("#cmnd").prop('disabled', true);
                             $("#dienThoai").prop('disabled', true);
+                            $("#showXeGan").html("");
                         }
                     },
                     error: function() {
@@ -606,6 +677,7 @@
                             icon: 'warning',
                             title: "Không lấy được dữ liệu"
                         })
+                        $("#showXeGan").html("");
                     }
                 });
             });
@@ -750,6 +822,35 @@
                 $('input[name=idHD3]').val($("input[name=idHopDong]").val());
             });
 
+            //Add show pk cost
+            $("#deNghiChinhSua").click(function(){
+                $('input[name=idRequestEdit]').val($("input[name=idHopDong]").val());
+            });
+
+            $("#requestEditBtn").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/yeucausua/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#requestEditForm").serialize(),
+                    success: function(response) {
+                        $("#requestEditForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#requestEdit").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể thêm!"
+                        })
+                    }
+                });
+            });
+
             $("#btnAddPKCost").click(function(e){
                 e.preventDefault();
                 $.ajax({
@@ -854,7 +955,7 @@
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
-                                title: "Lỗi!"
+                                title: "Không thể xóa: Đã duyệt, Đã gửi!"
                             })
                         }
                     });
@@ -883,7 +984,7 @@
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
-                                title: "Lỗi!"
+                                title: "Không thể xóa: Đã duyệt, Đã gửi!"
                             })
                         }
                     });
@@ -912,7 +1013,7 @@
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
-                                title: "Lỗi!"
+                                title: "Không thể xóa: Đã duyệt, Đã gửi!"
                             })
                         }
                     });

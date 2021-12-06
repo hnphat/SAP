@@ -220,6 +220,7 @@ class KhoController extends Controller
         $kho->ngayNhanXe = $request->ngayNhanXe;
         $kho->ngayDat = $request->ngayDat;
         $kho->nganHang = $request->nganHang;
+        $kho->ghiChu = $request->ghiChu;
 
         $kho->id_user_create = Auth::user()->id;
         $kho->save();
@@ -288,7 +289,8 @@ class KhoController extends Controller
             "soBaoLanh" => $request->esoBaoLanh,
             "ngayNhanXe" => $request->engayNhanXe,
             "ngayDat" => $request->engayDat,
-            "nganHang" => $request->enganHang
+            "nganHang" => $request->enganHang,
+            "ghiChu" => $request->eghiChu
         ]);
         if($kho) {
             return response()->json([

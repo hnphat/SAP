@@ -176,16 +176,18 @@
                                         </div>
 
                                         <div class="form-group">
-                                        <label class="text-danger">Trạng thái</label>
+                                            <label class="text-danger">Trạng thái</label>
                                             <select name="trangThai" class="form-control">
                                             'ORDER', 'P/O', 'MAP', 'HD', 'STORE', 'AGENT'
                                                 <option value="ORDER">ORDER</option>
                                                 <option value="P/O">P/O</option>
                                                 <option value="MAP">MAP</option>
-                                                <option value="HD">HD</option>
                                                 <option value="STORE">STORE</option>
-                                                <option value="AGENT">AGENT</option>
                                             </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Ghi chú</label>
+                                            <input name="ghiChu" placeholder="Ghi chú" type="text" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -327,14 +329,17 @@
 
                                         <label class="text-danger">Trạng thái</label>
                                             <select name="etrangThai" class="form-control">
-                                            'ORDER', 'P/O', 'MAP', 'HD', 'STORE', 'AGENT'
                                                 <option value="ORDER">ORDER</option>
                                                 <option value="P/O">P/O</option>
                                                 <option value="MAP">MAP</option>
-                                                <option value="HD">HD</option>
                                                 <option value="STORE">STORE</option>
-                                                <option value="AGENT">AGENT</option>
-                                        </select>
+                                                <option value="HD">HD</option>
+                                            </select>
+
+                                        <div class="form-group">
+                                            <label>Ghi chú</label>
+                                            <input name="eghiChu" placeholder="Ghi chú" type="text" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
                                 <h5>&nbsp;&nbsp;&nbsp;THÔNG TIN ĐƠN HÀNG HTV</h5>
@@ -560,6 +565,7 @@
                         $("input[name=engayNhanXe]").val(response.data.ngayNhanXe);
                         $("input[name=enganHang]").val(response.data.nganHang);
                         $("select[name=etrangThai]").val(response.data.type);
+                        $("input[name=eghiChu]").val(response.data.ghiChu);
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
