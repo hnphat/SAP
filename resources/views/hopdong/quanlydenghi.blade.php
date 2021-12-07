@@ -69,7 +69,11 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Xe bán</label>
-                                                    <input id="xeBan" class="form-control" type="text" disabled>
+                                                    <select name="xeBan" id="xeBan" class="form-control">
+                                                        @foreach($xeList as $row)
+                                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -89,7 +93,18 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Màu sắc</label>
-                                                    <input id="mauSac" class="form-control" type="text" disabled>
+                                                    <select name="mauSac" id="mauSac" class="form-control">
+                                                        <option value="Đỏ">Đỏ</option>
+                                                        <option value="Xanh">Xanh</option>
+                                                        <option value="Trắng">Trắng</option>
+                                                        <option value="Vàng">Vàng</option>
+                                                        <option value="Ghi">Ghi</option>
+                                                        <option value="Nâu">Nâu</option>
+                                                        <option value="Bạc">Bạc</option>
+                                                        <option value="Xám">Xám</option>
+                                                        <option value="Đen">Đen</option>
+                                                        <option value="Vàng cát">Vàng cát</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -143,7 +158,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>CMND/CCCD:</label>
-                                                    <input name="cmnd" id="cmnd" placeholder="CMND/CCCD" type="text" class="form-control"/>
+                                                    <input name="cmnd" placeholder="CMND/CCCD" type="text" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -219,7 +234,7 @@
                                         </h4>
                             </div>
                             <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
-                            <button id="deNghiHuy" class="btn btn-warning">YÊU CẦU HỦY</button>
+                            <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
                             <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button>
                             <button id="xoaDeNghi" class="btn btn-danger">XÓA</button>
                         </div>
@@ -379,6 +394,40 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+    <!-- Medal Yêu cầu hủy-->
+    <div class="modal fade" id="requestHuy">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Yêu cầu hủy hợp đồng</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <form id="requestHuyForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="idRequestHuy">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Lý do hủy: </label>
+                                    <input name="lyDoHuy" placeholder="Nhập lý do yêu cầu hủy" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    <button id="requestHuyBtn" class="btn btn-primary" form="requestEditForm">Gửi</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     <!-- ----------------------- -->
 @endsection
 @section('script')
@@ -495,8 +544,11 @@
                                 $("#giaNiemYet").prop('disabled', false);
                                 $("#hoaHongMoiGioi").prop('disabled', false);
                                 $("#hoTen").prop('disabled', false);
-                                $("#cmnd").prop('disabled', false);
+                                $("input[name=cmnd]").prop('disabled', false);
                                 $("#dienThoai").prop('disabled', false);
+
+                                $("select[name=mauSac]").prop('disabled', false);
+                                $("select[name=xeBan]").prop('disabled', false);
 
                             } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
@@ -512,8 +564,12 @@
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
-                                $("#cmnd").prop('disabled', true);
+                                $("input[name=cmnd]").prop('disabled', true);
                                 $("#dienThoai").prop('disabled', true);
+
+
+                                $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=xeBan]").prop('disabled', true);
                             } else if (response.data.requestCheck == true 
                             && response.data.admin_check == true && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
@@ -528,12 +584,16 @@
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
-                                $("#cmnd").prop('disabled', true);
+                                $("input[name=cmnd]").prop('disabled', true);
                                 $("#dienThoai").prop('disabled', true);
+
+                                $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=xeBan]").prop('disabled', true);
                             } else if (response.data.requestCheck == true 
                             && response.data.admin_check == true && response.data.lead_check == true) {
                                 $("#deNghiHopDong").hide();
-                                $("#deNghiHuy").show();
+                                if (response.data.lead_check_cancel == false)
+                                    $("#deNghiHuy").show();
                                 $("#xoaDeNghi").hide();
                                 $("#pkCostAdd").hide();
                                 $("#pkFreeAdd").hide();
@@ -543,8 +603,11 @@
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
-                                $("#cmnd").prop('disabled', true);
+                                $("input[name=cmnd]").prop('disabled', true);
                                 $("#dienThoai").prop('disabled', true);
+
+                                $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=xeBan]").prop('disabled', true);
                             } else {
                                 $("#deNghiHopDong").hide();
                                 $("#deNghiHuy").hide();
@@ -558,8 +621,10 @@
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
-                                $("#cmnd").prop('disabled', true);
+                                $("input[name=cmnd]").prop('disabled', true);
                                 $("#dienThoai").prop('disabled', true);
+                                $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=xeBan]").prop('disabled', true);
                             }
                         }
                     },
@@ -585,24 +650,30 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.code != 500) {
+                            
                             $("#sHoTen").text(response.data.guestname);
                             $("#sDienThoai").text(response.data.phone);
                             $("#smst").text(response.data.mst);
-                            $("#scmnd").text(response.data.cmnd);
+                            $("#scmnd").text(response.data.CMND);
                             $("#sNgayCap").text(response.data.ngayCap);
                             $("#sNoiCap").text(response.data.noiCap);
                             $("#sNgaySinh").text(response.data.ngaySinh);
                             $("#sDiaChi").text(response.data.address);
                             $("#sDaiDien").text(response.data.daiDien);
                             $("#sChucVu").text(response.data.chucVu);
-                            $("#mauSac").val(response.data.mau);
-                            $("#xeBan").val(response.data.namecar);
+
+                            $('select[name=mauSac] option[selected=selected]').removeAttr('selected');
+                            $('option[value='+response.data.mau+']').attr('selected','selected');
+                            $('select[name=xeBan] option[selected=selected]').removeAttr('selected');
+                            $('option[value='+response.data.idcar+']').attr('selected','selected');
+
+                          
                             $("#tamUng").val(response.data.tienCoc);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
-                            $("#cmnd").val(response.data.cmnd);
+                            $("input[name=cmnd]").val(response.data.CMND2);
                             $("#dienThoai").val(response.data.dienThoai);
                             $("input[name=idHopDong]").val(response.data.id);
 
@@ -642,14 +713,16 @@
                             $("#sDiaChi").text("");
                             $("#sDaiDien").text("");
                             $("#sChucVu").text("");
-                            $("#mauSac").val("");
-                            $("#xeBan").val("");
+
+                            $("input[name=mauSac]").prop('disabled', true);
+                            $("input[name=xeBan]").prop('disabled', true);
+                           
                             $("#tamUng").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
                             $("#hoaHongMoiGioi").val("");
                             $("#hoTen").val("");
-                            $("#cmnd").val("");
+                            $("input[name=cmnd]").val("");
                             $("#dienThoai").val("");
                             loadPKFree(null);
                             loadPKPay(null);
@@ -667,7 +740,7 @@
                             $("#giaNiemYet").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
-                            $("#cmnd").prop('disabled', true);
+                            $("input[name=cmnd]").prop('disabled', true);
                             $("#dienThoai").prop('disabled', true);
                             $("#showXeGan").html("");
                         }
@@ -827,6 +900,11 @@
                 $('input[name=idRequestEdit]').val($("input[name=idHopDong]").val());
             });
 
+            $("#deNghiHuy").click(function(){
+                $('input[name=idRequestHuy]').val($("input[name=idHopDong]").val());
+            });
+
+
             $("#requestEditBtn").click(function(e){
                 e.preventDefault();
                 $.ajax({
@@ -841,6 +919,30 @@
                             title: response.message
                         })
                         $("#requestEdit").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể thêm!"
+                        })
+                    }
+                });
+            });
+
+            $("#requestHuyBtn").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/yeucauhuy/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#requestHuyForm").serialize(),
+                    success: function(response) {
+                        $("#requestHuyForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#requestHuy").modal('hide');
                     },
                     error: function() {
                         Toast.fire({

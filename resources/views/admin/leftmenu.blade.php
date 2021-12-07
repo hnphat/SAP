@@ -125,53 +125,6 @@
                                         <p>Phê duyệt hợp đồng</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="{{route('hd.quanly.denghi')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Phê duyệt hợp đồng old</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('hd.list')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Hợp đồng</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('cancel.list')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Đề nghị hủy hợp đồng</p>
-                                    </a>
-                                </li>
-                            @endif
-                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                            <li class="nav-item">
-                                <a href="{{route('kho.list')}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Kho xe</p>
-                                </a>
-                            </li>
-                            @endif
-                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                    <li class="nav-item">
-                                        <a href="{{route('pheduyet.list')}}" class="nav-link">
-                                            <i class="fas fa-caret-right nav-icon"></i>
-                                            <p>Phê duyệt HĐ</p>
-                                        </a>
-                                    </li>
-                            @endif
-                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                                \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                <li class="nav-item">
-                                    <a href="{{route('denghi.list')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Duyệt đề nghị HĐ</p>
-                                    </a>
-                                </li>
                             @endif
                     </ul>
                 </li>

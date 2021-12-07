@@ -274,24 +274,64 @@ class KhoController extends Controller
     }
 
     public function updateV2(Request $request) {
-        $kho = KhoV2::where('id', $request->eid)->update([
-            "id_type_car_detail" => $request->etenXe,
-            "year" => $request->enam,
-            "vin" => $request->evin,
-            "frame" => $request->eframe,
-            "color" => $request->ecolor,
-            "gear" => $request->egear,
-            "machine" => $request->emachine,
-            "seat" => $request->eseat,
-            "fuel" => $request->efuel,
-            "type" => $request->etrangThai,
-            "soDonHang" => $request->esoDonHang,
-            "soBaoLanh" => $request->esoBaoLanh,
-            "ngayNhanXe" => $request->engayNhanXe,
-            "ngayDat" => $request->engayDat,
-            "nganHang" => $request->enganHang,
-            "ghiChu" => $request->eghiChu
-        ]);
+        $check = KhoV2::find($request->eid);
+        if ($check->type == "HD")
+            $kho = KhoV2::where('id', $request->eid)->update([
+                "id_type_car_detail" => $request->etenXe,
+                "year" => $request->enam,
+                "vin" => $request->evin,
+                "frame" => $request->eframe,
+                "color" => $request->ecolor,
+                "gear" => $request->egear,
+                "machine" => $request->emachine,
+                "seat" => $request->eseat,
+                "fuel" => $request->efuel,
+                "soDonHang" => $request->esoDonHang,
+                "soBaoLanh" => $request->esoBaoLanh,
+                "ngayNhanXe" => $request->engayNhanXe,
+                "ngayDat" => $request->engayDat,
+                "nganHang" => $request->enganHang,
+                "ghiChu" => $request->eghiChu
+            ]);
+        else {
+                if ($request->etrangThai == "HD")
+                    $kho = KhoV2::where('id', $request->eid)->update([
+                        "id_type_car_detail" => $request->etenXe,
+                        "year" => $request->enam,
+                        "vin" => $request->evin,
+                        "frame" => $request->eframe,
+                        "color" => $request->ecolor,
+                        "gear" => $request->egear,
+                        "machine" => $request->emachine,
+                        "seat" => $request->eseat,
+                        "fuel" => $request->efuel,
+                        "soDonHang" => $request->esoDonHang,
+                        "soBaoLanh" => $request->esoBaoLanh,
+                        "ngayNhanXe" => $request->engayNhanXe,
+                        "ngayDat" => $request->engayDat,
+                        "nganHang" => $request->enganHang,
+                        "ghiChu" => $request->eghiChu
+                    ]);
+                else 
+                    $kho = KhoV2::where('id', $request->eid)->update([
+                        "id_type_car_detail" => $request->etenXe,
+                        "year" => $request->enam,
+                        "vin" => $request->evin,
+                        "frame" => $request->eframe,
+                        "color" => $request->ecolor,
+                        "gear" => $request->egear,
+                        "machine" => $request->emachine,
+                        "seat" => $request->eseat,
+                        "fuel" => $request->efuel,
+                        "type" => $request->etrangThai,
+                        "soDonHang" => $request->esoDonHang,
+                        "soBaoLanh" => $request->esoBaoLanh,
+                        "ngayNhanXe" => $request->engayNhanXe,
+                        "ngayDat" => $request->engayDat,
+                        "nganHang" => $request->enganHang,
+                        "ghiChu" => $request->eghiChu
+                    ]);
+            }
         if($kho) {
             return response()->json([
                 'type' => 'success',

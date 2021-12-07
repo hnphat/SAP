@@ -1027,9 +1027,10 @@ class HDController extends Controller
     }
 
     public function getHDQuanLyDeNghi() {
+        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
         $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
         ->orderby('id','desc')->get();
-        return view('hopdong.quanlydenghi', ['hopdong' => $hopdong]);
+        return view('hopdong.quanlydenghi', ['hopdong' => $hopdong, 'xeList' => $xeList]);
     }
 
     public function getHDPheDuyetDeNghi() {
@@ -1080,7 +1081,7 @@ class HDController extends Controller
         $code->id_guest = $request->khachHang;
         $code->hoaHongMoiGioi = $request->hoaHongMoiGioi;
         $code->hoTen = $request->hoTen;
-        $code->CMND = $request->cmnd;
+        $code->CMND2 = $request->cmnd;
         $code->dienThoai = $request->dienThoai;
         $code->save();
         $idSale = $code->id;
@@ -1425,7 +1426,7 @@ class HDController extends Controller
     }
 
     public function chonDeNghi($id){
-        $result = HopDong::select('hop_dong.*','c.name as namecar', 'g.name as guestname', 
+        $result = HopDong::select('hop_dong.*','c.name as namecar', 'c.id as idcar', 'g.name as guestname', 
         'g.phone', 'g.address', 'g.daiDien', 'g.chucVu', 'g.mst', 'g.cmnd', 'g.ngayCap', 'g.noiCap', 
         'g.ngaySinh')
             ->join('guest as g','hop_dong.id_guest','=','g.id')
@@ -1471,8 +1472,10 @@ class HDController extends Controller
         $result->giaNiemYet = $request->giaNiemYet;
         $result->hoaHongMoiGioi = $request->hoaHongMoiGioi;
         $result->hoTen = $request->hoTen;
-        $result->CMND = $request->cmnd;
+        $result->CMND2 = $request->cmnd;
         $result->dienThoai = $request->dienThoai;
+        $result->id_car_sale = $request->xeBan;
+        $result->mau = $request->mauSac;
         $result->save();
         if($result) {
             return response()->json([
@@ -1583,6 +1586,37 @@ class HDController extends Controller
         ]);
     }
 
+    public function duyetDeNghiLeadHuy(Request $request){
+        $result = HopDong::find($request->id);
+        if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
+            $result->lead_check_cancel = true;
+                $car = KhoV2::find($result->id_car_kho);
+                $car->type = "STORE";
+                $car->save();
+            $result->save();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã duyệt hủy hợp đồng!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'type' => 'info',
+            'message' => 'Lỗi! Không xác định!',
+            'code' => 200,
+            'data' => null
+        ]);
+    }
+
     public function yeuCauSua(Request $request){
         $result = HopDong::find($request->idRequestEdit);
         $result->requestEditHD = true;
@@ -1603,14 +1637,37 @@ class HDController extends Controller
         }
     }
 
+    public function yeuCauHuy(Request $request){
+        $result = HopDong::find($request->idRequestHuy);
+        $result->requestCancel = true;
+        $result->lyDoCancel = $request->lyDoHuy;
+        $result->save();
+        if($result) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã gửi yêu cầu hủy hợp đồng!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+
     public function duyetYeuCauSua(Request $request){
         $result = HopDong::find($request->id);
         if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
             $result->requestCheck = false;
             $result->admin_check = false;
+                if ($result->id_car_kho != null) {
                     $car = KhoV2::find($result->id_car_kho);
                     $car->type = "STORE";
                     $car->save();
+                }                    
             $result->id_car_kho = null;
             $result->save();
             if($result) {

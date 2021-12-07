@@ -115,7 +115,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit/show','KhoController@editShow');
         Route::post('update','KhoController@update');
 
-
         // Kho remake v2
         Route::get('getkho','KhoController@getKho')->name('get.kho.v2');
         Route::get('getkho/list','KhoController@getKhoList');
@@ -175,6 +174,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/guidenghi','HDController@guiDeNghi');
         Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
         Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
+        Route::post('hd/denghi/yeucauhuy','HDController@yeuCauHuy');
 
         //----- phê duyệt đề nghị
         Route::get('hd/denghi/pheduyet','HDController@getHDPheDuyetDeNghi')->name('hd.quanly.pheduyet');
@@ -187,6 +187,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         //----- phê duyệt hợp đồng
         Route::get('hd/denghi/pheduyethopdong','HDController@getHDPheDuyetHopDong')->name('hd.quanly.pheduyet.hopdong');
         Route::post('hd/denghi/pheduyetlead/ok','HDController@duyetDeNghiLead');
+        Route::post('hd/denghi/pheduyetleadhuy/ok','HDController@duyetDeNghiLeadHuy');
 
 
     });

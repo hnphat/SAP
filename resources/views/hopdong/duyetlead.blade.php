@@ -311,13 +311,14 @@
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
             });
 
-            function reloadSS(request, admin, lead) {
+            function reloadSS(cancel,request, admin, lead) {
                 if (lead == true && request == false) {
                     $("#duyetDeNghi").hide();
                     $("#choPhepHuy").hide();
                 }else if (lead == true && request == true) {
                     $("#duyetDeNghi").hide();
-                    $("#choPhepHuy").show();
+                    if (cancel == false) 
+                        $("#choPhepHuy").show();
                 }else if (lead == false && admin == true) {
                     $("#duyetDeNghi").show();
                 }else {
@@ -351,7 +352,7 @@
                             $("#giaNiemYet").val(response.data.giaNiemYet);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
-                            $("#cmnd").val(response.data.cmnd);
+                            $("#cmnd").val(response.data.CMND2);
                             $("#dienThoai").val(response.data.dienThoai);
                             $("input[name=idHopDong]").val(response.data.id);
                             $("#showXeGan").html("");
@@ -371,7 +372,7 @@
                             loadPKPay(response.data.id);
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
-                            reloadSS(response.data.requestCancel, response.data.admin_check, response.data.lead_check);
+                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel, response.data.admin_check, response.data.lead_check);
 
                             // show xe gán
                             txt = "<tr>"+
@@ -548,7 +549,7 @@
 
             $("#duyetDeNghi").click(function(e){
                 e.preventDefault();
-                if(confirm('Xác nhận phê duyệt hợp đồng này này!\nLưu ý: Phê duyệt sẽ không thể thu hồi được.')){
+                if(confirm('Xác nhận phê duyệt hợp đồng này!\nLưu ý: Phê duyệt sẽ không thể thu hồi được.')){
                     $.ajax({
                         url: "{{url('management/hd/hd/denghi/pheduyetlead/ok/')}}",
                         type: "post",
@@ -562,7 +563,7 @@
                                 icon: response.type,
                                 title: response.message
                             })
-                            reloadSS(response.data.requestCancel,response.data.admin_check,response.data.lead_check);
+                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check);
                             loadList();
                         },
                         error: function() {
@@ -575,11 +576,11 @@
                 }
             });
 
-            $("#choPhepSua").click(function(e){
+            $("#choPhepHuy").click(function(e){
                 e.preventDefault();
-                if(confirm("Xác nhận cho phép chỉnh sửa?")) {
+                if(confirm('Xác nhận cho phép hủy hợp đồng này!\nLưu ý: Phê duyệt sẽ không được hoàn lại, xe sẽ được trả vào kho.')){
                     $.ajax({
-                        url: "{{url('management/hd/hd/denghi/yeucausua/ok')}}",
+                        url: "{{url('management/hd/hd/denghi/pheduyetleadhuy/ok/')}}",
                         type: "post",
                         dataType: 'json',
                         data: {
@@ -591,20 +592,20 @@
                                 icon: response.type,
                                 title: response.message
                             })
-                            reloadSS(response.data.requestCancel,response.data.admin_check,response.data.lead_check);
-                            $("#showXeGan").html("");
-                            $("input[name=xeGan]").val("");
+                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check);
                             loadList();
+                            $("#choPhepHuy").hide();
                         },
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
-                                title: "Không thể duyệt yêu cầu chỉnh sửa!"
+                                title: "LỖi không thể phê duyệt!"
                             })
                         }
                     });
                 }
             });
+
         });
     </script>
 @endsection

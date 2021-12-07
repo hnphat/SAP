@@ -37,7 +37,7 @@ class HopDong extends Migration
             $table->integer('giaNiemYet')->default(0);
             $table->integer('hoaHongMoiGioi')->default(0);
             $table->string('hoTen')->nullable();
-            $table->string('CMND')->nullable();
+            $table->string('CMND2')->nullable();
             $table->string('dienThoai')->nullable();
             $table->string('mau', 20)->nullable();
             $table->timestamps();

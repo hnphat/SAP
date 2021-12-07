@@ -101,10 +101,6 @@
                                                                 <input placeholder="Thông tin khách hàng" type="text" name="khachHang" class="form-control"/>
                                                             </div>
                                                         </div>
-                                                        <!-- <div class="form-group">
-                                                            <label>Lý do cấp:</label>                                                        
-                                                            <input type="text" name="lyDoCap" required="required" class="form-control">
-                                                        </div> -->
                                                         <div class="form-group">
                                                             <label>Lý do cấp:</label>                                                        
                                                             <select name="lyDoCap" class="form-control">
@@ -120,20 +116,6 @@
                                                             <label>Ghi chú:</label>                                                        
                                                             <input placeholder="Ghi chú (nếu có)" type="text" name="ghiChu" class="form-control">
                                                         </div>
-                                                        <!-- <div class="row">
-                                                            <div class="form-group col-sm-4">
-                                                                <label>Số km đi (dự kiến):</label>                                                        
-                                                                <input placeholder="Số km" type="number" min="0" name="km" class="form-control"/>
-                                                            </div>
-                                                            <div class="form-group col-sm-4">
-                                                                <label>Từ: </label>                                                        
-                                                                <input placeholder="Điểm đi" type="text" name="from" class="form-control"/>
-                                                            </div>
-                                                            <div class="form-group col-sm-4">
-                                                                <label>Đến: </label>                                                        
-                                                                <input placeholder="Điểm đến" type="text" name="to" class="form-control"/>
-                                                            </div>
-                                                        </div> -->
                                                         <div class="form-group">
                                                             <select name="leadCheck" class="form-control">
                                                                 <option value="">Chọn người duyệt</option>

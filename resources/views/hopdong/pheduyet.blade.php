@@ -398,7 +398,7 @@
                             $("#giaNiemYet").val(response.data.giaNiemYet);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
-                            $("#cmnd").val(response.data.cmnd);
+                            $("#cmnd").val(response.data.CMND2);
                             $("#dienThoai").val(response.data.dienThoai);
                             $("input[name=idHopDong]").val(response.data.id);
                             $("#showXeGan").html("");

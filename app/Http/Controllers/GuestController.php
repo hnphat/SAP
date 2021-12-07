@@ -115,39 +115,28 @@ class GuestController extends Controller
     }
 
     public function update(Request $request) {
-        $checkSale = Sale::where([
-           ['id_guest','=',$request->eid],
-           ['lead_sale_check','=', 1]
-        ])->exists();
-        if (!$checkSale) {
-            $result = Guest::where('id', $request->eid)->update([
-                'id_type_guest' => $request->eloai,
-                'name' => $request->eten,
-                'phone' => $request->edienThoai,
-                'address' => $request->ediaChi,
-                'mst' => $request->emst,
-                'cmnd' => $request->ecmnd,
-                'ngayCap' => $request->engayCap,
-                'noiCap' => $request->enoiCap,
-                'ngaySinh' => $request->engaySinh,
-                'daiDien' => $request->edaiDien,
-                'chucVu' => $request->echucVu
+        $result = Guest::where('id', $request->eid)->update([
+            'id_type_guest' => $request->eloai,
+            'name' => $request->eten,
+            'phone' => $request->edienThoai,
+            'address' => $request->ediaChi,
+            'mst' => $request->emst,
+            'cmnd' => $request->ecmnd,
+            'ngayCap' => $request->engayCap,
+            'noiCap' => $request->enoiCap,
+            'ngaySinh' => $request->engaySinh,
+            'daiDien' => $request->edaiDien,
+            'chucVu' => $request->echucVu
+        ]);
+        if($result) {
+            return response()->json([
+                'message' => 'Updated successfully!',
+                'code' => 200
             ]);
-            if($result) {
-                return response()->json([
-                    'message' => 'Updated successfully!',
-                    'code' => 200
-                ]);
-            } else {
-                return response()->json([
-                    'message' => 'Internal server fail!',
-                    'code' => 500
-                ]);
-            }
         } else {
             return response()->json([
-                'message' => 'Quản lý đã duyệt hợp đồng liên quan khách hàng, không thể chỉnh sữa!',
-                'code' => 200
+                'message' => 'Internal server fail!',
+                'code' => 500
             ]);
         }
     }
