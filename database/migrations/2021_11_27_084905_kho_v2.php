@@ -21,10 +21,6 @@ class KhoV2 extends Migration
             $table->string('vin', 100)->nullable();
             $table->string('frame', 100)->nullable();
             $table->string('color', 50)->nullable();
-            $table->string('gear', 10)->nullable();
-            $table->string('machine', 10)->nullable();
-            $table->string('seat', 10)->nullable();
-            $table->string('fuel', 10)->nullable();
             $table->enum('type', ['ORDER', 'P/O', 'MAP', 'HD', 'STORE', 'AGENT'])->nullable();
             $table->string('soDonHang', 50)->nullable();
             $table->string('soBaoLanh', 50)->nullable();

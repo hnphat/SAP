@@ -105,22 +105,19 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Năm sản xuất</label>
-                                            <select name="nam" class="form-control">
-                                                <option value="0">Chọn</option>
-                                                @for($i = 2000; $i <= 2100; $i++)
-                                                    <option value="{{$i}}">{{$i}}</option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label>Số VIN</label>
                                             <input name="vin" placeholder="VIN" type="text" class="form-control">
                                         </div>
                                         <div class="form-group">
-                                            <label>Số máy</label>
-                                            <input name="frame" placeholder="Số máy" type="text" class="form-control">
-                                        </div>
+                                            <label class="text-danger">Trạng thái</label>
+                                            <select name="trangThai" class="form-control">
+                                            'ORDER', 'P/O', 'MAP', 'HD', 'STORE', 'AGENT'
+                                                <option value="ORDER">ORDER</option>
+                                                <option value="P/O">P/O</option>
+                                                <option value="MAP">MAP</option>
+                                                <option value="STORE">STORE</option>
+                                            </select>
+                                        </div>                                        
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
@@ -140,49 +137,18 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Hộp số</label>
-                                            <select name="gear" class="form-control">
-                                                <option value="0">Chọn</option>
-                                                <option value="MT">MT</option>
-                                                <option value="AT">AT</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Động cơ</label>
-                                            <input name="machine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Số chỗ ngồi</label>
-                                            <select name="seat" class="form-control">
-                                                <option value="0">Chọn</option>
-                                                <option value="4">4 chỗ</option>
-                                                <option value="5">5 chỗ</option>
-                                                <option value="7">7 chỗ</option>
-                                                <option value="9">9 chỗ</option>
-                                            </select>
+                                            <label>Số máy</label>
+                                            <input name="frame" placeholder="Số máy" type="text" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Nhiên liệu</label>
-                                            <select name="fuel" class="form-control">
+                                            <label>Năm sản xuất</label>
+                                            <select name="nam" class="form-control">
                                                 <option value="0">Chọn</option>
-                                                <option value="Xăng">Xăng</option>
-                                                <option value="Dầu">Dầu</option>
-                                                <option value="Điện">Điện</option>
-                                                <option value="Điện/Dầu">Điện/Dầu</option>
-                                                <option value="Điện/Xăng">Điện/Xăng</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="text-danger">Trạng thái</label>
-                                            <select name="trangThai" class="form-control">
-                                            'ORDER', 'P/O', 'MAP', 'HD', 'STORE', 'AGENT'
-                                                <option value="ORDER">ORDER</option>
-                                                <option value="P/O">P/O</option>
-                                                <option value="MAP">MAP</option>
-                                                <option value="STORE">STORE</option>
+                                                @for($i = 2000; $i <= 2100; $i++)
+                                                    <option value="{{$i}}">{{$i}}</option>
+                                                @endfor
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -262,20 +228,18 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Năm sản xuất</label>
-                                            <select name="enam" class="form-control">
-                                                @for($i = 2000; $i <= 2100; $i++)
-                                                    <option value="{{$i}}">{{$i}}</option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label>Số VIN</label>
                                             <input name="evin" placeholder="VIN" type="text" class="form-control">
-                                        </div>
+                                        </div>                                         
                                         <div class="form-group">
-                                            <label>Số máy</label>
-                                            <input name="eframe" placeholder="Số máy" type="text" class="form-control">
+                                            <label class="text-danger">Trạng thái</label>
+                                            <select name="etrangThai" class="form-control">
+                                                <option value="ORDER">ORDER</option>
+                                                <option value="P/O">P/O</option>
+                                                <option value="MAP">MAP</option>
+                                                <option value="STORE">STORE</option>
+                                                <option value="HD">HD</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -295,47 +259,19 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Hộp số</label>
-                                            <select name="egear" class="form-control">
-                                                <option value="MT">MT</option>
-                                                <option value="AT">AT</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Động cơ</label>
-                                            <input name="emachine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Số chỗ ngồi</label>
-                                            <select name="eseat" class="form-control">
-                                                <option value="4">4 chỗ</option>
-                                                <option value="5">5 chỗ</option>
-                                                <option value="7">7 chỗ</option>
-                                                <option value="9">9 chỗ</option>
-                                            </select>
+                                            <label>Số máy</label>
+                                            <input name="eframe" placeholder="Số máy" type="text" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Nhiên liệu</label>
-                                            <select name="efuel" class="form-control">
-                                                <option value="Xăng">Xăng</option>
-                                                <option value="Dầu">Dầu</option>
-                                                <option value="Điện">Điện</option>
-                                                <option value="Điện/Dầu">Điện/Dầu</option>
-                                                <option value="Điện/Xăng">Điện/Xăng</option>
+                                            <label>Năm sản xuất</label>
+                                            <select name="enam" class="form-control">
+                                                @for($i = 2000; $i <= 2100; $i++)
+                                                    <option value="{{$i}}">{{$i}}</option>
+                                                @endfor
                                             </select>
-                                        </div>
-
-                                        <label class="text-danger">Trạng thái</label>
-                                            <select name="etrangThai" class="form-control">
-                                                <option value="ORDER">ORDER</option>
-                                                <option value="P/O">P/O</option>
-                                                <option value="MAP">MAP</option>
-                                                <option value="STORE">STORE</option>
-                                                <option value="HD">HD</option>
-                                            </select>
-
+                                        </div>    
                                         <div class="form-group">
                                             <label>Ghi chú</label>
                                             <input name="eghiChu" placeholder="Ghi chú" type="text" class="form-control">

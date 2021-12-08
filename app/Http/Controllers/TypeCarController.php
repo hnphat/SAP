@@ -38,6 +38,7 @@ class TypeCarController extends Controller
         $typecar = new TypeCar;
 
         $typecar->name = $request->tenXe;
+        $typecar->code = $request->code;
         $typecar->save();
 
         if($typecar) {
@@ -71,7 +72,8 @@ class TypeCarController extends Controller
 
     public function update(Request $request) {
         $result = TypeCar::where('id', $request->idMasterXe)->update([
-            'name' => $request->tenXeE
+            'name' => $request->tenXeE,
+            'code' => $request->codeE
         ]);
         if($result) {
             return response()->json([
@@ -103,9 +105,9 @@ class TypeCarController extends Controller
 
     public function more($id) {
         $result = TypeCarDetail::where('id_type_car',$id)->get();
-        echo "<table class='table'><tr class='bg-orange'><th>Tên loại xe</th><th>Sửa</th><th>Xóa</th></tr>";
+        echo "<table class='table'><tr class='bg-orange'><th>Tên loại xe</th><th>Động cơ</th><th>Hộp số</th><th>Số chỗ</th><th>Nhiên liệu</th><th>Sửa</th><th>Xóa</th></tr>";
         foreach($result as $row) {
-            echo "<tr><td>".$row->name."</td><td><button class='btn btn-success btn-sm' data-id='".$row->id."' data-toggle='modal' data-target='#editPlusModal' id='showEditPlus'><span class='far fa-edit'></span></button></td><td><button data-id='".$row->id."' data-idmaster='".$id."' class='btn btn-danger btn-sm' id='deletePlus'><span class='fas fa-times-circle'></span></button></td></tr>";
+            echo "<tr><td>".$row->name."</td><td>".$row->machine."</td><td>".$row->gear."</td><td>".$row->seat."</td><td>".$row->fuel."</td><td><button class='btn btn-success btn-sm' data-id='".$row->id."' data-toggle='modal' data-target='#editPlusModal' id='showEditPlus'><span class='far fa-edit'></span></button></td><td><button data-id='".$row->id."' data-idmaster='".$id."' class='btn btn-danger btn-sm' id='deletePlus'><span class='fas fa-times-circle'></span></button></td></tr>";
         }
         echo "</table>";
     }
@@ -128,9 +130,12 @@ class TypeCarController extends Controller
 
     public function addPlus(Request $request) {
         $typecardetail = new TypeCarDetail;
-
         $typecardetail->id_type_car = $request->idAddPlus;
         $typecardetail->name = $request->loaiXe;
+        $typecardetail->fuel = $request->fuel;
+        $typecardetail->seat = $request->seat;
+        $typecardetail->machine = $request->machine;
+        $typecardetail->gear = $request->gear;
         $typecardetail->save();
 
         if($typecardetail) {
@@ -181,7 +186,11 @@ class TypeCarController extends Controller
 
     public function editAddPlus(Request $request) {
         $result = TypeCarDetail::where('id', $request->idEditAddPlus)->update([
-            'name' => $request->_tenLoaiXe
+            'name' => $request->_tenLoaiXe,
+            'fuel' => $request->_fuel,
+            'gear' => $request->_gear,
+            'seat' => $request->_seat,
+            'machine' => $request->_machine,
         ]);
 
         if($result) {

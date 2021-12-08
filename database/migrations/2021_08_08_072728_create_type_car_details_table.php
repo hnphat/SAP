@@ -18,6 +18,10 @@ class CreateTypeCarDetailsTable extends Migration
             $table->integer('id_type_car')->unsigned();
             $table->foreign('id_type_car')->references('id')->on('type_car');
             $table->string('name', 100);
+            $table->string('gear', 10)->nullable();
+            $table->string('machine', 10)->nullable();
+            $table->string('seat', 10)->nullable();
+            $table->string('fuel', 10)->nullable();
             $table->timestamps();
         });
     }

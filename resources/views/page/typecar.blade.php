@@ -40,6 +40,10 @@
                                 <input type="text" class="form-control" placeholder="Tên dòng xe" name="tenXe">
                             </div>
                             <div class="form-group">
+                                <label for="tenXe">Mã rút gọn</label>
+                                <input type="text" class="form-control" placeholder="Mã rút gọn VD: ACC" name="code">
+                            </div>
+                            <div class="form-group">
                                 <button id="btnAdd" class="btn btn-primary">Thêm mới</button>
                             </div>
                         </div>
@@ -50,19 +54,12 @@
                         <thead>
                         <tr class="bg-cyan">
                             <th>Dòng xe</th>
+                            <th>Code</th>
                             <th>Sửa</th>
                             <th>Xóa</th>
                             <th>Mở rộng</th>
                         </tr>
                         </thead>
-                        <tfoot>
-                        <tr>
-                            <th>Dòng xe</th>
-                            <th>Sửa</th>
-                            <th>Xóa</th>
-                            <th>Mở rộng</th>
-                        </tr>
-                        </tfoot>
                     </table>
                 </div>
                 <div class="col-sm-4" id="showMore">
@@ -91,6 +88,10 @@
                                             <div class="form-group">
                                                 <label for="tenXeE">Tên dòng xe</label>
                                                 <input type="text" class="form-control" id="tenXeE" placeholder="Tên dòng xe" name="tenXeE">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="codeE">Mã rút gọn</label>
+                                                <input type="text" class="form-control" id="codeE" placeholder="Mã rút gọn" name="codeE">
                                             </div>
                                             <div class="form-group">
                                                 <button id="btnUpdate" class="btn btn-primary">Cập nhật</button>
@@ -137,6 +138,39 @@
                                                 <input type="text" class="form-control" id="loaiXe" placeholder="Tên loại xe" name="loaiXe">
                                             </div>
                                             <div class="form-group">
+                                                <label>Hộp số</label>
+                                                <select name="gear" class="form-control">
+                                                    <option value="0">Chọn</option>
+                                                    <option value="MT">MT</option>
+                                                    <option value="AT">AT</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Động cơ</label>
+                                                <input name="machine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Số chỗ ngồi</label>
+                                                <select name="seat" class="form-control">
+                                                    <option value="0">Chọn</option>
+                                                    <option value="4">4 chỗ</option>
+                                                    <option value="5">5 chỗ</option>
+                                                    <option value="7">7 chỗ</option>
+                                                    <option value="9">9 chỗ</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Nhiên liệu</label>
+                                                <select name="fuel" class="form-control">
+                                                    <option value="0">Chọn</option>
+                                                    <option value="Xăng">Xăng</option>
+                                                    <option value="Dầu">Dầu</option>
+                                                    <option value="Điện">Điện</option>
+                                                    <option value="Điện/Dầu">Điện/Dầu</option>
+                                                    <option value="Điện/Xăng">Điện/Xăng</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
                                                 <button id="btnAddPlus" class="btn btn-primary">Thêm</button>
                                             </div>
                                         </div>
@@ -176,6 +210,39 @@
                                             <div class="form-group">
                                                 <label for="_tenLoaiXe">Tên loại xe</label>
                                                 <input type="text" class="form-control" id="_tenLoaiXe" placeholder="Tên loại xe" name="_tenLoaiXe">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Hộp số</label>
+                                                <select name="_gear" class="form-control">
+                                                    <option value="0">Chọn</option>
+                                                    <option value="MT">MT</option>
+                                                    <option value="AT">AT</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Động cơ</label>
+                                                <input name="_machine" placeholder="Động cơ 1.0 1.2 .." type="number" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Số chỗ ngồi</label>
+                                                <select name="_seat" class="form-control">
+                                                    <option value="0">Chọn</option>
+                                                    <option value="4">4 chỗ</option>
+                                                    <option value="5">5 chỗ</option>
+                                                    <option value="7">7 chỗ</option>
+                                                    <option value="9">9 chỗ</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Nhiên liệu</label>
+                                                <select name="_fuel" class="form-control">
+                                                    <option value="0">Chọn</option>
+                                                    <option value="Xăng">Xăng</option>
+                                                    <option value="Dầu">Dầu</option>
+                                                    <option value="Điện">Điện</option>
+                                                    <option value="Điện/Dầu">Điện/Dầu</option>
+                                                    <option value="Điện/Xăng">Điện/Xăng</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <button id="btnUpdateAddPlus" class="btn btn-primary">Cập nhật</button>
@@ -220,6 +287,7 @@
                 ajax: "{{ url('management/typecar/getlist/') }}",
                 columns: [
                     { "data": "name"},
+                    { "data": "code"},
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -282,6 +350,7 @@
                    success: function(response) {
                        console.log(response.data);
                        $("input[name=tenXeE]").val(response.data.name);
+                       $("input[name=codeE]").val(response.data.code);
                        $("input[name=idMasterXe]").val(response.data.id);
                    }
                });
@@ -438,6 +507,10 @@
                         $("input[name=idEditAddPlus]").val(response.data.id);
                         $("input[name=idMaster]").val(response.data.id_type_car);
                         $("input[name=_tenLoaiXe]").val(response.data.name);
+                        $("input[name=_fuel]").val(response.data.fuel);
+                        $("input[name=_seat]").val(response.data.seat);
+                        $("input[name=_machine]").val(response.data.machine);
+                        $("input[name=_gear]").val(response.data.gear);
                     }
                 });
             });
