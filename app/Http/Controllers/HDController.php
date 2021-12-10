@@ -381,15 +381,23 @@ class HDController extends Controller
     public function cntm($id) {
         $outhd = "";
         $templateProcessor = new TemplateProcessor('template/CN_HD_TM_NO_PK.docx');
-        $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
-            ['sale_off.id_sale','=', $id],
+        $hasPK = SaleOffV2::select('package.*')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+        ->where([
+            ['saleoffv2.id_hd','=', $id],
             ['package.type','=','pay']
         ])->exists();
+
+        // $hasPK = SaleOff::select('package.*')->join('bh_pk_package as package','sale_off.id_bh_pk_package','=','package.id')->join('sale as s','sale_off.id_sale','=','s.id')->where([
+        //     ['sale_off.id_sale','=', $id],
+        //     ['package.type','=','pay']
+        // ])->exists();
 
         if ($hasPK) {
             $templateProcessor = new TemplateProcessor('template/CN_HD_TM.docx');
             // Set data from database
-            $sale = Sale::find($id);
+            $sale = HopDong::find($id);
             $sum = 0;
             $sumpk = 0;
             $tongChiPhi = 0;
@@ -409,9 +417,10 @@ class HDController extends Controller
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
-            $car = $sale->carSale;
-            $giaXe = $sale->requestHd;
-            $sum += $giaXe->giaXe;
+            $car = $sale->carSale->typeCarDetail;
+            $kho = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $sum += $sale->giaXe;
             $outhd = 'HDTM ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
@@ -428,17 +437,17 @@ class HDController extends Controller
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
                 'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
-                'tenDaiDien' => $sale->guest->daiDien,
+                'tenDaiDien' => $sale->guest->name,
                 'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
-                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->mau .'<w:br/>' .
                     '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
-                    '- Năm SX: ' . $car->year,
-                'donGia' => number_format($giaXe->giaXe),
-                'thanhTien' => number_format($giaXe->giaXe),
-                'tamUng' => number_format($giaXe->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                    '- Năm SX: ' . $kho->year,
+                'donGia' => number_format($sale->giaXe),
+                'thanhTien' => number_format($sale->giaXe),
+                'tamUng' => number_format($sale->tienCoc),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tienCoc),
                 'phuKien' => number_format($sumpk),
                 'giaPhuKien' => number_format($sumpk),
                 'chiPhi' => number_format($tongChiPhi),
@@ -450,7 +459,7 @@ class HDController extends Controller
             ]);
         } else {
             // Không phụ kiện
-            $sale = Sale::find($id);
+            $sale = HopDong::find($id);
             $sum = 0;
             $tongChiPhi = 0;
             $pkfree = "";
@@ -467,9 +476,10 @@ class HDController extends Controller
                 $sum += $row->cost;
             }
             $car_detail = $sale->carSale->typeCarDetail;
-            $car = $sale->carSale;
-            $giaXe = $sale->requestHd;
-            $sum += $giaXe->giaXe;
+            $car = $sale->carSale->typeCarDetail;
+            $kho = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $sum += $sale->giaXe;
             $outhd = 'HDTM ' . $sale->guest->name;
             // Cá nhân
             $templateProcessor->setValues([
@@ -486,17 +496,17 @@ class HDController extends Controller
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
                 'ngaySinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
-                'tenDaiDien' => $sale->guest->daiDien,
+                'tenDaiDien' => $sale->guest->name,
                 'noiDung' => '- Xe ô tô ' . $car->seat . ' chỗ ngồi hiệu HYUNDAI<w:br/>' .
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
-                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $car->color .'<w:br/>' .
+                    '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->mau .'<w:br/>' .
                     '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
-                    '- Năm SX: ' . $car->year,
-                'donGia' => number_format($giaXe->giaXe),
-                'thanhTien' => number_format($giaXe->giaXe),
-                'tamUng' => number_format($giaXe->tamUng),
-                'tamUngBangChu' => \HelpFunction::convert($giaXe->tamUng),
+                    '- Năm SX: ' . $kho->year,
+                'donGia' => number_format($sale->giaXe),
+                'thanhTien' => number_format($sale->giaXe),
+                'tamUng' => number_format($sale->tienCoc),
+                'tamUngBangChu' => \HelpFunction::convert($sale->tienCoc),
                 'chiPhi' => number_format($tongChiPhi),
                 'giaChiPhi' => number_format($tongChiPhi),
                 'tongCong' => number_format($sum),
@@ -1046,6 +1056,7 @@ class HDController extends Controller
     }
 
     public function getDanhSach() {
+        $hdWait = "";
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale'))
             $result = HopDong::select('*')->orderby('id','desc')->get();
         else 
@@ -1054,16 +1065,20 @@ class HDController extends Controller
         if($result) {
                 echo "<option value='0'>Chọn</option>";
             foreach($result as $row){
+                if($row->hdWait == true) 
+                    $hdWait = "(Hợp đồng chờ)";
+                else
+                    $hdWait = "";
                 if($row->lead_check_cancel	== true) 
-                echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy)</option>";
+                echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
                 elseif ($row->requestCheck == false)
-                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi)</option>";
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == false) 
-                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt)</option>";
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
-                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt)</option>";
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
-                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt)</option>";
+                    echo "<option value='".$row->id."'>[Số: HAGI-0".$row->id."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
             }
         } else {
             echo "<option value='0'>Không tìm thấy</option>";
@@ -1449,12 +1464,14 @@ class HDController extends Controller
             //     ->get();
         
         $car = KhoV2::find($result->id_car_kho);
+        $waitCar = TypeCarDetail::find($result->id_car_sale);
         if($result) {
             return response()->json([
                 'message' => 'Get HD Success!',
                 'code' => 200,
                 'data' => $result,
-                'car' => $car
+                'car' => $car,
+                'waitcar' => $waitCar
             ]);
         } else {
             return response()->json([
@@ -1519,9 +1536,27 @@ class HDController extends Controller
     }
 
     public function duyetDeNghi(Request $request){
-        $result = HopDong::find($request->id);
+        $result = HopDong::find($request->id);        
         if((Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) && $result->requestCheck == true) {
-            if ($request->idXeGan == null) {
+            if ($request->wait == 1) {
+                $result->admin_check = true;
+                $result->hdWait = true;    
+                $result->save();
+                if($result) {
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Hợp đồng chờ! Đã duyệt!',
+                        'code' => 200,
+                        'data' => $result
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else if ($request->idXeGan == null) {
                 return response()->json([
                     'type' => 'warning',
                     'message' => 'Bạn chưa gán xe cho đề nghị này!',
@@ -1590,9 +1625,11 @@ class HDController extends Controller
         $result = HopDong::find($request->id);
         if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
             $result->lead_check_cancel = true;
-                $car = KhoV2::find($result->id_car_kho);
-                $car->type = "STORE";
-                $car->save();
+                if ($result->id_car_kho != null && $result->hdWait != true) {
+                    $car = KhoV2::find($result->id_car_kho);
+                    $car->type = "STORE";
+                    $car->save();
+                }
             $result->save();
             if($result) {
                 return response()->json([
@@ -1663,11 +1700,12 @@ class HDController extends Controller
         if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
             $result->requestCheck = false;
             $result->admin_check = false;
-                if ($result->id_car_kho != null) {
+                if ($result->id_car_kho != null && $result->hdWait != true) {
                     $car = KhoV2::find($result->id_car_kho);
                     $car->type = "STORE";
                     $car->save();
-                }                    
+                }    
+            $result->hdWait = false;           
             $result->id_car_kho = null;
             $result->save();
             if($result) {
@@ -1692,10 +1730,13 @@ class HDController extends Controller
         $result = HopDong::find($request->id);
         if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
             $result->admin_check = false;
+                if ($result->id_car_kho != null && $result->hdWait != true) {
                     $car = KhoV2::find($result->id_car_kho);
                     $car->type = "STORE";
                     $car->save();
+                }
             $result->id_car_kho = null;
+            $result->hdWait = false;
             $result->save();
             if($result) {
                 return response()->json([

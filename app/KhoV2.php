@@ -13,7 +13,7 @@ class KhoV2 extends Model
      }
  
      public function sale() {
-         return $this->hasMany('App\Sale', 'id_car_sale', 'id');
+         return $this->hasMany('App\HopDong', 'id_car_sale', 'id');
      }
  
      public function user() {

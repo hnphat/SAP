@@ -1084,7 +1084,7 @@ class ReportController extends Controller
 
                     <div class='row'>
                         <div class='col-md-8'>
-                            <h5>- Xuất hóa đơn: <span class='text-success'><strong>" . ($xuatNgoaiTinh + $xuatTrongTinh) . "</strong></span></h5>
+                            <h5>- Xuất xe: <span class='text-success'><strong>" . ($xuatNgoaiTinh + $xuatTrongTinh) . "</strong></span></h5>
                             <p>+ Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span><br/>
                             + Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></p>
                             ";
@@ -1146,6 +1146,11 @@ class ReportController extends Controller
         $phuTungMua = 0;
         $dauNhotMua = 0;
 
+        $sum1 = 0;
+        $sum2 = 0;
+        $sum3 = 0;
+        $sum4 = 0;
+
         $_from = \HelpFunction::revertDate($_from);
         $_to = \HelpFunction::revertDate($_to);
 
@@ -1195,17 +1200,25 @@ class ReportController extends Controller
                 $suaChua += $row->suaChua;
                 $Dong += $row->Dong;
                 $Son += $row->Son;
+
                 $congBaoDuong += $row->congBaoDuong;
                 $congSuaChuaChung += $row->congSuaChuaChung;
                 $congDong += $row->congDong;
                 $congSon += $row->congSon;
+
                 $dtPhuTung += $row->dtPhuTung;
                 $dtDauNhot += $row->dtDauNhot;
                 $dtPhuTungBan += $row->dtPhuTungBan;
                 $dtDauNhotBan += $row->dtDauNhotBan;
+
                 $phuTungMua += $row->phuTungMua;
                 $dauNhotMua += $row->dauNhotMua;
             }
+
+            $sum1 = $baoDuong + $suaChua + $Dong + $Son;
+            $sum2 = $congBaoDuong + $congSuaChuaChung + $congDong + $congSon;
+            $sum3 = $dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan;
+            $sum4 = $phuTungMua + $dauNhotMua;
 
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
 
@@ -1215,14 +1228,14 @@ class ReportController extends Controller
 
                 <div class='row'>
                         <div class='col-md-6'>
-                            <h4>LƯỢT XE</h4>
+                            <h4>LƯỢT XE: <span class='text-success'><strong>" . number_format($sum1) . "</strong></span></h4>
                             <h5>- Bảo dưỡng: <span class='text-success'><strong>" . $baoDuong . "</strong></span></h5>
                             <h5>- Sữa chữa: <span class='text-success'><strong>" . $suaChua . "</strong></span></h5>
                             <h5>- Đồng: <span class='text-success'><strong>" . $Dong . "</strong></span></h5>
                             <h5>- Sơn: <span class='text-success'><strong>" . $Son . "</strong></span></h5>
                         </div>
                         <div class='col-md-6'>
-                            <h4>DOANH THU DỊCH VỤ</h4>
+                            <h4>DOANH THU DỊCH VỤ: <span class='text-success'><strong>" . number_format($sum2) . "</strong></span></h4>
                             <h5>- Công bảo dưỡng: <span class='text-success'><strong>" . number_format($congBaoDuong) . "</strong></span></h5>
                             <h5>- Công sữa chữa: <span class='text-success'><strong>" . number_format($congSuaChuaChung) . "</strong></span></h5>
                             <h5>- Công đồng: <span class='text-success'><strong>" . number_format($congDong) . "</strong></span></h5>
@@ -1231,14 +1244,14 @@ class ReportController extends Controller
                         </div>
                         <div class='row'>
                         <div class='col-md-6'>
-                            <h4>DOANH THU PHỤ TÙNG - DẦU NHỚT</h4>
+                            <h4>DOANH THU PHỤ TÙNG - DẦU NHỚT: <span class='text-success'><strong>" . number_format($sum3) . "</strong></span></h4>
                             <h5>- Phụ tùng sửa chữa: <span class='text-success'><strong>" . number_format($dtPhuTung) . "</strong></span></h5>
                             <h5>- Dầu nhớt sữa chữa: <span class='text-success'><strong>" . number_format($dtDauNhot) . "</strong></span></h5>
                             <h5>- Phụ tùng bán ngoài: <span class='text-success'><strong>" . number_format($dtPhuTungBan) . "</strong></span></h5>
                             <h5>- Dầu nhớt bán ngoài: <span class='text-success'><strong>" . number_format($dtDauNhotBan) . "</strong></span></h5>
                         </div>
                         <div class='col-md-6'>
-                            <h4>MUA PHỤ TÙNG/DẦU NHỚT HTV/TST</h4>
+                            <h4>MUA PHỤ TÙNG/DẦU NHỚT HTV/TST: <span class='text-success'><strong>" . number_format($sum4) . "</strong></span></h4>
                             <h5>- Tiền mua phụ tùng: <span class='text-success'><strong>" . number_format($phuTungMua) . "</strong></span></h5>
                             <h5>- Tiền mua dầu nhớt: <span class='text-success'><strong>" . number_format($dauNhotMua) . "</strong></span></h5>
                         </div>

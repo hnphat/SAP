@@ -504,13 +504,20 @@
                         'id': $(this).data('id')
                     },
                     success: function(response){
+                        $('select[name=_fuel] option[selected=selected]').removeAttr('selected');
+                        $('option[value='+response.data.fuel+']').attr('selected','selected');
+                        $('select[name=_seat] option[selected=selected]').removeAttr('selected');
+                        $('option[value='+response.data.seat+']').attr('selected','selected');
+                        $('select[name=_gear] option[selected=selected]').removeAttr('selected');
+                        $('option[value='+response.data.gear+']').attr('selected','selected');
+
                         $("input[name=idEditAddPlus]").val(response.data.id);
                         $("input[name=idMaster]").val(response.data.id_type_car);
                         $("input[name=_tenLoaiXe]").val(response.data.name);
-                        $("input[name=_fuel]").val(response.data.fuel);
-                        $("input[name=_seat]").val(response.data.seat);
+                        $("select[name=_fuel]").val(response.data.fuel);
+                        $("select[name=_seat]").val(response.data.seat);
                         $("input[name=_machine]").val(response.data.machine);
-                        $("input[name=_gear]").val(response.data.gear);
+                        $("select[name=_gear]").val(response.data.gear);
                     }
                 });
             });

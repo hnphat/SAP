@@ -65,6 +65,7 @@
                                     </div>
                                     <div>
                                         <h5>THÔNG TIN XE BÁN <button type="button" id="checkTonKho" data-toggle="modal" data-target="#checkTonKhoModal" class="btn btn-success btn-xs">KIỂM TRA TỒN KHO</button></h5>
+                                        <input type="checkbox" name="hdWait" id="hdWait"> <label for="hdWait" class="text-pink">HỢP ĐỒNG CHỜ</label>
                                         <hr>
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -358,18 +359,22 @@
                     $("#duyetDeNghi").hide();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
+                    $("input[name=hdWait]").prop('disabled', true);
                 }else if (request == true && admin == false) {
                     $("#duyetDeNghi").show();
                     $("#choPhepSua").show();
                     $("#huyDeNghi").hide();
+                    $("input[name=hdWait]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
                     $("#choPhepSua").show();
                     $("#huyDeNghi").show();
+                    $("input[name=hdWait]").prop('disabled', true);
                 }else if (request == false) {
                     $("#duyetDeNghi").show();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
+                    $("input[name=hdWait]").prop('disabled', false);
                 }
             }
 
@@ -403,10 +408,17 @@
                             $("input[name=idHopDong]").val(response.data.id);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
+                            
                             if (response.data.lyDoEdit != null)
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
                             else
                                 $("#requestSaleEdit").text("Không");
+                            if (response.data.hdWait == 1) {
+                                $("input[name=hdWait]").prop('checked', true);
+                            } else {
+                                $("input[name=hdWait]").prop('checked', false);
+                            }
+                                
 
                             // BUTTON
                             showSoTien();
@@ -419,13 +431,28 @@
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
                             reloadSS(response.data.requestCheck, response.data.admin_check, response.data.lead_check);
-
+                            
+                            let svin = "";
+                            let sframe = "";
+                            let scolor = "";
+                            let syear = "";
+                            try {
+                                svin = response.car.vin;
+                                sframe = response.car.frame;
+                                scolor = response.car.color;
+                                syear = response.car.year;
+                            } catch(error) {
+                                svin = "<span class='text-danger'>Chưa gán</span>";
+                                sframe = "<span class='text-danger'>Chưa gán</span>";
+                                scolor = "<span class='text-danger'>Chưa gán</span>";
+                                syear = "<span class='text-danger'>Chưa gán</span>";
+                            }
                             // show xe gán
                             txt = "<tr>"+
                             "<td>"+ response.data.namecar +"</td>"+
-                            "<td>"+ response.car.vin +"</td>"+
-                            "<td>"+ response.car.frame +"</td>"+
-                            "<td>Màu: "+ response.car.color +"; Năm SX: "+ response.car.year +"; Hộp số: "+ response.car.gear +"; Chỗ ngồi: "+ response.car.seat +"; Động cơ: "+ response.car.machine +"; Nhiên liệu: "+ response.car.fuel +"</td>"+
+                            "<td>"+ svin +"</td>"+
+                            "<td>"+ sframe +"</td>"+
+                            "<td>Màu: "+ scolor +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
                             "</tr>";
                             $("#showXeGan").html(txt);
                         } else {
@@ -595,6 +622,9 @@
             }
 
             $("#duyetDeNghi").click(function(e){
+                let wait = 0;
+                if ($("#hdWait").is(":checked"))
+                    wait = 1;
                 e.preventDefault();
                 if(confirm('Xác nhận phê duyệt đề nghị này!')){
                     $.ajax({
@@ -604,6 +634,7 @@
                         data: {
                             "_token": "{{csrf_token()}}",
                             "idXeGan": $("input[name=xeGan]").val(),
+                            "wait": wait,
                             "id": $("input[name=idHopDong]").val()
                         },
                         success: function(response) {

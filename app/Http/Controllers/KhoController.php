@@ -187,7 +187,10 @@ class KhoController extends Controller
     }
 
     public function getKhoList() {
-        $result = KhoV2::select('kho_v2.*','t.name as ten')->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')->orderBy('id', 'desc')->get();
+        //$result = KhoV2::select('kho_v2.*','t.name as ten')->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')->orderBy('id', 'desc')->get();
+        $result = KhoV2::select('kho_v2.*','t.name as ten', 't.fuel as fuel', 't.seat as seat', 't.machine as machine', 't.gear as gear')
+        ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        ->orderBy('id', 'desc')->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -210,10 +213,6 @@ class KhoController extends Controller
         $kho->vin = $request->vin;
         $kho->frame = $request->frame;
         $kho->color = $request->color;
-        $kho->gear = $request->gear;
-        $kho->machine = $request->machine;
-        $kho->seat = $request->seat;
-        $kho->fuel = $request->fuel;
         $kho->type = $request->trangThai;
         $kho->soDonHang = $request->soDonHang;
         $kho->soBaoLanh = $request->soBaoLanh;
@@ -281,11 +280,7 @@ class KhoController extends Controller
                 "year" => $request->enam,
                 "vin" => $request->evin,
                 "frame" => $request->eframe,
-                "color" => $request->ecolor,
-                "gear" => $request->egear,
-                "machine" => $request->emachine,
-                "seat" => $request->eseat,
-                "fuel" => $request->efuel,
+                "color" => $request->ecolor,                
                 "soDonHang" => $request->esoDonHang,
                 "soBaoLanh" => $request->esoBaoLanh,
                 "ngayNhanXe" => $request->engayNhanXe,
@@ -300,11 +295,7 @@ class KhoController extends Controller
                         "year" => $request->enam,
                         "vin" => $request->evin,
                         "frame" => $request->eframe,
-                        "color" => $request->ecolor,
-                        "gear" => $request->egear,
-                        "machine" => $request->emachine,
-                        "seat" => $request->eseat,
-                        "fuel" => $request->efuel,
+                        "color" => $request->ecolor,                        
                         "soDonHang" => $request->esoDonHang,
                         "soBaoLanh" => $request->esoBaoLanh,
                         "ngayNhanXe" => $request->engayNhanXe,
@@ -318,11 +309,7 @@ class KhoController extends Controller
                         "year" => $request->enam,
                         "vin" => $request->evin,
                         "frame" => $request->eframe,
-                        "color" => $request->ecolor,
-                        "gear" => $request->egear,
-                        "machine" => $request->emachine,
-                        "seat" => $request->eseat,
-                        "fuel" => $request->efuel,
+                        "color" => $request->ecolor,                        
                         "type" => $request->etrangThai,
                         "soDonHang" => $request->esoDonHang,
                         "soBaoLanh" => $request->esoBaoLanh,

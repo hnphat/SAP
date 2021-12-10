@@ -59,10 +59,10 @@
                                         <th class="bg-secondary">Ngày nhận xe</th>
                                         <th class="bg-secondary">Ngân hàng</th>
                                         <th>Năm SX</th>
-                                        <th>Hộp số</th>
+                                        <!-- <th>Hộp số</th>
                                         <th>Động cơ</th>
                                         <th>Số ghế</th>
-                                        <th>Nhiên liệu</th>
+                                        <th>Nhiên liệu</th> -->
                                         <th>Tác vụ</th>
                                     </tr>
                                     </thead>
@@ -393,10 +393,6 @@
                     { "data": "ngayNhanXe" },
                     { "data": "nganHang" },
                     { "data": "year" },
-                    { "data": "gear" },
-                    { "data": "machine" },
-                    { "data": "seat" },
-                    { "data": "fuel" },
                     {
                         "data": null,
                         render: function(data, type, row) {

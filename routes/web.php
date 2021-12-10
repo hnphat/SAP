@@ -140,16 +140,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('get/detail/hd/{id}','HDController@detailHD');
         // --- end ajax quickly
         Route::get('exportToWord','HDController@test');
-        Route::get('banle/canhan/tienmat/down/{id}','HDController@cntm');
-        Route::get('banle/canhan/nganhang/down/{id}','HDController@cnnh');
-        Route::get('banle/congty/tienmat/down/{id}','HDController@cttm');
-        Route::get('banle/congty/nganhang/down/{id}','HDController@ctnh');
-
-        // --- 
-        Route::get('banle/phuluc/canhan/down/{id}','HDController@inPhuLucCaNhan');
-        Route::get('banle/phuluc/congty/down/{id}','HDController@inPhuLucCongTy');
-
-
 
         //-------------- HD v2
         Route::get('hd/denghi','HDController@getHDDeNghi')->name('hd.denghi');
@@ -189,6 +179,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/pheduyetlead/ok','HDController@duyetDeNghiLead');
         Route::post('hd/denghi/pheduyetleadhuy/ok','HDController@duyetDeNghiLeadHuy');
 
+        // --- In ấn hợp đồng
+        Route::get('banle/canhan/tienmat/down/{id}','HDController@cntm');
+        Route::get('banle/canhan/nganhang/down/{id}','HDController@cnnh');
+        Route::get('banle/congty/tienmat/down/{id}','HDController@cttm');
+        Route::get('banle/congty/nganhang/down/{id}','HDController@ctnh');
+
+        // --- In ấn phụ lục
+        Route::get('banle/phuluc/canhan/down/{id}','HDController@inPhuLucCaNhan');
+        Route::get('banle/phuluc/congty/down/{id}','HDController@inPhuLucCongTy');
 
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){

@@ -236,7 +236,34 @@
                             <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
                             <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
                             <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button>
-                            <button id="xoaDeNghi" class="btn btn-danger">XÓA</button>
+                            <hr>
+                            <h5>IN HỢP ĐỒNG</h5>
+                            <form id="inForm">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>CHỌN LOẠI HỢP ĐỒNG</label>
+                                                <select name="chonLoaiHD" class="form-control">
+                                                    <option value="1">Cá nhân tiền mặt</option>
+                                                    <option value="2">Cá nhân ngân hàng</option>
+                                                    <option value="3">Công ty tiền mặt</option>
+                                                    <option value="4">Công ty ngân hàng</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>CHỌN MẪU CẦN IN</label>
+                                                <select name="mauHD" class="form-control">
+                                                    <option value="1">Hợp đồng mua bán</option>
+                                                    <option value="2">Phụ lục hợp đồng</option>
+                                                    <option value="3">Đề nghị thực hiện hợp đồng</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <button id="in" class="btn btn-success"><span class="fas fa-print"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                         </div>
                     </div>
                     <!-- /.card -->
@@ -472,7 +499,7 @@
             $("#pkCostAdd").hide();
             $("#pkFreeAdd").hide();
             $("#pkPayAdd").hide();
-
+            $("#inForm").hide();
             // load list hợp đồng
             function loadList() {
                 $.ajax({
@@ -549,7 +576,7 @@
 
                                 $("select[name=mauSac]").prop('disabled', false);
                                 $("select[name=xeBan]").prop('disabled', false);
-
+                                $("#inForm").hide();
                             } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
                                 $("#deNghiHuy").hide();
@@ -570,6 +597,7 @@
 
                                 $("select[name=mauSac]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
+                                $("#inForm").hide();
                             } else if (response.data.requestCheck == true 
                             && response.data.admin_check == true && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
@@ -589,6 +617,7 @@
 
                                 $("select[name=mauSac]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
+                                $("#inForm").show();
                             } else if (response.data.requestCheck == true 
                             && response.data.admin_check == true && response.data.lead_check == true) {
                                 $("#deNghiHopDong").hide();
@@ -608,6 +637,7 @@
 
                                 $("select[name=mauSac]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
+                                $("#inForm").hide();
                             } else {
                                 $("#deNghiHopDong").hide();
                                 $("#deNghiHuy").hide();
@@ -625,6 +655,7 @@
                                 $("#dienThoai").prop('disabled', true);
                                 $("select[name=mauSac]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
+                                $("#inForm").hide();
                             }
                         }
                     },
@@ -689,13 +720,28 @@
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
 
+                            let svin = "";
+                            let sframe = "";
+                            let scolor = "";
+                            let syear = "";
+                            try {
+                                svin = response.car.vin;
+                                sframe = response.car.frame;
+                                scolor = response.car.color;
+                                syear = response.car.year;
+                            } catch(error) {
+                                svin = "<span class='text-danger'>Chưa gán</span>";
+                                sframe = "<span class='text-danger'>Chưa gán</span>";
+                                scolor = "<span class='text-danger'>Chưa gán</span>";
+                                syear = "<span class='text-danger'>Chưa gán</span>";
+                            }
                             // show xe gán
                             $("#showXeGan").html("");
                             txt = "<tr>"+
                             "<td>"+ response.data.namecar +"</td>"+
-                            "<td>"+ response.car.vin +"</td>"+
-                            "<td>"+ response.car.frame +"</td>"+
-                            "<td>Màu: "+ response.car.color +"; Năm SX: "+ response.car.year +"; Hộp số: "+ response.car.gear +"; Chỗ ngồi: "+ response.car.seat +"; Động cơ: "+ response.car.machine +"; Nhiên liệu: "+ response.car.fuel +"</td>"+
+                            "<td>"+ svin +"</td>"+
+                            "<td>"+ sframe +"</td>"+
+                            "<td>Màu: "+ scolor +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
                             "</tr>";
                             $("#showXeGan").html(txt);
                         } else {
@@ -1209,6 +1255,38 @@
                             })
                         }
                     });
+                }
+            });
+
+
+            // check chosen hd
+            $("#in").click(function(e){
+               e.preventDefault();
+                if ($("select[name=mauHD]").val() == 1) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
+                 }
+
+                if ($("select[name=mauHD]").val() == 2) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
+                }
+
+                if ($("select[name=mauHD]").val() == 3) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
                 }
             });
         });

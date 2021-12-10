@@ -374,12 +374,27 @@
                             loadTotal(response.data.id);
                             reloadSS(response.data.lead_check_cancel,response.data.requestCancel, response.data.admin_check, response.data.lead_check);
 
+                            let svin = "";
+                            let sframe = "";
+                            let scolor = "";
+                            let syear = "";
+                            try {
+                                svin = response.car.vin;
+                                sframe = response.car.frame;
+                                scolor = response.car.color;
+                                syear = response.car.year;
+                            } catch(error) {
+                                svin = "<span class='text-danger'>Chưa gán</span>";
+                                sframe = "<span class='text-danger'>Chưa gán</span>";
+                                scolor = "<span class='text-danger'>Chưa gán</span>";
+                                syear = "<span class='text-danger'>Chưa gán</span>";
+                            }
                             // show xe gán
                             txt = "<tr>"+
                             "<td>"+ response.data.namecar +"</td>"+
-                            "<td>"+ response.car.vin +"</td>"+
-                            "<td>"+ response.car.frame +"</td>"+
-                            "<td>Màu: "+ response.car.color +"; Năm SX: "+ response.car.year +"; Hộp số: "+ response.car.gear +"; Chỗ ngồi: "+ response.car.seat +"; Động cơ: "+ response.car.machine +"; Nhiên liệu: "+ response.car.fuel +"</td>"+
+                            "<td>"+ svin +"</td>"+
+                            "<td>"+ sframe +"</td>"+
+                            "<td>Màu: "+ scolor +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
                             "</tr>";
                             $("#showXeGan").html(txt);
                         } else {
