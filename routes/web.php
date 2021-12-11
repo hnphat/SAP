@@ -169,6 +169,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         //----- phê duyệt đề nghị
         Route::get('hd/denghi/pheduyet','HDController@getHDPheDuyetDeNghi')->name('hd.quanly.pheduyet');
         Route::post('hd/denghi/pheduyet/ok','HDController@duyetDeNghi');
+        Route::post('hd/denghi/pheduyet/ganxe/ok','HDController@ganXeHDCho');
         Route::post('hd/denghi/yeucausua/ok','HDController@duyetYeuCauSua');
         Route::get('hd/denghi/checktonkho/{id}','HDController@checkTonKho');
         Route::get('hd/denghi/checktonkho/ok/{id}','HDController@checkTonKhoOk');

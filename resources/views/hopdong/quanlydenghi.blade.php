@@ -46,6 +46,7 @@
                                 <form id="addPkForm">
                                     {{csrf_field()}}
                                     <input type="hidden" name="idHopDong" id="idHopDong">
+                                    <input type="hidden" name="checkIn" id="checkIn">
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="form-group">
@@ -57,6 +58,7 @@
                                         </div>
                                     </div>
                                     <div>
+                                        <h5>Số hợp đồng: <strong id="soHD" class="text-danger"></strong></h5>
                                         <h5>THÔNG TIN KHÁCH HÀNG</h5>
                                         <p>Họ và tên: <strong id="sHoTen"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ngày sinh: <strong id="sNgaySinh"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Số điện thoại: <strong id="sDienThoai"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MST: <strong id="smst"></strong></p>
                                         <p>CMND/CCCD: <strong id="scmnd"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ngày Cấp: <strong id="sNgayCap"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nơi cấp: <strong id="sNoiCap"></strong></p>
@@ -637,7 +639,7 @@
 
                                 $("select[name=mauSac]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
-                                $("#inForm").hide();
+                                $("#inForm").show();
                             } else {
                                 $("#deNghiHopDong").hide();
                                 $("#deNghiHuy").hide();
@@ -692,6 +694,16 @@
                             $("#sDiaChi").text(response.data.address);
                             $("#sDaiDien").text(response.data.daiDien);
                             $("#sChucVu").text(response.data.chucVu);
+
+                            if (response.data.code == 0)
+                                $("#soHD").text("Chưa gán");
+                            else
+                                $("#soHD").text(response.sohd);
+
+                            if (response.data.lead_check == true)
+                                $("input[name=checkIn]").val(1);
+                            else
+                                $("input[name=checkIn]").val(0);
 
                             $('select[name=mauSac] option[selected=selected]').removeAttr('selected');
                             $('select[name=mauSac] option[value='+response.data.mau+']').attr('selected','selected');
@@ -770,6 +782,8 @@
                             $("#hoTen").val("");
                             $("input[name=cmnd]").val("");
                             $("#dienThoai").val("");
+
+                            $("#soHD").text("Chưa gán");
                             loadPKFree(null);
                             loadPKPay(null);
                             loadPKCost(null);
@@ -797,6 +811,7 @@
                             title: "Không lấy được dữ liệu"
                         })
                         $("#showXeGan").html("");
+                        $("#soHD").text("Chưa gán");
                     }
                 });
             });
@@ -1262,23 +1277,33 @@
             // check chosen hd
             $("#in").click(function(e){
                e.preventDefault();
-                if ($("select[name=mauHD]").val() == 1) {
+                if ($("select[name=mauHD]").val() == 1 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
+                 } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
                  }
 
-                if ($("select[name=mauHD]").val() == 2) {
+                if ($("select[name=mauHD]").val() == 2 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
-                }
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
 
                 if ($("select[name=mauHD]").val() == 3) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {

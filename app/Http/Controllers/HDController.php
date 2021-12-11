@@ -422,12 +422,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDTM ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -481,12 +482,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDTM ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -561,12 +563,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDNH ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -620,12 +623,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDNH ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -700,12 +704,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDTM ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -757,12 +762,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDTM ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -835,12 +841,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDNH ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -892,12 +899,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $sum += $sale->giaXe;
             $outhd = 'HDNH ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -957,12 +965,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'PHỤ LỤC ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -1014,12 +1023,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'PHỤ LỤC ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -1083,12 +1093,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'ĐNTHHĐ ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'sale' => $sale->user->userDetail->surname,
                 'salePhone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
@@ -1167,12 +1178,13 @@ class HDController extends Controller
             $giaXe = $sale->giaXe;
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'ĐNTHHĐ ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
             $templateProcessor->setValues([
-                'soHopDong' => "HAGI/0".$sale->id."/".$sale->carSale->typeCarDetail->typeCar->code."/HĐMB-PA",
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
+                'soHopDong' => $sale->code.".".$sale->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
                 'cmnd' => $sale->guest->cmnd,
                 'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
                 'noiCap' => $sale->guest->noiCap,
@@ -1239,6 +1251,7 @@ class HDController extends Controller
 
     public function getDanhSach() {
         $hdWait = "";
+        $code = "";
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale'))
             $result = HopDong::select('*')->orderby('id','desc')->get();
         else 
@@ -1251,16 +1264,22 @@ class HDController extends Controller
                     $hdWait = "(Hợp đồng chờ)";
                 else
                     $hdWait = "";
-                if($row->lead_check_cancel	== true) 
-                echo "<option value='".$row->id."'>[Số: HAGI/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
+
+                if($row->code == 0) 
+                    $code = "";
+                else
+                    $code = "[HĐ: ".$row->code.".".$row->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($row->created_at)."/HĐMB-PA]";
+
+                    if($row->lead_check_cancel	== true) 
+                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
                 elseif ($row->requestCheck == false)
-                    echo "<option value='".$row->id."'>[Số: HAGI/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
+                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == false) 
-                    echo "<option value='".$row->id."'>[Số: HAGI/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
+                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
-                    echo "<option value='".$row->id."'>[Số: HAGI/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
+                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
-                    echo "<option value='".$row->id."'>[Số: HAGI/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."/HĐMB-PA][KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
+                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
             }
         } else {
             echo "<option value='0'>Không tìm thấy</option>";
@@ -1632,19 +1651,7 @@ class HDController extends Controller
             ->where('hop_dong.id', $id)
             ->orderby('hop_dong.id','desc')
             ->first();
-
-            // $result = HopDong::select('hop_dong.*','c.name as namecar', 'g.name as guestname', 
-            // 'g.phone', 'g.address', 'g.daiDien', 'g.chucVu', 'g.mst', 'g.cmnd', 'g.ngayCap', 'g.noiCap', 
-            // 'g.ngaySinh', 'k.year', 'k.vin', 'k.frame', 'k.color', 'k.gear', 'k.machine', 'k.seat', 'k.fuel',
-            // 'k.type')
-            //     ->join('guest as g','hop_dong.id_guest','=','g.id')
-            //     ->join('type_car_detail as c','hop_dong.id_car_sale','=','c.id')
-            //     ->join('kho_v2 as k','hop_dong.id_car_kho','=','k.id')
-            //     // ->where('hop_dong.id_user_create', Auth::user()->id)
-            //     ->where('hop_dong.id', $id)
-            //     ->orderby('hop_dong.id','desc')
-            //     ->get();
-        
+        $sohd = $result->code.".".$result->carSale->typeCarDetail->typeCar->code."/".\HelpFunction::getDateCreatedAt($result->created_at)."/HĐMB-PA";
         $car = KhoV2::find($result->id_car_kho);
         $waitCar = TypeCarDetail::find($result->id_car_sale);
         if($result) {
@@ -1653,7 +1660,8 @@ class HDController extends Controller
                 'code' => 200,
                 'data' => $result,
                 'car' => $car,
-                'waitcar' => $waitCar
+                'waitcar' => $waitCar,
+                'sohd' => $sohd
             ]);
         } else {
             return response()->json([
@@ -1718,11 +1726,31 @@ class HDController extends Controller
     }
 
     public function duyetDeNghi(Request $request){
-        $result = HopDong::find($request->id);        
+        $result = HopDong::find($request->id); 
+        
+        if($request->sohd == 0) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Chưa nhập số hợp đồng!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } 
+        $check = HopDong::select('*')->where('code',$request->sohd)->exists(); 
+        if($check) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Số hợp đồng đã tồn tại!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } 
+
         if((Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) && $result->requestCheck == true) {
             if ($request->wait == 1) {
                 $result->admin_check = true;
                 $result->hdWait = true;    
+                $result->code = $request->sohd; 
                 $result->save();
                 if($result) {
                     return response()->json([
@@ -1750,6 +1778,7 @@ class HDController extends Controller
                     $car = KhoV2::find($request->idXeGan);
                     $car->type = "HD";
                     $car->save();
+                $result->code = $request->sohd; 
                 $result->save();
                 if($result) {
                     return response()->json([
@@ -1773,6 +1802,59 @@ class HDController extends Controller
             'code' => 200,
             'data' => null
         ]);
+    }
+
+    public function ganXeHDCho(Request $request){
+        $result = HopDong::find($request->id); 
+        
+        if($result->id_car_kho != null) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Hợp đồng này đã được gán xe!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } 
+
+        if($result->hdWait == false) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Chỉ gán xe cho hợp đồng chờ!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } 
+        
+        if ($request->idXeGan == null) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Bạn chưa gán xe cho hợp đồng!',
+                'code' => 200
+            ]);
+        }
+
+        if((Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) && $result->requestCheck == true && $result->admin_check == true && $result->lead_check == true) {
+            $result->id_car_kho = $request->idXeGan;
+                $car = KhoV2::find($request->idXeGan);
+                $car->type = "HD";
+                $car->save();
+            $result->hdWait = false;
+            $result->save();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã gán xe! Đã chuyển sang hợp đồng chính thức!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
     }
 
     public function duyetDeNghiLead(Request $request){
@@ -1882,6 +1964,7 @@ class HDController extends Controller
         if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
             $result->requestCheck = false;
             $result->admin_check = false;
+            $result->code = 0; 
                 if ($result->id_car_kho != null && $result->hdWait != true) {
                     $car = KhoV2::find($result->id_car_kho);
                     $car->type = "STORE";
@@ -1919,6 +2002,7 @@ class HDController extends Controller
                 }
             $result->id_car_kho = null;
             $result->hdWait = false;
+            $result->code = 0; 
             $result->save();
             if($result) {
                 return response()->json([

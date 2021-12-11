@@ -148,6 +148,22 @@ class HelpFunction {
         return $_time . ' ' . self::revertDate($newDate);
     }
 
+    public static function getDateCreatedAt($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $arr2 = explode('-', $newDate);
+        return $arr2[1] . "/" . $arr2[0];
+    }
+
+    public static function getArrCreatedAt($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $arr2 = explode('-', $newDate);
+        return $arr2;
+    }
+
     public static function countDayInMonth($month = 1, $year = 2020) {
         return cal_days_in_month(CAL_GREGORIAN, $month, $year);
         // return date('t', mktime(0, 0, 0, $month, 1, $year)); 

@@ -57,6 +57,12 @@
                                         </div>
                                     </div>
                                     <div>
+                                        <label>Số hợp đồng:</label>
+                                        <div class="row">
+                                            <div class="col-sm-1">
+                                                <input name="soHD" min="1" type="number" class="form-control">
+                                            </div>
+                                        </div>
                                         <h5>THÔNG TIN KHÁCH HÀNG</h5>
                                         <p>Họ và tên: <strong id="sHoTen"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ngày sinh: <strong id="sNgaySinh"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Số điện thoại: <strong id="sDienThoai"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MST: <strong id="smst"></strong></p>
                                         <p>CMND/CCCD: <strong id="scmnd"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ngày Cấp: <strong id="sNgayCap"></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nơi cấp: <strong id="sNoiCap"></strong></p>
@@ -216,7 +222,36 @@
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA</button>
                                         <button id="huyDeNghi" class="btn btn-danger">BỎ DUYỆT ĐỀ NGHỊ</button>
+                                        <button id="ganXeHDCho" class="btn btn-success">GÁN XE HỢP ĐỒNG CHỜ</button>
                             </div>
+                            <hr>
+                            <h5>IN HỢP ĐỒNG</h5>
+                            <form id="inForm">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>CHỌN LOẠI HỢP ĐỒNG</label>
+                                                <select name="chonLoaiHD" class="form-control">
+                                                    <option value="1">Cá nhân tiền mặt</option>
+                                                    <option value="2">Cá nhân ngân hàng</option>
+                                                    <option value="3">Công ty tiền mặt</option>
+                                                    <option value="4">Công ty ngân hàng</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>CHỌN MẪU CẦN IN</label>
+                                                <select name="mauHD" class="form-control">
+                                                    <option value="1">Hợp đồng mua bán</option>
+                                                    <option value="2">Phụ lục hợp đồng</option>
+                                                    <option value="3">Đề nghị thực hiện hợp đồng</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <button id="in" class="btn btn-success"><span class="fas fa-print"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                         </div>
                     </div>
                     <!-- /.card -->
@@ -304,6 +339,8 @@
             $("#duyetDeNghi").hide();
             $("#choPhepSua").hide();
             $("#huyDeNghi").hide();
+            $("#ganXeHDCho").hide();
+            $("#inForm").hide();
             // load list hợp đồng
             function loadList() {
                 $.ajax({
@@ -359,22 +396,33 @@
                     $("#duyetDeNghi").hide();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
+                    $("#ganXeHDCho").show();
                     $("input[name=hdWait]").prop('disabled', true);
+                    $("input[name=soHD]").prop('disabled', true);
+                    $("#inForm").show();
                 }else if (request == true && admin == false) {
                     $("#duyetDeNghi").show();
                     $("#choPhepSua").show();
                     $("#huyDeNghi").hide();
+                    $("#ganXeHDCho").hide();
                     $("input[name=hdWait]").prop('disabled', false);
+                    $("input[name=soHD]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
                     $("#choPhepSua").show();
                     $("#huyDeNghi").show();
+                    $("#ganXeHDCho").hide();
                     $("input[name=hdWait]").prop('disabled', true);
+                    $("input[name=soHD]").prop('disabled', true);
+                    $("#inForm").show();
                 }else if (request == false) {
                     $("#duyetDeNghi").show();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
+                    $("#ganXeHDCho").hide();
                     $("input[name=hdWait]").prop('disabled', false);
+                    $("input[name=soHD]").prop('disabled', false);
+                    $("#inForm").hide();
                 }
             }
 
@@ -406,6 +454,7 @@
                             $("#cmnd").val(response.data.CMND2);
                             $("#dienThoai").val(response.data.dienThoai);
                             $("input[name=idHopDong]").val(response.data.id);
+                            $("input[name=soHD]").val(response.data.code);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             
@@ -484,6 +533,7 @@
                             $("input[name=idHopDong]").val("");
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
+                            $("input[name=soHD]").val("");
                             loadPKFree(null);
                             loadPKPay(null);
                             loadPKCost(null);
@@ -502,6 +552,7 @@
                             $("#hoTen").prop('disabled', true);
                             $("#cmnd").prop('disabled', true);
                             $("#dienThoai").prop('disabled', true);
+                            $("input[name=soHD]").prop('disabled', true);
                             $("#duyetDeNghi").hide();
                             $("#choPhepSua").hide();
                             $("#huyDeNghi").hide();
@@ -516,6 +567,8 @@
                         $("#duyetDeNghi").hide();
                         $("#choPhepSua").hide();
                         $("#huyDeNghi").hide();
+                        $("#ganXeHDCho").hide();
+                        $("#inForm").hide();
                     }
                 });
             });
@@ -635,6 +688,7 @@
                             "_token": "{{csrf_token()}}",
                             "idXeGan": $("input[name=xeGan]").val(),
                             "wait": wait,
+                            "sohd": $("input[name=soHD]").val(),
                             "id": $("input[name=idHopDong]").val()
                         },
                         success: function(response) {
@@ -654,6 +708,36 @@
                     });
                 }
             });
+
+            $("#ganXeHDCho").click(function(e){
+                if(confirm('Xác nhận gán xe cho hợp đồng này!')){
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/pheduyet/ganxe/ok/')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "idXeGan": $("input[name=xeGan]").val(),
+                            "id": $("input[name=idHopDong]").val()
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
+                            loadList();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "LỖi không thể gán xe cho hợp đồng này!"
+                            })
+                        }
+                    });
+                }
+            });
+
 
             $("#choPhepSua").click(function(e){
                 e.preventDefault();
@@ -797,6 +881,37 @@
                             })
                         }
                     });
+                }
+            });
+
+             // check chosen hd
+             $("#in").click(function(e){
+               e.preventDefault();
+                if ($("select[name=mauHD]").val() == 1) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
+                 }
+
+                if ($("select[name=mauHD]").val() == 2) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
+                }
+
+                if ($("select[name=mauHD]").val() == 3) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
                 }
             });
         });
