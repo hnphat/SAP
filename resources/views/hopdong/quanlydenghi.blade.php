@@ -694,9 +694,9 @@
                             $("#sChucVu").text(response.data.chucVu);
 
                             $('select[name=mauSac] option[selected=selected]').removeAttr('selected');
-                            $('option[value='+response.data.mau+']').attr('selected','selected');
+                            $('select[name=mauSac] option[value='+response.data.mau+']').attr('selected','selected');
                             $('select[name=xeBan] option[selected=selected]').removeAttr('selected');
-                            $('option[value='+response.data.idcar+']').attr('selected','selected');
+                            $('select[name=xeBan] option[value='+response.data.idcar+']').attr('selected','selected');
 
                           
                             $("#tamUng").val(response.data.tienCoc);

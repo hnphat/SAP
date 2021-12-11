@@ -189,6 +189,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('banle/phuluc/canhan/down/{id}','HDController@inPhuLucCaNhan');
         Route::get('banle/phuluc/congty/down/{id}','HDController@inPhuLucCongTy');
 
+        // --- In ấn đề nghị
+        Route::get('banle/denghi/canhan/down/{id}','HDController@inDeNghiCaNhan');
+        Route::get('banle/denghi/congty/down/{id}','HDController@inDeNghiCongTy');
+
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');
