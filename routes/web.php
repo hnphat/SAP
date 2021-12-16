@@ -250,13 +250,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('approve','LaiThuController@approve');
     });
 
-    // Route::group(['prefix' => 'capxang', 'middleware' => ['f_capxang']], function(){
-    //     Route::get('list','LaiThuController@showCapXang')->name('capxang.duyet');
-    //     Route::post('allow','LaiThuController@allowCapXang');
-    //     Route::post('cancel','LaiThuController@cancelCapXang');
-    //     Route::post('leadallow','LaiThuController@leadAllowCapXang');
-    // });
-
     Route::group(['prefix' => 'capxang'], function(){
         Route::get('list','DeNghiCapXangController@showCapXang')->name('capxang.denghi');
         Route::post('reg','DeNghiCapXangController@postDeNghi')->name('capxang.post');
@@ -269,6 +262,22 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('allow','DeNghiCapXangController@allowCapXang')->middleware(['f_capxang']);
         Route::post('cancel','DeNghiCapXangController@cancelCapXang')->middleware(['f_capxang']);
         Route::post('leadallow','DeNghiCapXangController@leadAllowCapXang');
+
+    });
+
+    Route::group(['prefix' => 'hanhchinh'], function(){
+        Route::get('list','HanhChinhController@showBieuMau')->name('hanhchinh.bieumau.quanly');
+        Route::get('ajax/list','HanhChinhController@getBieuMau');
+        Route::post('ajax/post','HanhChinhController@postBieuMau');
+        Route::post('ajax/delete','HanhChinhController@deleteBieuMau');
+
+        // thông báo xem
+        Route::get('list/thongbao','HanhChinhController@showXemThongBao')->name('hanhchinh.xemthongbao');
+        Route::get('ajax/xemthongbao','HanhChinhController@getXemThongBao');
+
+        // biểu mẫu xem
+        Route::get('list/bieumau','HanhChinhController@showXemBieuMau')->name('hanhchinh.xembieumau');
+        Route::get('ajax/xembieumau','HanhChinhController@getXemBieuMau');
     });
 
     Route::get('qr/{content}', function ($content) {
