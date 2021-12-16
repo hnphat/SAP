@@ -15,7 +15,7 @@ class HanhChinhController extends Controller
     }
 
     public function getBieuMau() {
-        $result = BieuMau::all();
+        $result = BieuMau::select('*')->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([
                 'message' => 'Tải file thành công!',
@@ -25,6 +25,23 @@ class HanhChinhController extends Controller
         else
             return response()->json([
                 'message' => 'Lỗi tải filetừ máy chủ!',
+                'code' => 500
+            ]);
+    }
+
+    public function getEditBieuMau($id) {
+        $result = BieuMau::find($id);
+        if ($result) 
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã load!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        else
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không thể load dữ liệu!',
                 'code' => 500
             ]);
     }
@@ -67,6 +84,30 @@ class HanhChinhController extends Controller
         ]);
     }
 
+    public function updateBieuMau(Request $request) {
+        $bm = BieuMau::find($request->eid);
+        $bm->tieuDe = $request->etieuDe;
+        $bm->slug = \HelpFunction::changeTitle($request->etieuDe);
+        $bm->moTa = $request->emoTa;
+        $bm->type = $request->eloaiFile;
+        $bm->ghiChu = $request->eghiChu;
+        $bm->allow = $request->eallow;
+        $bm->user_create = Auth::user()->id;
+        $bm->save();
+        if ($bm)    
+            return response()->json([
+                "type" => 'success',
+                "message" => 'Đã cập nhật',
+                "code" => 200
+            ]);
+        else
+            return response()->json([
+                "type" => 'error',
+                "message" => 'Không thể cập nhật',
+                "code" => 500
+            ]);
+    }
+
     public function deleteBieuMau(Request $request) {
         $bm = BieuMau::find($request->id);
         $name = $bm->url;
@@ -97,7 +138,7 @@ class HanhChinhController extends Controller
         $result = BieuMau::select('*')->where([
             ['allow','=',true],
             ['type','=','BM']
-        ])->get();
+        ])->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([
                 'message' => 'Đã tải dữ liệu!',
@@ -120,7 +161,7 @@ class HanhChinhController extends Controller
         $result = BieuMau::select('*')->where([
             ['allow','=',true],
             ['type','=','TB']
-        ])->get();
+        ])->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([
                 'message' => 'Đã tải dữ liệu!',

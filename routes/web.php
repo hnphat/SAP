@@ -122,6 +122,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('getkho/delete','KhoController@deleteV2');
         Route::post('getkho/edit/show','KhoController@editShowV2');
         Route::post('getkho/update','KhoController@updateV2');
+
+        // xe hd
+        Route::get('getkhohd','KhoController@getKhoHD')->name('get.khohd.v2');
+        Route::get('getkhohd/list','KhoController@getKhoHDList');
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
         Route::get('list','HDController@index')->name('hd.list');
@@ -165,6 +169,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
         Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
         Route::post('hd/denghi/yeucauhuy','HDController@yeuCauHuy');
+
+        //----- quản lý đề nghị
+        Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');
+        Route::get('kho/tonkho/data','KhoController@getTonKho');
 
         //----- phê duyệt đề nghị
         Route::get('hd/denghi/pheduyet','HDController@getHDPheDuyetDeNghi')->name('hd.quanly.pheduyet');
@@ -270,6 +278,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('ajax/list','HanhChinhController@getBieuMau');
         Route::post('ajax/post','HanhChinhController@postBieuMau');
         Route::post('ajax/delete','HanhChinhController@deleteBieuMau');
+        Route::post('ajax/getedit/{id}','HanhChinhController@getEditBieuMau');
+        Route::post('ajax/update','HanhChinhController@updateBieuMau');
 
         // thông báo xem
         Route::get('list/thongbao','HanhChinhController@showXemThongBao')->name('hanhchinh.xemthongbao');

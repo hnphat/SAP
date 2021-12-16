@@ -129,6 +129,63 @@
         <!-- /.modal -->
     </div>
     <!----------------------->
+
+    <!--  MEDAL -->
+    <div>
+        <!-- Medal EDIT -->
+        <div class="modal fade" id="editModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chỉnh sửa biểu mẫu</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form method="POST" id="editForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="eid">
+                            <div class="form-group">
+                               <label>Tiêu đề file</label> 
+                               <input type="text" name="etieuDe" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Loại file</label> 
+                               <select name="eloaiFile" class="form-control">
+                                   <option value="BM" selected>Biểu mẫu</option>   
+                                   <option value="TB">Thông báo</option>   
+                               </select>
+                            </div>
+                            <div class="form-group">
+                               <label>Mô tả ngắn (nếu có)</label> 
+                               <input type="text" name="emoTa" class="form-control" placeholder="Mô tả">
+                            </div>
+                            <div class="form-group">
+                               <label>Ghi chú (nếu có)</label> 
+                               <input type="text" name="eghiChu" class="form-control" placeholder="Ghi chú">
+                            </div>
+                            <div class="form-group">
+                               <label>Hiển thị</label> 
+                               <select name="eallow" class="form-control">
+                                   <option value="0" selected>Không</option>   
+                                   <option value="1">Có</option>   
+                               </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        <button id="btnUpdate" class="btn btn-primary" form="editForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -199,7 +256,8 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                            return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
+                            "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
                         }
                     }
                 ]
@@ -229,7 +287,7 @@
                         contentType: false,
                         processData: false,
                         beforeSend: function () {
-                            $("#btnAdd").attr('disabled', true).html("Processing...");
+                            $("#btnAdd").attr('disabled', true).html("Đang xử lý....");
                         },
                         success: (response) => {
                             this.reset();
@@ -281,6 +339,62 @@
                         }
                     });
                 }
+            });
+
+            // edit data
+            $(document).on('click','#btnEdit', function(){
+                $.ajax({
+                    url: "{{url('management/hanhchinh/ajax/getedit/')}}" + "/" + $(this).data('id'),
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        $("input[name=eid]").val(response.data.id);
+                        $("input[name=etieuDe]").val(response.data.tieuDe);
+                        $("select[name=eloaiFile]").val(response.data.type);
+                        $("input[name=emoTa]").val(response.data.moTa);
+                        $("input[name=eghiChu]").val(response.data.ghiChu);
+                        $("select[name=eallow]").val(response.data.allow);
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            });
+
+            $("#btnUpdate").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hanhchinh/ajax/update/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#editForm").serialize(),
+                    success: function(response) {
+                        $("#editForm")[0].reset();
+                        Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                        })
+                        table.ajax.reload();
+                        $("#editModal").modal('hide');
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
             });
         });
     </script>

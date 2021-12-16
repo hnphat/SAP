@@ -186,10 +186,33 @@ class KhoController extends Controller
         return view('khoxe.khoxe', ['typecar' =>  $type_detail]);
     }
 
+    public function getKhoHD() {
+        $type_detail = TypeCarDetail::all()->sortBy('name');
+        return view('khoxe.xuatxe', ['typecar' =>  $type_detail]);
+    }
+
     public function getKhoList() {
-        //$result = KhoV2::select('kho_v2.*','t.name as ten')->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')->orderBy('id', 'desc')->get();
         $result = KhoV2::select('kho_v2.*','t.name as ten', 't.fuel as fuel', 't.seat as seat', 't.machine as machine', 't.gear as gear')
         ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        ->orderBy('id', 'desc')->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getKhoHDList() {
+        $result = KhoV2::select('kho_v2.*','t.name as ten', 't.fuel as fuel', 't.seat as seat', 't.machine as machine', 't.gear as gear')
+        ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        ->where('kho_v2.type','=','HD')
         ->orderBy('id', 'desc')->get();
         if($result) {
             return response()->json([
@@ -212,6 +235,7 @@ class KhoController extends Controller
         $kho->year = $request->nam;
         $kho->vin = $request->vin;
         $kho->frame = $request->frame;
+        $kho->gps = $request->gps;
         $kho->color = $request->color;
         $kho->type = $request->trangThai;
         $kho->soDonHang = $request->soDonHang;
@@ -280,6 +304,7 @@ class KhoController extends Controller
                 "year" => $request->enam,
                 "vin" => $request->evin,
                 "frame" => $request->eframe,
+                "gps" => $request->egps,
                 "color" => $request->ecolor,                
                 "soDonHang" => $request->esoDonHang,
                 "soBaoLanh" => $request->esoBaoLanh,
@@ -295,6 +320,7 @@ class KhoController extends Controller
                         "year" => $request->enam,
                         "vin" => $request->evin,
                         "frame" => $request->eframe,
+                        "gps" => $request->egps,
                         "color" => $request->ecolor,                        
                         "soDonHang" => $request->esoDonHang,
                         "soBaoLanh" => $request->esoBaoLanh,
@@ -309,6 +335,7 @@ class KhoController extends Controller
                         "year" => $request->enam,
                         "vin" => $request->evin,
                         "frame" => $request->eframe,
+                        "gps" => $request->egps,
                         "color" => $request->ecolor,                        
                         "type" => $request->etrangThai,
                         "soDonHang" => $request->esoDonHang,
@@ -328,6 +355,36 @@ class KhoController extends Controller
         } else {
             return response()->json([
                 'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+   
+    // check tồn kho cho sale
+    public function getPageTonKho() {
+        return view('hopdong.tonkho');
+    }
+
+    public function getTonKho() {
+        $result = KhoV2::select('kho_v2.*','t.name as ten')
+        ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        ->where([
+            ['kho_v2.type','=', 'HD']
+        ])
+        ->orWhere([
+            ['kho_v2.type','=', 'STORE']
+        ])
+        ->orderBy('id', 'desc')->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Đã check tồn kho!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Không thể check tồn kho!',
                 'code' => 500
             ]);
         }

@@ -39,9 +39,6 @@
                                     <li class="nav-item">
                                         <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Tất cả khách</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Khách đã mua xe</a>
-                                    </li>
                                 </ul>
                             </div>
                             <div class="card-body">
@@ -255,51 +252,7 @@
                                             </tr>
                                             </thead>
                                         </table>
-                                    </div>
-                                    <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
-                                        <table id="dataTableOut" class="display" style="width:100%">
-                                            <thead>
-                                            <tr class="bg-success">
-                                                <th>TT</th>
-                                                <th>Hợp đồng</th>
-                                                <th>Ngày hợp đồng</th>
-                                                <th>Giá trị hợp đồng</th>
-                                                <th>Khách hàng</th>
-                                                <th>Số điện thoại</th>
-                                                <th>Tên xe</th>
-                                                <th>Giá</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($sale as $row)
-                                                    @if ($row->lead_sale_check == 1 && ($row->cancelHd === null || $row->cancelHd->cancel == 0))
-                                                    <tr>
-                                                        <td>{{$loop->iteration}}</td>
-                                                        <td>HAGI-0{{$row->id}}/HDMB-PA</td>
-                                                        <td>{{$row->created_at}}</td>
-                                                        <td>
-                                                            <?php
-                                                                $tong = $row->requestHd->giaXe;
-                                                                $package = $row->package;
-                                                                foreach($package as $item) {
-                                                                    if ($item->type == 'cost' || $item->type == 'pay')
-                                                                        $tong += $item->cost;
-                                                                }
-                                                                echo number_format($tong);
-                                                            ?>
-                                                        </td>
-                                                        <td>{{$row->guest->name}}</td>
-                                                        <td>{{$row->guest->phone}}</td>
-                                                        <td>{{$row->carSale->typeCarDetail->name}}</td>
-                                                        <td>
-                                                            {{number_format($row->requestHd->giaXe)}}
-                                                        </td>
-                                                    </tr>
-                                                    @endif
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    </div>                                    
                                 </div>
                             </div>
                             <!-- /.card -->

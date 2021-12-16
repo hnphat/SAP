@@ -1,15 +1,0 @@
-$config['licenseName'] = 'localhost';
-$config['licenseKey']  = '1R8RHKPQPV3MHQUW4BGY4SKWENUL6';
-
-
-$config['licenseName'] = 'hyundaiangiang.com';
-$config['licenseKey']  = '93D3WH7JBHC1ECHDH8MLCU2DTLXBU';
-
-$config['licenseName'] = 'https://hyundaiangiang.com';
-$config['licenseKey']  = 'GVYV219XG51W2HUFEFGJTHS28XHG3';
-
-$config['licenseName'] = 'www.hyundaiangiang.com';
-$config['licenseKey']  = '3SYS3KTRV18FMW3SJ3PAFNRTQ6GNS';
-
-$config['licenseName'] = 'http://hyundaiangiang.com';
-$config['licenseKey']  = 'YS2SV64Q9JL9EARUERYWC731SL9HY';

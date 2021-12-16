@@ -53,6 +53,7 @@
                                         <th>Màu</th>
                                         <th>VIN</th>
                                         <th>Số máy</th>
+                                        <th>GPS</th>
                                         <th class="bg-secondary">Số đơn hàng</th>
                                         <th class="bg-secondary">Ngày đặt</th>
                                         <th class="bg-secondary">Số bảo lãnh</th>
@@ -140,6 +141,10 @@
                                             <label>Số máy</label>
                                             <input name="frame" placeholder="Số máy" type="text" class="form-control">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Ghi chú</label>
+                                            <input name="ghiChu" placeholder="Ghi chú" type="text" class="form-control">
+                                        </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
@@ -152,8 +157,8 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Ghi chú</label>
-                                            <input name="ghiChu" placeholder="Ghi chú" type="text" class="form-control">
+                                            <label>GPS</label>
+                                            <input name="gps" placeholder="GPS" type="text" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -262,6 +267,10 @@
                                             <label>Số máy</label>
                                             <input name="eframe" placeholder="Số máy" type="text" class="form-control">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Ghi chú</label>
+                                            <input name="eghiChu" placeholder="Ghi chú" type="text" class="form-control">
+                                        </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
@@ -273,8 +282,8 @@
                                             </select>
                                         </div>    
                                         <div class="form-group">
-                                            <label>Ghi chú</label>
-                                            <input name="eghiChu" placeholder="Ghi chú" type="text" class="form-control">
+                                            <label>GPS</label>
+                                            <input name="egps" placeholder="GPS" type="text" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -356,8 +365,7 @@
         var DOCSO = function(){ var t=["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" mươi",1==e&&(o+=" mốt")):1==a?(o=" mười",1==e&&(o+=" một")):n&&e>0&&(o=" lẻ"),5==e&&a>=1?o+=" lăm":4==e&&a>=1?o+=" tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" tỷ";while(r>0);return n.trim()}}}();
 
         // show data
-        $(document).ready(function() {
-
+        $(document).ready(function() {            
             $('#cost').keyup(function(){
                 var cos = $('#cost').val();
                 $('#showCost').text(formatNumber(cos) + " (" + DOCSO.doc(cos) + ")");
@@ -387,6 +395,7 @@
                     { "data": "color" },
                     { "data": "vin" },
                     { "data": "frame" },
+                    { "data": "gps" },
                     { "data": "soDonHang" },
                     { "data": "ngayDat" },
                     { "data": "soBaoLanh" },
@@ -398,13 +407,6 @@
                         render: function(data, type, row) {
                             return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
                                 "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
-                        //     return "<div class='btn-group'>" +
-                        //         "<button type='button' class='btn btn-info btn-sm dropdown-toggle dropdown-icon' data-toggle='dropdown'></button>" +
-                        //     "<div class='dropdown-menu' role='menu'>" +
-                        //         "<button id='btnEdit' data-id='"+row.id+"'  data-toggle='modal' data-target='#editModal' class='dropdown-item' data-id='"+row.id+"'>Sửa</button>" +
-                        //         "<button id='delete' data-id='"+row.id+"' class='dropdown-item'>Xóa</button>" +
-                        //     "</div>" +
-                        // "</div>";
                         }
                     }
                 ]
@@ -419,6 +421,11 @@
             // Add data
             $("#btnAdd").click(function(e){
                 e.preventDefault();
+                // prevent double click
+                var el = $(this);
+                el.prop('disabled', true);
+                setTimeout(function(){el.prop('disabled', false); }, 3000);
+                // prevent double click   
                 $.ajax({
                     url: "{{url('management/kho/getkho/add/')}}",
                     type: "post",
@@ -498,6 +505,7 @@
                         $("input[name=enganHang]").val(response.data.nganHang);
                         $("select[name=etrangThai]").val(response.data.type);
                         $("input[name=eghiChu]").val(response.data.ghiChu);
+                        $("input[name=egps]").val(response.data.gps);
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message

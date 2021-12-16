@@ -174,7 +174,7 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    <label>ĐÃ DUYỆT XE:</label>
+                                                    <label>CHỜ DUYỆT XE:</label>
                                                 </div>
                                                 <table class="table table-bordered table-striped">
                                                     <tr class="bg-success">
@@ -753,7 +753,7 @@
                             "<td>"+ response.data.namecar +"</td>"+
                             "<td>"+ svin +"</td>"+
                             "<td>"+ sframe +"</td>"+
-                            "<td>Màu: "+ scolor +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
+                            "<td>Màu: "+ response.data.mau +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
                             "</tr>";
                             $("#showXeGan").html(txt);
                         } else {

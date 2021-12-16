@@ -29,8 +29,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                         \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-cog"></i>
                             <p>
@@ -60,8 +59,7 @@
                             </a>
                         </li>
                         @endif
-                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
+                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
                                     <a href="{{route("typecar.list")}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -114,11 +112,23 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{route('sale.kho')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Tồn kho</p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
+                                <li class="nav-item">
                                     <a href="{{route('hd.quanly.pheduyet')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Phê duyệt đề nghị</p>
                                     </a>
                                 </li>
+                            @endif
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                                 <li class="nav-item">
                                     <a href="{{route('hd.quanly.pheduyet.hopdong')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -143,6 +153,12 @@
                             <a href="{{route('get.kho.v2')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý kho</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('get.khohd.v2')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Xe hợp đồng</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -213,43 +229,8 @@
                                 <p>Tình trạng xe</p>
                             </a>
                         </li>
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
-                        <!-- <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Duyệt cấp xăng</p>
-                            </a>
-                        </li> -->
-                        @endif
                     </ul>
                 </li>
-                <!--
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-newspaper"></i>
-                        <p>
-                            <strong>TÀI LIỆU</strong>
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-file-alt nav-icon"></i>
-                                <p>Tài liệu chia sẽ</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-file-upload nav-icon"></i>
-                                <p>Upload tài liệu</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-address-book"></i>

@@ -22,6 +22,7 @@ class KhoV2 extends Migration
             $table->string('frame', 100)->nullable();
             $table->string('color', 50)->nullable();
             $table->enum('type', ['ORDER', 'P/O', 'MAP', 'HD', 'STORE', 'AGENT'])->nullable();
+            $table->string('gps', 50)->nullable();
             $table->string('soDonHang', 50)->nullable();
             $table->string('soBaoLanh', 50)->nullable();
             $table->string('ngayDat', 10)->nullable();

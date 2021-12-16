@@ -1244,15 +1244,14 @@ class HDController extends Controller
     }
 
     public function getHDPheDuyetHopDong() {
-        $hopdong = HopDong::select('*')
-        ->orderby('id','desc')->get();
+        $hopdong = HopDong::select('*')->orderby('id','desc')->get();
         return view('hopdong.duyetlead', ['hopdong' => $hopdong]);
     }
 
     public function getDanhSach() {
         $hdWait = "";
         $code = "";
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('tpkd'))
             $result = HopDong::select('*')->orderby('id','desc')->get();
         else 
             $result = HopDong::select('*')->where('id_user_create', Auth::user()->id)
