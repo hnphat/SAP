@@ -53,8 +53,10 @@
                                         <th>Màu</th>
                                         <th>VIN</th>
                                         <th>Số máy</th>
+                                        <th>TPKD</th>
                                         <th>Trạng thái</th>
                                         <th>Sale bán</th>
+                                        <th>Khách hàng</th>
                                         <th>Ngày giao xe</th>
                                         <th>Tác vụ</th>
                                     </tr>
@@ -91,96 +93,19 @@
                                 <div class="card-body row">
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Tên xe</label>
-                                            <select name="etenXe" class="form-control">
-                                                @foreach($typecar as $row)
-                                                    <option value="{{$row->id}}">{{$row->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Số VIN</label>
-                                            <input name="evin" placeholder="VIN" type="text" class="form-control">
-                                        </div>                                         
+                                            <label>Ngày giao xe</label>
+                                            <input min="<?php echo Date('Y-m-d');?>" name="ngayGiaoXe" placeholder="Ngày giao xe" type="date" class="form-control">
+                                        </div>    
+                                    </div>
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label class="text-danger">Trạng thái</label>
-                                            <select name="etrangThai" class="form-control">
-                                                <option value="ORDER">ORDER</option>
-                                                <option value="P/O">P/O</option>
-                                                <option value="MAP">MAP</option>
-                                                <option value="STORE">STORE</option>
-                                                <option value="HD">HD</option>
+                                            <select name="xuatXe" class="form-control">
+                                                <option value="0">Chưa xuất</option>
+                                                <option value="1">Xuất xe</option>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Màu sắc</label>
-                                            <select name="ecolor" class="form-control">
-                                                <option value="Đỏ">Đỏ</option>
-                                                <option value="Xanh">Xanh</option>
-                                                <option value="Trắng">Trắng</option>
-                                                <option value="Vàng">Vàng</option>
-                                                <option value="Ghi">Ghi</option>
-                                                <option value="Nâu">Nâu</option>
-                                                <option value="Bạc">Bạc</option>
-                                                <option value="Xám">Xám</option>
-                                                <option value="Đen">Đen</option>
-                                                <option value="Vàng cát">Vàng cát</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Số máy</label>
-                                            <input name="eframe" placeholder="Số máy" type="text" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Ghi chú</label>
-                                            <input name="eghiChu" placeholder="Ghi chú" type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Năm sản xuất</label>
-                                            <select name="enam" class="form-control">
-                                                @for($i = 2000; $i <= 2100; $i++)
-                                                    <option value="{{$i}}">{{$i}}</option>
-                                                @endfor
-                                            </select>
-                                        </div>    
-                                        <div class="form-group">
-                                            <label>GPS</label>
-                                            <input name="egps" placeholder="GPS" type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <h5>&nbsp;&nbsp;&nbsp;THÔNG TIN ĐƠN HÀNG HTV</h5>
-                                <div class="card-body row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Số đơn hàng</label>
-                                            <input name="esoDonHang" placeholder="Số đơn hàng" type="text" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Số bảo lãnh NH</label>
-                                            <input name="esoBaoLanh" placeholder="Số bảo lãnh ngân hàng" type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Ngày đặt</label>
-                                            <input name="engayDat" placeholder="Ngày đặt" type="date" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Ngân hàng</label>
-                                            <input name="enganHang" placeholder="Ngân hàng" type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Ngày nhận xe</label>
-                                            <input name="engayNhanXe" placeholder="Ngày nhận xe" type="date" class="form-control">
-                                        </div>
-                                    </div>
+                                    </div>                                   
                                 </div>
                             </form>
                         </div>
@@ -260,14 +185,29 @@
                     { "data": "color" },
                     { "data": "vin" },
                     { "data": "frame" },
-                    { "data": null },
-                    { "data": null },
-                    { "data": null },
+                    { "data": null,
+                        render: function(data, type, row) {
+                            if (row.tpkd == false)
+                                return "<strong class='text-danger'>Chưa duyệt</strong>";
+                            else
+                                return "<strong class='text-success'>Đã duyệt</strong>";
+                        } 
+                    },
+                    { "data": null,
+                        render: function(data, type, row) {
+                            if (row.xuatXe == false)
+                                return "<strong class='text-danger'>Chưa xuất</strong>";
+                            else
+                                return "<strong class='text-success'>Đã xuất</strong>";
+                        } 
+                    },
+                    { "data": "saleban" },
+                    { "data": "khach" },
+                    { "data": "ngayGiaoXe" },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
-                                "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                            return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";                        
                         }
                     }
                 ]
@@ -279,78 +219,58 @@
                 } );
             } ).draw();
 
-            // edit data
-            // $(document).on('click','#btnEdit', function(){
-            //     $.ajax({
-            //         url: "{{url('management/kho/getkho/edit/show/')}}",
-            //         type: "post",
-            //         dataType: "json",
-            //         data: {
-            //             "_token": "{{csrf_token()}}",
-            //             "id": $(this).data('id')
-            //         },
-            //         success: function(response) {
-            //             $("input[name=eid]").val(response.data.id);
-            //             $("select[name=etenXe]").val(response.data.id_type_car_detail);
-            //             $("select[name=enam]").val(response.data.year);
-            //             $("input[name=evin]").val(response.data.vin);
-            //             $("input[name=eframe]").val(response.data.frame);
-            //             $("select[name=ecolor]").val(response.data.color);
-            //             $("select[name=egear]").val(response.data.gear);
-            //             $("input[name=emachine]").val(response.data.machine);
-            //             $("select[name=eseat]").val(response.data.seat);
-            //             $("select[name=efuel]").val(response.data.fuel);
-            //             $("input[name=esoDonHang]").val(response.data.soDonHang);
-            //             $("input[name=esoBaoLanh]").val(response.data.soBaoLanh);
-            //             $("input[name=engayDat]").val(response.data.ngayDat);
-            //             $("input[name=engayNhanXe]").val(response.data.ngayNhanXe);
-            //             $("input[name=enganHang]").val(response.data.nganHang);
-            //             $("select[name=etrangThai]").val(response.data.type);
-            //             $("input[name=eghiChu]").val(response.data.ghiChu);
-            //             $("input[name=egps]").val(response.data.gps);
-            //                 Toast.fire({
-            //                     icon: response.type,
-            //                     title: response.message
-            //                 })
-            //             // $("input[name=ecost]").val(response.data.cost);
-            //             // if (response.data.exist == 1)
-            //             //     $("#exist1").prop('checked',true);
-            //             // if (response.data.order == 1)
-            //             //     $("#exist2").prop('checked',true);
-            //         },
-            //         error: function(){
-            //             Toast.fire({
-            //                 icon: 'warning',
-            //                 title: "Error 500!"
-            //             })
-            //         }
-            //     });
-            // });
+           // edit data
+            $(document).on('click','#btnEdit', function(){
+                $.ajax({
+                    url: "{{url('management/kho/getkho/edit/show/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        $("input[name=eid]").val(response.data.id);
+                        $("select[name=xuatXe]").val(response.data.xuatXe);
+                        $("input[name=ngayGiaoXe]").val(response.data.ngayGiaoXe);
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            });
 
-            // $("#btnUpdate").click(function(e){
-            //     e.preventDefault();
-            //     $.ajax({
-            //         url: "{{url('management/kho/getkho/update/')}}",
-            //         type: "post",
-            //         dataType: "json",
-            //         data: $("#editForm").serialize(),
-            //         success: function(response) {
-            //             $("#editForm")[0].reset();
-            //             Toast.fire({
-            //                     icon: response.type,
-            //                     title: response.message
-            //             })
-            //             table.ajax.reload();
-            //             $("#editModal").modal('hide');
-            //         },
-            //         error: function(){
-            //             Toast.fire({
-            //                 icon: 'warning',
-            //                 title: "Error 500!"
-            //             })
-            //         }
-            //     });
-            // });
+            $("#btnUpdate").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/kho/getkho/updatehd/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#editForm").serialize(),
+                    success: function(response) {
+                        $("#editForm")[0].reset();
+                        Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                        })
+                        table.ajax.reload();
+                        $("#editModal").modal('hide');
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            });
         });
     </script>
 @endsection

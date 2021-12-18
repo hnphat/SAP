@@ -8,6 +8,7 @@ class KhoV2 extends Model
 {
     //
      protected $table = "kho_v2";
+
      public function typeCarDetail() {
          return $this->belongsTo('App\TypeCarDetail', 'id_type_car_detail', 'id');
      }

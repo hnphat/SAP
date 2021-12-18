@@ -8,6 +8,7 @@ class TypeCarDetail extends Model
 {
     //
     protected $table = "type_car_detail";
+
     public function typeCar() {
         return $this->belongsTo('App\TypeCar', 'id_type_car', 'id');
     }

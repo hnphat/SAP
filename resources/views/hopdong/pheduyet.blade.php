@@ -866,7 +866,12 @@
                             "<td>"+ response.namecar +"</td>"+
                            "<td>"+ response.data.vin +"</td>"+
                             "<td>"+ response.data.frame +"</td>"+
-                            "<td>Màu: "+ response.data.color +"; Năm SX: "+ response.data.year +"; Hộp số: "+ response.data.gear +"; Chỗ ngồi: "+ response.data.seat +"; Động cơ: "+ response.data.machine +"; Nhiên liệu: "+ response.data.fuel +"</td>"+
+                            "<td>Màu: "+ response.data.color +"; Năm SX: " + 
+                            response.data.year + "; Hộp số: " + 
+                            response.info.gear + "; Chỗ ngồi: " + 
+                            response.info.seat + "; Động cơ: " + 
+                            response.info.machine +"; Nhiên liệu: " + 
+                            response.info.fuel +"</td>"+
                            "</tr>";
                             $("#showXeGan").html(txt);
                             Toast.fire({

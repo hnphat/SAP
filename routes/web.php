@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 use \Illuminate\Support\Facades\Auth;
 
-Route::get('show/{id}', 'LaiThuController@showQR');
+Route::get('show/{id}', 'LaiThuController@showQR')->name('showbv');
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -122,10 +122,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('getkho/delete','KhoController@deleteV2');
         Route::post('getkho/edit/show','KhoController@editShowV2');
         Route::post('getkho/update','KhoController@updateV2');
+        Route::post('getkho/updatehd','KhoController@updateV2OnlyHD');
 
         // xe hd
         Route::get('getkhohd','KhoController@getKhoHD')->name('get.khohd.v2');
         Route::get('getkhohd/list','KhoController@getKhoHDList');
+
+        // report kho
+        Route::get('report','KhoController@getReport')->name('get.khohd.v2.report');
+        
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
         Route::get('list','HDController@index')->name('hd.list');

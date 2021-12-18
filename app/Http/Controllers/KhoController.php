@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CarSale;
 use App\KhoV2;
+use App\HopDong;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -210,10 +211,14 @@ class KhoController extends Controller
     }
 
     public function getKhoHDList() {
-        $result = KhoV2::select('kho_v2.*','t.name as ten', 't.fuel as fuel', 't.seat as seat', 't.machine as machine', 't.gear as gear')
+        $result = KhoV2::select('kho_v2.*','t.name as ten', 'h.lead_check as tpkd', 'ud.surname as saleban','g.name as khach')
         ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        ->join('hop_dong as h','h.id_car_kho','=','kho_v2.id')
+        ->join('guest as g','g.id','=','h.id_guest')
+        ->join('users as u','u.id','=','h.id_user_create')
+        ->join('users_detail as ud','ud.id_user','=','u.id')
         ->where('kho_v2.type','=','HD')
-        ->orderBy('id', 'desc')->get();
+        ->orderBy('xuatXe', 'asc')->get();
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',
@@ -300,12 +305,12 @@ class KhoController extends Controller
         $check = KhoV2::find($request->eid);
         if ($check->type == "HD")
             $kho = KhoV2::where('id', $request->eid)->update([
-                "id_type_car_detail" => $request->etenXe,
+                // "id_type_car_detail" => $request->etenXe,
                 "year" => $request->enam,
                 "vin" => $request->evin,
                 "frame" => $request->eframe,
                 "gps" => $request->egps,
-                "color" => $request->ecolor,                
+                // "color" => $request->ecolor,                
                 "soDonHang" => $request->esoDonHang,
                 "soBaoLanh" => $request->esoBaoLanh,
                 "ngayNhanXe" => $request->engayNhanXe,
@@ -360,6 +365,56 @@ class KhoController extends Controller
         }
     }
 
+    public function updateV2OnlyHD(Request $request) {
+        $check = HopDong::where('id_car_kho', $request->eid)->first();
+        if ($request->xuatXe == 1 && $check->lead_check == false) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Trưởng phòng chưa duyệt không thể xuất xe!',
+                'code' => 200
+            ]);
+        } elseif ($request->xuatXe == 1 && $check->lead_check == true) {
+            if ($request->ngayGiaoXe == null)
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Nhập ngày giao xe!',
+                'code' => 200
+            ]);
+            $kho = KhoV2::where('id', $request->eid)->update([
+                "xuatXe" => $request->xuatXe,
+                "ngayGiaoXe" => $request->ngayGiaoXe
+            ]);
+            if($kho) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã cập nhật!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } elseif ($request->xuatXe == 0) {
+            $kho = KhoV2::where('id', $request->eid)->update([
+                "xuatXe" => $request->xuatXe,
+                "ngayGiaoXe" => null
+            ]);
+            if($kho) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã cập nhật!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
    
     // check tồn kho cho sale
     public function getPageTonKho() {
@@ -388,5 +443,10 @@ class KhoController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    // get report kho
+    public function getReport() {
+        return view('khoxe.report');
     }
 }

@@ -241,7 +241,8 @@
                                             <td>{{$row->hoSoDi}}</td>
                                             <td>
                                                 @if($row->allow == 1)
-                                                    <a target="_blank" href="{{route('qrcode', ['content' => url("/show/{$row->id}")])}}" class="btn btn-dark btn-xs">QR Code</a>
+                                                    <!-- <a target="_blank" href="{{route('qrcode', ['content' => url("/show/{$row->id}")])}}" class="btn btn-dark btn-xs">QR Code</a> -->
+                                                    <a target="_blank" href="{{route('showbv', ['id' => $row->id])}}" class="btn btn-dark btn-xs">Kiểm tra</a>
                                                 @else
                                                     <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
                                                 @endif

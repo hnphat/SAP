@@ -14,7 +14,7 @@ class HopDong extends Model
     }
 
     public function carSale() {
-        return $this->belongsTo('App\KhoV2', 'id_car_sale','id');
+        return $this->belongsTo('App\TypeCarDetail', 'id_car_sale','id');
     }
 
     public function user() {
