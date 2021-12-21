@@ -152,7 +152,7 @@
                                                                 <input required="required" min="<?php echo Date('Y-m-d');?>" type="date" name="dateDuKien" class="form-control">
                                                             </div>
                                                             <select name="tbpCheck" class="form-control">
-                                                                <option value="">Chọn người duyệt</option>
+                                                                <option value="">Chọn trưởng bộ phận duyệt đăng ký xe</option>
                                                                 @foreach($lead as $row)
                                                                     @if($row->hasRole('lead'))
                                                                         <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>

@@ -51,7 +51,7 @@
                                 <table id="dataTable" class="display" style="width:100%">
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
-                                        <th>TT</th>
+                                        <!-- <th>TT</th> -->
                                         <th>Tên xe</th>
                                         <th>Màu</th>
                                         <th>Trạng thái</th>
@@ -114,14 +114,14 @@
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 ajax: "{{ url('management/hd/kho/tonkho/data') }}",
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
+                // "columnDefs": [ {
+                //     "searchable": false,
+                //     "orderable": false,
+                //     "targets": 0
+                // } ],
+                // "order": [
+                //     [ 0, 'desc' ]
+                // ],
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 //-------- Filter column -------------------
                 orderCellsTop: true,
@@ -174,7 +174,7 @@
                 },
                 //-------- Filter column end-------------------
                 columns: [
-                    { "data": null },
+                    // { "data": null },
                     { "data": "ten" },
                     { "data": "color" },
                     {
@@ -220,12 +220,12 @@
             //         }                   
             //     ]
             // });
-            table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                    cell.innerHTML = i+1;
-                    table.cell(cell).invalidate('dom');
-                } );
-            } ).draw();
+            // table.on( 'order.dt search.dt', function () {
+            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            //         cell.innerHTML = i+1;
+            //         table.cell(cell).invalidate('dom');
+            //     } );
+            // } ).draw();
         });
     </script>
 @endsection
