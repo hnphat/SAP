@@ -9,6 +9,7 @@ use App\ReportWork;
 use App\ReportCar;
 use App\ReportXuat;
 use App\TypeCar;
+use App\Kpi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -252,12 +253,9 @@ class ReportController extends Controller
 
     public function loadReport()
     {
-        $ds = 0;
-        $tp = 0;
-        $dtdv = 0;
-        $lxdv = 0;
         $today = Date('d-m-Y');
         $month = Date('m-Y');
+        $valIn = null;
         $typeUser = "";
         if (Auth::user()->hasRole('tpkd'))
             $typeUser = "pkd";
@@ -283,85 +281,36 @@ class ReportController extends Controller
             ['type', 'like', $typeUser]
         ])->exists();
 
+        
+        $inFirst = Kpi::where([
+            ['thang', 'like', $month],
+            ['type', 'like', $typeUser]
+        ])->exists();
+
+        if ($inFirst) {
+            $valIn = Kpi::where([
+                ['thang', 'like', $month],
+                ['type', 'like', $typeUser]
+            ])->first();
+        }
+
         if ($checkIn) {
-            $checkReport = Report::where([
-                ['ngayReport', 'like', '%' . $month],
-                ['type', 'like', $typeUser],
-                ['doanhSoThang', '!=', null],
-                ['thiPhanThang', '!=', null]
-            ])->first();
-
-            $checkReport2 = Report::where([
-                ['ngayReport', 'like', '%' . $month],
-                ['type', 'like', $typeUser],
-                ['luotXeDV', '!=', null],
-                ['doanhThuDV', '!=', null]
-            ])->first();
-
-
-            if ($checkReport !== null) {
-                $ds = 1;
-                $tp = 1;
-            }
-
-            if ($checkReport2 !== null) {
-                $lxdv = 1;
-                $dtdv = 1;
-            }
-
             $report = Report::where([
                 ['ngayReport', 'like', $today],
                 ['type', 'like', $typeUser]
             ])->first();
 
             return response()->json([
-                'ds' => $ds,
-                'tp' => $tp,
-                'dtdv' => $dtdv,
-                'lxdv' => $lxdv,
                 'type' => 'info',
                 'message' => ' Tải báo cáo thành công!',
+                'val' => $valIn,
                 'code' => 200,
                 'data' => $report
             ]);
         } else {
-            $ds_num = 0;
-            $tp_num = 0;
-            $lxdv_num = 0;
-            $dtdv_num = 0;
-            $report = Report::where([
-                ['ngayReport', 'like', '%' . $month],
-                ['type', 'like', $typeUser],
-                ['doanhSoThang', '!=', null],
-                ['thiPhanThang', '!=', null]
-            ])->first();
-            $report2 = Report::where([
-                ['ngayReport', 'like', '%' . $month],
-                ['type', 'like', $typeUser],
-                ['luotXeDV', '!=', null],
-                ['doanhThuDV', '!=', null]
-            ])->first();
-            if ($report !== null) {
-                $ds = 1;
-                $tp = 1;
-                $ds_num = $report->doanhSoThang;
-                $tp_num = $report->thiPhanThang;
-            }
-            if ($report2 !== null) {
-                $dtdv = 1;
-                $lxdv = 1;
-                $lxdv_num = $report2->luotXeDV;
-                $dtdv_num = $report2->doanhThuDV;
-            }
             return response()->json([
-                'ds' => $ds,
-                'tp' => $tp,
-                'dtdv' => $dtdv,
-                'lxdv' => $lxdv,
-                'ds_num' => $ds_num,
-                'tp_num' => $tp_num,
-                'lxdv_num' => $lxdv_num,
-                'dtdv_num' => $dtdv_num,
+                'pdv' => $valIn,
+                'pkd' => $valIn,
                 'type' => 'warning',
                 'message' => ' Chưa có báo cáo nào trong hôm nay!',
                 'code' => 500
@@ -369,12 +318,144 @@ class ReportController extends Controller
         }
     }
 
+    public function updateKpiKD(Request $request){
+        $month = Date('m-Y');
+        $typeUser = "";
+        if (Auth::user()->hasRole('tpkd'))
+            $typeUser = "pkd";
+        elseif (Auth::user()->hasRole('tpdv'))
+            $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
+        elseif (Auth::user()->hasRole('mkt'))
+            $typeUser = "mkt";
+        elseif (Auth::user()->hasRole('xuong'))
+            $typeUser = "xuong";
+        elseif (Auth::user()->hasRole('cskh'))
+            $typeUser = "cskh";
+        elseif (Auth::user()->hasRole('hcns'))
+            $typeUser = "hcns";
+        elseif (Auth::user()->hasRole('it'))
+            $typeUser = "it";
+        elseif (Auth::user()->hasRole('drp'))
+            $typeUser = "ptdl";
+
+        $inFirst = Kpi::where([
+            ['thang', 'like', $month],
+            ['type', 'like', $typeUser]
+        ])->exists();
+
+        if ($inFirst) {
+            $valIn = Kpi::where([
+                ['thang', 'like', $month],
+                ['type', 'like', $typeUser]
+            ])->update([
+                'kpi1' => $request->ds,
+                'kpiDecimal' => $request->tp
+            ]);
+            if ($valIn)
+                return response()->json([
+                    'message' => ' Đã cập nhật!',
+                    'code' => 200
+                ]);
+            else
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Không thể cập nhật từ máy chủ!',
+                    'code' => 500
+                ]);
+        } else {
+            $valIn = new Kpi;
+            $valIn->thang = $month;
+            $valIn->type = $typeUser;
+            $valIn->kpi1 = $request->ds;
+            $valIn->kpiDecimal = $request->tp;
+            $valIn->save();
+
+            if ($valIn)
+                return response()->json([
+                    'message' => ' Đã cập nhật!',
+                    'code' => 200
+                ]);
+            else
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Không thể cập nhật từ máy chủ!',
+                    'code' => 500
+                ]);
+        }
+    }
+
+    public function updateKpiDV(Request $request){
+        $month = Date('m-Y');
+        $typeUser = "";
+        if (Auth::user()->hasRole('tpkd'))
+            $typeUser = "pkd";
+        elseif (Auth::user()->hasRole('tpdv'))
+            $typeUser = "pdv";
+        elseif (Auth::user()->hasRole('ketoan'))
+            $typeUser = "ketoan";
+        elseif (Auth::user()->hasRole('mkt'))
+            $typeUser = "mkt";
+        elseif (Auth::user()->hasRole('xuong'))
+            $typeUser = "xuong";
+        elseif (Auth::user()->hasRole('cskh'))
+            $typeUser = "cskh";
+        elseif (Auth::user()->hasRole('hcns'))
+            $typeUser = "hcns";
+        elseif (Auth::user()->hasRole('it'))
+            $typeUser = "it";
+        elseif (Auth::user()->hasRole('drp'))
+            $typeUser = "ptdl";
+
+        $inFirst = Kpi::where([
+            ['thang', 'like', $month],
+            ['type', 'like', $typeUser]
+        ])->exists();
+
+        if ($inFirst) {
+            $valIn = Kpi::where([
+                ['thang', 'like', $month],
+                ['type', 'like', $typeUser]
+            ])->update([
+                'kpi1' => $request->dt,
+                'kpi2' => $request->lx
+            ]);
+            if ($valIn)
+                return response()->json([
+                    'message' => ' Đã cập nhật!',
+                    'code' => 200
+                ]);
+            else
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Không thể cập nhật từ máy chủ!',
+                    'code' => 500
+                ]);
+        } else {
+            $valIn = new Kpi;
+            $valIn->thang = $month;
+            $valIn->type = $typeUser;
+            $valIn->kpi1 = $request->dt;
+            $valIn->kpi2 = $request->lx;
+            $valIn->save();
+
+            if ($valIn)
+                return response()->json([
+                    'message' => ' Đã cập nhật!',
+                    'code' => 200
+                ]);
+            else
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => ' Không thể cập nhật từ máy chủ!',
+                    'code' => 500
+                ]);
+        }
+    }
+
     public function saveReport(Request $request)
     {
-        $doanhSo = 0;
-        $thiPhan = 0;
-        $luotXeDV = 0;
-        $doanhThuDV = 0;
         $month = Date('m-Y');
         $today = Date('d-m-Y');
         $typeUser = "";
@@ -397,56 +478,17 @@ class ReportController extends Controller
         elseif (Auth::user()->hasRole('drp'))
             $typeUser = "ptdl";
 
-        $checkSale = Report::where([
-            ['ngayReport', 'like', '%' . $month],
-            ['type', 'like', $typeUser],
-            ['doanhSoThang', '!=', null],
-            ['thiPhanThang', '!=', null]
-        ])->first();
-
-        $checkDV = Report::where([
-            ['ngayReport', 'like', '%' . $month],
-            ['type', 'like', $typeUser],
-            ['luotXeDV', '!=', null],
-            ['doanhThuDV', '!=', null]
-        ])->first();
-
-        if ($checkSale !== null && $checkSale->count() > 0) {
-            $doanhSo = $checkSale->doanhSoThang;
-            $thiPhan = $checkSale->thiPhanThang;
-        }
-
-        if ($checkDV !== null && $checkDV->count() > 0) {
-            $luotXeDV = $checkDV->luotXeDV;
-            $doanhThuDV = $checkDV->doanhThuDV;
-        }
-
         $checkIn = Report::where([
             ['ngayReport', 'like', $today],
             ['type', 'like', $typeUser]
         ])->exists();
-
-        if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
-            $doanhSo = ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang;
-            $thiPhan = ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang;
-        }
-
-        if ($request->luotXeDV != null && $request->doanhThuDV != null) {
-            $luotXeDV = ($luotXeDV != 0) ? $luotXeDV : $request->luotXeDV;
-            $doanhThuDV = ($doanhThuDV != 0) ? $doanhThuDV : $request->doanhThuDV;
-        }
-
 
         if (!$checkIn) {
             $report = Report::insert([
                 'type' => $typeUser,
                 'user_report' => Auth::user()->id,
                 'ngayReport' => Date('d-m-Y'),
-                'doanhSoThang' => $doanhSo,
-                'thiPhanThang' => $thiPhan,
-                'luotXeDV' => $luotXeDV,
-                'doanhThuDV' => $doanhThuDV,
-                'xuatHoaDon' => $request->xuatHoaDon,
+                'timeReport' => Date('H:i:s'),
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
                 'hdHuy' => $request->hdHuy,
@@ -525,7 +567,6 @@ class ReportController extends Controller
                 ['ngayReport', 'like', $today],
                 ['type', 'like', $typeUser]
             ])->update([
-                'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
                 'hdHuy' => $request->hdHuy,
@@ -604,10 +645,6 @@ class ReportController extends Controller
 
     public function saveNotSend(Request $request)
     {
-        $doanhSo = 0;
-        $thiPhan = 0;
-        $luotXeDV = 0;
-        $doanhThuDV = 0;
         $month = Date('m-Y');
         $today = Date('d-m-Y');
         $typeUser = "";
@@ -630,55 +667,17 @@ class ReportController extends Controller
         elseif (Auth::user()->hasRole('drp'))
             $typeUser = "ptdl";
 
-        $checkSale = Report::where([
-            ['ngayReport', 'like', '%' . $month],
-            ['type', 'like', $typeUser],
-            ['doanhSoThang', '!=', null],
-            ['thiPhanThang', '!=', null]
-        ])->first();
-
-        $checkDV = Report::where([
-            ['ngayReport', 'like', '%' . $month],
-            ['type', 'like', $typeUser],
-            ['luotXeDV', '!=', null],
-            ['doanhThuDV', '!=', null]
-        ])->first();
-
-        if ($checkSale !== null && $checkSale->count() > 0) {
-            $doanhSo = $checkSale->doanhSoThang;
-            $thiPhan = $checkSale->thiPhanThang;
-        }
-
-        if ($checkDV !== null && $checkDV->count() > 0) {
-            $luotXeDV = $checkDV->luotXeDV;
-            $doanhThuDV = $checkDV->doanhThuDV;
-        }
-
         $checkIn = Report::where([
             ['ngayReport', 'like', $today],
             ['type', 'like', $typeUser]
         ])->exists();
-
-        if ($request->doanhSoThang != null && $request->thiPhanThang != null) {
-            $doanhSo = ($doanhSo != 0) ? $doanhSo : $request->doanhSoThang;
-            $thiPhan = ($thiPhan != 0) ? $thiPhan : $request->thiPhanThang;
-        }
-
-        if ($request->luotXeDV != null && $request->doanhThuDV != null) {
-            $luotXeDV = ($luotXeDV != 0) ? $luotXeDV : $request->luotXeDV;
-            $doanhThuDV = ($doanhThuDV != 0) ? $doanhThuDV : $request->doanhThuDV;
-        }
-
 
         if (!$checkIn) {
             $report = Report::insert([
                 'type' => $typeUser,
                 'user_report' => Auth::user()->id,
                 'ngayReport' => Date('d-m-Y'),
-                'doanhSoThang' => $doanhSo,
-                'thiPhanThang' => $thiPhan,
-                'luotXeDV' => $luotXeDV,
-                'doanhThuDV' => $doanhThuDV,
+                'timeReport' => Date('H:i:s'),
                 'xuatHoaDon' => $request->xuatHoaDon,
                 'xuatNgoaiTinh' => $request->xuatNgoaiTinh,
                 'xuatTrongTinh' => $request->xuatTrongTinh,
@@ -1006,18 +1005,20 @@ class ReportController extends Controller
         $_from = \HelpFunction::revertDate($_from);
         $_to = \HelpFunction::revertDate($_to);
 
+        
+
         // --- only for pkd
         $doanhSoThang = 0;
         $thiPhanThang = 0;
-        $thang = "";
-        $ds = Report::where([
-            ['type', 'like', 'pkd']
-        ])->whereBetween('ngayReport', [$_from, $_to])->first();
+        $thang = \HelpFunction::getMonthInDay($_from);
+        $ds = Kpi::where([
+            ['type', 'like', 'pkd'],
+            ['thang', 'like', $thang]
+        ])->first();
 
         if ($ds !== null) {
-            $doanhSoThang = $ds->doanhSoThang;
-            $thiPhanThang = $ds->thiPhanThang;
-            $thang = \HelpFunction::getMonthInDay($ds->ngayReport);
+            $doanhSoThang = $ds->kpi1;
+            $thiPhanThang = $ds->kpiDecimal;
         } else {
             $doanhSoThang = 1;
             $thiPhanThang = 1;
@@ -1049,20 +1050,23 @@ class ReportController extends Controller
 
         if ($report !== null) {
             foreach ($report as $row) {
-                $xuatHoaDon += $row->xuatHoaDon;
-                $xuatNgoaiTinh += $row->xuatNgoaiTinh;
-                $xuatTrongTinh += $row->xuatTrongTinh;
-                $hdHuy += $row->hdHuy;
-                $hdDaiLy += $row->hdDaiLy;
-                $ctInternet += $row->ctInternet;
-                $ctShowroom += $row->ctShowroom;
-                $ctHotline += $row->ctHotline;
-                $ctSuKien += $row->ctSuKien;
-                $ctBLD += $row->ctBLD;
-                $saleInternet += $row->saleInternet;
-                $saleMoiGioi += $row->saleMoiGioi;
-                $saleThiTruong += $row->saleThiTruong;
-                $khShowRoom += $row->khShowRoom;
+                if ((strtotime($row->ngayReport) >= strtotime($_from)) 
+                        &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
+                    $xuatHoaDon += $row->xuatHoaDon;
+                    $xuatNgoaiTinh += $row->xuatNgoaiTinh;
+                    $xuatTrongTinh += $row->xuatTrongTinh;
+                    $hdHuy += $row->hdHuy;
+                    $hdDaiLy += $row->hdDaiLy;
+                    $ctInternet += $row->ctInternet;
+                    $ctShowroom += $row->ctShowroom;
+                    $ctHotline += $row->ctHotline;
+                    $ctSuKien += $row->ctSuKien;
+                    $ctBLD += $row->ctBLD;
+                    $saleInternet += $row->saleInternet;
+                    $saleMoiGioi += $row->saleMoiGioi;
+                    $saleThiTruong += $row->saleThiTruong;
+                    $khShowRoom += $row->khShowRoom;
+                }
             }
             $arrIndex = [];
             $arrName = [];
@@ -1075,21 +1079,15 @@ class ReportController extends Controller
                     $arrValue[$list] = 0;
                     $list++;
                }
-
-
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
-
             <h5>Doanh số (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . (($doanhSoThang == 1) ? "0" : $doanhSoThang) . " (" . number_format((($xuatNgoaiTinh + $xuatTrongTinh) * 100 / $doanhSoThang), 2) . "%)</strong></span></h5>
                     <h5>Thị phần tháng (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . number_format((($thiPhanThang == 1) ? "0" : $thiPhanThang),2) . "</strong></span></h5><br>
-
                     <div class='row'>
                         <div class='col-md-8'>
                             <h5>- Xuất xe: <span class='text-success'><strong>" . ($xuatNgoaiTinh + $xuatTrongTinh) . "</strong></span></h5>
                             <p>+ Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span><br/>
                             + Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></p>
                             ";
-
-
             foreach ($report as $row) {
                 foreach ($row->reportCar as $item) {
                     for ($i = 0; $i < count($arrIndex); $i++) { 
@@ -1101,7 +1099,6 @@ class ReportController extends Controller
                     }
                 }
             }
-          
             echo "<h5>- Ký hợp đồng: <span class='text-success'><strong>".$kyHopDong."</strong></span></h5><p>";
             for ($i = 0; $i < count($arrIndex); $i++) { 
                 echo "+ " . $arrName[$i] . ": <span class='text-success'><strong>" . $arrValue[$i] . "</strong></span><br/>";
@@ -1153,19 +1150,18 @@ class ReportController extends Controller
 
         $_from = \HelpFunction::revertDate($_from);
         $_to = \HelpFunction::revertDate($_to);
-
+        $thang = \HelpFunction::getMonthInDay($_from);
         // --- only for pdv
         $doanhThuDV = 0;
         $luotXeDV = 0;
-        $thang = "";
-        $dv = Report::where([
-            ['type', 'like', 'pdv']
-        ])->whereBetween('ngayReport', [$_from, $_to])->first();
+        $dv = Kpi::where([
+            ['type', 'like', 'pdv'],
+            ['thang', 'like', $thang]
+        ])->first();
 
         if ($dv !== null) {
-            $doanhThuDV = $dv->doanhThuDV;
-            $luotXeDV = $dv->luotXeDV;
-            $thang = \HelpFunction::getMonthInDay($dv->ngayReport);
+            $doanhThuDV = $dv->kpi1;
+            $luotXeDV = $dv->kpi2;
         } else {
             $doanhThuDV = 1;
             $luotXeDV = 1;
@@ -1196,23 +1192,26 @@ class ReportController extends Controller
 
         if ($report !== null) {
             foreach ($report as $row) {
-                $baoDuong += $row->baoDuong;
-                $suaChua += $row->suaChua;
-                $Dong += $row->Dong;
-                $Son += $row->Son;
+                if ((strtotime($row->ngayReport) >= strtotime($_from)) 
+                &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
+                    $baoDuong += $row->baoDuong;
+                    $suaChua += $row->suaChua;
+                    $Dong += $row->Dong;
+                    $Son += $row->Son;
 
-                $congBaoDuong += $row->congBaoDuong;
-                $congSuaChuaChung += $row->congSuaChuaChung;
-                $congDong += $row->congDong;
-                $congSon += $row->congSon;
+                    $congBaoDuong += $row->congBaoDuong;
+                    $congSuaChuaChung += $row->congSuaChuaChung;
+                    $congDong += $row->congDong;
+                    $congSon += $row->congSon;
 
-                $dtPhuTung += $row->dtPhuTung;
-                $dtDauNhot += $row->dtDauNhot;
-                $dtPhuTungBan += $row->dtPhuTungBan;
-                $dtDauNhotBan += $row->dtDauNhotBan;
+                    $dtPhuTung += $row->dtPhuTung;
+                    $dtDauNhot += $row->dtDauNhot;
+                    $dtPhuTungBan += $row->dtPhuTungBan;
+                    $dtDauNhotBan += $row->dtDauNhotBan;
 
-                $phuTungMua += $row->phuTungMua;
-                $dauNhotMua += $row->dauNhotMua;
+                    $phuTungMua += $row->phuTungMua;
+                    $dauNhotMua += $row->dauNhotMua;
+                }  
             }
 
             $sum1 = $baoDuong + $suaChua + $Dong + $Son;
@@ -1257,6 +1256,112 @@ class ReportController extends Controller
                         </div>
                     </div>
                     <br>";
+                    
+                    echo "<hr/>";
+                    echo "<h4>CHI TIẾT THEO NGÀY</h4>";
+                    echo "<table class='table table-bordered'>
+                       <thead>
+                         <tr>
+                           <th>Ngày báo cáo</th>
+                           <th>Lượt BD</th>
+                           <th>Lượt SCC</th>
+                           <th>Lượt Đồng</th>
+                           <th>Lượt Sơn</th>
+                           <th>Công BD</th>
+                           <th>Công SCC</th>
+                           <th>Công Đồng</th>
+                           <th>Công Sơn</th>
+                           <th>Phụ tùng SC</th>
+                           <th>Dầu nhớt SC</th>
+                           <th>Phụ tùng bán</th>
+                           <th>Dầu nhót bán</th>
+                           <th>Tiền mua PT</th>
+                           <th>Tiền mua DN</th>
+                         </tr>
+                       </thead>
+                       <tbody>";
+
+                    $dbd = 0;
+                    $dsc = 0;
+                    $ddong = 0;
+                    $dson = 0;
+
+                    $dcbd = 0;
+                    $dcsc = 0;
+                    $dcdong = 0;
+                    $dcson = 0;
+
+                    $dpt = 0;
+                    $ddn = 0;
+                    $dptb = 0;
+                    $ddnb = 0;
+
+                    $dptm = 0;
+                    $ddnm = 0;
+                    foreach ($report as $row) {
+                        if ((strtotime($row->ngayReport) >= strtotime($_from)) 
+                        &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
+                            $dbd += $row->baoDuong;
+                            $dsc += $row->suaChua;
+                            $ddong += $row->Dong;
+                            $dson += $row->Son;
+
+                            $dcbd += $row->congBaoDuong;
+                            $dcsc += $row->congSuaChua;
+                            $dcdong += $row->congDong;
+                            $dcson += $row->congSon;
+
+                            $dpt += $row->dtPhuTung;
+                            $ddn += $row->dtDauNhot;
+                            $dptb += $row->dtPhuTungBan;
+                            $ddnb += $row->dtDauNhotBan;
+
+                            $dptm += $row->phuTungMua;
+                            $ddnm += $row->dauNhotMua;
+                            echo "<tr>
+                                <td>".$row->ngayReport."</td>
+                                <td>".$row->baoDuong."</td>
+                                <td>".$row->suaChua."</td>
+                                <td>".$row->Dong."</td>
+                                <td>".$row->Son."</td>
+
+                                <td>".number_format($row->congBaoDuong)."</td>
+                                <td>".number_format($row->congSuaChuaChung)."</td>
+                                <td>".number_format($row->congDong)."</td>
+                                <td>".number_format($row->congSon)."</td>
+
+                                <td>".number_format($row->dtPhuTung)."</td>
+                                <td>".number_format($row->dtDauNhot)."</td>
+                                <td>".number_format($row->dtPhuTungBan)."</td>
+                                <td>".number_format($row->dtDauNhotBan)."</td>
+
+                                <td>".number_format($row->phuTungMua)."</td>
+                                <td>".number_format($row->dauNhotMua)."</td>
+                            </tr>";
+                        }
+                    }
+                    echo "<tr>
+                            <td></td>
+                            <td>".$dbd."</td>
+                            <td>".$dsc."</td>
+                            <td>".$ddong."</td>
+                            <td>".$dson."</td>
+
+                            <td>".number_format($dcbd)."</td>
+                            <td>".number_format($dcsc)."</td>
+                            <td>".number_format($dcdong)."</td>
+                            <td>".number_format($dcson)."</td>
+
+                            <td>".number_format($dpt)."</td>
+                            <td>".number_format($ddn)."</td>
+                            <td>".number_format($dptb)."</td>
+                            <td>".number_format($ddnb)."</td>
+
+                            <td>".number_format($dptm)."</td>
+                            <td>".number_format($ddnm)."</td>
+                        </tr>";
+            echo "</tbody>
+            </table>";
         }
     }
 

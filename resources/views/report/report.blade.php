@@ -57,13 +57,18 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="doanhSoThang">Doanh số tháng: </label>
-                                    <input min="1" id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required" value="1">
+                                    <input min="0" id="doanhSoThang" name="doanhSoThang" type="number" class="form-control" required="required">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="thiPhanThang">Thị phần tháng: </label>
-                                    <input min="1" id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required" value="1">
+                                    <input min="0" id="thiPhanThang" name="thiPhanThang" type="number" class="form-control" required="required">
+                                </div>
+                                <div class="col-md-3">
+                                    <br/>
+                                    <button id="updateKpiKD" type="button" class="btn btn-success">Cập nhật</button>
                                 </div>
                             </div>
+                            <hr>
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="xuatTrongTinh">Xuất trong tỉnh: </label>
@@ -143,11 +148,15 @@
                             <div class="row p-1">
                                 <div class="col-md-3">
                                     <label for="luotXeDV">Lượt xe tháng: </label>
-                                    <input min="1" id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required" value="1">
+                                    <input min="0" id="luotXeDV" name="luotXeDV" type="number" class="form-control" required="required">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="doanhThuDV">Doanh thu tháng: </label>
-                                    <input min="1" id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required" value="1">
+                                    <input min="0" id="doanhThuDV" name="doanhThuDV" type="number" class="form-control" required="required">
+                                </div>
+                                <div class="col-md-3">
+                                    <br/>
+                                    <button id="updateKpiDV" type="button" class="btn btn-success">Cập nhật</button>
                                 </div>
                             </div>
                         </div>
@@ -425,7 +434,7 @@
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
-                    <div class="card card-fuchsia">
+                    <div class="card card-fuchsia" id="haveIdReport">
                         <div class="card-header">
                             <h5>CHI TIẾT HỢP ĐỒNG KÝ</h5>
                         </div>
@@ -595,21 +604,25 @@
                             title: response.message
                         })
 
-                        if (response.ds == 1) {
-                            $('input[name=doanhSoThang]').val(response.ds_num);
-                            $('input[name=doanhSoThang]').prop('readonly', true);
+                        $("#haveIdReport").hide();
+
+                        if (response.code == 500) {
+                            $('input[name=doanhSoThang]').val(response.pkd.kpi1);
+                            // $('input[name=doanhSoThang]').prop('readonly', true);
+                            $('input[name=thiPhanThang]').val(response.pkd.kpiDecimal);
+                            $('input[name=luotXeDV]').val(response.pdv.kpi2);
+                            $('input[name=doanhThuDV]').val(response.pdv.kpi1);
                         }
-                        if (response.tp == 1) {
-                            $('input[name=thiPhanThang]').val(response.tp_num);
-                            $('input[name=thiPhanThang]').prop('readonly', true);
-                        }
-                        if (response.lxdv == 1) {
-                            $('input[name=luotXeDV]').val(response.lxdv_num);
-                            $('input[name=luotXeDV]').prop('readonly', true);
-                        }
-                        if (response.dtdv == 1) {
-                            $('input[name=doanhThuDV]').val(response.dtdv_num);
-                            $('input[name=doanhThuDV]').prop('readonly', true);
+                        
+                        if (response.code == 200) 
+                            $("#haveIdReport").show();
+
+                        if (response.val !== null) {
+                            $('input[name=doanhSoThang]').val(response.val.kpi1);
+                            $('input[name=thiPhanThang]').val(response.val.kpiDecimal);
+
+                            $('input[name=luotXeDV]').val(response.val.kpi2);
+                            $('input[name=doanhThuDV]').val(response.val.kpi1);
                         }
 
                         if (response.data.clock == true) {
@@ -629,16 +642,7 @@
                         $('input[name=idReport4]').val(response.data.id);
 
                         loadHD(response.data.id);
-
-                        //---------PKD
-                        $('input[name=doanhSoThang]').val(response.data.doanhSoThang);
-                        $('input[name=thiPhanThang]').val(response.data.thiPhanThang);
-
-                        //---------PDV
-                        $('input[name=luotXeDV]').val(response.data.luotXeDV);
-                        $('input[name=doanhThuDV]').val(response.data.doanhThuDV);
-
-
+                        
                         $('input[name=xuatHoaDon]').val(response.data.xuatHoaDon);
                         $('input[name=xuatTrongTinh]').val(response.data.xuatTrongTinh);
                         $('input[name=xuatNgoaiTinh]').val(response.data.xuatNgoaiTinh);
@@ -1052,8 +1056,56 @@
                     });
                 }
             });
+
+            $("#updateKpiKD").click(function(){
+                $.ajax({
+                    url: "{{url('management/report/updatekpikd/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "ds": $('input[name=doanhSoThang]').val(),
+                        "tp": $('input[name=thiPhanThang]').val()
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'info',
+                            title: response.message
+                        })
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể cập nhật!"
+                        })
+                    }
+                });
+            });
+
+            $("#updateKpiDV").click(function(){
+                $.ajax({
+                    url: "{{url('management/report/updatekpidv/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "dt": $('input[name=doanhThuDV]').val(),
+                        "lx": $('input[name=luotXeDV]').val()
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'info',
+                            title: response.message
+                        })
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể cập nhật!"
+                        })
+                    }
+                });
+            });
         });
-
-
     </script>
 @endsection

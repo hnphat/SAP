@@ -315,6 +315,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('loadwork','ReportController@loadWork')->name('add.work.load');
         Route::post('deletework','ReportController@deleteWork')->name('add.work.delete');
 
+        // update kpi
+        Route::post('updatekpikd','ReportController@updateKpiKD');
+        Route::post('updatekpidv','ReportController@updateKpiDV');
     });
 
     Route::group(['prefix' => 'overview', 'middleware' => ['f_report']], function(){

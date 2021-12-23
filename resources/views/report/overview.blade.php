@@ -42,7 +42,7 @@
                     {{session('err')}}
                 </div>
             @endif
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
                         <form id="phongBan">
@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <div class="container" id="show">
+                <div class="container-fluid" id="show">
                 </div>
             </div>
         </div>
