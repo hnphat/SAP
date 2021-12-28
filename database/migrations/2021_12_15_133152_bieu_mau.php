@@ -16,7 +16,7 @@ class BieuMau extends Migration
         Schema::create('bieu_mau', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ngayTao');
-            $table->string('tieuDe')->unique();
+            $table->string('tieuDe');
             $table->string('slug');
             // $table->longText('noiDung')->nullable();
             $table->string('moTa')->nullable();

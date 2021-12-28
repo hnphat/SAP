@@ -207,6 +207,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('banle/denghi/canhan/down/{id}','HDController@inDeNghiCaNhan');
         Route::get('banle/denghi/congty/down/{id}','HDController@inDeNghiCongTy');
 
+        // --- BẢng giá xe
+        Route::get('listbanggia','HanhChinhController@showBangGiaXe')->name('sale.banggiaxe');
+        Route::get('ajax/list/banggia','HanhChinhController@getBangGia');
+        Route::post('ajax/post/banggia','HanhChinhController@postBangGia');
+        Route::post('ajax/delete/banggia','HanhChinhController@deleteBangGia');
+        Route::post('ajax/getedit/banggia/{id}','HanhChinhController@getEditBangGia');
+        Route::post('ajax/update/banggia','HanhChinhController@updateBangGia');
+
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

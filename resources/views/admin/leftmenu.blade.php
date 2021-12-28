@@ -117,6 +117,18 @@
                                         <p>Tồn kho</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('sale.banggiaxe')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Bảng giá xe</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Thông báo nội bộ</p>
+                                    </a>
+                                </li>
                             @endif
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
