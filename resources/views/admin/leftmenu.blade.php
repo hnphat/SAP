@@ -118,18 +118,33 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{route('sale.banggiaxe')}}" class="nav-link">
+                                    <a href="{{route('sale.xembanggiaxe')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Bảng giá xe</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <li class="nav-item">
+                                    <a href="{{route('sale.xemthongbao')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Thông báo nội bộ</p>
                                     </a>
                                 </li>
-                            @endif
+                                @endif
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                                    <li class="nav-item">
+                                        <a href="{{route('sale.banggiaxe')}}" class="nav-link">
+                                            <i class="fas fa-caret-right nav-icon"></i>
+                                            <p>QL Bảng giá xe</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{route('sale.thongbao')}}" class="nav-link">
+                                            <i class="fas fa-caret-right nav-icon"></i>
+                                            <p>QL Thông báo nội bộ</p>
+                                        </a>
+                                    </li>
+                                @endif                            
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                 <li class="nav-item">
@@ -270,6 +285,15 @@
                                         <p>Biểu mẫu</p>
                                     </a>
                                 </li>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))   
+                                <li class="nav-item">
+                                    <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Hồ sơ nhân viên</p>
+                                    </a>
+                                </li>
+                                @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))                    

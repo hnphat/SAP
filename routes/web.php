@@ -133,22 +133,22 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
-        Route::get('list','HDController@index')->name('hd.list');
-        Route::get('get/list','HDController@getList');
-        Route::get('get/list/code','HDController@getListCode');
-        Route::get('get/list/wait','HDController@getListWait');
-        Route::post('add/code','HDController@addCode');
-        Route::post('delete','HDController@delete');
-        Route::post('deleteWait','HDController@deleteWait');
-        // ajax get quickly
-        Route::get('get/guest/personal/','HDController@getGuestPersonal');
-        Route::get('get/guest/company/','HDController@getGuestCompany');
-        Route::get('get/guest/{id}','HDController@getGuest');
-        Route::get('get/car/{id}','HDController@getCar');
-        Route::get('get/load/hd/','HDController@loadHD');
-        Route::get('get/detail/hd/{id}','HDController@detailHD');
-        // --- end ajax quickly
-        Route::get('exportToWord','HDController@test');
+        // Route::get('list','HDController@index')->name('hd.list');
+        // Route::get('get/list','HDController@getList');
+        // Route::get('get/list/code','HDController@getListCode');
+        // Route::get('get/list/wait','HDController@getListWait');
+        // Route::post('add/code','HDController@addCode');
+        // Route::post('delete','HDController@delete');
+        // Route::post('deleteWait','HDController@deleteWait');
+        // // ajax get quickly
+        // Route::get('get/guest/personal/','HDController@getGuestPersonal');
+        // Route::get('get/guest/company/','HDController@getGuestCompany');
+        // Route::get('get/guest/{id}','HDController@getGuest');
+        // Route::get('get/car/{id}','HDController@getCar');
+        // Route::get('get/load/hd/','HDController@loadHD');
+        // Route::get('get/detail/hd/{id}','HDController@detailHD');
+        // // --- end ajax quickly
+        // Route::get('exportToWord','HDController@test');
 
         //-------------- HD v2
         Route::get('hd/denghi','HDController@getHDDeNghi')->name('hd.denghi');
@@ -209,11 +209,21 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // --- BẢng giá xe
         Route::get('listbanggia','HanhChinhController@showBangGiaXe')->name('sale.banggiaxe');
+        Route::get('xemlistbanggia','HanhChinhController@showXemBangGiaXe')->name('sale.xembanggiaxe');
         Route::get('ajax/list/banggia','HanhChinhController@getBangGia');
         Route::post('ajax/post/banggia','HanhChinhController@postBangGia');
-        Route::post('ajax/delete/banggia','HanhChinhController@deleteBangGia');
+        Route::post('ajax/delete/banggia','HanhChinhController@deleteBieuMau');
         Route::post('ajax/getedit/banggia/{id}','HanhChinhController@getEditBangGia');
         Route::post('ajax/update/banggia','HanhChinhController@updateBangGia');
+
+        // --- Thông báo nội bộ
+        Route::get('listthongbao','HanhChinhController@showSaleThongBao')->name('sale.thongbao');
+        Route::get('xemlistthongbao','HanhChinhController@showXemSaleThongBao')->name('sale.xemthongbao');
+        Route::get('ajax/list/thongbao','HanhChinhController@getSaleThongBao');
+        Route::post('ajax/post/thongbao','HanhChinhController@postSaleThongBao');
+        Route::post('ajax/delete/thongbao','HanhChinhController@deleteBieuMau');
+        Route::post('ajax/getedit/thongbao/{id}','HanhChinhController@getEditSaleThongBao');
+        Route::post('ajax/update/thongbao','HanhChinhController@updateSaleThongBao');
 
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
@@ -301,6 +311,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // biểu mẫu xem
         Route::get('list/bieumau','HanhChinhController@showXemBieuMau')->name('hanhchinh.xembieumau');
         Route::get('ajax/xembieumau','HanhChinhController@getXemBieuMau');
+
+        // Hồ sơ nhân viên
+        Route::get('hoso','HanhChinhController@getHoSo')->name('hanhchinh.hoso');
     });
 
     Route::get('qr/{content}', function ($content) {

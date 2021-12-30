@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Bảng giá xe
+    Thông báo nội bộ
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Bảng giá xe</strong></h1>
+                        <h1 class="m-0"><strong>Thông báo nội bộ</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Kinh doanh</li>
-                            <li class="breadcrumb-item active">Bảng giá xe</li>
+                            <li class="breadcrumb-item active">Thông báo nội bộ</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -39,7 +39,7 @@
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="false">
-                                    <strong>Bảng giá xe</strong>
+                                    <strong>Thông báo nội bộ</strong>
                                 </a>
                             </li>
                         </ul>
@@ -76,7 +76,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Quản lý bảng giá xe</h4>
+                        <h4 class="modal-title">Quản lý Thông báo nội bộ</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -129,7 +129,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Chỉnh sửa bảng giá xe</h4>
+                        <h4 class="modal-title">Chỉnh sửa Thông báo nội bộ</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -206,7 +206,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/hd/ajax/list/banggia/') }}",
+                ajax: "{{ url('management/hd/ajax/list/thongbao/') }}",
                 "columnDefs": [ {
                     "searchable": false,
                     "orderable": false,
@@ -264,7 +264,7 @@
                     var formData = new FormData(this);
                     $.ajax({
                         type:'POST',
-                        url: "{{ url('management/hd/ajax/post/banggia')}}",
+                        url: "{{ url('management/hd/ajax/post/thongbao')}}",
                         data: formData,
                         cache: false,
                         contentType: false,
@@ -300,7 +300,7 @@
             $(document).on('click','#delete', function(){
                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
-                        url: "{{url('management/hd/ajax/delete/banggia')}}",
+                        url: "{{url('management/hd/ajax/delete/thongbao')}}",
                         type: "post",
                         dataType: "json",
                         data: {
@@ -327,7 +327,7 @@
             // edit data
             $(document).on('click','#btnEdit', function(){
                 $.ajax({
-                    url: "{{url('management/hd/ajax/getedit/banggia/')}}" + "/" + $(this).data('id'),
+                    url: "{{url('management/hd/ajax/getedit/thongbao/')}}" + "/" + $(this).data('id'),
                     type: "post",
                     dataType: "json",
                     data: {
@@ -358,7 +358,7 @@
             $("#btnUpdate").click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/hd/ajax/update/banggia/')}}",
+                    url: "{{url('management/hd/ajax/update/thongbao/')}}",
                     type: "post",
                     dataType: "json",
                     data: $("#editForm").serialize(),

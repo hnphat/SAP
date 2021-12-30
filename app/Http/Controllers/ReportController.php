@@ -503,13 +503,14 @@ class ReportController extends Controller
                 'saleThiTruong' => $request->saleThiTruong,
                 'khShowRoom' => $request->khShowRoom,
                 'baoDuong' => $request->baoDuong,
-                'suaChua' => $request->suaChua,
-                'Dong' => $request->dong,
-                'Son' => $request->son,
+                // 'suaChua' => $request->suaChua,
+                // 'Dong' => $request->dong,
+                // 'Son' => $request->son,
                 'congBaoDuong' => $request->congBaoDuong,
                 'congSuaChuaChung' => $request->congSuaChuaChung,
                 'congDong' => $request->congDong,
                 'congSon' => $request->congSon,
+                'pdi' => $request->pdi,
                 'dtPhuTung' => $request->dtPhuTung,
                 'dtDauNhot' => $request->dtDauNhot,
                 'dtPhuTungBan' => $request->dtPhuTungBan,
@@ -581,13 +582,14 @@ class ReportController extends Controller
                 'saleThiTruong' => $request->saleThiTruong,
                 'khShowRoom' => $request->khShowRoom,
                 'baoDuong' => $request->baoDuong,
-                'suaChua' => $request->suaChua,
-                'Dong' => $request->dong,
-                'Son' => $request->son,
+                // 'suaChua' => $request->suaChua,
+                // 'Dong' => $request->dong,
+                // 'Son' => $request->son,
                 'congBaoDuong' => $request->congBaoDuong,
                 'congSuaChuaChung' => $request->congSuaChuaChung,
                 'congDong' => $request->congDong,
                 'congSon' => $request->congSon,
+                'pdi' => $request->pdi,
                 'dtPhuTung' => $request->dtPhuTung,
                 'dtDauNhot' => $request->dtDauNhot,
                 'dtPhuTungBan' => $request->dtPhuTungBan,
@@ -693,13 +695,14 @@ class ReportController extends Controller
                 'saleThiTruong' => $request->saleThiTruong,
                 'khShowRoom' => $request->khShowRoom,
                 'baoDuong' => $request->baoDuong,
-                'suaChua' => $request->suaChua,
-                'Dong' => $request->dong,
-                'Son' => $request->son,
+                // 'suaChua' => $request->suaChua,
+                // 'Dong' => $request->dong,
+                // 'Son' => $request->son,
                 'congBaoDuong' => $request->congBaoDuong,
                 'congSuaChuaChung' => $request->congSuaChuaChung,
                 'congDong' => $request->congDong,
                 'congSon' => $request->congSon,
+                'pdi' => $request->pdi,
                 'dtPhuTung' => $request->dtPhuTung,
                 'dtDauNhot' => $request->dtDauNhot,
                 'dtPhuTungBan' => $request->dtPhuTungBan,
@@ -771,13 +774,14 @@ class ReportController extends Controller
                 'saleThiTruong' => $request->saleThiTruong,
                 'khShowRoom' => $request->khShowRoom,
                 'baoDuong' => $request->baoDuong,
-                'suaChua' => $request->suaChua,
-                'Dong' => $request->dong,
-                'Son' => $request->son,
+                // 'suaChua' => $request->suaChua,
+                // 'Dong' => $request->dong,
+                // 'Son' => $request->son,
                 'congBaoDuong' => $request->congBaoDuong,
                 'congSuaChuaChung' => $request->congSuaChuaChung,
                 'congDong' => $request->congDong,
                 'congSon' => $request->congSon,
+                'pdi' => $request->pdi,
                 'dtPhuTung' => $request->dtPhuTung,
                 'dtDauNhot' => $request->dtDauNhot,
                 'dtPhuTungBan' => $request->dtPhuTungBan,
@@ -1128,14 +1132,18 @@ class ReportController extends Controller
     public function getPDVAll($_from, $_to)
     {
         $i = 1;
-        $baoDuong = 0;
-        $suaChua = 0;
-        $Dong = 0;
-        $Son = 0;
+        // $baoDuong = 0;
+        // $suaChua = 0;
+        // $Dong = 0;
+        // $Son = 0;
+        $luotXe = 0;
+
         $congBaoDuong = 0;
         $congSuaChuaChung = 0;
         $congDong = 0;
         $congSon = 0;
+        $pdi = 0;
+
         $dtPhuTung = 0;
         $dtDauNhot = 0;
         $dtPhuTungBan = 0;
@@ -1194,15 +1202,18 @@ class ReportController extends Controller
             foreach ($report as $row) {
                 if ((strtotime($row->ngayReport) >= strtotime($_from)) 
                 &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
-                    $baoDuong += $row->baoDuong;
-                    $suaChua += $row->suaChua;
-                    $Dong += $row->Dong;
-                    $Son += $row->Son;
+                    // $baoDuong += $row->baoDuong;
+                    // $suaChua += $row->suaChua;
+                    // $Dong += $row->Dong;
+                    // $Son += $row->Son;
+
+                    $luotXe += $row->baoDuong;
 
                     $congBaoDuong += $row->congBaoDuong;
                     $congSuaChuaChung += $row->congSuaChuaChung;
                     $congDong += $row->congDong;
                     $congSon += $row->congSon;
+                    $pdi += $row->pdi;
 
                     $dtPhuTung += $row->dtPhuTung;
                     $dtDauNhot += $row->dtDauNhot;
@@ -1214,24 +1225,21 @@ class ReportController extends Controller
                 }  
             }
 
-            $sum1 = $baoDuong + $suaChua + $Dong + $Son;
-            $sum2 = $congBaoDuong + $congSuaChuaChung + $congDong + $congSon;
+            // $sum1 = $baoDuong + $suaChua + $Dong + $Son;
+            $sum1 = $luotXe;
+            $sum2 = $congBaoDuong + $congSuaChuaChung + $congDong + $congSon + $pdi;
             $sum3 = $dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan;
             $sum4 = $phuTungMua + $dauNhotMua;
 
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
 
 
-            <h5>Lượt xe (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . (($luotXeDV == 1) ? "0" : $luotXeDV) . " (" . number_format((($baoDuong + $suaChua + $Dong + $Son) * 100 / $luotXeDV), 2) . "%)</strong></span></h5>
-                    <h5>Doanh thu (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . number_format(($doanhThuDV == 1) ? "0" : $doanhThuDV) . " (" . number_format((($dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan + $congBaoDuong + $congSuaChuaChung + $congDong + $congSon) * 100 / $doanhThuDV), 2) . "%)</strong></span></h5><br>
+            <h5>Lượt xe (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . (($luotXeDV == 1) ? "0" : $luotXeDV) . " (Thực hiện: ".$luotXe. " đạt " . number_format((($luotXe) * 100 / $luotXeDV), 2) . "%)</strong></span></h5>
+                    <h5>Doanh thu (chỉ tiêu tháng <strong>" . $thang . "</strong>): <span class='text-blue'><strong>" . number_format(($doanhThuDV == 1) ? "0" : $doanhThuDV) . " (Thực hiện: ".number_format($dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan + $congBaoDuong + $congSuaChuaChung + $congDong + $congSon + $pdi). " đạt " . number_format((($dtPhuTung + $dtDauNhot + $dtPhuTungBan + $dtDauNhotBan + $congBaoDuong + $congSuaChuaChung + $congDong + $congSon + $pdi) * 100 / $doanhThuDV), 2) . "%)</strong></span></h5><br>
 
                 <div class='row'>
                         <div class='col-md-6'>
                             <h4>LƯỢT XE: <span class='text-success'><strong>" . number_format($sum1) . "</strong></span></h4>
-                            <h5>- Bảo dưỡng: <span class='text-success'><strong>" . $baoDuong . "</strong></span></h5>
-                            <h5>- Sữa chữa: <span class='text-success'><strong>" . $suaChua . "</strong></span></h5>
-                            <h5>- Đồng: <span class='text-success'><strong>" . $Dong . "</strong></span></h5>
-                            <h5>- Sơn: <span class='text-success'><strong>" . $Son . "</strong></span></h5>
                         </div>
                         <div class='col-md-6'>
                             <h4>DOANH THU DỊCH VỤ: <span class='text-success'><strong>" . number_format($sum2) . "</strong></span></h4>
@@ -1239,6 +1247,7 @@ class ReportController extends Controller
                             <h5>- Công sữa chữa: <span class='text-success'><strong>" . number_format($congSuaChuaChung) . "</strong></span></h5>
                             <h5>- Công đồng: <span class='text-success'><strong>" . number_format($congDong) . "</strong></span></h5>
                             <h5>- Công sơn: <span class='text-success'><strong>" . number_format($congSon) . "</strong></span></h5>
+                            <h5>- Công PDI: <span class='text-success'><strong>" . number_format($pdi) . "</strong></span></h5>
                         </div>
                         </div>
                         <div class='row'>
@@ -1263,14 +1272,12 @@ class ReportController extends Controller
                        <thead>
                          <tr>
                            <th>Ngày báo cáo</th>
-                           <th>Lượt BD</th>
-                           <th>Lượt SCC</th>
-                           <th>Lượt Đồng</th>
-                           <th>Lượt Sơn</th>
+                           <th>Lượt Xe</th>
                            <th>Công BD</th>
                            <th>Công SCC</th>
                            <th>Công Đồng</th>
                            <th>Công Sơn</th>
+                           <th>Công PDI</th>
                            <th>Phụ tùng SC</th>
                            <th>Dầu nhớt SC</th>
                            <th>Phụ tùng bán</th>
@@ -1281,15 +1288,18 @@ class ReportController extends Controller
                        </thead>
                        <tbody>";
 
-                    $dbd = 0;
-                    $dsc = 0;
-                    $ddong = 0;
-                    $dson = 0;
+                    // $dbd = 0;
+                    // $dsc = 0;
+                    // $ddong = 0;
+                    // $dson = 0;
+                    $dluotXe = 0;
+
 
                     $dcbd = 0;
                     $dcsc = 0;
                     $dcdong = 0;
                     $dcson = 0;
+                    $dpdi = 0;
 
                     $dpt = 0;
                     $ddn = 0;
@@ -1301,15 +1311,17 @@ class ReportController extends Controller
                     foreach ($report as $row) {
                         if ((strtotime($row->ngayReport) >= strtotime($_from)) 
                         &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
-                            $dbd += $row->baoDuong;
-                            $dsc += $row->suaChua;
-                            $ddong += $row->Dong;
-                            $dson += $row->Son;
+                            // $dbd += $row->baoDuong;
+                            // $dsc += $row->suaChua;
+                            // $ddong += $row->Dong;
+                            // $dson += $row->Son;
+                            $dluotXe += $row->baoDuong;
 
                             $dcbd += $row->congBaoDuong;
-                            $dcsc += $row->congSuaChua;
+                            $dcsc += $row->congSuaChuaChung;
                             $dcdong += $row->congDong;
                             $dcson += $row->congSon;
+                            $dpdi += $row->pdi;
 
                             $dpt += $row->dtPhuTung;
                             $ddn += $row->dtDauNhot;
@@ -1321,14 +1333,12 @@ class ReportController extends Controller
                             echo "<tr>
                                 <td>".$row->ngayReport."</td>
                                 <td>".$row->baoDuong."</td>
-                                <td>".$row->suaChua."</td>
-                                <td>".$row->Dong."</td>
-                                <td>".$row->Son."</td>
 
                                 <td>".number_format($row->congBaoDuong)."</td>
                                 <td>".number_format($row->congSuaChuaChung)."</td>
                                 <td>".number_format($row->congDong)."</td>
                                 <td>".number_format($row->congSon)."</td>
+                                <td>".number_format($row->pdi)."</td>
 
                                 <td>".number_format($row->dtPhuTung)."</td>
                                 <td>".number_format($row->dtDauNhot)."</td>
@@ -1342,15 +1352,13 @@ class ReportController extends Controller
                     }
                     echo "<tr>
                             <td></td>
-                            <td>".$dbd."</td>
-                            <td>".$dsc."</td>
-                            <td>".$ddong."</td>
-                            <td>".$dson."</td>
+                            <td>".$dluotXe."</td>
 
                             <td>".number_format($dcbd)."</td>
                             <td>".number_format($dcsc)."</td>
                             <td>".number_format($dcdong)."</td>
                             <td>".number_format($dcson)."</td>
+                            <td>".number_format($dpdi)."</td>
 
                             <td>".number_format($dpt)."</td>
                             <td>".number_format($ddn)."</td>
@@ -1410,18 +1418,21 @@ class ReportController extends Controller
 
         if ($report !== null) {
             foreach ($report as $row) {
-                $tonBaoDuong += $row->tonBaoDuong;
-                $tonSuaChuaChung += $row->tonSuaChuaChung;
-                $tonDong += $row->tonDong;
-                $tonSon += $row->tonSon;
-                $tiepNhanBaoDuong += $row->tiepNhanBaoDuong;
-                $tiepNhanSuaChuaChung += $row->tiepNhanSuaChuaChung;
-                $tiepNhanDong += $row->tiepNhanDong;
-                $tiepNhanSon += $row->tiepNhanSon;
-                $hoanThanhBaoDuong += $row->hoanThanhBaoDuong;
-                $hoanThanhSuaChuaChung += $row->hoanThanhSuaChuaChung;
-                $hoanThanhDong += $row->hoanThanhDong;
-                $hoanThanhSon += $row->hoanThanhSon;
+                if ((strtotime($row->ngayReport) >= strtotime($_from)) 
+                &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
+                    $tonBaoDuong += $row->tonBaoDuong;
+                    $tonSuaChuaChung += $row->tonSuaChuaChung;
+                    $tonDong += $row->tonDong;
+                    $tonSon += $row->tonSon;
+                    $tiepNhanBaoDuong += $row->tiepNhanBaoDuong;
+                    $tiepNhanSuaChuaChung += $row->tiepNhanSuaChuaChung;
+                    $tiepNhanDong += $row->tiepNhanDong;
+                    $tiepNhanSon += $row->tiepNhanSon;
+                    $hoanThanhBaoDuong += $row->hoanThanhBaoDuong;
+                    $hoanThanhSuaChuaChung += $row->hoanThanhSuaChuaChung;
+                    $hoanThanhDong += $row->hoanThanhDong;
+                    $hoanThanhSon += $row->hoanThanhSon;
+                }
             }
 
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
@@ -1499,23 +1510,26 @@ class ReportController extends Controller
         ])->whereBetween('ngayTao', [$_from, $_to])->get();
         if ($report !== null) {
             foreach ($report as $row) {
-                $callDatHenSuccess += $row->callDatHenSuccess;
-                $callDatHenFail += $row->callDatHenFail;
-                $datHen += $row->datHen;
-                $dvHaiLong += $row->dvHaiLong;
-                $dvKhongHaiLong += $row->dvKhongHaiLong;
-                $dvKhongThanhCong += $row->dvKhongThanhCong;
-                $muaXeSuccess += $row->muaXeSuccess;
-                $muaXeFail += $row->muaXeFail;
-                $duyetBanLe += $row->duyetBanLe;
-                $knThaiDo += $row->knThaiDo;
-                $knChatLuong += $row->knChatLuong;
-                $knThoiGian += $row->knThoiGian;
-                $knVeSinh += $row->knVeSinh;
-                $knGiaCa += $row->knGiaCa;
-                $knKhuyenMai += $row->knKhuyenMai;
-                $knDatHen += $row->knDatHen;
-                $knTraiNghiem += $row->knTraiNghiem;
+                if ((strtotime($row->ngayReport) >= strtotime($_from)) 
+                &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
+                    $callDatHenSuccess += $row->callDatHenSuccess;
+                    $callDatHenFail += $row->callDatHenFail;
+                    $datHen += $row->datHen;
+                    $dvHaiLong += $row->dvHaiLong;
+                    $dvKhongHaiLong += $row->dvKhongHaiLong;
+                    $dvKhongThanhCong += $row->dvKhongThanhCong;
+                    $muaXeSuccess += $row->muaXeSuccess;
+                    $muaXeFail += $row->muaXeFail;
+                    $duyetBanLe += $row->duyetBanLe;
+                    $knThaiDo += $row->knThaiDo;
+                    $knChatLuong += $row->knChatLuong;
+                    $knThoiGian += $row->knThoiGian;
+                    $knVeSinh += $row->knVeSinh;
+                    $knGiaCa += $row->knGiaCa;
+                    $knKhuyenMai += $row->knKhuyenMai;
+                    $knDatHen += $row->knDatHen;
+                    $knTraiNghiem += $row->knTraiNghiem;
+                }
             }
 
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>
@@ -1590,8 +1604,11 @@ class ReportController extends Controller
         if ($report !== null) {
 
             foreach ($report as $row) {
-                $khBanGiao += $row->khBanGiao;
-                $khSuKien += $row->khSuKien;
+                if ((strtotime($row->ngayReport) >= strtotime($_from)) 
+                &&  (strtotime($row->ngayReport) <= strtotime($_to))) {
+                    $khBanGiao += $row->khBanGiao;
+                    $khSuKien += $row->khSuKien;
+                }
             }
 
             echo "<h5>Báo cáo từ: <span class='text-red'><strong>" . $_from . "</strong> đến <strong>" . $_to . "</strong></span></h5>

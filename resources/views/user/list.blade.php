@@ -51,6 +51,7 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Tài khoản</th>
+                                <th>Tên người dùng</th>
                                 <th>Email</th>
                                 <th>Tác vụ</th>
                             </tr>
@@ -60,6 +61,11 @@
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$row->name}}</td>
+                                    <td>
+                                        @if($row->userDetail != null)
+                                            {{$row->userDetail->surname}}
+                                        @endif
+                                    </td>
                                     <td>{{$row->email}}</td>
                                     <td>
                                         <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>

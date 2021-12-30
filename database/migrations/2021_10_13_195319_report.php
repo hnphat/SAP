@@ -50,6 +50,7 @@ class Report extends Migration
             $table->integer('congSuaChuaChung')->nullable();
             $table->integer('congDong')->nullable();
             $table->integer('congSon')->nullable();
+            $table->integer('pdi')->nullable();
             $table->integer('dtPhuTung')->nullable();
             $table->integer('dtDauNhot')->nullable();
             $table->integer('dtPhuTungBan')->nullable();

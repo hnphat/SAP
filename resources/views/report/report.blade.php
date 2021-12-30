@@ -161,13 +161,13 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <h5 class="text-blue">LƯỢT XE</h5>
+                            <h5 class="text-blue">LƯỢT XE TRONG NGÀY</h5>
                             <div class="row p-1">
                                 <div class="col-md-3">
-                                    <label for="baoDuong">Bảo dưỡng: </label>
+                                    <label for="baoDuong">Lượt xe: </label>
                                     <input min="0" id="baoDuong" name="baoDuong" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-3">
+                                <!-- <div class="col-md-3">
                                     <label for="suaChua">Sửa chửa: </label>
                                     <input min="0" id="suaChua" name="suaChua" type="number" class="form-control">
                                 </div>
@@ -178,26 +178,30 @@
                                 <div class="col-md-3">
                                     <label for="son">Sơn: </label>
                                     <input min="0" id="son" name="son" type="number" class="form-control">
-                                </div>
+                                </div> -->
                             </div>
                             <hr>
                             <h5 class="text-blue">DOANH THU DỊCH VỤ</h5>
                             <div class="row p-1">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="congBaoDuong">Công bảo dưỡng: </label>
                                     <input min="0" id="congBaoDuong" name="congBaoDuong" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="congSuaChuaChung">Công sửa chửa: </label>
                                     <input min="0" id="congSuaChuaChung" name="congSuaChuaChung" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="congDong">Công đồng: </label>
                                     <input min="0" id="congDong" name="congDong" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="congSon">Công Sơn: </label>
                                     <input min="0" id="congSon" name="congSon" type="number" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="pdi">Công PDI: </label>
+                                    <input min="0" id="pdi" name="pdi" type="number" class="form-control">
                                 </div>
                             </div>
                             <hr>
@@ -660,13 +664,14 @@
 
                         //---------PDV
                         $('input[name=baoDuong]').val(response.data.baoDuong);
-                        $('input[name=suaChua]').val(response.data.suaChua);
-                        $('input[name=dong]').val(response.data.Dong);
-                        $('input[name=son]').val(response.data.Son);
+                        // $('input[name=suaChua]').val(response.data.suaChua);
+                        // $('input[name=dong]').val(response.data.Dong);
+                        // $('input[name=son]').val(response.data.Son);
                         $('input[name=congBaoDuong]').val(response.data.congBaoDuong);
                         $('input[name=congSuaChuaChung]').val(response.data.congSuaChuaChung);
                         $('input[name=congDong]').val(response.data.congDong);
                         $('input[name=congSon]').val(response.data.congSon);
+                        $('input[name=pdi]').val(response.data.pdi);
                         $('input[name=dtPhuTung]').val(response.data.dtPhuTung);
                         $('input[name=dtDauNhot]').val(response.data.dtDauNhot);
                         $('input[name=dtPhuTungBan]').val(response.data.dtPhuTungBan);

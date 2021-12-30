@@ -180,6 +180,11 @@ class HanhChinhController extends Controller
         return view('hopdong.banggiaxe');
     }
 
+    public function showXemBangGiaXe() {
+        return view('hopdong.xembanggiaxe');
+    }
+
+
     public function getBangGia() {
         if (Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
             $result = BieuMau::select('*')->where([
@@ -281,5 +286,123 @@ class HanhChinhController extends Controller
                 "message" => 'Không thể cập nhật',
                 "code" => 500
             ]);
+    }
+
+     // THÔNG BÁO NỘI BỘ KINH DOANH
+     public function showSaleThongBao() {
+        return view('hopdong.thongbaonb');
+    }
+
+    public function showXemSaleThongBao() {
+        return view('hopdong.xemthongbaonb');
+    }
+
+
+    public function getSaleThongBao() {
+        if (Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
+            $result = BieuMau::select('*')->where([
+                    ['type','=','TBKD']
+            ])->orderBy('id', 'desc')->get();
+        }
+        else {
+            $result = BieuMau::select('*')->where([
+                ['allow','=',true],
+                ['type','=','TBKD']
+            ])->orderBy('id', 'desc')->get();   
+        }        
+        if ($result) 
+            return response()->json([
+                'message' => 'Đã tải dữ liệu!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        else
+            return response()->json([
+                'message' => 'Lỗi tải dữ liệu!',
+                'code' => 500
+            ]);
+    }
+
+    public function postSaleThongBao(Request $request) {
+        $bm = new BieuMau();
+        $this->validate($request,[
+            'file'  => 'required|mimes:doc,docx,pdf,txt,xls,xlsx,ppt,pptx|max:20480',
+        ]);
+    
+        if ($files = $request->file('file')) {
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/bieumau/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }
+            $bm->tieuDe = $request->tieuDe;
+            $bm->slug = \HelpFunction::changeTitle($request->tieuDe);
+            $bm->url = $name;
+            $bm->moTa = $request->moTa;
+            $bm->type = 'TBKD';
+            $bm->ghiChu = $request->ghiChu;
+            $bm->allow = $request->allow;
+            $bm->ngayTao = Date('d-m-Y');
+            $bm->user_create = Auth::user()->id;
+            $bm->save();
+            $files->move('upload/bieumau/', $name);
+            
+            return response()->json([
+                "type" => 'success',
+                "message" => 'File: Đã upload file',
+                "code" => 200,
+                "file" => $files
+            ]);
+        }
+        return response()->json([
+            "type" => 'danger',
+            "message" => 'File: Không thể upload file và nội dung',
+            "code" => 500
+        ]);
+    }
+
+    public function getEditSaleThongBao($id) {
+        $result = BieuMau::find($id);
+        if ($result) 
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã load!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        else
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không thể load dữ liệu!',
+                'code' => 500
+            ]);
+    }
+
+    public function updateSaleThongBao(Request $request) {
+        $bm = BieuMau::find($request->eid);
+        $bm->tieuDe = $request->etieuDe;
+        $bm->slug = \HelpFunction::changeTitle($request->etieuDe);
+        $bm->moTa = $request->emoTa;
+        $bm->ghiChu = $request->eghiChu;
+        $bm->allow = $request->eallow;
+        $bm->user_create = Auth::user()->id;
+        $bm->save();
+        if ($bm)    
+            return response()->json([
+                "type" => 'success',
+                "message" => 'Đã cập nhật',
+                "code" => 200
+            ]);
+        else
+            return response()->json([
+                "type" => 'error',
+                "message" => 'Không thể cập nhật',
+                "code" => 500
+            ]);
+    }
+
+    // Hồ sơ nhân viên
+    public function getHoSo() {
+        return view('hanhchinh.hoso');
     }
 }
