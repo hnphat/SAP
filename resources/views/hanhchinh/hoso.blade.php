@@ -32,7 +32,6 @@
         <!-- Main content -->
         <div class="content">
             <div class="container">
-                <button class="btn btn-success" data-toggle="modal" data-target="#add"><span class="fas fa-plus-circle"></span></button><br/><br/>
                 <table id="showData" class="display" style="width:100%">
                     <thead>
                     <tr>
