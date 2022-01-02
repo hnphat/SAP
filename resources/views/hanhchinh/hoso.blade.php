@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -32,7 +31,13 @@
         <!-- Main content -->
         <div class="content">
             <div class="container">
-                <table id="showData" class="display" style="width:100%">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <input name="iInput" type="text" class="form-control" name="findMember" placeholder="Nhập tên cần tìm (có dấu)"> 
+                    </div>        
+                </div>            
+                <hr>   
+                <!-- <table id="showData" class="display" style="width:100%">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -42,6 +47,17 @@
                         <th>Địa chỉ</th>
                     </tr>
                     </thead>
+                </table> -->
+                 <table class="display" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Họ và tên</th>
+                        <th>Điện thoại</th>
+                    </tr>
+                    </thead>
+                    <tbody id="showData">
+
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -50,9 +66,7 @@
 @endsection
 @section('script')
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>    
     <!-- SweetAlert2 -->
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Bootstrap 4 -->
@@ -68,51 +82,50 @@
         });
 
         $(document).ready(function(){
-
-            function reloadUserOption() {
-                // reload when add new user
-                $.get('{{url('management/hoso/users/')}}', function(data){
-                    $("#acc").html(data);
-                });
-            }
-
-            // reload when start page
-            reloadUserOption();
-
-            $("#submit").click(function(e){
-                e.preventDefault();
-
-                $.ajax({
-                    url: "{{url('management/hoso/add/')}}",
-                    type: "POST",
-                    dataType: "json",
-                    data: $('#ajaxform').serialize(),
-                    success: function(response){
-                        $('#ajaxform')[0].reset();
-                        console.log(response);
-                        Toast.fire({
-                            icon: 'success',
-                            title: "Đã thêm!"
-                        })
-                        table.ajax.reload();
-                        $("#add").modal("hide");
-                        reloadUserOption();
-                    }
-                });
-            });
-
             //Display data
-            var table = $('#showData').DataTable( {
-                responsive: true,
-                ajax: "{{url('management/hoso/get/')}}",
-                columns: [
-                    { "data": "id" },
-                    { "data": "surname" },
-                    { "data": "phone" },
-                    { "data": "birthday" },
-                    { "data": "address" }
-                ]
-            });
+            // var table = $('#showData').DataTable( {
+            //     responsive: true,
+            //     ajax: "{{url('management/hoso/get/')}}",
+            //     columns: [
+            //         { "data": "id" },
+            //         { "data": "surname" },
+            //         { "data": "phone" },
+            //         { "data": "birthday" },
+            //         { "data": "address" }
+            //     ]
+            // });
+
+                $("input[name=iInput]").change(function(){
+                    $.ajax({
+                        type: "post",
+                        dataType: "json",
+                        url: "{{url('management/hanhchinh/gethoso/')}}",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "name": $("input[name=iInput]").val()
+                        },
+                        success: function(response){
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: "Đã tìm được"
+                                })
+                                $('#showData').html(response.result);
+                            } else {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Không tìm thấy!"
+                                })
+                            }                                
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Error 500!"
+                            })
+                        }
+                    });
+                });
         });
     </script>
 @endsection

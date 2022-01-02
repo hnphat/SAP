@@ -141,9 +141,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Route::post('delete','HDController@delete');
         // Route::post('deleteWait','HDController@deleteWait');
         // // ajax get quickly
-        // Route::get('get/guest/personal/','HDController@getGuestPersonal');
+        Route::get('get/guest/personal/','HDController@getGuestPersonal');
         // Route::get('get/guest/company/','HDController@getGuestCompany');
-        // Route::get('get/guest/{id}','HDController@getGuest');
+        Route::get('get/guest/{id}','HDController@getGuest');
         // Route::get('get/car/{id}','HDController@getCar');
         // Route::get('get/load/hd/','HDController@loadHD');
         // Route::get('get/detail/hd/{id}','HDController@detailHD');
@@ -314,6 +314,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // Hồ sơ nhân viên
         Route::get('hoso','HanhChinhController@getHoSo')->name('hanhchinh.hoso');
+        Route::post('gethoso','HanhChinhController@getHoSoWithName');
     });
 
     Route::get('qr/{content}', function ($content) {

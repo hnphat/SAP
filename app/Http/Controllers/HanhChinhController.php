@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\BieuMau;
+use App\UsersDetail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HanhChinhController extends Controller
@@ -403,6 +404,22 @@ class HanhChinhController extends Controller
 
     // Hồ sơ nhân viên
     public function getHoSo() {
-        return view('hanhchinh.hoso');
+        $hoso = UsersDetail::all();
+        return view('hanhchinh.hoso', ['hs' => $hoso]);
+    }
+
+    public function getHoSoWithName(Request $request) {
+        $hoSo = UsersDetail::where('surname','like', "%".$request->name."%")->first();
+
+        if ($hoSo) {
+            return response()->json([
+                'code' => 200,
+                'result' => "<tr><td>".$hoSo->surname."</td><td>".$hoSo->phone."</td></tr>"
+            ]);
+        } else {
+            return response()->json([
+                'code' =>  500
+            ]);
+        }
     }
 }

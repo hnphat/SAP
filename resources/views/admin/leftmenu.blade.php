@@ -285,15 +285,12 @@
                                         <p>Biểu mẫu</p>
                                     </a>
                                 </li>
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))   
                                 <li class="nav-item">
                                     <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Hồ sơ nhân viên</p>
                                     </a>
                                 </li>
-                                @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))                    
