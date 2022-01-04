@@ -9,7 +9,7 @@
     <div class="col-md-8">
         <img src="{{asset('images/logo/tc.png')}}" style="width: 200px; height: auto;" alt="Logo">
         <h3 style="text-align: center;"><strong>PHIẾU ĐỀ NGHỊ CẤP NHIÊN LIỆU</strong></h3>
-        <h5 style="text-align: right;">{{\HelpFunction::revertCreatedAt($car->created_at)}}</h5>
+        <h5 style="text-align: right;"><strong>[CODE: HAGI-CX-0{{$car->id}}]</strong> <br/>{{\HelpFunction::revertCreatedAt($car->created_at)}}</h5>
         <p><strong>Họ và tên:</strong> {{$car->user->userDetail->surname}}</p>
         <p><strong>Khách hàng:</strong> {{$car->khachHang}}</p>
         <p><strong>Số lít đề nghị:</strong> {{$car->fuel_num}} lít; <strong>Loại:</strong>
