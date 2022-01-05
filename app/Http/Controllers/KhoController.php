@@ -449,4 +449,264 @@ class KhoController extends Controller
     public function getReport() {
         return view('khoxe.report');
     }
+
+    public function getReportKho($chose,$ngayfrom,$ngayto) {
+        $i = 1;
+        $listPo = KhoV2::select('*')->where('type','like','P/O')->get();
+        $po = KhoV2::select('*')->where('type','like','P/O')->count();
+        $listMap = KhoV2::select('*')->where('type','like','MAP')->get();
+        $map = KhoV2::select('*')->where('type','like','MAP')->count();
+        $listOrder = KhoV2::select('*')->where('type','like','ORDER')->get();
+        $order = KhoV2::select('*')->where('type','like','ORDER')->count();
+        $complete = 0;
+        $hdky = 0;
+        $hdcho = 0;
+        $hdhuy = 0;
+        $listStore = KhoV2::select('*')->where([
+            ['type','like','STORE']
+        ])->orWhere([
+            ['type','like','HD'],
+            ['xuatXe','=',false]
+        ])->get();
+        $store = KhoV2::select('*')->where([
+            ['type','like','STORE']
+        ])->orWhere([
+            ['type','like','HD'],
+            ['xuatXe','=',false]
+        ])->count();
+        $listComplete = KhoV2::select('*')->where('xuatXe',true)->get();
+        $completeList = KhoV2::select('*')->where('xuatXe',true)->get();
+        foreach($completeList as $row){
+            if ((strtotime($row->ngayGiaoXe) >= strtotime($ngayfrom)) 
+                &&  (strtotime($row->ngayGiaoXe) <= strtotime($ngayto))) {
+                    $complete++;
+                }
+        }
+        $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
+        ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
+        ->where([
+            ['hop_dong.lead_check','=',true],
+            ['hop_dong.lead_check_cancel','=',false],
+            ['k.xuatXe','=',false]
+        ])->get();
+        foreach($hdkyList as $row){
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                    $hdky++;
+            }
+        }
+        $hdchoList = HopDong::select('*')->where([
+            ['lead_check','=',true],
+            ['hdWait','=',true],
+            ['lead_check_cancel','=',false]
+        ])->get();
+        foreach($hdchoList as $row){
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                    $hdcho++;
+            }
+        }
+        $hdhuyList = HopDong::select('*')->where([
+            ['lead_check_cancel','=',true]
+        ])->get();
+        foreach($hdhuyList as $row){
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                    $hdhuy++;
+            }
+        }
+        switch ($chose) {
+            case 'ALL':
+                {
+                    echo "<h4>P/O: <span class='badge badge-secondary'>$po</span></h4>
+                    <h4>MAP: <span class='badge badge-secondary'>$map</span> </h4>
+                    <h4>ĐẶT HÀNG: <span class='badge badge-secondary'>$order</span> </h4>
+                    <h4>TỒN KHO: <span class='badge badge-warning'>$store</span> </h4>
+                    <h4>XUẤT XE: <span class='badge badge-success'>$complete</span> </h4>
+                    <h4>HỢP ĐỒNG KÝ: <span class='badge badge-primary'>$hdky</span> </h4>
+                    <h4>HỢP ĐỒNG CHỜ: <span class='badge badge-info'>$hdcho</span> </h4>
+                    <h4>HỢP ĐỒNG HỦY: <span class='badge badge-danger'>$hdhuy</span> </h4>";
+                }
+                break;
+            case 'PO':
+                {
+                    echo "<h4>P/O: <span class='badge badge-secondary'>$po</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                          </tr>";
+                    foreach($listPo as $row)
+                        echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->typeCarDetail->name."</td>
+                            <td>".$row->color."</td>
+                        </tr>";
+                    echo "</table>";    
+                }
+                break;
+            case 'MAP':
+                {
+                    echo "<h4>MAP: <span class='badge badge-secondary'>$map</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                          </tr>";
+                    foreach($listMap as $row)
+                        echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->typeCarDetail->name."</td>
+                            <td>".$row->color."</td>
+                        </tr>";
+                    echo "</table>";    
+                }    
+                break;
+            case 'ORDER':
+                {
+                    echo "<h4>ĐẶT HÀNG: <span class='badge badge-secondary'>$order</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                          </tr>";
+                    foreach($listOrder as $row)
+                        echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->typeCarDetail->name."</td>
+                            <td>".$row->color."</td>
+                        </tr>";
+                    echo "</table>";    
+                }    
+                break;
+            case 'STORE':
+                {
+                    echo "<h4>TỒN KHO: <span class='badge badge-secondary'>$store</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                          </tr>";
+                    foreach($listOrder as $row)
+                        echo "<tr>
+                            <td>".$i++."</td>
+                            <td>".$row->typeCarDetail->name."</td>
+                            <td>".$row->color."</td>
+                        </tr>";
+                    echo "</table>";    
+                }    
+                break;
+            case 'COMPLETE':
+                {
+                    echo "<h4>XUẤT XE: <span class='badge badge-secondary'>$complete</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Ngày giao</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                          </tr>";
+                    foreach($listComplete as $row) {
+                        if ((strtotime($row->ngayGiaoXe) >= strtotime($ngayfrom)) 
+                        &&  (strtotime($row->ngayGiaoXe) <= strtotime($ngayto))) {
+                            echo "<tr>
+                                <td>".$i++."</td>
+                                <td>".\HelpFunction::revertDate($row->ngayGiaoXe)."</td>
+                                <td>".$row->typeCarDetail->name."</td>
+                                <td>".$row->color."</td>
+                            </tr>";
+                        }
+                    }
+                    echo "</table>";    
+                }    
+                break;
+            case 'HD':
+                {
+                    echo "<h4>HỢP ĐỒNG KÝ: <span class='badge badge-secondary'>$hdky</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Ngày ký</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                              <th>Sale bán</th>
+                          </tr>";
+                    foreach($hdkyList as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                            echo "<tr>
+                                <td>".$i++."</td>
+                                <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
+                                <td>".$row->carSale->name."</td>
+                                <td>".$row->mau."</td>
+                                <td>".$row->user->userDetail->surname."</td>
+                            </tr>";
+                        }
+                    }
+                    echo "</table>";    
+                }    
+                break;
+            case 'HDWAIT':
+                {
+                    echo "<h4>HỢP ĐỒNG KÝ CHỜ: <span class='badge badge-secondary'>$hdcho</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Ngày ký</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                              <th>Sale bán</th>
+                          </tr>";
+                    foreach($hdchoList as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                            echo "<tr>
+                                <td>".$i++."</td>
+                                <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
+                                <td>".$row->carSale->name."</td>
+                                <td>".$row->mau."</td>
+                                <td>".$row->user->userDetail->surname."</td>
+                            </tr>";
+                        }
+                    }
+                    echo "</table>";    
+                }    
+                break;
+            case 'HDCANCEL':
+                {
+                    echo "<h4>HỢP ĐỒNG HỦY: <span class='badge badge-secondary'>$hdhuy</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Ngày ký</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                              <th>Sale bán</th>
+                              <th>Lý do hủy</th>
+                          </tr>";
+                    foreach($hdhuyList as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                            echo "<tr>
+                                <td>".$i++."</td>
+                                <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
+                                <td>".$row->carSale->name."</td>
+                                <td>".$row->mau."</td>
+                                <td>".$row->user->userDetail->surname."</td>
+                                <td>".$row->lyDoCancel."</td>
+                            </tr>";
+                        }
+                    }
+                    echo "</table>";    
+                }    
+                break;
+                break;
+            default:
+                break;
+        }
+    }
 }

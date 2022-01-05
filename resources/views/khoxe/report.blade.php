@@ -59,12 +59,51 @@
                                                     <option value="HDWAIT">Hợp đồng ký chờ</option>
                                                     <option value="HDCANCEL">Hợp đồng hủy</option>
                                                 </select> <br/>
-                                                <button type="button" class="btn btn-info btn-xs">XEM</button>
+                                                <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Từ</label>
+                                                <input type="date" name="chonNgayOne" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Đến</label>
+                                                <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                             </div>
                                         </div>
                                 </div>
                               </form>
                               <hr/>
+                              <div id="all">
+                                  
+                              </div>
+                              <div id="po">
+                                  
+                              </div>
+                              <div id="map">
+                                  
+                              </div>
+                              <div id="order">
+                                  
+                              </div>
+                              <div id="store">
+                                  
+                              </div>
+                              <div id="complete">
+                                  
+                              </div>
+                              <div id="hdky">
+                                  
+                              </div>
+                              <div id="hdcho">
+                                  
+                              </div>
+                              <div id="hdhuy">
+                                  
+                              </div>
                             </div>
                         </div>
                     </div>
@@ -82,66 +121,145 @@
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery Knob -->
-    <script src="plugins/jquery-knob/jquery.knob.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
     <script>
-       $(document).ready(function(){
-         /* jQueryKnob */
-                $('.knob').knob({
-                /*change : function (value) {
-                //console.log("change : " + value);
-                },
-                release : function (value) {
-                console.log("release : " + value);
-                },
-                cancel : function () {
-                console.log("cancel : " + this.value);
-                },*/
-                draw: function () {
-                    // "tron" case
-                    if (this.$.data('skin') == 'tron') {
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
 
-                    var a   = this.angle(this.cv)  // Angle
-                        ,
-                        sa  = this.startAngle          // Previous start angle
-                        ,
-                        sat = this.startAngle         // Start angle
-                        ,
-                        ea                            // Previous end angle
-                        ,
-                        eat = sat + a                 // End angle
-                        ,
-                        r   = true
-                    this.g.lineWidth = this.lineWidth
-                    this.o.cursor
-                    && (sat = eat - 0.3)
-                    && (eat = eat + 0.3)
-                    if (this.o.displayPrevious) {
-                        ea = this.startAngle + this.angle(this.value)
-                        this.o.cursor
-                        && (sa = ea - 0.3)
-                        && (ea = ea + 0.3)
-                        this.g.beginPath()
-                        this.g.strokeStyle = this.previousColor
-                        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false)
-                        this.g.stroke()
+       $(document).ready(function(){
+         $("#xemReport").click(function(){
+            $.ajax({
+                type: "get",
+                url: "{{url('management/kho/getreportkho/')}}" + "/" + $("select[name=chonBaoCao]").val() +
+                "/ngayfrom/" + $("input[name=chonNgayOne]").val() + "/ngayto/" + $("input[name=chonNgayTwo").val(),
+                dataType: "text",
+                success: function(response) {
+                    Toast.fire({
+                        icon: 'info',
+                        title: " Đã gửi yêu cầu! "
+                    })
+                    if ($("select[name=chonBaoCao]").val() == "ALL") {
+                        $("#all").html(response);
+                        $("#po").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
                     }
-                    this.g.beginPath()
-                    this.g.strokeStyle = r ? this.o.fgColor : this.fgColor
-                    this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false)
-                    this.g.stroke()
-                    this.g.lineWidth = 2
-                    this.g.beginPath()
-                    this.g.strokeStyle = this.o.fgColor
-                    this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false)
-                    this.g.stroke()
-                    return false
+                        
+                    if ($("select[name=chonBaoCao]").val() == "PO") {
+                        $("#all").html(response);
+                        $("#po").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
                     }
+
+                    if ($("select[name=chonBaoCao]").val() == "MAP") {
+                        $("#map").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "ORDER") {
+                        $("#order").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "STORE") {
+                        $("#store").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "COMPLETE") {
+                        $("#complete").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "HD") {
+                        $("#hdky").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "HDWAIT") {
+                        $("#hdcho").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hdhuy").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "HDCANCEL") {
+                        $("#hdhuy").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                    }
+                        
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Lỗi!"
+                    })
                 }
-                })
-                /* END JQUERY KNOB */  
+            });
+         });  
        });
     </script>
 @endsection

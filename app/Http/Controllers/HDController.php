@@ -1061,14 +1061,23 @@ class HDController extends Controller
             $sale = HopDong::find($id);
             $tongChiPhi = 0;
             $i = 2;
+            $j = 1;
+            $k = 1;
             $dem = 0;
             $stt = "";
+            $sttPK = "";
+            $sttPKB = "";
             $dspk = "";
             $dsqt = "";
             $other = "";
             $tongPhuKien = 0;
+            $tongPhuKienFree = 0;
             $chiPhiChiTiet = "";
+            $chiPhiChiTietPK = "";
+            $chiPhiChiTietPKB = "";
             $pkcost = "";
+            $pkfree = "";
+            $pkpay = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'cost') {
@@ -1083,9 +1092,18 @@ class HDController extends Controller
                     $tongPhuKien += $row->cost;
                     $dspk .=  $row->name . ";";
                     $dem++;
+                    $sttPKB .= $j . '<w:br/>';
+                    $pkpay .=  $row->name . '<w:br/>';
+                    $chiPhiChiTietPKB .=  number_format($row->cost) . '<w:br/>';
+                    $j++;
                 }
                 if ($row->type == 'free') {
+                    $sttPK .= $k . '<w:br/>';
+                    $pkfree .=  $row->name . '<w:br/>';
+                    $chiPhiChiTietPK .=  number_format($row->cost) . '<w:br/>';
                     $dsqt .=  $row->name . ";";
+                    $tongPhuKienFree += $row->cost;
+                    $k++;
                 }
             }
             $car_detail = $sale->carSale;
@@ -1129,6 +1147,15 @@ class HDController extends Controller
                 'thanhTienPhi' => $chiPhiChiTiet,
                 'tongPhi' => number_format($tongChiPhi + $giaXe),
                 'bangChuTongPhi' => \HelpFunction::convert($tongChiPhi),
+                'mauXe' => $sale->mau,
+                'sttPK' => $sttPK,
+                'cacLoaiPhiPK' => $pkfree,
+                'thanhTienPhiPK' => $chiPhiChiTietPK,
+                'sttPKB' => $sttPKB,
+                'cacLoaiPhiPKB' => $pkpay,
+                'thanhTienPhiPKB' => $chiPhiChiTietPKB,
+                'tongPhuKienFree' => number_format($tongPhuKienFree),
+                'tongPhuKienBan' => number_format($tongPhuKien),
             ]);
 
         $pathToSave = 'template/DENGHIDOWN.docx';
@@ -1146,14 +1173,23 @@ class HDController extends Controller
             $sale = HopDong::find($id);
             $tongChiPhi = 0;
             $i = 2;
+            $j = 1;
+            $k = 1;
             $dem = 0;
             $stt = "";
+            $sttPK = "";
+            $sttPKB = "";
             $dspk = "";
             $dsqt = "";
             $other = "";
             $tongPhuKien = 0;
+            $tongPhuKienFree = 0;
             $chiPhiChiTiet = "";
+            $chiPhiChiTietPK = "";
+            $chiPhiChiTietPKB = "";
             $pkcost = "";
+            $pkfree = "";
+            $pkpay = "";
             $package = $sale->package;
             foreach($package as $row) {
                 if ($row->type == 'cost') {
@@ -1168,9 +1204,18 @@ class HDController extends Controller
                     $tongPhuKien += $row->cost;
                     $dspk .=  $row->name . ";";
                     $dem++;
+                    $sttPKB .= $j . '<w:br/>';
+                    $pkpay .=  $row->name . '<w:br/>';
+                    $chiPhiChiTietPKB .=  number_format($row->cost) . '<w:br/>';
+                    $j++;
                 }
                 if ($row->type == 'free') {
+                    $sttPK .= $k . '<w:br/>';
+                    $pkfree .=  $row->name . '<w:br/>';
+                    $chiPhiChiTietPK .=  number_format($row->cost) . '<w:br/>';
                     $dsqt .=  $row->name . ";";
+                    $tongPhuKienFree += $row->cost;
+                    $k++;
                 }
             }
             $car_detail = $sale->carSale;
@@ -1215,6 +1260,15 @@ class HDController extends Controller
                 'thanhTienPhi' => $chiPhiChiTiet,
                 'tongPhi' => number_format($tongChiPhi + $giaXe),
                 'bangChuTongPhi' => \HelpFunction::convert($tongChiPhi),
+                'mauXe' => $sale->mau,
+                'sttPK' => $sttPK,
+                'cacLoaiPhiPK' => $pkfree,
+                'thanhTienPhiPK' => $chiPhiChiTietPK,
+                'sttPKB' => $sttPKB,
+                'cacLoaiPhiPKB' => $pkpay,
+                'thanhTienPhiPKB' => $chiPhiChiTietPKB,
+                'tongPhuKienFree' => number_format($tongPhuKienFree),
+                'tongPhuKienBan' => number_format($tongPhuKien),
             ]);
 
         $pathToSave = 'template/DENGHICONGTYDOWN.docx';
@@ -1898,8 +1952,6 @@ class HDController extends Controller
     public function duyetDeNghiLeadHuy(Request $request){
         $result = HopDong::find($request->id);
         if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
-            $result->lead_check_cancel = true;
-            $result->id_car_kho = null;
                 if ($result->id_car_kho != null && $result->hdWait != true) {
                     $car = KhoV2::find($result->id_car_kho);
                     if ($car->xuatXe == true)
@@ -1911,6 +1963,8 @@ class HDController extends Controller
                     $car->type = "STORE";
                     $car->save();
                 }
+            $result->lead_check_cancel = true;
+            $result->id_car_kho = null;
             $result->save();
             if($result) {
                 return response()->json([
