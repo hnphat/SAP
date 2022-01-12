@@ -211,9 +211,12 @@
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
-                                        <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu sửa hợp đồng: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
                                         <button id="choPhepHuy" class="btn btn-warning">CHO PHÉP HỦY</button>
+                                        <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA HỢP ĐỒNG</button>
+
                             </div>
                         </div>
                     </div>
@@ -261,6 +264,7 @@
             // default set
             $("#duyetDeNghi").hide();
             $("#choPhepHuy").hide();
+            $("#choPhepSua").hide();
             // load list hợp đồng
             function loadList() {
                 $.ajax({
@@ -311,19 +315,24 @@
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
             });
 
-            function reloadSS(cancel,request, admin, lead) {
-                if (lead == true && request == false) {
+            function reloadSS(leadAllowCancel,requestCancel, adminCheck, leadCheck, requestEdit) {
+                if (leadAllowCancel == true) {
                     $("#duyetDeNghi").hide();
                     $("#choPhepHuy").hide();
-                }else if (lead == true && request == true) {
-                    $("#duyetDeNghi").hide();
-                    if (cancel == false) 
-                        $("#choPhepHuy").show();
-                }else if (lead == false && admin == true) {
+                    $("#choPhepSua").hide();
+                } else if (adminCheck == true && leadCheck == false) {
                     $("#duyetDeNghi").show();
-                }else {
+                } else if(adminCheck == true && leadCheck == true) {
+                    if (requestCancel == true)
+                        $("#choPhepHuy").show();
+                    else $("#choPhepHuy").hide();
+                    if (requestEdit == true)
+                        $("#choPhepSua").show();
+                    else $("#choPhepSua").hide();
+                } else {
                     $("#duyetDeNghi").hide();
                     $("#choPhepHuy").hide();
+                    $("#choPhepSua").hide();
                 }
             }
 
@@ -357,11 +366,15 @@
                             $("input[name=idHopDong]").val(response.data.id);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
-                            if (response.data.lyDoCancel != null)
-                                $("#requestSaleEdit").text(response.data.lyDoCancel);
+                            if (response.data.lyDoEdit != null)
+                                $("#requestSaleEdit").text(response.data.lyDoEdit);
                             else
                                 $("#requestSaleEdit").text("Không");
 
+                            if (response.data.lyDoCancel != null)
+                                $("#requestSaleCancel").text(response.data.lyDoCancel);
+                            else
+                                $("#requestSaleCancel").text("Không");
                             // BUTTON
                             showSoTien();
                             Toast.fire({
@@ -372,7 +385,7 @@
                             loadPKPay(response.data.id);
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
-                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel, response.data.admin_check, response.data.lead_check);
+                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel, response.data.admin_check, response.data.lead_check, response.data.requestEditHD);
 
                             let svin = "";
                             let sframe = "";
@@ -578,7 +591,7 @@
                                 icon: response.type,
                                 title: response.message
                             })
-                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check);
+                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check, response.data.requestEditHD);
                             loadList();
                         },
                         error: function() {
@@ -607,7 +620,7 @@
                                 icon: response.type,
                                 title: response.message
                             })
-                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check);
+                            reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check, response.data.requestEditHD);
                             loadList();
                             $("#choPhepHuy").hide();
                         },
@@ -621,6 +634,36 @@
                 }
             });
 
+            $("#choPhepSua").click(function(e){
+                e.preventDefault();
+                if(confirm("Xác nhận cho phép chỉnh sửa hợp đồng này?")) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/yeucausualead')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $("input[name=idHopDong]").val()
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check, response.data.requestEditHD);
+                            $("#showXeGan").html("");
+                            $("input[name=xeGan]").val("");
+                            loadList();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt yêu cầu chỉnh sửa!"
+                            })
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection

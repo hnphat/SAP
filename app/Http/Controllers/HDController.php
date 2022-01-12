@@ -1454,7 +1454,7 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.name as name')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+        $pkban = SaleOffV2::select('saleoffv2.*','package.name as name','package.cost as cost')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
             ['saleoffv2.id_hd','=', $id],
             ['package.type','=','free']
         ])->get();
@@ -1510,6 +1510,26 @@ class HDController extends Controller
         }
     }
 
+    public function getEditPkCost($id) {
+        $pkcost = PackageV2::select('*')
+        ->where([
+            ['id','=', $id]
+        ])->first();
+        if($pkcost) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Get PK Cost Success!',
+                'code' => 200,
+                'pkcost' => $pkcost
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function addPkCost(Request $request){
         $check = HopDong::find($request->idHD3);
         if ($check->lead_check != 1) {
@@ -1544,6 +1564,33 @@ class HDController extends Controller
         }
         return response()->json([
             'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
+            'code' => 200
+        ]);
+    }
+
+    public function postEditPKCost(Request $request){
+        $check = HopDong::find($request->idSaleHD);
+        if ($check->admin_check != 1) {
+            $pkpay = PackageV2::find($request->idPkCost);
+            $pkpay->name = $request->endpk;
+            $pkpay->cost = $request->egiapk;
+            $pkpay->save();
+            if($pkpay) {
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã chỉnh sửa!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'type' => 'warning',
+            'message' => 'Quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
             'code' => 200
         ]);
     }
@@ -1964,6 +2011,7 @@ class HDController extends Controller
                     $car->save();
                 }
             $result->lead_check_cancel = true;
+            $result->lyDoEdit = "";
             $result->id_car_kho = null;
             $result->save();
             if($result) {
@@ -1993,6 +2041,8 @@ class HDController extends Controller
         $result = HopDong::find($request->idRequestEdit);
         $result->requestEditHD = true;
         $result->lyDoEdit = $request->lyDoChinhSua;
+        $result->lyDoCancel = "";
+        $result->requestCancel = false;
         $result->save();
         if($result) {
             return response()->json([
@@ -2013,6 +2063,8 @@ class HDController extends Controller
         $result = HopDong::find($request->idRequestHuy);
         $result->requestCancel = true;
         $result->lyDoCancel = $request->lyDoHuy;
+        $result->lyDoEdit = "";
+        $result->requestEditHD = false;
         $result->save();
         if($result) {
             return response()->json([
@@ -2048,6 +2100,48 @@ class HDController extends Controller
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã duyệt yêu cầu chỉnh sửa!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            }
+        }
+    }
+
+    public function duyetYeuCauSuaLead(Request $request){
+        $result = HopDong::find($request->id);
+        if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
+            $result->requestCheck = false;
+            $result->admin_check = false;
+            $result->code = 0;
+                if ($result->id_car_kho != null && $result->hdWait != true) {
+                    $car = KhoV2::find($result->id_car_kho);
+                    if ($car->xuatXe == true)
+                        return response()->json([
+                            'type' => 'warning',
+                            'message' => 'Xe đã xuất kho không thể thao tác trên hợp đồng này!',
+                            'code' => 200
+                        ]);
+                    $car->type = "STORE";
+                    $car->save();
+                }    
+            $result->hdWait = false;           
+            $result->id_car_kho = null;
+            $result->lead_check = false; 
+            $result->requestCancel = false;
+            $result->requestEditHD = false;
+            $result->lyDoCancel = "";
+            $result->save();
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã duyệt yêu cầu chỉnh sửa hợp đồng!',
                     'code' => 200,
                     'data' => $result
                 ]);

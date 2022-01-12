@@ -250,6 +250,8 @@ class KhoController extends Controller
         $kho->nganHang = $request->nganHang;
         $kho->ghiChu = $request->ghiChu;
 
+        $kho->viTri = $request->viTri;
+
         $kho->id_user_create = Auth::user()->id;
         $kho->save();
 
@@ -316,7 +318,8 @@ class KhoController extends Controller
                 "ngayNhanXe" => $request->engayNhanXe,
                 "ngayDat" => $request->engayDat,
                 "nganHang" => $request->enganHang,
-                "ghiChu" => $request->eghiChu
+                "ghiChu" => $request->eghiChu,
+                "viTri" => $request->eviTri
             ]);
         else {
                 if ($request->etrangThai == "HD")
@@ -332,7 +335,8 @@ class KhoController extends Controller
                         "ngayNhanXe" => $request->engayNhanXe,
                         "ngayDat" => $request->engayDat,
                         "nganHang" => $request->enganHang,
-                        "ghiChu" => $request->eghiChu
+                        "ghiChu" => $request->eghiChu,
+                        "viTri" => $request->eviTri
                     ]);
                 else 
                     $kho = KhoV2::where('id', $request->eid)->update([
@@ -348,7 +352,8 @@ class KhoController extends Controller
                         "ngayNhanXe" => $request->engayNhanXe,
                         "ngayDat" => $request->engayDat,
                         "nganHang" => $request->enganHang,
-                        "ghiChu" => $request->eghiChu
+                        "ghiChu" => $request->eghiChu,
+                        "viTri" => $request->eviTri
                     ]);
             }
         if($kho) {
@@ -590,12 +595,14 @@ class KhoController extends Controller
                               <th>STT</th>
                               <th>Thông tin xe</th>
                               <th>Màu sắc</th>
+                              <th>Vị trí kho</th>
                           </tr>";
-                    foreach($listOrder as $row)
+                    foreach($listStore as $row)
                         echo "<tr>
                             <td>".$i++."</td>
                             <td>".$row->typeCarDetail->name."</td>
                             <td>".$row->color."</td>
+                            <td>".$row->viTri."</td>
                         </tr>";
                     echo "</table>";    
                 }    
@@ -634,6 +641,7 @@ class KhoController extends Controller
                               <th>Thông tin xe</th>
                               <th>Màu sắc</th>
                               <th>Sale bán</th>
+                              <th>Tiền cọc</th>
                           </tr>";
                     foreach($hdkyList as $row) {
                         if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
@@ -644,6 +652,7 @@ class KhoController extends Controller
                                 <td>".$row->carSale->name."</td>
                                 <td>".$row->mau."</td>
                                 <td>".$row->user->userDetail->surname."</td>
+                                <td>".number_format($row->tienCoc)."</td>
                             </tr>";
                         }
                     }
@@ -660,6 +669,7 @@ class KhoController extends Controller
                               <th>Thông tin xe</th>
                               <th>Màu sắc</th>
                               <th>Sale bán</th>
+                              <th>Tiền cọc</th>
                           </tr>";
                     foreach($hdchoList as $row) {
                         if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
@@ -670,6 +680,7 @@ class KhoController extends Controller
                                 <td>".$row->carSale->name."</td>
                                 <td>".$row->mau."</td>
                                 <td>".$row->user->userDetail->surname."</td>
+                                <td>".number_format($row->tienCoc)."</td>
                             </tr>";
                         }
                     }
@@ -687,6 +698,7 @@ class KhoController extends Controller
                               <th>Màu sắc</th>
                               <th>Sale bán</th>
                               <th>Lý do hủy</th>
+                              <th>Tiền cọc</th>
                           </tr>";
                     foreach($hdhuyList as $row) {
                         if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
@@ -698,6 +710,7 @@ class KhoController extends Controller
                                 <td>".$row->mau."</td>
                                 <td>".$row->user->userDetail->surname."</td>
                                 <td>".$row->lyDoCancel."</td>
+                                <td>".number_format($row->tienCoc)."</td>
                             </tr>";
                         }
                     }

@@ -218,11 +218,14 @@
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
-                                        <h5>Sale yêu cầu sửa: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu sửa: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA</button>
                                         <button id="huyDeNghi" class="btn btn-danger">BỎ DUYỆT ĐỀ NGHỊ</button>
                                         <button id="ganXeHDCho" class="btn btn-success">GÁN XE HỢP ĐỒNG CHỜ</button>
+                                        <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA HỢP ĐỒNG</button>
+                                        <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY HỢP ĐỒNG</button>
                             </div>
                             <hr>
                             <h5>IN HỢP ĐỒNG</h5>
@@ -300,6 +303,74 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+    <!-- Medal Yêu cầu chỉnh sửa-->
+    <div class="modal fade" id="requestEdit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Yêu cầu chỉnh sửa</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <form id="requestEditForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="idRequestEdit">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Lý do chỉnh sửa: </label>
+                                    <input name="lyDoChinhSua" placeholder="Nhập lý do yêu cầu chỉnh sửa" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    <button id="requestEditBtn" class="btn btn-primary" form="requestEditForm">Gửi</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- Medal Yêu cầu hủy-->
+    <div class="modal fade" id="requestHuy">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Yêu cầu hủy hợp đồng</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <form id="requestHuyForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="idRequestHuy">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Lý do hủy: </label>
+                                    <input name="lyDoHuy" placeholder="Nhập lý do yêu cầu hủy" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    <button id="requestHuyBtn" class="btn btn-primary" form="requestEditForm">Gửi</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -341,6 +412,8 @@
             $("#huyDeNghi").hide();
             $("#ganXeHDCho").hide();
             $("#inForm").hide();
+            $("#deNghiHuy").hide();
+            $("#deNghiChinhSua").hide();
             // load list hợp đồng
             function loadList() {
                 $.ajax({
@@ -397,6 +470,8 @@
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").show();
+                    $("#deNghiChinhSua").show();
+                    $("#deNghiHuy").show();
                     $("input[name=hdWait]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("#inForm").show();
@@ -405,6 +480,8 @@
                     $("#choPhepSua").show();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").hide();
+                    $("#deNghiHuy").hide();
+                    $("#deNghiChinhSua").hide();
                     $("input[name=hdWait]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                 }else if (request == true && admin == true) {
@@ -412,6 +489,8 @@
                     $("#choPhepSua").show();
                     $("#huyDeNghi").show();
                     $("#ganXeHDCho").hide();
+                    $("#deNghiHuy").hide();
+                    $("#deNghiChinhSua").hide();
                     $("input[name=hdWait]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("#inForm").show();
@@ -420,6 +499,8 @@
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").hide();
+                    $("#deNghiHuy").hide();
+                    $("#deNghiChinhSua").hide();
                     $("input[name=hdWait]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                     $("#inForm").hide();
@@ -454,6 +535,8 @@
                             $("#cmnd").val(response.data.CMND2);
                             $("#dienThoai").val(response.data.dienThoai);
                             $("input[name=idHopDong]").val(response.data.id);
+                            $("input[name=idRequestEdit]").val(response.data.id);
+                            $("input[name=idRequestHuy]").val(response.data.id);
                             $("input[name=soHD]").val(response.data.code);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
@@ -462,12 +545,17 @@
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
                             else
                                 $("#requestSaleEdit").text("Không");
+                            
+                            if (response.data.lyDoCancel != null)
+                                $("#requestSaleCancel").text(response.data.lyDoCancel);
+                            else
+                                $("#requestSaleCancel").text("Không");
+
                             if (response.data.hdWait == 1) {
                                 $("input[name=hdWait]").prop('checked', true);
                             } else {
                                 $("input[name=hdWait]").prop('checked', false);
                             }
-                                
 
                             // BUTTON
                             showSoTien();
@@ -480,7 +568,11 @@
                             loadPKCost(response.data.id);
                             loadTotal(response.data.id);
                             reloadSS(response.data.requestCheck, response.data.admin_check, response.data.lead_check);
-                            
+                            if (response.data.lead_check_cancel == 1) {
+                                $("#deNghiChinhSua").hide();
+                                $("#deNghiHuy").hide();
+                            } 
+
                             let svin = "";
                             let sframe = "";
                             let scolor = "";
@@ -918,6 +1010,55 @@
                         case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
                 }
+            });
+
+
+            $("#requestEditBtn").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/yeucausua/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#requestEditForm").serialize(),
+                    success: function(response) {
+                        $("#requestEditForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#requestEdit").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể yêu cầu sửa!"
+                        })
+                    }
+                });
+            });
+
+            $("#requestHuyBtn").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/yeucauhuy/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#requestHuyForm").serialize(),
+                    success: function(response) {
+                        $("#requestHuyForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#requestHuy").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể thêm!"
+                        })
+                    }
+                });
             });
         });
     </script>

@@ -226,6 +226,7 @@
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
+                                                <th>Giá</th>
                                                 <th>Tác vụ</th>
                                             </tr>
                                             <tbody id="showPKFREE">
@@ -236,8 +237,8 @@
                                         </h4>
                             </div>
                             <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
-                            <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
-                            <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button>
+                            <!-- <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
+                            <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button> -->
                             <hr>
                             <h5>IN HỢP ĐỒNG</h5>
                             <form id="inForm">
@@ -335,7 +336,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Giá</label>
-                                    <input readonly name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control">
+                                    <input name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
                             </div>
                         </form>
@@ -389,25 +390,30 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
-    <!-- Medal Yêu cầu chỉnh sửa-->
-    <div class="modal fade" id="requestEdit">
+    <!-- Edit pk cost medal-->
+    <div class="modal fade" id="editPkCostMedal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Yêu cầu chỉnh sửa</h4>
+                    <h4 class="modal-title">CHỈNH SỬA CÁC LOẠI PHÍ</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="card">
-                        <form id="requestEditForm" autocomplete="off">
+                        <form id="editPkCostForm" autocomplete="off">
                             {{csrf_field()}}
-                            <input type="hidden" name="idRequestEdit">
+                            <input type="hidden" name="idSaleHD">
+                            <input type="hidden" name="idPkCost">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Lý do chỉnh sửa: </label>
-                                    <input name="lyDoChinhSua" placeholder="Nhập lý do yêu cầu chỉnh sửa" type="text" class="form-control">
+                                    <label>Nội dung</label>
+                                    <input name="endpk" placeholder="Nhập nội dung" type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Giá</label>
+                                    <input name="egiapk" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
                             </div>
                         </form>
@@ -415,41 +421,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                    <button id="requestEditBtn" class="btn btn-primary" form="requestEditForm">Gửi</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <!-- Medal Yêu cầu hủy-->
-    <div class="modal fade" id="requestHuy">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Yêu cầu hủy hợp đồng</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <form id="requestHuyForm" autocomplete="off">
-                            {{csrf_field()}}
-                            <input type="hidden" name="idRequestHuy">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>Lý do hủy: </label>
-                                    <input name="lyDoHuy" placeholder="Nhập lý do yêu cầu hủy" type="text" class="form-control">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                    <button id="requestHuyBtn" class="btn btn-primary" form="requestEditForm">Gửi</button>
+                    <button id="btnEditPKCost" class="btn btn-primary" form="editPkCostForm">Lưu</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -829,6 +801,7 @@
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>" +
                                 "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
                                 "</tr>";
                         }
@@ -896,7 +869,9 @@
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
-                                "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
+                                "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
+                                +"<button id='editPkCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"'  data-toggle='modal' data-target='#editPkCostMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>"+
+                                "</td>" +
                                 "</tr>";
                             sum += response.pkcost[i].cost;
                         }
@@ -1313,6 +1288,57 @@
                         case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
                 }
+            });
+
+
+            $(document).on('click','#editPkCost', function(){
+                $("input[name=idSaleHD]").val($(this).data('sale'));
+                $("input[name=idPkCost]").val($(this).data('id'));
+                $.ajax({
+                        url: "{{url('management/hd/getedit/pkcost/')}}" + '/' + $(this).data('id'),
+                        type: "get",
+                        dataType: "json",
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })   
+                            $("input[name=endpk]").val(response.pkcost.name);
+                            $("input[name=egiapk]").val(response.pkcost.cost);                                     
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể load chỉnh sửa chi phí!"
+                            })
+                        }
+                    });
+            });
+
+            $("#btnEditPKCost").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/postedit/pkcost/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#editPkCostForm").serialize(),
+                    success: function(response) {
+                        $("#editPkCostForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        loadPKCost($("input[name=idHopDong]").val());
+                        loadTotal($("input[name=idHopDong]").val());
+                        $("#editPkCostMedal").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể chỉnh sửa"
+                        })
+                    }
+                });
             });
         });
     </script>

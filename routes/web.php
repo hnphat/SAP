@@ -175,6 +175,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
         Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
         Route::post('hd/denghi/yeucauhuy','HDController@yeuCauHuy');
+        Route::get('getedit/pkcost/{id}','HDController@getEditPkCost');
+        Route::post('postedit/pkcost/','HDController@postEditPKCost');
 
         //----- quản lý đề nghị
         Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');
@@ -193,6 +195,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hd/denghi/pheduyethopdong','HDController@getHDPheDuyetHopDong')->name('hd.quanly.pheduyet.hopdong');
         Route::post('hd/denghi/pheduyetlead/ok','HDController@duyetDeNghiLead');
         Route::post('hd/denghi/pheduyetleadhuy/ok','HDController@duyetDeNghiLeadHuy');
+        Route::post('hd/denghi/yeucausualead','HDController@duyetYeuCauSuaLead');
 
         // --- In ấn hợp đồng
         Route::get('banle/canhan/tienmat/down/{id}','HDController@cntm');

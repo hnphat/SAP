@@ -166,6 +166,7 @@
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -176,6 +177,8 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('get.kho.v2')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -188,6 +191,7 @@
                                 <p>Xe hợp đồng</p>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2.report')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

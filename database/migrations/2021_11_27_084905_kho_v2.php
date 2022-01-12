@@ -31,6 +31,7 @@ class KhoV2 extends Migration
             $table->string('ghiChu')->nullable();
             $table->boolean('xuatXe')->default(false);
             $table->string('ngayGiaoXe', 10)->nullable();
+            $table->string('viTri', 255)->nullable();
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->timestamps();

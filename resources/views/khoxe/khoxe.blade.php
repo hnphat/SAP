@@ -160,6 +160,14 @@
                                             <label>GPS</label>
                                             <input name="gps" placeholder="GPS" type="text" class="form-control">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Vị trí</label>
+                                            <select name="viTri" id="viTri" class="form-control">
+                                                <option value="NULL">NULL</option>
+                                                <option value="KHO">KHO_MOI</option>
+                                                <option value="CONG_TY">CONG_TY</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <hr>
@@ -284,6 +292,14 @@
                                         <div class="form-group">
                                             <label>GPS</label>
                                             <input name="egps" placeholder="GPS" type="text" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Vị trí</label>
+                                            <select name="eviTri" class="form-control">
+                                                <option value="NULL">NULL</option>
+                                                <option value="KHO">KHO_MOI</option>
+                                                <option value="CONG_TY">CONG_TY</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -506,6 +522,7 @@
                         $("select[name=etrangThai]").val(response.data.type);
                         $("input[name=eghiChu]").val(response.data.ghiChu);
                         $("input[name=egps]").val(response.data.gps);
+                        $("select[name=eviTri]").val(response.data.viTri);
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
