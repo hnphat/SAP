@@ -55,6 +55,7 @@
                                         <th>Tên xe</th>
                                         <th>Màu</th>
                                         <th>Trạng thái</th>
+                                        <th>Vị trí kho</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -96,85 +97,16 @@
             showConfirmButton: false,
             timer: 3000
         });
-
-        // Exe
         $(document).ready(function() {
-            //-------- Filter column -------------------
-            // $('#dataTable thead tr')
-            // .clone(true)
-            // .addClass('filters')
-            // .appendTo('#dataTable thead');
-            //-------- Filter column end-------------------
- 
             var table = $('#dataTable').DataTable({
-                // paging: false,    use to show all data
                 responsive: true,
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 ajax: "{{ url('management/hd/kho/tonkho/data') }}",
-                // "columnDefs": [ {
-                //     "searchable": false,
-                //     "orderable": false,
-                //     "targets": 0
-                // } ],
-                // "order": [
-                //     [ 0, 'desc' ]
-                // ],
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
-                //-------- Filter column -------------------
-                // orderCellsTop: true,
-                // fixedHeader: true,
-                // initComplete: function () {
-                //     var api = this.api();
-                //     // For each column
-                //     api
-                //         .columns()
-                //         .eq(0)
-                //         .each(function (colIdx) {
-                //             // Set the header cell to contain the input element
-                //             var cell = $('.filters th').eq(
-                //                 $(api.column(colIdx).header()).index()
-                //             );
-                //             var title = $(cell).text();
-                //             $(cell).html('<input type="text" placeholder="' + title + '" />');
-        
-                //             // On every keypress in this input
-                //             $(
-                //                 'input',
-                //                 $('.filters th').eq($(api.column(colIdx).header()).index())
-                //             )
-                //                 .off('keyup change')
-                //                 .on('keyup change', function (e) {
-                //                     e.stopPropagation();
-        
-                //                     // Get the search value
-                //                     $(this).attr('title', $(this).val());
-                //                     var regexr = '({search})'; //$(this).parents('th').find('select').val();
-        
-                //                     var cursorPosition = this.selectionStart;
-                //                     // Search the column for that value
-                //                     api
-                //                         .column(colIdx)
-                //                         .search(
-                //                             this.value != ''
-                //                                 ? regexr.replace('{search}', '(((' + this.value + ')))')
-                //                                 : '',
-                //                             this.value != '',
-                //                             this.value == ''
-                //                         )
-                //                         .draw();
-        
-                //                     $(this)
-                //                         .focus()[0]
-                //                         .setSelectionRange(cursorPosition, cursorPosition);
-                //                 });
-                //         });
-                // },
-                //-------- Filter column end-------------------
                 columns: [
-                    // { "data": null },
                     { "data": "ten" },
                     { "data": "color" },
                     {
@@ -185,47 +117,10 @@
                            else
                                 return "<strong class='text-success'>Kho</strong>";
                         }
-                    }                   
+                    },
+                    { "data": "viTri" }                   
                 ]
             });
-            // var table = $('#dataTable').DataTable({
-            //     // paging: false,    use to show all data
-            //     responsive: true,
-            //     dom: 'Blfrtip',
-            //     buttons: [
-            //         'copy', 'csv', 'excel', 'pdf', 'print'
-            //     ],
-            //     ajax: "{{ url('management/hd/kho/tonkho/data') }}",
-            //     "columnDefs": [ {
-            //         "searchable": false,
-            //         "orderable": false,
-            //         "targets": 0
-            //     } ],
-            //     "order": [
-            //         [ 0, 'desc' ]
-            //     ],
-            //     lengthMenu:  [5, 10, 25, 50, 75, 100 ],
-            //     columns: [
-            //         { "data": null },
-            //         { "data": "ten" },
-            //         { "data": "color" },
-            //         {
-            //             "data": null,
-            //             render: function(data, type, row) {
-            //                if (row.type == 'HD') 
-            //                     return "<strong class='text-danger'>Đang lên hợp đồng</strong>";
-            //                else
-            //                     return "<strong class='text-success'>Đang trong kho</strong>";
-            //             }
-            //         }                   
-            //     ]
-            // });
-            // table.on( 'order.dt search.dt', function () {
-            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-            //         cell.innerHTML = i+1;
-            //         table.cell(cell).invalidate('dom');
-            //     } );
-            // } ).draw();
         });
     </script>
 @endsection

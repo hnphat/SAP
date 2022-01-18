@@ -229,6 +229,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('ajax/getedit/thongbao/{id}','HanhChinhController@getEditSaleThongBao');
         Route::post('ajax/update/thongbao','HanhChinhController@updateSaleThongBao');
 
+        // --- In tào lao
+        Route::get('complete/pdi/{id}','HDController@inPdiXe');
+        Route::get('complete/bhbb/{id}','HDController@inBHBB');
+        Route::get('complete/phukien/{id}','HDController@inPhuKien');
+
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

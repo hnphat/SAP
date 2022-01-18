@@ -2236,4 +2236,173 @@ class HDController extends Controller
             }
         } 
     }
+
+
+    public function inPdiXe($id) {
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/PDIXE.docx');
+            $sale = HopDong::find($id);
+            $kho = KhoV2::find($sale->id_car_kho);
+            $year = $kho->year;
+            $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $car_detail = $sale->carSale;
+            $car = $sale->carSale;
+            $tenXe = $car_detail->name;
+            // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
+            $outhd = 'PDI XE và CẤP HOA ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            $templateProcessor->setValues([
+                'soHopDong' => $soHopDong,
+                'ngayhd' => $arrdate[2],
+                'thanghd' => $arrdate[1],
+                'namhd' => $arrdate[0],
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'phone' => $sale->guest->phone,
+                'carname' => $tenXe,
+                'year' => $year,
+                'seat' => $car->seat,
+                'color' => $sale->mau,
+                'vin' => $kho->vin,
+                'frame' => $kho->frame
+            ]);
+
+        $pathToSave = 'template/PDIXEDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+    public function inBHBB($id) {
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/BH5MON.docx');
+            $sale = HopDong::find($id);
+            $kho = KhoV2::find($sale->id_car_kho);
+            $year = $kho->year;
+            $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $car_detail = $sale->carSale;
+            $car = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $tenXe = $car_detail->name;
+            // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
+            $outhd = 'BHBB VÀ 5 MÓN ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            $templateProcessor->setValues([
+                'soHopDong' => $soHopDong,
+                'ngayhd' => $arrdate[2],
+                'thanghd' => $arrdate[1],
+                'namhd' => $arrdate[0],
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'phone' => $sale->guest->phone,
+                'carname' => $tenXe,
+                'cost' => number_format($giaXe),
+                'year' => $year,
+                'seat' => $car->seat,
+                'color' => $sale->mau,
+                'vin' => $kho->vin,
+                'frame' => $kho->frame
+            ]);
+
+        $pathToSave = 'template/BH5MONDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+    public function inPhuKien($id) {
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/PHUKIEN.docx');
+            $sale = HopDong::find($id);
+            $kho = KhoV2::find($sale->id_car_kho);
+            $year = $kho->year;
+            $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $car_detail = $sale->carSale;
+            $car = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $tenXe = $car_detail->name;
+            // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
+            $outhd = 'YÊU CẦU LẮP PHỤ KIỆN ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+
+            // Exe phụ kiện bán và free
+            $package = $sale->package;
+
+            $sttpkban = "";
+            $pkban = "";
+            $pkbansl = "";
+            $pkbangia = "";
+            $i = 1;
+
+            $sttpkfree = "";
+            $pkfree = "";
+            $pkfreesl = "";
+            $pkfreegia = "";
+            $j = 1;
+
+            foreach($package as $row) {
+                if ($row->type == 'pay') {
+                    $sttpkban .= $i . '<w:br/>';
+                    $pkbansl .= '1 <w:br/>';
+                    $pkban .= $row->name . '<w:br/>';
+                    $pkbangia .= number_format($row->cost) . '<w:br/>';
+                    $i++;
+                }
+                if ($row->type == 'free') {
+                    $sttpkfree .= $j . '<w:br/>';
+                    $pkfreesl .= '1 <w:br/>';
+                    $pkfree .= $row->name . '<w:br/>';
+                    $pkfreegia .= number_format($row->cost) . '<w:br/>';
+                    $j++;
+                }
+            }
+
+            $templateProcessor->setValues([
+                'soHopDong' => $soHopDong,
+                'ngayhd' => $arrdate[2],
+                'thanghd' => $arrdate[1],
+                'namhd' => $arrdate[0],
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'phone' => $sale->guest->phone,
+                'carname' => $tenXe,
+                'cost' => number_format($giaXe),
+                'year' => $year,
+                'seat' => $car->seat,
+                'color' => $sale->mau,
+                'vin' => $kho->vin,
+                'frame' => $kho->frame,
+                'sttpkban' => $sttpkban,
+                'pkban' => $pkban,
+                'pkbansl' => $pkbansl,
+                'pkbangia' => $pkbangia,
+                'sttpkfree' => $sttpkfree,
+                'pkfree' => $pkfree,
+                'pkfreesl' => $pkfreesl,
+                'pkfreegia' => $pkfreegia
+            ]);
+
+        $pathToSave = 'template/PHUKIENDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
 }

@@ -259,6 +259,9 @@
                                                     <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option>
                                                     <option value="3">Đề nghị thực hiện hợp đồng</option>
+                                                    <option value="4">Yêu cầu PDI xe và cấp hoa</option>
+                                                    <option value="5">Đề nghị BHBB & 5 món</option>
+                                                    <option value="6">Yêu cầu lắp đặt phụ kiện</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -836,7 +839,7 @@
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
                                 "<td><button id='delPKPAY' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
                                 "</tr>";
-                            sum += response.pkban[i].cost;
+                            sum += parseInt(response.pkban[i].cost);
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
@@ -873,7 +876,7 @@
                                 +"<button id='editPkCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"'  data-toggle='modal' data-target='#editPkCostMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>"+
                                 "</td>" +
                                 "</tr>";
-                            sum += response.pkcost[i].cost;
+                            sum += parseInt(response.pkcost[i].cost);
                         }
                         $("#showPKCOST").html(txt);
                         $("#xtongCost").text(formatNumber(sum));
@@ -1288,6 +1291,33 @@
                         case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
                 }
+
+                if ($("select[name=mauHD]").val() == 4 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/pdi')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
+
+                 if ($("select[name=mauHD]").val() == 5 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/bhbb')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
+
+                 if ($("select[name=mauHD]").val() == 6 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/phukien')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
             });
 
 

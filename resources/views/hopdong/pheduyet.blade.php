@@ -706,7 +706,7 @@
                                 "<td>" + response.pkban[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
                                 "</tr>";
-                            sum += response.pkban[i].cost;
+                            sum += parseInt(response.pkban[i].cost);
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
@@ -735,7 +735,7 @@
                                 "<td>" + response.pkcost[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
                                 "</tr>";
-                            sum += response.pkcost[i].cost;
+                            sum += parseInt(response.pkcost[i].cost);
                         }
                         $("#showPKCOST").html(txt);
                         $("#xtongCost").text(formatNumber(sum));
