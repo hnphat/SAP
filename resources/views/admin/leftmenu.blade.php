@@ -262,6 +262,26 @@
                         </li>
                     </ul>
                 </li>
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system')||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-money-check-alt"></i>
+                        <p>
+                            <strong>KẾ TOÁN</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('ketoan')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>HỢP ĐỒNG XE</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endif
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-address-book"></i>

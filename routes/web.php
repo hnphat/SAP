@@ -235,6 +235,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('complete/phukien/{id}','HDController@inPhuKien');
 
     });
+    Route::group(['prefix' => 'ketoan', 'middleware' => ['f_hd']], function(){
+        Route::get('hopdongxe','KetoanController@getKeToan')->name('ketoan');
+        Route::get('hopdong/danhsach','KetoanController@getDanhSachHopDong');
+        Route::get('hopdong/bienban/{id}','KetoanController@inBienBan');
+    });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');
         Route::get('check/{id}','PheDuyetController@check');

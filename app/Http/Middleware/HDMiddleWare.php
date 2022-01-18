@@ -19,6 +19,7 @@ class HDMiddleWare
         if (Auth::user()->hasRole('system') ||
             Auth::user()->hasRole('sale') ||
             Auth::user()->hasRole('tpkd') ||
+            Auth::user()->hasRole('ketoan') ||
             Auth::user()->hasRole('adminsale'))
             return $next($request);
         else abort(403);
