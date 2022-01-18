@@ -1366,6 +1366,105 @@ class HDController extends Controller
         $code->save();
         $idSale = $code->id;
 
+        // --------------- Add các loại phí
+        $pkcost = new PackageV2;
+        $pkcost->name = "Phí trước bạ";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+        $pkcost = new PackageV2;
+        $pkcost->name = "Phí đăng ký xe";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+        $pkcost = new PackageV2;
+        $pkcost->name = "Phí đăng kiểm xe";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+        $pkcost = new PackageV2;
+        $pkcost->name = "Phí đường bộ";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+        $pkcost = new PackageV2;
+        $pkcost->name = "Bảo hiểm TNDS";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+        $pkcost = new PackageV2;
+        $pkcost->name = "Bảo hiểm vật chất";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+        $pkcost = new PackageV2;
+        $pkcost->name = "Hỗ trợ đăng ký - đăng kiểm";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
         // --------------- Add 05 phụ kiện theo xe
         $pkpay = new PackageV2;
         $pkpay->name = "Áo trùm xe";
