@@ -102,4 +102,15 @@ class User extends Authenticatable
         return $this->hasMany('App\ReportWork','user_nhan','id');
     }
 
+    public function chamCongChiTiet() {
+        return $this->hasMany('App\ChamCongChiTiet','id_user','id');
+    }
+
+    public function xinPhep() {
+        return $this->hasMany('App\XinPhep','id_user','id');
+    }
+
+    public function duyetPhep() {
+        return $this->hasMany('App\XinPhep','id_user_duyet','id');
+    }
 }

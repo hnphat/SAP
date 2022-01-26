@@ -276,7 +276,45 @@
                         <li class="nav-item">
                             <a href="{{route('ketoan')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>HỢP ĐỒNG XE</p>
+                                <p>Hợp đồng xe</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endif
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('hsns')||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-person-booth"></i>
+                        <p>
+                            <strong>NHÂN SỰ</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('nhansu.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý chấm công</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('quanlyphep.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý loại phép</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Xin phép</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('chitiet.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Chấm công chi tiết</p>
                             </a>
                         </li>
                     </ul>

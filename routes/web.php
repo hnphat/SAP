@@ -331,6 +331,24 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('gethoso','HanhChinhController@getHoSoWithName');
     });
 
+    Route::group(['prefix' => 'nhansu'], function(){
+        Route::get('quanlychamcong','NhanSuController@quanLyChamCong')->name('nhansu.panel');
+        Route::get('quanly/ajax/getnhanvien','NhanSuController@quanLyChamCongGetNhanVien');
+        Route::post('quanly/ajax/postnhanvien','NhanSuController@quanLyChamCongPostNhanVien');
+      
+        // LoaiPhep -> Quản lý loại phép
+        Route::get('quanlyphep','NhanSuController@quanLyPhep')->name('quanlyphep.panel');
+        Route::get('quanlyphep/ajax/getlist','NhanSuController@quanLyPhepGetList');
+        Route::post('quanlyphep/ajax/post','NhanSuController@quanLyPhepPost');
+        Route::post('quanlyphep/ajax/delete','NhanSuController@quanLyPhepDelete');
+
+        // Chi tiết chấm công
+        Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
+        Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');
+        Route::post('chitiet/ajax/themphep','NhanSuController@chiTietThemPhep');
+
+    });
+
     Route::get('qr/{content}', function ($content) {
 //        return QrCode::size(200)->generate('https://google.com');
         return view('qr', ['content' => $content]);

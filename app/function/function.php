@@ -312,5 +312,13 @@ class HelpFunction {
         return cal_days_in_month(CAL_GREGORIAN, $month, $year);
         // return date('t', mktime(0, 0, 0, $month, 1, $year)); 
     }
+
+    public static function isSunday($day, $month, $year) {
+        $date = date($year."-".$month."-".$day);
+        $date = strtotime($date);
+        $date = getdate($date);
+        if ($date['weekday'] == "Sunday") return true;
+        return false;
+    }
 }
 ?>
