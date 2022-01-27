@@ -18,6 +18,6 @@ class XinPhep extends Model
     }
 
     public function userDuyet() {
-        return $this->belongsTo('App\User','user_duyet', 'id');
+        return $this->belongsTo('App\User','id_user_duyet', 'id');
     }
 }

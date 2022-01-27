@@ -282,8 +282,6 @@
                     </ul>
                 </li>
                 @endif
-                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('hsns')||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-person-booth"></i>
@@ -293,10 +291,18 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('hsns')||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('nhansu.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý chấm công</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('tonghop.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Tổng hợp công</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -305,10 +311,11 @@
                                 <p>Quản lý loại phép</p>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('xinphep.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Xin phép</p>
+                                <p>Quản lý xin phép</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -319,7 +326,6 @@
                         </li>
                     </ul>
                 </li>
-                @endif
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-address-book"></i>

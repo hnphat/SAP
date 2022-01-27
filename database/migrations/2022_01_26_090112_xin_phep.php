@@ -28,6 +28,10 @@ class XinPhep extends Migration
             $table->string('lyDo');
             $table->boolean('user_duyet')->default(false);
             $table->boolean('duyet')->default(false);
+            $table->string('vaoSang')->nullable();
+            $table->string('raSang')->nullable();
+            $table->string('vaoChieu')->nullable();
+            $table->string('raChieu')->nullable();
             $table->integer('gioSang')->nullable();
             $table->integer('gioChieu')->nullable();
             $table->integer('treSang')->nullable();

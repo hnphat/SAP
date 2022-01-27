@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-   Chấm công chi tiết
+    Quản lý xin phép
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,18 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Chấm công chi tiết</strong></h1>
+                        <h1 class="m-0"><strong>Quản lý xin phép</strong> 
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            <a href="{{route('pheduyet.panel')}}" class="btn btn-xs btn-warning">Phê duyệt phép</a>
+                        @endif
+                    </h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Nhân sự</li>
-                            <li class="breadcrumb-item active">Chấm công chi tiết</li>
+                            <li class="breadcrumb-item active">Quản lý xin phép</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -32,8 +37,8 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container-fluid">
-                <div class="row">                    
+        <div class="container-fluid">
+                <div class="row">  
                     <div class="col-md-1">
                         <label>Tháng</label>
                         <select name="thang" class="form-control">
@@ -55,7 +60,7 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <select name="nhanVien" class="form-control">
                             @foreach($user as $row)                            
-                                <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
+                                <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
                             @endforeach
                         </select>
                         @else
@@ -70,22 +75,18 @@
                     </div>
                 </div>  
                 <br/>
-                <input type="hidden" name="idChiTiet">
                 <table class="table table-striped table-bordered">
                     <tr class="text-center">
-                        <th>Ngày</th>
-                        <th>Vào Sáng</th>
-                        <th>Ra Sáng</th>
-                        <th>Vào Chiều</th>
-                        <th>Ra Chiều</th>
-                        <th>Công sáng</th>
-                        <th>Công chiều</th>
-                        <th>Trể/Sớm Sáng</th>
-                        <th>Trể/Sớm Chiều</th>
+                        <th>Ngày xin phép</th>
+                        <th>Loại Phép</th>
+                        <th>Mô tả</th>
+                        <th>Lý do</th>
+                        <th>Buổi</th>
+                        <th>Người duyệt</th>
                         <th>Trạng thái</th>
                         <th>Tác vụ</th>
                     </tr>
-                    <tbody class="text-center" id="chiTietCong">
+                    <tbody class="text-center" id="chiTietPhep">
                        
                     </tbody>                    
                 </table>                  
@@ -93,67 +94,6 @@
         </div>
         <!-- /.content -->
     </div>
-    <!-- Medal Add -->
-    <div class="modal fade" id="addModal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Thêm phép</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> 
-                        <form method="POST" enctype="multipart/form-data" id="addForm" autocomplete="off">
-                            {{csrf_field()}}         
-                            <input type="hidden" name="idUserXin">    
-                            <div class="form-group row">
-                                <div class="col-md-2"><input type="text" name="ngayXin" readonly class="form-control"></div>
-                                <div class="col-md-2"><input type="text" name="thangXin" readonly class="form-control"></div>
-                                <div class="col-md-2"><input type="text" name="namXin" readonly class="form-control"></div>
-                            </div>            
-                            <div class="form-group">
-                               <label>Chọn buổi</label> 
-                               <select name="buoi" class="form-control">
-                                   <option value="SANG">Sáng</option>
-                                   <option value="CHIEU">Chiều</option>
-                                   <option value="CANGAY">Cả ngày</option>
-                               </select>
-                            </div>
-                            <div class="form-group">
-                               <label>Loại phép</label> 
-                               <select name="loaiPhep" class="form-control">
-                                  @foreach($phep as $row)
-                                    <option value="{{$row->id}}">{{$row->tenPhep}}</option>
-                                  @endforeach
-                               </select>
-                            </div>
-                            <div class="form-group">
-                               <label>Lý do xin</label> 
-                               <input type="text" name="lyDo" class="form-control" placeholder="Lý do xin">
-                            </div>
-                            <div class="form-group">
-                               <label>Người duyệt</label> 
-                               <select name="nguoiDuyet" class="form-control">
-                                  @foreach($user as $row)
-                                    @if($row->hasRole('lead'))
-                                        <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                    @endif                                    
-                                  @endforeach
-                               </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                        <button id="btnAdd" class="btn btn-primary" form="addForm">Lưu</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -181,11 +121,11 @@
             timer: 3000
         });
 
-        $(document).ready(function(){
-
-           function reload() {
+        // Exe
+        $(document).ready(function() {
+            function reload() {
                 $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvien')}}",
+                    url: "{{url('management/nhansu/xinphep/ajax/getnhanvien')}}",
                     type: "get",
                     dataType: "text",
                     data: {
@@ -194,7 +134,7 @@
                         "nam": $("select[name=nam]").val()
                     },
                     success: function(response){                        
-                        $("#chiTietCong").html(response);                                   
+                        $("#chiTietPhep").html(response);                                   
                     },
                     error: function(){
                         Toast.fire({
@@ -207,7 +147,7 @@
 
            $("#chon").click(function(){
                 $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvien')}}",
+                    url: "{{url('management/nhansu/xinphep/ajax/getnhanvien')}}",
                     type: "get",
                     dataType: "text",
                     data: {
@@ -216,7 +156,7 @@
                         "nam": $("select[name=nam]").val()
                     },
                     success: function(response){                        
-                        $("#chiTietCong").html(response);                                   
+                        $("#chiTietPhep").html(response);                                   
                     },
                     error: function(){
                         Toast.fire({
@@ -227,38 +167,33 @@
                 });
            });
 
-           $(document).on('click','#xinPhep', function(){
-                $("input[name=ngayXin]").val($(this).data('ngay'));
-                $("input[name=thangXin]").val($(this).data('thang'));
-                $("input[name=namXin]").val($(this).data('nam'));
-                $("input[name=idUserXin]").val($("select[name=nhanVien]").val());
-           });
-
-
-           $("#btnAdd").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/themphep')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: $("#addForm").serialize(),
-                    success: function(response){
-                        $("#addForm")[0].reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        $("#addModal").modal('hide');
-                        reload();
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể tạo phép"
-                        })
-                    }
-                });
-           });
+            //Delete data
+            $(document).on('click','#delete', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/nhansu/xinphep/ajax/delete/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection

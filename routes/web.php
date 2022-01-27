@@ -347,6 +347,24 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');
         Route::post('chitiet/ajax/themphep','NhanSuController@chiTietThemPhep');
 
+        // xin phép
+        Route::get('xinphep','NhanSuController@xinPhepGetList')->name('xinphep.panel');
+        Route::get('xinphep/ajax/getnhanvien','NhanSuController@xinPhepGetNhanVien');
+        Route::post('xinphep/ajax/delete','NhanSuController@xinPhepDelete');
+
+        // phê duyệt phép
+        Route::get('pheduyet','NhanSuController@pheDuyetGetList')->name('pheduyet.panel');
+        Route::get('pheduyet/ajax/getlist','NhanSuController@pheDuyetPhepGetList');
+        Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep');
+
+         // tổng hợp
+        Route::get('tonghop','NhanSuController@getTongHop')->name('tonghop.panel');
+        Route::get('tonghop/ajax/getngay','NhanSuController@tongHopXemNgay');
+        Route::get('tonghop/ajax/getthang','NhanSuController@tongHopXemThang');
+
+         // Xem tháng
+        Route::get('xemthang/ngay/{ngay}/thang/{thang}/nam/{nam}','NhanSuController@xemThang')->name('xemthang.panel');
+
     });
 
     Route::get('qr/{content}', function ($content) {

@@ -18,6 +18,7 @@ class LoaiPhep extends Migration
             $table->string('tenPhep', 255);
             $table->string('maPhep', 10)->nullable();
             $table->enum('loaiPhep', ['COLUONG', 'KHONGLUONG', 'PHEPNAM', 'QCC']);
+            $table->string('moTa', 255)->nullable();
             $table->timestamps();
         });
     }

@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Quản lý phép
+    Quản lý loại phép
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Quản lý phép</strong></h1>
+                        <h1 class="m-0"><strong>Quản lý loại phép</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Nhân sự</li>
-                            <li class="breadcrumb-item active">Quản lý phép</li>
+                            <li class="breadcrumb-item active">Quản lý loại phép</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -40,6 +40,7 @@
                             <th>Tên phép</th>
                             <th>Mã phép</th>
                             <th>Loại phép</th>
+                            <th>Mô tả</th>
                             <th>Tác vụ</th>
                         </tr>
                     </thead>
@@ -77,6 +78,10 @@
                                    <option value="PHEPNAM">Phép năm</option>
                                    <option value="QCC">Quên chấm công</option>
                                </select>
+                            </div>
+                            <div class="form-group">
+                               <label>Mô tả</label> 
+                               <input type="text" name="moTa" class="form-control" placeholder="Nhập mô tả cho phép">
                             </div>
                         </form>
                     </div>
@@ -142,6 +147,7 @@
                     { "data": "tenPhep" },
                     { "data": "maPhep" },
                     { "data": "loaiPhep" },
+                    { "data": "moTa" },
                     {
                         "data": null,
                         render: function(data, type, row) {
