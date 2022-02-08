@@ -301,14 +301,14 @@ class NhanSuController extends Controller
                 echo "
                 <tr>
                     <td>".$i."/".$thang."/".$nam."</td>
-                    <td>".$chiTiet->vaoSang." $phepSang</td>
-                    <td>".$chiTiet->raSang." $phepSang</td>
-                    <td>".$chiTiet->vaoChieu." $phepChieu</td>
-                    <td>".$chiTiet->raChieu." $phepChieu</td>
-                    <td>".$chiTiet->gioSang." $gioSang (giờ)</td>
-                    <td>".$chiTiet->gioChieu." $gioChieu (giờ)</td>
-                    <td>".$chiTiet->treSang." $treSang (phút)</td>
-                    <td>".$chiTiet->treChieu." $treChieu (phút)</td>
+                    <td class='text-success'>".$chiTiet->vaoSang." $phepSang</td>
+                    <td class='text-success'>".$chiTiet->raSang." $phepSang</td>
+                    <td class='text-success'>".$chiTiet->vaoChieu." $phepChieu</td>
+                    <td class='text-success'>".$chiTiet->raChieu." $phepChieu</td>
+                    <td class='text-info'>".$chiTiet->gioSang." $gioSang (giờ)</td>
+                    <td class='text-info'>".$chiTiet->gioChieu." $gioChieu (giờ)</td>
+                    <td class='text-danger'>".$chiTiet->treSang." $treSang (phút)</td>
+                    <td class='text-danger'>".$chiTiet->treChieu." $treChieu (phút)</td>
                     <td>".$stt."</td>
                     <td>".$btnXinPhep."</td>
                 </tr>
@@ -375,6 +375,7 @@ class NhanSuController extends Controller
         $xinPhep->ngay = $request->ngayXin;
         $xinPhep->thang = $request->thangXin;
         $xinPhep->nam = $request->namXin;
+        $xinPhep->buoi = $request->buoi;
         $xinPhep->id_user_duyet = $request->nguoiDuyet;
         $xinPhep->lyDo = $request->lyDo;
 
@@ -789,8 +790,8 @@ class NhanSuController extends Controller
                         $gioChieu = "<strong class='text-success'>".$xinPhep->gioChieu."</strong>";
                         $treSang = "<strong class='text-success'>".$xinPhep->treSang."</strong>";
                         $treChieu = "<strong class='text-success'>".$xinPhep->treChieu."</strong>";
-                        $phepSang = "<strong class='text-success'>".$xinPhep->loaiPhep->maPhep."</strong>";
-                        $phepChieu = "<strong class='text-success'>".$xinPhep->loaiPhep->maPhep."</strong>";
+                        $phepSang = "<strong class='text-success'>".$xinPhep->vaoSang."</strong>";
+                        $phepChieu = "<strong class='text-success'>".$xinPhep->vaoChieu."</strong>";
                     }
 
                     if ($xinPhep->user_duyet == false) {
@@ -809,14 +810,14 @@ class NhanSuController extends Controller
                     <tr>
                         <td>".$tt."</td>
                         <td>".$row->userDetail->surname."</td>
-                        <td>".$chiTiet->vaoSang." $phepSang</td>
-                        <td>".$chiTiet->raSang." $phepSang</td>
-                        <td>".$chiTiet->vaoChieu." $phepChieu</td>
-                        <td>".$chiTiet->raChieu." $phepChieu</td>
-                        <td>".$chiTiet->gioSang." $gioSang</td>
-                        <td>".$chiTiet->gioChieu." $gioChieu</td>
-                        <td>".$chiTiet->treSang." $treSang</td>
-                        <td>".$chiTiet->treChieu." $treChieu</td>
+                        <td><span class='text-success'>".$chiTiet->vaoSang."</span> $phepSang</td>
+                        <td><span class='text-success'>".$chiTiet->raSang."</span> $phepSang</td>
+                        <td><span class='text-success'>".$chiTiet->vaoChieu."</span> $phepChieu</td>
+                        <td><span class='text-success'>".$chiTiet->raChieu."</span> $phepChieu</td>
+                        <td><span class='text-info'>".$chiTiet->gioSang."</span> $gioSang</td>
+                        <td><span class='text-info'>".$chiTiet->gioChieu."</span> $gioChieu</td>
+                        <td><span class='text-danger'>".$chiTiet->treSang."</span> $treSang</td>
+                        <td><span class='text-danger'>".$chiTiet->treChieu."</span> $treChieu</td>
                         <td>$stt</td>
                     </tr>
                     ";
@@ -828,8 +829,8 @@ class NhanSuController extends Controller
                             $gioChieu = "<strong class='text-success'>".$xinPhep->gioChieu."</strong>";
                             $treSang = "<strong class='text-success'>".$xinPhep->treSang."</strong>";
                             $treChieu = "<strong class='text-success'>".$xinPhep->treChieu."</strong>";
-                            $phepSang = "<strong class='text-success'>".$xinPhep->loaiPhep->maPhep."</strong>";
-                            $phepChieu = "<strong class='text-success'>".$xinPhep->loaiPhep->maPhep."</strong>";
+                            $phepSang = "<strong class='text-success'>".$xinPhep->vaoSang."</strong>";
+                            $phepChieu = "<strong class='text-success'>".$xinPhep->vaoChieu."</strong>";
                         }
     
                         if ($xinPhep->user_duyet == false) {
@@ -844,14 +845,14 @@ class NhanSuController extends Controller
                     <tr>
                         <td>".$tt."</td>
                         <td>".$row->userDetail->surname."</td>
-                        <td>$phepSang</td>
-                        <td>$phepSang</td>
-                        <td>$phepChieu</td>
-                        <td>$phepChieu</td>
-                        <td>$gioSang</td>
-                        <td>$gioChieu</td>
-                        <td>$treSang</td>
-                        <td>$treChieu</td>
+                        <td class='text-success'>$phepSang</td>
+                        <td class='text-success'>$phepSang</td>
+                        <td class='text-success'>$phepChieu</td>
+                        <td class='text-success'>$phepChieu</td>
+                        <td class='text-info'>$gioSang</td>
+                        <td class='text-info'>$gioChieu</td>
+                        <td class='text-danger'>$treSang</td>
+                        <td class='text-danger'>$treChieu</td>
                         <td>$stt</td>
                     </tr>
                     ";
@@ -926,9 +927,15 @@ class NhanSuController extends Controller
                         if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                             $tongCong += $xinPhep->gioSang;
                             if(\HelpFunction::isSunday($i,$thang,$nam)) {
-                                echo "<td class='bg-warning'>".$xinPhep->loaiPhep->maPhep."</td>";
+                                if ($xinPhep->buoi === "SANG" || $xinPhep->buoi === "CANGAY")
+                                    echo "<td class='bg-warning'>".$xinPhep->loaiPhep->maPhep."</td>";
+                                else
+                                    echo "<td class='bg-warning'>".$chiTietCong->gioSang."</td>";
                             } else {
-                                echo "<td>".$xinPhep->loaiPhep->maPhep."</td>";
+                                if ($xinPhep->buoi === "SANG" || $xinPhep->buoi === "CANGAY")
+                                    echo "<td>".$xinPhep->loaiPhep->maPhep."</td>";
+                                else
+                                    echo "<td>".$chiTietCong->gioSang."</td>";
                             }
                         } else {
                             $tongCong += $chiTietCong->gioSang;
@@ -1011,9 +1018,15 @@ class NhanSuController extends Controller
                     if ($chiTietCong !== null) {
                         if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                             if(\HelpFunction::isSunday($i,$thang,$nam)) {
-                                echo "<td class='bg-warning'>".$xinPhep->loaiPhep->maPhep."</td>";
+                                if ($xinPhep->buoi === "CHIEU" || $xinPhep->buoi === "CANGAY")
+                                    echo "<td class='bg-warning'>".$xinPhep->loaiPhep->maPhep."</td>";
+                                else
+                                    echo "<td class='bg-warning'>".$chiTietCong->gioChieu."</td>";
                             } else {
-                                echo "<td>".$xinPhep->loaiPhep->maPhep."</td>";
+                                if ($xinPhep->buoi === "CHIEU" || $xinPhep->buoi === "CANGAY")
+                                    echo "<td>".$xinPhep->loaiPhep->maPhep."</td>";
+                                else
+                                    echo "<td>".$chiTietCong->gioChieu."</td>";
                             }
                         } else {
                             if(\HelpFunction::isSunday($i,$thang,$nam)) {

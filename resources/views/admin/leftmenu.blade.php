@@ -219,8 +219,7 @@
                         </li>
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv'))
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
                         <li class="nav-item">
                             <a href="{{route('laithu.duyet')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -234,7 +233,8 @@
                             </a>
                         </li>
                         @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
                         <li class="nav-item">
                             <a href="{{route('laithu.tbp.duyet')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

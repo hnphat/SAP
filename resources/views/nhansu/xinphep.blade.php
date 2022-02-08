@@ -47,7 +47,7 @@
                             @endfor
                         </select>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label>Năm</label>
                         <select name="nam" class="form-control">
                             @for($i = 2021; $i < 2100; $i++)
