@@ -89,7 +89,8 @@
                     </div>
                     <div class="col-md-2">
                         <input id="luu" type="submit" class="btn btn-xs btn-success" value="Lưu">
-                    </div>
+                        <a href="{{route('import.panel')}}" class="btn btn-xs btn-info">Import Excel</a>
+                    </div>                   
                 </div>
                 <br/>
                 <table class="table table-striped table-bordered">

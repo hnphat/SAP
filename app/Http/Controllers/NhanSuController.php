@@ -8,6 +8,7 @@ use App\User;
 use App\XinPhep;
 use App\ChamCongChiTiet;
 use Illuminate\Support\Facades\Auth;
+use Excel;
 
 class NhanSuController extends Controller
 {
@@ -1108,4 +1109,164 @@ class NhanSuController extends Controller
         echo "</tbody></table>";
     }
 
+    // Phê duyệt phép
+    public function getImport() {
+        return view("nhansu.importexcel");
+    }
+
+    public function importExcel(Request $request) {      
+        $ngay = $request->ngay;
+        $thang = $request->thang;
+        $nam = $request->nam; 
+        // Thời gian mặc định ---------------
+        $time_1 = "07:30";
+        $time_2 = "11:30";
+        $time_3 = "13:00";
+        $time_4 = "17:00";
+        if($request->hasFile('excel')){
+            $theArray = Excel::toArray([], request()->file('excel'));  
+            if (strval($theArray[0][0][0]) == "CODE" && strval($theArray[0][0][1]) == "NAME" && 
+            strval($theArray[0][0][2]) == "CV" && strval($theArray[0][0][3]) == "GV" && 
+            strval($theArray[0][0][4]) == "GR" && strval($theArray[0][0][5]) == "NOTE") {
+                $tempcode = "";
+                $arrmain = [];
+                $arrsub = [];
+                $numlen = count($theArray[0]);
+                for($i = 1; $i < $numlen; $i++) {
+                    if ($theArray[0][$i][5] == "BH") {
+                    if ($tempcode != "") {
+                        array_push($arrsub,null,null);
+                        array_push($arrmain, $arrsub);
+                        $arrsub = [];
+                        $tempcode = "";
+                    }
+                    array_push($arrsub, $theArray[0][$i][0], $theArray[0][$i][3], $time_2, $time_3, $theArray[0][$i][4]);
+                    array_push($arrmain, $arrsub);
+                    $arrsub = [];
+                    } else {
+                        if ($tempcode != "") {
+                            if ($tempcode == $theArray[0][$i][0]) {
+                                array_push($arrsub,$theArray[0][$i][3],$theArray[0][$i][4]);
+                                array_push($arrmain, $arrsub);
+                                $arrsub = [];
+                                $tempcode = "";
+                            } else {
+                                array_push($arrsub,null,null);
+                                array_push($arrmain, $arrsub);
+                                $arrsub = [];
+                                $tempcode = $theArray[0][$i][0];
+                                array_push($arrsub,$tempcode,$theArray[0][$i][3],$theArray[0][$i][4]);
+                            }
+                        } else {
+                            $tempcode = $theArray[0][$i][0];
+                            array_push($arrsub,$tempcode,$theArray[0][$i][3],$theArray[0][$i][4]);
+                        }
+                    }
+                    
+                }               
+                
+                // Xử lý chấm công ---------------
+                foreach($arrmain as $row) {
+                    $gioSang = 0;
+                    $gioChieu = 0;
+                    $treSang = 0;
+                    $treChieu = 0;
+                    $user = User::where('name',strtolower($row[0]))->first();
+                    if ($user != null) {
+                        // Xử lý ca sáng
+                        if ($row[1] != null && $row[2] != null) {
+                            $to_time = strtotime($row[1]);
+                            $from_time = strtotime($time_1);
+                            $test = round(($to_time - $from_time)/60,2);
+                            if ($test > 0)
+                                $treSang += $test;
+            
+                            $to_time = strtotime($row[2]);
+                            $from_time = strtotime($time_2);
+                            $test = round(($to_time - $from_time)/60,2);
+                            if ($test < 0)
+                                $treSang += abs($test);
+            
+                            if ($treSang == 0) {
+                                $to_time = strtotime($time_2);
+                                $from_time = strtotime($time_1);
+                                $gioSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                            } else {
+                                $to_time = strtotime($time_2);
+                                $from_time = strtotime($time_1);
+                                $gioSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
+                            }    
+                        }
+                        // Xử lý ca chiều
+                        if ($row[3] != null && $row[4] != null) {
+                            $to_time = strtotime($row[3]);
+                            $from_time = strtotime($time_3);
+                            $test = round(($to_time - $from_time)/60,2);
+                            if ($test > 0)
+                                $treChieu += $test;
+            
+                            $to_time = strtotime($row[4]);
+                            $from_time = strtotime($time_4);
+                            $test = round(($to_time - $from_time)/60,2);
+                            if ($test < 0)
+                                $treChieu += abs($test);
+            
+                            if ($treChieu == 0) {
+                                $to_time = strtotime($time_4);
+                                $from_time = strtotime($time_3);
+                                $gioChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                            } else {
+                                $to_time = strtotime($time_4);
+                                $from_time = strtotime($time_3);
+                                $gioChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
+                            }    
+                        }
+
+                        $checkChamCong = ChamCongChiTiet::where([
+                            ['ngay','=',$ngay],
+                            ['thang','=',$thang],
+                            ['nam','=',$nam],
+                            ['id_user','=',$user->id]
+                        ])->exists();
+
+                        if ($checkChamCong) {
+                            $chiTiet = ChamCongChiTiet::where([
+                                ['ngay','=',$ngay],
+                                ['thang','=',$thang],
+                                ['nam','=',$nam],
+                                ['id_user','=',$user->id]
+                            ])
+                            ->update([
+                                'vaoSang' => $row[1],
+                                'raSang' => $row[2],
+                                'vaoChieu' => $row[3],
+                                'raChieu' => $row[4],
+                                'gioSang' => $gioSang,
+                                'gioChieu' => $gioChieu,
+                                'treSang' => $treSang,
+                                'treChieu' => $treChieu,
+                            ]);
+                        } else {
+                            $chiTiet = ChamCongChiTiet::insert([
+                                'id_user' => $user->id,
+                                'ngay' => $ngay,
+                                'thang' => $thang,
+                                'nam' => $nam,
+                                'vaoSang' => $row[1],
+                                'raSang' => $row[2],
+                                'vaoChieu' => $row[3],
+                                'raChieu' => $row[4],
+                                'gioSang' => $gioSang,
+                                'gioChieu' => $gioChieu,
+                                'treSang' => $treSang,
+                                'treChieu' => $treChieu,
+                            ]);
+                        }  
+                    }
+                }   
+                return back()->with('success','Đã cập nhật chấm công! Vào chấm công chi tiết để kiểm tra!');
+            }
+		}
+		return back()->with('error','Không tìm thấy file theo yêu cầu!!!');
+    }
 }

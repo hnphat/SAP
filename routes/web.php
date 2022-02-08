@@ -365,6 +365,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
          // Xem tháng
         Route::get('xemthang/ngay/{ngay}/thang/{thang}/nam/{nam}','NhanSuController@xemThang')->name('xemthang.panel');
 
+        // Import Excel
+        Route::get('importexcel','NhanSuController@getImport')->name('import.panel');
+        Route::post('import','NhanSuController@importExcel')->name('import.post');
     });
 
     Route::get('qr/{content}', function ($content) {

@@ -71,10 +71,7 @@
                         $("#noiDung").html(response);                                   
                     },
                     error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể chọn"
-                        })
+                        alert('Lỗi');
                     }
                 });
            }); 
