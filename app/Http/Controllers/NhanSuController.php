@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\LoaiPhep;
 use App\User;
 use App\XinPhep;
+use App\TangCa;
 use App\ChamCongChiTiet;
 use Illuminate\Support\Facades\Auth;
 use Excel;
@@ -245,6 +246,7 @@ class NhanSuController extends Controller
         $tongTre = 0;
         $coPhep = 0;
         $khongPhep = 0;
+        $lamThem = 0;
         for($i = 1; $i <= $day; $i++) {
             $chiTiet = ChamCongChiTiet::select("*")
             ->where([
@@ -261,6 +263,16 @@ class NhanSuController extends Controller
                 ['thang','=',$thang],
                 ['nam','=',$nam]
             ])->first();
+
+            $tangCa = TangCa::select("*")
+            ->where([
+                ['id_user','=',$request->id],
+                ['ngay','=',$i],
+                ['thang','=',$thang],
+                ['nam','=',$nam]
+            ])->first();
+
+
             $stt = "";
             $flag = true;
             $phepSang = "";
@@ -288,13 +300,29 @@ class NhanSuController extends Controller
             }             
                 
                 $btnXinPhep = "";
+                $btnTangCa = "";
+
+            if ($tangCa !== null) {
+                if ($tangCa->user_duyet == true) {
+                    $to_time = strtotime($tangCa->time2);
+                    $from_time = strtotime($tangCa->time1);
+                    $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
+                    $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."</strong> (giờ)</span>";
+                    $lamThem += $gioTangCa;
+                }                   
+                else 
+                    $btnTangCa = "<span class='text-secondary'>Đợi duyệt</span>";
+            } else {
+                $btnTangCa = "<button id='tangCa' data-toggle='modal' data-target='#addModalTangCa' data-ngay='".$i."' data-thang='".$thang."' data-nam='".$nam."' class='btn btn-sm btn-info'>Tăng ca</button>";
+            }
+
             if($chiTiet !== null && $chiTiet->ngay == $i && $chiTiet->thang == $thang && $chiTiet->nam == $nam) {
                 if ($chiTiet->gioSang != 4 || $chiTiet->gioChieu != 4) {
                     if ($flag)
                         $btnXinPhep = "<button id='xinPhep' data-toggle='modal' data-target='#addModal' data-ngay='".$chiTiet->ngay."' data-thang='".$chiTiet->thang."' data-nam='".$chiTiet->nam."' class='btn btn-sm btn-success'>Xin phép</button>";
                     else
                         $btnXinPhep = "";
-                }                    
+                }                                 
                 if ($xinPhep === null && ($chiTiet->gioSang != 4 || $chiTiet->gioChieu != 4)) {
                     $khongPhep+=1;
                 }
@@ -311,6 +339,7 @@ class NhanSuController extends Controller
                     <td class='text-danger'>".$chiTiet->treChieu." $treChieu (phút)</td>
                     <td>".$stt."</td>
                     <td>".$btnXinPhep."</td>
+                    <td>".$btnTangCa."</td>
                 </tr>
                 ";
 
@@ -349,6 +378,7 @@ class NhanSuController extends Controller
                     <td class='text-danger'></td>
                     <td class='text-danger'>$stt</td>
                     <td class='text-danger'>$btn</td>
+                    <td>$btnTangCa</td>
                 </tr>
                 ";
             }                
@@ -357,13 +387,14 @@ class NhanSuController extends Controller
             <tr>
                 <td colspan='2'><strong>Tổng công</strong></td>
                 <td class='text-success'><strong>".round(($tongCong/8),2)." (ngày)</strong></td>
-                <td colspan='2'><strong>Tổng Trể</strong></td>
+                <td colspan='2'><strong>Tổng Trể/Sớm</strong></td>
                 <td class='text-danger'><strong>".$tongTre." (phút)</strong></td>
                 <td><strong>Có phép</strong></td>
                 <td class='text-success'><strong>".$coPhep."</strong></td>
                 <td><strong>Không phép</strong></td>
                 <td class='text-danger'><strong>".$khongPhep."</strong></td>
-                <td></td>
+                <td><strong>Tăng ca</strong></td>
+                <td class='text-info'><strong>".$lamThem."</strong> (giờ)</td>
             </tr>
             ";
     }
@@ -606,6 +637,32 @@ class NhanSuController extends Controller
         }
     }
 
+
+    // Xin tăng ca
+    public function chiTietThemTangCa(Request $request) {
+        $tangCa = new TangCa();
+        $tangCa->id_user = $request->idUserXinTangCa;
+        $tangCa->ngay = $request->ngayXinTangCa;
+        $tangCa->thang = $request->thangXinTangCa;
+        $tangCa->nam = $request->namXinTangCa;
+        $tangCa->id_user_duyet = $request->nguoiDuyetTangCa;
+        $tangCa->lyDo = $request->lyDoTangCa;
+        $tangCa->save();
+        
+        if ($tangCa)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã xin phép tăng ca"
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi không thể xin tăng ca"
+            ]);
+    }
+
     // Xin phép
     public function xinPhepGetList() {
         $user = User::select("*")->where('active', true)->get();
@@ -693,7 +750,7 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhepGetList() {
-        if (!Auth::user()->hasRole('system'))
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns'))
             $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
             ->join('users as u','u.id','=','xin_phep.id_user')
             ->join('users_detail as d','d.id_user','=','u.id')
@@ -731,22 +788,125 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhep(Request $request) {
-        $xinPhep = XinPhep::where('id',$request->id)->update([
-            'user_duyet' => true
-        ]);
-        if ($xinPhep)
-            return response()->json([
-                "type" => "info",
-                "code" => 200,
-                "message" => "Đã phê duyệt phép",
-                "data" => $xinPhep
+        $check = XinPhep::where('id',$request->id)->first();
+        $month = (int)Date('m');
+        $year = (int)Date('Y');
+        if ($year > $check->nam) {
+            $month = 12;
+        }
+        $suDung = 0;
+        switch($check->buoi) {
+            case 'SANG': $suDung = 0.5; break;
+            case 'CHIEU': $suDung = 0.5; break;
+            case 'CANGAY': $suDung = 1; break;
+        }
+        //Xử lý quên chấm công
+        $getIdPhep = LoaiPhep::where('loaiPhep','QCC')->first()->id;
+        $checkQCC = XinPhep::where([
+            ['id_user','=',$check->id_user],
+            ['id_phep','=',$getIdPhep],
+            ['user_duyet','=', true],
+            ['thang','=',$check->thang],
+            ['nam','=',$check->nam]
+        ])->get();
+        //--------------
+
+        // Xử lý Phép năm
+        $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+        $checkPN = XinPhep::where([
+            ['id_user','=',$check->id_user],
+            ['id_phep','=',$getIdPhepNam],
+            ['user_duyet','=', true],
+            ['nam','=',$check->nam]
+        ])->get();
+        $daSuDung = 0;
+        foreach($checkPN as $row) {
+            if ($row->buoi == "SANG") {
+                $daSuDung += 0.5;
+            }
+            if ($row->buoi == "CHIEU") {
+                $daSuDung += 0.5;
+            }
+            if ($row->buoi == "CANGAY") {
+                $daSuDung += 1;
+            }
+        }
+        //--------------
+
+        if (Auth::user()->hasRole('system')) {   
+            if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
+                return response()->json([
+                    "type" => "error",
+                    "code" => 500,
+                    "message" => "Không thể duyệt! Đã quá số lần duyệt Quên chấm công"
+                ]);
+            }
+
+            if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $month)) {
+                return response()->json([
+                    "type" => "error",
+                    "code" => 500,
+                    "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
+                ]);
+            }
+
+            $xinPhep = XinPhep::where('id',$request->id)->update([
+                'user_duyet' => true
             ]);
-        else
-            return response()->json([
-                "type" => "info",
-                "code" => 500,
-                "message" => "Không thể phê duyệt phép"
-            ]);
+            if ($xinPhep)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã phê duyệt phép"
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Không thể phê duyệt phép"
+                ]);
+        } else {
+            if ($check->id_user_duyet != Auth::user()->id) {
+                return response()->json([
+                    "type" => "error",
+                    "code" => 500,
+                    "message" => "Bạn không có quyền phê duyệt cho phép này"
+                ]);
+            } else {
+
+                if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
+                    return response()->json([
+                        "type" => "error",
+                        "code" => 500,
+                        "message" => "Không thể duyệt! Đã quá số lần duyệt Quên chấm công"
+                    ]);
+                }
+
+                if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $month)) {
+                    return response()->json([
+                        "type" => "error",
+                        "code" => 500,
+                        "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
+                    ]);
+                }
+
+                $xinPhep = XinPhep::where('id',$request->id)->update([
+                    'user_duyet' => true
+                ]);
+                if ($xinPhep)
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 200,
+                        "message" => "Đã phê duyệt phép"
+                    ]);
+                else
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 500,
+                        "message" => "Không thể phê duyệt phép"
+                    ]);
+            }    
+        }      
     }
 
     // Tổng hợp
@@ -776,6 +936,27 @@ class NhanSuController extends Controller
                     ['thang','=',$thang],
                     ['nam','=',$nam]
                 ])->first();
+
+                // Xử lý tăng ca
+                $btnTangCa = "";
+                $tangCa = TangCa::where([
+                    ['id_user','=',$row->id],
+                    ['ngay','=',$ngay],
+                    ['thang','=',$thang],
+                    ['nam','=',$nam]
+                ])->first();
+
+                if ($tangCa !== null) {
+                    if ($tangCa->user_duyet == true) {
+                        $to_time = strtotime($tangCa->time2);
+                        $from_time = strtotime($tangCa->time1);
+                        $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
+                        $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."</strong> (giờ)</span>";
+                    }                   
+                    else 
+                        $btnTangCa = "<span class='text-secondary'>Đợi duyệt</span>";
+                } 
+
                 $stt = "";
                 $gioSang = "";
                 $gioChieu = "";
@@ -803,7 +984,7 @@ class NhanSuController extends Controller
                 if ($chiTiet !== null) {
                     if ($xinPhep === null && ($chiTiet->gioSang != 4 || $chiTiet->gioChieu != 4)) {
                         // if (!\HelpFunction::isSunday($ngay,$thang,$nam)) {
-                            $stt = "<strong class='text-danger'>Không phép</strong>";
+                            $stt = "<strong class='text-danger'>K</strong>";
                         // }                   
                     }
                     echo "
@@ -819,6 +1000,7 @@ class NhanSuController extends Controller
                         <td><span class='text-danger'>".$chiTiet->treSang."</span> $treSang</td>
                         <td><span class='text-danger'>".$chiTiet->treChieu."</span> $treChieu</td>
                         <td>$stt</td>
+                        <td>$btnTangCa</td>
                     </tr>
                     ";
                 } else {
@@ -838,7 +1020,7 @@ class NhanSuController extends Controller
                         }                  
                     } else {
                        if (!\HelpFunction::isSunday($ngay,$thang,$nam)) {
-                            $stt = "<strong class='text-danger'>Không phép</strong>";
+                            $stt = "<strong class='text-danger'>K</strong>";
                        }   
                     }
                     echo "
@@ -854,6 +1036,7 @@ class NhanSuController extends Controller
                         <td class='text-danger'>$treSang</td>
                         <td class='text-danger'>$treChieu</td>
                         <td>$stt</td>
+                        <td>$btnTangCa</td>
                     </tr>
                     ";
                 }                
@@ -906,6 +1089,7 @@ class NhanSuController extends Controller
                 ";                
                 $tongCong = 0;
                 $tongTre = 0;
+                $tongTangCa = 0;
                 for($i = 1; $i <= \HelpFunction::countDayInMonth($thang,$nam); $i++) {
                     $chiTietCong = ChamCongChiTiet::select("*")
                     ->where([
@@ -1104,18 +1288,34 @@ class NhanSuController extends Controller
             <tr>
                 <td>Tăng ca</td>";
                 for($i = 1; $i <= \HelpFunction::countDayInMonth($thang,$nam); $i++) {
-                    if(\HelpFunction::isSunday($i,$thang,$nam)) {
-                        echo "<td class='bg-warning'></td>";
+                    $gioTangCa = null;
+                    $tangCa = TangCa::where([
+                        ['id_user','=',$row->id],
+                        ['ngay','=',$i],
+                        ['thang','=',$thang],
+                        ['nam','=',$nam]
+                    ])->first();
+    
+                    if ($tangCa !== null) {
+                        if ($tangCa->user_duyet == true) {
+                            $to_time = strtotime($tangCa->time2);
+                            $from_time = strtotime($tangCa->time1);
+                            $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
+                            $tongTangCa += $gioTangCa;
+                        }  
+                    } 
+
+                    if(\HelpFunction::isSunday($i,$thang,$nam)) {                        
+                        echo "<td class='bg-warning'>".$gioTangCa."</td>";
                     } else {
-                        echo "<td></td>";
+                        echo "<td>".$gioTangCa."</td>";
                     }
                 }
-             echo "<td></td>
+             echo "<td>".round(($tongTangCa/8),2)."</td>
              </tr>";
             } else {
                 continue;
             }
-
             $tt++;
         }
 
@@ -1281,5 +1481,200 @@ class NhanSuController extends Controller
             }
 		}
 		return back()->with('error','Không tìm thấy file theo yêu cầu!!!');
+    }
+
+
+    // Phê duyệt tăng ca
+    public function getTangCaPanel() {        
+        return view("nhansu.tangca");
+    }
+
+    public function pheDuyetTangCaGetList() {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns'))
+            $tangCa = TangCa::select("tang_ca.heSo","tang_ca.time2","tang_ca.time1","tang_ca.created_at","tang_ca.updated_at","tang_ca.id_user_duyet","tang_ca.id","tang_ca.ngay","tang_ca.thang","tang_ca.nam","tang_ca.lyDo","tang_ca.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin")
+            ->join('users as u','u.id','=','tang_ca.id_user')
+            ->join('users_detail as d','d.id_user','=','u.id')
+            ->join('users as un','un.id','=','tang_ca.id_user_duyet')
+            ->join('users_detail as dn','dn.id_user','=','un.id')
+            ->where([
+                ['tang_ca.id_user_duyet', '=', Auth::user()->id]
+            ])
+            ->orderby('user_duyet','asc')
+            ->get();
+        else 
+            $tangCa = TangCa::select("tang_ca.heSo","tang_ca.time2","tang_ca.time1","tang_ca.created_at","tang_ca.updated_at","tang_ca.id_user_duyet","tang_ca.id","tang_ca.ngay","tang_ca.thang","tang_ca.nam","tang_ca.lyDo","tang_ca.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin")
+            ->join('users as u','u.id','=','tang_ca.id_user')
+            ->join('users_detail as d','d.id_user','=','u.id')
+            ->join('users as un','un.id','=','tang_ca.id_user_duyet')
+            ->join('users_detail as dn','dn.id_user','=','un.id')
+            ->orderby('user_duyet','desc')
+            ->get();    
+
+        if ($tangCa)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã tải dữ liệu",
+                "data" => $tangCa
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi tải dữ liệu"
+            ]);
+    }
+
+    public function pheDuyetTangCa(Request $request) {
+        $check = TangCa::where('id',$request->id)->first();
+        if (Auth::user()->hasRole('system')) {
+            $tangCa = TangCa::where('id',$request->id)->update([
+                'user_duyet' => true
+            ]);
+            if ($tangCa)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã phê duyệt tăng ca"
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Không thể phê duyệt tăng ca"
+                ]);
+        } else {
+            if ($check->id_user_duyet != Auth::user()->id) {
+                return response()->json([
+                    "type" => "error",
+                    "code" => 500,
+                    "message" => "Bạn không có quyền phê duyệt tăng ca này"
+                ]);
+            } else {
+                $tangCa = TangCa::where('id',$request->id)->update([
+                    'user_duyet' => true
+                ]);
+                if ($tangCa)
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 200,
+                        "message" => "Đã phê duyệt tăng ca"
+                    ]);
+                else
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 500,
+                        "message" => "Không thể phê duyệt tăng ca"
+                    ]);
+            }    
+        }      
+    }
+
+    public function capNhatTangCa(Request $request) {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns')) {
+            return response()->json([
+                "type" => "errpr",
+                "code" => 500,
+                "message" => "Bạn không có quyền thao tác trên chức năng này"
+            ]);
+        } else {
+            $tangCa = TangCa::where('id',$request->idTangCa)->update([
+                'time1' => $request->gioVao,
+                'time2' => $request->gioRa,
+                'heSo' => $request->heSo
+            ]);
+            if ($tangCa)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã cập nhật giờ công tăng ca"
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Không thể cập nhật giờ công"
+                ]);
+        }        
+    }
+
+    public function tangCaDelete(Request $request) {
+        $check = TangCa::where('id',$request->id)->first();
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns')) {
+            $tangCa = TangCa::find($request->id);
+            $tangCa->delete();
+            if ($tangCa)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã xóa tăng ca"
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi xóa dữ liệu"
+                ]);
+        } else {
+            if ($check->id_user_duyet != Auth::user()->id) {
+                return response()->json([
+                    "type" => "error",
+                    "code" => 500,
+                    "message" => "Bạn không có quyền xóa phiếu này"
+                ]);
+            } else {
+                $tangCa = TangCa::find($request->id);
+                $tangCa->delete();
+                if ($tangCa)
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 200,
+                        "message" => "Đã xóa tăng ca"
+                    ]);
+                else
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 500,
+                        "message" => "Lỗi xóa dữ liệu"
+                    ]);
+            }
+        }        
+    }
+
+    public function getPhepNam($id, $nam){
+        $month = (int) Date('m');
+        $year = (int) Date('Y');
+        if ($year > $nam) {
+            $month = 12;
+        }
+        $getIdPhep = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+        $check = XinPhep::where([
+            ['id_user','=',$id],
+            ['id_phep','=',$getIdPhep],
+            ['user_duyet','=', true],
+            ['nam','=',$nam]
+        ])->get();
+
+        $daSuDung = 0;
+
+        foreach($check as $row) {
+            if ($row->buoi == "SANG") {
+                $daSuDung += 0.5;
+            }
+            if ($row->buoi == "CHIEU") {
+                $daSuDung += 0.5;
+            }
+            if ($row->buoi == "CANGAY") {
+                $daSuDung += 1;
+            }
+        }
+
+        return response()->json([
+            'type' => 'info',
+            'code' => 200,
+            'message' => 'success',
+            'conlai' => $month,
+            'dasudung' => $daSuDung
+        ]);
     }
 }

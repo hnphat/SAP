@@ -81,6 +81,7 @@
                         <th>T/S Chiều</th>
                         <th>T/S  Sáng</th>
                         <th>Trạng thái</th>
+                        <th>Tăng ca</th>
                     </tr>
                     <tbody class="text-center" id="chiTietCong">
                        

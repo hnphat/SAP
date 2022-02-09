@@ -351,11 +351,22 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('xinphep','NhanSuController@xinPhepGetList')->name('xinphep.panel');
         Route::get('xinphep/ajax/getnhanvien','NhanSuController@xinPhepGetNhanVien');
         Route::post('xinphep/ajax/delete','NhanSuController@xinPhepDelete');
+        Route::get('xinphep/ajax/getphepnam/{id}/nam/{nam}','NhanSuController@getPhepNam');
+
+        // xin tăng ca
+        Route::post('chitiet/ajax/themtangca','NhanSuController@chiTietThemTangCa');
 
         // phê duyệt phép
         Route::get('pheduyet','NhanSuController@pheDuyetGetList')->name('pheduyet.panel');
         Route::get('pheduyet/ajax/getlist','NhanSuController@pheDuyetPhepGetList');
         Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep');
+
+        // phê duyệt tăng ca
+        Route::get('pheduyettangca','NhanSuController@getTangCaPanel')->name('tangca.panel');
+        Route::get('pheduyettangca/ajax/getlist','NhanSuController@pheDuyetTangCaGetList');
+        Route::post('pheduyettangca/ajax/pheduyet','NhanSuController@pheDuyetTangCa');
+        Route::post('capnhattangca/ajax/capnhat','NhanSuController@capNhatTangCa');
+        Route::post('pheduyettangca/ajax/delete','NhanSuController@tangCaDelete');
 
          // tổng hợp
         Route::get('tonghop','NhanSuController@getTongHop')->name('tonghop.panel');

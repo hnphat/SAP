@@ -19,7 +19,8 @@
                         <h1 class="m-0"><strong>Quản lý xin phép</strong> 
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                            <a href="{{route('pheduyet.panel')}}" class="btn btn-xs btn-warning">Phê duyệt phép</a>
+                            <a href="{{route('pheduyet.panel')}}" class="btn btn-xs btn-warning">Phê duyệt phép</a> &nbsp;
+                            <a href="{{route('tangca.panel')}}" class="btn btn-xs btn-success">Phê duyệt tăng ca</a>
                         @endif
                     </h1>
                     </div><!-- /.col -->
@@ -57,10 +58,13 @@
                     </div>
                     <div class="col-md-3">
                         <label>Nhân viên</label>
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                         <select name="nhanVien" class="form-control">
-                            @foreach($user as $row)                            
-                                <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                            @foreach($user as $row)
+                                @if($row->active == true)
+                                    <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
+                                @endif
                             @endforeach
                         </select>
                         @else
@@ -72,6 +76,11 @@
                     <div class="col-md-1">
                         <label>&nbsp;</label><br/>
                         <button id="chon" type="button "class="btn btn-xs btn-info">Chọn</button>
+                    </div>
+                    <div class="col-md-3">
+                        <br/>
+                        <label>Phép năm còn lại: <strong id="conLai" class="text-success"></strong> (ngày)</label>
+                        <label>Đã sử dụng: <strong id="daSuDung" class="text-danger"></strong> (ngày)</label>
                     </div>
                 </div>  
                 <br/>
@@ -162,6 +171,22 @@
                         Toast.fire({
                             icon: "error",
                             title: "Lỗi! Không thể chọn"
+                        })
+                    }
+                });
+           }).click(function(){
+                $.ajax({
+                    url: "{{url('management/nhansu/xinphep/ajax/getphepnam')}}" + "/" + $("select[name=nhanVien]").val() + "/nam/" + $("select[name=nam]").val(),
+                    type: "get",
+                    dataType: "json",
+                    success: function(response){                        
+                        $("#conLai").text(response.conlai - response.dasudung);      
+                        $("#daSuDung").text(response.dasudung);                               
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: "error",
+                            title: "Lỗi! Không thể tải phép năm"
                         })
                     }
                 });

@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'App\\BhPkPackage' => $baseDir . '/app/BhPkPackage.php',
     'App\\BieuMau' => $baseDir . '/app/BieuMau.php',
-    'App\\CCImport' => $baseDir . '/app/CCImport.php',
     'App\\CancelHD' => $baseDir . '/app/CancelHD.php',
     'App\\CarSale' => $baseDir . '/app/CarSale.php',
     'App\\ChamCongChiTiet' => $baseDir . '/app/ChamCongChiTiet.php',
@@ -73,7 +72,6 @@ return array(
     'App\\Http\\Middleware\\TypeCarMiddleWare' => $baseDir . '/app/Http/Middleware/TypeCarMiddleWare.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Middleware\\WorkMiddleWare' => $baseDir . '/app/Http/Middleware/WorkMiddleWare.php',
-    'App\\Imports\\ChamCongImport' => $baseDir . '/app/Imports/ChamCongImport.php',
     'App\\KhoV2' => $baseDir . '/app/KhoV2.php',
     'App\\Kpi' => $baseDir . '/app/Kpi.php',
     'App\\LoaiCong' => $baseDir . '/app/LoaiCong.php',

@@ -62,7 +62,9 @@
                         <label>Nhân viên</label>
                         <select name="nhanVien" class="form-control">
                             @foreach($user as $row)
-                            <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
+                                @if($row->active == true)
+                                    <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>

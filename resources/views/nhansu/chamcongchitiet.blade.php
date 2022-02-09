@@ -54,13 +54,15 @@
                         <label>Nhân viên</label>
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <select name="nhanVien" class="form-control">
-                            @foreach($user as $row)                            
-                                <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
+                            @foreach($user as $row)
+                                @if($row->active == true)
+                                    <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
+                                @endif
                             @endforeach
                         </select>
                         @else
                         <select name="nhanVien" class="form-control">
-                                <option value="{{Auth::user()->id}}">{{Auth::user()->userDetail->surname}}</option>
+                            <option value="{{Auth::user()->id}}">{{Auth::user()->userDetail->surname}}</option>
                         </select>
                         @endif
                     </div>
@@ -71,24 +73,27 @@
                 </div>  
                 <br/>
                 <input type="hidden" name="idChiTiet">
-                <table class="table table-striped table-bordered">
-                    <tr class="text-center">
-                        <th>Ngày</th>
-                        <th>Vào Sáng</th>
-                        <th>Ra Sáng</th>
-                        <th>Vào Chiều</th>
-                        <th>Ra Chiều</th>
-                        <th>Công sáng</th>
-                        <th>Công chiều</th>
-                        <th>Trể/Sớm Sáng</th>
-                        <th>Trể/Sớm Chiều</th>
-                        <th>Trạng thái</th>
-                        <th>Tác vụ</th>
-                    </tr>
-                    <tbody class="text-center" id="chiTietCong">
-                       
-                    </tbody>                    
-                </table>                  
+                <div style="overflow: auto;">
+                    <table class="table table-striped table-bordered">
+                        <tr class="text-center">
+                            <th>Ngày</th>
+                            <th>Vào Sáng</th>
+                            <th>Ra Sáng</th>
+                            <th>Vào Chiều</th>
+                            <th>Ra Chiều</th>
+                            <th>Công sáng</th>
+                            <th>Công chiều</th>
+                            <th>Trể/Sớm Sáng</th>
+                            <th>Trể/Sớm Chiều</th>
+                            <th>Trạng thái</th>
+                            <th>Phép (hành chính)</th>
+                            <th>Tăng ca (ngoài giờ)</th>
+                        </tr>
+                        <tbody class="text-center" id="chiTietCong">
+                        
+                        </tbody>                    
+                    </table>                  
+                </div>                
             </div>
         </div>
         <!-- /.content -->
@@ -98,7 +103,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Thêm phép</h4>
+                        <h4 class="modal-title">Xin phép (giờ hành chính)</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -147,6 +152,52 @@
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                         <button id="btnAdd" class="btn btn-primary" form="addForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- Medal Add Tăng ca -->
+    <div class="modal fade" id="addModalTangCa">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Xin phép tăng ca (ngoài giờ)</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form method="POST" enctype="multipart/form-data" id="addFormTangCa" autocomplete="off">
+                            {{csrf_field()}}         
+                            <input type="hidden" name="idUserXinTangCa">    
+                            <div class="form-group row">
+                                <div class="col-md-2"><input type="text" name="ngayXinTangCa" readonly class="form-control"></div>
+                                <div class="col-md-2"><input type="text" name="thangXinTangCa" readonly class="form-control"></div>
+                                <div class="col-md-2"><input type="text" name="namXinTangCa" readonly class="form-control"></div>
+                            </div>   
+                            <div class="form-group">
+                               <label>Lý do xin</label> 
+                               <input type="text" name="lyDoTangCa" class="form-control" placeholder="Lý do xin">
+                            </div>
+                            <div class="form-group">
+                               <label>Người duyệt</label> 
+                               <select name="nguoiDuyetTangCa" class="form-control">
+                                  @foreach($user as $row)
+                                    @if($row->hasRole('lead') && $row->allow == true)
+                                        <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                    @endif                                    
+                                  @endforeach
+                               </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        <button id="btnAddTangCa" class="btn btn-primary" form="addFormTangCa">Lưu</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -203,7 +254,7 @@
                         })
                     }
                 });
-           } 
+           }            
 
            $("#chon").click(function(){
                 $.ajax({
@@ -234,6 +285,13 @@
                 $("input[name=idUserXin]").val($("select[name=nhanVien]").val());
            });
 
+           $(document).on('click','#tangCa', function(){
+                $("input[name=ngayXinTangCa]").val($(this).data('ngay'));
+                $("input[name=thangXinTangCa]").val($(this).data('thang'));
+                $("input[name=namXinTangCa]").val($(this).data('nam'));
+                $("input[name=idUserXinTangCa]").val($("select[name=nhanVien]").val());
+           });
+
 
            $("#btnAdd").click(function(e){
                 e.preventDefault();
@@ -255,6 +313,31 @@
                         Toast.fire({
                             icon: "error",
                             title: "Lỗi! Không thể tạo phép"
+                        })
+                    }
+                });
+           });
+
+           $("#btnAddTangCa").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/nhansu/chitiet/ajax/themtangca')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#addFormTangCa").serialize(),
+                    success: function(response){
+                        $("#addFormTangCa")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#addModalTangCa").modal('hide');
+                        reload();
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: "error",
+                            title: "Lỗi! Không thể xin tăng ca"
                         })
                     }
                 });

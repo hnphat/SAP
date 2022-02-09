@@ -547,7 +547,6 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
     public static $classMap = array (
         'App\\BhPkPackage' => __DIR__ . '/../..' . '/app/BhPkPackage.php',
         'App\\BieuMau' => __DIR__ . '/../..' . '/app/BieuMau.php',
-        'App\\CCImport' => __DIR__ . '/../..' . '/app/CCImport.php',
         'App\\CancelHD' => __DIR__ . '/../..' . '/app/CancelHD.php',
         'App\\CarSale' => __DIR__ . '/../..' . '/app/CarSale.php',
         'App\\ChamCongChiTiet' => __DIR__ . '/../..' . '/app/ChamCongChiTiet.php',
@@ -612,7 +611,6 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\Http\\Middleware\\TypeCarMiddleWare' => __DIR__ . '/../..' . '/app/Http/Middleware/TypeCarMiddleWare.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\WorkMiddleWare' => __DIR__ . '/../..' . '/app/Http/Middleware/WorkMiddleWare.php',
-        'App\\Imports\\ChamCongImport' => __DIR__ . '/../..' . '/app/Imports/ChamCongImport.php',
         'App\\KhoV2' => __DIR__ . '/../..' . '/app/KhoV2.php',
         'App\\Kpi' => __DIR__ . '/../..' . '/app/Kpi.php',
         'App\\LoaiCong' => __DIR__ . '/../..' . '/app/LoaiCong.php',
