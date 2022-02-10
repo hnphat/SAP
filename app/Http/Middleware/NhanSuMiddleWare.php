@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class DuyetMiddleWare
+class NhanSuMiddleWare
 {
     /**
      * Handle an incoming request.
@@ -17,8 +17,8 @@ class DuyetMiddleWare
     public function handle($request, Closure $next)
     {
         if (Auth::user()->hasRole('system') ||
-            Auth::user()->hasRole('car') ||
-            Auth::user()->hasRole('lead'))
+            Auth::user()->hasRole('hcns') ||
+            Auth::user()->hasRole('boss'))
             return $next($request);
         else abort(403);
     }

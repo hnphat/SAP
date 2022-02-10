@@ -97,6 +97,7 @@ return array(
     'App\\SaleOff' => $baseDir . '/app/SaleOff.php',
     'App\\SaleOffV2' => $baseDir . '/app/SaleOffV2.php',
     'App\\TaiLieu' => $baseDir . '/app/TaiLieu.php',
+    'App\\TangCa' => $baseDir . '/app/TangCa.php',
     'App\\TraXe' => $baseDir . '/app/TraXe.php',
     'App\\TypeCar' => $baseDir . '/app/TypeCar.php',
     'App\\TypeCarDetail' => $baseDir . '/app/TypeCarDetail.php',

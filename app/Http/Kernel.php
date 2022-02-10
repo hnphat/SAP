@@ -80,5 +80,7 @@ class Kernel extends HttpKernel
         'f_typecar' => \App\Http\Middleware\TypeCarMiddleWare::class,
         'f_report' => \App\Http\Middleware\ReportMiddleWare::class,
         'f_work' => \App\Http\Middleware\WorkMiddleWare::class,
+        'f_nhansu' => \App\Http\Middleware\NhanSuMiddleWare::class,
+        'f_nhansupheduyet' => \App\Http\Middleware\NhanSuPheDuyetMiddleWare::class,
     ];
 }

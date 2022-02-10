@@ -130,8 +130,7 @@
                                     </a>
                                 </li>
                                 @endif
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                     <li class="nav-item">
                                         <a href="{{route('sale.banggiaxe')}}" class="nav-link">
                                             <i class="fas fa-caret-right nav-icon"></i>
@@ -219,7 +218,7 @@
                         </li>
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('car'))
                         <li class="nav-item">
                             <a href="{{route('laithu.duyet')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -298,6 +297,12 @@
                                 <a href="{{route('nhansu.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Quản lý chấm công</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('chotcong.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Quản lý chốt công</p>
                                 </a>
                             </li>
                             @endif

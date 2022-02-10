@@ -316,7 +316,7 @@ class LaiThuController extends Controller
             $hoSo .= "Chìa khóa phụ; ";
         }
 
-        if ($check->mau != 'Xe tải' && Auth::user()->hasRole('mkt')) {
+        if ($check->mau != 'Xe tải' && Auth::user()->hasRole('car')) {
             if ($check->status == 'T') {
                 $reg = DangKySuDung::where('id', $request->_id)->update([
                     "allow" => true,
@@ -420,7 +420,7 @@ class LaiThuController extends Controller
     public function approve(Request $request) {
         $car = DangKySuDung::find($request->id);
          $check = $car->xeLaiThu;
-         if ($check->mau != 'Xe tải' && Auth::user()->hasRole('mkt')) {
+         if ($check->mau != 'Xe tải' && Auth::user()->hasRole('car')) {
              $car->tra_allow = true;
             $car->request_tra = true;
             $car->save();

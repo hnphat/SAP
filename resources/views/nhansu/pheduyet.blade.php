@@ -143,7 +143,7 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.user_duyet == true)
-                                return "";
+                                return "<button id='xoa' data-id='"+row.id+"' class='btn btn-danger btn-sm'>Xóa</button>";
                             else
                                 return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'>Không duyệt</button>&nbsp;" + 
                             "<button id='duyet' data-id='"+row.id+"' class='btn btn-success btn-sm'>Duyệt</button>";
@@ -163,6 +163,34 @@
                 if(confirm('Xác nhận không duyệt phép này và xóa phiếu?')) {
                     $.ajax({
                         url: "{{url('management/nhansu/xinphep/ajax/delete/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            // Delete phép đã duyệt
+            $(document).on('click','#xoa', function(){
+                if(confirm('Xác nhận xóa phiếu đã duyệt?')) {
+                    $.ajax({
+                        url: "{{url('management/nhansu/xinphep/ajax/deleteadmin/')}}",
                         type: "post",
                         dataType: "json",
                         data: {

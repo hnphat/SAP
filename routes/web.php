@@ -332,12 +332,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'nhansu'], function(){
-        Route::get('quanlychamcong','NhanSuController@quanLyChamCong')->name('nhansu.panel');
+        Route::get('quanlychamcong','NhanSuController@quanLyChamCong')->name('nhansu.panel')->middleware(['f_nhansu']);
         Route::get('quanly/ajax/getnhanvien','NhanSuController@quanLyChamCongGetNhanVien');
         Route::post('quanly/ajax/postnhanvien','NhanSuController@quanLyChamCongPostNhanVien');
       
         // LoaiPhep -> Quản lý loại phép
-        Route::get('quanlyphep','NhanSuController@quanLyPhep')->name('quanlyphep.panel');
+        Route::get('quanlyphep','NhanSuController@quanLyPhep')->name('quanlyphep.panel')->middleware(['f_nhansu']);
         Route::get('quanlyphep/ajax/getlist','NhanSuController@quanLyPhepGetList');
         Route::post('quanlyphep/ajax/post','NhanSuController@quanLyPhepPost');
         Route::post('quanlyphep/ajax/delete','NhanSuController@quanLyPhepDelete');
@@ -351,34 +351,41 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('xinphep','NhanSuController@xinPhepGetList')->name('xinphep.panel');
         Route::get('xinphep/ajax/getnhanvien','NhanSuController@xinPhepGetNhanVien');
         Route::post('xinphep/ajax/delete','NhanSuController@xinPhepDelete');
+        Route::post('xinphep/ajax/deleteadmin','NhanSuController@xinPhepDeleteAdmin')->middleware(['f_nhansu']);
         Route::get('xinphep/ajax/getphepnam/{id}/nam/{nam}','NhanSuController@getPhepNam');
 
         // xin tăng ca
         Route::post('chitiet/ajax/themtangca','NhanSuController@chiTietThemTangCa');
 
         // phê duyệt phép
-        Route::get('pheduyet','NhanSuController@pheDuyetGetList')->name('pheduyet.panel');
+        Route::get('pheduyet','NhanSuController@pheDuyetGetList')->name('pheduyet.panel')->middleware(['f_nhansupheduyet']);
         Route::get('pheduyet/ajax/getlist','NhanSuController@pheDuyetPhepGetList');
         Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep');
 
         // phê duyệt tăng ca
-        Route::get('pheduyettangca','NhanSuController@getTangCaPanel')->name('tangca.panel');
+        Route::get('pheduyettangca','NhanSuController@getTangCaPanel')->name('tangca.panel')->middleware(['f_nhansupheduyet']);
         Route::get('pheduyettangca/ajax/getlist','NhanSuController@pheDuyetTangCaGetList');
         Route::post('pheduyettangca/ajax/pheduyet','NhanSuController@pheDuyetTangCa');
         Route::post('capnhattangca/ajax/capnhat','NhanSuController@capNhatTangCa');
         Route::post('pheduyettangca/ajax/delete','NhanSuController@tangCaDelete');
 
          // tổng hợp
-        Route::get('tonghop','NhanSuController@getTongHop')->name('tonghop.panel');
+        Route::get('tonghop','NhanSuController@getTongHop')->name('tonghop.panel')->middleware(['f_nhansu']);
         Route::get('tonghop/ajax/getngay','NhanSuController@tongHopXemNgay');
         Route::get('tonghop/ajax/getthang','NhanSuController@tongHopXemThang');
 
          // Xem tháng
-        Route::get('xemthang/ngay/{ngay}/thang/{thang}/nam/{nam}','NhanSuController@xemThang')->name('xemthang.panel');
+        Route::get('xemthang/ngay/{ngay}/thang/{thang}/nam/{nam}','NhanSuController@xemThang')->name('xemthang.panel')->middleware(['f_nhansu']);
 
         // Import Excel
-        Route::get('importexcel','NhanSuController@getImport')->name('import.panel');
+        Route::get('importexcel','NhanSuController@getImport')->name('import.panel')->middleware(['f_nhansu']);
         Route::post('import','NhanSuController@importExcel')->name('import.post');
+
+         // Chốt công
+        Route::get('chotcong','NhanSuController@getChotCong')->name('chotcong.panel')->middleware(['f_nhansu']);
+        Route::post('chotcong/ajax/chot','NhanSuController@chotCong');
+        Route::get('chotcong/ajax/get','NhanSuController@chiTietChotCong');
+        Route::post('chotcong/ajax/huy','NhanSuController@huyChotCong');
     });
 
     Route::get('qr/{content}', function ($content) {

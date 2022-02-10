@@ -636,6 +636,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\SaleOff' => __DIR__ . '/../..' . '/app/SaleOff.php',
         'App\\SaleOffV2' => __DIR__ . '/../..' . '/app/SaleOffV2.php',
         'App\\TaiLieu' => __DIR__ . '/../..' . '/app/TaiLieu.php',
+        'App\\TangCa' => __DIR__ . '/../..' . '/app/TangCa.php',
         'App\\TraXe' => __DIR__ . '/../..' . '/app/TraXe.php',
         'App\\TypeCar' => __DIR__ . '/../..' . '/app/TypeCar.php',
         'App\\TypeCarDetail' => __DIR__ . '/../..' . '/app/TypeCarDetail.php',

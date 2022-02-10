@@ -187,7 +187,7 @@
                                <label>Người duyệt</label> 
                                <select name="nguoiDuyetTangCa" class="form-control">
                                   @foreach($user as $row)
-                                    @if($row->hasRole('lead') && $row->allow == true)
+                                    @if($row->hasRole('lead'))
                                         <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
                                     @endif                                    
                                   @endforeach
@@ -341,6 +341,40 @@
                         })
                     }
                 });
+           });
+
+
+           $(document).on('click','#xacNhan', function(){
+                if (confirm("Xác nhận giờ công?\nLưu ý: Sau khi xác nhận sẽ không được chỉnh sửa và thêm phép")){
+                    $.ajax({
+                        url: "{{url('management/nhansu/chotcong/ajax/chot')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "id": $("select[name=nhanVien]").val(),
+                            "_token": "{{csrf_token()}}",
+                            "thang": $(this).data('thang'),
+                            "nam": $(this).data('nam'),
+                            "ngayCong": $(this).data('ngaycong'),
+                            "tangCa": $(this).data('tangca'),
+                            "tongTre": $(this).data('tongtre'),
+                            "khongPhep": $(this).data('khongphep'),
+                        },
+                        success: function(response){
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reload();
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: "error",
+                                title: "Lỗi! Không thể xác nhận giờ công"
+                            })
+                        }
+                    });
+                }
            });
         });
     </script>
