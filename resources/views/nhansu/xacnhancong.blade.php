@@ -55,12 +55,24 @@
                         <label>&nbsp;</label><br/>
                         <button id="chon" type="button "class="btn btn-xs btn-info">Chọn</button>
                     </div>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label><br/>
+                        <button id="xacNhanAll" type="button "class="btn btn-xs btn-success">Xác nhận tất cả</button>
+                    </div>
+                    <div class="col-md-1">
+                        <label>&nbsp;</label><br/>
+                        <button id="huyAll" type="button "class="btn btn-xs btn-warning">Hủy tất cả</button>
+                    </div>
                 </div>  
                 <br/>
+                <p id="loading" style="text-align:center;display:none;">
+                    <img src="{{asset('images/loading.gif')}}" alt="Loading" style="width: 100px; height:auto;"/>
+                </p>
                 <table class="table table-striped table-bordered">
                     <tr class="text-center">
                         <th>Nhân viên</th>
                         <th>Ngày công</th>
+                        <th>Phép năm</th>
                         <th>Tăng ca</th>
                         <th>Tổng trể/sớm</th>
                         <th>Không phép</th>
@@ -175,6 +187,67 @@
                     });
                 }
             });
+
+            //Xác nhận tất cả
+            $("#xacNhanAll").click(function(){
+                $.ajax({
+                    url: "{{url('management/nhansu/chotcong/ajax/xacnhanall')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "thang": $("select[name=thang]").val(),
+                        "nam": $("select[name=nam]").val()
+                    },
+                    beforeSend: function() {
+                        $("#loading").show();
+                    },
+                    success: function(response){    
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })                    
+                        reload();                                  
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: "error",
+                            title: "Lỗi! Không thể tải chi tiết chốt công"
+                        })
+                    },
+                    complete: function() {
+                        $("#loading").hide();
+                    }
+                });
+           });
+
+
+           // Hủy tất cả
+           $("#huyAll").click(function(){
+                $.ajax({
+                    url: "{{url('management/nhansu/chotcong/ajax/huyall')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "thang": $("select[name=thang]").val(),
+                        "nam": $("select[name=nam]").val()
+                    },
+                    success: function(response){    
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })                    
+                        reload();                                  
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: "error",
+                            title: "Lỗi! Không thể tải chi tiết chốt công"
+                        })
+                    }
+                });
+           });
         });
     </script>
 @endsection

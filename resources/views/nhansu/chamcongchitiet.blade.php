@@ -359,6 +359,7 @@
                             "tangCa": $(this).data('tangca'),
                             "tongTre": $(this).data('tongtre'),
                             "khongPhep": $(this).data('khongphep'),
+                            "phepNam": $(this).data('phepnam'),
                         },
                         success: function(response){
                             Toast.fire({

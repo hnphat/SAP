@@ -386,6 +386,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chotcong/ajax/chot','NhanSuController@chotCong');
         Route::get('chotcong/ajax/get','NhanSuController@chiTietChotCong');
         Route::post('chotcong/ajax/huy','NhanSuController@huyChotCong');
+        Route::post('chotcong/ajax/xacnhanall','NhanSuController@xacNhanAll');
+        Route::post('chotcong/ajax/huyall','NhanSuController@huyAll');
     });
 
     Route::get('qr/{content}', function ($content) {

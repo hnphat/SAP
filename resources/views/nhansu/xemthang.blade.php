@@ -40,6 +40,9 @@
             <button id="xemThang" type="button "class="btn btn-xs btn-warning">Xem</button>
         </div>
     </div>  
+    <p id="loading" style="text-align:center;display:none;">
+        <img src="{{asset('images/loading.gif')}}" alt="Loading" style="width: 100px; height:auto;"/>
+    </p>
     <div>
         <br/>
         <div id="noiDung">
@@ -67,11 +70,17 @@
                         "thang": $("select[name=thang]").val(),
                         "nam": $("select[name=nam]").val()
                     },
+                    beforeSend: function() {
+                        $("#loading").show();
+                    },
                     success: function(response){                        
                         $("#noiDung").html(response);                                   
                     },
                     error: function(){
                         alert('Lỗi');
+                    },
+                    complete: function() {
+                        $("#loading").hide();
                     }
                 });
            }); 

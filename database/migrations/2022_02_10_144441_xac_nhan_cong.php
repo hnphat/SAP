@@ -19,6 +19,7 @@ class XacNhanCong extends Migration
             $table->foreign('id_user')->references('id')->on('users');
             $table->integer('thang');
             $table->integer('nam');
+            $table->float('phepNam', 8, 2)->nullable();
             $table->float('ngayCong', 8, 2)->nullable();
             $table->float('tangCa', 8, 2)->nullable();
             $table->integer('tongTre')->nullable();
