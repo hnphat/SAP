@@ -99,7 +99,12 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
-                    { "data": "nguoixin" },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                            return "N " + row.nguoixin;                            
+                        } 
+                    },
                     { 
                         "data": null,
                         render: function(data, type, row) {

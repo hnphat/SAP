@@ -791,7 +791,6 @@ class NhanSuController extends Controller
                 <tr>
                     <td>".$i."/".$thang."/".$nam."</td>
                     <td>".$xinPhep->loaiPhep->tenPhep."</td>
-                    <td>".$xinPhep->loaiPhep->moTa."</td>
                     <td>".$xinPhep->lyDo."</td>
                     <td>".$xinPhep->buoi."</td>
                     <td>".$xinPhep->userDuyet->userDetail->surname."</td>
@@ -803,7 +802,6 @@ class NhanSuController extends Controller
                 echo "
                 <tr>
                     <td>".$i."/".$thang."/".$nam."</td>
-                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1510,7 +1508,6 @@ class NhanSuController extends Controller
                     }
                     
                 }               
-                
                 // Xử lý chấm công ---------------
                 foreach($arrmain as $row) {
                     $gioSang = 0;

@@ -88,7 +88,6 @@
                     <tr class="text-center">
                         <th>Ngày xin phép</th>
                         <th>Loại Phép</th>
-                        <th>Mô tả</th>
                         <th>Lý do</th>
                         <th>Buổi</th>
                         <th>Người duyệt</th>

@@ -71,7 +71,7 @@ class EventRealController extends Controller
 
         $total_full = $getWork + $checkWork;
 
-        if (Auth::user()->hasRole('mkt'))
+        if (Auth::user()->hasRole('car'))
             $total_full += $reg + $traXe;
 
         if (Auth::user()->hasRole('hcns'))
@@ -92,7 +92,7 @@ class EventRealController extends Controller
 
         if (Auth::user()->hasRole('work'))
             $s_work = 1;
-        if (Auth::user()->hasRole('mkt'))
+        if (Auth::user()->hasRole('car'))
             $s_xedemo = 1;
         if (Auth::user()->hasRole('hcns'))
             $s_xang = 1;

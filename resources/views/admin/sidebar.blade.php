@@ -10,7 +10,7 @@
                 </a>
             </p>
             <p>
-                <a style="text-decoration: none;" href="{{route("working.list")}}" class="left">
+                <a style="text-decoration: none;" href="{{route('working.list')}}" class="left">
                     Đang thực hiện &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="badge badge-warning" id="r_working"></span>
                 </a>
