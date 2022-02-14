@@ -24,6 +24,7 @@ class TangCa extends Migration
             $table->integer('nam');
             $table->string('lyDo');
             $table->boolean('user_duyet')->default(false);
+            $table->boolean('duyet')->default(false);
             $table->string('time1')->nullable();
             $table->string('time2')->nullable();
             $table->float('heSo', 8, 2)->nullable();

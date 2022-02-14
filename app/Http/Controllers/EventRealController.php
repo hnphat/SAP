@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DangKySuDung;
 use App\DeNghiCapXang;
+use App\XinPhep;
+use App\TangCa;
 use App\ReportWork;
 use App\EventReal;
 use Session;
@@ -21,11 +23,25 @@ class EventRealController extends Controller
         $s_xang_lead = 0;
         $s_duyet_tbp = 0;
         $total_full = 0;
+        // Xử lý duyệt phép và tăng ca
+        $s_duyetphep = 0;
+        $s_duyettangca = 0;
 
         $duyettbp = DangKySuDung::where([
             ['id_lead_check','=', Auth::user()->id],
             ['id_lead_check_status','=', false]
         ])->orderBy('id', 'DESC')->get()->count();
+
+        $duyetPhep = XinPhep::where([
+            ['duyet','=', false],
+            ['user_duyet','=', true]
+        ])->get()->count();
+
+        $duyetTangCa = TangCa::where([
+            ['duyet','=', false],
+            ['user_duyet','=', true]
+        ])->get()->count();
+
 
         $duyetXang = DeNghiCapXang::where([
             ['fuel_allow','=', false]
@@ -88,6 +104,11 @@ class EventRealController extends Controller
             $s_xang = 1;
             $s_xang_lead = 1;
             $s_duyet_tbp = 1;
+            // Xử lý tăng ca và phép
+            $s_duyetphep = 1;
+            $s_duyettangca = 1;
+
+            $total_full += ($duyetPhep + $duyetTangCa);
         }
 
         if (Auth::user()->hasRole('work'))
@@ -107,6 +128,8 @@ class EventRealController extends Controller
             's_xang' => $s_xang,
             's_xang_lead' => $s_xang_lead,
             's_duyet_tbp' => $s_duyet_tbp,
+            's_duyet_phep' => $s_duyetphep,
+            's_duyet_tangca' => $s_duyettangca,
             'newWork' => $getWork,
             'working' => $working,
             'checkWork' => $checkWork,
@@ -115,6 +138,8 @@ class EventRealController extends Controller
             'tra' => $traXe,
             'duyetXang' => $duyetXang,
             'duyetXangLead' => $duyetXangLead,
+            'phep' => $duyetPhep,
+            'tangCa' => $duyetTangCa,
             'total_full' => $total_full
         ];
         $response = new StreamedResponse();

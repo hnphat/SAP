@@ -388,6 +388,16 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chotcong/ajax/huy','NhanSuController@huyChotCong');
         Route::post('chotcong/ajax/xacnhanall','NhanSuController@xacNhanAll');
         Route::post('chotcong/ajax/huyall','NhanSuController@huyAll');
+
+        // Quản lý phê duyệt
+        Route::get('quanlypheduyetphep','NhanSuController@getQuanLyPheDuyet')->name('quanlypheduyet.panel')->middleware(['f_nhansupheduyet']);
+        Route::get('quanlypheduyetphep/ajax/getlist','NhanSuController@quanLyPheDuyetGetList');
+        Route::post('quanlypheduyetphep/ajax/seen','NhanSuController@quanLyPheDuyetSeen');
+
+        // Quản lý phê duyệt tăng ca
+        Route::get('quanlypheduyettangca','NhanSuController@getQuanLyPheDuyetTangCa')->name('quanlypheduyettangca.panel')->middleware(['f_nhansupheduyet']);
+        Route::get('quanlypheduyettangca/ajax/getlist','NhanSuController@quanLyPheDuyetTangCaGetList');
+        Route::post('quanlypheduyettangca/ajax/seen','NhanSuController@quanLyPheDuyetTangCaSeen');
     });
 
     Route::get('qr/{content}', function ($content) {

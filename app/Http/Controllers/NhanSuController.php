@@ -2075,4 +2075,106 @@ class NhanSuController extends Controller
                 "message" => "Lỗi hủy chốt tất cả chấm công"
             ]);
     }
+
+    public function getQuanLyPheDuyet() {
+        return view('nhansu.viewphep');
+    }
+
+    public function quanLyPheDuyetGetList() {
+            $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
+            ->join('users as u','u.id','=','xin_phep.id_user')
+            ->join('users_detail as d','d.id_user','=','u.id')
+            ->join('users as un','un.id','=','xin_phep.id_user_duyet')
+            ->join('users_detail as dn','dn.id_user','=','un.id')
+            ->join('loai_phep as p','p.id','=','xin_phep.id_phep')
+            ->where([
+                ['duyet','=', false],
+                ['user_duyet','=', true]
+            ])
+            ->orderby('user_duyet','asc')
+            ->get();    
+    
+            if ($xinPhep)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã tải dữ liệu",
+                    "data" => $xinPhep
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi tải dữ liệu"
+                ]);        
+    }
+
+    public function quanLyPheDuyetSeen(Request $request) {
+        $xinPhep = XinPhep::find($request->id);
+        $xinPhep->duyet = true;
+        $xinPhep->save();
+        if ($xinPhep)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã xem",
+                "data" => $xinPhep
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi thao tác"
+            ]);    
+    }
+
+    public function getQuanLyPheDuyetTangCa() {
+        return view('nhansu.viewtangca');
+    }
+
+    public function quanLyPheDuyetTangCaGetList() {
+        $tangCa = TangCa::select("tang_ca.heSo","tang_ca.time2","tang_ca.time1","tang_ca.created_at","tang_ca.updated_at","tang_ca.id_user_duyet","tang_ca.id","tang_ca.ngay","tang_ca.thang","tang_ca.nam","tang_ca.lyDo","tang_ca.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin")
+        ->join('users as u','u.id','=','tang_ca.id_user')
+        ->join('users_detail as d','d.id_user','=','u.id')
+        ->join('users as un','un.id','=','tang_ca.id_user_duyet')
+        ->join('users_detail as dn','dn.id_user','=','un.id')
+        ->where([
+            ['duyet','=', false],
+            ['user_duyet','=', true]
+        ])
+        ->orderby('user_duyet','desc')
+        ->get();   
+
+        if ($tangCa)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã tải dữ liệu",
+                "data" => $tangCa
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi tải dữ liệu"
+            ]);        
+    }
+
+    public function quanLyPheDuyetTangCaSeen(Request $request) {
+        $tangCa = TangCa::find($request->id);
+        $tangCa->duyet = true;
+        $tangCa->save();
+        if ($tangCa)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã xem"
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi thao tác"
+            ]);    
+    }
 }

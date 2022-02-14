@@ -58,7 +58,7 @@
         <div id="real_capxang_lead" style="display: none;">
             <h5>CẤP XĂNG TBP</h5>
             <p>
-            <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
+                <a style="text-decoration: none;" href="{{route('capxang.duyet')}}" class="left">
                     Chờ duyệt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="badge badge-danger" id="r_capXang_lead"></span>
                 </a>
@@ -85,6 +85,21 @@
                 </a>
             </p>
         </div>
+        <div id="real_duyet" style="display: none;">
+            <h5>PHÉP/TĂNG CA</h5>
+            <p>
+                <a style="text-decoration: none;" href="{{route('quanlypheduyet.panel')}}" class="left">
+                    Phép &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_duyet_phep"></span>
+                </a>
+            </p>
+            <p>
+                <a style="text-decoration: none;" href="{{route('quanlypheduyettangca.panel')}}" class="left">
+                    Tăng ca &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_duyet_tangca"></span>
+                </a>
+            </p>
+        </div>
     </div>
 </aside>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -94,6 +109,10 @@
         es.onmessage = function(e) {
             console.log(e.data);
             let fullData = JSON.parse(e.data);
+            if (fullData.s_duyet_phep == 1 && fullData.s_duyet_tangca == 1)
+                $('#real_duyet').show();
+            else
+                $('#real_duyet').hide();
             if (fullData.s_work == 1)
                 $('#real_work').show();
             else
@@ -118,6 +137,14 @@
             else
                 $('#real_xedemo_tbp').hide();
 
+            if (fullData.phep != 0)
+                $('#r_duyet_phep').text(fullData.phep);
+            else
+                $('#r_duyet_phep').text("");
+            if (fullData.tangCa != 0)
+                $('#r_duyet_tangca').text(fullData.tangCa);
+            else
+                $('#r_duyet_tangca').text("");
             if (fullData.newWork != 0)
                 $('#r_newWork').text(fullData.newWork);
             else
