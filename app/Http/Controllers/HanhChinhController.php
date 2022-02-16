@@ -16,7 +16,9 @@ class HanhChinhController extends Controller
     }
 
     public function getBieuMau() {
-        $result = BieuMau::select('*')->orderBy('id', 'desc')->get();
+        $result = BieuMau::select('*')
+        ->where('type','!=', 'CT')
+        ->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([
                 'message' => 'Tải file thành công!',
@@ -162,6 +164,50 @@ class HanhChinhController extends Controller
         $result = BieuMau::select('*')->where([
             ['allow','=',true],
             ['type','=','TB']
+        ])->orderBy('id', 'desc')->get();
+        if ($result) 
+            return response()->json([
+                'message' => 'Đã tải dữ liệu!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        else
+            return response()->json([
+                'message' => 'Lỗi tải dữ liệu!',
+                'code' => 500
+            ]);
+    }
+
+    // Chứng từ/mộc
+    public function showChungTuMoc() {
+        return view('ketoan.chungtumoc');
+    }
+    
+    public function showXemChungTu() {
+        return view('ketoan.xemchungtu');
+    }
+
+    public function loadChungTu() {
+        $result = BieuMau::select('*')->where([
+            ['type','=','CT']
+        ])->orderBy('id', 'desc')->get();
+        if ($result) 
+            return response()->json([
+                'message' => 'Đã tải dữ liệu!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        else
+            return response()->json([
+                'message' => 'Lỗi tải dữ liệu!',
+                'code' => 500
+            ]);
+    }
+
+    public function xemChungTu() {
+        $result = BieuMau::select('*')->where([
+            ['allow','=',true],
+            ['type','=','CT']
         ])->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([

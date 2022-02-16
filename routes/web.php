@@ -329,6 +329,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Hồ sơ nhân viên
         Route::get('hoso','HanhChinhController@getHoSo')->name('hanhchinh.hoso');
         Route::post('gethoso','HanhChinhController@getHoSoWithName');
+
+        // Chứng từ mộc
+        Route::get('list/chungtumoc','HanhChinhController@showChungTuMoc')->name('chungtu.panel');
+        Route::get('ajax/loadchungtu','HanhChinhController@loadChungTu');
+        Route::get('ajax/xemchungtu','HanhChinhController@xemChungTu');
+
+         // Xem Chứng từ mộc
+         Route::get('list/xemchungtumoc','HanhChinhController@showXemChungTu')->name('xemchungtu.panel');
     });
 
     Route::group(['prefix' => 'nhansu'], function(){

@@ -261,8 +261,9 @@
                         </li>
                     </ul>
                 </li>
-                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system')||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-money-check-alt"></i>
@@ -272,10 +273,25 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
                         <li class="nav-item">
                             <a href="{{route('ketoan')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Hợp đồng xe</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('chungtu.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Chứng từ/mộc</p>
+                            </a>
+                        </li>
+                        @endif
+                        <li class="nav-item">
+                            <a href="{{route('xemchungtu.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Xem Chứng từ/mộc</p>
                             </a>
                         </li>
                     </ul>
