@@ -7,6 +7,7 @@ use App\LoaiPhep;
 use App\User;
 use App\XinPhep;
 use App\TangCa;
+use App\QuanLyTangCa;
 use App\XacNhanCong;
 use App\ChamCongChiTiet;
 use Illuminate\Support\Facades\Auth;
@@ -248,8 +249,24 @@ class NhanSuController extends Controller
         $coPhep = 0;
         $khongPhep = $day;
         $lamThem = 0;
-        $phepNam = 0;       
-        for($i = 1; $i <= $day; $i++) {
+        $phepNam = 0;  
+        $khongPhepCaNgay = 0;    
+        for($i = 1; $i <= $day; $i++) {            
+            $tangCaGioHanhChinh = 0; 
+            $thuMay = "";
+            $specDate = $nam."-".$thang."-".$i;
+            $ngayThu = array('Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4','Thứ 5','Thứ 6', 'Thứ 7');
+            $numThu =  date('w', strtotime($specDate));
+            switch((int)$numThu){
+                case 0: $thuMay = "Chủ nhật"; break;
+                case 1: $thuMay = "Thứ 2"; break;
+                case 2: $thuMay = "Thứ 3"; break;
+                case 3: $thuMay = "Thứ 4"; break;
+                case 4: $thuMay = "Thứ 5"; break;
+                case 5: $thuMay = "Thứ 6"; break;
+                case 6: $thuMay = "Thứ 7"; break;
+            }
+
             $chiTiet = ChamCongChiTiet::select("*")
             ->where([
                 ['id_user','=',$request->id],
@@ -274,6 +291,14 @@ class NhanSuController extends Controller
                 ['nam','=',$nam]
             ])->first();
 
+            $quanLy = QuanLyTangCa::select("*")
+            ->where([
+                ['id_user','=',$request->id],
+                ['ngay','=',$i],
+                ['thang','=',$thang],
+                ['nam','=',$nam]
+            ])->first();
+
             $xacNhan = XacNhanCong::where([
                 ['id_user','=',$request->id],
                 ['thang','=',$thang],
@@ -285,6 +310,13 @@ class NhanSuController extends Controller
                 $khongPhep -= 1;
             } elseif ($xinPhep != null && ($xinPhep->treSang == 0 && $xinPhep->treChieu == 0)) {
                 $khongPhep -= 1;
+            }
+
+            if ($chiTiet === null && !\HelpFunction::isSunday($i,$thang,$nam)) {
+                if ($xinPhep === null)
+                    $khongPhepCaNgay += 1;
+                elseif ($xinPhep->user_duyet == false)
+                    $khongPhepCaNgay += 1;
             }
 
             $stt = "";
@@ -334,7 +366,7 @@ class NhanSuController extends Controller
                     $to_time = strtotime($tangCa->time2);
                     $from_time = strtotime($tangCa->time1);
                     $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
-                    $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."</strong> (giờ)</span>";
+                    $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."h</strong> (Đêm)</span>";
                     $lamThem += $gioTangCa;
                 }                   
                 else 
@@ -345,6 +377,16 @@ class NhanSuController extends Controller
             }
 
             if($chiTiet !== null && $chiTiet->ngay == $i && $chiTiet->thang == $thang && $chiTiet->nam == $nam) {
+                
+                if ($quanLy !== null) {
+                    if ($xinPhep !== null && $xinPhep->user_duyet == true)
+                        $tangCaGioHanhChinh = (($xinPhep->gioSang + $xinPhep->gioChieu) * $quanLy->heSo);
+                    else {
+                        $tangCaGioHanhChinh = (($chiTiet->gioSang + $chiTiet->gioChieu)* $quanLy->heSo);
+                    }             
+                    $lamThem += $tangCaGioHanhChinh;   
+                } 
+
                 if ($chiTiet->gioSang != 4 || $chiTiet->gioChieu != 4) {
                     if ($flag && !$xacNhan) 
                         $btnXinPhep = "<button id='xinPhep' data-toggle='modal' data-target='#addModal' data-ngay='".$chiTiet->ngay."' data-thang='".$chiTiet->thang."' data-nam='".$chiTiet->nam."' class='btn btn-sm btn-success'>Xin phép</button>";
@@ -353,7 +395,7 @@ class NhanSuController extends Controller
                 }        
                 echo "
                 <tr>
-                    <td>".$theDay."</td>
+                    <td>".$theDay."<br/> ".$thuMay."</td>
                     <td class='text-success'>".$chiTiet->vaoSang." $phepSang</td>
                     <td class='text-success'>".$chiTiet->raSang." $phepSang</td>
                     <td class='text-success'>".$chiTiet->vaoChieu." $phepChieu</td>
@@ -364,16 +406,20 @@ class NhanSuController extends Controller
                     <td class='text-danger'>".$chiTiet->treChieu." $treChieu (phút)</td>
                     <td>".$stt."</td>
                     <td>".$btnXinPhep."</td>
-                    <td>".$btnTangCa."</td>
+                    <td>".$btnTangCa."<br/><span style='color:blue;'>".($tangCaGioHanhChinh == 0 ? "" : $tangCaGioHanhChinh . "h (Ngày)")."</span></td>
                 </tr>
                 ";
 
                 if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                     $tongTre += ($xinPhep->treSang + $xinPhep->treChieu);
-                    $tongCong += ($xinPhep->gioSang + $xinPhep->gioChieu);
+                    if ($quanLy !== null) {
+                    } else
+                        $tongCong += ($xinPhep->gioSang + $xinPhep->gioChieu);
                 } else {
                     $tongTre += ($chiTiet->treSang + $chiTiet->treChieu);
-                    $tongCong += ($chiTiet->gioSang + $chiTiet->gioChieu);
+                    if ($quanLy !== null) {
+                    } else 
+                        $tongCong += ($chiTiet->gioSang + $chiTiet->gioChieu);
                 }         
             }
             else {
@@ -393,7 +439,7 @@ class NhanSuController extends Controller
 
                 echo "
                 <tr>
-                    <td>".$theDay."</td>
+                    <td>".$theDay."<br/> ".$thuMay."</td>
                     <td class='text-success'>".$phepSang."</td>
                     <td class='text-success'>".$phepSang."</td>
                     <td class='text-success'>".$phepSang."</td>
@@ -417,15 +463,15 @@ class NhanSuController extends Controller
                 <td class='text-danger'><strong>".$tongTre." (phút)</strong></td>
                 <td><strong>Có phép</strong></td>
                 <td class='text-success'><strong>".$coPhep."</strong></td>
-                <td><strong>Không phép</strong></td>
-                <td class='text-danger'><strong>".$khongPhep."</strong></td>
+                <td><strong>Không phép (cả ngày)</strong></td>
+                <td class='text-danger'><strong>".$khongPhepCaNgay."</strong></td>
                 <td><strong>Tăng ca</strong></td>
-                <td class='text-info'><strong>".$lamThem."</strong> (giờ)</td>
+                <td class='text-info'><strong>".$lamThem." (giờ)</strong><br/> <strong>".round($lamThem/8,2)." (ngày)</strong></td>
             </tr>
             ";
             if (!$xacNhan)
                 echo "<tr>
-                        <td colspan='12'><button type='button' data-thang='".$thang."' data-nam='".$nam."' data-ngaycong='".(round(($tongCong/8),2) - $phepNam)."' data-tangca='".round(($lamThem/8),2)."' data-tongtre='".$tongTre."' data-khongphep='".$khongPhep."' data-phepnam='".$phepNam."' id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
+                        <td colspan='12'><button type='button' data-thang='".$thang."' data-nam='".$nam."' data-ngaycong='".(round(($tongCong/8),2) - $phepNam)."' data-tangca='".round(($lamThem/8),2)."' data-tongtre='".$tongTre."' data-khongphep='".($khongPhep - $khongPhepCaNgay)."' data-khongphepcangay='".$khongPhepCaNgay."' data-phepnam='".$phepNam."' id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
                     </tr>
                     ";
     }
@@ -1034,6 +1080,7 @@ class NhanSuController extends Controller
         $user = User::select("*")->where('active', true)->get();     
         $tt = 1;  
         foreach($user as $row) {
+            $tangCaGioHanhChinh = 0;
             if ($row->hasRole('chamcong')) {
                 $chiTiet = ChamCongChiTiet::where([
                     ['id_user','=',$row->id],
@@ -1059,12 +1106,19 @@ class NhanSuController extends Controller
                     ['nam','=',$nam]
                 ])->first();
 
+                $quanLy = QuanLyTangCa::where([
+                    ['id_user','=',$row->id],
+                    ['ngay','=',$ngay],
+                    ['thang','=',$thang],
+                    ['nam','=',$nam]
+                ])->first();
+
                 if ($tangCa !== null) {
                     if ($tangCa->user_duyet == true) {
                         $to_time = strtotime($tangCa->time2);
                         $from_time = strtotime($tangCa->time1);
                         $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
-                        $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."</strong> (giờ)</span>";
+                        $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."</strong>h (Đêm)</span>";
                     }                   
                     else 
                         $btnTangCa = "<span class='text-secondary'>Đợi duyệt</span>";
@@ -1100,6 +1154,15 @@ class NhanSuController extends Controller
                             $stt = "<strong class='text-danger'>K</strong>";
                         // }                   
                     }
+
+                    if ($quanLy !== null) {
+                        if ($xinPhep !== null && $xinPhep->user_duyet == true)
+                            $tangCaGioHanhChinh = (($xinPhep->gioSang + $xinPhep->gioChieu) * $quanLy->heSo);
+                        else {
+                            $tangCaGioHanhChinh = (($chiTiet->gioSang + $chiTiet->gioChieu)* $quanLy->heSo);
+                        } 
+                    } 
+
                     echo "
                     <tr>
                         <td>".$tt."</td>
@@ -1112,8 +1175,8 @@ class NhanSuController extends Controller
                         <td><span class='text-info'>".$chiTiet->gioChieu."</span> $gioChieu</td>
                         <td><span class='text-danger'>".$chiTiet->treSang."</span> $treSang</td>
                         <td><span class='text-danger'>".$chiTiet->treChieu."</span> $treChieu</td>
-                        <td>$stt</td>
-                        <td>$btnTangCa</td>
+                        <td>".$stt."</td>
+                        <td>".$btnTangCa."<br/><span style='color:blue;'>".($tangCaGioHanhChinh == 0 ? "" : $tangCaGioHanhChinh . "h (Ngày)")."</span></td>
                     </tr>
                     ";
                 } else {
@@ -1823,6 +1886,7 @@ class NhanSuController extends Controller
         $xacNhan->tangCa = $request->tangCa;
         $xacNhan->tongTre = $request->tongTre;
         $xacNhan->khongPhep = $request->khongPhep;
+        $xacNhan->khongPhepNgay = $request->khongPhepCaNgay;
         $xacNhan->save();
         if ($xacNhan)
             return response()->json([
@@ -1864,8 +1928,9 @@ class NhanSuController extends Controller
                             <td class='text-success'>".$xacNhan->ngayCong." (ngày)</td>
                             <td class='text-success'>".$xacNhan->phepNam." (ngày)</td>
                             <td class='text-info'>".$xacNhan->tangCa." (ngày)</td>
-                            <td class='text-warning'>".$xacNhan->tongTre." (phút)</td>
-                            <td class='text-danger'>".$xacNhan->khongPhep."</td>
+                            <td><strong style='color: pink;'>".$xacNhan->tongTre."</strong> (phút)</td>
+                            <td class='text-danger'>".($xacNhan->khongPhep >= 0 ? $xacNhan->khongPhep : 0)."</td>
+                            <td class='text-danger'><strong>".$xacNhan->khongPhepNgay."</strong></td>
                             <td>$stt</td>
                             <td>
                                 <button id='huy' data-id='".$xacNhan->id_user."' data-thang='".$xacNhan->thang."' data-nam='".$xacNhan->nam."' class='btn btn-danger btn-sm'>Hủy</button>
@@ -1876,6 +1941,7 @@ class NhanSuController extends Controller
                     echo "
                         <tr>
                             <td>".$row->userDetail->surname."</td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -1896,6 +1962,8 @@ class NhanSuController extends Controller
                 <td class='text-danger'><strong>".$chuaXacNhan."</strong></td>
                 <td><strong>Đã xác nhận</strong></td>
                 <td class='text-info'><strong>".($tong - $chuaXacNhan)."</strong></td>
+                <td></td>
+                <td></td>
                 <td></td>
             </tr>
         ";
@@ -1940,6 +2008,7 @@ class NhanSuController extends Controller
                     $tongCong = 0;
                     $tongTre = 0;
                     $khongPhep = $day;
+                    $khongPhepCaNgay = 0;
                     $lamThem = 0;
                     $phepNam = 0;  
                     for($i = 1; $i <= $day; $i++) {
@@ -1979,6 +2048,15 @@ class NhanSuController extends Controller
                         } elseif ($xinPhep != null && ($xinPhep->treSang == 0 && $xinPhep->treChieu == 0)) {
                             $khongPhep -= 1;
                         }
+
+                        if ($chiTiet === null && !\HelpFunction::isSunday($i,$thang,$nam)) {
+                            if ($xinPhep === null)
+                                $khongPhepCaNgay += 1;
+                            elseif ($xinPhep->user_duyet == false)
+                                $khongPhepCaNgay += 1;
+                        }
+            
+
                         if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                             if ($xinPhep->loaiPhep->loaiPhep == "PHEPNAM") {
                                 switch($xinPhep->buoi) {
@@ -2025,7 +2103,8 @@ class NhanSuController extends Controller
                     $xacNhan->ngayCong = round(($tongCong/8),2) - $phepNam;
                     $xacNhan->tangCa = round(($lamThem/8),2);
                     $xacNhan->tongTre = $tongTre;
-                    $xacNhan->khongPhep = $khongPhep;
+                    $xacNhan->khongPhep = $khongPhep - $khongPhepCaNgay;
+                    $xacNhan->khongPhepNgay = $khongPhepCaNgay;
                     $xacNhan->save();
                     $flag = true;
                 }
@@ -2143,6 +2222,7 @@ class NhanSuController extends Controller
             ['user_duyet','=', true]
         ])
         ->orderby('user_duyet','desc')
+        ->orderBy('id', 'desc')
         ->get();   
 
         if ($tangCa)
@@ -2169,6 +2249,223 @@ class NhanSuController extends Controller
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xem"
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi thao tác"
+            ]);    
+    }
+
+    // Quản lý tăng ca/ngày lễ
+    public function getQuanLyTangCaLe() {
+        $user = User::select("*")->where('active', true)->get();
+        return view('nhansu.quanlytangcale', ['user' => $user]);
+    }
+
+    public function getQuanLyTangCa(Request $request) {
+        $quanLy = QuanLyTangCa::where([
+            ['ngay','=',$request->ngay],
+            ['thang','=',$request->thang],
+            ['nam','=',$request->nam],
+        ])->get();
+        $ngay = $request->ngay;
+        $thang = $request->thang;
+        $nam = $request->nam;
+        $thuMay = "";
+        $specDate = $nam."-".$thang."-".$ngay;
+        $ngayThu = array('Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4','Thứ 5','Thứ 6', 'Thứ 7');
+        $numThu =  date('w', strtotime($specDate));
+        switch((int)$numThu){
+            case 0: $thuMay = "Chủ nhật"; break;
+            case 1: $thuMay = "Thứ 2"; break;
+            case 2: $thuMay = "Thứ 3"; break;
+            case 3: $thuMay = "Thứ 4"; break;
+            case 4: $thuMay = "Thứ 5"; break;
+            case 5: $thuMay = "Thứ 6"; break;
+            case 6: $thuMay = "Thứ 7"; break;
+        }
+        if ($quanLy !== null) {
+            foreach($quanLy as $row) {
+                $vaoSang = null;
+                $raSang = null;
+                $vaoChieu = null;
+                $raChieu = null;
+                $congSang = 0;
+                $congChieu = 0;
+
+                $chiTiet = ChamCongChiTiet::where([
+                    ['ngay','=',$ngay],
+                    ['thang','=',$thang],
+                    ['nam','=',$nam],
+                    ['id_user','=',$row->id_user],
+                ])->first();
+                if ($chiTiet !== null) {
+                    $vaoSang = $chiTiet->vaoSang;
+                    $raSang = $chiTiet->raSang;
+                    $vaoChieu = $chiTiet->vaoChieu;
+                    $raChieu = $chiTiet->raChieu;
+                    $congSang = $chiTiet->gioSang;
+                    $congChieu = $chiTiet->gioChieu;
+                }
+                $tongCong = round((($congChieu + $congSang) * $row->heSo)/8,2);
+                echo "<tr>
+                    <td>".($ngay . "/" . $thang . "/".$nam)." <br/> ".$thuMay."</td>
+                    <td>".$row->user->userDetail->surname."</td>
+                    <td style='color:blue;'><strong>".$row->heSo."</strong></td>
+                    <td class='text-success'>".$vaoSang."</td>
+                    <td class='text-success'>".$raSang."</td>
+                    <td class='text-success'>".$vaoChieu."</td>
+                    <td class='text-success'>".$raChieu."</td>
+                    <td class='text-info'>".$congSang." (giờ)</td>
+                    <td class='text-info'>".$congChieu." (giờ)</td>
+                    <td><strong><span class='text-secondary'>".round(($congSang + $congChieu)/8,2)." (ngày)</span><br/><span class='text-primary'>".$tongCong." (ngày)</span></strong></td>
+                    <td><button id='del' data-idquanly='".$row->id."' class='btn btn-danger btn-sm'>Xóa</button></td>
+                </tr>";
+            }            
+        } 
+    }
+
+    public function quanLyTangCaPost(Request $request) {
+        $check = QuanLyTangCa::where([
+            ['ngay','=',$request->ngay],
+            ['thang','=',$request->thang],
+            ['nam','=',$request->nam],
+            ['id_user','=',$request->nhanVien]
+        ])->exists();
+
+        if ($check) {
+            return response()->json([
+                "type" => "warning",
+                "code" => 200,
+                "message" => "Đã thêm nhân viên này rồi!"
+            ]);
+        } else {
+            $quanLy = new QuanLyTangCa();
+            $quanLy->ngay = $request->ngay;
+            $quanLy->thang = $request->thang;
+            $quanLy->nam = $request->nam;
+            $quanLy->id_user = $request->nhanVien;
+            $quanLy->heSo = $request->heSo;
+            $quanLy->save();
+            if ($quanLy)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã thêm"
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi thao tác"
+                ]);    
+        }
+    }
+
+    public function xoaNhanVienTangCa(Request $request) {
+        $quanLy = QuanLyTangCa::find($request->id);
+        $quanLy->delete();
+        if ($quanLy)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã xóa"
+            ]);
+        else
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi thao tác"
+            ]);    
+    }
+
+    public function themAllNhanVienTangCa(Request $request) {
+        $idPhepCoLuong = LoaiPhep::where('maPhep','L')->first();      
+        $idPhepKhongLuong = LoaiPhep::where('maPhep','LKL')->first();         
+        $user = User::select("*")->where('active', true)->get();
+        $type = $request->loaiPhep;
+        $ngay = $request->ngay;
+        $thang = $request->thang;
+        $nam = $request->nam;
+        foreach($user as $row) { 
+            $chiTiet = ChamCongChiTiet::select("*")
+            ->where([
+                ['id_user','=',$row->id],
+                ['ngay','=',$ngay],
+                ['thang','=',$thang],
+                ['nam','=',$nam]
+            ])->exists();
+
+            $check = XinPhep::select("*")
+            ->where([
+                ['id_user','=',$row->id],
+                ['ngay','=',$ngay],
+                ['thang','=',$thang],
+                ['nam','=',$nam]
+            ])->exists();
+
+            if ($row->hasRole('chamcong') && !$chiTiet && !$check) {
+                if ($type == 0) {
+                    $xinPhep = new XinPhep();
+                    $xinPhep->id_user = $row->id;
+                    $xinPhep->id_phep = $idPhepKhongLuong->id;
+                    $xinPhep->ngay = $ngay;
+                    $xinPhep->thang = $thang;
+                    $xinPhep->nam = $nam;
+                    $xinPhep->buoi = "CANGAY";
+                    $xinPhep->id_user_duyet = Auth::user()->id;
+                    $xinPhep->lyDo = "Tự động cập nhật từ hệ thống";
+                    $xinPhep->user_duyet = true;
+                    $xinPhep->duyet = true;
+                    $xinPhep->gioSang =0;
+                    $xinPhep->gioChieu = 0;
+                    $xinPhep->treSang = 0;
+                    $xinPhep->treChieu= 0;
+                    $xinPhep->vaoSang = $idPhepKhongLuong->maPhep;   
+                    $xinPhep->vaoChieu = $idPhepKhongLuong->maPhep;  
+                    $xinPhep->save();                    
+                } else {
+                    $xinPhep = new XinPhep();
+                    $xinPhep->id_user = $row->id;
+                    $xinPhep->id_phep = $idPhepCoLuong->id;
+                    $xinPhep->ngay = $ngay;
+                    $xinPhep->thang = $thang;
+                    $xinPhep->nam = $nam;
+                    $xinPhep->buoi = "CANGAY";
+                    $xinPhep->id_user_duyet = Auth::user()->id;
+                    $xinPhep->lyDo = "Tự động cập nhật từ hệ thống";
+                    $xinPhep->user_duyet = true;
+                    $xinPhep->duyet = true;
+                    $xinPhep->gioSang = 4;
+                    $xinPhep->gioChieu = 4;
+                    $xinPhep->treSang = 0;
+                    $xinPhep->treChieu= 0;
+                    $xinPhep->vaoSang = $idPhepCoLuong->maPhep;   
+                    $xinPhep->vaoChieu = $idPhepCoLuong->maPhep;  
+                    $xinPhep->save();                
+                }    
+            }
+        } 
+        return response()->json([
+            "type" => "info",
+            "code" => 200,
+            "message" => "Đã cập nhật hàng loạt. Vào mục tổng hợp công để kiểm tra!"
+        ]);            
+    }
+
+    public function huyAllNhanVienTangCa(Request $request) {
+        $xinPhep = XinPhep::where([
+            ['ngay','=',$request->ngay],
+            ['thang','=',$request->thang],
+            ['nam','=',$request->nam],
+        ])->delete();
+        if ($xinPhep)
+            return response()->json([
+                "type" => "info",
+                "code" => 200,
+                "message" => "Đã xóa tất cả phép của nhân viên trong ngày được chọn. Vào mục tổng hợp công để kiểm tra!"
             ]);
         else
             return response()->json([

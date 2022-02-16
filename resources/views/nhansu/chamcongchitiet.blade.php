@@ -86,8 +86,8 @@
                             <th>Trể/Sớm Sáng</th>
                             <th>Trể/Sớm Chiều</th>
                             <th>Trạng thái</th>
-                            <th>Phép (hành chính)</th>
-                            <th>Tăng ca (ngoài giờ)</th>
+                            <th>Phép</th>
+                            <th>Tăng ca</th>
                         </tr>
                         <tbody class="text-center" id="chiTietCong">
                         
@@ -359,6 +359,7 @@
                             "tangCa": $(this).data('tangca'),
                             "tongTre": $(this).data('tongtre'),
                             "khongPhep": $(this).data('khongphep'),
+                            "khongPhepCaNgay": $(this).data('khongphepcangay'),
                             "phepNam": $(this).data('phepnam'),
                         },
                         success: function(response){

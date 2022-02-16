@@ -75,7 +75,8 @@
                         <th>Phép năm</th>
                         <th>Tăng ca</th>
                         <th>Tổng trể/sớm</th>
-                        <th>Không phép</th>
+                        <th>Không phép (Trể/sớm/QCC/Nữa ngày)</th>
+                        <th>Không phép (Cả ngày)</th>
                         <th>Trạng thái</th>
                         <th>Tác vụ</th>
                     </tr>
@@ -190,63 +191,67 @@
 
             //Xác nhận tất cả
             $("#xacNhanAll").click(function(){
-                $.ajax({
-                    url: "{{url('management/nhansu/chotcong/ajax/xacnhanall')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "thang": $("select[name=thang]").val(),
-                        "nam": $("select[name=nam]").val()
-                    },
-                    beforeSend: function() {
-                        $("#loading").show();
-                    },
-                    success: function(response){    
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })                    
-                        reload();                                  
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể tải chi tiết chốt công"
-                        })
-                    },
-                    complete: function() {
-                        $("#loading").hide();
-                    }
-                });
+                if(confirm('Xác nhận chốt công cho TẤT CẢ nhân viên?')) {
+                    $.ajax({
+                        url: "{{url('management/nhansu/chotcong/ajax/xacnhanall')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "thang": $("select[name=thang]").val(),
+                            "nam": $("select[name=nam]").val()
+                        },
+                        beforeSend: function() {
+                            $("#loading").show();
+                        },
+                        success: function(response){    
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })                    
+                            reload();                                  
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: "error",
+                                title: "Lỗi! Không thể tải chi tiết chốt công"
+                            })
+                        },
+                        complete: function() {
+                            $("#loading").hide();
+                        }
+                    });
+                }
            });
 
 
            // Hủy tất cả
            $("#huyAll").click(function(){
-                $.ajax({
-                    url: "{{url('management/nhansu/chotcong/ajax/huyall')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "thang": $("select[name=thang]").val(),
-                        "nam": $("select[name=nam]").val()
-                    },
-                    success: function(response){    
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })                    
-                        reload();                                  
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể tải chi tiết chốt công"
-                        })
-                    }
-                });
+                if(confirm('Xác nhận hủy chốt công cho TẤT CẢ nhân viên?')) {
+                    $.ajax({
+                        url: "{{url('management/nhansu/chotcong/ajax/huyall')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "thang": $("select[name=thang]").val(),
+                            "nam": $("select[name=nam]").val()
+                        },
+                        success: function(response){    
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })                    
+                            reload();                                  
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: "error",
+                                title: "Lỗi! Không thể tải chi tiết chốt công"
+                            })
+                        }
+                    });
+                }
            });
         });
     </script>

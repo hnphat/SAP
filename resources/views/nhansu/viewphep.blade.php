@@ -147,7 +147,7 @@
                     {
                         "data": null,
                         render: function(data, type, row) {     
-                            return "<button id='seen' data-id='"+row.id+"' class='btn btn-danger btn-sm'>Đã xen</button>";
+                            return "<button id='seen' data-id='"+row.id+"' class='btn btn-danger btn-sm'>Đã xem</button>";
                         }
                     }
                 ]

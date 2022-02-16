@@ -126,4 +126,8 @@ class User extends Authenticatable
         return $this->hasMany('App\XacNhanCong','id_user','id');
     }
 
+    public function quanLyTangCa() {
+        return $this->hasMany('App\QuanLyTangCa','id_user','id');
+    }
+
 }

@@ -398,6 +398,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('quanlypheduyettangca','NhanSuController@getQuanLyPheDuyetTangCa')->name('quanlypheduyettangca.panel')->middleware(['f_nhansupheduyet']);
         Route::get('quanlypheduyettangca/ajax/getlist','NhanSuController@quanLyPheDuyetTangCaGetList');
         Route::post('quanlypheduyettangca/ajax/seen','NhanSuController@quanLyPheDuyetTangCaSeen');
+
+        // Quản lý tăng ca/ngày lễ
+        Route::get('quanlytangcale','NhanSuController@getQuanLyTangCaLe')->name('quanlytangcale.panel')->middleware(['f_nhansupheduyet']);
+        Route::get('quanlytangca/ajax/get','NhanSuController@getQuanLyTangCa');
+        Route::post('quanlytangca/ajax/postnhanvien','NhanSuController@quanLyTangCaPost');
+        Route::post('quanlytangca/ajax/xoa','NhanSuController@xoaNhanVienTangCa');
+        Route::post('quanlytangca/ajax/themall','NhanSuController@themAllNhanVienTangCa');
+        Route::post('quanlytangca/ajax/huyall','NhanSuController@huyAllNhanVienTangCa');
     });
 
     Route::get('qr/{content}', function ($content) {

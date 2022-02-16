@@ -15,16 +15,19 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-8">
                         <h1 class="m-0"><strong>Quản lý xin phép</strong> 
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                             <a href="{{route('pheduyet.panel')}}" class="btn btn-xs btn-warning">Phê duyệt phép</a> &nbsp;
-                            <a href="{{route('tangca.panel')}}" class="btn btn-xs btn-success">Phê duyệt tăng ca</a>
+                            <a href="{{route('tangca.panel')}}" class="btn btn-xs btn-success">Phê duyệt tăng ca</a> &nbsp;
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            <a href="{{route('quanlytangcale.panel')}}" class="btn btn-xs btn-info">Quản lý tăng ca/ngày lễ</a>                           
                         @endif
                     </h1>
                     </div><!-- /.col -->
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Nhân sự</li>
