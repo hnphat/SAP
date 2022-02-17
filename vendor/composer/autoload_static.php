@@ -627,6 +627,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
+        'App\\QuanLyTangCa' => __DIR__ . '/../..' . '/app/QuanLyTangCa.php',
         'App\\QuyenXem' => __DIR__ . '/../..' . '/app/QuyenXem.php',
         'App\\Report' => __DIR__ . '/../..' . '/app/Report.php',
         'App\\ReportCar' => __DIR__ . '/../..' . '/app/ReportCar.php',

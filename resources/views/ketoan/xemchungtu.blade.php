@@ -49,9 +49,13 @@
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
+                                        <th>Giờ tạo</th>
                                         <th>Ngày tạo</th>
-                                        <th>Tên file</th>
-                                        <th>Mô tả</th>
+                                        <th>Tệp (nếu có)</th>
+                                        <th>Nội dung</th>
+                                        <th>Số lượng</th>
+                                        <th>Người yêu cầu</th>
+                                        <th>Bộ phận</th>
                                         <th>Ghi chú</th>
                                     </tr>
                                     </thead>
@@ -113,15 +117,22 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
-                    { "data": "ngayTao" },
+                    { "data": "gio" },
+                    { "data": "ngay" },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<a href='upload/bieumau/"+row.url+"' target='_blank'>"+row.tieuDe+"</a>";
+                            if (row.url !== null)
+                                return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>";
+                            else 
+                                return "Không có file";
                         }
                     },
-                    { "data": "moTa" },
-                    { "data": "ghiChu" }                    
+                    { "data": "noiDung" },
+                    { "data": "soLuong" },
+                    { "data": "nguoiYeuCau" },
+                    { "data": "boPhan" },
+                    { "data": "ghiChu" }             
                 ]
             });
             table.on( 'order.dt search.dt', function () {

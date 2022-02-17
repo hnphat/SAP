@@ -88,6 +88,7 @@ return array(
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',
     'App\\Providers\\EventServiceProvider' => $baseDir . '/app/Providers/EventServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
+    'App\\QuanLyTangCa' => $baseDir . '/app/QuanLyTangCa.php',
     'App\\QuyenXem' => $baseDir . '/app/QuyenXem.php',
     'App\\Report' => $baseDir . '/app/Report.php',
     'App\\ReportCar' => $baseDir . '/app/ReportCar.php',

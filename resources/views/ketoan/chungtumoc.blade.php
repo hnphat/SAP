@@ -51,11 +51,14 @@
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
+                                        <th>Giờ tạo</th>
                                         <th>Ngày tạo</th>
-                                        <th>Tên file</th>
-                                        <th>Mô tả</th>
+                                        <th>Tệp (nếu có)</th>
+                                        <th>Nội dung</th>
+                                        <th>Số lượng</th>
+                                        <th>Người yêu cầu</th>
+                                        <th>Bộ phận</th>
                                         <th>Ghi chú</th>
-                                        <th>Loại file</th>
                                         <th>Hiển thị</th>
                                         <th>Tác vụ</th>
                                     </tr>
@@ -85,27 +88,51 @@
                     <div class="modal-body"> 
                         <form method="POST" enctype="multipart/form-data" id="addForm" autocomplete="off">
                             <div class="form-group">
-                               <label>Tiêu đề file</label> 
-                               <input type="text" name="tieuDe" class="form-control" placeholder="Tiêu đề file">
+                               <label>Ngày</label> 
+                               <input type="date" name="ngay" class="form-control" placeholder="Tiêu đề file">
                             </div>
                             <div class="form-group">
-                               <label>Loại file</label> 
-                               <select name="loaiFile" class="form-control">
-                                   <option value="CT">Chứng từ</option>   
+                               <label>Giờ</label> 
+                               <input type="time" name="gio" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Nội dung</label> 
+                               <input type="text" name="noiDung" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Số lượng</label> 
+                               <input type="text" name="soLuong" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Người yêu cầu</label> 
+                               <input type="text" name="nguoiYeuCau" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Bộ phận</label> 
+                               <select name="boPhan" class="form-control">
+                                    <option value="Kinh doanh">Kinh doanh</option>
+                                    <option value="Dịch vụ">Dịch vụ</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="CSKH">CSKH</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Kế toán">Kế toán</option>
+                                    <option value="PTĐL (DRP + Đào tạo)">PTĐL (DRP + Đào tạo)</option>
+                                    <option value="PTĐL (Nhân sự + KSNB)">PTĐL (Nhân sự + KSNB)</option>
+                                    <option value="Hành chính">Hành chính</option>
                                </select>
-                            </div>
-                            <div class="form-group">
-                               <label>Mô tả ngắn (nếu có)</label> 
-                               <input type="text" name="moTa" class="form-control" placeholder="Mô tả">
                             </div>
                             <div class="form-group">
                                <label>Ghi chú (nếu có)</label> 
                                <input type="text" name="ghiChu" class="form-control" placeholder="Ghi chú">
                             </div>
+                            <label>
+                                   <input type="checkbox" name="hasFile"/>
+                                   Có file đính kèm
+                                </label>
                             <div class="form-group">
                                 <input type="file" class="form-control" name="file" placeholder="Choose File" id="file">
                                 <span class="text-danger">{{ $errors->first('file') }}</span>
-                                <span>Tối đa 20MB (doc,docx,pdf,txt,xls,xlsx,ppt,pptx)</span>
+                                <span>Tối đa 20MB (png,jpg,PNG,JPG,doc,docx,pdf,txt,xls,xlsx,ppt,pptx)</span>
                             </div>
                             <div class="form-group">
                                <label>Hiển thị</label> 
@@ -146,18 +173,38 @@
                             {{csrf_field()}}
                             <input type="hidden" name="eid">
                             <div class="form-group">
-                               <label>Tiêu đề file</label> 
-                               <input type="text" name="etieuDe" class="form-control" placeholder="Tiêu đề file">
+                               <label>Ngày</label> 
+                               <input type="date" name="engay" class="form-control" placeholder="Tiêu đề file">
                             </div>
                             <div class="form-group">
-                               <label>Loại file</label> 
-                               <select name="eloaiFile" class="form-control">
-                                   <option value="CT">Chứng từ</option>   
+                               <label>Giờ</label> 
+                               <input type="time" name="egio" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Nội dung</label> 
+                               <input type="text" name="enoiDung" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Số lượng</label> 
+                               <input type="text" name="esoLuong" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Người yêu cầu</label> 
+                               <input type="text" name="enguoiYeuCau" class="form-control" placeholder="Tiêu đề file">
+                            </div>
+                            <div class="form-group">
+                               <label>Bộ phận</label> 
+                               <select name="eboPhan" class="form-control">
+                                    <option value="Kinh doanh">Kinh doanh</option>
+                                    <option value="Dịch vụ">Dịch vụ</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="CSKH">CSKH</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Kế toán">Kế toán</option>
+                                    <option value="PTĐL (DRP + Đào tạo)">PTĐL (DRP + Đào tạo)</option>
+                                    <option value="PTĐL (Nhân sự + KSNB)">PTĐL (Nhân sự + KSNB)</option>
+                                    <option value="Hành chính">Hành chính</option>
                                </select>
-                            </div>
-                            <div class="form-group">
-                               <label>Mô tả ngắn (nếu có)</label> 
-                               <input type="text" name="emoTa" class="form-control" placeholder="Mô tả">
                             </div>
                             <div class="form-group">
                                <label>Ghi chú (nếu có)</label> 
@@ -232,16 +279,22 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
-                    { "data": "ngayTao" },
+                    { "data": "gio" },
+                    { "data": "ngay" },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<a href='upload/bieumau/"+row.url+"' target='_blank'>"+row.tieuDe+"</a>";
+                            if (row.url !== null)
+                                return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>";
+                            else 
+                                return "Không có file";
                         }
                     },
-                    { "data": "moTa" },
+                    { "data": "noiDung" },
+                    { "data": "soLuong" },
+                    { "data": "nguoiYeuCau" },
+                    { "data": "boPhan" },
                     { "data": "ghiChu" },
-                    { "data": "type" },
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -279,7 +332,7 @@
                     var formData = new FormData(this);
                     $.ajax({
                         type:'POST',
-                        url: "{{ url('management/hanhchinh/ajax/post/')}}",
+                        url: "{{ url('management/hanhchinh/chungtuajax/post/')}}",
                         data: formData,
                         cache: false,
                         contentType: false,
@@ -315,7 +368,7 @@
             $(document).on('click','#delete', function(){
                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
-                        url: "{{url('management/hanhchinh/ajax/delete/')}}",
+                        url: "{{url('management/hanhchinh/chungtuajax/delete/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
@@ -342,7 +395,7 @@
             // edit data
             $(document).on('click','#btnEdit', function(){
                 $.ajax({
-                    url: "{{url('management/hanhchinh/ajax/getedit/')}}" + "/" + $(this).data('id'),
+                    url: "{{url('management/hanhchinh/chungtuajax/getedit/')}}" + "/" + $(this).data('id'),
                     type: "post",
                     dataType: "json",
                     data: {
@@ -351,11 +404,14 @@
                     },
                     success: function(response) {
                         $("input[name=eid]").val(response.data.id);
-                        $("input[name=etieuDe]").val(response.data.tieuDe);
-                        $("input[name=emoTa]").val(response.data.moTa);
+                        $("input[name=engay]").val(response.data.ngay);
+                        $("input[name=egio]").val(response.data.gio);
+                        $("input[name=enoiDung]").val(response.data.noiDung);
+                        $("input[name=esoLuong]").val(response.data.soLuong);
+                        $("input[name=enguoiYeuCau]").val(response.data.nguoiYeuCau);                        
+                        $("select[name=eboPhan]").val(response.data.boPhan);
                         $("input[name=eghiChu]").val(response.data.ghiChu);
                         $("select[name=eallow]").val(response.data.allow);
-                        $("select[name=eloaiFile]").val(response.data.type);
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
@@ -373,7 +429,7 @@
             $("#btnUpdate").click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/hanhchinh/ajax/update/')}}",
+                    url: "{{url('management/hanhchinh/chungtuajax/update/')}}",
                     type: "post",
                     dataType: "json",
                     data: $("#editForm").serialize(),

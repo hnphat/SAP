@@ -130,4 +130,7 @@ class User extends Authenticatable
         return $this->hasMany('App\QuanLyTangCa','id_user','id');
     }
 
+    public function chungTu() {
+        return $this->hasMany('App\ChungTu', 'user_create', 'id');
+    }
 }

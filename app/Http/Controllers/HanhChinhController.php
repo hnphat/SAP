@@ -178,50 +178,6 @@ class HanhChinhController extends Controller
             ]);
     }
 
-    // Chứng từ/mộc
-    public function showChungTuMoc() {
-        return view('ketoan.chungtumoc');
-    }
-    
-    public function showXemChungTu() {
-        return view('ketoan.xemchungtu');
-    }
-
-    public function loadChungTu() {
-        $result = BieuMau::select('*')->where([
-            ['type','=','CT']
-        ])->orderBy('id', 'desc')->get();
-        if ($result) 
-            return response()->json([
-                'message' => 'Đã tải dữ liệu!',
-                'code' => 200,
-                'data' => $result
-            ]);
-        else
-            return response()->json([
-                'message' => 'Lỗi tải dữ liệu!',
-                'code' => 500
-            ]);
-    }
-
-    public function xemChungTu() {
-        $result = BieuMau::select('*')->where([
-            ['allow','=',true],
-            ['type','=','CT']
-        ])->orderBy('id', 'desc')->get();
-        if ($result) 
-            return response()->json([
-                'message' => 'Đã tải dữ liệu!',
-                'code' => 200,
-                'data' => $result
-            ]);
-        else
-            return response()->json([
-                'message' => 'Lỗi tải dữ liệu!',
-                'code' => 500
-            ]);
-    }
-
     // BẢNG GIÁ XE KINH DOANH
     public function showBangGiaXe() {
         return view('hopdong.banggiaxe');

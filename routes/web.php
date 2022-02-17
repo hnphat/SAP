@@ -331,12 +331,16 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('gethoso','HanhChinhController@getHoSoWithName');
 
         // Chứng từ mộc
-        Route::get('list/chungtumoc','HanhChinhController@showChungTuMoc')->name('chungtu.panel');
-        Route::get('ajax/loadchungtu','HanhChinhController@loadChungTu');
-        Route::get('ajax/xemchungtu','HanhChinhController@xemChungTu');
+        Route::get('list/chungtumoc','ChungTuController@showChungTuMoc')->name('chungtu.panel');
+        Route::get('ajax/loadchungtu','ChungTuController@loadChungTu');
+        Route::get('ajax/xemchungtu','ChungTuController@xemChungTu');
+        Route::post('chungtuajax/post','ChungTuController@postBieuMau');
+        Route::post('chungtuajax/delete','ChungTuController@deleteChungTu');
+        Route::post('chungtuajax/getedit/{id}','ChungTuController@getEditChungTu');
+        Route::post('chungtuajax/update','ChungTuController@updateChungTu');
 
          // Xem Chứng từ mộc
-         Route::get('list/xemchungtumoc','HanhChinhController@showXemChungTu')->name('xemchungtu.panel');
+         Route::get('list/xemchungtumoc','ChungTuController@showXemChungTu')->name('xemchungtu.panel');
     });
 
     Route::group(['prefix' => 'nhansu'], function(){
