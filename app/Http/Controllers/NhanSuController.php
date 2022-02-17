@@ -2474,4 +2474,230 @@ class NhanSuController extends Controller
                 "message" => "Lỗi thao tác"
             ]);    
     }
+
+    public function dongBoPhep(Request $request) {
+        $thang = $request->thang;
+        $nam = $request->nam;
+        $user = User::all();
+        foreach($user as $row) {
+            if ($row->hasRole('chamcong') && $row->active == true) {
+                $tongPhep = XinPhep::where([
+                    ['id_user','=',$row->id],
+                    ['thang','=',$thang],
+                    ['nam','=',$nam]
+                ])->get();
+                foreach($tongPhep as $phep) {
+                    $chiTiet = ChamCongChiTiet::select("*")
+                    ->where([
+                        ['id_user','=',$phep->id_user],
+                        ['ngay','=',$phep->ngay],
+                        ['thang','=',$phep->thang],
+                        ['nam','=',$phep->nam]
+                    ])
+                    ->first();
+
+                    if ($chiTiet !== null) {
+                        $gioSang = $chiTiet->gioSang;
+                        $gioChieu = $chiTiet->gioChieu;
+                        $treSang = $chiTiet->treSang;
+                        $treChieu = $chiTiet->treChieu;
+                        $vaoSang = "";
+                        $raSang = "";
+                        $vaoChieu = "";
+                        $raChieu = ""; 
+            
+                        $loaiPhep = LoaiPhep::find($phep->id_phep);
+                        switch ($loaiPhep->loaiPhep) {
+                            case 'PHEPNAM':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $gioSang = 4;
+                                            $treSang = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CHIEU': {
+                                            $gioChieu = 4;
+                                            $treChieu = 0;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CANGAY': {
+                                            $gioSang = 4;
+                                            $gioChieu = 4;
+                                            $treSang = 0;
+                                            $treChieu = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            case 'QCC':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $gioSang = 4;
+                                            $treSang = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CHIEU': {
+                                            $gioChieu = 4;
+                                            $treChieu = 0;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            case 'COLUONG':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $gioSang = 4;
+                                            $treSang = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CHIEU': {
+                                            $gioChieu = 4;
+                                            $treChieu = 0;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CANGAY': {
+                                            $gioSang = 4;
+                                            $gioChieu = 4;
+                                            $treSang = 0;
+                                            $treChieu = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            case 'KHONGLUONG':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $treSang = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CHIEU': {
+                                            $treChieu = 0;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        case 'CANGAY': {
+                                            $treSang = 0;
+                                            $treChieu = 0;
+                                            $vaoSang = $loaiPhep->maPhep;
+                                            $vaoChieu = $loaiPhep->maPhep;
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            default: break;
+                        }
+                        
+                        $xinPhep = XinPhep::find($phep->id);
+                        $xinPhep->gioSang = $gioSang;
+                        $xinPhep->gioChieu = $gioChieu;
+                        $xinPhep->treSang = $treSang;
+                        $xinPhep->treChieu= $treChieu;
+                        $xinPhep->vaoSang = $vaoSang;
+                        $xinPhep->raSang = $raSang;
+                        $xinPhep->vaoChieu = $vaoChieu;
+                        $xinPhep->raChieu= $raChieu;
+                        $xinPhep->save();
+                    } else {
+                        $gioSang = 0;
+                        $gioChieu = 0;
+                        $vaoSang = "";
+                        $vaoChieu = "";
+                        $loaiPhep = LoaiPhep::find($phep->id_phep);
+                        switch ($loaiPhep->loaiPhep) {
+                            case 'PHEPNAM':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $gioSang = 4;    
+                                            $vaoSang = $loaiPhep->maPhep;                           
+                                        } break;
+                                        case 'CHIEU': {
+                                            $gioChieu = 4;    
+                                            $vaoChieu = $loaiPhep->maPhep;                            
+                                        } break;
+                                        case 'CANGAY': {
+                                            $gioSang = 4;
+                                            $gioChieu = 4;  
+                                            $vaoSang = $loaiPhep->maPhep;   
+                                            $vaoChieu = $loaiPhep->maPhep;                              
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            case 'COLUONG':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $gioSang = 4;     
+                                            $vaoSang = $loaiPhep->maPhep;                                  
+                                        } break;
+                                        case 'CHIEU': {
+                                            $gioChieu = 4;       
+                                            $vaoChieu = $loaiPhep->maPhep;                                  
+                                        } break;
+                                        case 'CANGAY': {
+                                            $gioSang = 4;
+                                            $gioChieu = 4;     
+                                            $vaoSang = $loaiPhep->maPhep;   
+                                            $vaoChieu = $loaiPhep->maPhep;                                
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            case 'KHONGLUONG':
+                                {
+                                    switch($phep->buoi){
+                                        case 'SANG': {
+                                            $gioSang = 0;   
+                                            $vaoSang = $loaiPhep->maPhep;                                   
+                                        } break;
+                                        case 'CHIEU': {
+                                            $gioChieu = 0;     
+                                            $vaoChieu = $loaiPhep->maPhep;                                   
+                                        } break;
+                                        case 'CANGAY': {
+                                            $gioSang = 0;
+                                            $gioChieu = 0;    
+                                            $vaoSang = $loaiPhep->maPhep;   
+                                            $vaoChieu = $loaiPhep->maPhep;                                   
+                                        } break;
+                                        default: break;
+                                    }
+                                }
+                                break;
+                            default: break;
+                        }
+
+                        $xinPhep = XinPhep::find($phep->id);
+                        $xinPhep->gioSang = $gioSang;
+                        $xinPhep->gioChieu = $gioChieu;
+                        $xinPhep->treSang = 0;
+                        $xinPhep->treChieu= 0;
+                        $xinPhep->vaoSang = $vaoSang;
+                        $xinPhep->vaoChieu = $vaoChieu;
+                        $xinPhep->save();
+                    }
+                }
+            }
+        }    
+        return response()->json([
+            "type" => "info",
+            "code" => 200,
+            "message" => "Đã đồng bộ hóa phép. Vào tổng hợp công hoặc chấm công chi tiết để kiểm tra"
+        ]);
+    }
 }

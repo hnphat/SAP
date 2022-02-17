@@ -365,6 +365,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('xinphep/ajax/delete','NhanSuController@xinPhepDelete');
         Route::post('xinphep/ajax/deleteadmin','NhanSuController@xinPhepDeleteAdmin')->middleware(['f_nhansu']);
         Route::get('xinphep/ajax/getphepnam/{id}/nam/{nam}','NhanSuController@getPhepNam');
+        Route::get('xinphep/ajax/dongbo','NhanSuController@dongBoPhep');
 
         // xin tăng ca
         Route::post('chitiet/ajax/themtangca','NhanSuController@chiTietThemTangCa');

@@ -23,7 +23,8 @@
                             <a href="{{route('tangca.panel')}}" class="btn btn-xs btn-success">Phê duyệt tăng ca</a> &nbsp;
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                            <a href="{{route('quanlytangcale.panel')}}" class="btn btn-xs btn-info">Quản lý tăng ca/ngày lễ</a>                           
+                            <a href="{{route('quanlytangcale.panel')}}" class="btn btn-xs btn-info">Quản lý tăng ca/ngày lễ</a>  &nbsp;                          
+                            <button id="dongBo" type="button" class="btn btn-xs btn-primary">Đồng bộ phép</button>
                         @endif
                     </h1>
                     </div><!-- /.col -->
@@ -221,6 +222,33 @@
                     });
                 }
             });
+
+
+            $("#dongBo").click(function(){
+                if (confirm("Vui lòng chọn đúng tháng cần đồng bộ để kết quả được chính xác?\n Đang chọn tháng " + $("select[name=thang]").val() +"/"+ $("select[name=nam]").val())) {
+                    $.ajax({
+                        url: "{{url('management/nhansu/xinphep/ajax/dongbo')}}",
+                        type: "get",
+                        dataType: "json",
+                        data: {
+                            "thang": $("select[name=thang]").val(),
+                            "nam": $("select[name=nam]").val()
+                        },
+                        success: function(response){          
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })                    
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: "error",
+                                title: "Lỗi! Không thể chọn"
+                            })
+                        }
+                    });
+                }             
+           });
         });
     </script>
 @endsection
