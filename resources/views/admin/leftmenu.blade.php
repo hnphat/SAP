@@ -282,6 +282,24 @@
                             </a>
                         </li>                        
                         @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
+                            <li class="nav-item">
+                                <a href="{{route('chungtu.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Chứng từ/mộc</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                            <li class="nav-item">
+                                <a href="{{route('xemchungtu.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Xem Chứng từ/mộc</p>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
                 @endif
@@ -398,24 +416,6 @@
                                     </a>
                              </li>
                         @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
-                            <li class="nav-item">
-                                <a href="{{route('chungtu.panel')}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Chứng từ/mộc</p>
-                                </a>
-                            </li>
-                        @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
-                            <li class="nav-item">
-                                <a href="{{route('xemchungtu.panel')}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Xem Chứng từ/mộc</p>
-                                </a>
-                            </li>
-                        @endif    
                     </ul>
                 </li>
                 <li class="nav-item">

@@ -93,6 +93,14 @@
                                <select name="loaiFile" class="form-control">
                                    <option value="BM" selected>Biểu mẫu</option>   
                                    <option value="TB">Thông báo</option>   
+                                   <option value="HĐ">Hợp đồng AB</option>  
+                                   <option value="CT">Chứng từ/mộc</option>  
+                                   <option value="QĐ">Quyết định</option>
+                                   <option value="CV">Công văn</option>
+                                   <option value="BBH">Biên bản họp</option>
+                                   <option value="CS">Chính sách</option>
+                                   <option value="NQ">Nội quy - quy định</option>
+                                   <option value="K">Khác</option>
                                </select>
                             </div>
                             <div class="form-group">
@@ -154,7 +162,15 @@
                                <label>Loại file</label> 
                                <select name="eloaiFile" class="form-control">
                                    <option value="BM" selected>Biểu mẫu</option>   
-                                   <option value="TB">Thông báo</option>   
+                                   <option value="TB">Thông báo</option>  
+                                   <option value="HĐ">Hợp đồng AB</option>  
+                                   <option value="CT">Chứng từ/mộc</option>  
+                                   <option value="QĐ">Quyết định</option>
+                                   <option value="CV">Công văn</option>
+                                   <option value="BBH">Biên bản họp</option>
+                                   <option value="CS">Chính sách</option>
+                                   <option value="NQ">Nội quy - quy định</option>
+                                   <option value="K">Khác</option>                                    
                                </select>
                             </div>
                             <div class="form-group">
