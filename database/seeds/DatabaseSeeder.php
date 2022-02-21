@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call(NhomUserSeeder::class);
 //        $this->call(QuyenXemSeeder::class);
         $this->call(RoleSeed::class);
+        $this->call(LoaiPhepSeed::class);
 
     }
 }

@@ -329,6 +329,7 @@
                     if (requestEdit == true)
                         $("#choPhepSua").show();
                     else $("#choPhepSua").hide();
+                    $("#duyetDeNghi").hide();
                 } else {
                     $("#duyetDeNghi").hide();
                     $("#choPhepHuy").hide();
@@ -590,7 +591,7 @@
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
-                            })
+                            })                            
                             reloadSS(response.data.lead_check_cancel,response.data.requestCancel,response.data.admin_check,response.data.lead_check, response.data.requestEditHD);
                             loadList();
                         },

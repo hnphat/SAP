@@ -56,65 +56,74 @@ class KetoanController extends Controller
     }
 
     public function inBienBan($id) {
-        $outhd = "";
-        $templateProcessor = new TemplateProcessor('template/BIENBANBANGIAO.docx');
-            $sale = HopDong::find($id);
-            $kho = KhoV2::find($sale->id_car_kho);
-            $year = $kho->year;
-            $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
-            $car_detail = $sale->carSale;
-            $car = $sale->carSale;
-            $giaXe = $sale->giaXe;
-            $tenXe = $car_detail->name;
-            // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
-            $outhd = 'Biên bản bàn giao xe - KH ' . $sale->guest->name;
-            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
 
-            // Exe phụ kiện bán và free
-            $package = $sale->package;
+        //----- Đã xuất xe mới in được biên bản bàn giao
+        $hd = HopDong::find($id);
+        $khoXe = KhoV2::find($hd->id_car_kho);
+        if($khoXe->xuatXe == true) {
+        //-----        
+            $outhd = "";
+            $templateProcessor = new TemplateProcessor('template/BIENBANBANGIAO.docx');
+                $sale = HopDong::find($id);
+                $kho = KhoV2::find($sale->id_car_kho);
+                $year = $kho->year;
+                $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+                $car_detail = $sale->carSale;
+                $car = $sale->carSale;
+                $giaXe = $sale->giaXe;
+                $tenXe = $car_detail->name;
+                // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
+                $outhd = 'Biên bản bàn giao xe - KH ' . $sale->guest->name;
+                $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
 
-            $sumpkban = 0;
-            $sumchiphi = 0;
+                // Exe phụ kiện bán và free
+                $package = $sale->package;
 
-            foreach($package as $row) {
-                if ($row->type == 'pay') {
-                    $sumpkban += $row->cost;
+                $sumpkban = 0;
+                $sumchiphi = 0;
+
+                foreach($package as $row) {
+                    if ($row->type == 'pay') {
+                        $sumpkban += $row->cost;
+                    }
+                    if ($row->type == 'cost') {
+                        $sumchiphi += $row->cost;
+                    }
                 }
-                if ($row->type == 'cost') {
-                    $sumchiphi += $row->cost;
-                }
-            }
 
-            $templateProcessor->setValues([
-                'soHopDong' => $soHopDong,
-                'ngayhd' => $arrdate[2],
-                'thanghd' => $arrdate[1],
-                'namhd' => $arrdate[0],
-                'ngay' => Date('d'),
-                'thang' => Date('m'),
-                'nam' => Date('Y'),
-                'sale' => $sale->user->userDetail->surname,
-                'guest' => $sale->guest->name,
-                'daiDien' => $sale->guest->daiDien,
-                'diaChi' => $sale->guest->address,
-                'phone' => $sale->guest->phone,
-                'carname' => $tenXe,
-                'giaXe' => number_format($giaXe),
-                'year' => $year,
-                'seat' => $car->seat,
-                'color' => $sale->mau,
-                'vin' => $kho->vin,
-                'frame' => $kho->frame,
-                'cost' => number_format($sumchiphi),
-                'pay' => number_format($sumpkban),
-                'tong' => number_format($sumchiphi + $sumpkban + $giaXe)
-            ]);
+                $templateProcessor->setValues([
+                    'soHopDong' => $soHopDong,
+                    'ngayhd' => $arrdate[2],
+                    'thanghd' => $arrdate[1],
+                    'namhd' => $arrdate[0],
+                    'ngay' => Date('d'),
+                    'thang' => Date('m'),
+                    'nam' => Date('Y'),
+                    'sale' => $sale->user->userDetail->surname,
+                    'guest' => $sale->guest->name,
+                    'daiDien' => $sale->guest->daiDien,
+                    'diaChi' => $sale->guest->address,
+                    'phone' => $sale->guest->phone,
+                    'carname' => $tenXe,
+                    'giaXe' => number_format($giaXe),
+                    'year' => $year,
+                    'seat' => $car->seat,
+                    'color' => $sale->mau,
+                    'vin' => $kho->vin,
+                    'frame' => $kho->frame,
+                    'cost' => number_format($sumchiphi),
+                    'pay' => number_format($sumpkban),
+                    'tong' => number_format($sumchiphi + $sumpkban + $giaXe)
+                ]);
 
-        $pathToSave = 'template/BIENBANBANGIAODOWN.docx';
-        $templateProcessor->saveAs($pathToSave);
-        $headers = array(
-            'Content-Type: application/docx',
-        );
-        return response()->download($pathToSave,$outhd . '.docx',$headers);
+            $pathToSave = 'template/BIENBANBANGIAODOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            return response()->download($pathToSave,$outhd . '.docx',$headers);
+        } else {
+            echo "<script>alert('Chưa xuất xe, chưa thể in biên bản bàn giao xe');</script>";
+        }
     }
 }

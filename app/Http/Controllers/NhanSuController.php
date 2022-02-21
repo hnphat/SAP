@@ -2269,7 +2269,7 @@ class NhanSuController extends Controller
             ['ngay','=',$request->ngay],
             ['thang','=',$request->thang],
             ['nam','=',$request->nam],
-        ])->get();
+        ])->get();        
         $ngay = $request->ngay;
         $thang = $request->thang;
         $nam = $request->nam;
@@ -2294,6 +2294,19 @@ class NhanSuController extends Controller
                 $raChieu = null;
                 $congSang = 0;
                 $congChieu = 0;
+                $idXinPhep = 0;
+
+                //-------------
+                $xinPhep = XinPhep::where([
+                    ['id_user','=',$row->id_user],
+                    ['ngay','=',$request->ngay],
+                    ['thang','=',$request->thang],
+                    ['nam','=',$request->nam],
+                ])->first();
+
+                if ($xinPhep !== null)
+                    $idXinPhep = $xinPhep->id;     
+                //-------------  
 
                 $chiTiet = ChamCongChiTiet::where([
                     ['ngay','=',$ngay],
@@ -2321,7 +2334,7 @@ class NhanSuController extends Controller
                     <td class='text-info'>".$congSang." (giờ)</td>
                     <td class='text-info'>".$congChieu." (giờ)</td>
                     <td><strong><span class='text-secondary'>".round(($congSang + $congChieu)/8,2)." (ngày)</span><br/><span class='text-primary'>".$tongCong." (ngày)</span></strong></td>
-                    <td><button id='del' data-idquanly='".$row->id."' class='btn btn-danger btn-sm'>Xóa</button></td>
+                    <td><button id='del' data-idphep='".$idXinPhep."' data-idquanly='".$row->id."' class='btn btn-danger btn-sm'>Xóa</button></td>
                 </tr>";
             }            
         } 
@@ -2349,6 +2362,40 @@ class NhanSuController extends Controller
             $quanLy->id_user = $request->nhanVien;
             $quanLy->heSo = $request->heSo;
             $quanLy->save();
+
+            if ($request->loaiGioCong == 1) {
+                $getIdPhep = LoaiPhep::where('maPhep','LT')->first()->id;
+                $xinPhep = new XinPhep();
+                $xinPhep->id_user = $request->nhanVien;
+                $xinPhep->id_phep = $getIdPhep;
+                $xinPhep->ngay = $request->ngay;
+                $xinPhep->thang = $request->thang;
+                $xinPhep->nam = $request->nam;
+                $xinPhep->buoi = "CANGAY";
+                $xinPhep->id_user_duyet = Auth::user()->id;
+                $xinPhep->user_duyet = true;
+                $xinPhep->lyDo = "Hệ thống tự động bổ sung theo nghiệp vụ quản lý tăng ca, làm thêm";                
+                $xinPhep->gioSang = 0;
+                $xinPhep->gioChieu = 0;
+                $xinPhep->treSang = 0;
+                $xinPhep->treChieu= 0;
+                $xinPhep->vaoSang = "LT";
+                $xinPhep->raSang = "LT";
+                $xinPhep->save();
+                if ($xinPhep)
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã thêm"
+                ]);
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi thao tác"
+                ]);    
+            }
+
             if ($quanLy)
                 return response()->json([
                     "type" => "info",
@@ -2367,6 +2414,12 @@ class NhanSuController extends Controller
     public function xoaNhanVienTangCa(Request $request) {
         $quanLy = QuanLyTangCa::find($request->id);
         $quanLy->delete();
+
+        if ($request->idPhep != 0) {
+            $xinPhep = XinPhep::find($request->idPhep);
+            $xinPhep->delete();
+        }    
+
         if ($quanLy)
             return response()->json([
                 "type" => "info",

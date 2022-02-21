@@ -183,13 +183,7 @@
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý kho</p>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('get.khohd.v2')}}" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Xe hợp đồng</p>
-                            </a>
-                        </li>
+                        </li>                       
                         @endif
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2.report')}}" class="nav-link">
@@ -278,9 +272,15 @@
                         <li class="nav-item">
                             <a href="{{route('ketoan')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Hợp đồng xe</p>
+                                <p>Hợp đồng xe chi tiết</p>
                             </a>
-                        </li>                        
+                        </li>       
+                        <li class="nav-item">
+                            <a href="{{route('get.khohd.v2')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Xe hợp đồng</p>
+                            </a>
+                        </li>     
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
@@ -512,6 +512,14 @@
                     </ul>
                 </li>
                 <li class="nav-item">
+                    <a href="{{route('nhatky.list')}}" class="nav-link">
+                        <i class="nav-icon fas fa-history"></i>
+                        <p>
+                            <strong>NHẬT KÝ</strong>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
@@ -519,7 +527,7 @@
                             <span class="right badge badge-danger">New</span>
                         </p>
                     </a>
-                </li>
+                </li>                
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

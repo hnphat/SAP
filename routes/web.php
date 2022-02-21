@@ -507,5 +507,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('getnoapprove','WorkController@getNoApprove');
         Route::post('getapprove','WorkController@getApprove');
     });
+
+    Route::group(['prefix' => 'nhatky', 'middleware' => ['f_role']], function(){
+        Route::get('list','NhatKyController@getList')->name('nhatky.list');      
+    });
 });
 

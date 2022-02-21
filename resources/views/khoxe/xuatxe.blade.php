@@ -59,6 +59,7 @@
                                         <th>Khách hàng</th>
                                         <th>Ngày giao xe</th>
                                         <th>Tác vụ</th>
+                                        <th>IN</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -207,7 +208,19 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";                        
+                            if (row.xuatXe == true)
+                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";
+                            else
+                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";     
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.xuatXe == true)
+                                return "<button id='inBB' data-id='"+row.id+"' class='btn btn-info btn-sm'>In</button>";                        
+                            else
+                                return "";                        
                         }
                     }
                 ]
@@ -270,6 +283,10 @@
                         })
                     }
                 });
+            });
+
+            $(document).on('click','#inBB', function(){
+                open("{{url('management/ketoan/hopdong/bienban/')}}/" + $(this).data('id'),"_blank");
             });
         });
     </script>

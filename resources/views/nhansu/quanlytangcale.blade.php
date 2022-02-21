@@ -105,6 +105,13 @@
                             </select>
                     </div>
                     <div class="col-md-2">
+                       <label>Chọn loại giờ công</label>
+                       <select name="loaiGioCong" class="form-control">
+                           <option value="0" selected>Giờ công quy định</option>
+                           <option value="1">Giờ công thực tế</option>
+                       </select>
+                    </div>
+                    <div class="col-md-2">
                         <label>&nbsp;</label><br/>
                         <input id="themTangCa" type="submit" class="btn btn-xs btn-info" value="THÊM">
                     </div>
@@ -221,6 +228,7 @@
                             "nam": $("select[name=nam]").val(),
                             "nhanVien": $("select[name=nhanVien]").val(),
                             "heSo": $("select[name=heSo]").val(),
+                            "loaiGioCong": $("select[name=loaiGioCong]").val(),
                         },
                         success: function(response){
                             Toast.fire({
@@ -249,6 +257,7 @@
                         data: {
                             "_token": "{{csrf_token()}}",
                             "id": $(this).data('idquanly'),
+                            "idPhep": $(this).data('idphep'),
                         },
                         success: function(response){
                             Toast.fire({

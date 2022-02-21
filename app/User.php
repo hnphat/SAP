@@ -133,4 +133,8 @@ class User extends Authenticatable
     public function chungTu() {
         return $this->hasMany('App\ChungTu', 'user_create', 'id');
     }
+
+    public function nhatKy() {
+        return $this->hasMany('App\NhatKy', 'id_create', 'id');
+    }
 }
