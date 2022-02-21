@@ -1553,7 +1553,10 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.name as name','package.cost as cost')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+        $pkban = SaleOffV2::select('saleoffv2.*','package.name as name','package.cost as cost')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')
+        ->where([
             ['saleoffv2.id_hd','=', $id],
             ['package.type','=','free']
         ])->get();

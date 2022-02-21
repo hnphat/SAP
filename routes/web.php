@@ -509,7 +509,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'nhatky', 'middleware' => ['f_role']], function(){
-        Route::get('list','NhatKyController@getList')->name('nhatky.list');      
+        Route::get('list','NhatKyController@getList')->name('nhatky.list');   
+        Route::get('ajax/xem','NhatKyController@loadList');      
     });
 });
 

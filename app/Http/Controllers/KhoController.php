@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CarSale;
+use App\NhatKy;
 use App\KhoV2;
 use App\HopDong;
 use App\TypeCarDetail;
@@ -390,6 +391,11 @@ class KhoController extends Controller
                 "ngayGiaoXe" => $request->ngayGiaoXe
             ]);
             if($kho) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
+                $nhatKy->noiDung = "Cập nhật lại thông tin xuất xe. Cập nhật ngày giao xe " . $request->ngayGiaoXe . " và trạng thái xuất xe " . $request->xuatXe;
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã cập nhật!',
@@ -407,6 +413,11 @@ class KhoController extends Controller
                 "ngayGiaoXe" => null
             ]);
             if($kho) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
+                $nhatKy->noiDung = "Cập nhật lại thông tin xuất xe. Cập nhật từ trạng thái xuất xe sang không xuất xe";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã cập nhật!',
