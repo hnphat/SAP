@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\HopDong;
 use App\KhoV2;
+use App\NhatKy;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 
@@ -56,7 +57,6 @@ class KetoanController extends Controller
     }
 
     public function inBienBan($id) {
-
         //----- Đã xuất xe mới in được biên bản bàn giao
         $hd = HopDong::find($id);
         $khoXe = KhoV2::find($hd->id_car_kho);
@@ -121,9 +121,14 @@ class KetoanController extends Controller
             $headers = array(
                 'Content-Type: application/docx',
             );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
+            $nhatKy->noiDung = "In biên bản bàn giao xe hợp đồng số " . $hd->code;
+            $nhatKy->save();
             return response()->download($pathToSave,$outhd . '.docx',$headers);
         } else {
             echo "<script>alert('Chưa xuất xe, chưa thể in biên bản bàn giao xe');</script>";
-        }
+        }        
     }
 }

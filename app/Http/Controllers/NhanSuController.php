@@ -9,6 +9,7 @@ use App\XinPhep;
 use App\TangCa;
 use App\QuanLyTangCa;
 use App\XacNhanCong;
+use App\NhatKy;
 use App\ChamCongChiTiet;
 use Illuminate\Support\Facades\Auth;
 use Excel;
@@ -199,13 +200,20 @@ class NhanSuController extends Controller
         $loaiPhep->loaiPhep = $request->loaiPhep;
         $loaiPhep->moTa = $request->moTa;
         $loaiPhep->save();
-        if ($loaiPhep)
+        if ($loaiPhep) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - quản lý loại phép";
+            $nhatKy->noiDung = "Thêm loại phép<br/>Tên phép: ".$request->tenPhep." Mã phép: "
+            .$request->maPhep." Loại phép: ". $request->loaiPhep." Mô tả: ".$request->moTa;
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã thêm dữ liệu",
                 "data" => $loaiPhep
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -216,14 +224,22 @@ class NhanSuController extends Controller
 
     public function quanLyPhepDelete(Request $request) {
         $loaiPhep = LoaiPhep::find($request->id);
+        $temp = $loaiPhep;
         $loaiPhep->delete();
-        if ($loaiPhep)
+        if ($loaiPhep) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - quản lý loại phép";
+            $nhatKy->noiDung = "Xóa loại phép<br/>Tên phép: ".$temp->tenPhep." Mã phép: "
+            .$temp->maPhep." Loại phép: ". $temp->loaiPhep." Mô tả: ".$temp->moTa;
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xóa dữ liệu",
                 "data" => $loaiPhep
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -668,12 +684,21 @@ class NhanSuController extends Controller
             $xinPhep->vaoChieu = $vaoChieu;
             $xinPhep->raChieu= $raChieu;
             $xinPhep->save();
-            if ($xinPhep)
+            if ($xinPhep) {
+                $loai = LoaiPhep::find($request->loaiPhep);
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
+                $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
+                .$request->buoi." Ngày xin: "
+                .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã tạo phép"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -759,12 +784,20 @@ class NhanSuController extends Controller
             $xinPhep->vaoSang = $vaoSang;
             $xinPhep->vaoChieu = $vaoChieu;
             $xinPhep->save();
-            if ($xinPhep)
+            if ($xinPhep) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
+                $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
+                .$request->buoi." Ngày xin: "
+                .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã tạo phép"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -786,12 +819,18 @@ class NhanSuController extends Controller
         $tangCa->lyDo = $request->lyDoTangCa;
         $tangCa->save();
         
-        if ($tangCa)
+        if ($tangCa) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
+            $nhatKy->noiDung = "Xin phép tăng ca";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xin phép tăng ca"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -863,13 +902,19 @@ class NhanSuController extends Controller
     public function xinPhepDelete(Request $request) {
         $xinPhep = XinPhep::find($request->id);
         $xinPhep->delete();
-        if ($xinPhep)
+        if ($xinPhep) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
+            $nhatKy->noiDung = "Xóa xin phép";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xóa phép",
                 "data" => $xinPhep
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -882,13 +927,19 @@ class NhanSuController extends Controller
         if (Auth::user()->hasRole('system')) {
             $xinPhep = XinPhep::find($request->id);
             $xinPhep->delete();
-            if ($xinPhep)
+            if ($xinPhep) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
+                $nhatKy->noiDung = "Admin xóa xin phép";
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã xóa phép",
                     "data" => $xinPhep
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -1012,12 +1063,18 @@ class NhanSuController extends Controller
             $xinPhep = XinPhep::where('id',$request->id)->update([
                 'user_duyet' => true
             ]);
-            if ($xinPhep)
+            if ($xinPhep) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
+                $nhatKy->noiDung = "Phê duyệt phép";
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã phê duyệt phép"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -1052,12 +1109,18 @@ class NhanSuController extends Controller
                 $xinPhep = XinPhep::where('id',$request->id)->update([
                     'user_duyet' => true
                 ]);
-                if ($xinPhep)
+                if ($xinPhep) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
+                    $nhatKy->noiDung = "Phê duyệt phép";
+                    $nhatKy->save();
                     return response()->json([
                         "type" => "info",
                         "code" => 200,
                         "message" => "Đã phê duyệt phép"
                     ]);
+                }
                 else
                     return response()->json([
                         "type" => "info",
@@ -1670,6 +1733,11 @@ class NhanSuController extends Controller
                         }  
                     }
                 }   
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý chấm công - Import excel";
+                $nhatKy->noiDung = "Import excel file chấm công vào hệ thống";
+                $nhatKy->save();
                 return back()->with('success','Đã cập nhật chấm công! Vào chấm công chi tiết để kiểm tra!');
             }
 		}
@@ -1724,12 +1792,18 @@ class NhanSuController extends Controller
             $tangCa = TangCa::where('id',$request->id)->update([
                 'user_duyet' => true
             ]);
-            if ($tangCa)
+            if ($tangCa) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
+                $nhatKy->noiDung = "Phê duyệt tăng ca";
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã phê duyệt tăng ca"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -1747,12 +1821,18 @@ class NhanSuController extends Controller
                 $tangCa = TangCa::where('id',$request->id)->update([
                     'user_duyet' => true
                 ]);
-                if ($tangCa)
+                if ($tangCa) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
+                    $nhatKy->noiDung = "Phê duyệt tăng ca";
+                    $nhatKy->save();
                     return response()->json([
                         "type" => "info",
                         "code" => 200,
                         "message" => "Đã phê duyệt tăng ca"
                     ]);
+                }
                 else
                     return response()->json([
                         "type" => "info",
@@ -1776,12 +1856,18 @@ class NhanSuController extends Controller
                 'time2' => $request->gioRa,
                 'heSo' => $request->heSo
             ]);
-            if ($tangCa)
+            if ($tangCa) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
+                $nhatKy->noiDung = "Cập nhật giờ công và hệ số tăng ca";
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã cập nhật giờ công tăng ca"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -1796,12 +1882,18 @@ class NhanSuController extends Controller
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns')) {
             $tangCa = TangCa::find($request->id);
             $tangCa->delete();
-            if ($tangCa)
+            if ($tangCa) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
+                $nhatKy->noiDung = "Xóa tăng ca";
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã xóa tăng ca"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -1818,12 +1910,18 @@ class NhanSuController extends Controller
             } else {
                 $tangCa = TangCa::find($request->id);
                 $tangCa->delete();
-                if ($tangCa)
+                if ($tangCa) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
+                    $nhatKy->noiDung = "Xóa tăng ca";
+                    $nhatKy->save();
                     return response()->json([
                         "type" => "info",
                         "code" => 200,
                         "message" => "Đã xóa tăng ca"
                     ]);
+                }
                 else
                     return response()->json([
                         "type" => "info",
@@ -1888,12 +1986,18 @@ class NhanSuController extends Controller
         $xacNhan->khongPhep = $request->khongPhep;
         $xacNhan->khongPhepNgay = $request->khongPhepCaNgay;
         $xacNhan->save();
-        if ($xacNhan)
+        if ($xacNhan) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
+            $nhatKy->noiDung = "Chốt chấm công";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã chốt chấm công"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -1975,12 +2079,18 @@ class NhanSuController extends Controller
             ['thang','=', $request->thang],
             ['nam','=', $request->nam],
         ])->delete();
-        if ($xacNhan)
+        if ($xacNhan) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
+            $nhatKy->noiDung = "Hủy chốt chấm công";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã hủy chốt chấm công"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2111,12 +2221,18 @@ class NhanSuController extends Controller
             }
         }
 
-        if ($flag)
+        if ($flag) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
+            $nhatKy->noiDung = "Admin chốt tất cả chấm công";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã chốt tất cả chấm công"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2141,12 +2257,18 @@ class NhanSuController extends Controller
             }
         }
 
-        if ($flag)
+        if ($flag) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
+            $nhatKy->noiDung = "Admin hủy chốt tất cả chấm công";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã hủy chốt tất cả chấm công"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2192,13 +2314,19 @@ class NhanSuController extends Controller
         $xinPhep = XinPhep::find($request->id);
         $xinPhep->duyet = true;
         $xinPhep->save();
-        if ($xinPhep)
+        if ($xinPhep) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt phép trưởng bộ phận";
+            $nhatKy->noiDung = "Admin đã xem và kiểm tra";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xem",
                 "data" => $xinPhep
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2244,12 +2372,18 @@ class NhanSuController extends Controller
         $tangCa = TangCa::find($request->id);
         $tangCa->duyet = true;
         $tangCa->save();
-        if ($tangCa)
+        if ($tangCa) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt tăng ca trưởng bộ phận";
+            $nhatKy->noiDung = "Admin đã xem và kiểm tra";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xem"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2396,12 +2530,18 @@ class NhanSuController extends Controller
                 ]);    
             }
 
-            if ($quanLy)
+            if ($quanLy) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - Quản lý tăng ca";
+                $nhatKy->noiDung = "Thêm tăng ca và hệ số tăng ca";
+                $nhatKy->save();
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
                     "message" => "Đã thêm"
                 ]);
+            }
             else
                 return response()->json([
                     "type" => "info",
@@ -2420,12 +2560,18 @@ class NhanSuController extends Controller
             $xinPhep->delete();
         }    
 
-        if ($quanLy)
+        if ($quanLy) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - quản lý tăng ca";
+            $nhatKy->noiDung = "Xóa nhân viên tăng ca";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xóa"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2501,6 +2647,11 @@ class NhanSuController extends Controller
                 }    
             }
         } 
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
+        $nhatKy->noiDung = "Thêm phép hàng loạt";
+        $nhatKy->save();
         return response()->json([
             "type" => "info",
             "code" => 200,
@@ -2514,12 +2665,18 @@ class NhanSuController extends Controller
             ['thang','=',$request->thang],
             ['nam','=',$request->nam],
         ])->delete();
-        if ($xinPhep)
+        if ($xinPhep) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
+            $nhatKy->noiDung = "Hủy phép hàng loạt";
+            $nhatKy->save();
             return response()->json([
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã xóa tất cả phép của nhân viên trong ngày được chọn. Vào mục tổng hợp công để kiểm tra!"
             ]);
+        }
         else
             return response()->json([
                 "type" => "info",
@@ -2747,6 +2904,11 @@ class NhanSuController extends Controller
                 }
             }
         }    
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Nhân sự - Quản lý phép";
+        $nhatKy->noiDung = "Thực thiện đồng bộ phép";
+        $nhatKy->save();
         return response()->json([
             "type" => "info",
             "code" => 200,

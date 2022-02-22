@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\NhatKy;
 use App\UsersDetail;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -60,6 +61,13 @@ class HoSoController extends Controller
         $result = $hoso->save();
 
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Hồ sơ";
+            $nhatKy->noiDung = "Thêm thông tin nhân viên<br/> Họ tên: "
+            .$request->hoTen." Điện thoại: ".$request->phone." Ngày sinh: "
+            .$request->ngaySinh." Địa chỉ:" .$request->diaChi;
+            $nhatKy->save();
             return response()->json([
                'message' => 'Data Inserted',
                 'code' => 200
@@ -153,6 +161,7 @@ class HoSoController extends Controller
     public function updateHoSo(Request $request)
     {
         //
+        $temp = UsersDetail::where('id', $request->edit_id)->first();
         $hoso = UsersDetail::where('id', $request->edit_id)->update([
             'surname' => $request->_hoTen,
             'birthday' => $request->_ngaySinh,
@@ -161,6 +170,15 @@ class HoSoController extends Controller
         ]);
 
         if($hoso) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Hồ sơ";
+            $nhatKy->noiDung = "Cập nhật thông tin nhân viên<br/>THÔNG TIN CŨ<br/>Họ tên: "
+            .$temp->surname." Điện thoại: ".$temp->phone." Ngày sinh: "
+            .$temp->birthday." Địa chỉ:" .$temp->address."<br/>THÔNG TIN MỚI<br/>Họ tên: "
+            .$request->_hoTen." Điện thoại: ".$request->_phone." Ngày sinh: "
+            .$request->_ngaySinh." Địa chỉ:" .$request->_diaChi;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Data updated',
                 'code' => 200
@@ -175,8 +193,16 @@ class HoSoController extends Controller
 
     public function deleteHoSo(Request $request)
     {
+        $temp = UsersDetail::where('id', $request->id)->first();
         $hoso = UsersDetail::where('id', $request->id)->delete();
         if($hoso) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Hồ sơ";
+            $nhatKy->noiDung = "Xóa thông tin nhân viên<br/> Họ tên: "
+            .$temp->surname." Điện thoại: ".$temp->phone." Ngày sinh: "
+            .$temp->birthday." Địa chỉ:" .$temp->address;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Data deleted',
                 'code' => 200

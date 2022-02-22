@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\NhatKy;
 use App\DeNghiCapXang;
 use App\EventReal;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,14 @@ class DeNghiCapXangController extends Controller
         // $eventReal->name = "Cá nhân làm đề nghị";
         // $eventReal->save();
         if ($deNghi) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Đề nghị cấp nhiên liệu";
+            $nhatKy->noiDung = "Thêm đề nghị cấp nhiên liệu loại xe: ".$request->loaiXe." khách hàng: "
+            .$request->khachHang." biển số: ".$request->bienSo." lý do cấp: " . $request->lyDoCap;
+            $nhatKy->save();
+
             return redirect()
             ->route('capxang.denghi')
             ->with('succ','Đã gửi đề nghị cấp nhiên liệu!');
@@ -45,11 +54,19 @@ class DeNghiCapXangController extends Controller
     }
 
     public function del(Request $request) {
-        $deNghi = DeNghiCapXang::where('id',$request->id)->delete();
+        $deNghi = DeNghiCapXang::find($request->id);
+        $temp = $deNghi;
+        $deNghi->delete();
         $eventReal = new EventReal;
         $eventReal->name = "Cá nhân xóa đề nghị";
         $eventReal->save();
         if($deNghi) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Đề nghị cấp nhiên liệu";
+            $nhatKy->noiDung = "Xóa đề nghị cấp nhiên liệu loại xe: ".$temp->fuel_car." khách hàng: "
+            .$temp->fuel_guest." biển số: ".$temp->fuel_frame." lý do cấp: " . $temp->fuel_lyDo;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Delete successfully!',
                 'code' => 200
@@ -78,6 +95,13 @@ class DeNghiCapXangController extends Controller
         $eventReal->name = "Hành chính duyệt cấp xăng";
         $eventReal->save();
         if($car) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
+            $nhatKy->noiDung = "Phê duyệt đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
+            $nhatKy->save();
+
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',
                 'code' => 200
@@ -96,6 +120,11 @@ class DeNghiCapXangController extends Controller
         $eventReal->name = "HÀnh chính hủy cấp xăng";
         $eventReal->save();
         if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
+            $nhatKy->noiDung = "Hủy đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Đã hủy đề nghị cấp xăng',
                 'code' => 200
@@ -125,6 +154,11 @@ class DeNghiCapXangController extends Controller
         $eventReal->name = "Trưởng bộ phận duyệt";
         $eventReal->save();
         if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
+            $nhatKy->noiDung = "Phê duyệt đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',
                 'code' => 200

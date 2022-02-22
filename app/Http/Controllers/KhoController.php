@@ -257,6 +257,11 @@ class KhoController extends Controller
         $kho->save();
 
         if($kho) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kho xe - Quản lý kho";
+            $nhatKy->noiDung = "Nhập xe vào kho trạng thái xe " . $request->trangThai;
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã thêm!',
@@ -272,8 +277,18 @@ class KhoController extends Controller
     }
 
     public function deleteV2(Request $request) {
+        $temp = KhoV2::where('id', $request->id)->first();
         $kho = KhoV2::where('id', $request->id)->delete();
-        if($kho) {
+        if($kho) {          
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kho xe - Quản lý kho";
+            $nhatKy->noiDung = "Xóa xe trong kho. THÔNG TIN XE XÓA<br/>Xe: "
+            .$temp->typeCarDetail->name." VIN: "
+            .$temp->vin." Số máy: "
+            .$temp->frame." GPS: "
+            .$temp->gps." Trạng thái: ". $temp->type;
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã xóa!',
@@ -306,7 +321,7 @@ class KhoController extends Controller
 
     public function updateV2(Request $request) {
         $check = KhoV2::find($request->eid);
-        if ($check->type == "HD")
+        if ($check->type == "HD") {
             $kho = KhoV2::where('id', $request->eid)->update([
                 // "id_type_car_detail" => $request->etenXe,
                 "year" => $request->enam,
@@ -322,8 +337,22 @@ class KhoController extends Controller
                 "ghiChu" => $request->eghiChu,
                 "viTri" => $request->eviTri
             ]);
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kho xe - Quản lý kho";
+            $nhatKy->noiDung = "Cập nhật thông tin xe trong kho. <br/>THÔNG TIN CŨ<br/>Xe: "
+            .$check->typeCarDetail->name." VIN: "
+            .$check->vin." Số máy: "
+            .$check->frame." GPS: "
+            .$check->gps." Vị trí: ". $check->viTri. "<br/>THÔNG TIN MỚI<br/>VIN: "
+            .$request->evin." Số máy: "
+            .$request->eframe." GPS: "
+            .$request->egps." Vị trí: "
+            .$request->eviTri;
+            $nhatKy->save();
+        }
         else {
-                if ($request->etrangThai == "HD")
+                if ($request->etrangThai == "HD") {
                     $kho = KhoV2::where('id', $request->eid)->update([
                         "id_type_car_detail" => $request->etenXe,
                         "year" => $request->enam,
@@ -339,7 +368,22 @@ class KhoController extends Controller
                         "ghiChu" => $request->eghiChu,
                         "viTri" => $request->eviTri
                     ]);
-                else 
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kho xe - Quản lý kho";
+                    $nhatKy->noiDung = "Cập nhật thông tin xe trong kho. <br/>THÔNG TIN CŨ<br/>Xe: "
+                    .$check->typeCarDetail->name." VIN: "
+                    .$check->vin." Số máy: "
+                    .$check->frame." GPS: "
+                    .$check->gps." Vị trí: ". $check->viTri. "<br/>THÔNG TIN MỚI<br/>VIN: "
+                    .$request->evin." Số máy: "
+                    .$request->eframe." GPS: "
+                    .$request->egps." Vị trí: "
+                    .$request->eviTri;
+                    $nhatKy->save();
+                }
+                else {
+                    $typeCar = TypeCarDetail::find($request->etenXe);
                     $kho = KhoV2::where('id', $request->eid)->update([
                         "id_type_car_detail" => $request->etenXe,
                         "year" => $request->enam,
@@ -356,6 +400,20 @@ class KhoController extends Controller
                         "ghiChu" => $request->eghiChu,
                         "viTri" => $request->eviTri
                     ]);
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kho xe - Quản lý kho";
+                    $nhatKy->noiDung = "Cập nhật thông tin xe trong kho. <br/>THÔNG TIN CŨ<br/>Xe: "
+                    .$check->typeCarDetail->name." VIN: "
+                    .$check->vin." Số máy: "
+                    .$check->frame." GPS: "
+                    .$check->gps." Vị trí: ". $check->viTri. " Trạng thái: ".$check->type."<br/>THÔNG TIN MỚI<br/>Xe: ".$typeCar->name." VIN: "
+                    .$request->evin." Số máy: "
+                    .$request->eframe." GPS: "
+                    .$request->egps." Vị trí: "
+                    .$request->eviTri." Trạng thái: " . $request->etrangThai;
+                    $nhatKy->save();
+                }
             }
         if($kho) {
             return response()->json([
@@ -386,6 +444,7 @@ class KhoController extends Controller
                 'message' => 'Nhập ngày giao xe!',
                 'code' => 200
             ]);
+            $temp = KhoV2::where('id', $request->eid)->first();
             $kho = KhoV2::where('id', $request->eid)->update([
                 "xuatXe" => $request->xuatXe,
                 "ngayGiaoXe" => $request->ngayGiaoXe
@@ -394,7 +453,8 @@ class KhoController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
-                $nhatKy->noiDung = "Cập nhật lại thông tin xuất xe. Cập nhật ngày giao xe " . $request->ngayGiaoXe . " và trạng thái xuất xe " . $request->xuatXe;
+                $nhatKy->noiDung = "Cập nhật ngày giao xe<br/>THÔNG TIN CŨ<br/>Ngày giao xe: "
+                .$temp->ngayGiaoXe." trạng thái xuất xe(1: Đã xuất; 0:Chưa xuất): ".$temp->xuatXe."<br/>THÔNG TIN MỚI<br/> Ngày giao xe: " . $request->ngayGiaoXe . " và trạng thái xuất xe(1: Đã xuất; 0:Chưa xuất) " . $request->xuatXe;
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',

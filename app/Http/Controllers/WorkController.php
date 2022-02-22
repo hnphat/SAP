@@ -48,6 +48,11 @@ class WorkController extends Controller
         $reportWork->ghiChu = $request->ghiChu;
         $reportWork->save();
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - Công việc tổng";
+            $nhatKy->noiDung = "Thêm công việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã thêm công việc",
@@ -70,6 +75,11 @@ class WorkController extends Controller
         ])->delete();
 
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - Công việc tổng";
+            $nhatKy->noiDung = "Xóa công việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã xóa công việc",
@@ -122,6 +132,11 @@ class WorkController extends Controller
         $eventReal->save();
 
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - Công việc tổng";
+            $nhatKy->noiDung = "Cập nhật công việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã chỉnh sửa công việc",
@@ -155,6 +170,11 @@ class WorkController extends Controller
         $eventReal->save();
 
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - Công việc tổng";
+            $nhatKy->noiDung = "Cập nhật công việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã chỉnh sửa công việc",
@@ -186,6 +206,11 @@ class WorkController extends Controller
             ]);
 
             if($reportWork) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Công việc - Công việc tổng";
+                $nhatKy->noiDung = "Check báo cáo công việc";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ($newVal == true) ? " Added!" : " Deleted!",
@@ -214,6 +239,11 @@ class WorkController extends Controller
             ]);
 
             if($reportWork) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Công việc - Công việc tổng";
+                $nhatKy->noiDung = "Check báo cáo công việc";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ($newVal == true) ? " Added!" : " Deleted!",
@@ -336,6 +366,11 @@ class WorkController extends Controller
         $eventReal->name = "Work";
         $eventReal->save();
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - giao việc";
+            $nhatKy->noiDung = "Thêm giao việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã giao việc",
@@ -373,6 +408,11 @@ class WorkController extends Controller
             $eventReal->name = "Work";
             $eventReal->save();
             if($reportWork) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Công việc - giao việc";
+                $nhatKy->noiDung = "Chỉnh sửa giao việc";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => " Đã chỉnh sửa giao việc",
@@ -404,6 +444,11 @@ class WorkController extends Controller
             $eventReal->name = "Work";
             $eventReal->save();
             if($reportWork) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Công việc - giao việc";
+                $nhatKy->noiDung = "Xóa giao việc";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => " Đã xóa giao việc",
@@ -434,6 +479,11 @@ class WorkController extends Controller
         ]);
 
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - giao việc";
+            $nhatKy->noiDung = "Check báo cáo giao việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => ($newVal == true) ? " Added!" : " Deleted!",
@@ -460,6 +510,11 @@ class WorkController extends Controller
         $eventReal->name = "Work";
         $eventReal->save();
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - giao việc";
+            $nhatKy->noiDung = "Chấp nhận kết quả từ giao việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã chấp nhận kết quả công việc",
@@ -486,6 +541,11 @@ class WorkController extends Controller
         $eventReal->name = "Work";
         $eventReal->save();
         if($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Công việc - giao việc";
+            $nhatKy->noiDung = "Từ chối kết quả từ giao việc";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã từ chối kết quả công việc",

@@ -12,6 +12,7 @@ use App\Sale;
 use App\KhoV2;
 use App\HopDong;
 use App\SaleOff;
+use App\NhatKy;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -380,6 +381,7 @@ class HDController extends Controller
 
     public function cntm($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/CN_HD_TM_NO_PK.docx');
         $hasPK = SaleOffV2::select('package.*')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
@@ -424,6 +426,7 @@ class HDController extends Controller
             $outhd = 'HDTM ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -484,6 +487,7 @@ class HDController extends Controller
             $outhd = 'HDTM ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -522,10 +526,18 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     public function cnnh($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/CN_HD_NH_NO_PK.docx');
         $hasPK = SaleOffV2::select('package.*')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
@@ -565,6 +577,7 @@ class HDController extends Controller
             $outhd = 'HDNH ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -625,6 +638,7 @@ class HDController extends Controller
             $outhd = 'HDNH ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -663,10 +677,18 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+        
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     public function cttm($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/CT_HD_TM_NO_PK.docx');
         $hasPK = SaleOffV2::select('package.*')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
@@ -706,6 +728,7 @@ class HDController extends Controller
             $outhd = 'HDTM ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -764,6 +787,7 @@ class HDController extends Controller
             $outhd = 'HDTM ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -800,10 +824,18 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     public function ctnh($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/CT_HD_NH_NO_PK.docx');
         $hasPK = SaleOffV2::select('package.*')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
@@ -843,6 +875,7 @@ class HDController extends Controller
             $outhd = 'HDNH ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -901,6 +934,7 @@ class HDController extends Controller
             $outhd = 'HDNH ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -937,11 +971,19 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
     public function inPhuLucCaNhan($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/PHULUC.docx');
             // Set data from database
             $sale = HopDong::find($id);
@@ -966,7 +1008,8 @@ class HDController extends Controller
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'PHỤ LỤC ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
-            // Cá nhân
+            // Cá nhân            
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -995,11 +1038,19 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In phụ lục hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
     public function inPhuLucCongTy($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/PHULUCCONGTY.docx');
             // Set data from database
             $sale = HopDong::find($id);
@@ -1025,6 +1076,7 @@ class HDController extends Controller
             $outhd = 'PHỤ LỤC ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -1051,11 +1103,19 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In phụ lục hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
     public function inDeNghiCaNhan($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/DENGHI.docx');
             // Set data from database
             $sale = HopDong::find($id);
@@ -1113,6 +1173,7 @@ class HDController extends Controller
             $outhd = 'ĐNTHHĐ ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -1163,11 +1224,19 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In đề nghị thực hiện hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
     public function inDeNghiCongTy($id) {
         $outhd = "";
+        $logSoHd = "";
         $templateProcessor = new TemplateProcessor('template/DENGHICONGTY.docx');
             // Set data from database
             $sale = HopDong::find($id);
@@ -1225,6 +1294,7 @@ class HDController extends Controller
             $outhd = 'ĐNTHHĐ ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
                 'soHopDong' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
                 'ngay' => $arrdate[2],
@@ -1276,6 +1346,12 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In đề nghị thực hiện hợp đồng " . $logSoHd;
+        $nhatKy->save();
+
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
     //------------------------- HD V2
@@ -1538,6 +1614,13 @@ class HDController extends Controller
 
         // --------------- End add 05 phụ kiện theo xe
         if($code) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Đề nghị thực hiện hợp đồng";
+            $nhatKy->noiDung = "Thực hiện khởi tạo hợp đồng mới, danh mục chi phí đăng ký, danh mục quà tặng 05 món theo xe ";
+            $nhatKy->save();
+
             return response()->json([
                 'type' => 'info',
                 'message' => 'Đã tạo mẫu!',
@@ -1647,6 +1730,13 @@ class HDController extends Controller
                 $saleOff->id_bh_pk_package = $pkpay->id;
                 $saleOff->save();
                 if($saleOff) {
+
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Bổ sung chi phí cho đề nghị thực hiện hợp đồng mã định danh: ".$request->idHD3."(không phải mã hợp đồng chính thức) Nội dung: " . $request->namePkCost . " Giá: " . round($request->giaPkCost,2);
+                    $nhatKy->save();
+
                     return response()->json([
                         'message' => 'Tạo các chi phí thành công!',
                         'code' => 200
@@ -1678,6 +1768,12 @@ class HDController extends Controller
             $pkpay->cost = $request->egiapk;
             $pkpay->save();
             if($pkpay) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                $nhatKy->noiDung = "Điều chỉnh nội dung chi phí cho mã định danh: ".$request->idSaleHD."(không phải mã hợp đồng) Nội dung: " . $request->endpk . " Giá: " . round($request->egiapk,2);
+                $nhatKy->save();
+
                 return response()->json([
                     'type' => 'info',
                     'message' => 'Đã chỉnh sửa!',
@@ -1712,6 +1808,13 @@ class HDController extends Controller
                 $saleOff->id_bh_pk_package = $pkpay->id;
                 $saleOff->save();
                 if($saleOff) {
+
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Thêm phụ kiện bán cho mã định danh: ".$request->idHD."(không phải mã hợp đồng) Nội dung: " . $request->namePkPay . " Giá: " . round($request->giaPkPay,2);
+                    $nhatKy->save();
+
                     return response()->json([
                         'message' => 'Tạo phụ kiện bán thành công!',
                         'code' => 200
@@ -1750,6 +1853,13 @@ class HDController extends Controller
                 $saleOff->id_bh_pk_package = $pkpay->id;
                 $saleOff->save();
                 if($saleOff) {
+                    
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Thêm phụ kiện tặng mã định dang: ".$request->idHD2."(không phải mã hợp đồng) Nội dung: " . $request->namePkFree . " Giá: " . round($request->giaPkFree,2);
+                    $nhatKy->save();
+
                     return response()->json([
                         'message' => 'Tạo phụ kiện tặng thành công!',
                         'code' => 200
@@ -1776,11 +1886,21 @@ class HDController extends Controller
     public function deletePkPay(Request $request) {
         $check = HopDong::find($request->sale);
         if ($check->lead_check != 1 && $check->requestCheck != 1) {
+            $temp = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->first();
             $result = SaleOffV2::where([
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                $nhatKy->noiDung = "Xóa phụ kiện bán cho mã định danh: ".$request->sale."(không phải mã hợp đồng) Nội dung: " . $temp->name . " Giá: " . round($temp->cost,2);
+                $nhatKy->save();
+
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Delete PK Pay successfully!',
@@ -1800,11 +1920,20 @@ class HDController extends Controller
     public function deletePkFree(Request $request) {
         $check = HopDong::find($request->sale);
         if ($check->lead_check != 1 && $check->requestCheck != 1) {
+            $temp = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->first();
             $result = SaleOffV2::where([
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                $nhatKy->noiDung = "Xóa phụ kiện tặng cho mã định danh: ".$request->sale."(không phải mã hợp đồng) Nội dung: " . $temp->name . " Giá: " . round($temp->cost,2);
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Delete PK Free successfully!',
@@ -1823,11 +1952,21 @@ class HDController extends Controller
     public function deletePkCost(Request $request) {
         $check = HopDong::find($request->sale);
         if ($check->lead_check != 1 && $check->requestCheck != 1) {
+            $temp = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->first();
             $result = SaleOffV2::where([
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                $nhatKy->noiDung = "Xóa chi phí cho mã định danh: ".$request->sale."(không phải mã hợp đồng) Nội dung: " . $temp->name . " Giá: " . round($temp->cost,2);
+                $nhatKy->save();
+
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Delete PK Cost successfully!',
@@ -1898,6 +2037,13 @@ class HDController extends Controller
         $result->mau = $request->mauSac;
         $result->save();
         if($result) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+            $nhatKy->noiDung = "Gửi đề nghị thực hiện hợp đồng cho mã định danh: ".$request->idHopDong."(không phải mã hợp đồng)";
+            $nhatKy->save();
+
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã gửi đề nghị hợp đồng!',
@@ -1917,7 +2063,7 @@ class HDController extends Controller
         $result = HopDong::find($request->id);
         if($result->admin_check == false && $result->lead_check == false) {
             $result->delete();
-            if($result) {
+            if($result) {                
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã xóa!',
@@ -1939,8 +2085,7 @@ class HDController extends Controller
     }
 
     public function duyetDeNghi(Request $request){
-        $result = HopDong::find($request->id); 
-        
+        $result = HopDong::find($request->id);         
         if($request->sohd == 0) {
             return response()->json([
                 'type' => 'warning',
@@ -1966,6 +2111,13 @@ class HDController extends Controller
                 $result->code = $request->sohd; 
                 $result->save();
                 if($result) {
+
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                    $nhatKy->noiDung = "Phê duyệt hợp đồng chờ <br/>Số hợp đồng ".$request->sohd. " đã được gán!";
+                    $nhatKy->save();
+        
                     return response()->json([
                         'type' => 'success',
                         'message' => 'Hợp đồng chờ! Đã duyệt!',
@@ -1994,6 +2146,11 @@ class HDController extends Controller
                 $result->code = $request->sohd; 
                 $result->save();
                 if($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                    $nhatKy->noiDung = "Phê duyệt đề nghị thực hiện hợp đồng<br/>Số hợp đồng ".$request->sohd. " đã được gán!";
+                    $nhatKy->save();
                     return response()->json([
                         'type' => 'success',
                         'message' => 'Đã duyệt!',
@@ -2019,7 +2176,6 @@ class HDController extends Controller
 
     public function ganXeHDCho(Request $request){
         $result = HopDong::find($request->id); 
-        
         if($result->id_car_kho != null) {
             return response()->json([
                 'type' => 'warning',
@@ -2052,8 +2208,15 @@ class HDController extends Controller
                 $car->type = "HD";
                 $car->save();
             $result->hdWait = false;
+            $temp = $result->code;
+            $mau = $result->mau;
             $result->save();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                $nhatKy->noiDung = "Gán xe: ".$car->typeCarDetail->name." màu: ".$mau." cho hợp đồng chờ số ".$temp. " và chuyển sang thành hợp đồng chính thức";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã gán xe! Đã chuyển sang hợp đồng chính thức!',
@@ -2074,8 +2237,14 @@ class HDController extends Controller
         $result = HopDong::find($request->id);
         if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
             $result->lead_check = true;
+            $code = $result->code;
             $result->save();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+                $nhatKy->noiDung = "Đã phê duyệt hợp đồng số " . $code;
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã duyệt hợp đồng!',
@@ -2110,13 +2279,28 @@ class HDController extends Controller
                             'code' => 200
                         ]);
                     $car->type = "STORE";
+                    $temp = $car->typeCarDetail->name;
                     $car->save();
+                    if ($car) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+                        $nhatKy->noiDung = "Thực hiện chuyển xe ".$temp." từ hợp đồng số " . $result->code . " vào kho. Chuyển trạng thái xe sang STORE!";
+                        $nhatKy->save();
+                    }
                 }
             $result->lead_check_cancel = true;
+            $lydo = $result->lyDoCancel;
             $result->lyDoEdit = "";
             $result->id_car_kho = null;
+            $code = $result->code;
             $result->save();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+                $nhatKy->noiDung = "Thực hiện hủy hợp đồng số " . $code . " Lý do hủy: " . $lydo;
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã duyệt hủy hợp đồng!',
@@ -2145,8 +2329,14 @@ class HDController extends Controller
         $result->lyDoEdit = $request->lyDoChinhSua;
         $result->lyDoCancel = "";
         $result->requestCancel = false;
+        $code = $result->code;
         $result->save();
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+            $nhatKy->noiDung = "Gửi yêu cầu chỉnh sửa hợp đồng số " . $code . " Lý do chỉnh sửa: " . $request->lyDoChinhSua;
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã gửi yêu cầu sửa!',
@@ -2167,8 +2357,14 @@ class HDController extends Controller
         $result->lyDoCancel = $request->lyDoHuy;
         $result->lyDoEdit = "";
         $result->requestEditHD = false;
+        $code = $result->code;
         $result->save();
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+            $nhatKy->noiDung = "Gửi yêu cầu hủy hợp đồng " . $code . " Lý do hủy: " . $request->lyDoHuy;
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã gửi yêu cầu hủy hợp đồng!',
@@ -2189,16 +2385,29 @@ class HDController extends Controller
         if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
             $result->requestCheck = false;
             $result->admin_check = false;
+            $code = $result->code;
+            $lyDo = $result->lyDoEdit;
             $result->code = 0; 
                 if ($result->id_car_kho != null && $result->hdWait != true) {
                     $car = KhoV2::find($result->id_car_kho);
                     $car->type = "STORE";
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                        $nhatKy->noiDung = "Thực hiện yêu cầu sửa hợp đồng số " . $code . " Lý do chỉnh sửa: " . $lyDo . " Chuyển xe ".$car->typeCarDetail->name." vào kho và trạng thái xe thành STORE";
+                        $nhatKy->save();
                     $car->save();
                 }    
             $result->hdWait = false;           
             $result->id_car_kho = null;
+            $temp = $result->lyDoEdit;
             $result->save();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                $nhatKy->noiDung = "Thực hiện duyệt yêu cầu sửa hợp đồng số " . $code . " Lý do chỉnh sửa: " . $temp;
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã duyệt yêu cầu chỉnh sửa!',
@@ -2221,6 +2430,8 @@ class HDController extends Controller
         if(Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('system')) {
             $result->requestCheck = false;
             $result->admin_check = false;
+            $code = $result->code;
+            $lyDo = $result->lyDoEdit;
             $result->code = 0;
                 if ($result->id_car_kho != null && $result->hdWait != true) {
                     $car = KhoV2::find($result->id_car_kho);
@@ -2230,6 +2441,11 @@ class HDController extends Controller
                             'message' => 'Xe đã xuất kho không thể thao tác trên hợp đồng này!',
                             'code' => 200
                         ]);
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                        $nhatKy->noiDung = "Thực hiện yêu cầu sửa hợp đồng số " . $code . " Lý do chỉnh sửa: " . $lyDo . " Chuyển xe ".$car->typeCarDetail->name." vào kho và trạng thái xe thành STORE";
+                        $nhatKy->save();
                     $car->type = "STORE";
                     $car->save();
                 }    
@@ -2241,6 +2457,11 @@ class HDController extends Controller
             $result->lyDoCancel = "";
             $result->save();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                $nhatKy->noiDung = "Thực hiện duyệt yêu cầu sửa hợp đồng số " . $code . " Lý do chỉnh sửa: " . $lyDo;
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã duyệt yêu cầu chỉnh sửa hợp đồng!',
@@ -2269,9 +2490,15 @@ class HDController extends Controller
                 }
             $result->id_car_kho = null;
             $result->hdWait = false;
+            $code = $result->code;
             $result->code = 0; 
             $result->save();
             if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                $nhatKy->noiDung = "Hủy bỏ phê duyệt đề nghị thực hiện hợp đồng cho hợp đồng số " . $code;
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã bỏ phê duyệt cho đề nghị!',
@@ -2378,6 +2605,11 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In PDI số hợp đồng " . $soHopDong;
+        $nhatKy->save();
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
@@ -2421,6 +2653,11 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In BHBB và 5 món số hợp đồng " . $soHopDong;
+        $nhatKy->save();
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
@@ -2505,6 +2742,11 @@ class HDController extends Controller
         $headers = array(
             'Content-Type: application/docx',
         );
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In yêu cầu lắp phụ kiện số hợp đồng " . $soHopDong;
+        $nhatKy->save();
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 }

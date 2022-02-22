@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DangKySuDung;
 use App\User;
+use App\NhatKy;
 use App\EventReal;
 use App\XeLaiThu;
 use Illuminate\Http\Request;
@@ -36,6 +37,11 @@ class LaiThuController extends Controller
         //
         $car = XeLaiThu::where('id',$request->id)->delete();
         if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
+            $nhatKy->noiDung = "Xóa xe: ";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Delete successfully!',
                 'code' => 200
@@ -61,6 +67,11 @@ class LaiThuController extends Controller
                 'status' => $stt
             ]);
             if($car) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
+                $nhatKy->noiDung = "Chuyển trạng thái xe: ";
+                $nhatKy->save();
                 return response()->json([
                     'message' => 'Đã chuyển trạng thái xe!',
                     'code' => 200
@@ -165,6 +176,11 @@ class LaiThuController extends Controller
             $reg->date_return = Date('H:i d-m-Y');
         $reg->save();
         if($reg) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản lý xe demo - trả xe";
+            $nhatKy->noiDung = "Gửi yêu cầu trả xe";
+            $nhatKy->save();
             return redirect()->route('laithu.pay')->with('succ','Đã gửi yêu cầu trả xe!');
         } else {
             return redirect()->route('laithu.pay')->with('err','Không thể gửi yêu cầu trả xe!');
@@ -205,6 +221,11 @@ class LaiThuController extends Controller
             $reg->id_lead_check = $request->tbpCheck;
             $reg->save();
             if($reg) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
+                $nhatKy->noiDung = "Gửi yêu cầu sử dụng xe ";
+                $nhatKy->save();
                 return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
             } else {
                 return redirect()->route('laithu.reg')->with('err','Không thể đăng ký xe lái thử');
@@ -233,6 +254,11 @@ class LaiThuController extends Controller
         } else {
             $car = DangKySuDung::where('id',$request->id)->delete();
             if($car) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
+                $nhatKy->noiDung = "Xóa đề nghị sử dụng xe";
+                $nhatKy->save();
                 return response()->json([
                     'message' => 'Đã xóa đề nghị sử dụng xe!',
                     'code' => 200
@@ -334,6 +360,11 @@ class LaiThuController extends Controller
                 $eventReal->save();
 
                 if($reg && $upCar) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Quản lý xe demo - duyệt đăng ký";
+                    $nhatKy->noiDung = "Phê duyệt sử dụng xe lái thử";
+                    $nhatKy->save();
                     return response()->json([
                         'message' => 'Đã phê duyệt sử dụng xe lái thử!',
                         'code' => 200
@@ -405,6 +436,11 @@ class LaiThuController extends Controller
         $regInfo->id_lead_check_status = true;
         $regInfo->save();
            if($regInfo) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Quản lý xe demo - duyệt đăng ký (TBP)";
+                $nhatKy->noiDung = "Trưởng bộ phận phê duyệt sử dụng xe lái thử";
+                $nhatKy->save();
                 return response()->json([
                     'message' => 'Đã phê duyệt sử dụng xe lái thử!',
                     'code' => 200
@@ -434,6 +470,11 @@ class LaiThuController extends Controller
             $eventReal->save();
 
             if($car && $upCar) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Quản lý xe demo - duyệt trả";
+                $nhatKy->noiDung = "Duyệt trả xe";
+                $nhatKy->save();
                 return response()->json([
                     'message' => 'Nhận xe thành công',
                     'code' => 200
@@ -501,8 +542,13 @@ class LaiThuController extends Controller
         $eventReal->name = "Allow Demo";
         $eventReal->save();
         if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
+            $nhatKy->noiDung = "Duyệt đề nghị cấp nhiên liệu";
+            $nhatKy->save();
             return response()->json([
-                'message' => 'Đã duyệt đề nghị cấp xăng',
+                'message' => 'Đã duyệt đề nghị cấp nhiên liệu',
                 'code' => 200
             ]);
         } else {
@@ -522,8 +568,13 @@ class LaiThuController extends Controller
         $eventReal->name = "Allow Demo";
         $eventReal->save();
         if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
+            $nhatKy->noiDung = "Không duyệt/Hủy đề nghị cấp nhiên liệu";
+            $nhatKy->save();
             return response()->json([
-                'message' => 'Đã hủy đề nghị cấp xăng',
+                'message' => 'Đã hủy đề nghị cấp nhiên liệu',
                 'code' => 200
             ]);
         } else {
@@ -543,6 +594,11 @@ class LaiThuController extends Controller
         $eventReal->name = "Allow Demo";
         $eventReal->save();
         if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
+            $nhatKy->noiDung = "Trưởng bộ phận duyệt đề nghị cấp nhiên liệu";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',
                 'code' => 200
@@ -558,6 +614,11 @@ class LaiThuController extends Controller
     public function inXang($id) {
         $car = DangKySuDung::find($id);
         $tbp = User::find($car->id_user_check)->userDetail->surname;
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Hành chính - đề nghị cấp nhiên liệu";
+        $nhatKy->noiDung = "In phiếu cấp nhiên liệu";
+        $nhatKy->save();
         return view('laithu.in', ['car' => $car, 'content' => $car, 'tbp' => $tbp]);
     }
 }

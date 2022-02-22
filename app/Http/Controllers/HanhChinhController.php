@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BieuMau;
+use App\NhatKy;
 use App\UsersDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,12 +73,30 @@ class HanhChinhController extends Controller
             $bm->save();
             $files->move('upload/bieumau/', $name);
             
-            return response()->json([
-                "type" => 'success',
-                "message" => 'File: Đã upload file',
-                "code" => 200,
-                "file" => $files
-            ]);
+            if ($bm) {
+
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
+                $nhatKy->noiDung = "Bổ sung biểu mẫu Nội dung: "
+                .$request->tieuDe." Loại: ".$request->loaiFile." Ghi Chú: "
+                .$request->ghiChu." Cho phép hiển thị: " . $request->allow;
+                $nhatKy->save(); 
+
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'File: Đã upload file',
+                    "code" => 200,
+                    "file" => $files
+                ]);
+            } else {
+                return response()->json([
+                    "type" => 'error',
+                    "message" => 'File: lỗi upload',
+                    "code" => 500
+                ]);
+            }
+           
         }
         return response()->json([
             "type" => 'danger',
@@ -88,6 +107,7 @@ class HanhChinhController extends Controller
 
     public function updateBieuMau(Request $request) {
         $bm = BieuMau::find($request->eid);
+        $temp = $bm;
         $bm->tieuDe = $request->etieuDe;
         $bm->slug = \HelpFunction::changeTitle($request->etieuDe);
         $bm->moTa = $request->emoTa;
@@ -96,12 +116,24 @@ class HanhChinhController extends Controller
         $bm->allow = $request->eallow;
         $bm->user_create = Auth::user()->id;
         $bm->save();
-        if ($bm)    
+        if ($bm) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
+            $nhatKy->noiDung = "Cập nhật biểu mẫu.<br/>THÔNG TIN CŨ:<br/>Nội dung: "
+            .$temp->tieuDe." Loại: ".$temp->type." Ghi Chú: "
+            .$temp->ghiChu." Cho phép hiển thị: " . $temp->allow . "<br/>THÔNG TIN MỚI:<br/>Nội dung: "
+            .$request->etieuDe." Loại: ".$request->eloaiFile." Ghi Chú: "
+            .$request->eghiChu." Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->save(); 
+            
             return response()->json([
                 "type" => 'success',
                 "message" => 'Đã cập nhật',
                 "code" => 200
             ]);
+        }
         else
             return response()->json([
                 "type" => 'error',
@@ -112,17 +144,26 @@ class HanhChinhController extends Controller
 
     public function deleteBieuMau(Request $request) {
         $bm = BieuMau::find($request->id);
+        $temp = $bm;
         $name = $bm->url;
         if (file_exists('upload/bieumau/' . $name))
             unlink('upload/bieumau/'.$name);
         $bm->delete();
-        if ($bm) 
+        if ($bm) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
+            $nhatKy->noiDung = "Xóa biểu mẫu <br/>Nội dung: "
+            .$temp->tieuDe." Loại: ".$temp->type." Ghi Chú: "
+            .$temp->ghiChu." Cho phép hiển thị: " . $temp->allow;
+            $nhatKy->save(); 
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã xóa file!',
                 'code' => 200,
                 'data' => $bm
             ]);
+        }
         else
             return response()->json([
                 'type' => 'error',
@@ -236,12 +277,30 @@ class HanhChinhController extends Controller
             $bm->save();
             $files->move('upload/bieumau/', $name);
             
-            return response()->json([
-                "type" => 'success',
-                "message" => 'File: Đã upload file',
-                "code" => 200,
-                "file" => $files
-            ]);
+            if ($bm) {                
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Quản lý bảng giá xe";
+                $nhatKy->noiDung = "Bổ sung bảng giá Nội dung: "
+                .$request->tieuDe." Mô tả: ".$request->moTa." Ghi Chú: "
+                .$request->ghiChu." Cho phép hiển thị: " . $request->allow;
+                $nhatKy->save(); 
+
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'File: Đã upload file',
+                    "code" => 200,
+                    "file" => $files
+                ]);
+            } else {
+                return response()->json([
+                    "type" => 'error',
+                    "message" => 'File: lỗi upload',
+                    "code" => 500,
+                    "file" => $files
+                ]);
+            }
+           
         }
         return response()->json([
             "type" => 'danger',
@@ -269,6 +328,7 @@ class HanhChinhController extends Controller
 
     public function updateBangGia(Request $request) {
         $bm = BieuMau::find($request->eid);
+        $temp = $bm;
         $bm->tieuDe = $request->etieuDe;
         $bm->slug = \HelpFunction::changeTitle($request->etieuDe);
         $bm->moTa = $request->emoTa;
@@ -276,12 +336,21 @@ class HanhChinhController extends Controller
         $bm->allow = $request->eallow;
         $bm->user_create = Auth::user()->id;
         $bm->save();
-        if ($bm)    
+        if ($bm)  {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Quản lý bảng giá xe";
+            $nhatKy->noiDung = "Cập nhật bảng giá<br/> Nội dung: "
+            .$request->etieuDe." Mô tả: ".$request->emoTa." Ghi Chú: "
+            .$request->eghiChu." Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->save(); 
+
             return response()->json([
                 "type" => 'success',
                 "message" => 'Đã cập nhật',
                 "code" => 200
             ]);
+        }
         else
             return response()->json([
                 "type" => 'error',
@@ -349,12 +418,27 @@ class HanhChinhController extends Controller
             $bm->save();
             $files->move('upload/bieumau/', $name);
             
-            return response()->json([
-                "type" => 'success',
-                "message" => 'File: Đã upload file',
-                "code" => 200,
-                "file" => $files
-            ]);
+            if($bm) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Quản lý thông báo nội bộ";
+                $nhatKy->noiDung = "Bổ sung thông báo nội bộ:<br/>Nội dung: "
+                .$request->tieuDe." Mô tả: ".$request->moTa." Ghi Chú: "
+                .$request->ghiChu." Cho phép hiển thị: " . $request->allow;
+                $nhatKy->save(); 
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'File: Đã upload file',
+                    "code" => 200,
+                    "file" => $files
+                ]);
+            } else {
+                return response()->json([
+                    "type" => 'error',
+                    "message" => 'File: Lỗi upload',
+                    "code" => 500
+                ]);
+            }           
         }
         return response()->json([
             "type" => 'danger',
@@ -389,12 +473,20 @@ class HanhChinhController extends Controller
         $bm->allow = $request->eallow;
         $bm->user_create = Auth::user()->id;
         $bm->save();
-        if ($bm)    
+        if ($bm) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Quản lý thông báo nội bộ";
+            $nhatKy->noiDung = "Cập nhật thông báo nội bộ:<br/>Nội dung: "
+            .$request->etieuDe." Mô tả: ".$request->emoTa." Ghi Chú: "
+            .$request->eghiChu." Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->save(); 
             return response()->json([
                 "type" => 'success',
                 "message" => 'Đã cập nhật',
                 "code" => 200
             ]);
+        }              
         else
             return response()->json([
                 "type" => 'error',
@@ -411,7 +503,6 @@ class HanhChinhController extends Controller
 
     public function getHoSoWithName(Request $request) {
         $hoSo = UsersDetail::where('surname','like', "%".$request->name."%")->first();
-
         if ($hoSo) {
             return response()->json([
                 'code' => 200,

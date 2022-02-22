@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\TypeCar;
 use App\TypeCarDetail;
+use App\NhatKy;
 use Illuminate\Http\Request;
 
 class TypeCarController extends Controller
@@ -42,6 +43,11 @@ class TypeCarController extends Controller
         $typecar->save();
 
         if($typecar) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Model xe";
+            $nhatKy->noiDung = "Thêm Model xe";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Inserted Type Car',
                 'code' => 200
@@ -76,6 +82,11 @@ class TypeCarController extends Controller
             'code' => $request->codeE
         ]);
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Model xe";
+            $nhatKy->noiDung = "Cập nhật model xe";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Data updated',
                 'code' => 200
@@ -91,6 +102,11 @@ class TypeCarController extends Controller
     public function delete(Request $request) {
         $result = TypeCar::where('id', $request->id)->delete();
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Model xe";
+            $nhatKy->noiDung = "Xóa model xe";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Deleted Type Car',
                 'code' => 200
@@ -139,6 +155,11 @@ class TypeCarController extends Controller
         $typecardetail->save();
 
         if($typecardetail) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Model xe";
+            $nhatKy->noiDung = "Thêm chi tiết xe từ model xe";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Inserted Add Plus Car',
                 'code' => 200,
@@ -155,6 +176,11 @@ class TypeCarController extends Controller
     public function deleteMore(Request $request) {
         $result = TypeCarDetail::where('id', $request->id)->delete();
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Model xe";
+            $nhatKy->noiDung = "Xóa chi tiết xe từ model xe";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Deleted Type Car Detail',
                 'code' => 200,
@@ -194,6 +220,11 @@ class TypeCarController extends Controller
         ]);
 
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - Model xe";
+            $nhatKy->noiDung = "Cập nhật chi tiết xe từ model xe";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Data Add Plus updated',
                 'code' => 200,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\ChungTu;
+use App\NhatKy;
 use Illuminate\Support\Facades\Auth;
 
 class ChungTuController extends Controller
@@ -76,14 +77,21 @@ class ChungTuController extends Controller
                     $bm->allow = $request->allow;
                     $bm->user_create = Auth::user()->id;
                     $bm->save();
-                    $files->move('upload/chungtu/', $name);
-        
-                    if ($bm) 
+                    $files->move('upload/chungtu/', $name);                     
+                    if ($bm) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
+                        $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . " Số lượng: " 
+                        . $request->soLuong . " Người yêu cầu: " . $request->nguoiYeuCau . " Bộ phận: " 
+                        . $request->boPhan . " Cho phép hiển thị: " . $request->allow . " Tệp đính kèm: Có";
+                        $nhatKy->save();
                         return response()->json([
                             "type" => 'success',
                             "message" => 'File: Đã upload file và nội dung',
                             "code" => 200
                         ]);
+                    }                       
                     else
                         return response()->json([
                             'message' => 'Lỗi upload!',
@@ -102,12 +110,20 @@ class ChungTuController extends Controller
                 $bm->allow = $request->allow;
                 $bm->user_create = Auth::user()->id;
                 $bm->save();
-                if ($bm) 
+                if ($bm) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
+                    $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . " Số lượng: " 
+                    . $request->soLuong . " Người yêu cầu: " . $request->nguoiYeuCau . " Bộ phận: " 
+                    . $request->boPhan . " Cho phép hiển thị: " . $request->allow . " Tệp đính kèm: Không";
+                    $nhatKy->save();
                     return response()->json([
                         "type" => 'success',
                         "message" => 'Đã upload nội dung, không có file đính kèm',
                         "code" => 200
                     ]);
+                }                   
                 else
                     return response()->json([
                         'message' => 'Lỗi upload!',
@@ -124,17 +140,27 @@ class ChungTuController extends Controller
 
     public function deleteChungTu(Request $request) {
         $bm = ChungTu::find($request->id);
+        $temp = $bm->noiDung;
         $name = $bm->url;
         if ($name !== null && file_exists('upload/chungtu/' . $name))
             unlink('upload/chungtu/'.$name);
         $bm->delete();
-        if ($bm) 
+       
+        if ($bm) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
+            $nhatKy->noiDung = "Xóa chứng từ " . $temp;
+            $nhatKy->save();
+
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã xóa!',
                 'code' => 200,
                 'data' => $bm
-            ]);
+            ]);    
+        }           
         else
             return response()->json([
                 'type' => 'error',
@@ -172,12 +198,22 @@ class ChungTuController extends Controller
         $bm->ghiChu = $request->eghiChu;
         $bm->allow = $request->eallow;
         $bm->save();
-        if ($bm)    
+        if ($bm) {
+
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
+            $nhatKy->noiDung = "Cập nhật lại nội dung chứng từ " . $request->enoiDung . " Số lượng: " 
+            . $request->esoLuong . " Người yêu cầu: " . $request->enguoiYeuCau . " Bộ phận: " 
+            . $request->eboPhan . " Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->save();
+
             return response()->json([
                 "type" => 'success',
                 "message" => 'Đã cập nhật',
                 "code" => 200
             ]);
+        }            
         else
             return response()->json([
                 "type" => 'error',

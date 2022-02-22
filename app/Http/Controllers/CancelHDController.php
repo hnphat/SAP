@@ -30,7 +30,9 @@ class CancelHDController extends Controller
            ['sale_id','=', $request->chonHD]
        ])->exists();
        if ($checkCancel) {
-           return redirect()->route('cancel.list')->with('err','[LỖI TRÙNG LẮP]: Hợp đồng HAGI-0'.$request->chonHD.'/HDMB-PA đã được yêu cầu hủy trên hệ thống!');
+           return redirect()
+           ->route('cancel.list')
+           ->with('err','[LỖI TRÙNG LẮP]: Hợp đồng HAGI-0'.$request->chonHD.'/HDMB-PA đã được yêu cầu hủy trên hệ thống!');
        } else {
            $cancel = new CancelHD();
            $cancel->user_id = Auth::user()->id;

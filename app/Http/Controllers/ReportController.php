@@ -10,6 +10,7 @@ use App\ReportCar;
 use App\ReportXuat;
 use App\TypeCar;
 use App\Kpi;
+use App\NhatKy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -159,9 +160,14 @@ class ReportController extends Controller
                 'khSuKien' => $request->khSuKien
             ]);
             if ($report) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Tạo báo cáo ngày";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
-                    'message' => ' Đã khởi tạo báo cáo!',
+                    'message' => ' Khởi tạo báo cáo!',
                     'code' => 200
                 ]);
             } else {
@@ -236,6 +242,11 @@ class ReportController extends Controller
                 'khSuKien' => $request->khSuKien
             ]);
             if ($report) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Lưubáo cáo!";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ' Đã lưu!',
@@ -353,11 +364,17 @@ class ReportController extends Controller
                 'kpi1' => $request->ds,
                 'kpiDecimal' => $request->tp
             ]);
-            if ($valIn)
+            if ($valIn) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "CẬp nhật KPI kinh doanh";
+                $nhatKy->save();
                 return response()->json([
                     'message' => ' Đã cập nhật!',
                     'code' => 200
                 ]);
+            }
             else
                 return response()->json([
                     'type' => 'warning',
@@ -372,11 +389,17 @@ class ReportController extends Controller
             $valIn->kpiDecimal = $request->tp;
             $valIn->save();
 
-            if ($valIn)
+            if ($valIn) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Cập nhật KPI kinh doanh";
+                $nhatKy->save();
                 return response()->json([
                     'message' => ' Đã cập nhật!',
                     'code' => 200
                 ]);
+            }
             else
                 return response()->json([
                     'type' => 'warning',
@@ -421,11 +444,17 @@ class ReportController extends Controller
                 'kpi1' => $request->dt,
                 'kpi2' => $request->lx
             ]);
-            if ($valIn)
+            if ($valIn) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Cập nhật KPI dịch vụ";
+                $nhatKy->save();
                 return response()->json([
                     'message' => ' Đã cập nhật!',
                     'code' => 200
                 ]);
+            }
             else
                 return response()->json([
                     'type' => 'warning',
@@ -440,11 +469,17 @@ class ReportController extends Controller
             $valIn->kpi2 = $request->lx;
             $valIn->save();
 
-            if ($valIn)
+            if ($valIn) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Cập nhật KPI dịch vụ";
+                $nhatKy->save();
                 return response()->json([
                     'message' => ' Đã cập nhật!',
                     'code' => 200
                 ]);
+            }
             else
                 return response()->json([
                     'type' => 'warning',
@@ -551,6 +586,11 @@ class ReportController extends Controller
                 'clock' => true
             ]);
             if ($report) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Lưu và gửi báo cáo (chốt khóa báo cáo)";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ' Đã lưu!',
@@ -630,6 +670,11 @@ class ReportController extends Controller
                 'clock' => true
             ]);
             if ($report) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Lưu và gửi báo cáo (chốt khóa báo cáo)";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ' Đã lưu!',
@@ -742,6 +787,11 @@ class ReportController extends Controller
                 'khSuKien' => $request->khSuKien
             ]);
             if ($report) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Lưu báo cáo (chưa gửi, chưa chốt báo cáo)";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ' Đã lưu!',
@@ -821,6 +871,11 @@ class ReportController extends Controller
                 'khSuKien' => $request->khSuKien
             ]);
             if ($report) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->noiDung = "Lưu báo cáo (chưa gửi, chưa chốt báo cáo)";
+                $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
                     'message' => ' Đã lưu!',
@@ -845,6 +900,11 @@ class ReportController extends Controller
         $reportCar->dongXe = $request->typeCar;
         $reportCar->save();
         if ($reportCar) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+            $nhatKy->noiDung = "Báo cáo thông tin xe hợp đồng";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã thêm chi tiết hợp đồng",
@@ -883,6 +943,11 @@ class ReportController extends Controller
     {
         $reportCar = ReportCar::where('id', $request->id)->delete();
         if ($reportCar) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+            $nhatKy->noiDung = "Xóa báo cáo thông tin xe hợp đồng";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Đã xóa!',
                 'code' => 200
@@ -908,6 +973,11 @@ class ReportController extends Controller
         $reportWork->ketQua = $request->ketQua;
         $reportWork->save();
         if ($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+            $nhatKy->noiDung = "Thêm công việc trong ngày";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã thêm công việc",
@@ -961,6 +1031,11 @@ class ReportController extends Controller
     {
         $reportWork = ReportWork::where('id', $request->id)->delete();
         if ($reportWork) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+            $nhatKy->noiDung = "Xóa công việc trong ngày";
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Đã xóa!',
                 'code' => 200

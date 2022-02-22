@@ -7,6 +7,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use App\NhatKy;
 use App\UsersDetail;
 
 class UserController extends Controller
@@ -50,6 +51,11 @@ class UserController extends Controller
         $role = Roles::where('name','normal')->firstOrFail();
         $userAddRole = User::where('id',$user->id)->firstOrFail();
         $userAddRole->roles()->attach($role->id);
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Quản trị - người dùng";
+        $nhatKy->noiDung = "Thêm người dùng";
+        $nhatKy->save();
         return response()->json(['success'=>'Đã thêm người dùng']);
     }
 
@@ -90,6 +96,11 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->save();
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Quản trị - người dùng";
+        $nhatKy->noiDung = "Cập nhật người dùng";
+        $nhatKy->save();
         return response()->json(['success'=>'Đã cập nhật người dùng']);
     }
 
@@ -106,8 +117,14 @@ class UserController extends Controller
             return redirect()->route('user.list')->with('loi','Không thể xóa tài khoản hệ thống');
         try {
             $user = User::where('id', $id)->delete();
-            if ($user)
+            if ($user) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Quản trị - người dùng";
+                $nhatKy->noiDung = "Xóa người dùng";
+                $nhatKy->save();
                 return redirect()->route('user.list');
+            }
         } catch (QueryException $ex) {
             return redirect()->route('user.list')->with('loi','Không thể xóa vì người dùng đang còn sử dụng ở những nơi khác NOTE: ' .$ex->getMessage());
         }
@@ -122,6 +139,11 @@ class UserController extends Controller
         $active = ($active == 1) ? 0 : 1;
         $user->active = $active;
         $user->save();
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Quản trị - người dùng";
+        $nhatKy->noiDung = "Thay đổi trạng thái khóa người dùng";
+        $nhatKy->save();
         return redirect()->route('user.list');
     }
 
@@ -136,6 +158,11 @@ class UserController extends Controller
                     abort(403);
                 }
         }
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->chucNang = "Đăng nhập";
+        $nhatKy->noiDung = "Thực hiện đăng nhập vào hệ thống";
+        $nhatKy->save();
         return view('login', ['error' => 'Sai tài khoản hoặc mật khẩu']);
     }
 
@@ -196,6 +223,11 @@ class UserController extends Controller
         $userDetail->birthday = $request->birthday;
         $userDetail->save();
         if($user) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Quản trị - người dùng";
+            $nhatKy->noiDung = "Cập nhật thông tin người dùng";
+            $nhatKy->save();
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã cập nhật thông tin',

@@ -18,7 +18,7 @@ class NhatKy extends Migration
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');
             $table->string('chucNang');
-            $table->string('noiDung');
+            $table->text('noiDung');
             $table->string('ghiChu')->nullable();
             $table->timestamps();
         });

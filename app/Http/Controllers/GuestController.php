@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Guest;
 use App\Sale;
+use App\NhatKy;
 use App\TypeGuest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,16 @@ class GuestController extends Controller
         $guest->save();
 
         if($guest) {
+            
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+            $nhatKy->noiDung = "Thêm khách hàng mới Họ tên: "
+            .$request->ten." CMND: ".$request->cmnd." Ngày cấp: ".$request->ngayCap." Nơi cấp: "
+            .$request->noiCap." MST: ".$request->mst." Đại diện: ".$request->daiDien." Chức vụ: "
+            .$request->chucVu." Điện thoại: ".$request->dienThoai." Địa chỉ: " . $request->diaChi;
+            $nhatKy->save();
+
             return response()->json([
                 'message' => 'Insert data successfully!',
                 'code' => 200,
@@ -84,8 +95,18 @@ class GuestController extends Controller
     }
 
     public function delete(Request $request) {
-        $result = Guest::where('id', $request->id)->delete();
+        $result = Guest::find($request->id);
+        $temp = $result;
+        $result->delete();
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+            $nhatKy->noiDung = "Xóa khách hàng Họ tên: "
+            .$temp->name." CMND: ".$temp->cmnd." Ngày cấp: ".$temp->ngayCap." Nơi cấp: "
+            .$temp->noiCap." MST: ".$temp->mst." Đại diện: ".$temp->daiDien." Chức vụ: "
+            .$temp->chucVu." Điện thoại: ".$temp->phone." Địa chỉ: " . $temp->address;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Delete data successfully!',
                 'code' => 200
@@ -115,7 +136,8 @@ class GuestController extends Controller
     }
 
     public function update(Request $request) {
-        $result = Guest::where('id', $request->eid)->update([
+        $temp = Guest::find($request->eid);
+        $result = Guest::where('id',$request->eid)->update([
             'id_type_guest' => $request->eloai,
             'name' => $request->eten,
             'phone' => $request->edienThoai,
@@ -129,6 +151,18 @@ class GuestController extends Controller
             'chucVu' => $request->echucVu
         ]);
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+            $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: Họ tên: "
+            .$temp->name." CMND: ".$temp->cmnd." Ngày cấp: ".$temp->ngayCap." Nơi cấp: "
+            .$temp->noiCap." MST: ".$temp->mst." Đại diện: ".$temp->daiDien." Chức vụ: "
+            .$temp->chucVu." Điện thoại: ".$temp->phone." Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: Họ tên: "
+            .$request->eten." CMND: ".$request->ecmnd." Ngày cấp: ".$request->engayCap." Nơi cấp: "
+            .$request->enoiCap." MST: ".$request->emst." Đại diện: ".$request->edaiDien." Chức vụ: "
+            .$request->echucVu." Điện thoại: ".$request->edienThoai." Địa chỉ: " . $request->ediaChi;
+            $nhatKy->save();
+
             return response()->json([
                 'message' => 'Updated successfully!',
                 'code' => 200
