@@ -162,6 +162,7 @@ class ReportController extends Controller
             if ($report) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Tạo báo cáo ngày";
                 $nhatKy->save();
@@ -244,6 +245,7 @@ class ReportController extends Controller
             if ($report) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Lưubáo cáo!";
                 $nhatKy->save();
@@ -367,6 +369,7 @@ class ReportController extends Controller
             if ($valIn) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "CẬp nhật KPI kinh doanh";
                 $nhatKy->save();
@@ -392,6 +395,7 @@ class ReportController extends Controller
             if ($valIn) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Cập nhật KPI kinh doanh";
                 $nhatKy->save();
@@ -447,6 +451,7 @@ class ReportController extends Controller
             if ($valIn) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Cập nhật KPI dịch vụ";
                 $nhatKy->save();
@@ -472,6 +477,7 @@ class ReportController extends Controller
             if ($valIn) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Cập nhật KPI dịch vụ";
                 $nhatKy->save();
@@ -588,6 +594,7 @@ class ReportController extends Controller
             if ($report) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Lưu và gửi báo cáo (chốt khóa báo cáo)";
                 $nhatKy->save();
@@ -672,6 +679,7 @@ class ReportController extends Controller
             if ($report) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Lưu và gửi báo cáo (chốt khóa báo cáo)";
                 $nhatKy->save();
@@ -790,6 +798,7 @@ class ReportController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->noiDung = "Lưu báo cáo (chưa gửi, chưa chốt báo cáo)";
                 $nhatKy->save();
                 return response()->json([
@@ -873,6 +882,7 @@ class ReportController extends Controller
             if ($report) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
                 $nhatKy->noiDung = "Lưu báo cáo (chưa gửi, chưa chốt báo cáo)";
                 $nhatKy->save();
@@ -902,6 +912,7 @@ class ReportController extends Controller
         if ($reportCar) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
             $nhatKy->noiDung = "Báo cáo thông tin xe hợp đồng";
             $nhatKy->save();
@@ -945,6 +956,7 @@ class ReportController extends Controller
         if ($reportCar) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
             $nhatKy->noiDung = "Xóa báo cáo thông tin xe hợp đồng";
             $nhatKy->save();
@@ -975,6 +987,7 @@ class ReportController extends Controller
         if ($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
             $nhatKy->noiDung = "Thêm công việc trong ngày";
             $nhatKy->save();
@@ -1033,6 +1046,7 @@ class ReportController extends Controller
         if ($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
             $nhatKy->noiDung = "Xóa công việc trong ngày";
             $nhatKy->save();

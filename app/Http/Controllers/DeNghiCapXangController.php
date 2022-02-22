@@ -38,9 +38,10 @@ class DeNghiCapXangController extends Controller
 
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Đề nghị cấp nhiên liệu";
-            $nhatKy->noiDung = "Thêm đề nghị cấp nhiên liệu loại xe: ".$request->loaiXe." khách hàng: "
-            .$request->khachHang." biển số: ".$request->bienSo." lý do cấp: " . $request->lyDoCap;
+            $nhatKy->noiDung = "Thêm đề nghị cấp nhiên liệu loại xe: ".$request->loaiXe." <br/>khách hàng: "
+            .$request->khachHang." <br/>biển số: ".$request->bienSo." <br/>lý do cấp: " . $request->lyDoCap;
             $nhatKy->save();
 
             return redirect()
@@ -63,9 +64,10 @@ class DeNghiCapXangController extends Controller
         if($deNghi) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Đề nghị cấp nhiên liệu";
-            $nhatKy->noiDung = "Xóa đề nghị cấp nhiên liệu loại xe: ".$temp->fuel_car." khách hàng: "
-            .$temp->fuel_guest." biển số: ".$temp->fuel_frame." lý do cấp: " . $temp->fuel_lyDo;
+            $nhatKy->noiDung = "Xóa đề nghị cấp nhiên liệu loại xe: ".$temp->fuel_car." <br/>khách hàng: "
+            .$temp->fuel_guest." <br/>biển số: ".$temp->fuel_frame." <br/>lý do cấp: " . $temp->fuel_lyDo;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Delete successfully!',
@@ -98,6 +100,7 @@ class DeNghiCapXangController extends Controller
 
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
             $nhatKy->noiDung = "Phê duyệt đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
             $nhatKy->save();
@@ -122,6 +125,7 @@ class DeNghiCapXangController extends Controller
         if($car) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
             $nhatKy->noiDung = "Hủy đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
             $nhatKy->save();
@@ -156,6 +160,7 @@ class DeNghiCapXangController extends Controller
         if($car) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
             $nhatKy->noiDung = "Phê duyệt đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
             $nhatKy->save();

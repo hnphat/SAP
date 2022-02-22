@@ -64,9 +64,10 @@ class HoSoController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Quản trị - Hồ sơ";
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->noiDung = "Thêm thông tin nhân viên<br/> Họ tên: "
-            .$request->hoTen." Điện thoại: ".$request->phone." Ngày sinh: "
-            .$request->ngaySinh." Địa chỉ:" .$request->diaChi;
+            .$request->hoTen." <br/>Điện thoại: ".$request->phone." <br/>Ngày sinh: "
+            .$request->ngaySinh." <br/>Địa chỉ:" .$request->diaChi;
             $nhatKy->save();
             return response()->json([
                'message' => 'Data Inserted',
@@ -173,11 +174,12 @@ class HoSoController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Quản trị - Hồ sơ";
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->noiDung = "Cập nhật thông tin nhân viên<br/>THÔNG TIN CŨ<br/>Họ tên: "
-            .$temp->surname." Điện thoại: ".$temp->phone." Ngày sinh: "
-            .$temp->birthday." Địa chỉ:" .$temp->address."<br/>THÔNG TIN MỚI<br/>Họ tên: "
-            .$request->_hoTen." Điện thoại: ".$request->_phone." Ngày sinh: "
-            .$request->_ngaySinh." Địa chỉ:" .$request->_diaChi;
+            .$temp->surname." <br/>Điện thoại: ".$temp->phone." <br/>Ngày sinh: "
+            .$temp->birthday." <br/>Địa chỉ:" .$temp->address."<br/>THÔNG TIN MỚI<br/>Họ tên: "
+            .$request->_hoTen." <br/>Điện thoại: ".$request->_phone." <br/>Ngày sinh: "
+            .$request->_ngaySinh." <br/>Địa chỉ:" .$request->_diaChi;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Data updated',
@@ -199,9 +201,10 @@ class HoSoController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Quản trị - Hồ sơ";
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->noiDung = "Xóa thông tin nhân viên<br/> Họ tên: "
-            .$temp->surname." Điện thoại: ".$temp->phone." Ngày sinh: "
-            .$temp->birthday." Địa chỉ:" .$temp->address;
+            .$temp->surname." <br/>Điện thoại: ".$temp->phone." <br/>Ngày sinh: "
+            .$temp->birthday." vĐịa chỉ:" .$temp->address;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Data deleted',

@@ -123,6 +123,7 @@ class KetoanController extends Controller
             );
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
             $nhatKy->noiDung = "In biên bản bàn giao xe hợp đồng số " . $hd->code;
             $nhatKy->save();

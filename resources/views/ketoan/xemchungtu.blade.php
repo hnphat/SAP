@@ -118,7 +118,13 @@
                 columns: [
                     { "data": null },
                     { "data": "gio" },
-                    { "data": "ngay" },
+                    { "data": null,
+                        render: function(data, type, row) {
+                            let arr = row.ngay.split('-');
+                            let theday = arr[2].toString().substring(0,2);                          
+                            return theday + "/" + arr[1] + "/" + arr[0];                         
+                        } 
+                    },
                     {
                         "data": null,
                         render: function(data, type, row) {

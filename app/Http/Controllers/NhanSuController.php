@@ -203,6 +203,7 @@ class NhanSuController extends Controller
         if ($loaiPhep) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - quản lý loại phép";
             $nhatKy->noiDung = "Thêm loại phép<br/>Tên phép: ".$request->tenPhep." Mã phép: "
             .$request->maPhep." Loại phép: ". $request->loaiPhep." Mô tả: ".$request->moTa;
@@ -229,6 +230,7 @@ class NhanSuController extends Controller
         if ($loaiPhep) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - quản lý loại phép";
             $nhatKy->noiDung = "Xóa loại phép<br/>Tên phép: ".$temp->tenPhep." Mã phép: "
             .$temp->maPhep." Loại phép: ". $temp->loaiPhep." Mô tả: ".$temp->moTa;
@@ -787,6 +789,7 @@ class NhanSuController extends Controller
             if ($xinPhep) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
                 $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
                 .$request->buoi." Ngày xin: "
@@ -822,6 +825,7 @@ class NhanSuController extends Controller
         if ($tangCa) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
             $nhatKy->noiDung = "Xin phép tăng ca";
             $nhatKy->save();
@@ -905,6 +909,7 @@ class NhanSuController extends Controller
         if ($xinPhep) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
             $nhatKy->noiDung = "Xóa xin phép";
             $nhatKy->save();
@@ -930,8 +935,9 @@ class NhanSuController extends Controller
             if ($xinPhep) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
-                $nhatKy->noiDung = "Admin xóa xin phép";
+                $nhatKy->noiDung = "Xóa xin phép";
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1066,6 +1072,7 @@ class NhanSuController extends Controller
             if ($xinPhep) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
                 $nhatKy->noiDung = "Phê duyệt phép";
                 $nhatKy->save();
@@ -1112,6 +1119,7 @@ class NhanSuController extends Controller
                 if ($xinPhep) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
                     $nhatKy->noiDung = "Phê duyệt phép";
                     $nhatKy->save();
@@ -1735,6 +1743,7 @@ class NhanSuController extends Controller
                 }   
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý chấm công - Import excel";
                 $nhatKy->noiDung = "Import excel file chấm công vào hệ thống";
                 $nhatKy->save();
@@ -1795,6 +1804,7 @@ class NhanSuController extends Controller
             if ($tangCa) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                 $nhatKy->noiDung = "Phê duyệt tăng ca";
                 $nhatKy->save();
@@ -1824,6 +1834,7 @@ class NhanSuController extends Controller
                 if ($tangCa) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                     $nhatKy->noiDung = "Phê duyệt tăng ca";
                     $nhatKy->save();
@@ -1859,6 +1870,7 @@ class NhanSuController extends Controller
             if ($tangCa) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                 $nhatKy->noiDung = "Cập nhật giờ công và hệ số tăng ca";
                 $nhatKy->save();
@@ -1885,6 +1897,7 @@ class NhanSuController extends Controller
             if ($tangCa) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                 $nhatKy->noiDung = "Xóa tăng ca";
                 $nhatKy->save();
@@ -1913,6 +1926,7 @@ class NhanSuController extends Controller
                 if ($tangCa) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                     $nhatKy->noiDung = "Xóa tăng ca";
                     $nhatKy->save();
@@ -1989,6 +2003,7 @@ class NhanSuController extends Controller
         if ($xacNhan) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
             $nhatKy->noiDung = "Chốt chấm công";
             $nhatKy->save();
@@ -2082,6 +2097,7 @@ class NhanSuController extends Controller
         if ($xacNhan) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
             $nhatKy->noiDung = "Hủy chốt chấm công";
             $nhatKy->save();
@@ -2224,6 +2240,7 @@ class NhanSuController extends Controller
         if ($flag) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
             $nhatKy->noiDung = "Admin chốt tất cả chấm công";
             $nhatKy->save();
@@ -2260,6 +2277,7 @@ class NhanSuController extends Controller
         if ($flag) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
             $nhatKy->noiDung = "Admin hủy chốt tất cả chấm công";
             $nhatKy->save();
@@ -2317,6 +2335,7 @@ class NhanSuController extends Controller
         if ($xinPhep) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt phép trưởng bộ phận";
             $nhatKy->noiDung = "Admin đã xem và kiểm tra";
             $nhatKy->save();
@@ -2375,6 +2394,7 @@ class NhanSuController extends Controller
         if ($tangCa) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt tăng ca trưởng bộ phận";
             $nhatKy->noiDung = "Admin đã xem và kiểm tra";
             $nhatKy->save();
@@ -2533,6 +2553,7 @@ class NhanSuController extends Controller
             if ($quanLy) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - Quản lý tăng ca";
                 $nhatKy->noiDung = "Thêm tăng ca và hệ số tăng ca";
                 $nhatKy->save();
@@ -2563,6 +2584,7 @@ class NhanSuController extends Controller
         if ($quanLy) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - quản lý tăng ca";
             $nhatKy->noiDung = "Xóa nhân viên tăng ca";
             $nhatKy->save();
@@ -2649,6 +2671,7 @@ class NhanSuController extends Controller
         } 
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
         $nhatKy->noiDung = "Thêm phép hàng loạt";
         $nhatKy->save();
@@ -2668,6 +2691,7 @@ class NhanSuController extends Controller
         if ($xinPhep) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
             $nhatKy->noiDung = "Hủy phép hàng loạt";
             $nhatKy->save();
@@ -2906,6 +2930,7 @@ class NhanSuController extends Controller
         }    
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Nhân sự - Quản lý phép";
         $nhatKy->noiDung = "Thực thiện đồng bộ phép";
         $nhatKy->save();

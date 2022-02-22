@@ -49,6 +49,7 @@
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
+                                        <th>Thời gian</th>
                                         <th>Ngày</th>
                                         <th>Tài khoản</th>
                                         <th>Chức năng thao tác</th>
@@ -113,13 +114,13 @@
                 ],
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
-                    { "data": null },  
+                    { "data": null },
+                    { "data": "thoiGian" },  
                     { "data": null,
                         render: function(data, type, row) {
                             let arr = row.created_at.split('-');
-                            let theday = arr[2].toString().substring(0,2);
-                            let thetime = arr[2].toString().split("T")[1].substring(0,5);
-                            return thetime + " " + theday + "/" + arr[1] + "/" + arr[0];
+                            let theday = arr[2].toString().substring(0,2);                          
+                            return theday + "/" + arr[1] + "/" + arr[0];                         
                         } 
                     },                  
                     { "data": "name" },          

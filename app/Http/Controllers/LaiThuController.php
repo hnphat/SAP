@@ -39,6 +39,7 @@ class LaiThuController extends Controller
         if($car) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
             $nhatKy->noiDung = "Xóa xe: ";
             $nhatKy->save();
@@ -69,6 +70,7 @@ class LaiThuController extends Controller
             if($car) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
                 $nhatKy->noiDung = "Chuyển trạng thái xe: ";
                 $nhatKy->save();
@@ -178,6 +180,7 @@ class LaiThuController extends Controller
         if($reg) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản lý xe demo - trả xe";
             $nhatKy->noiDung = "Gửi yêu cầu trả xe";
             $nhatKy->save();
@@ -223,6 +226,7 @@ class LaiThuController extends Controller
             if($reg) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
                 $nhatKy->noiDung = "Gửi yêu cầu sử dụng xe ";
                 $nhatKy->save();
@@ -256,6 +260,7 @@ class LaiThuController extends Controller
             if($car) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
                 $nhatKy->noiDung = "Xóa đề nghị sử dụng xe";
                 $nhatKy->save();
@@ -362,6 +367,7 @@ class LaiThuController extends Controller
                 if($reg && $upCar) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Quản lý xe demo - duyệt đăng ký";
                     $nhatKy->noiDung = "Phê duyệt sử dụng xe lái thử";
                     $nhatKy->save();
@@ -438,6 +444,7 @@ class LaiThuController extends Controller
            if($regInfo) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - duyệt đăng ký (TBP)";
                 $nhatKy->noiDung = "Trưởng bộ phận phê duyệt sử dụng xe lái thử";
                 $nhatKy->save();
@@ -472,6 +479,7 @@ class LaiThuController extends Controller
             if($car && $upCar) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - duyệt trả";
                 $nhatKy->noiDung = "Duyệt trả xe";
                 $nhatKy->save();
@@ -544,6 +552,7 @@ class LaiThuController extends Controller
         if($car) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
             $nhatKy->noiDung = "Duyệt đề nghị cấp nhiên liệu";
             $nhatKy->save();
@@ -570,6 +579,7 @@ class LaiThuController extends Controller
         if($car) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
             $nhatKy->noiDung = "Không duyệt/Hủy đề nghị cấp nhiên liệu";
             $nhatKy->save();
@@ -596,6 +606,7 @@ class LaiThuController extends Controller
         if($car) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
             $nhatKy->noiDung = "Trưởng bộ phận duyệt đề nghị cấp nhiên liệu";
             $nhatKy->save();
@@ -616,6 +627,7 @@ class LaiThuController extends Controller
         $tbp = User::find($car->id_user_check)->userDetail->surname;
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Hành chính - đề nghị cấp nhiên liệu";
         $nhatKy->noiDung = "In phiếu cấp nhiên liệu";
         $nhatKy->save();

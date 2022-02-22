@@ -45,6 +45,7 @@ class TypeCarController extends Controller
         if($typecar) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Model xe";
             $nhatKy->noiDung = "Thêm Model xe";
             $nhatKy->save();
@@ -84,6 +85,7 @@ class TypeCarController extends Controller
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Model xe";
             $nhatKy->noiDung = "Cập nhật model xe";
             $nhatKy->save();
@@ -104,6 +106,7 @@ class TypeCarController extends Controller
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Model xe";
             $nhatKy->noiDung = "Xóa model xe";
             $nhatKy->save();
@@ -157,6 +160,7 @@ class TypeCarController extends Controller
         if($typecardetail) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Model xe";
             $nhatKy->noiDung = "Thêm chi tiết xe từ model xe";
             $nhatKy->save();
@@ -178,6 +182,7 @@ class TypeCarController extends Controller
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Model xe";
             $nhatKy->noiDung = "Xóa chi tiết xe từ model xe";
             $nhatKy->save();
@@ -222,6 +227,7 @@ class TypeCarController extends Controller
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Model xe";
             $nhatKy->noiDung = "Cập nhật chi tiết xe từ model xe";
             $nhatKy->save();

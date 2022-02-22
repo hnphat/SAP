@@ -77,10 +77,11 @@ class HanhChinhController extends Controller
 
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
-                $nhatKy->noiDung = "Bổ sung biểu mẫu Nội dung: "
-                .$request->tieuDe." Loại: ".$request->loaiFile." Ghi Chú: "
-                .$request->ghiChu." Cho phép hiển thị: " . $request->allow;
+                $nhatKy->noiDung = "Bổ sung biểu mẫu <br/>Nội dung: "
+                .$request->tieuDe." <br/>Loại: ".$request->loaiFile." <br/>Ghi Chú: "
+                .$request->ghiChu." <br/>Cho phép hiển thị: " . $request->allow;
                 $nhatKy->save(); 
 
                 return response()->json([
@@ -121,11 +122,12 @@ class HanhChinhController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->noiDung = "Cập nhật biểu mẫu.<br/>THÔNG TIN CŨ:<br/>Nội dung: "
-            .$temp->tieuDe." Loại: ".$temp->type." Ghi Chú: "
-            .$temp->ghiChu." Cho phép hiển thị: " . $temp->allow . "<br/>THÔNG TIN MỚI:<br/>Nội dung: "
-            .$request->etieuDe." Loại: ".$request->eloaiFile." Ghi Chú: "
-            .$request->eghiChu." Cho phép hiển thị: " . $request->eallow;
+            .$temp->tieuDe." <br/>Loại: ".$temp->type." <br/>Ghi Chú: "
+            .$temp->ghiChu." <br/>Cho phép hiển thị: " . $temp->allow . "<br/>THÔNG TIN MỚI:<br/>Nội dung: "
+            .$request->etieuDe." <br/>Loại: ".$request->eloaiFile." <br/>Ghi Chú: "
+            .$request->eghiChu." <br/>Cho phép hiển thị: " . $request->eallow;
             $nhatKy->save(); 
             
             return response()->json([
@@ -152,10 +154,11 @@ class HanhChinhController extends Controller
         if ($bm) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
             $nhatKy->noiDung = "Xóa biểu mẫu <br/>Nội dung: "
-            .$temp->tieuDe." Loại: ".$temp->type." Ghi Chú: "
-            .$temp->ghiChu." Cho phép hiển thị: " . $temp->allow;
+            .$temp->tieuDe." <br/>Loại: ".$temp->type." <br/>Ghi Chú: "
+            .$temp->ghiChu." <br/>Cho phép hiển thị: " . $temp->allow;
             $nhatKy->save(); 
             return response()->json([
                 'type' => 'success',
@@ -280,10 +283,11 @@ class HanhChinhController extends Controller
             if ($bm) {                
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý bảng giá xe";
-                $nhatKy->noiDung = "Bổ sung bảng giá Nội dung: "
-                .$request->tieuDe." Mô tả: ".$request->moTa." Ghi Chú: "
-                .$request->ghiChu." Cho phép hiển thị: " . $request->allow;
+                $nhatKy->noiDung = "Bổ sung bảng giá <br/>Nội dung: "
+                .$request->tieuDe." <br/>Mô tả: ".$request->moTa." <br/>Ghi Chú: "
+                .$request->ghiChu." <br/>Cho phép hiển thị: " . $request->allow;
                 $nhatKy->save(); 
 
                 return response()->json([
@@ -339,10 +343,11 @@ class HanhChinhController extends Controller
         if ($bm)  {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Quản lý bảng giá xe";
-            $nhatKy->noiDung = "Cập nhật bảng giá<br/> Nội dung: "
-            .$request->etieuDe." Mô tả: ".$request->emoTa." Ghi Chú: "
-            .$request->eghiChu." Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->noiDung = "Cập nhật bảng giá<br/>Nội dung: "
+            .$request->etieuDe." <br/>Mô tả: ".$request->emoTa." <br/>Ghi Chú: "
+            .$request->eghiChu." <br/>Cho phép hiển thị: " . $request->eallow;
             $nhatKy->save(); 
 
             return response()->json([
@@ -421,10 +426,11 @@ class HanhChinhController extends Controller
             if($bm) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý thông báo nội bộ";
                 $nhatKy->noiDung = "Bổ sung thông báo nội bộ:<br/>Nội dung: "
-                .$request->tieuDe." Mô tả: ".$request->moTa." Ghi Chú: "
-                .$request->ghiChu." Cho phép hiển thị: " . $request->allow;
+                .$request->tieuDe." <br/>Mô tả: ".$request->moTa." <br/>Ghi Chú: "
+                .$request->ghiChu." <br/>Cho phép hiển thị: " . $request->allow;
                 $nhatKy->save(); 
                 return response()->json([
                     "type" => 'success',
@@ -476,10 +482,11 @@ class HanhChinhController extends Controller
         if ($bm) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Quản lý thông báo nội bộ";
             $nhatKy->noiDung = "Cập nhật thông báo nội bộ:<br/>Nội dung: "
-            .$request->etieuDe." Mô tả: ".$request->emoTa." Ghi Chú: "
-            .$request->eghiChu." Cho phép hiển thị: " . $request->eallow;
+            .$request->etieuDe." <br/>Mô tả: ".$request->emoTa." <br/>Ghi Chú: "
+            .$request->eghiChu." <br/>Cho phép hiển thị: " . $request->eallow;
             $nhatKy->save(); 
             return response()->json([
                 "type" => 'success',

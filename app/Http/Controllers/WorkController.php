@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\ReportWork;
 use App\User;
+use App\NhatKy;
 use App\EventReal;
 
 class WorkController extends Controller
@@ -50,6 +51,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - Công việc tổng";
             $nhatKy->noiDung = "Thêm công việc";
             $nhatKy->save();
@@ -77,6 +79,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - Công việc tổng";
             $nhatKy->noiDung = "Xóa công việc";
             $nhatKy->save();
@@ -134,6 +137,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - Công việc tổng";
             $nhatKy->noiDung = "Cập nhật công việc";
             $nhatKy->save();
@@ -172,6 +176,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - Công việc tổng";
             $nhatKy->noiDung = "Cập nhật công việc";
             $nhatKy->save();
@@ -208,6 +213,7 @@ class WorkController extends Controller
             if($reportWork) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Công việc - Công việc tổng";
                 $nhatKy->noiDung = "Check báo cáo công việc";
                 $nhatKy->save();
@@ -241,6 +247,7 @@ class WorkController extends Controller
             if($reportWork) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Công việc - Công việc tổng";
                 $nhatKy->noiDung = "Check báo cáo công việc";
                 $nhatKy->save();
@@ -368,6 +375,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - giao việc";
             $nhatKy->noiDung = "Thêm giao việc";
             $nhatKy->save();
@@ -410,6 +418,7 @@ class WorkController extends Controller
             if($reportWork) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Công việc - giao việc";
                 $nhatKy->noiDung = "Chỉnh sửa giao việc";
                 $nhatKy->save();
@@ -446,6 +455,7 @@ class WorkController extends Controller
             if($reportWork) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Công việc - giao việc";
                 $nhatKy->noiDung = "Xóa giao việc";
                 $nhatKy->save();
@@ -481,6 +491,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - giao việc";
             $nhatKy->noiDung = "Check báo cáo giao việc";
             $nhatKy->save();
@@ -512,6 +523,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - giao việc";
             $nhatKy->noiDung = "Chấp nhận kết quả từ giao việc";
             $nhatKy->save();
@@ -543,6 +555,7 @@ class WorkController extends Controller
         if($reportWork) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Công việc - giao việc";
             $nhatKy->noiDung = "Từ chối kết quả từ giao việc";
             $nhatKy->save();

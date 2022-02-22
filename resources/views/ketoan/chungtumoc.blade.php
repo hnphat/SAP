@@ -89,23 +89,23 @@
                         <form method="POST" enctype="multipart/form-data" id="addForm" autocomplete="off">
                             <div class="form-group">
                                <label>Ngày</label> 
-                               <input type="date" name="ngay" class="form-control" placeholder="Tiêu đề file">
+                               <input type="date" name="ngay" class="form-control">
                             </div>
                             <div class="form-group">
                                <label>Giờ</label> 
-                               <input type="time" name="gio" class="form-control" placeholder="Tiêu đề file">
+                               <input type="time" name="gio" class="form-control">
                             </div>
                             <div class="form-group">
                                <label>Nội dung</label> 
-                               <input type="text" name="noiDung" class="form-control" placeholder="Tiêu đề file">
+                               <input type="text" name="noiDung" class="form-control" placeholder="Nội dung">
                             </div>
                             <div class="form-group">
                                <label>Số lượng</label> 
-                               <input type="text" name="soLuong" class="form-control" placeholder="Tiêu đề file">
+                               <input type="text" name="soLuong" class="form-control" placeholder="Số lượng">
                             </div>
                             <div class="form-group">
                                <label>Người yêu cầu</label> 
-                               <input type="text" name="nguoiYeuCau" class="form-control" placeholder="Tiêu đề file">
+                               <input type="text" name="nguoiYeuCau" class="form-control" placeholder="Người yêu cầu">
                             </div>
                             <div class="form-group">
                                <label>Bộ phận</label> 
@@ -174,23 +174,23 @@
                             <input type="hidden" name="eid">
                             <div class="form-group">
                                <label>Ngày</label> 
-                               <input type="date" name="engay" class="form-control" placeholder="Tiêu đề file">
+                               <input type="date" name="engay" class="form-control">
                             </div>
                             <div class="form-group">
                                <label>Giờ</label> 
-                               <input type="time" name="egio" class="form-control" placeholder="Tiêu đề file">
+                               <input type="time" name="egio" class="form-control">
                             </div>
                             <div class="form-group">
                                <label>Nội dung</label> 
-                               <input type="text" name="enoiDung" class="form-control" placeholder="Tiêu đề file">
+                               <input type="text" name="enoiDung" class="form-control" placeholder="Nội dung">
                             </div>
                             <div class="form-group">
                                <label>Số lượng</label> 
-                               <input type="text" name="esoLuong" class="form-control" placeholder="Tiêu đề file">
+                               <input type="text" name="esoLuong" class="form-control" placeholder="Số lượng">
                             </div>
                             <div class="form-group">
                                <label>Người yêu cầu</label> 
-                               <input type="text" name="enguoiYeuCau" class="form-control" placeholder="Tiêu đề file">
+                               <input type="text" name="enguoiYeuCau" class="form-control" placeholder="Người yêu cầu">
                             </div>
                             <div class="form-group">
                                <label>Bộ phận</label> 
@@ -280,7 +280,13 @@
                 columns: [
                     { "data": null },
                     { "data": "gio" },
-                    { "data": "ngay" },
+                    { "data": null,
+                        render: function(data, type, row) {
+                            let arr = row.ngay.split('-');
+                            let theday = arr[2].toString().substring(0,2);                          
+                            return theday + "/" + arr[1] + "/" + arr[0];                         
+                        } 
+                    },
                     {
                         "data": null,
                         render: function(data, type, row) {

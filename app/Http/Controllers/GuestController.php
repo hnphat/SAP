@@ -73,11 +73,12 @@ class GuestController extends Controller
             
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Khách hàng";
-            $nhatKy->noiDung = "Thêm khách hàng mới Họ tên: "
-            .$request->ten." CMND: ".$request->cmnd." Ngày cấp: ".$request->ngayCap." Nơi cấp: "
-            .$request->noiCap." MST: ".$request->mst." Đại diện: ".$request->daiDien." Chức vụ: "
-            .$request->chucVu." Điện thoại: ".$request->dienThoai." Địa chỉ: " . $request->diaChi;
+            $nhatKy->noiDung = "Thêm khách hàng mới <br/>Họ tên: "
+            .$request->ten." <br/>CMND: ".$request->cmnd." <br/>Ngày cấp: ".$request->ngayCap." <br/>Nơi cấp: "
+            .$request->noiCap." <br/>MST: ".$request->mst." <br/>Đại diện: ".$request->daiDien." <br/>Chức vụ: "
+            .$request->chucVu." <br/>Điện thoại: ".$request->dienThoai." <br/>Địa chỉ: " . $request->diaChi;
             $nhatKy->save();
 
             return response()->json([
@@ -101,11 +102,12 @@ class GuestController extends Controller
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Khách hàng";
-            $nhatKy->noiDung = "Xóa khách hàng Họ tên: "
-            .$temp->name." CMND: ".$temp->cmnd." Ngày cấp: ".$temp->ngayCap." Nơi cấp: "
-            .$temp->noiCap." MST: ".$temp->mst." Đại diện: ".$temp->daiDien." Chức vụ: "
-            .$temp->chucVu." Điện thoại: ".$temp->phone." Địa chỉ: " . $temp->address;
+            $nhatKy->noiDung = "Xóa khách hàng <br/>Họ tên: "
+            .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
+            .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
+            .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Delete data successfully!',
@@ -154,13 +156,14 @@ class GuestController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Kinh doanh - Khách hàng";
-            $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: Họ tên: "
-            .$temp->name." CMND: ".$temp->cmnd." Ngày cấp: ".$temp->ngayCap." Nơi cấp: "
-            .$temp->noiCap." MST: ".$temp->mst." Đại diện: ".$temp->daiDien." Chức vụ: "
-            .$temp->chucVu." Điện thoại: ".$temp->phone." Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: Họ tên: "
-            .$request->eten." CMND: ".$request->ecmnd." Ngày cấp: ".$request->engayCap." Nơi cấp: "
-            .$request->enoiCap." MST: ".$request->emst." Đại diện: ".$request->edaiDien." Chức vụ: "
-            .$request->echucVu." Điện thoại: ".$request->edienThoai." Địa chỉ: " . $request->ediaChi;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
+            .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
+            .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
+            .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: <br/>Họ tên: "
+            .$request->eten." <br/>CMND: ".$request->ecmnd." <br/>Ngày cấp: ".$request->engayCap." <br/>Nơi cấp: "
+            .$request->enoiCap." <br/>MST: ".$request->emst." <br/>Đại diện: ".$request->edaiDien." <br/>Chức vụ: "
+            .$request->echucVu." <br/>Điện thoại: ".$request->edienThoai." <br/>Địa chỉ: " . $request->ediaChi;
             $nhatKy->save();
 
             return response()->json([

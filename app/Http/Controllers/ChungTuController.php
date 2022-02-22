@@ -81,10 +81,11 @@ class ChungTuController extends Controller
                     if ($bm) {
                         $nhatKy = new NhatKy();
                         $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
-                        $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . " Số lượng: " 
-                        . $request->soLuong . " Người yêu cầu: " . $request->nguoiYeuCau . " Bộ phận: " 
-                        . $request->boPhan . " Cho phép hiển thị: " . $request->allow . " Tệp đính kèm: Có";
+                        $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . " <br/>Số lượng: " 
+                        . $request->soLuong . " <br/>Người yêu cầu: " . $request->nguoiYeuCau . " <br/>Bộ phận: " 
+                        . $request->boPhan . " <br/>Cho phép hiển thị: " . $request->allow . " <br/>Tệp đính kèm: Có";
                         $nhatKy->save();
                         return response()->json([
                             "type" => 'success',
@@ -114,9 +115,10 @@ class ChungTuController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
-                    $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . " Số lượng: " 
-                    . $request->soLuong . " Người yêu cầu: " . $request->nguoiYeuCau . " Bộ phận: " 
-                    . $request->boPhan . " Cho phép hiển thị: " . $request->allow . " Tệp đính kèm: Không";
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . "<br/>Số lượng: " 
+                    . $request->soLuong . " <br/>Người yêu cầu: " . $request->nguoiYeuCau . " <br/>Bộ phận: " 
+                    . $request->boPhan . " <br/>Cho phép hiển thị: " . $request->allow . " <br/>Tệp đính kèm: Không";
                     $nhatKy->save();
                     return response()->json([
                         "type" => 'success',
@@ -150,8 +152,9 @@ class ChungTuController extends Controller
 
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
-            $nhatKy->noiDung = "Xóa chứng từ " . $temp;
+            $nhatKy->noiDung = "Xóa chứng từ: " . $temp;
             $nhatKy->save();
 
             return response()->json([
@@ -199,13 +202,13 @@ class ChungTuController extends Controller
         $bm->allow = $request->eallow;
         $bm->save();
         if ($bm) {
-
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
-            $nhatKy->noiDung = "Cập nhật lại nội dung chứng từ " . $request->enoiDung . " Số lượng: " 
-            . $request->esoLuong . " Người yêu cầu: " . $request->enguoiYeuCau . " Bộ phận: " 
-            . $request->eboPhan . " Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->noiDung = "Cập nhật lại nội dung chứng từ: " . $request->enoiDung . " <br/>Số lượng: " 
+            . $request->esoLuong . " <br/>Người yêu cầu: " . $request->enguoiYeuCau . " <br/>Bộ phận: " 
+            . $request->eboPhan . " <br/>Cho phép hiển thị: " . $request->eallow;
             $nhatKy->save();
 
             return response()->json([

@@ -53,6 +53,7 @@ class UserController extends Controller
         $userAddRole->roles()->attach($role->id);
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
         $nhatKy->noiDung = "Thêm người dùng";
         $nhatKy->save();
@@ -98,6 +99,7 @@ class UserController extends Controller
         $user->save();
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
         $nhatKy->noiDung = "Cập nhật người dùng";
         $nhatKy->save();
@@ -120,6 +122,7 @@ class UserController extends Controller
             if ($user) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản trị - người dùng";
                 $nhatKy->noiDung = "Xóa người dùng";
                 $nhatKy->save();
@@ -141,6 +144,7 @@ class UserController extends Controller
         $user->save();
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
         $nhatKy->noiDung = "Thay đổi trạng thái khóa người dùng";
         $nhatKy->save();
@@ -150,19 +154,21 @@ class UserController extends Controller
     public function login(Request $request) {
         $data = ['name' => $request->account, 'password' => $request->password];
         if (Auth::attempt($data)) {
-            if (Auth::user()->active == 1)
+            if (Auth::user()->active == 1) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Đăng nhập";
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->noiDung = "Đăng nhập thành công vào vào hệ thống";
+                $nhatKy->save();
                 return redirect()->route('trangchu');
+            }
             else
                 {
                     Auth::logout();
                     abort(403);
                 }
         }
-        $nhatKy = new NhatKy();
-        $nhatKy->id_user = Auth::user()->id;
-        $nhatKy->chucNang = "Đăng nhập";
-        $nhatKy->noiDung = "Thực hiện đăng nhập vào hệ thống";
-        $nhatKy->save();
         return view('login', ['error' => 'Sai tài khoản hoặc mật khẩu']);
     }
 
@@ -225,6 +231,7 @@ class UserController extends Controller
         if($user) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - người dùng";
             $nhatKy->noiDung = "Cập nhật thông tin người dùng";
             $nhatKy->save();
