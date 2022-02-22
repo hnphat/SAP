@@ -787,6 +787,7 @@ class NhanSuController extends Controller
             $xinPhep->vaoChieu = $vaoChieu;
             $xinPhep->save();
             if ($xinPhep) {
+                $loai = LoaiPhep::find($request->loaiPhep);
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");

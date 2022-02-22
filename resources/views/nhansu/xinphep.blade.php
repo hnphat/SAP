@@ -48,7 +48,7 @@
                         <label>Tháng</label>
                         <select name="thang" class="form-control">
                             @for($i = 1; $i <= 12; $i++)
-                                <option value="{{$i}}">{{$i}}</option>
+                                <option value="{{$i}}" <?php if(Date('m') == $i) echo "selected";?>>{{$i}}</option>
                             @endfor
                         </select>
                     </div>
@@ -56,7 +56,7 @@
                         <label>Năm</label>
                         <select name="nam" class="form-control">
                             @for($i = 2021; $i < 2100; $i++)
-                                <option value="{{$i}}">{{$i}}</option>
+                                <option value="{{$i}}" <?php if(Date('Y') == $i) echo "selected";?>>{{$i}}</option>
                             @endfor
                         </select>
                     </div>

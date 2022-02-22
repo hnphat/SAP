@@ -218,7 +218,7 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.xuatXe == true)
-                                return "<button id='inBB' data-id='"+row.id+"' class='btn btn-info btn-sm'>In</button>";                        
+                                return "<button id='inBB' data-id='"+row.idhopdong+"' class='btn btn-info btn-sm'>In</button>";                        
                             else
                                 return "";                        
                         }

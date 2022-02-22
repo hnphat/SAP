@@ -212,7 +212,7 @@ class KhoController extends Controller
     }
 
     public function getKhoHDList() {
-        $result = KhoV2::select('kho_v2.*','t.name as ten', 'h.lead_check as tpkd', 'ud.surname as saleban','g.name as khach')
+        $result = KhoV2::select('kho_v2.*','h.id as idhopdong','t.name as ten', 'h.lead_check as tpkd', 'ud.surname as saleban','g.name as khach')
         ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
         ->join('hop_dong as h','h.id_car_kho','=','kho_v2.id')
         ->join('guest as g','g.id','=','h.id_guest')
