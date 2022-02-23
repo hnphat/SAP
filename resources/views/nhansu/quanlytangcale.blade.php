@@ -123,6 +123,7 @@
                         <th>Ngày</th>
                         <th>Nhân viên</th>
                         <th>Hệ số lương</th>
+                        <th>Loại giờ công</th>
                         <th>Vào sáng</th>
                         <th>Ra sáng</th>
                         <th>Vào chiều</th>

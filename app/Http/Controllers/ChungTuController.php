@@ -51,8 +51,7 @@ class ChungTuController extends Controller
     }
 
     public function postBieuMau(Request $request) {
-        $check = ChungTu::where('slug',\HelpFunction::changeTitle($request->noiDung))->exists();
-        
+        $check = ChungTu::where('slug',\HelpFunction::changeTitle($request->noiDung))->exists();        
         if (!$check) {
             $bm = new ChungTu();
             if ($request->hasFile == 'on') {
@@ -76,9 +75,13 @@ class ChungTuController extends Controller
                     $bm->ghiChu = $request->ghiChu;
                     $bm->allow = $request->allow;
                     $bm->user_create = Auth::user()->id;
-                    $bm->save();
-                    $files->move('upload/chungtu/', $name);                     
+                    $bm->save();                                     
                     if ($bm) {
+                        //
+                        $files->move('upload/chungtu/', $name);    
+                        // $dontDeleteThisRow = ChungTu::where('mobile_number', '0123456789')->first();
+                        // App\Model::where('mobile_number', '0123456789')->where('id', '!=', $dontDeleteThisRow->id)->delete();
+                        //
                         $nhatKy = new NhatKy();
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");

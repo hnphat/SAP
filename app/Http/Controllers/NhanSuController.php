@@ -690,6 +690,7 @@ class NhanSuController extends Controller
                 $loai = LoaiPhep::find($request->loaiPhep);
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
                 $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
                 .$request->buoi." Ngày xin: "
@@ -2450,6 +2451,7 @@ class NhanSuController extends Controller
                 $congSang = 0;
                 $congChieu = 0;
                 $idXinPhep = 0;
+                $loaiGioCong = "Giờ quy định";
 
                 //-------------
                 $xinPhep = XinPhep::where([
@@ -2459,8 +2461,11 @@ class NhanSuController extends Controller
                     ['nam','=',$request->nam],
                 ])->first();
 
-                if ($xinPhep !== null)
-                    $idXinPhep = $xinPhep->id;     
+                if ($xinPhep !== null) {
+                    $idXinPhep = $xinPhep->id;    
+                    if ($xinPhep->loaiPhep->maPhep == 'LT')
+                        $loaiGioCong = "<strong>Giờ thực tế</strong>";
+                }
                 //-------------  
 
                 $chiTiet = ChamCongChiTiet::where([
@@ -2481,7 +2486,8 @@ class NhanSuController extends Controller
                 echo "<tr>
                     <td>".($ngay . "/" . $thang . "/".$nam)." <br/> ".$thuMay."</td>
                     <td>".$row->user->userDetail->surname."</td>
-                    <td style='color:blue;'><strong>".$row->heSo."</strong></td>
+                    <td style='color:blue;'><strong>".$row->heSo."</strong></td>                    
+                    <td>".$loaiGioCong."</td>
                     <td class='text-success'>".$vaoSang."</td>
                     <td class='text-success'>".$raSang."</td>
                     <td class='text-success'>".$vaoChieu."</td>

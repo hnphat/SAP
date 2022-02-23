@@ -1209,16 +1209,11 @@ class ReportController extends Controller
             <h5>- Hủy hợp đồng: <span class='text-success'><strong>" . $hdHuy . "</strong></span></h5>
                         </div>
                         <div class='col-md-4'>
-                            <h4>KHTN Công ty</h4>
-                            <h5>- Internet: <span class='text-success'><strong>" . $ctInternet . "</strong></span></h5>
-                            <h5>- Showroom: <span class='text-success'><strong>" . $ctShowroom . "</strong></span></h5>
-                            <h5>- Hotline: <span class='text-success'><strong>" . $ctHotline . "</strong></span></h5>
+                            <h4>KHTN CÔNG TY: <span class='text-success'><strong>" . ($ctInternet+$ctHotline+$ctSuKien) . "</strong></span></h4>
+                            <h5>- Marketing - Internet: <span class='text-success'><strong>" . $ctInternet . "</strong></span></h5>                            
+                            <h5>- Hotline & CSKH: <span class='text-success'><strong>" . $ctHotline . "</strong></span></h5>
                             <h5>- Sự kiện: <span class='text-success'><strong>" . $ctSuKien . "</strong></span></h5>
-                            <h5>- Ban lãnh đạo: <span class='text-success'><strong>" . $ctBLD . "</strong></span></h5>
-                            <h4>KHTN SALER</h4>
-                            <h5>- Internet: <span class='text-success'><strong>" . $saleInternet . "</strong></span></h5>
-                            <h5>- Môi giới: <span class='text-success'><strong>" . $saleMoiGioi . "</strong></span></h5>
-                            <h5>- Thị trường: <span class='text-success'><strong>" . $saleThiTruong . "</strong></span></h5>
+                            <h4>KHTN SALER: <span class='text-success'><strong>" . $saleInternet . "</strong></span></h4>                          
                         </div>
                     </div>
                     <h5>Lượt khách showroom: <span class='text-success'><strong>" . $khShowRoom . "</strong></span></h5>

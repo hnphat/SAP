@@ -58,6 +58,7 @@
                                 <tr class="bg-gradient-lightblue">
                                     <th>TT</th>
                                     <th>Ngày</th>
+                                    <th>CODE</th>
                                     <th>Đề nghị</th>
                                     <th>Xe - Biển số</th>
                                     <th>Nhiên liệu</th>
@@ -75,6 +76,7 @@
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{\HelpFunction::revertCreatedAt($row->created_at)}}</td>
+                                        <td>HAGI-CX-0{{$row->id}}</td>
                                         <td> @if($row->user !== null)
                                                     {{$row->user->userDetail->surname}}
                                                 @else

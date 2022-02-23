@@ -90,50 +90,50 @@
                             <hr>
                             <h5 class="text-blue">KHTN CÔNG TY</h5>
                             <div class="row p-1">
-                                <div class="col-md-2">
-                                    <label for="ctInternet">Internet: </label>
+                                <div class="col-md-4">
+                                    <label for="ctInternet">Marketing - Internet: </label>
                                     <input min="0" id="ctInternet" name="ctInternet" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <label for="ctShowroom">Showroom: </label>
                                     <input min="0" id="ctShowroom" name="ctShowroom" type="number" class="form-control">
-                                </div>
+                                </div> -->
                                 <div class="col-md-2">
-                                    <label for="ctHotline">Hotline: </label>
+                                    <label for="ctHotline">Hotline và CSKH: </label>
                                     <input min="0" id="ctHotline" name="ctHotline" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="ctSuKien">Sự kiện: </label>
                                     <input min="0" id="ctSuKien" name="ctSuKien" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <label for="ctBLD">Ban lãnh đạo: </label>
                                     <input min="0" id="ctBLD" name="ctBLD" type="number" class="form-control">
-                                </div>
+                                </div> -->
                             </div>
                             <hr>
                             <h5 class="text-blue">KHTN SALER</h5>
                             <div class="row p-1">
-                                <div class="col-md-2">
-                                    <label for="saleInternet">Internet: </label>
+                                <div class="col-md-3">
+                                    <label for="saleInternet">KHTN Sale: </label>
                                     <input min="0" id="saleInternet" name="saleInternet" type="number" class="form-control">
                                 </div>
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <label for="saleMoiGioi">Môi giới: </label>
                                     <input min="0" id="saleMoiGioi" name="saleMoiGioi" type="number" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="saleThiTruong">Thị trường: </label>
                                     <input min="0" id="saleThiTruong" name="saleThiTruong" type="number" class="form-control">
-                                </div>
+                                </div> -->
                             </div>
                             <hr>
-                            <div class="row p-1">
+                            <!-- <div class="row p-1">
                                 <div class="col-md-4">
                                     <label for="khShowRoom">Lượt khách showroom: </label>
                                     <input min="0" id="khShowRoom" name="khShowRoom" type="number" class="form-control">
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <!-- /.card-body -->
                     </div>
