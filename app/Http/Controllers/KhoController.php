@@ -546,6 +546,7 @@ class KhoController extends Controller
         $hdky = 0;
         $hdcho = 0;
         $hdhuy = 0;
+        $hddaily = 0;
         $listStore = KhoV2::select('*')->where([
             ['type','like','STORE']
         ])->orWhere([
@@ -599,6 +600,22 @@ class KhoController extends Controller
                     $hdhuy++;
             }
         }
+
+        $hddailyList = HopDong::select('k.xuatXe','hop_dong.*')
+        ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
+        ->where([
+            ['hop_dong.lead_check','=',true],
+            ['hop_dong.lead_check_cancel','=',false],
+            ['k.xuatXe','=',false],
+            ['hop_dong.hdDaiLy','=',true]
+        ])->get();
+        foreach($hddailyList as $row){
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                    $hddaily++;
+            }
+        }
+
         switch ($chose) {
             case 'ALL':
                 {
@@ -607,7 +624,8 @@ class KhoController extends Controller
                     <h4>ĐẶT HÀNG: <span class='badge badge-secondary'>$order</span> </h4>
                     <h4>TỒN KHO: <span class='badge badge-warning'>$store</span> </h4>
                     <h4>XUẤT XE: <span class='badge badge-success'>$complete</span> </h4>
-                    <h4>HỢP ĐỒNG KÝ: <span class='badge badge-primary'>$hdky</span> </h4>
+                    <h4>HỢP ĐỒNG KÝ: <span class='badge badge-primary'>".($hdky - $hddaily)."</span> </h4>
+                    <h4>HỢP ĐỒNG KÝ ĐẠI LÝ: <span class='badge badge-primary'>$hddaily</span> </h4>
                     <h4>HỢP ĐỒNG CHỜ: <span class='badge badge-info'>$hdcho</span> </h4>
                     <h4>HỢP ĐỒNG HỦY: <span class='badge badge-danger'>$hdhuy</span> </h4>";
                 }
@@ -796,6 +814,33 @@ class KhoController extends Controller
                     echo "</table>";    
                 }    
                 break;
+            case 'HDDAILY':
+                {
+                    echo "<h4>HỢP ĐỒNG KÝ ĐẠI LÝ: <span class='badge badge-secondary'>$hddaily</span></h4>
+                    <table class='table table-striped table-bordered'>
+                          <tr>
+                              <th>STT</th>
+                              <th>Ngày ký</th>
+                              <th>Thông tin xe</th>
+                              <th>Màu sắc</th>
+                              <th>Sale bán</th>
+                              <th>Tiền cọc</th>
+                          </tr>";
+                    foreach($hddailyList as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($ngayfrom)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($ngayto))) {
+                            echo "<tr>
+                                <td>".$i++."</td>
+                                <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
+                                <td>".$row->carSale->name."</td>
+                                <td>".$row->mau."</td>
+                                <td>".$row->user->userDetail->surname."</td>
+                                <td>".number_format($row->tienCoc)."</td>
+                            </tr>";
+                        }
+                    }
+                    echo "</table>";     
+                }    
                 break;
             default:
                 break;

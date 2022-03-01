@@ -5,7 +5,8 @@
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 @endsection
 @section('content')
@@ -71,7 +72,8 @@
 @section('script')
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <!-- <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> -->
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Bootstrap 4 -->
@@ -102,7 +104,7 @@
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
+                ],                         
                 ajax: "{{ url('management/nhatky/ajax/xem/') }}",
                 "columnDefs": [ {
                     "searchable": false,
@@ -134,7 +136,7 @@
                     cell.innerHTML = i+1;
                     table.cell(cell).invalidate('dom');
                 } );
-            } ).draw();
+            } ).draw();            
         });
     </script>
 @endsection

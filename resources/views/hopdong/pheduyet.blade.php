@@ -71,7 +71,10 @@
                                     </div>
                                     <div>
                                         <h5>THÔNG TIN XE BÁN <button type="button" id="checkTonKho" data-toggle="modal" data-target="#checkTonKhoModal" class="btn btn-success btn-xs">KIỂM TRA TỒN KHO</button></h5>
-                                        <input type="checkbox" name="hdWait" id="hdWait"> <label for="hdWait" class="text-pink">HỢP ĐỒNG CHỜ</label>
+                                        <input type="checkbox" name="hdWait" id="hdWait"> 
+                                        <label for="hdWait" class="text-pink">HỢP ĐỒNG CHỜ</label> &nbsp;&nbsp;&nbsp;
+                                        <input type="checkbox" name="hdDaiLy" id="hdDaiLy"> 
+                                        <label for="hdDaiLy" class="text-blue">HỢP ĐỒNG ĐẠI LÝ</label>
                                         <hr>
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -473,6 +476,7 @@
                     $("#deNghiChinhSua").show();
                     $("#deNghiHuy").show();
                     $("input[name=hdWait]").prop('disabled', true);
+                    $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == true && admin == false) {
@@ -483,6 +487,7 @@
                     $("#deNghiHuy").hide();
                     $("#deNghiChinhSua").hide();
                     $("input[name=hdWait]").prop('disabled', false);
+                    $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
@@ -492,6 +497,7 @@
                     $("#deNghiHuy").hide();
                     $("#deNghiChinhSua").hide();
                     $("input[name=hdWait]").prop('disabled', true);
+                    $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == false) {
@@ -502,6 +508,7 @@
                     $("#deNghiHuy").hide();
                     $("#deNghiChinhSua").hide();
                     $("input[name=hdWait]").prop('disabled', false);
+                    $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                     $("#inForm").hide();
                 }
@@ -555,6 +562,12 @@
                                 $("input[name=hdWait]").prop('checked', true);
                             } else {
                                 $("input[name=hdWait]").prop('checked', false);
+                            }
+
+                            if (response.data.hdDaiLy == 1) {
+                                $("input[name=hdDaiLy]").prop('checked', true);
+                            } else {
+                                $("input[name=hdDaiLy]").prop('checked', false);
                             }
 
                             // BUTTON
@@ -770,6 +783,9 @@
                 let wait = 0;
                 if ($("#hdWait").is(":checked"))
                     wait = 1;
+                let daiLy = 0;
+                if ($("#hdDaiLy").is(":checked"))
+                    daiLy = 1;
                 e.preventDefault();
                 if(confirm('Xác nhận phê duyệt đề nghị này!')){
                     $.ajax({
@@ -780,6 +796,7 @@
                             "_token": "{{csrf_token()}}",
                             "idXeGan": $("input[name=xeGan]").val(),
                             "wait": wait,
+                            "daiLy": daiLy,
                             "sohd": $("input[name=soHD]").val(),
                             "id": $("input[name=idHopDong]").val()
                         },

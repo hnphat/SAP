@@ -6,12 +6,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
 @endsection
 @section('content')
     <div class="content-wrapper">
 
         <!-- Main content -->
         <div class="content">
+            <button type="button" class="btn btn-default toastsDefaultFull">
+                  Launch Full Toast (with icon)
+            </button>
             <img src="{{asset('images/bg/bg.jpg')}}" alt="background" style="width: 100%; height:auto;">
         </div>
         <!-- /.content -->
@@ -27,6 +31,7 @@
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
+    <script src="plugins/toastr/toastr.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -34,5 +39,15 @@
             showConfirmButton: false,
             timer: 3000
         });
+
+        $(document).ready(function(){           
+            $(document).Toasts('create', {
+                class: 'bg-danger',
+                body: 'Kể từ 01/03/2022 tất cả các loại phép phải gửi trưởng bộ phận duyệt trước (tối thiểu 01 ngày). Hệ thống sẽ không chấp nhận các loại phép duyệt sau ngày xin phép. Mọi chi tiết liên hệ bộ phận nhân sự!',
+                title: 'THÔNG BÁO',
+                subtitle: 'Quan trọng',
+                icon: 'fas fa-envelope fa-lg',
+            })           
+        });        
     </script>
 @endsection

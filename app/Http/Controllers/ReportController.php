@@ -1715,7 +1715,9 @@ class ReportController extends Controller
 
     public function status()
     {
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
+        if (Auth::user()->hasRole('system') 
+        || Auth::user()->hasRole('drp') 
+        || Auth::user()->hasRole('boss')) {
             $_date = Date('d-m-Y');
             $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh'];
             echo "<h3>BÁO CÁO SỐ LIỆU</h3><table class='table table-striped table-border'>

@@ -18,6 +18,10 @@ class HanhChinhController extends Controller
 
     public function getBieuMau() {
         $result = BieuMau::select('*')
+        ->where([
+            ['type','!=','TBKD'],
+            ['type','!=','GX']
+        ])
         ->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([

@@ -58,6 +58,7 @@
                                                     <option value="HD">Hợp đồng ký</option>
                                                     <option value="HDWAIT">Hợp đồng ký chờ</option>
                                                     <option value="HDCANCEL">Hợp đồng hủy</option>
+                                                    <option value="HDDAILY">Hợp đồng đại lý</option>
                                                 </select> <br/>
                                                 <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
                                             </div>
@@ -102,6 +103,9 @@
                                   
                               </div>
                               <div id="hdhuy">
+                                  
+                              </div>
+                              <div id="hddaily">
                                   
                               </div>
                             </div>
@@ -153,6 +157,7 @@
                         $("#hdky").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
                         
                     if ($("select[name=chonBaoCao]").val() == "PO") {
@@ -165,6 +170,7 @@
                         $("#hdky").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "MAP") {
@@ -177,6 +183,7 @@
                         $("#hdky").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "ORDER") {
@@ -189,6 +196,7 @@
                         $("#hdky").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "STORE") {
@@ -201,6 +209,7 @@
                         $("#hdky").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "COMPLETE") {
@@ -213,6 +222,7 @@
                         $("#hdky").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "HD") {
@@ -225,6 +235,7 @@
                         $("#order").html("<span></span>");
                         $("#hdcho").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "HDWAIT") {
@@ -237,10 +248,25 @@
                         $("#order").html("<span></span>");
                         $("#hdky").html("<span></span>");
                         $("#hdhuy").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
                     }
 
                     if ($("select[name=chonBaoCao]").val() == "HDCANCEL") {
                         $("#hdhuy").html(response);
+                        $("#po").html("<span></span>");
+                        $("#all").html("<span></span>");
+                        $("#map").html("<span></span>");
+                        $("#store").html("<span></span>");
+                        $("#complete").html("<span></span>");
+                        $("#order").html("<span></span>");
+                        $("#hdcho").html("<span></span>");
+                        $("#hdky").html("<span></span>");
+                        $("#hddaily").html("<span></span>");
+                    }
+
+                    if ($("select[name=chonBaoCao]").val() == "HDDAILY") {
+                        $("#hddaily").html(response);
+                        $("#hdhuy").html("<span></span>");
                         $("#po").html("<span></span>");
                         $("#all").html("<span></span>");
                         $("#map").html("<span></span>");

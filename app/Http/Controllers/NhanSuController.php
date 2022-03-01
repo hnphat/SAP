@@ -1007,8 +1007,13 @@ class NhanSuController extends Controller
 
     public function pheDuyetPhep(Request $request) {
         $check = XinPhep::where('id',$request->id)->first();
+        $flag = false;
+        $day = (int)Date('d');
         $month = (int)Date('m');
         $year = (int)Date('Y');
+        if ($year <= $check->nam && $day <= ($check->ngay + 1) && $month <= $check->thang) {
+            $flag = true;
+        }
         if ($year > $check->nam) {
             $month = 12;
         }
@@ -1076,7 +1081,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                $nhatKy->noiDung = "Phê duyệt phép";
+                $nhatKy->noiDung = "Admin Phê duyệt phép";
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1115,28 +1120,36 @@ class NhanSuController extends Controller
                     ]);
                 }
 
-                $xinPhep = XinPhep::where('id',$request->id)->update([
-                    'user_duyet' => true
-                ]);
-                if ($xinPhep) {
-                    $nhatKy = new NhatKy();
-                    $nhatKy->id_user = Auth::user()->id;
-                    $nhatKy->thoiGian = Date("H:m:s");
-                    $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                    $nhatKy->noiDung = "Phê duyệt phép";
-                    $nhatKy->save();
-                    return response()->json([
-                        "type" => "info",
-                        "code" => 200,
-                        "message" => "Đã phê duyệt phép"
+                if ($flag) {
+                    $xinPhep = XinPhep::where('id',$request->id)->update([
+                        'user_duyet' => true
                     ]);
-                }
-                else
+                    if ($xinPhep) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
+                        $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép";
+                        $nhatKy->save();
+                        return response()->json([
+                            "type" => "info",
+                            "code" => 200,
+                            "message" => "Đã phê duyệt phép"
+                        ]);
+                    }
+                    else
+                        return response()->json([
+                            "type" => "info",
+                            "code" => 500,
+                            "message" => "Không thể phê duyệt phép"
+                        ]);
+                } else {
                     return response()->json([
                         "type" => "info",
                         "code" => 500,
-                        "message" => "Không thể phê duyệt phép"
+                        "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 01 ngày!"
                     ]);
+                }             
             }    
         }      
     }

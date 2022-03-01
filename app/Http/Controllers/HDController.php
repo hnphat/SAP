@@ -2162,13 +2162,14 @@ class HDController extends Controller
                     $car->type = "HD";
                     $car->save();
                 $result->code = $request->sohd; 
+                $result->hdDaiLy = $request->daiLy; 
                 $result->save();
                 if($result) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
                     $nhatKy->thoiGian = Date("H:m:s");
-                    $nhatKy->noiDung = "Phê duyệt đề nghị thực hiện hợp đồng<br/>Số hợp đồng ".$request->sohd. " đã được gán!";
+                    $nhatKy->noiDung = "Phê duyệt đề nghị thực hiện hợp đồng<br/>Số hợp đồng ".$request->sohd. " đã được gán! HĐ Đại lý (1: HĐ Đại lý; 0: HĐ Thường): " . $request->daiLy;
                     $nhatKy->save();
                     return response()->json([
                         'type' => 'success',

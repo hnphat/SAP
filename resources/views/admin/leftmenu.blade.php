@@ -408,7 +408,8 @@
                             </li>
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('drp'))
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('drp') ||
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                             <li class="nav-item">
                                     <a href="{{route('hanhchinh.bieumau.quanly')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
