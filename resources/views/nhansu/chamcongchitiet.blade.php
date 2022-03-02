@@ -129,7 +129,11 @@
                                <label>Loại phép</label> 
                                <select name="loaiPhep" class="form-control">
                                   @foreach($phep as $row)
-                                    <option value="{{$row->id}}">{{$row->tenPhep}}</option>
+                                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                        <option value="{{$row->id}}">{{$row->tenPhep}}</option>
+                                    @elseif($row->maPhep != 'L' && $row->maPhep != 'LKL' && $row->maPhep != 'PCL')
+                                        <option value="{{$row->id}}">{{$row->tenPhep}}</option>
+                                    @endif                                    
                                   @endforeach
                                </select>
                             </div>

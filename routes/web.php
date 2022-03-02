@@ -343,6 +343,31 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
          Route::get('list/xemchungtumoc','ChungTuController@showXemChungTu')->name('xemchungtu.panel');
     });
 
+    Route::group(['prefix' => 'vpp'], function(){
+        // Quản lý nhóm hàng
+        Route::get('quanlynhomhang','VPPController@nhomHangPanel')->name('vpp.nhomhang.panel');
+        Route::get('quanlynhomhang/loadnhomhang','VPPController@loadNhomHang');
+        Route::post('quanlynhomhang/post','VPPController@postNhomHang');
+        Route::post('quanlynhomhang/delete','VPPController@deleteNhomHang');
+        Route::get('quanlynhomhang/edit/{id}','VPPController@loadEditNhomHang');
+        Route::post('quanlynhomhang/update','VPPController@updateNhomHang');
+        // Quản lý danh mục
+        Route::get('quanlydanhmuc','VPPController@danhMucPanel')->name('vpp.danhmuc.panel');
+        Route::get('quanlydanhmuc/loaddanhmuc','VPPController@loadDanhMuc');
+        Route::post('quanlydanhmuc/post','VPPController@postDanhMuc');
+        Route::post('quanlydanhmuc/delete','VPPController@deleteDanhMuc');
+        Route::get('quanlydanhmuc/edit/{id}','VPPController@loadEditDanhMuc');
+        Route::post('quanlydanhmuc/update','VPPController@updateDanhMuc');
+        // Quản lý nhập kho
+        Route::get('quanlynhapkho','VPPController@nhapKhoPanel')->name('vpp.nhapkho.panel');
+        Route::post('quanlynhapkho/post','VPPController@nhapKhoPost');
+        Route::post('quanlynhapkho/delete','VPPController@nhapKhoDelete');
+        Route::get('quanlynhapkho/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
+        Route::get('quanlynhapkho/loadphieunhap','VPPController@nhapKhoLoadPhieuNhap');
+        Route::get('quanlynhapkho/loadphieunhapchitiet','VPPController@nhapKhoLoadPhieuNhapChiTiet');
+        Route::post('quanlynhapkho/taophieu','VPPController@nhapKhoTaoPhieuNhap');
+    });
+
     Route::group(['prefix' => 'nhansu'], function(){
         Route::get('quanlychamcong','NhanSuController@quanLyChamCong')->name('nhansu.panel')->middleware(['f_nhansu']);
         Route::get('quanly/ajax/getnhanvien','NhanSuController@quanLyChamCongGetNhanVien');

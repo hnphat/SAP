@@ -487,11 +487,22 @@ class NhanSuController extends Controller
                 <td class='text-info'><strong>".$lamThem." (giờ)</strong><br/> <strong>".round($lamThem/8,2)." (ngày)</strong></td>
             </tr>
             ";
-            if (!$xacNhan)
+            if (!$xacNhan) {
+                session(['engaycong' => (round(($tongCong/8),2) - $phepNam), 'etangca' => round(($lamThem/8),2), 'ephepnam' => $phepNam]);
                 echo "<tr>
-                        <td colspan='12'><button type='button' data-thang='".$thang."' data-nam='".$nam."' data-ngaycong='".(round(($tongCong/8),2) - $phepNam)."' data-tangca='".round(($lamThem/8),2)."' data-tongtre='".$tongTre."' data-khongphep='".($khongPhep - $khongPhepCaNgay)."' data-khongphepcangay='".$khongPhepCaNgay."' data-phepnam='".$phepNam."' id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
+                        <td colspan='12' style='text-align:left;'><button type='button' 
+                        data-thang='".$thang."' 
+                        data-nam='".$nam."' 
+                        data-ngaycong='".(round(($tongCong/8),2) - $phepNam)."' 
+                        data-tangca='".round(($lamThem/8),2)."' 
+                        data-tongtre='".$tongTre."' 
+                        data-khongphep='".($khongPhep - $khongPhepCaNgay)."' 
+                        data-khongphepcangay='".$khongPhepCaNgay."' 
+                        data-phepnam='".$phepNam."' 
+                        id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
                     </tr>
                     ";
+            }
     }
 
     public function chiTietThemPhep(Request $request) {
@@ -2004,36 +2015,53 @@ class NhanSuController extends Controller
     }
 
     public function chotCong(Request $request) {
-        $xacNhan = new XacNhanCong();
-        $xacNhan->thang = $request->thang;
-        $xacNhan->nam = $request->nam;
-        $xacNhan->id_user = $request->id;
-        $xacNhan->phepNam = $request->phepNam;
-        $xacNhan->ngayCong = $request->ngayCong;
-        $xacNhan->tangCa = $request->tangCa;
-        $xacNhan->tongTre = $request->tongTre;
-        $xacNhan->khongPhep = $request->khongPhep;
-        $xacNhan->khongPhepNgay = $request->khongPhepCaNgay;
-        $xacNhan->save();
-        if ($xacNhan) {
+        $ngaycong = session('engaycong');
+        $tangca = session('etangca');
+        $phepnam = session('ephepnam');
+        if ((int)$ngaycong == (int)$request->ngayCong && (int)$tangca == (int)$request->tangCa && (int)$phepnam == (int)$request->phepNam) {
+            $xacNhan = new XacNhanCong();
+            $xacNhan->thang = $request->thang;
+            $xacNhan->nam = $request->nam;
+            $xacNhan->id_user = $request->id;
+            $xacNhan->phepNam = $request->phepNam;
+            $xacNhan->ngayCong = $request->ngayCong;
+            $xacNhan->tangCa = $request->tangCa;
+            $xacNhan->tongTre = $request->tongTre;
+            $xacNhan->khongPhep = $request->khongPhep;
+            $xacNhan->khongPhepNgay = $request->khongPhepCaNgay;
+            $xacNhan->save();
+            if ($xacNhan) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
+                $nhatKy->noiDung = "Chốt chấm công";
+                $nhatKy->save();
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã chốt chấm công"
+                ]);
+            }
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi chốt chấm công"
+                ]);
+        } else {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
-            $nhatKy->noiDung = "Chốt chấm công";
+            $nhatKy->noiDung = "[NGUY HIỂM] Thực hiện tác động kỹ thuật vào kết quả chấm công. Hệ thống đã ngăn chặn!!! Ngày công: $ngaycong Tăng ca: $tangca Phép năm: $phepnam Hacking: " . $request->ngayCong . " " . $request->tangCa . " " . $request->phepNam;
             $nhatKy->save();
             return response()->json([
-                "type" => "info",
-                "code" => 200,
-                "message" => "Đã chốt chấm công"
-            ]);
-        }
-        else
-            return response()->json([
-                "type" => "info",
+                "type" => "error",
                 "code" => 500,
-                "message" => "Lỗi chốt chấm công"
+                "message" => "Bạn đã thực hiện kỹ thuật tác động đến dữ liệu chấm công. Báo cáo đã gửi về administrator"
             ]);
+        }       
     }
 
     public function chiTietChotCong(Request $request) {
@@ -2153,6 +2181,8 @@ class NhanSuController extends Controller
                     $lamThem = 0;
                     $phepNam = 0;  
                     for($i = 1; $i <= $day; $i++) {
+                        $tangCaGioHanhChinh = 0; 
+
                         $chiTiet = ChamCongChiTiet::select("*")
                         ->where([
                             ['id_user','=',$row->id],
@@ -2170,6 +2200,14 @@ class NhanSuController extends Controller
                         ])->first();
             
                         $tangCa = TangCa::select("*")
+                        ->where([
+                            ['id_user','=',$row->id],
+                            ['ngay','=',$i],
+                            ['thang','=',$thang],
+                            ['nam','=',$nam]
+                        ])->first();
+
+                        $quanLy = QuanLyTangCa::select("*")
                         ->where([
                             ['id_user','=',$row->id],
                             ['ngay','=',$i],
@@ -2207,6 +2245,7 @@ class NhanSuController extends Controller
                                 }
                             }
                         }  
+
                         if ($tangCa !== null) {
                             if ($tangCa->user_duyet == true) {
                                 $to_time = strtotime($tangCa->time2);
@@ -2215,14 +2254,31 @@ class NhanSuController extends Controller
                                 $lamThem += $gioTangCa;
                             } 
                         }             
-                        if($chiTiet !== null && $chiTiet->ngay == $i && $chiTiet->thang == $thang && $chiTiet->nam == $nam) {
+
+                        if($chiTiet !== null && $chiTiet->ngay == $i 
+                        && $chiTiet->thang == $thang && $chiTiet->nam == $nam) {
                             if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                                 $tongTre += ($xinPhep->treSang + $xinPhep->treChieu);
-                                $tongCong += ($xinPhep->gioSang + $xinPhep->gioChieu);
+                                // $tongCong += ($xinPhep->gioSang + $xinPhep->gioChieu);
+                                if ($quanLy !== null) {
+                                } else
+                                    $tongCong += ($xinPhep->gioSang + $xinPhep->gioChieu);
                             } else {
                                 $tongTre += ($chiTiet->treSang + $chiTiet->treChieu);
-                                $tongCong += ($chiTiet->gioSang + $chiTiet->gioChieu);
-                            }         
+                                // $tongCong += ($chiTiet->gioSang + $chiTiet->gioChieu);
+                                if ($quanLy !== null) {
+                                } else 
+                                    $tongCong += ($chiTiet->gioSang + $chiTiet->gioChieu);
+                            }        
+                            
+                            if ($quanLy !== null) {
+                                if ($xinPhep !== null && $xinPhep->user_duyet == true)
+                                    $tangCaGioHanhChinh = (($xinPhep->gioSang + $xinPhep->gioChieu) * $quanLy->heSo);
+                                else {
+                                    $tangCaGioHanhChinh = (($chiTiet->gioSang + $chiTiet->gioChieu)* $quanLy->heSo);
+                                }             
+                                $lamThem += $tangCaGioHanhChinh;   
+                            } 
                         }
                         else {
                             if (!\HelpFunction::isSunday($i,$thang,$nam)) {                              

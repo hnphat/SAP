@@ -17,6 +17,7 @@ class NhatKyController extends Controller
         $nhatKy = NhatKy::select("nhat_ky.*","d.surname as name")
         ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
         ->orderBy('nhat_ky.id', 'desc')
+        ->take(500)
         ->get();
 
         if ($nhatKy)
