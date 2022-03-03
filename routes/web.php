@@ -374,6 +374,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('quanlyxuatkho/refresh','VPPController@refreshPage')->name('vpp.refresh');
         Route::post('quanlyxuatkho/duyetphieu','VPPController@duyetPhieu');
         Route::post('quanlyxuatkho/huyduyetphieu','VPPController@huyDuyetPhieu');
+        // Báo cáo kho
+        Route::get('baocaokho','VPPController@baoCaoKhoPanel')->name('vpp.baocaokho.panel');
     });
 
     Route::group(['prefix' => 'requestvpp'], function(){

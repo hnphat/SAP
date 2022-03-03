@@ -852,4 +852,9 @@ class VPPController extends Controller
                 'message' => 'Không thể duyệt yêu cầu'
             ]);
     }
+
+    // Báo cáo kho
+    public function baoCaoKhoPanel() {
+        return view('vpp.baocaokho');
+    }
 }

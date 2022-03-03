@@ -438,7 +438,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route('vpp.baocaokho.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Báo cáo kho</p>
                                 </a>
