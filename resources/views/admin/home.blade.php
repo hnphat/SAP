@@ -12,10 +12,7 @@
     <div class="content-wrapper">
 
         <!-- Main content -->
-        <div class="content">
-            <button type="button" class="btn btn-default toastsDefaultFull">
-                  Launch Full Toast (with icon)
-            </button>
+        <div class="content">           
             <img src="{{asset('images/bg/bg.jpg')}}" alt="background" style="width: 100%; height:auto;">
         </div>
         <!-- /.content -->

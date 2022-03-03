@@ -20,7 +20,7 @@ class Phieuxuat extends Migration
             $table->string('nam', 4);
             $table->integer('id_user_xuat')->unsigned();
             $table->foreign('id_user_xuat')->references('id')->on('users');
-            $table->integer('id_user_duyet')->unsigned();
+            $table->integer('id_user_duyet')->unsigned()->nullable();
             $table->foreign('id_user_duyet')->references('id')->on('users');
             $table->boolean('duyet')->default(false);
             $table->string('noiDungXuat');

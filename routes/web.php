@@ -343,7 +343,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
          Route::get('list/xemchungtumoc','ChungTuController@showXemChungTu')->name('xemchungtu.panel');
     });
 
-    Route::group(['prefix' => 'vpp'], function(){
+    Route::group(['prefix' => 'vpp', 'middleware' => ['f_nhansu']], function(){
         // Quản lý nhóm hàng
         Route::get('quanlynhomhang','VPPController@nhomHangPanel')->name('vpp.nhomhang.panel');
         Route::get('quanlynhomhang/loadnhomhang','VPPController@loadNhomHang');
@@ -360,12 +360,31 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('quanlydanhmuc/update','VPPController@updateDanhMuc');
         // Quản lý nhập kho
         Route::get('quanlynhapkho','VPPController@nhapKhoPanel')->name('vpp.nhapkho.panel');
-        Route::post('quanlynhapkho/post','VPPController@nhapKhoPost');
+        // Route::post('quanlynhapkho/post','VPPController@nhapKhoPost');
+        Route::post('quanlynhapkho/update','VPPController@nhapKhoUpdate');
         Route::post('quanlynhapkho/delete','VPPController@nhapKhoDelete');
         Route::get('quanlynhapkho/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
         Route::get('quanlynhapkho/loadphieunhap','VPPController@nhapKhoLoadPhieuNhap');
         Route::get('quanlynhapkho/loadphieunhapchitiet','VPPController@nhapKhoLoadPhieuNhapChiTiet');
-        Route::post('quanlynhapkho/taophieu','VPPController@nhapKhoTaoPhieuNhap');
+        Route::post('quanlynhapkho/taophieu','VPPController@nhapKhoTaoPhieuNhap');        
+        // Quản lý xuất kho
+        Route::get('quanlyxuatkho','VPPController@quanLyXuatKhoPanel')->name('vpp.quanlyxuatkho.panel');
+        Route::get('quanlyxuatkho/loadphieu','VPPController@xuatKhoLoadPhieu');
+        Route::get('quanlyxuatkho/loadphieuchitiet','VPPController@xuatKhoLoadChiTiet');
+        Route::get('quanlyxuatkho/refresh','VPPController@refreshPage')->name('vpp.refresh');
+        Route::post('quanlyxuatkho/duyetphieu','VPPController@duyetPhieu');
+        Route::post('quanlyxuatkho/huyduyetphieu','VPPController@huyDuyetPhieu');
+    });
+
+    Route::group(['prefix' => 'requestvpp'], function(){
+        // Đề nghị công cụ
+        Route::get('denghicongcu','VPPController@deNghiCongCuPanel')->name('vpp.denghicongcu.panel');
+        Route::post('denghicongcu/update','VPPController@deNghiUpdate');
+        Route::post('denghicongcu/delete','VPPController@yeuCauDelete');
+        Route::get('denghicongcu/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
+        Route::get('denghicongcu/loadphieu','VPPController@deNghiLoadPhieu');
+        Route::get('denghicongcu/loadphieuchitiet','VPPController@deNghiLoadChiTiet');
+        Route::post('denghicongcu/taophieu','VPPController@yeuCauTaoPhieu');
     });
 
     Route::group(['prefix' => 'nhansu'], function(){

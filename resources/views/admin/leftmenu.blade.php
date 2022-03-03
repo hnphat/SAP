@@ -380,7 +380,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="{{route('vpp.denghicongcu.panel')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Đề nghị công cụ</p>
                                     </a>
@@ -432,7 +432,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route('vpp.quanlyxuatkho.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Quản lý xuất kho</p>
                                 </a>

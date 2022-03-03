@@ -157,15 +157,15 @@ class EventRealController extends Controller
     public function realTimeReg() {
 
         $_eve = EventReal::select('*')->get()->count();
-
+        
         $data = [];
 
         if (!Session::has('eventreal')) {
             session(['eventreal' => $_eve]);
         }
-        
+               
         if ((int)$_eve != (int)session('eventreal')) {
-            session(['eventreal' => $_eve]);
+            session(['eventreal' => (int)$_eve]);
             $data = [
                 'flag' => true
             ];
