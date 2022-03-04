@@ -45,7 +45,125 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-one-tabContent">
-                        
+                        <div class="row container">
+                            <div class="col-md-4">
+                                <label>Chọn loại báo cáo</label>
+                                <select name="chonBaoCao" class="form-control">
+                                    <option value="1">Tồn kho (thực tế)</option>
+                                    <option value="2">Biến động kho (nhu cầu sử dụng)</option>
+                                    <option value="3">Yêu cầu đã duyệt</option>
+                                    <option value="4">Yêu cầu đợi duyệt (thiếu CCDC)</option>
+                                    <option value="5">Nhập kho chi tiết</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Từ ngày</label>
+                                <input type="date" name="tuNgay" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label>Đến ngày</label>
+                                <input type="date" name="denNgay" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                            </div>
+                            <div class="col-md-1">
+                                <label>&nbsp;</label>
+                                <input type="button" class="form-control btn btn-success" id="xem" value="Xem">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row container">
+                            <div id="tonKho" style="display:none;">
+                                <h3>TỒN KHO THỰC TẾ</h3>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>TT</th>
+                                            <th>Công cụ/dụng cụ</th>
+                                            <th>Mô tả</th>
+                                            <th>Số lượng nhập</th>
+                                            <th>Số lượng xuất</th>
+                                            <th>Tồn thực tế</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tonKhoShow">                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="bienDongKho" style="display:none;">
+                                <h3>BIẾN ĐỘNG KHO (NHU CẦU SỬ DỤNG)</h3>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>TT</th>
+                                            <th>Tên CCDC</th>
+                                            <th>Mô tả</th>                                            
+                                            <th>Số lượng nhập mới</th>
+                                            <th>Số lượng xuất</th>
+                                            <th>Mã yêu cầu (PX)</th>
+                                            <th>Nhân viên yêu cầu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bienDongKhoShow">                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="yeuCauDaDuyet" style="display:none;">
+                                <h3>YÊU CẦU CÔNG CỤ/DỤNG CỤ ĐÃ DUYỆT</h3>                               
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>TT</th>
+                                            <th>Ngày yêu cầu (Ngày duyệt)</th>
+                                            <th>Nhân viên</th>
+                                            <th>Mục đích sử dụng</th> 
+                                            <th>Mã yêu cầu</th>                                            
+                                            <th>Danh mục</th>
+                                            <th>Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="yeuCauDaDuyetShow">                                                                   
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="yeuCauDoiDuyet" style="display:none;">
+                                <h3>YÊU CẦU ĐỢI DUYỆT (THIẾU CCDC)</h3>                                
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>TT</th>
+                                            <th>Ngày yêu cầu</th>
+                                            <th>Nhân viên</th>
+                                            <th>Mục đích sử dụng</th> 
+                                            <th>Mã yêu cầu</th>                                            
+                                            <th>Yêu cầu</th>
+                                            <th>Đáp ứng (thực tế)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="yeuCauDoiDuyetShow">
+                                                                  
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="nhapKhoChiTiet" style="display:none;">
+                                <h3>NHẬP KHO CHI TIẾT</h3>                                
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>TT</th>
+                                            <th>Ngày nhập</th>
+                                            <th>Người nhập</th>
+                                            <th>Mã phiếu</th>
+                                            <th>Nội dung</th> 
+                                            <th>Danh mục</th> 
+                                            <th>Số lượng</th> 
+                                            <th>Đơn giá</th>         
+                                        </tr>
+                                    </thead>
+                                    <tbody id="nhapKhoChiTietShow">
+                                                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- /.card -->
@@ -84,7 +202,117 @@
 
         // Exe
         $(document).ready(function() {
-           
+           $("#tonKho").hide();
+           $("#bienDongKho").hide();
+           $("#yeuCauDaDuyet").hide();
+           $("#yeuCauDoiDuyet").hide();
+           $("#nhapKhoChiTiet").hide();
+           $("#xem").click(function(){
+               let tuNgay = $("input[name=tuNgay]").val();
+               let denNgay = $("input[name=denNgay]").val();
+               let chose = $("select[name=chonBaoCao]").val();
+               let urlPoint = "";
+               switch(parseInt(chose)) {
+                    case 1: {
+                        urlPoint = "{{url('management/vpp/baocaokho/tonkhothucte/')}}";
+                        $("#bienDongKho").hide();
+                        $("#yeuCauDaDuyet").hide();
+                        $("#yeuCauDoiDuyet").hide();
+                        $("#nhapKhoChiTiet").hide();
+                    } break;
+                    case 2: {
+                        urlPoint = "{{url('management/vpp/baocaokho/biendongkho/')}}";
+                        $("#tonKho").hide();
+                        $("#yeuCauDaDuyet").hide();
+                        $("#yeuCauDoiDuyet").hide();
+                        $("#nhapKhoChiTiet").hide();
+                    } break;
+                    case 3: {
+                        urlPoint = "{{url('management/vpp/baocaokho/yeucaudaduyet/')}}";
+                        $("#tonKho").hide();
+                        $("#bienDongKho").hide();
+                        $("#yeuCauDoiDuyet").hide();
+                        $("#nhapKhoChiTiet").hide();
+                    } break;
+                    case 4: {
+                        urlPoint = "{{url('management/vpp/baocaokho/yeucaudoiduyet/')}}";
+                        $("#tonKho").hide();
+                        $("#bienDongKho").hide();
+                        $("#yeuCauDaDuyet").hide();
+                        $("#nhapKhoChiTiet").hide();
+                    } break;
+                    case 5: {
+                        urlPoint = "{{url('management/vpp/baocaokho/nhapkhochitiet/')}}";
+                        $("#tonKho").hide();
+                        $("#bienDongKho").hide();
+                        $("#yeuCauDaDuyet").hide();
+                        $("#yeuCauDoiDuyet").hide();
+                    } break;
+                    default: alert('Không tồn tại lựa chọn này');
+               }
+               $.ajax({
+                    type:'POST',
+                    url: urlPoint,
+                    dataType: "text",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "chose": chose,
+                        "tuNgay": tuNgay,
+                        "denNgay": denNgay
+                    },                  
+                    success: (response) => {  
+                        switch(parseInt(chose)) {
+                            case 1: {
+                                $("#bienDongKho").hide();
+                                $("#yeuCauDaDuyet").hide();
+                                $("#yeuCauDoiDuyet").hide();
+                                $("#nhapKhoChiTiet").hide();
+                                $("#tonKho").show();
+                                $("#tonKhoShow").html(response);
+                            } break;
+                            case 2: {
+                                $("#tonkho").hide();
+                                $("#yeuCauDaDuyet").hide();
+                                $("#yeuCauDoiDuyet").hide();
+                                $("#nhapKhoChiTiet").hide();
+                                $("#bienDongKho").show();
+                                $("#bienDongKhoShow").html(response);
+                            } break;
+                            case 3: {
+                                $("#tonkho").hide();                                
+                                $("#yeuCauDoiDuyet").hide();
+                                $("#nhapKhoChiTiet").hide();
+                                $("#bienDongKho").hide();
+                                $("#yeuCauDaDuyet").show();
+                                $("#yeuCauDaDuyetShow").html(response);
+                            } break;
+                            case 4: {
+                                $("#tonkho").hide();                                
+                                $("#yeuCauDuyet").hide();
+                                $("#nhapKhoChiTiet").hide();
+                                $("#bienDongKho").hide();
+                                $("#yeuCauDoiDuyet").show();
+                                $("#yeuCauDoiDuyetShow").html(response);
+                            } break;
+                            case 5: {
+                                $("#tonkho").hide();                                
+                                $("#yeuCauDuyet").hide();
+                                $("#yeuCauDoiDuyet").hide();
+                                $("#bienDongKho").hide();
+                                $("#nhapKhoChiTiet").show();
+                                $("#nhapKhoChiTietShow").html(response);
+                            } break;
+                            default: alert('Không tồn tại lựa chọn này');
+                        }                
+                    },
+                    error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: ' Không xem báo cáo lúc này!'
+                        })
+                    }
+               });
+           });
         });
     </script>
 @endsection

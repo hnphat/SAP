@@ -66,14 +66,11 @@
                                     </h5>
                                     <h5>NỘI DUNG YÊU CẦU (XUẤT KHO): <i><span id="noiDung"></span></i></h5>
                                     <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
+                                    <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
                                     <hr/>
                                     <h5>HÀNG HÓA YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
                                 </div>
-                            </div>
-                            <div class="col-md-6" id="doiChieu" style="display:none;">
-                                <h5>TỒN KHO (Tính đến <?php echo Date('d-m-Y'); ?>)</h5>
-                                <p><strong>Bút xóa:</strong> &nbsp;&nbsp;&nbsp;&nbsp; <span class="badge badge-success">10</span></p>
-                            </div>
+                            </div>                            
                         </div>
                         <div class="row container">
                             <div id="showForm">                               
@@ -190,6 +187,7 @@
                         $("#ngayYeuCau").text(response.ngayXuat);   
                         $("#nguoiYeuCau").text(response.user);    
                         $("#trangThai").html((response.status == 1) ? "<strong class='text-success'>Đã duyệt</strong>&nbsp;&nbsp;&nbsp;<button id='huyDuyet' class='btn btn-danger btn-sm'>Hoàn trạng</button>" : "<strong class='text-danger'>Chưa duyệt</strong>");        
+                        $("#trangThaiNhan").html((response.statusNhan == 1) ? "<strong class='text-success'>Đã nhận</strong>" : "<strong class='text-danger'>Chưa nhận</strong>");           
                         $("#showForm").empty();  
                         showrow = ``;                        
                         Toast.fire({

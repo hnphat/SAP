@@ -376,6 +376,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('quanlyxuatkho/huyduyetphieu','VPPController@huyDuyetPhieu');
         // Báo cáo kho
         Route::get('baocaokho','VPPController@baoCaoKhoPanel')->name('vpp.baocaokho.panel');
+        Route::post('baocaokho/tonkhothucte','VPPController@tonKhoThucTe');
+        Route::post('baocaokho/biendongkho','VPPController@bienDongKho');
+        Route::post('baocaokho/yeucaudaduyet','VPPController@yeuCauDaDuyet');
+        Route::post('baocaokho/yeucaudoiduyet','VPPController@yeuCauDoiDuyet');
+        Route::post('baocaokho/nhapkhochitiet','VPPController@nhapKhoChiTiet');
     });
 
     Route::group(['prefix' => 'requestvpp'], function(){
@@ -387,6 +392,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('denghicongcu/loadphieu','VPPController@deNghiLoadPhieu');
         Route::get('denghicongcu/loadphieuchitiet','VPPController@deNghiLoadChiTiet');
         Route::post('denghicongcu/taophieu','VPPController@yeuCauTaoPhieu');
+        Route::post('denghicongcu/nhanhang','VPPController@nhanHang');
     });
 
     Route::group(['prefix' => 'nhansu'], function(){

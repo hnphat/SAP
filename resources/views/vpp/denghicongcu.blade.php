@@ -68,6 +68,7 @@
                             </h5>
                             <h5>NỘI DUNG: <i><span id="noiDung"></span></i></h5>                            
                             <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
+                            <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
                             <hr>
                             <h5>CÔNG CỤ/DỤNG CỤ YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
                         </div>
@@ -214,6 +215,7 @@
                         $("#noiDung").text(response.noiDung);   
                         $("#ngayYeuCau").text(response.ngayXuat);    
                         $("#trangThai").html((response.status == 1) ? "<strong class='text-success'>Đã duyệt</strong>" : "<strong class='text-danger'>Chưa duyệt</strong>");           
+                        $("#trangThaiNhan").html((response.statusNhan == 1) ? "<strong class='text-success'>Đã nhận</strong>" : "<strong class='text-danger'>Chưa nhận</strong>&nbsp;<button id='nhanHang' class='btn btn-success btn-sm'>Xác nhận</button>");           
                         $("#showForm").empty();  
                         showrow = ``;                        
                         Toast.fire({
@@ -256,11 +258,19 @@
                             $('#themHangHoa').hide();
                             $("#suaPhieu").hide();
                             $("#xoaPhieu").hide();
+                            if (response.statusNhan == 1) {
+                                $('#nhanHang').hide();
+                            } else {
+                                $('#nhanHang').show();
+                            }
                         } else {
                             $('#showForm button').show();
                             $("#suaPhieu").show();
-                            $("#xoaPhieu").show();
+                            $("#xoaPhieu").show();   
+                            $('#nhanHang').hide();                         
                         }
+
+                       
                     },
                     error: function(){
                         Toast.fire({
@@ -406,6 +416,35 @@
                     `;
                 arr++;
                 $("#showForm").prepend(temp);    
+            });
+
+            $(document).on("click","#nhanHang", function(e){
+                e.preventDefault();
+                if (confirm('Xác nhận đã nhận đầy đủ công cụ/dụng cụ?')) {
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/requestvpp/denghicongcu/nhanhang/')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "idPX": $("select[name=chonPhieu]").val()
+                        },
+                        success: (response) => {                        
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })    
+                            $('#trangThaiNhan').html("<strong class='text-success'>Đã nhận</strong>");     
+                            $('#nhanHang').hide();                    
+                        },
+                        error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Không thể nhận hàng lúc này!'
+                            })
+                        }
+                    }); 
+                }               
             });
             
         });

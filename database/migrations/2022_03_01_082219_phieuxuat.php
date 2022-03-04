@@ -23,6 +23,7 @@ class Phieuxuat extends Migration
             $table->integer('id_user_duyet')->unsigned()->nullable();
             $table->foreign('id_user_duyet')->references('id')->on('users');
             $table->boolean('duyet')->default(false);
+            $table->boolean('nhan')->default(false);
             $table->string('noiDungXuat');
             $table->timestamps();
         });

@@ -12,6 +12,7 @@ use App\PhieuXuat;
 use App\XuatSP;
 use App\EventReal;
 use App\RefreshSupport;
+use DB;
 use Session;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -266,50 +267,7 @@ class VPPController extends Controller
     public function nhapKhoPanel(){
         return view('vpp.quanlynhapkho');
     }
-
-    // public function nhapKhoPost(Request $request) {  
-    //     $id = $request->idPN;
-    //     if ($id != ''){
-    //         $count = 1;
-    //         $i = 1;
-    //         while(isset($request['hangHoa' . $count]))  {
-    //             $count++;
-    //         }      
-
-    //         if ($count == 1) {
-    //             return response()->json([
-    //                 'code' => 500,        
-    //                 'type' => 'info',
-    //                 'message' => 'Vui lòng thêm hàng hóa vào phiếu nhập. Bạn chưa thêm bất kỳ mặt hàng nào!',
-    //             ]);   
-    //         } else {
-    //             for($i; $i < $count; $i++) {
-    //                 $hangHoa = $request['hangHoa' . $i];
-    //                 $soLuong = $request['soLuong' . $i];
-    //                 $donGia = $request['donGia' . $i];
-    //                 // dd($hangHoa . " -- " . $soLuong . " - " . $donGia);
-    //                 $nhap = new NhapSP();
-    //                 $nhap->id_danhmuc = $hangHoa;
-    //                 $nhap->id_nhap = $id;
-    //                 $nhap->soLuong = $soLuong;
-    //                 $nhap->donGia = $donGia;
-    //                 $nhap->save();                    
-    //             }
-    //             return response()->json([
-    //                 'code' => 200,        
-    //                 'type' => 'info',
-    //                 'message' => 'Đã thêm phiếu nhập và danh mục sản phẩm vào kho',
-    //             ]);   
-    //         }            
-    //     } else {
-    //         return response()->json([
-    //             'code' => 500,        
-    //             'type' => 'info',
-    //             'message' => 'Vui lòng tạo phiếu nhập trước khi thực hiện thêm hàng hóa',
-    //         ]);   
-    //     }
-    // }
-
+  
     public function nhapKhoUpdate(Request $request) {    
         $arrHangHoa = [];
         $arrSoLuong = [];
@@ -605,7 +563,8 @@ class VPPController extends Controller
                 'data' => $xuatsp,
                 'noiDung' => $phieuXuat->noiDungXuat,
                 'ngayXuat' => $phieuXuat->ngay . "-" . $phieuXuat->thang . "-" . $phieuXuat->nam,
-                'status' => $phieuXuat->duyet
+                'status' => $phieuXuat->duyet,
+                'statusNhan' => $phieuXuat->nhan
             ]);
         else
             return response()->json([
@@ -723,6 +682,42 @@ class VPPController extends Controller
         }        
     }
 
+    public function nhanHang(Request $request) {
+        $px = PhieuXuat::find($request->idPX);
+        if ($px->duyet == true) {
+            $px->nhan = true;
+            $px->save();
+            if ($px) {
+                $eventReal = new EventReal;
+                $eventReal->name = "Xác nhận hàng";
+                $eventReal->save();
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Xác nhận nhận đủ công cụ/dụng cụ mã phiếu PXK-0" . $request->idPX;
+                $nhatKy->save(); 
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => "Đã xác nhận nhận đầy đủ công cụ dụng cụ!"
+                ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể xác nhận'
+                ]);
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không thể xác nhận vì chưa được duyệt'
+            ]);
+        }        
+    }
+
     // Quản lý xuất kho
     public function quanLyXuatKhoPanel(){
         return view('vpp.quanlyxuatkho');
@@ -762,7 +757,8 @@ class VPPController extends Controller
                 'noiDung' => $phieuXuat->noiDungXuat,
                 'ngayXuat' => $phieuXuat->ngay . "-" . $phieuXuat->thang . "-" . $phieuXuat->nam,
                 'user' => $phieuXuat->userXuat->userDetail->surname,
-                'status' => $phieuXuat->duyet
+                'status' => $phieuXuat->duyet,
+                'statusNhan' => $phieuXuat->nhan
             ]);
         else
             return response()->json([
@@ -805,56 +801,308 @@ class VPPController extends Controller
 
     public function duyetPhieu(Request $request) {
         $phieu = PhieuXuat::find($request->phieu);
-        $phieu->duyet = true;
-        $phieu->save();
-        if ($phieu) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
-            $nhatKy->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
-            $nhatKy->save(); 
-            return response()->json([
-                'code' => 200,        
-                'type' => 'info',
-                'message' => "Đã duyệt yêu cầu. Đang đồng bộ và tải lại danh sách phiếu...."
-            ]);
+        $flag = true;
+        $sanPham = "";
+        $xuatSP = XuatSP::where('id_xuat', $request->phieu)->get();
+        foreach($xuatSP as $xuat) {
+            $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
+            ->groupBy('id_danhmuc')
+            ->having('id_danhmuc', $xuat->id_danhmuc)
+            ->first();
+            $soLuongNhap = (isset($newPN) ? $newPN->soLuong : 0);
+            $newPX = XuatSP::where('id_danhmuc',$xuat->id_danhmuc)->get();
+            $soLuongXuat = 0;
+            foreach($newPX as $item) {
+                $px = PhieuXuat::find($item->id_xuat);
+                if ($px->duyet == true && $px->nhan == true) {
+                    $soLuongXuat += $item->soLuong;
+                }
+            }
+            if ($xuat->soLuong > ($soLuongNhap - $soLuongXuat)) {
+                $sanPham .= " ;". DanhMucSP::find($xuat->id_danhmuc)->tenSanPham;
+                $flag = false;
+            }            
         }
-        else
+
+        if ($flag) {
+            $phieu->duyet = true;
+            $phieu->save();
+            if ($phieu) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
+                $nhatKy->save(); 
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => "Đã duyệt yêu cầu. Đang đồng bộ và tải lại danh sách phiếu...."
+                ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể duyệt yêu cầu'
+                ]);
+        } else {
             return response()->json([
                 'code' => 500,        
                 'type' => 'error',
-                'message' => 'Không thể duyệt yêu cầu'
+                'message' => "Không đủ số lượng [".$sanPham."] để duyệt"
             ]);
+        }
     }
 
     public function huyDuyetPhieu(Request $request) {
         $phieu = PhieuXuat::find($request->phieu);
-        $phieu->duyet = false;
-        $phieu->save();
-        if ($phieu) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
-            $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
-            $nhatKy->save();
-            return response()->json([
-                'code' => 200,        
-                'type' => 'info',
-                'message' => "Đã HỦY duyệt phiếu. Đang đồng bộ và tải lại danh sách phiếu...."
-            ]);
-        }
-        else
+        if ($phieu->nhan == true) {
             return response()->json([
                 'code' => 500,        
                 'type' => 'error',
-                'message' => 'Không thể duyệt yêu cầu'
+                'message' => 'Không thể hủy (hoàn trạng) yêu cầu vì nhân viên đã xác nhận CCDC'
             ]);
+        } else {
+            $phieu->duyet = false;
+            $phieu->save();
+            if ($phieu) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
+                $nhatKy->save();
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => "Đã HỦY duyệt phiếu. Đang đồng bộ và tải lại danh sách phiếu...."
+                ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể duyệt yêu cầu'
+                ]);
+        }        
     }
 
     // Báo cáo kho
     public function baoCaoKhoPanel() {
         return view('vpp.baocaokho');
+    }
+
+    public function tonKhoThucTe(Request $request){
+        $listDM = DanhMucSP::all();
+        $i = 1;
+        foreach($listDM as $row) {
+            $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
+            ->groupBy('id_danhmuc')
+            ->having('id_danhmuc', $row->id)
+            ->first(); 
+            $newPX = XuatSP::where('id_danhmuc',$row->id)->get();
+            $soLuongNhap = (isset($newPN) ? $newPN->soLuong : 0);
+            $soLuongXuat = 0;
+            foreach($newPX as $item) {
+                $px = PhieuXuat::find($item->id_xuat);
+                if ($px->duyet == true && $px->nhan == true) {
+                    $soLuongXuat += $item->soLuong;
+                }
+            }
+
+            echo "<tr class='text-center'>
+                    <td>".$i++."</td>
+                    <td>".$row->tenSanPham."</td>
+                    <td>".$row->moTa."</td>
+                    <td class='text-primary text-bold'>". ($soLuongNhap != 0 ? $soLuongNhap : "") ."</td>
+                    <td class='text-danger text-bold'>". ($soLuongXuat != 0 ? $soLuongXuat : "") ."</td>
+                    <td class='text-success text-bold'>".(($soLuongNhap - $soLuongXuat) != 0 ? $soLuongNhap - $soLuongXuat : "")."</td>
+                </tr>";
+        }
+    }
+
+    public function bienDongKho(Request $request){       
+        $tuNgay = \HelpFunction::revertDate($request->tuNgay);
+        $denNgay = \HelpFunction::revertDate($request->denNgay);        
+        $listDM = DanhMucSP::all();
+      
+        $i = 1;
+        foreach($listDM as $row) {
+            $maPhieu = "";
+            $nhanVien = "";
+            $soLuongNhap = 0;
+            $soLuongXuat = 0;
+            $newPN = NhapSP::where('id_danhmuc', $row->id)->get(); 
+            $newPX = XuatSP::where('id_danhmuc',$row->id)->get();
+
+            foreach($newPN as $nhap) {
+                $pn = PhieuNhap::find($nhap->id_nhap);
+                // dd($denNgay . " --- " . ($pn->ngay."/".$pn->thang."/".$pn->nam));
+                if ((strtotime($pn->ngay."-".$pn->thang."-".$pn->nam) >= strtotime($tuNgay)) 
+                    &&  (strtotime($pn->ngay."-".$pn->thang."-".$pn->nam) <= strtotime($denNgay))) {
+                        $soLuongNhap += $nhap->soLuong;
+                    }
+            }           
+           
+            foreach($newPX as $item) {
+                $px = PhieuXuat::find($item->id_xuat);
+                if ((strtotime($px->ngay."-".$px->thang."-".$px->nam) >= strtotime($tuNgay)) 
+                    &&  (strtotime($px->ngay."-".$px->thang."-".$px->nam) <= strtotime($denNgay))) {
+                        if ($px->duyet == true && $px->nhan == true) {
+                            $soLuongXuat += $item->soLuong;
+                            $maPhieu .= "PXK-0" . $px->id . " <span class='badge badge-secondary'>".$item->soLuong."</span><br/>";
+                            $nhanVien .= $px->userXuat->userDetail->surname . " <span class='badge badge-secondary'>".$item->soLuong."</span><br/>";
+                        }
+                    }               
+            }
+            echo "<tr class='text-center'>
+                <td>".$i++."</td>
+                <td>".$row->tenSanPham."</td>
+                <td>".$row->moTa."</td>
+                <td class='text-success text-bold'>".($soLuongNhap != 0 ? $soLuongNhap : "")."</td>
+                <td class='text-danger text-bold'>".($soLuongXuat != 0 ? $soLuongXuat : "")."</td>
+                <td>".$maPhieu."</td>
+                <td>".$nhanVien."</td>
+            </tr>";
+        }     
+        
+    }
+
+    public function yeuCauDaDuyet(Request $request){       
+        $tuNgay = \HelpFunction::revertDate($request->tuNgay);
+        $denNgay = \HelpFunction::revertDate($request->denNgay);        
+        $px = PhieuXuat::select("*")->where([
+            ['duyet','=',true]
+        ])->get();
+        $i = 1;
+        foreach($px as $row) {
+            $_day = $row->ngay."-".$row->thang."-".$row->nam;
+            $_nv = $row->userXuat->userDetail->surname;
+            $_dayDuyet = \HelpFunction::getDateRevertCreatedAt($row->updated_at);
+            $_noiDung = $row->noiDungXuat;
+            $_maPhieu = "PXK-0".$row->id;
+            $_status = ($row->nhan) ? "<strong class='text-success'>Đã nhận</strong>" : "<strong class='text-danger'>Chưa nhận</strong>";
+            $_dm = "";
+            if ((strtotime($_day) >= strtotime($tuNgay)) 
+                &&  (strtotime($_day) <= strtotime($denNgay))) {
+                    $xuat = XuatSP::where('id_xuat', $row->id)->get();
+                    foreach($xuat as $item) {
+                        $dm = DanhMucSP::find($item->id_danhmuc);
+                        $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong."</span></span><br/>";
+                    }
+                }
+            echo "<tr class='text-center'>
+                <td>".$i++."</td>
+                <td>".$_day." <span class='text-success'>(".$_dayDuyet.")</span></td>
+                <td>".$_nv."</td>
+                <td>".$_noiDung."</td>
+                <td>".$_maPhieu."</td>
+                <td>
+                    ".$_dm."
+                </td> 
+                <td>".$_status."</td>                                           
+            </tr>";         
+        }
+    }
+
+    public function yeuCauDoiDuyet(Request $request){       
+        $tuNgay = \HelpFunction::revertDate($request->tuNgay);
+        $denNgay = \HelpFunction::revertDate($request->denNgay);        
+        $px = PhieuXuat::select("*")->where([
+            ['duyet','=',false]
+        ])->get();
+        $i = 1;
+        foreach($px as $row) {
+            $_day = $row->ngay."-".$row->thang."-".$row->nam;
+            $_nv = $row->userXuat->userDetail->surname;
+            $_dayDuyet = \HelpFunction::getDateRevertCreatedAt($row->updated_at);
+            $_noiDung = $row->noiDungXuat;
+            $_maPhieu = "PXK-0".$row->id;
+            $_dm = "";
+            $_sl = "";
+            if ((strtotime($_day) >= strtotime($tuNgay)) 
+                &&  (strtotime($_day) <= strtotime($denNgay))) {
+                    $xuat = XuatSP::where('id_xuat', $row->id)->get();
+                    foreach($xuat as $item) {
+                        $dm = DanhMucSP::find($item->id_danhmuc);
+                        $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong."</span></span><br/>";
+                        
+                        // Kiểm tra tồn kho
+                        $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
+                        ->groupBy('id_danhmuc')
+                        ->having('id_danhmuc', $item->id_danhmuc)
+                        ->first();
+                        $soLuongNhap = (isset($newPN) ? $newPN->soLuong : 0);
+                        $newPX = XuatSP::where('id_danhmuc',$item->id_danhmuc)->get();
+                        $soLuongXuat = 0;
+                        foreach($newPX as $itemx) {
+                            $px = PhieuXuat::find($itemx->id_xuat);
+                            if ($px->duyet == true && $px->nhan == true) {
+                                $soLuongXuat += $itemx->soLuong;
+                            }
+                        }
+                        // --------
+                        $_sl .= "<span><span class='badge badge-warning'>".($soLuongNhap - $soLuongXuat)."</span></span><br/>";
+                    }
+                }
+
+            echo "<tr class='text-center'>
+                <td>".$i++."</td>
+                <td>".$_day."</td>
+                <td>".$_nv."</td>
+                <td>".$_noiDung."</td>
+                <td>".$_maPhieu."</td>
+                <td class='text-left'>
+                    ".$_dm."
+                </td>      
+                <td>
+                    ".$_sl."
+                </td>                                             
+            </tr>";         
+        }
+    }
+
+    public function nhapKhoChiTiet(Request $request){       
+        $tuNgay = \HelpFunction::revertDate($request->tuNgay);
+        $denNgay = \HelpFunction::revertDate($request->denNgay);        
+        $pn = PhieuNhap::all();
+        $i = 1;
+        foreach($pn as $row) {
+            $_day = $row->ngay."-".$row->thang."-".$row->nam;
+            $_nv = $row->user->userDetail->surname;
+            $_noiDung = $row->noiDungNhap;
+            $_maPhieu = "PNK-0".$row->id;
+            $_dm = "";
+            $_sl = "";
+            $_dg = "";
+            if ((strtotime($_day) >= strtotime($tuNgay)) 
+                &&  (strtotime($_day) <= strtotime($denNgay))) {
+                    $nhap = NhapSP::where('id_nhap', $row->id)->get();
+                    foreach($nhap as $item) {
+                        $dm = DanhMucSP::find($item->id_danhmuc);
+                        $_dm .= "<span>".$dm->tenSanPham."</span><br/>";
+                        $_sl .= $item->soLuong."<br/>";
+                        $_dg .= number_format($item->donGia)."<br/>";
+                    }
+
+                    echo "<tr class='text-center'>
+                            <td>".$i++."</td>
+                            <td>".$_day."</td>
+                            <td>".$_nv."</td>
+                            <td>".$_maPhieu."</td>
+                            <td>".$_noiDung."</td>
+                            <td class='text-left'>
+                                ".$_dm."                                           
+                            </td>      
+                            <td class='text-info text-bold'>
+                                ".$_sl."                                                       
+                            </td>  
+                            <td>
+                                ".$_dg."                                              
+                            </td>                                             
+                        </tr>";    
+                }              
+        }
     }
 }
