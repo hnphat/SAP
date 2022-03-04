@@ -915,9 +915,9 @@ class VPPController extends Controller
                     <td>".$i++."</td>
                     <td>".$row->tenSanPham."</td>
                     <td>".$row->moTa."</td>
-                    <td class='text-primary text-bold'>". ($soLuongNhap != 0 ? $soLuongNhap : "") ."</td>
-                    <td class='text-danger text-bold'>". ($soLuongXuat != 0 ? $soLuongXuat : "") ."</td>
-                    <td class='text-success text-bold'>".(($soLuongNhap - $soLuongXuat) != 0 ? $soLuongNhap - $soLuongXuat : "")."</td>
+                    <td class='text-primary text-bold'>". ($soLuongNhap != 0 ? $soLuongNhap. " " .$row->donViTinh : "") ."</td>
+                    <td class='text-danger text-bold'>". ($soLuongXuat != 0 ? $soLuongXuat. " " .$row->donViTinh : "") ."</td>
+                    <td class='text-success text-bold'>".(($soLuongNhap - $soLuongXuat) != 0 ? ($soLuongNhap - $soLuongXuat). " " .$row->donViTinh : "")."</td>
                 </tr>";
         }
     }
@@ -960,8 +960,8 @@ class VPPController extends Controller
                 <td>".$i++."</td>
                 <td>".$row->tenSanPham."</td>
                 <td>".$row->moTa."</td>
-                <td class='text-success text-bold'>".($soLuongNhap != 0 ? $soLuongNhap : "")."</td>
-                <td class='text-danger text-bold'>".($soLuongXuat != 0 ? $soLuongXuat : "")."</td>
+                <td class='text-success text-bold'>".($soLuongNhap != 0 ? $soLuongNhap. " " .$row->donViTinh : "")."</td>
+                <td class='text-danger text-bold'>".($soLuongXuat != 0 ? $soLuongXuat. " " .$row->donViTinh : "")."</td>
                 <td>".$maPhieu."</td>
                 <td>".$nhanVien."</td>
             </tr>";
@@ -989,7 +989,7 @@ class VPPController extends Controller
                     $xuat = XuatSP::where('id_xuat', $row->id)->get();
                     foreach($xuat as $item) {
                         $dm = DanhMucSP::find($item->id_danhmuc);
-                        $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong."</span></span><br/>";
+                        $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong." ".$dm->donViTinh."</span></span><br/>";
                     }
                 }
             echo "<tr class='text-center'>
@@ -1026,7 +1026,7 @@ class VPPController extends Controller
                     $xuat = XuatSP::where('id_xuat', $row->id)->get();
                     foreach($xuat as $item) {
                         $dm = DanhMucSP::find($item->id_danhmuc);
-                        $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong."</span></span><br/>";
+                        $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong." ".$dm->donViTinh."</span></span><br/>";
                         
                         // Kiểm tra tồn kho
                         $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
@@ -1043,7 +1043,7 @@ class VPPController extends Controller
                             }
                         }
                         // --------
-                        $_sl .= "<span><span class='badge badge-warning'>".($soLuongNhap - $soLuongXuat)."</span></span><br/>";
+                        $_sl .= "<span><span class='badge badge-warning'>".($soLuongNhap - $soLuongXuat)." ".$dm->donViTinh."</span></span><br/>";
                     }
                 }
 
@@ -1081,8 +1081,8 @@ class VPPController extends Controller
                     $nhap = NhapSP::where('id_nhap', $row->id)->get();
                     foreach($nhap as $item) {
                         $dm = DanhMucSP::find($item->id_danhmuc);
-                        $_dm .= "<span>".$dm->tenSanPham."</span><br/>";
-                        $_sl .= $item->soLuong."<br/>";
+                        $_dm .= "<span>".$dm->tenSanPham." </span><br/>";
+                        $_sl .= $item->soLuong." ".$dm->donViTinh."<br/>";
                         $_dg .= number_format($item->donGia)."<br/>";
                     }
 
