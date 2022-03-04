@@ -894,31 +894,48 @@ class VPPController extends Controller
     }
 
     public function tonKhoThucTe(Request $request){
-        $listDM = DanhMucSP::all();
-        $i = 1;
-        foreach($listDM as $row) {
-            $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
-            ->groupBy('id_danhmuc')
-            ->having('id_danhmuc', $row->id)
-            ->first(); 
-            $newPX = XuatSP::where('id_danhmuc',$row->id)->get();
-            $soLuongNhap = (isset($newPN) ? $newPN->soLuong : 0);
-            $soLuongXuat = 0;
-            foreach($newPX as $item) {
-                $px = PhieuXuat::find($item->id_xuat);
-                if ($px->duyet == true && $px->nhan == true) {
-                    $soLuongXuat += $item->soLuong;
+        $listNhom = NhomSP::all();
+        foreach($listNhom as $nhom) {
+            echo "<hr/><h5 class='text-primary'>".mb_strtoupper($nhom->tenNhom)."</h5>";
+                echo "<table class='table table-striped table-bordered'>
+                <thead>
+                    <tr class='text-center'>
+                        <th>TT</th>
+                        <th>Công cụ/dụng cụ</th>
+                        <th>Mô tả</th>
+                        <th>Số lượng nhập</th>
+                        <th>Số lượng xuất</th>
+                        <th>Tồn thực tế</th>
+                    </tr>
+                </thead>
+                <tbody>";
+                $listDM = DanhMucSP::where('id_nhom',$nhom->id)->get();
+                $i = 1;
+                foreach($listDM as $row) {
+                    $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
+                    ->groupBy('id_danhmuc')
+                    ->having('id_danhmuc', $row->id)
+                    ->first(); 
+                    $newPX = XuatSP::where('id_danhmuc',$row->id)->get();
+                    $soLuongNhap = (isset($newPN) ? $newPN->soLuong : 0);
+                    $soLuongXuat = 0;
+                    foreach($newPX as $item) {
+                        $px = PhieuXuat::find($item->id_xuat);
+                        if ($px->duyet == true && $px->nhan == true) {
+                            $soLuongXuat += $item->soLuong;
+                        }
+                    }
+                    echo "<tr class='text-center'>
+                            <td>".$i++."</td>
+                            <td>".$row->tenSanPham."</td>
+                            <td>".$row->moTa."</td>
+                            <td class='text-primary text-bold'>". ($soLuongNhap != 0 ? $soLuongNhap. " " .$row->donViTinh : "") ."</td>
+                            <td class='text-danger text-bold'>". ($soLuongXuat != 0 ? $soLuongXuat. " " .$row->donViTinh : "") ."</td>
+                            <td class='text-success text-bold'>".(($soLuongNhap - $soLuongXuat) != 0 ? ($soLuongNhap - $soLuongXuat). " " .$row->donViTinh : "")."</td>
+                        </tr>";
                 }
-            }
-
-            echo "<tr class='text-center'>
-                    <td>".$i++."</td>
-                    <td>".$row->tenSanPham."</td>
-                    <td>".$row->moTa."</td>
-                    <td class='text-primary text-bold'>". ($soLuongNhap != 0 ? $soLuongNhap. " " .$row->donViTinh : "") ."</td>
-                    <td class='text-danger text-bold'>". ($soLuongXuat != 0 ? $soLuongXuat. " " .$row->donViTinh : "") ."</td>
-                    <td class='text-success text-bold'>".(($soLuongNhap - $soLuongXuat) != 0 ? ($soLuongNhap - $soLuongXuat). " " .$row->donViTinh : "")."</td>
-                </tr>";
+                echo "</tbody>
+            </table>";            
         }
     }
 
@@ -976,7 +993,7 @@ class VPPController extends Controller
             ['duyet','=',true]
         ])->get();
         $i = 1;
-        foreach($px as $row) {
+        foreach($px as $row) {           
             $_day = $row->ngay."-".$row->thang."-".$row->nam;
             $_nv = $row->userXuat->userDetail->surname;
             $_dayDuyet = \HelpFunction::getDateRevertCreatedAt($row->updated_at);
@@ -991,18 +1008,19 @@ class VPPController extends Controller
                         $dm = DanhMucSP::find($item->id_danhmuc);
                         $_dm .= "<span>".$dm->tenSanPham.": <span class='badge badge-info'>".$item->soLuong." ".$dm->donViTinh."</span></span><br/>";
                     }
-                }
-            echo "<tr class='text-center'>
-                <td>".$i++."</td>
-                <td>".$_day." <span class='text-success'>(".$_dayDuyet.")</span></td>
-                <td>".$_nv."</td>
-                <td>".$_noiDung."</td>
-                <td>".$_maPhieu."</td>
-                <td>
-                    ".$_dm."
-                </td> 
-                <td>".$_status."</td>                                           
-            </tr>";         
+
+                    echo "<tr class='text-center'>
+                        <td>".$i++."</td>
+                        <td>".$_day." <span class='text-success'>(".$_dayDuyet.")</span></td>
+                        <td>".$_nv."</td>
+                        <td>".$_noiDung."</td>
+                        <td>".$_maPhieu."</td>
+                        <td>
+                            ".$_dm."
+                        </td> 
+                        <td>".$_status."</td>                                           
+                    </tr>";       
+                }              
         }
     }
 
@@ -1045,21 +1063,20 @@ class VPPController extends Controller
                         // --------
                         $_sl .= "<span><span class='badge badge-warning'>".($soLuongNhap - $soLuongXuat)." ".$dm->donViTinh."</span></span><br/>";
                     }
+                    echo "<tr class='text-center'>
+                        <td>".$i++."</td>
+                        <td>".$_day."</td>
+                        <td>".$_nv."</td>
+                        <td>".$_noiDung."</td>
+                        <td>".$_maPhieu."</td>
+                        <td class='text-left'>
+                            ".$_dm."
+                        </td>      
+                        <td>
+                            ".$_sl."
+                        </td>                                             
+                    </tr>";         
                 }
-
-            echo "<tr class='text-center'>
-                <td>".$i++."</td>
-                <td>".$_day."</td>
-                <td>".$_nv."</td>
-                <td>".$_noiDung."</td>
-                <td>".$_maPhieu."</td>
-                <td class='text-left'>
-                    ".$_dm."
-                </td>      
-                <td>
-                    ".$_sl."
-                </td>                                             
-            </tr>";         
         }
     }
 

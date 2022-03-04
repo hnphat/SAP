@@ -71,24 +71,13 @@
                         </div>
                         <hr>
                         <div class="row container">
-                            <div id="tonKho" style="display:none;">
+                            <div class="col-md-12" id="tonKho" style="display:none;">
                                 <h3>TỒN KHO THỰC TẾ</h3>
-                                <table class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>TT</th>
-                                            <th>Công cụ/dụng cụ</th>
-                                            <th>Mô tả</th>
-                                            <th>Số lượng nhập</th>
-                                            <th>Số lượng xuất</th>
-                                            <th>Tồn thực tế</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tonKhoShow">                                        
-                                    </tbody>
-                                </table>
+                                <div id="tonKhoShow">
+
+                                </div>                                
                             </div>
-                            <div id="bienDongKho" style="display:none;">
+                            <div class="col-md-12" id="bienDongKho" style="display:none;">
                                 <h3>BIẾN ĐỘNG KHO (NHU CẦU SỬ DỤNG)</h3>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -106,7 +95,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="yeuCauDaDuyet" style="display:none;">
+                            <div class="col-md-12" id="yeuCauDaDuyet" style="display:none;">
                                 <h3>YÊU CẦU CÔNG CỤ/DỤNG CỤ ĐÃ DUYỆT</h3>                               
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -124,7 +113,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="yeuCauDoiDuyet" style="display:none;">
+                            <div class="col-md-12" id="yeuCauDoiDuyet" style="display:none;">
                                 <h3>YÊU CẦU ĐỢI DUYỆT (THIẾU CCDC)</h3>                                
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -143,7 +132,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="nhapKhoChiTiet" style="display:none;">
+                            <div class="col-md-12" id="nhapKhoChiTiet" style="display:none;">
                                 <h3>NHẬP KHO CHI TIẾT</h3>                                
                                 <table class="table table-striped table-bordered">
                                     <thead>
