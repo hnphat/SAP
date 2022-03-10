@@ -7,6 +7,7 @@ use App\NhatKy;
 use App\UsersDetail;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HoSoController extends Controller
@@ -71,7 +72,7 @@ class HoSoController extends Controller
             $nhatKy->save();
             return response()->json([
                'message' => 'Data Inserted',
-                'code' => 200
+               'code' => 200
             ]);
         } else {
             return response()->json([

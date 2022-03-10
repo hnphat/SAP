@@ -114,6 +114,12 @@
                                     <option value="lít">lít</option>
                                     <option value="chai">chai</option>
                                     <option value="lọ">lọ</option>
+                                    <option value="gram">gram</option>
+                                    <option value="tờ">tờ</option>
+                                    <option value="cuộn">cuộn</option>
+                                    <option value="xấp">xấp</option>
+                                    <option value="bịt">bịt</option>
+                                    <option value="bình">bình</option>
                                </select>
                             </div>    
                             <div class="form-group">
@@ -179,6 +185,12 @@
                                     <option value="lít">lít</option>
                                     <option value="chai">chai</option>
                                     <option value="lọ">lọ</option>
+                                    <option value="gram">gram</option>
+                                    <option value="tờ">tờ</option>
+                                    <option value="cuộn">cuộn</option>
+                                    <option value="xấp">xấp</option>
+                                    <option value="bịt">bịt</option>
+                                    <option value="bình">bình</option>
                                </select>
                             </div>    
                             <div class="form-group">

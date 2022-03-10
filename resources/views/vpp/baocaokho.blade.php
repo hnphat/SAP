@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="row container">
+                        <div class="row">
                             <div class="col-md-12" id="tonKho" style="display:none;">
                                 <h3>TỒN KHO THỰC TẾ</h3>
                                 <div id="tonKhoShow">

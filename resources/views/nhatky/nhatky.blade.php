@@ -3,10 +3,9 @@
     NHẬT KÝ TRUY CẬP
 @endsection
 @section('script_head')
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"> -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 @endsection
 @section('content')
@@ -58,6 +57,19 @@
                                         <th>Ghi chú</th>
                                     </tr>
                                     </thead>
+                                    <tbody>
+                                       @foreach($nk as $row)
+                                            <tr>
+                                                <td>{{$loop->iteration}}</td>
+                                                <td>{{\HelpFunction::revertCreatedAtGetTime($row->created_at)}}</td>
+                                                <td>{{\HelpFunction::getDateRevertCreatedAt($row->created_at)}}</td>
+                                                <td>{{$row->user->userDetail->surname}}</td>
+                                                <td>{{$row->chucNang}}</td>
+                                                <td>{!! $row->noiDung!!}</td>
+                                                <td>{{$row->ghiChu}}</td>
+                                            </tr>
+                                       @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -72,22 +84,14 @@
 @section('script')
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <!-- <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> -->
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
-    <!-- Below is plugin for datatables -->
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -98,45 +102,51 @@
 
         // Exe
         $(document).ready(function() {
-            var table = $('#dataTable').DataTable({
-                // paging: false,    use to show all data
-                responsive: true,
-                dom: 'Blfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],                         
-                ajax: "{{ url('management/nhatky/ajax/xem/') }}",
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
-                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
-                columns: [
-                    { "data": null },
-                    { "data": "thoiGian" },  
-                    { "data": null,
-                        render: function(data, type, row) {
-                            let arr = row.created_at.split('-');
-                            let theday = arr[2].toString().substring(0,2);                          
-                            return theday + "/" + arr[1] + "/" + arr[0];                         
-                        } 
-                    },                  
-                    { "data": "name" },          
-                    { "data": "chucNang" },
-                    { "data": "noiDung" },
-                    { "data": "ghiChu" }                    
-                ]
+            $("#dataTable").DataTable({
+                "responsive": true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
             });
-            table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                    cell.innerHTML = i+1;
-                    table.cell(cell).invalidate('dom');
-                } );
-            } ).draw();            
+
+
+            // var table = $('#dataTable').DataTable({
+            //     // paging: false,    use to show all data
+            //     responsive: true,
+            //     dom: 'Blfrtip',
+            //     buttons: [
+            //         'copy', 'csv', 'excel', 'pdf', 'print'
+            //     ],                         
+            //     ajax: "{{ url('management/nhatky/ajax/xem/') }}",
+            //     "columnDefs": [ {
+            //         "searchable": false,
+            //         "orderable": false,
+            //         "targets": 0
+            //     } ],
+            //     "order": [
+            //         [ 0, 'desc' ]
+            //     ],
+            //     lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+            //     columns: [
+            //         { "data": null },
+            //         { "data": "created_at" },  
+            //         { "data": null,
+            //             render: function(data, type, row) {
+            //                 let arr = row.created_at.split('-');
+            //                 let theday = arr[2].toString().substring(0,2);                          
+            //                 return theday + "/" + arr[1] + "/" + arr[0];                         
+            //             } 
+            //         },                  
+            //         { "data": "name" },          
+            //         { "data": "chucNang" },
+            //         { "data": "noiDung" },
+            //         { "data": "ghiChu" }                    
+            //     ]
+            // });
+            // table.on( 'order.dt search.dt', function () {
+            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            //         cell.innerHTML = i+1;
+            //         table.cell(cell).invalidate('dom');
+            //     } );
+            // } ).draw();            
         });
     </script>
 @endsection

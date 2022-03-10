@@ -516,11 +516,26 @@ class NhanSuController extends Controller
         $xinPhep->id_user_duyet = $request->nguoiDuyet;
         $xinPhep->lyDo = $request->lyDo;
         // -----------
-        $month = (int)Date('m');
-        $year = (int)Date('Y');
-        if ($year > $request->namXin) {
-            $month = 12;
-        }
+        // $month = (int)Date('m');
+        // $year = (int)Date('Y');
+        // if ($year > $request->namXin) {
+        //     $month = 12;
+        // }
+
+        // Xử lý phép năm đang có của nhân viên
+        $user = User::find($request->idUserXin);
+        $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
+        $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
+        //--- phep thuc te
+        $now = Date('d-m-Y');     
+        $datediff = strtotime($now) - strtotime($ngay);       
+        $ngayLam = $datediff / (60 * 60 * 24);   
+        $chuan = floor($ngayLam / 30);
+        if ($ngayLam >= 330) $chuan++;
+        $chuan = ($chuan > 12) ? 12 : $chuan;
+        // --------------
+
+
         $suDung = 0;
         switch($request->buoi) {
             case 'SANG': $suDung = 0.5; break;
@@ -567,7 +582,7 @@ class NhanSuController extends Controller
             ]);
         }
 
-        if ($request->loaiPhep == $getIdPhepNam && ($daSuDung + $suDung > $month)) {
+        if ($request->loaiPhep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
             return response()->json([
                 "type" => "error",
                 "code" => 500,
@@ -840,7 +855,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
-            $nhatKy->noiDung = "Xin phép tăng ca";
+            $nhatKy->noiDung = "Xin phép tăng ca<br/>Ngày xin: ".$request->ngayXinTangCa."<br/>Lý do: ". $request->lyDoTangCa;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -918,13 +933,14 @@ class NhanSuController extends Controller
 
     public function xinPhepDelete(Request $request) {
         $xinPhep = XinPhep::find($request->id);
+        $ngay = $xinPhep->ngay . "/" . $xinPhep->thang . "/" . $xinPhep->nam;
         $xinPhep->delete();
         if ($xinPhep) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
-            $nhatKy->noiDung = "Xóa xin phép";
+            $nhatKy->noiDung = "Xóa xin phép ngày " . $ngay;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -944,13 +960,14 @@ class NhanSuController extends Controller
     public function xinPhepDeleteAdmin(Request $request) {
         if (Auth::user()->hasRole('system')) {
             $xinPhep = XinPhep::find($request->id);
+            $ngay = $xinPhep->ngay . "/" . $xinPhep->thang . "/" . $xinPhep->nam;
             $xinPhep->delete();
             if ($xinPhep) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
-                $nhatKy->noiDung = "Xóa xin phép";
+                $nhatKy->noiDung = "Admin xóa xin phép " . $ngay;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1018,6 +1035,8 @@ class NhanSuController extends Controller
 
     public function pheDuyetPhep(Request $request) {
         $check = XinPhep::where('id',$request->id)->first();
+        $ngay = $check->ngay . "/" . $check->thang . "/" . $check->nam;
+        $nhanvien = $check->user->userDetail->surname;
         $flag = false;
         $day = (int)Date('d');
         $month = (int)Date('m');
@@ -1025,9 +1044,21 @@ class NhanSuController extends Controller
         if ($year <= $check->nam && $day <= ($check->ngay + 1) && $month <= $check->thang) {
             $flag = true;
         }
-        if ($year > $check->nam) {
-            $month = 12;
-        }
+        // if ($year > $check->nam) {
+        //     $month = 12;
+        // }
+        // Xử lý phép năm đang có của nhân viên
+        $user = User::find($check->id_user);
+        $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
+        $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
+        //--- phep thuc te
+        $now = Date('d-m-Y');     
+        $datediff = strtotime($now) - strtotime($ngay);       
+        $ngayLam = $datediff / (60 * 60 * 24);   
+        $chuan = floor($ngayLam / 30);
+        if ($ngayLam >= 330) $chuan++;
+        $chuan = ($chuan > 12) ? 12 : $chuan;
+        // ----------------
         $suDung = 0;
         switch($check->buoi) {
             case 'SANG': $suDung = 0.5; break;
@@ -1076,7 +1107,7 @@ class NhanSuController extends Controller
                 ]);
             }
 
-            if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $month)) {
+            if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
                 return response()->json([
                     "type" => "error",
                     "code" => 500,
@@ -1092,7 +1123,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                $nhatKy->noiDung = "Admin Phê duyệt phép";
+                $nhatKy->noiDung = "Phê duyệt phép ngày " . $ngay . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1823,6 +1854,8 @@ class NhanSuController extends Controller
 
     public function pheDuyetTangCa(Request $request) {
         $check = TangCa::where('id',$request->id)->first();
+        $ngay = $check->ngay . "/" . $check->thang . "/" . $check->nam;
+        $nhanvien = $check->user->userDetail->surname;
         if (Auth::user()->hasRole('system')) {
             $tangCa = TangCa::where('id',$request->id)->update([
                 'user_duyet' => true
@@ -1832,7 +1865,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
-                $nhatKy->noiDung = "Phê duyệt tăng ca";
+                $nhatKy->noiDung = "Phê duyệt tăng ca ngày " . $ngay . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1862,7 +1895,7 @@ class NhanSuController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
-                    $nhatKy->noiDung = "Phê duyệt tăng ca";
+                    $nhatKy->noiDung = "Phê duyệt tăng ca ngày " . $ngay . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                     $nhatKy->save();
                     return response()->json([
                         "type" => "info",
@@ -1888,6 +1921,9 @@ class NhanSuController extends Controller
                 "message" => "Bạn không có quyền thao tác trên chức năng này"
             ]);
         } else {
+            $check = TangCa::where('id',$request->idTangCa)->first();
+            $ngay = $check->ngay . "/" . $check->thang . "/" . $check->nam;
+            $nhanvien = $check->user->userDetail->surname;
             $tangCa = TangCa::where('id',$request->idTangCa)->update([
                 'time1' => $request->gioVao,
                 'time2' => $request->gioRa,
@@ -1898,7 +1934,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
-                $nhatKy->noiDung = "Cập nhật giờ công và hệ số tăng ca";
+                $nhatKy->noiDung = "Cập nhật giờ công ".$request->gioVao." ".$request->gioRa." và hệ số tăng ca ".$request->heSo." ngày " . $ngay . " của nhân viên " . $nhanvien;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1917,6 +1953,8 @@ class NhanSuController extends Controller
 
     public function tangCaDelete(Request $request) {
         $check = TangCa::where('id',$request->id)->first();
+        $ngay = $check->ngay . "/" . $check->thang . "/" . $check->nam;
+        $nhanvien = $check->user->userDetail->surname;
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns')) {
             $tangCa = TangCa::find($request->id);
             $tangCa->delete();
@@ -1925,7 +1963,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
-                $nhatKy->noiDung = "Xóa tăng ca";
+                $nhatKy->noiDung = "Không duyệt và xóa tăng ca ngày " . $ngay . " của nhân viên " . $nhanvien;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1948,13 +1986,15 @@ class NhanSuController extends Controller
                 ]);
             } else {
                 $tangCa = TangCa::find($request->id);
+                $ngay = $tangCa->ngay . "/" . $tangCa->thang . "/" . $tangCa->nam;
+                $nhanvien = $tangCa->user->userDetail->surname;
                 $tangCa->delete();
                 if ($tangCa) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
-                    $nhatKy->noiDung = "Xóa tăng ca";
+                    $nhatKy->noiDung = "Không duyệt và xóa tăng ca ngày " . $ngay . " của nhân viên " . $nhanvien;
                     $nhatKy->save();
                     return response()->json([
                         "type" => "info",
@@ -1973,11 +2013,17 @@ class NhanSuController extends Controller
     }
 
     public function getPhepNam($id, $nam){
-        $month = (int) Date('m');
-        $year = (int) Date('Y');
-        if ($year > $nam) {
-            $month = 12;
-        }
+        $user = User::find($id);
+        $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
+        $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
+        //--- phep thuc te
+        $now = Date('d-m-Y');     
+        $datediff = strtotime($now) - strtotime($ngay);       
+        $ngayLam = $datediff / (60 * 60 * 24);   
+        $chuan = floor($ngayLam / 30);
+        if ($ngayLam >= 330) $chuan++;
+        $chuan = ($chuan > 12) ? 12 : $chuan;
+        
         $getIdPhep = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
         $check = XinPhep::where([
             ['id_user','=',$id],
@@ -2004,7 +2050,7 @@ class NhanSuController extends Controller
             'type' => 'info',
             'code' => 200,
             'message' => 'success',
-            'conlai' => $month,
+            'conlai' => $chuan,
             'dasudung' => $daSuDung
         ]);
     }
@@ -2035,7 +2081,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
-                $nhatKy->noiDung = "Chốt chấm công";
+                $nhatKy->noiDung = "Chốt chấm công tháng ".$request->thang." năm " . $request->nam;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -2142,7 +2188,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
-            $nhatKy->noiDung = "Hủy chốt chấm công";
+            $nhatKy->noiDung = "Hủy chốt chấm công " . $request->thang . "/" . $request->nam;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -2313,7 +2359,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
-            $nhatKy->noiDung = "Admin chốt tất cả chấm công";
+            $nhatKy->noiDung = "Admin chốt tất cả chấm công tháng " . $thang . "/" . $nam;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -2350,7 +2396,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
-            $nhatKy->noiDung = "Admin hủy chốt tất cả chấm công";
+            $nhatKy->noiDung = "Admin hủy chốt tất cả chấm công tháng " . $thang . "/" . $nam;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -2401,6 +2447,8 @@ class NhanSuController extends Controller
 
     public function quanLyPheDuyetSeen(Request $request) {
         $xinPhep = XinPhep::find($request->id);
+        $ngay = $xinPhep->ngay . "/" . $xinPhep->thang . "/" . $xinPhep->nam;
+        $nhanvien = $xinPhep->user->userDetail->surname;
         $xinPhep->duyet = true;
         $xinPhep->save();
         if ($xinPhep) {
@@ -2408,7 +2456,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt phép trưởng bộ phận";
-            $nhatKy->noiDung = "Admin đã xem và kiểm tra";
+            $nhatKy->noiDung = "Admin đã xem và kiểm tra duyệt phép của trưởng bộ phận<br/>Duyệt ngày: ".$ngay."<br/>Cho nhân viên: " . $nhanvien;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -2460,6 +2508,8 @@ class NhanSuController extends Controller
 
     public function quanLyPheDuyetTangCaSeen(Request $request) {
         $tangCa = TangCa::find($request->id);
+        $ngay = $tangCa->ngay . "/" . $tangCa->thang . "/" . $tangCa->nam;
+        $nhanvien = $tangCa->user->userDetail->surname;
         $tangCa->duyet = true;
         $tangCa->save();
         if ($tangCa) {
@@ -2467,7 +2517,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt tăng ca trưởng bộ phận";
-            $nhatKy->noiDung = "Admin đã xem và kiểm tra";
+            $nhatKy->noiDung = "Admin đã xem và kiểm tra phê duyệt tăng ca của trưởng bộ phận<br/>Ngày phê duyệt: ".$ngay."<br/>Cho nhân viên: " . $nhanvien;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -2601,6 +2651,11 @@ class NhanSuController extends Controller
                 $xinPhep->ngay = $request->ngay;
                 $xinPhep->thang = $request->thang;
                 $xinPhep->nam = $request->nam;
+
+                $ngay = $request->ngay . "/" . $request->thang. "/" . $request->nam;
+                $user = User::find($request->nhanVien);
+                $ten = $user->userDetail->surname;
+
                 $xinPhep->buoi = "CANGAY";
                 $xinPhep->id_user_duyet = Auth::user()->id;
                 $xinPhep->user_duyet = true;
@@ -2631,7 +2686,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - Quản lý tăng ca";
-                $nhatKy->noiDung = "Thêm tăng ca và hệ số tăng ca";
+                $nhatKy->noiDung = "Thêm tăng ca và hệ số ".$request->heSo." (ban ngày) ngày tăng ca ".$ngay." cho nhân viên " . $ten;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -2749,7 +2804,7 @@ class NhanSuController extends Controller
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
-        $nhatKy->noiDung = "Thêm phép hàng loạt";
+        $nhatKy->noiDung = "Thêm phép hàng loạt ngày " . $ngay . "/" . $thang . "/" . $nam;
         $nhatKy->save();
         return response()->json([
             "type" => "info",
@@ -2769,7 +2824,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
-            $nhatKy->noiDung = "Hủy phép hàng loạt";
+            $nhatKy->noiDung = "Hủy phép hàng loạt ngày " . $request->ngay . "/" . $request->thang . "/" . $request->nam;
             $nhatKy->save();
             return response()->json([
                 "type" => "info",
@@ -3015,5 +3070,73 @@ class NhanSuController extends Controller
             "code" => 200,
             "message" => "Đã đồng bộ hóa phép. Vào tổng hợp công hoặc chấm công chi tiết để kiểm tra"
         ]);
+    }
+
+    public function getBaoCaoPhepNam() {
+        return view('nhansu.baocaophepnam');
+    }
+
+    public function loadBaoCaoPhepNam() {
+        $user = User::select("*")->where('active', true)->get();
+        $i = 1;
+        foreach($user as $row) {            
+           if ($row->hasRole('chamcong')) {
+                $flag = false;
+                $phepNamThucTe = 0;
+                $phepNamDaSuDung = 0;
+                $ngayVao = \HelpFunction::getDateRevertCreatedAt($row->created_at);   
+                $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
+                //--- phep thuc te
+                $now = Date('d-m-Y');     
+                $datediff = strtotime($now) - strtotime($ngay);       
+                $ngayLam = $datediff / (60 * 60 * 24);   
+                $chuan = floor($ngayLam / 30);
+                //-------
+                //-------
+                if ($chuan >= 1) {
+                    $flag = true;
+                    if ($ngayLam >= 330) $chuan++;
+                    $phepNamThucTe = ($chuan > 12) ? 12 : $chuan;
+                    // xử lý phép năm
+                    $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+                    $checkPN = XinPhep::where([
+                        ['id_user','=',$row->id],
+                        ['id_phep','=',$getIdPhepNam],
+                        ['user_duyet','=', true],
+                        ['nam','=',Date('Y')]
+                    ])->get();
+                    foreach($checkPN as $rowp) {
+                        if ($rowp->buoi == "SANG") {
+                            $phepNamDaSuDung += 0.5;
+                        }
+                        if ($rowp->buoi == "CHIEU") {
+                            $phepNamDaSuDung += 0.5;
+                        }
+                        if ($rowp->buoi == "CANGAY") {
+                            $phepNamDaSuDung += 1;
+                        }
+                    }
+                    // ---------
+                }                            
+                $phepNamConLai = $phepNamThucTe - $phepNamDaSuDung;
+                $stt = "";
+
+                if ($flag) 
+                    $stt = "<strong class='text-info'>Được sử dụng phép năm</strong>";                    
+                else
+                    $stt = "<strong class='text-danger'>Chưa thể sử dụng phép năm</strong>";                    
+                echo "<tr>
+                        <td>".$i++."</td>
+                        <td>".$row->userDetail->surname."</td>
+                        <td>".$ngayVao. "</td>
+                        <td class='text-primary text-bold'>".$phepNamThucTe."</td>
+                        <td class='text-danger text-bold'>".$phepNamDaSuDung."</td>
+                        <td class='text-success text-bold'>".$phepNamConLai."</td>
+                        <td>
+                            $stt
+                        </td>
+                    </tr>";
+           }
+        }
     }
 }

@@ -53,6 +53,7 @@
                                 <th>Tài khoản</th>
                                 <th>Tên người dùng</th>
                                 <th>Email</th>
+                                <th>Ngày bắt đầu</th>
                                 <th>Tác vụ</th>
                             </tr>
                             </thead>
@@ -67,6 +68,7 @@
                                         @endif
                                     </td>
                                     <td>{{$row->email}}</td>
+                                    <td>{{\HelpFunction::getDateRevertCreatedAt($row->created_at)}}</td>
                                     <td>
                                         <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
                                         <button onclick="lock('{{$row->id}}')" class="btn btn-dark btn-sm">

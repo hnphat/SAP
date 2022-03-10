@@ -284,6 +284,14 @@ class HelpFunction {
         return $_time . ' ' . self::revertDate($newDate);
     }
 
+    public static function revertCreatedAtGetTime($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $_time = $arr[1];
+        return $_time;
+    }
+
     public static function getDateRevertCreatedAt($date = '2020-01-01') {
         if ($date == null) return "";
         $arr = explode(' ', $date);

@@ -137,6 +137,7 @@ class LaiThuController extends Controller
 
     public function postPay(Request $request) {
         $reg = DangKySuDung::find($request->_idOff);
+        $carname = $reg->xeLaiThu->name. " " .$reg->xeLaiThu->number_car;
         $reg->tra_km_current = $request->_km;
         $reg->tra_fuel_current = $request->_xang;
         $str = "";
@@ -182,7 +183,7 @@ class LaiThuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản lý xe demo - trả xe";
-            $nhatKy->noiDung = "Gửi yêu cầu trả xe";
+            $nhatKy->noiDung = "Gửi yêu cầu trả xe: " . $carname;
             $nhatKy->save();
             return redirect()->route('laithu.pay')->with('succ','Đã gửi yêu cầu trả xe!');
         } else {
@@ -224,11 +225,13 @@ class LaiThuController extends Controller
             $reg->id_lead_check = $request->tbpCheck;
             $reg->save();
             if($reg) {
+                $check = DangKySuDung::find($reg->id);
+                $carname = $check->xeLaiThu->name. " " .$check->xeLaiThu->number_car;
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
-                $nhatKy->noiDung = "Gửi yêu cầu sử dụng xe ";
+                $nhatKy->noiDung = "Gửi yêu cầu sử dụng xe: " . $carname;
                 $nhatKy->save();
                 return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
             } else {
@@ -244,6 +247,7 @@ class LaiThuController extends Controller
     public function delReg(Request $request)
     {
         $check = DangKySuDung::find($request->id);
+        $carname = $check->xeLaiThu->name. " " .$check->xeLaiThu->number_car;
         if ($check->allow == true) {
             return response()->json([
                 'message' => 'Xe đã được duyệt, không thể xóa!',
@@ -262,7 +266,7 @@ class LaiThuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
-                $nhatKy->noiDung = "Xóa đề nghị sử dụng xe";
+                $nhatKy->noiDung = "Xóa đề nghị sử dụng xe: " . $carname;
                 $nhatKy->save();
                 return response()->json([
                     'message' => 'Đã xóa đề nghị sử dụng xe!',
@@ -326,6 +330,8 @@ class LaiThuController extends Controller
 
     public function allowLaiThu(Request $request) {
         $regInfo = DangKySuDung::find($request->_id);
+        $name = $regInfo->user->userDetail->surname;
+        $carname = $regInfo->xeLaiThu->name. " " .$regInfo->xeLaiThu->number_car;
         $check = XeLaiThu::find($regInfo->id_xe_lai_thu);
         $hoSo = "";
         if ($request->_caVet == "on") {
@@ -369,7 +375,7 @@ class LaiThuController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Quản lý xe demo - duyệt đăng ký";
-                    $nhatKy->noiDung = "Phê duyệt sử dụng xe lái thử";
+                    $nhatKy->noiDung = "Phê duyệt sử dụng xe lái thử<br/>Người yêu cầu: ".$name."<br/>Xe: " . $carname;
                     $nhatKy->save();
                     return response()->json([
                         'message' => 'Đã phê duyệt sử dụng xe lái thử!',
@@ -439,6 +445,8 @@ class LaiThuController extends Controller
 
     public function allowLaiThuTBP(Request $request) {
         $regInfo = DangKySuDung::find($request->id);
+        $name = $regInfo->user->userDetail->surname;
+        $car = $regInfo->xeLaiThu->name. " " .$regInfo->xeLaiThu->number_car;
         $regInfo->id_lead_check_status = true;
         $regInfo->save();
            if($regInfo) {
@@ -446,7 +454,7 @@ class LaiThuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - duyệt đăng ký (TBP)";
-                $nhatKy->noiDung = "Trưởng bộ phận phê duyệt sử dụng xe lái thử";
+                $nhatKy->noiDung = "Trưởng bộ phận phê duyệt sử dụng xe lái thử <br/>Người đề nghị: ".$name." <br/>Xe: " . $car;
                 $nhatKy->save();
                 return response()->json([
                     'message' => 'Đã phê duyệt sử dụng xe lái thử!',
@@ -462,7 +470,9 @@ class LaiThuController extends Controller
 
     public function approve(Request $request) {
         $car = DangKySuDung::find($request->id);
-         $check = $car->xeLaiThu;
+        $name = $car->user->userDetail->surname;
+        $carname = $car->xeLaiThu->name. " " .$car->xeLaiThu->number_car;
+        $check = $car->xeLaiThu;
          if ($check->mau != 'Xe tải' && Auth::user()->hasRole('car')) {
              $car->tra_allow = true;
             $car->request_tra = true;
@@ -481,7 +491,7 @@ class LaiThuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản lý xe demo - duyệt trả";
-                $nhatKy->noiDung = "Duyệt trả xe";
+                $nhatKy->noiDung = "Duyệt trả xe<br>Người trả: ".$name."<br/>Xe: " .$carname;
                 $nhatKy->save();
                 return response()->json([
                     'message' => 'Nhận xe thành công',
@@ -543,6 +553,9 @@ class LaiThuController extends Controller
     }
 
     public function allowCapXang(Request $request) {
+        $regInfo = DangKySuDung::where('id', $request->id)->first();
+        $name = $regInfo->user->userDetail->surname;
+        $carname = $regInfo->xeLaiThu->name. " " .$regInfo->xeLaiThu->number_car;
         $car = DangKySuDung::where('id', $request->id)->update([
            'fuel_allow' => true
         ]);
@@ -554,7 +567,7 @@ class LaiThuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
-            $nhatKy->noiDung = "Duyệt đề nghị cấp nhiên liệu";
+            $nhatKy->noiDung = "Duyệt đề nghị cấp nhiên liệu<br/>Người yêu cầu: ".$name."<br/>Xe: ".$carname;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp nhiên liệu',
@@ -569,6 +582,9 @@ class LaiThuController extends Controller
     }
 
     public function cancelCapXang(Request $request) {
+        $regInfo = DangKySuDung::where('id', $request->id)->first();
+        $name = $regInfo->user->userDetail->surname;
+        $carname = $regInfo->xeLaiThu->name. " " .$regInfo->xeLaiThu->number_car;
         $car = DangKySuDung::where('id', $request->id)->update([
            'fuel_allow' => false,
            'fuel_request' => false
@@ -581,7 +597,7 @@ class LaiThuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
-            $nhatKy->noiDung = "Không duyệt/Hủy đề nghị cấp nhiên liệu";
+            $nhatKy->noiDung = "Không duyệt/Hủy đề nghị cấp nhiên liệu<br/>Người yêu cầu: ".$name."<br/>Xe: ".$carname;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Đã hủy đề nghị cấp nhiên liệu',
@@ -597,6 +613,9 @@ class LaiThuController extends Controller
 
 
     public function leadAllowCapXang(Request $request) {
+        $regInfo = DangKySuDung::where('id', $request->id)->first();
+        $name = $regInfo->user->userDetail->surname;
+        $carname = $regInfo->xeLaiThu->name. " " .$regInfo->xeLaiThu->number_car;
         $car = DangKySuDung::where('id', $request->id)->update([
             'lead_check' => true
         ]);
@@ -608,7 +627,7 @@ class LaiThuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - duyệt cấp nhiên liệu";
-            $nhatKy->noiDung = "Trưởng bộ phận duyệt đề nghị cấp nhiên liệu";
+            $nhatKy->noiDung = "Trưởng bộ phận duyệt đề nghị cấp nhiên liệu<br/>Người yêu cầu: ".$name."<br/>Xe: ".$carname;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',

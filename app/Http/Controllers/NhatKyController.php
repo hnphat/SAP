@@ -10,7 +10,11 @@ use Illuminate\Http\Request;
 class NhatKyController extends Controller
 {
     public function getList() {
-        return view('nhatky.nhatky');
+        $nhatKy = NhatKy::select("*")
+        ->orderBy('id', 'desc')
+        ->take(500)
+        ->get();
+        return view('nhatky.nhatky', ['nk' => $nhatKy]);
     }
 
     public function loadList() {
