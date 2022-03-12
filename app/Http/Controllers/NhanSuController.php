@@ -506,369 +506,401 @@ class NhanSuController extends Controller
     }
 
     public function chiTietThemPhep(Request $request) {
-        $xinPhep = new XinPhep();
-        $xinPhep->id_user = $request->idUserXin;
-        $xinPhep->id_phep = $request->loaiPhep;
-        $xinPhep->ngay = $request->ngayXin;
-        $xinPhep->thang = $request->thangXin;
-        $xinPhep->nam = $request->namXin;
-        $xinPhep->buoi = $request->buoi;
-        $xinPhep->id_user_duyet = $request->nguoiDuyet;
-        $xinPhep->lyDo = $request->lyDo;
-        // -----------
-        // $month = (int)Date('m');
-        // $year = (int)Date('Y');
-        // if ($year > $request->namXin) {
-        //     $month = 12;
-        // }
+        $check = XinPhep::where([
+            ['ngay', '=', $request->ngayXin],
+            ['thang', '=', $request->thangXin],
+            ['nam', '=', $request->namXin],
+            ['id_user', '=',$request->idUserXin]
+        ])->exists();
 
-        // Xử lý phép năm đang có của nhân viên
-        $user = User::find($request->idUserXin);
-        $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
-        $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
-        //--- phep thuc te
-        $now = Date('d-m-Y');     
-        $datediff = strtotime($now) - strtotime($ngay);       
-        $ngayLam = $datediff / (60 * 60 * 24);   
-        $chuan = floor($ngayLam / 30);
-        if ($ngayLam >= 330) $chuan++;
-        $chuan = ($chuan > 12) ? 12 : $chuan;
-        // --------------
-
-
-        $suDung = 0;
-        switch($request->buoi) {
-            case 'SANG': $suDung = 0.5; break;
-            case 'CHIEU': $suDung = 0.5; break;
-            case 'CANGAY': $suDung = 1; break;
-        }
-        //Xử lý quên chấm công
-        $getIdPhep = LoaiPhep::where('loaiPhep','QCC')->first()->id;
-        $checkQCC = XinPhep::where([
-            ['id_user','=',$request->idUserXin],
-            ['id_phep','=',$getIdPhep],
-            ['user_duyet','=', true],
-            ['thang','=',$request->thangXin],
-            ['nam','=',$request->namXin]
-        ])->get();
-        //--------------
-
-        // Xử lý Phép năm
-        $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
-        $checkPN = XinPhep::where([
-            ['id_user','=',$request->idUserXin],
-            ['id_phep','=',$getIdPhepNam],
-            ['user_duyet','=', true],
-            ['nam','=',$request->namXin]
-        ])->get();
-        $daSuDung = 0;
-        foreach($checkPN as $row) {
-            if ($row->buoi == "SANG") {
-                $daSuDung += 0.5;
+        if (!$check) {
+            $xinPhep = new XinPhep();
+            $xinPhep->id_user = $request->idUserXin;
+            $xinPhep->id_phep = $request->loaiPhep;
+            $xinPhep->ngay = $request->ngayXin;
+            $xinPhep->thang = $request->thangXin;
+            $xinPhep->nam = $request->namXin;
+            $xinPhep->buoi = $request->buoi;
+            $xinPhep->id_user_duyet = $request->nguoiDuyet;
+            $xinPhep->lyDo = $request->lyDo;
+            // -----------
+            // $month = (int)Date('m');
+            // $year = (int)Date('Y');
+            // if ($year > $request->namXin) {
+            //     $month = 12;
+            // }
+    
+            // Xử lý phép năm đang có của nhân viên
+            $user = User::find($request->idUserXin);
+            $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
+            $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
+            //--- phep thuc te
+            $now = Date('d-m-Y');     
+            $datediff = strtotime($now) - strtotime($ngay);       
+            $ngayLam = $datediff / (60 * 60 * 24);   
+            $chuan = floor($ngayLam / 30);
+            if ($ngayLam >= 330) $chuan++;
+            $chuan = ($chuan > 12) ? 12 : $chuan;
+            // --------------
+    
+    
+            $suDung = 0;
+            switch($request->buoi) {
+                case 'SANG': $suDung = 0.5; break;
+                case 'CHIEU': $suDung = 0.5; break;
+                case 'CANGAY': $suDung = 1; break;
             }
-            if ($row->buoi == "CHIEU") {
-                $daSuDung += 0.5;
+            //Xử lý quên chấm công
+            $getIdPhep = LoaiPhep::where('loaiPhep','QCC')->first()->id;
+            $checkQCC = XinPhep::where([
+                ['id_user','=',$request->idUserXin],
+                ['id_phep','=',$getIdPhep],
+                ['user_duyet','=', true],
+                ['thang','=',$request->thangXin],
+                ['nam','=',$request->namXin]
+            ])->get();
+            //--------------
+    
+            // Xử lý Phép năm
+            $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+            $checkPN = XinPhep::where([
+                ['id_user','=',$request->idUserXin],
+                ['id_phep','=',$getIdPhepNam],
+                ['user_duyet','=', true],
+                ['nam','=',$request->namXin]
+            ])->get();
+            $daSuDung = 0;
+            foreach($checkPN as $row) {
+                if ($row->buoi == "SANG") {
+                    $daSuDung += 0.5;
+                }
+                if ($row->buoi == "CHIEU") {
+                    $daSuDung += 0.5;
+                }
+                if ($row->buoi == "CANGAY") {
+                    $daSuDung += 1;
+                }
             }
-            if ($row->buoi == "CANGAY") {
-                $daSuDung += 1;
-            }
-        }
-
-        if ($request->loaiPhep == $getIdPhep && $checkQCC->count() == 1) {
-            return response()->json([
-                "type" => "error",
-                "code" => 500,
-                "message" => "Đã quá số lần Quên chấm công trong tháng"
-            ]);
-        }
-
-        if ($request->loaiPhep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
-            return response()->json([
-                "type" => "error",
-                "code" => 500,
-                "message" => "Phép năm đã dùng hết hoặc không đủ phép năm"
-            ]);
-        }
-        //--------------
-
-        $chiTiet = ChamCongChiTiet::select("*")
-        ->where([
-            ['id_user','=',$request->idUserXin],
-            ['ngay','=',$request->ngayXin],
-            ['thang','=',$request->thangXin],
-            ['nam','=',$request->namXin]
-        ])
-        ->first();
-
-        if ($chiTiet !== null) {
-            $gioSang = $chiTiet->gioSang;
-            $gioChieu = $chiTiet->gioChieu;
-            $treSang = $chiTiet->treSang;
-            $treChieu = $chiTiet->treChieu;
-            $vaoSang = "";
-            $raSang = "";
-            $vaoChieu = "";
-            $raChieu = ""; 
-
-            $loaiPhep = LoaiPhep::find($request->loaiPhep);
-            switch ($loaiPhep->loaiPhep) {
-                case 'PHEPNAM':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $gioSang = 4;
-                                $treSang = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                            } break;
-                            case 'CHIEU': {
-                                $gioChieu = 4;
-                                $treChieu = 0;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            case 'CANGAY': {
-                                $gioSang = 4;
-                                $gioChieu = 4;
-                                $treSang = 0;
-                                $treChieu = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                case 'QCC':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $gioSang = 4;
-                                $treSang = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                            } break;
-                            case 'CHIEU': {
-                                $gioChieu = 4;
-                                $treChieu = 0;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                case 'COLUONG':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $gioSang = 4;
-                                $treSang = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                            } break;
-                            case 'CHIEU': {
-                                $gioChieu = 4;
-                                $treChieu = 0;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            case 'CANGAY': {
-                                $gioSang = 4;
-                                $gioChieu = 4;
-                                $treSang = 0;
-                                $treChieu = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                case 'KHONGLUONG':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $treSang = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                            } break;
-                            case 'CHIEU': {
-                                $treChieu = 0;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            case 'CANGAY': {
-                                $treSang = 0;
-                                $treChieu = 0;
-                                $vaoSang = $loaiPhep->maPhep;
-                                $vaoChieu = $loaiPhep->maPhep;
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                default: break;
-            }
-
-            $xinPhep->gioSang = $gioSang;
-            $xinPhep->gioChieu = $gioChieu;
-            $xinPhep->treSang = $treSang;
-            $xinPhep->treChieu= $treChieu;
-            $xinPhep->vaoSang = $vaoSang;
-            $xinPhep->raSang = $raSang;
-            $xinPhep->vaoChieu = $vaoChieu;
-            $xinPhep->raChieu= $raChieu;
-            $xinPhep->save();
-            if ($xinPhep) {
-                $loai = LoaiPhep::find($request->loaiPhep);
-                $nhatKy = new NhatKy();
-                $nhatKy->id_user = Auth::user()->id;
-                $nhatKy->thoiGian = Date("H:m:s");
-                $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
-                $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
-                .$request->buoi." Ngày xin: "
-                .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
-                $nhatKy->save();
+    
+            if ($request->loaiPhep == $getIdPhep && $checkQCC->count() == 1) {
                 return response()->json([
-                    "type" => "info",
-                    "code" => 200,
-                    "message" => "Đã tạo phép"
-                ]);
-            }
-            else
-                return response()->json([
-                    "type" => "info",
+                    "type" => "error",
                     "code" => 500,
-                    "message" => "Lỗi không thể tạo phép"
+                    "message" => "Đã quá số lần Quên chấm công trong tháng"
                 ]);
+            }
+    
+            if ($request->loaiPhep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
+                return response()->json([
+                    "type" => "error",
+                    "code" => 500,
+                    "message" => "Phép năm đã dùng hết hoặc không đủ phép năm"
+                ]);
+            }
+            //--------------
+    
+            $chiTiet = ChamCongChiTiet::select("*")
+            ->where([
+                ['id_user','=',$request->idUserXin],
+                ['ngay','=',$request->ngayXin],
+                ['thang','=',$request->thangXin],
+                ['nam','=',$request->namXin]
+            ])
+            ->first();
+    
+            if ($chiTiet !== null) {
+                $gioSang = $chiTiet->gioSang;
+                $gioChieu = $chiTiet->gioChieu;
+                $treSang = $chiTiet->treSang;
+                $treChieu = $chiTiet->treChieu;
+                $vaoSang = "";
+                $raSang = "";
+                $vaoChieu = "";
+                $raChieu = ""; 
+    
+                $loaiPhep = LoaiPhep::find($request->loaiPhep);
+                switch ($loaiPhep->loaiPhep) {
+                    case 'PHEPNAM':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $gioSang = 4;
+                                    $treSang = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                } break;
+                                case 'CHIEU': {
+                                    $gioChieu = 4;
+                                    $treChieu = 0;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                case 'CANGAY': {
+                                    $gioSang = 4;
+                                    $gioChieu = 4;
+                                    $treSang = 0;
+                                    $treChieu = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    case 'QCC':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $gioSang = 4;
+                                    $treSang = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                } break;
+                                case 'CHIEU': {
+                                    $gioChieu = 4;
+                                    $treChieu = 0;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    case 'COLUONG':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $gioSang = 4;
+                                    $treSang = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                } break;
+                                case 'CHIEU': {
+                                    $gioChieu = 4;
+                                    $treChieu = 0;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                case 'CANGAY': {
+                                    $gioSang = 4;
+                                    $gioChieu = 4;
+                                    $treSang = 0;
+                                    $treChieu = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    case 'KHONGLUONG':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $treSang = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                } break;
+                                case 'CHIEU': {
+                                    $treChieu = 0;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                case 'CANGAY': {
+                                    $treSang = 0;
+                                    $treChieu = 0;
+                                    $vaoSang = $loaiPhep->maPhep;
+                                    $vaoChieu = $loaiPhep->maPhep;
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    default: break;
+                }
+    
+                $xinPhep->gioSang = $gioSang;
+                $xinPhep->gioChieu = $gioChieu;
+                $xinPhep->treSang = $treSang;
+                $xinPhep->treChieu= $treChieu;
+                $xinPhep->vaoSang = $vaoSang;
+                $xinPhep->raSang = $raSang;
+                $xinPhep->vaoChieu = $vaoChieu;
+                $xinPhep->raChieu= $raChieu;
+                $xinPhep->save();
+                if ($xinPhep) {
+                    $loai = LoaiPhep::find($request->loaiPhep);
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
+                    $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
+                    .$request->buoi." Ngày xin: "
+                    .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
+                    $nhatKy->save();
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 200,
+                        "message" => "Đã tạo phép"
+                    ]);
+                }
+                else
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 500,
+                        "message" => "Lỗi không thể tạo phép"
+                    ]);
+            } else {
+                $gioSang = 0;
+                $gioChieu = 0;
+                $vaoSang = "";
+                $vaoChieu = "";
+                $loaiPhep = LoaiPhep::find($request->loaiPhep);
+                switch ($loaiPhep->loaiPhep) {
+                    case 'PHEPNAM':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $gioSang = 4;    
+                                    $vaoSang = $loaiPhep->maPhep;                           
+                                } break;
+                                case 'CHIEU': {
+                                    $gioChieu = 4;    
+                                    $vaoChieu = $loaiPhep->maPhep;                            
+                                } break;
+                                case 'CANGAY': {
+                                    $gioSang = 4;
+                                    $gioChieu = 4;  
+                                    $vaoSang = $loaiPhep->maPhep;   
+                                    $vaoChieu = $loaiPhep->maPhep;                              
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    case 'COLUONG':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $gioSang = 4;     
+                                    $vaoSang = $loaiPhep->maPhep;                                  
+                                } break;
+                                case 'CHIEU': {
+                                    $gioChieu = 4;       
+                                    $vaoChieu = $loaiPhep->maPhep;                                  
+                                } break;
+                                case 'CANGAY': {
+                                    $gioSang = 4;
+                                    $gioChieu = 4;     
+                                    $vaoSang = $loaiPhep->maPhep;   
+                                    $vaoChieu = $loaiPhep->maPhep;                                
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    case 'KHONGLUONG':
+                        {
+                            switch($request->buoi){
+                                case 'SANG': {
+                                    $gioSang = 0;   
+                                    $vaoSang = $loaiPhep->maPhep;                                   
+                                } break;
+                                case 'CHIEU': {
+                                    $gioChieu = 0;     
+                                    $vaoChieu = $loaiPhep->maPhep;                                   
+                                } break;
+                                case 'CANGAY': {
+                                    $gioSang = 0;
+                                    $gioChieu = 0;    
+                                    $vaoSang = $loaiPhep->maPhep;   
+                                    $vaoChieu = $loaiPhep->maPhep;                                   
+                                } break;
+                                default: break;
+                            }
+                        }
+                        break;
+                    default: break;
+                }
+                $xinPhep->gioSang = $gioSang;
+                $xinPhep->gioChieu = $gioChieu;
+                $xinPhep->treSang = 0;
+                $xinPhep->treChieu= 0;
+                $xinPhep->vaoSang = $vaoSang;
+                $xinPhep->vaoChieu = $vaoChieu;
+                $xinPhep->save();
+                if ($xinPhep) {
+                    $loai = LoaiPhep::find($request->loaiPhep);
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
+                    $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
+                    .$request->buoi." Ngày xin: "
+                    .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
+                    $nhatKy->save();
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 200,
+                        "message" => "Đã tạo phép"
+                    ]);
+                }
+                else
+                    return response()->json([
+                        "type" => "info",
+                        "code" => 500,
+                        "message" => "Lỗi không thể tạo phép"
+                    ]);
+            }
         } else {
-            $gioSang = 0;
-            $gioChieu = 0;
-            $vaoSang = "";
-            $vaoChieu = "";
-            $loaiPhep = LoaiPhep::find($request->loaiPhep);
-            switch ($loaiPhep->loaiPhep) {
-                case 'PHEPNAM':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $gioSang = 4;    
-                                $vaoSang = $loaiPhep->maPhep;                           
-                            } break;
-                            case 'CHIEU': {
-                                $gioChieu = 4;    
-                                $vaoChieu = $loaiPhep->maPhep;                            
-                            } break;
-                            case 'CANGAY': {
-                                $gioSang = 4;
-                                $gioChieu = 4;  
-                                $vaoSang = $loaiPhep->maPhep;   
-                                $vaoChieu = $loaiPhep->maPhep;                              
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                case 'COLUONG':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $gioSang = 4;     
-                                $vaoSang = $loaiPhep->maPhep;                                  
-                            } break;
-                            case 'CHIEU': {
-                                $gioChieu = 4;       
-                                $vaoChieu = $loaiPhep->maPhep;                                  
-                            } break;
-                            case 'CANGAY': {
-                                $gioSang = 4;
-                                $gioChieu = 4;     
-                                $vaoSang = $loaiPhep->maPhep;   
-                                $vaoChieu = $loaiPhep->maPhep;                                
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                case 'KHONGLUONG':
-                    {
-                        switch($request->buoi){
-                            case 'SANG': {
-                                $gioSang = 0;   
-                                $vaoSang = $loaiPhep->maPhep;                                   
-                            } break;
-                            case 'CHIEU': {
-                                $gioChieu = 0;     
-                                $vaoChieu = $loaiPhep->maPhep;                                   
-                            } break;
-                            case 'CANGAY': {
-                                $gioSang = 0;
-                                $gioChieu = 0;    
-                                $vaoSang = $loaiPhep->maPhep;   
-                                $vaoChieu = $loaiPhep->maPhep;                                   
-                            } break;
-                            default: break;
-                        }
-                    }
-                    break;
-                default: break;
-            }
-            $xinPhep->gioSang = $gioSang;
-            $xinPhep->gioChieu = $gioChieu;
-            $xinPhep->treSang = 0;
-            $xinPhep->treChieu= 0;
-            $xinPhep->vaoSang = $vaoSang;
-            $xinPhep->vaoChieu = $vaoChieu;
-            $xinPhep->save();
-            if ($xinPhep) {
-                $loai = LoaiPhep::find($request->loaiPhep);
-                $nhatKy = new NhatKy();
-                $nhatKy->id_user = Auth::user()->id;
-                $nhatKy->thoiGian = Date("H:m:s");
-                $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
-                $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
-                .$request->buoi." Ngày xin: "
-                .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
-                $nhatKy->save();
-                return response()->json([
-                    "type" => "info",
-                    "code" => 200,
-                    "message" => "Đã tạo phép"
-                ]);
-            }
-            else
-                return response()->json([
-                    "type" => "info",
-                    "code" => 500,
-                    "message" => "Lỗi không thể tạo phép"
-                ]);
+            return response()->json([
+                "type" => "info",
+                "code" => 500,
+                "message" => "Lỗi phép tạo trùng"
+            ]);
         }
     }
 
 
     // Xin tăng ca
     public function chiTietThemTangCa(Request $request) {
-        $tangCa = new TangCa();
-        $tangCa->id_user = $request->idUserXinTangCa;
-        $tangCa->ngay = $request->ngayXinTangCa;
-        $tangCa->thang = $request->thangXinTangCa;
-        $tangCa->nam = $request->namXinTangCa;
-        $tangCa->id_user_duyet = $request->nguoiDuyetTangCa;
-        $tangCa->lyDo = $request->lyDoTangCa;
-        $tangCa->save();
+        $check = TangCa::where([
+            ['ngay', '=', $request->ngayXinTangCa],
+            ['thang', '=', $request->thangXinTangCa],
+            ['nam', '=', $request->namXinTangCa],
+            ['id_user', '=',$request->idUserXinTangCa]
+        ])->exists();
+
+        $ngay = $request->ngayXinTangCa."/".$request->thangXinTangCa."/".$request->namXinTangCa;
         
-        if ($tangCa) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
-            $nhatKy->noiDung = "Xin phép tăng ca<br/>Ngày xin: ".$request->ngayXinTangCa."<br/>Lý do: ". $request->lyDoTangCa;
-            $nhatKy->save();
-            return response()->json([
-                "type" => "info",
-                "code" => 200,
-                "message" => "Đã xin phép tăng ca"
-            ]);
-        }
-        else
+        if (!$check) {
+            $tangCa = new TangCa();
+            $tangCa->id_user = $request->idUserXinTangCa;
+            $tangCa->ngay = $request->ngayXinTangCa;
+            $tangCa->thang = $request->thangXinTangCa;
+            $tangCa->nam = $request->namXinTangCa;
+            $tangCa->id_user_duyet = $request->nguoiDuyetTangCa;
+            $tangCa->lyDo = $request->lyDoTangCa;
+            $tangCa->save();
+            
+            if ($tangCa) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
+                $nhatKy->noiDung = "Xin phép tăng ca<br/>Ngày xin: ".$ngay."<br/>Lý do: ". $request->lyDoTangCa;
+                $nhatKy->save();
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã xin phép tăng ca"
+                ]);
+            }
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi không thể xin tăng ca"
+                ]);
+        } else {
             return response()->json([
                 "type" => "info",
                 "code" => 500,
-                "message" => "Lỗi không thể xin tăng ca"
+                "message" => "Lỗi trùng lắp"
             ]);
+        }
     }
 
     // Xin phép
@@ -1035,7 +1067,7 @@ class NhanSuController extends Controller
 
     public function pheDuyetPhep(Request $request) {
         $check = XinPhep::where('id',$request->id)->first();
-        $ngay = $check->ngay . "/" . $check->thang . "/" . $check->nam;
+        $ngays = $check->ngay . "/" . $check->thang . "/" . $check->nam;
         $nhanvien = $check->user->userDetail->surname;
         $flag = false;
         $day = (int)Date('d');
@@ -1123,7 +1155,7 @@ class NhanSuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                $nhatKy->noiDung = "Phê duyệt phép ngày " . $ngay . "<br/>Nhân viên yêu cầu: " . $nhanvien;
+                $nhatKy->noiDung = "Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                 $nhatKy->save();
                 return response()->json([
                     "type" => "info",
@@ -1171,7 +1203,7 @@ class NhanSuController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                        $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép";
+                        $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                         $nhatKy->save();
                         return response()->json([
                             "type" => "info",
@@ -2012,6 +2044,41 @@ class NhanSuController extends Controller
         }        
     }
 
+    public function tangCaDeleteAdmin(Request $request) {
+        $check = TangCa::where('id',$request->id)->first();
+        $ngay = $check->ngay . "/" . $check->thang . "/" . $check->nam;
+        $nhanvien = $check->user->userDetail->surname;
+        if (Auth::user()->hasRole('system')) {
+            $tangCa = TangCa::find($request->id);
+            $tangCa->delete();
+            if ($tangCa) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
+                $nhatKy->noiDung = "Admin đã xóa tăng ca (đã duyệt) " . $ngay . " của nhân viên " . $nhanvien;
+                $nhatKy->save();
+                return response()->json([
+                    "type" => "info",
+                    "code" => 200,
+                    "message" => "Đã xóa tăng ca"
+                ]);
+            }
+            else
+                return response()->json([
+                    "type" => "info",
+                    "code" => 500,
+                    "message" => "Lỗi xóa dữ liệu"
+                ]);
+        } else {
+            return response()->json([
+                "type" => "error",
+                "code" => 500,
+                "message" => "Phiếu đã duyệt. Bạn không có quyền xóa phiếu này"
+            ]);
+        }        
+    }
+
     public function getPhepNam($id, $nam){
         $user = User::find($id);
         $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
@@ -2627,7 +2694,9 @@ class NhanSuController extends Controller
             ['nam','=',$request->nam],
             ['id_user','=',$request->nhanVien]
         ])->exists();
-
+        $ngay = $request->ngay . "/" . $request->thang . "/" . $request->nam;
+        $user = User::find($request->nhanVien);
+        $ten = $user->userDetail->surname;
         if ($check) {
             return response()->json([
                 "type" => "warning",

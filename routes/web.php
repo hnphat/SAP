@@ -433,6 +433,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('pheduyettangca/ajax/pheduyet','NhanSuController@pheDuyetTangCa');
         Route::post('capnhattangca/ajax/capnhat','NhanSuController@capNhatTangCa');
         Route::post('pheduyettangca/ajax/delete','NhanSuController@tangCaDelete');
+        Route::post('pheduyettangca/ajax/deleteadmin','NhanSuController@tangCaDeleteAdmin');
 
          // tổng hợp
         Route::get('tonghop','NhanSuController@getTongHop')->name('tonghop.panel')->middleware(['f_nhansu']);
