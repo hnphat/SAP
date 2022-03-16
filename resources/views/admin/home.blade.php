@@ -40,7 +40,7 @@
         $(document).ready(function(){           
             $(document).Toasts('create', {
                 class: 'bg-danger',
-                body: 'Kể từ 01/03/2022 tất cả các loại phép phải gửi trưởng bộ phận duyệt trước (tối thiểu 01 ngày). Hệ thống sẽ không chấp nhận các loại phép duyệt sau ngày xin phép. Mọi chi tiết liên hệ bộ phận nhân sự!',
+                body: 'Kể từ 01/03/2022 tất cả các loại phép phải gửi trưởng bộ phận duyệt trước (tối thiểu 02 ngày). Hệ thống sẽ không chấp nhận các loại phép duyệt sau ngày xin phép. Mọi chi tiết liên hệ bộ phận nhân sự!',
                 title: 'THÔNG BÁO',
                 subtitle: 'Quan trọng',
                 icon: 'fas fa-envelope fa-lg',

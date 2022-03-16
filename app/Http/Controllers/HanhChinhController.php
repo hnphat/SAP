@@ -6,7 +6,6 @@ use App\BieuMau;
 use App\NhatKy;
 use App\UsersDetail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class HanhChinhController extends Controller
 {
@@ -517,7 +516,7 @@ class HanhChinhController extends Controller
         if ($hoSo) {
             return response()->json([
                 'code' => 200,
-                'result' => "<tr><td>".$hoSo->surname."</td><td>".$hoSo->phone."</td></tr>"
+                'result' => "<tr><td>".$hoSo->surname."</td><td>".$hoSo->phone."</td><td>".$hoSo->address."</td></tr>"
             ]);
         } else {
             return response()->json([

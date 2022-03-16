@@ -571,3 +571,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 });
 
+// Route::get('mail', function () { 
+//     return new App\Mail\EmailXinPhep(['Trần Dần','02-02-2022']);
+// });

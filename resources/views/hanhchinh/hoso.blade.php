@@ -14,13 +14,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>HỒ SƠ NHÂN VIÊN</strong></h1>
+                        <h1 class="m-0"><strong>THÔNG TIN NHÂN VIÊN</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Hành chính</li>
-                            <li class="breadcrumb-item active">Hồ sơ nhân viên</li>
+                            <li class="breadcrumb-item active">Thông tin nhân viên</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -53,6 +53,7 @@
                     <tr>
                         <th>Họ và tên</th>
                         <th>Điện thoại</th>
+                        <th>Địa chỉ</th>
                     </tr>
                     </thead>
                     <tbody id="showData">

@@ -11,7 +11,9 @@ use App\QuanLyTangCa;
 use App\XacNhanCong;
 use App\NhatKy;
 use App\ChamCongChiTiet;
+use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Excel;
 
 class NhanSuController extends Controller
@@ -506,6 +508,13 @@ class NhanSuController extends Controller
     }
 
     public function chiTietThemPhep(Request $request) {
+        $userDuyetEmail = User::find($request->nguoiDuyet);
+        $emailDuyet = $userDuyetEmail->email;
+        $loaiPhepEmail = LoaiPhep::find($request->loaiPhep)->tenPhep;
+        $nguoiDuyetEmail = $userDuyetEmail->userDetail->surname;
+        $nhanVien = User::find($request->idUserXin)->userDetail->surname;
+        $ngayEmail = $request->ngayXin."-".$request->thangXin."-".$request->namXin;
+        $lyDoEmail = $request->lyDo; 
         $check = XinPhep::where([
             ['ngay', '=', $request->ngayXin],
             ['thang', '=', $request->thangXin],
@@ -729,7 +738,10 @@ class NhanSuController extends Controller
                     $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
                     .$request->buoi." Ngày xin: "
                     .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
-                    $nhatKy->save();
+                    $nhatKy->save();          
+                    // -------
+                    Mail::to($emailDuyet)->send(new EmailXinPhep([$nhanVien,$ngayEmail,$loaiPhepEmail,$lyDoEmail,$nguoiDuyetEmail,$request->buoi]));
+                    // -------
                     return response()->json([
                         "type" => "info",
                         "code" => 200,
@@ -831,6 +843,9 @@ class NhanSuController extends Controller
                     .$request->buoi." Ngày xin: "
                     .$request->ngayXin."/".$request->thangXin."/".$request->namXin;
                     $nhatKy->save();
+                     // -------
+                     Mail::to($emailDuyet)->send(new EmailXinPhep([$nhanVien,$ngayEmail,$loaiPhepEmail,$lyDoEmail,$nguoiDuyetEmail,$request->buoi]));
+                     // -------
                     return response()->json([
                         "type" => "info",
                         "code" => 200,
@@ -1070,15 +1085,19 @@ class NhanSuController extends Controller
         $ngays = $check->ngay . "/" . $check->thang . "/" . $check->nam;
         $nhanvien = $check->user->userDetail->surname;
         $flag = false;
-        $day = (int)Date('d');
-        $month = (int)Date('m');
-        $year = (int)Date('Y');
-        if ($year <= $check->nam && $day <= ($check->ngay + 1) && $month <= $check->thang) {
+       
+        $date1 = $check->nam."-".$check->thang."-".$check->ngay;
+        $date2 = Date('d-m-Y');
+        // $date2 = '2022-03-17';
+
+        $date1_ts = strtotime($date1);
+        $date2_ts = strtotime($date2);
+        $diff = $date2_ts - $date1_ts;
+        $dateDiff = round($diff / 86400);
+        // dd($dateDiff);
+        if ($dateDiff <= 2) {
             $flag = true;
         }
-        // if ($year > $check->nam) {
-        //     $month = 12;
-        // }
         // Xử lý phép năm đang có của nhân viên
         $user = User::find($check->id_user);
         $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
@@ -1221,7 +1240,7 @@ class NhanSuController extends Controller
                     return response()->json([
                         "type" => "info",
                         "code" => 500,
-                        "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 01 ngày!"
+                        "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 02 ngày!"
                     ]);
                 }             
             }    

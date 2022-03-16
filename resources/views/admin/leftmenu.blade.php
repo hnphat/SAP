@@ -541,13 +541,21 @@
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                 <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-mail-bulk"></i>
+                        <p>
+                            <strong>QUẢN LÝ MAIL</strong>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{route('nhatky.list')}}" class="nav-link">
                         <i class="nav-icon fas fa-history"></i>
                         <p>
                             <strong>NHẬT KÝ</strong>
                         </p>
                     </a>
-                </li>
+                </li>                
                 @endif
                 <li class="nav-item">
                     <a href="#" class="nav-link">

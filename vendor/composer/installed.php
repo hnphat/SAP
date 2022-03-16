@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '27497ecdd25f135a308a6ebd44b4edbc77aa5e55',
+        'reference' => '006bf11e6cbfc2dbe8dea1c3c5973cd84f922ef0',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -176,12 +176,12 @@
             'dev_requirement' => false,
         ),
         'guzzlehttp/guzzle' => array(
-            'pretty_version' => '7.4.0',
-            'version' => '7.4.0.0',
+            'pretty_version' => '7.4.1',
+            'version' => '7.4.1.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../guzzlehttp/guzzle',
             'aliases' => array(),
-            'reference' => '868b3571a039f0ebc11ac8f344f4080babe2cb94',
+            'reference' => 'ee0a041b1760e6a53d2a39c8c34115adc2af2c79',
             'dev_requirement' => false,
         ),
         'guzzlehttp/promises' => array(
@@ -415,7 +415,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '27497ecdd25f135a308a6ebd44b4edbc77aa5e55',
+            'reference' => '006bf11e6cbfc2dbe8dea1c3c5973cd84f922ef0',
             'dev_requirement' => false,
         ),
         'laravel/tinker' => array(

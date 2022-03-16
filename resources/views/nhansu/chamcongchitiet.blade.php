@@ -304,12 +304,16 @@
                     type: "post",
                     dataType: "json",
                     data: $("#addForm").serialize(),
+                    beforeSend: function () {
+                       $("#btnAdd").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
+                    },
                     success: function(response){
                         $("#addForm")[0].reset();
                         Toast.fire({
                             icon: response.type,
                             title: response.message
                         })
+                        $("#btnAdd").attr('disabled', false).html("Lưu");
                         $("#addModal").modal('hide');
                         reload();
                     },
