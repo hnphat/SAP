@@ -385,6 +385,9 @@
                     type: "post",
                     dataType: 'json',
                     data: $("#addWorkForm").serialize(),
+                    beforeSend: function () {
+                       $("#btnAddWork").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
+                    },
                     success: function(response) {
                         $("#addWorkForm")[0].reset();
                         Toast.fire({
@@ -392,6 +395,7 @@
                             title: " " + response.message
                         })
                         $("#addWork").modal('hide');
+                        $("#btnAddWork").attr('disabled', false).html("Lưu");
                         table.ajax.reload();
                     },
                     error: function() {

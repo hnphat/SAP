@@ -7,6 +7,8 @@ use App\User;
 use App\NhatKy;
 use App\DeNghiCapXang;
 use App\EventReal;
+use App\Mail\DuyetCapXangTBP;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 
 class DeNghiCapXangController extends Controller
@@ -19,10 +21,22 @@ class DeNghiCapXangController extends Controller
     }
 
     public function postDeNghi(Request $request) {
+        $userDuyetEmail = User::find($request->leadCheck);
+        $emailDuyet = ($userDuyetEmail) ? $userDuyetEmail->email : "";
+        $nguoiDuyet = ($userDuyetEmail) ? $userDuyetEmail->userDetail->surname : "";
+        $nguoiYeuCau = User::find(Auth::user()->id)->userDetail->surname;
+        $xeDangKy = $request->loaiXe . " " . $request->bienSo;
+        $lyDo = $request->lyDoCap;
+        $nhienLieu = $request->loaiNhienLieu;
+        $soLit = $request->soLit;
+        $khach = $request->khachHang;
+        $ghiChu = $request->ghiChu;
+        $ngayDangKy = Date('d-m-Y');
+
         $deNghi = new DeNghiCapXang;
         $deNghi->id_user = Auth::user()->id;
         $deNghi->fuel_type = $request->loaiNhienLieu;
-        $deNghi->fuel_num = $request->soLit;;
+        $deNghi->fuel_num = $request->soLit;
         $deNghi->fuel_car = $request->loaiXe;
         $deNghi->fuel_guest = $request->khachHang;
         $deNghi->fuel_frame = $request->bienSo;
@@ -35,7 +49,7 @@ class DeNghiCapXangController extends Controller
         // $eventReal->name = "Cá nhân làm đề nghị";
         // $eventReal->save();
         if ($deNghi) {
-
+            $code = $deNghi->id;
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
@@ -43,6 +57,12 @@ class DeNghiCapXangController extends Controller
             $nhatKy->noiDung = "Thêm đề nghị cấp nhiên liệu loại xe: ".$request->loaiXe." <br/>khách hàng: "
             .$request->khachHang." <br/>biển số: ".$request->bienSo." <br/>lý do cấp: " . $request->lyDoCap;
             $nhatKy->save();
+
+            //-----
+                if ($userDuyetEmail)
+                    Mail::to($emailDuyet)->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
+                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
+            //-----
 
             return redirect()
             ->route('capxang.denghi')

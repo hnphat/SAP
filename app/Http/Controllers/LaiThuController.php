@@ -7,6 +7,8 @@ use App\User;
 use App\NhatKy;
 use App\EventReal;
 use App\XeLaiThu;
+use App\Mail\DuyetXeDemoTBP;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -192,6 +194,17 @@ class LaiThuController extends Controller
     }
 
     public function postReg(Request $request) {
+        $userDuyetEmail = User::find($request->tbpCheck);
+        $emailDuyet = ($userDuyetEmail) ? $userDuyetEmail->email : "";
+        $nguoiDuyet = ($userDuyetEmail) ? $userDuyetEmail->userDetail->surname : "";
+        $nguoiYeuCau = User::find(Auth::user()->id)->userDetail->surname;
+        $lyDo = $request->lyDo;
+        $ngayDangKy = Date('d-m-Y');
+        $km = $request->km;
+        $kmXang = $request->xang;
+        $batDau = $request->timeHourGo . " " . \HelpFunction::revertDate($request->timeGo);
+        $ketThuc = $request->timeReturn . " " . \HelpFunction::revertDate($request->dateDuKien);
+
         $check = XeLaiThu::find($request->xe);
         $str = "";
         if ($check->status == 'T') {
@@ -233,6 +246,12 @@ class LaiThuController extends Controller
                 $nhatKy->chucNang = "Quản lý xe demo - đăng ký xe";
                 $nhatKy->noiDung = "Gửi yêu cầu sử dụng xe: " . $carname;
                 $nhatKy->save();
+
+                //---
+                if ($userDuyetEmail)
+                    Mail::to($emailDuyet)->send(new DuyetXeDemoTBP([$nguoiDuyet,$nguoiYeuCau,$ngayDangKy,$carname,$lyDo,$km,$kmXang,$str,$batDau,$ketThuc]));
+                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetXeDemoTBP(['Phòng hành chính',$nguoiYeuCau,$ngayDangKy,$carname,$lyDo,$km,$kmXang,$str,$batDau,$ketThuc]));
+                //---
                 return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
             } else {
                 return redirect()->route('laithu.reg')->with('err','Không thể đăng ký xe lái thử');

@@ -1205,7 +1205,7 @@ class NhanSuController extends Controller
                     ]);
                 }
 
-                if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $month)) {
+                if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
                     return response()->json([
                         "type" => "error",
                         "code" => 500,

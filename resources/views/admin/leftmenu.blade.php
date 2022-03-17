@@ -460,7 +460,7 @@
                     @endif
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
+                        (\Illuminate\Support\Facades\Auth::user()->hasRole('report') && \Illuminate\Support\Facades\Auth::user()->hasRole('lead')))
                             <li class="nav-item">
                                 <a href="{{route("report")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
@@ -470,7 +470,7 @@
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('report'))
+                            (\Illuminate\Support\Facades\Auth::user()->hasRole('report') && \Illuminate\Support\Facades\Auth::user()->hasRole('lead')))
                             <li class="nav-item">
                                 <a href="{{route("overview.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>

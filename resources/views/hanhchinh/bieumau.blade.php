@@ -319,7 +319,7 @@
                             error: function(response){
                             Toast.fire({
                                 icon: 'info',
-                                title: ' Thao tác client có vấn đề'
+                                title: ' Có lỗi hệ thống đang sửa lỗi và tự động khắc phục sau đó....'
                             })
                             $("#addModal").modal('hide');
                             $("#btnAdd").attr('disabled', false).html("LƯU");

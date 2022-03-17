@@ -8,6 +8,8 @@ use App\ReportWork;
 use App\User;
 use App\NhatKy;
 use App\EventReal;
+use App\Mail\GiaoViec;
+use Illuminate\Support\Facades\Mail;
 
 class WorkController extends Controller
 {
@@ -359,6 +361,14 @@ class WorkController extends Controller
     }
 
       public function addPushWork(Request $request) {
+        $userDuyetEmail = User::find($request->giaoCho);
+        $emailNhan = ($userDuyetEmail) ? $userDuyetEmail->email : "";
+        $nguoiNhan = ($userDuyetEmail) ? $userDuyetEmail->userDetail->surname : "";
+        $nguoiYeuCau = User::find(Auth::user()->id)->userDetail->surname;
+        $ngayBatDau = \HelpFunction::revertDate($request->ngayStart);
+        $ngayKetThuc = \HelpFunction::revertDate($request->ngayEnd);
+        $yeuCau = $request->yeuCau;
+
         $reportWork = new ReportWork();
         $reportWork->user_tao = Auth::user()->id;
         $reportWork->user_nhan = $request->giaoCho;
@@ -379,6 +389,9 @@ class WorkController extends Controller
             $nhatKy->chucNang = "Công việc - giao việc";
             $nhatKy->noiDung = "Thêm giao việc";
             $nhatKy->save();
+            //----
+                Mail::to($emailNhan)->send(new GiaoViec([$nguoiNhan,$nguoiYeuCau,$ngayBatDau,$ngayKetThuc,$yeuCau]));
+            //----
             return response()->json([
                 'type' => 'success',
                 'message' => " Đã giao việc",

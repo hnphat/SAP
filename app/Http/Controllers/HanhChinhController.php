@@ -6,6 +6,7 @@ use App\BieuMau;
 use App\NhatKy;
 use App\UsersDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HanhChinhController extends Controller
 {

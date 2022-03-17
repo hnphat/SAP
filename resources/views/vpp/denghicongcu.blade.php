@@ -292,6 +292,9 @@
                     data: {
                         "_token": "{{csrf_token()}}",
                         "noiDung": $("input[name=noiDung]").val()
+                    },
+                    beforeSend: function () {
+                       $("#taoPhieu").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
                     },                  
                     success: (response) => {                        
                         Toast.fire({
@@ -307,6 +310,7 @@
                             $("#addModal").modal('hide');
                             phieuxuat = ``;
                             reload();
+                            $("#taoPhieu").attr('disabled', false).html("Tạo phiếu");
                             setTimeout(autoloadPhieu, 1000);
                         }                            
                     },

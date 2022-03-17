@@ -240,7 +240,7 @@
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
-                                title: "Không thể xóa lúc này!"
+                                title: "Lỗi phê duyệt vui lòng liên hệ bộ phận kỹ thuật!"
                             })
                         }
                     });

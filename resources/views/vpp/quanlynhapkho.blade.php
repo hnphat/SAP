@@ -70,7 +70,7 @@
                             <h5>PHIẾU NHẬP KHO: 
                                 <strong class="text-info" id="maPhieuNK"></strong> 
                                 <button id="xoaPhieuNhap" class="btn btn-danger btn-sm">Xóa phiếu</button>
-                                <button id="suaPhieuNhap" class="btn btn-secondary btn-sm">Sửa phiếu</button>
+                                <button id="suaPhieuNhap" class="btn btn-secondary btn-sm">Cập nhật phiếu</button>
                             </h5>
                             <h5>NỘI DUNG: <i><span id="noiDungPN"></span></i></h5>
                             <hr>

@@ -129,7 +129,7 @@
                                                     </div>
                                                     <!-- /.card-body -->
                                                     <div class="card-footer">
-                                                        <button id="btnAdd" class="btn btn-primary">GỬI</button>
+                                                        <button id="btnAdd" type="button" class="btn btn-primary">GỬI</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -278,7 +278,7 @@
                         })
                     }
                 });
-            }
+            }          
         });
         // -- event realtime
         let es = new EventSource("{{route('action.reg')}}");
@@ -288,6 +288,14 @@
             if (fullData.flag == true) {
                open('{{route('capxang.denghi')}}','_self');
             }
+
+
+            $('#btnAdd').click(function(event) {               
+                let form = $("#addForm");   
+                $("#btnAdd").attr('disabled', true).html("Đang xử lý vui lòng đợi....");            
+                event.preventDefault();
+                form.submit();
+            }); 
         }
         // -- event realtime
     </script>

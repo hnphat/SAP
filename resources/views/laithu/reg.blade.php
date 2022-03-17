@@ -163,7 +163,7 @@
                                                     </div>
                                                     <!-- /.card-body -->
                                                     <div class="card-footer">
-                                                        <button id="btnAdd" class="btn btn-primary">Lưu</button>
+                                                        <button id="btnAdd" type="button" class="btn btn-primary">Lưu</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -349,6 +349,15 @@
                 $('.pass').removeAttr('disabled');
             else
                 $('.pass').attr('disabled','disabled');
+        });
+
+        $(document).ready(function(){
+            $('#btnAdd').click(function(event) {               
+                let form = $("#addForm");   
+                $("#btnAdd").attr('disabled', true).html("Đang xử lý vui lòng đợi....");            
+                event.preventDefault();
+                form.submit();
+            }); 
         });
         
     </script>

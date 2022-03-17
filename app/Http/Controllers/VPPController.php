@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\NhomSP;
+use App\User;
 use App\DanhMucSP;
 use App\NhatKy;
 use App\PhieuNhap;
@@ -16,6 +17,8 @@ use DB;
 use Session;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Mail\DuyetVanPhongPham;
+use Illuminate\Support\Facades\Mail;
 
 class VPPController extends Controller
 {
@@ -483,7 +486,9 @@ class VPPController extends Controller
         return view('vpp.denghicongcu');
     }
 
-    public function yeuCauTaoPhieu(Request $request){   
+    public function yeuCauTaoPhieu(Request $request){  
+        $nguoiYeuCau = User::find(Auth::user()->id)->userDetail->surname;
+        $noiDung = $request->noiDung;
         if ($request->noiDung != '') {
             $newPN = new PhieuXuat();
             $newPN->ngay = Date('d');
@@ -493,6 +498,7 @@ class VPPController extends Controller
             $newPN->noiDungXuat = $request->noiDung;
             $newPN->save();
             $code = "PXK-0" . $newPN->id;
+            $codeEmail = $newPN->id;
             if ($newPN) {                
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
@@ -500,6 +506,9 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Tạo đề nghị (phiếu xuất) <strong>".$code."</strong>";
                 $nhatKy->save(); 
+                //-----
+                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetVanPhongPham([$nguoiYeuCau,$codeEmail,$noiDung]));
+                //-----
                     return response()->json([
                         'code' => 200,        
                         'type' => 'info',
