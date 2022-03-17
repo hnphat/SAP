@@ -7,7 +7,7 @@ use App\User;
 use App\NhatKy;
 use App\EventReal;
 use App\XeLaiThu;
-use App\Mail\DuyetXeDemoTBP;
+use App\Mail\TraXe;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -137,8 +137,16 @@ class LaiThuController extends Controller
         }
     }
 
-    public function postPay(Request $request) {
+    public function postPay(Request $request) {   
         $reg = DangKySuDung::find($request->_idOff);
+        $nguoiYeuCau = User::find($reg->id_user_reg)->userDetail->surname;
+        $ngayDi = $reg->time_go . " " . \HelpFunction::revertDate($reg->date_go);
+        $ngayTra = Date('H:i d-m-Y');
+        $xeDangKy = $reg->xeLaiThu->name. " " .$reg->xeLaiThu->number_car;
+        $km = $request->_km;
+        $kmXang = $request->_xang;      
+          
+
         $carname = $reg->xeLaiThu->name. " " .$reg->xeLaiThu->number_car;
         $reg->tra_km_current = $request->_km;
         $reg->tra_fuel_current = $request->_xang;
@@ -187,6 +195,11 @@ class LaiThuController extends Controller
             $nhatKy->chucNang = "Quản lý xe demo - trả xe";
             $nhatKy->noiDung = "Gửi yêu cầu trả xe: " . $carname;
             $nhatKy->save();
+
+            //---
+                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new TraXe(['Phòng hành chính',$nguoiYeuCau,$ngayDi,$ngayTra,$xeDangKy,$km,$kmXang,$str,$hoSo]));
+            //---
+
             return redirect()->route('laithu.pay')->with('succ','Đã gửi yêu cầu trả xe!');
         } else {
             return redirect()->route('laithu.pay')->with('err','Không thể gửi yêu cầu trả xe!');

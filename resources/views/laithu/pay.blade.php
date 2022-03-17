@@ -171,7 +171,7 @@
                                                     </div>
                                                     <!-- /.card-body -->
                                                     <div class="card-footer">
-                                                        <button id="btnOff" class="btn btn-success">Xác nhận trả</button>
+                                                        <button id="btnOff" type="button" class="btn btn-success">Xác nhận trả</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -270,5 +270,13 @@
             }
         }
         // -- event realtime
+        $(document).ready(function() {
+            $('#btnOff').click(function(event) {               
+                let form = $("#offForm");   
+                $("#btnOff").attr('disabled', true).html("Đang xử lý vui lòng đợi....");            
+                event.preventDefault();
+                form.submit();
+            }); 
+        });
     </script>
 @endsection
