@@ -61,7 +61,7 @@ class DeNghiCapXangController extends Controller
             //-----
                 if ($userDuyetEmail)
                     Mail::to($emailDuyet)->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
-                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
+                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetCapXangTBP(['Phòng hành chính',$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
             //-----
 
             return redirect()

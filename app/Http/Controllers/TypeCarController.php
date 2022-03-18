@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\TypeCar;
 use App\TypeCarDetail;
 use App\NhatKy;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class TypeCarController extends Controller

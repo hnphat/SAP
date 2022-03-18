@@ -541,17 +541,17 @@ class NhanSuController extends Controller
     
             // Xử lý phép năm đang có của nhân viên
             $user = User::find($request->idUserXin);
-            $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
-            $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
-            //--- phep thuc te
-            $now = Date('d-m-Y');     
-            $datediff = strtotime($now) - strtotime($ngay);       
-            $ngayLam = $datediff / (60 * 60 * 24);   
-            $chuan = floor($ngayLam / 30);
-            if ($ngayLam >= 330) $chuan++;
-            $chuan = ($chuan > 12) ? 12 : $chuan;
+            $current = "1-1-".Date('Y');            
+            $phepNamThucTe = 0;
+            if ($user->allowPhepNam == true && $user->ngay !== null) {
+                $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
+                if (strtotime($thangPhepNam) >= strtotime($current))
+                    $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
+                else 
+                    $phepNamThucTe = (int)Date('m');                     
+            }                   
+
             // --------------
-    
     
             $suDung = 0;
             switch($request->buoi) {
@@ -599,7 +599,7 @@ class NhanSuController extends Controller
                 ]);
             }
     
-            if ($request->loaiPhep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
+            if ($request->loaiPhep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
                 return response()->json([
                     "type" => "error",
                     "code" => 500,
@@ -1100,15 +1100,16 @@ class NhanSuController extends Controller
         }
         // Xử lý phép năm đang có của nhân viên
         $user = User::find($check->id_user);
-        $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
-        $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
-        //--- phep thuc te
-        $now = Date('d-m-Y');     
-        $datediff = strtotime($now) - strtotime($ngay);       
-        $ngayLam = $datediff / (60 * 60 * 24);   
-        $chuan = floor($ngayLam / 30);
-        if ($ngayLam >= 330) $chuan++;
-        $chuan = ($chuan > 12) ? 12 : $chuan;
+        $current = "1-1-".Date('Y');            
+        $phepNamThucTe = 0;
+        if ($user->allowPhepNam == true && $user->ngay !== null) {
+            $flag = true;
+            $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
+            if (strtotime($thangPhepNam) >= strtotime($current))
+                $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
+            else 
+                $phepNamThucTe = (int)Date('m');                     
+        }    
         // ----------------
         $suDung = 0;
         switch($check->buoi) {
@@ -1158,7 +1159,7 @@ class NhanSuController extends Controller
                 ]);
             }
 
-            if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
+            if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
                 return response()->json([
                     "type" => "error",
                     "code" => 500,
@@ -1205,7 +1206,7 @@ class NhanSuController extends Controller
                     ]);
                 }
 
-                if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $chuan)) {
+                if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
                     return response()->json([
                         "type" => "error",
                         "code" => 500,
@@ -2100,15 +2101,16 @@ class NhanSuController extends Controller
 
     public function getPhepNam($id, $nam){
         $user = User::find($id);
-        $ngayVao = \HelpFunction::getDateRevertCreatedAt($user->created_at);   
-        $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
         //--- phep thuc te
-        $now = Date('d-m-Y');     
-        $datediff = strtotime($now) - strtotime($ngay);       
-        $ngayLam = $datediff / (60 * 60 * 24);   
-        $chuan = floor($ngayLam / 30);
-        if ($ngayLam >= 330) $chuan++;
-        $chuan = ($chuan > 12) ? 12 : $chuan;
+        $current = "1-1-".Date('Y');            
+        $phepNamThucTe = 0;
+        if ($user->allowPhepNam == true && $user->ngay !== null) {
+            $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
+            if (strtotime($thangPhepNam) >= strtotime($current))
+                $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
+            else 
+                $phepNamThucTe = (int)Date('m');                     
+        }    
         
         $getIdPhep = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
         $check = XinPhep::where([
@@ -2136,7 +2138,7 @@ class NhanSuController extends Controller
             'type' => 'info',
             'code' => 200,
             'message' => 'success',
-            'conlai' => $chuan,
+            'conlai' => $phepNamThucTe,
             'dasudung' => $daSuDung
         ]);
     }
@@ -3164,59 +3166,126 @@ class NhanSuController extends Controller
         return view('nhansu.baocaophepnam');
     }
 
+    // public function loadBaoCaoPhepNam() {
+    //     $user = User::select("*")->where('active', true)->get();
+    //     $i = 1;
+    //     foreach($user as $row) {            
+    //        if ($row->hasRole('chamcong')) {
+    //             $flag = false;
+    //             $phepNamThucTe = 0;
+    //             $phepNamDaSuDung = 0;
+    //             $ngayVao = \HelpFunction::getDateRevertCreatedAt($row->created_at);   
+    //             $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
+    //             //--- phep thuc te
+    //             $now = Date('d-m-Y');     
+    //             $datediff = strtotime($now) - strtotime($ngay);       
+    //             $ngayLam = $datediff / (60 * 60 * 24);   
+    //             $chuan = floor($ngayLam / 30);
+    //             //-------
+    //             //-------
+    //             if ($chuan >= 1) {
+    //                 $flag = true;
+    //                 if ($ngayLam >= 330) $chuan++;
+    //                 $phepNamThucTe = ($chuan > 12) ? 12 : $chuan;
+    //                 // xử lý phép năm
+    //                 $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+    //                 $checkPN = XinPhep::where([
+    //                     ['id_user','=',$row->id],
+    //                     ['id_phep','=',$getIdPhepNam],
+    //                     ['user_duyet','=', true],
+    //                     ['nam','=',Date('Y')]
+    //                 ])->get();
+    //                 foreach($checkPN as $rowp) {
+    //                     if ($rowp->buoi == "SANG") {
+    //                         $phepNamDaSuDung += 0.5;
+    //                     }
+    //                     if ($rowp->buoi == "CHIEU") {
+    //                         $phepNamDaSuDung += 0.5;
+    //                     }
+    //                     if ($rowp->buoi == "CANGAY") {
+    //                         $phepNamDaSuDung += 1;
+    //                     }
+    //                 }
+    //                 // ---------
+    //             }                            
+    //             $phepNamConLai = $phepNamThucTe - $phepNamDaSuDung;
+    //             $stt = "";
+
+    //             if ($flag) 
+    //                 $stt = "<strong class='text-info'>Được sử dụng phép năm</strong>";                    
+    //             else
+    //                 $stt = "<strong class='text-danger'>Chưa thể sử dụng phép năm</strong>";                    
+    //             echo "<tr>
+    //                     <td>".$i++."</td>
+    //                     <td>".$row->userDetail->surname."</td>
+    //                     <td>".$ngayVao. "</td>
+    //                     <td class='text-primary text-bold'>".$phepNamThucTe."</td>
+    //                     <td class='text-danger text-bold'>".$phepNamDaSuDung."</td>
+    //                     <td class='text-success text-bold'>".$phepNamConLai."</td>
+    //                     <td>
+    //                         $stt
+    //                     </td>
+    //                 </tr>";
+    //        }
+    //     }
+    // }
+
     public function loadBaoCaoPhepNam() {
         $user = User::select("*")->where('active', true)->get();
         $i = 1;
         foreach($user as $row) {            
            if ($row->hasRole('chamcong')) {
                 $flag = false;
+                $current = "1-1-".Date('Y');
+                //-------
                 $phepNamThucTe = 0;
-                $phepNamDaSuDung = 0;
-                $ngayVao = \HelpFunction::getDateRevertCreatedAt($row->created_at);   
-                $ngay = (strtotime($ngayVao) < strtotime("01-01-" . Date('Y')) ? "01-01-" . Date('Y') : $ngayVao);
-                //--- phep thuc te
-                $now = Date('d-m-Y');     
-                $datediff = strtotime($now) - strtotime($ngay);       
-                $ngayLam = $datediff / (60 * 60 * 24);   
-                $chuan = floor($ngayLam / 30);
-                //-------
-                //-------
-                if ($chuan >= 1) {
+                $phepNamDaSuDung = 0;  
+                if ($row->allowPhepNam == true && $row->ngay !== null) {
                     $flag = true;
-                    if ($ngayLam >= 330) $chuan++;
-                    $phepNamThucTe = ($chuan > 12) ? 12 : $chuan;
-                    // xử lý phép năm
-                    $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
-                    $checkPN = XinPhep::where([
-                        ['id_user','=',$row->id],
-                        ['id_phep','=',$getIdPhepNam],
-                        ['user_duyet','=', true],
-                        ['nam','=',Date('Y')]
-                    ])->get();
-                    foreach($checkPN as $rowp) {
-                        if ($rowp->buoi == "SANG") {
-                            $phepNamDaSuDung += 0.5;
-                        }
-                        if ($rowp->buoi == "CHIEU") {
-                            $phepNamDaSuDung += 0.5;
-                        }
-                        if ($rowp->buoi == "CANGAY") {
-                            $phepNamDaSuDung += 1;
-                        }
+                    $thangPhepNam = $row->ngay."-". $row->thang . "-" . $row->nam; 
+                    if (strtotime($thangPhepNam) >= strtotime($current))
+                        $phepNamThucTe = (int)Date('m') - (int)$row->thang + 1; 
+                    else 
+                        $phepNamThucTe = (int)Date('m');                     
+                }                   
+                $ngayVao = \HelpFunction::getDateRevertCreatedAt($row->created_at);
+
+                // xử lý phép năm
+                $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+                $checkPN = XinPhep::where([
+                    ['id_user','=',$row->id],
+                    ['id_phep','=',$getIdPhepNam],
+                    ['user_duyet','=', true],
+                    ['nam','=',Date('Y')]
+                ])->get();
+                foreach($checkPN as $rowp) {
+                    if ($rowp->buoi == "SANG") {
+                        $phepNamDaSuDung += 0.5;
                     }
-                    // ---------
-                }                            
+                    if ($rowp->buoi == "CHIEU") {
+                        $phepNamDaSuDung += 0.5;
+                    }
+                    if ($rowp->buoi == "CANGAY") {
+                        $phepNamDaSuDung += 1;
+                    }
+                }
+                // ---------                                     
                 $phepNamConLai = $phepNamThucTe - $phepNamDaSuDung;
                 $stt = "";
 
                 if ($flag) 
                     $stt = "<strong class='text-info'>Được sử dụng phép năm</strong>";                    
                 else
-                    $stt = "<strong class='text-danger'>Chưa thể sử dụng phép năm</strong>";                    
+                    $stt = "<strong class='text-danger'>Chưa thể sử dụng phép năm</strong>";   
+                    
+                if (!$flag) {
+                    $phepNamThucTe = "";
+                } 
                 echo "<tr>
                         <td>".$i++."</td>
                         <td>".$row->userDetail->surname."</td>
-                        <td>".$ngayVao. "</td>
+                        <td>".$ngayVao."</td>
+                        <td>".($row->ngay . "-".$row->thang . "-" . $row->nam). "</td>
                         <td class='text-primary text-bold'>".$phepNamThucTe."</td>
                         <td class='text-danger text-bold'>".$phepNamDaSuDung."</td>
                         <td class='text-success text-bold'>".$phepNamConLai."</td>

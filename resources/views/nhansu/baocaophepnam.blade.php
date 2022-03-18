@@ -55,6 +55,7 @@
                                         <th>STT</th>
                                         <th>Nhân viên</th>
                                         <th>Ngày bắt đầu (trên phần mềm)</th>
+                                        <th>Ngày tính phép năm</th>
                                         <th>Phép năm thực tế</th>
                                         <th>Phép năm sử dụng</th>
                                         <th>Phép năm còn lại</th>

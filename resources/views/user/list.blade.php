@@ -54,6 +54,8 @@
                                 <th>Tên người dùng</th>
                                 <th>Email</th>
                                 <th>Ngày bắt đầu</th>
+                                <th>Phép năm</th>
+                                <th>Ngày tính phép năm</th>
                                 <th>Tác vụ</th>
                             </tr>
                             </thead>
@@ -69,8 +71,15 @@
                                     </td>
                                     <td>{{$row->email}}</td>
                                     <td>{{\HelpFunction::getDateRevertCreatedAt($row->created_at)}}</td>
+                                    <td>@if($row->allowPhepNam == true)
+                                            <strong class="text-success">Có</strong>
+                                        @else
+                                            <strong class="text-danger">Không có</strong>
+                                        @endif
+                                    </td>
+                                    <td>{{$row->ngay . "-" . $row->thang . "-" . $row->nam}}</td>
                                     <td>
-                                        <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
+                                        <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}','{{$row->allowPhepNam}}','{{$row->ngay}}','{{$row->thang}}','{{$row->nam}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
                                         <button onclick="lock('{{$row->id}}')" class="btn btn-dark btn-sm">
                                             @if($row->active == 1)
                                                 <span class="fas fa-lock text-success"></span>
@@ -127,6 +136,36 @@
                                     <input type="checkbox" class="form-check-input" id="active" name="active">
                                     <label class="form-check-label" for="active">Kích hoạt</label>
                                 </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="allowPhepNam" name="allowPhepNam">
+                                    <label class="form-check-label" for="allowPhepNam">Được dùng phép năm</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ngày tính phép năm</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <select name="ngay" class="form-control" disabled>
+                                                @for($i = 1; $i <= 31; $i++)
+                                                    <option value="{{$i}}" <?php if(Date('d') == $i) echo "selected";?>>{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="thang" class="form-control" disabled>
+                                                @for($i = 1; $i <= 12; $i++)
+                                                    <option value="{{$i}}" <?php if(Date('m') == $i) echo "selected";?>>{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                        <select name="nam" class="form-control" disabled>
+                                            @for($i = 2021; $i < 2100; $i++)
+                                                <option value="{{$i}}" <?php if(Date('Y') == $i) echo "selected";?>>{{$i}}</option>
+                                            @endfor
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
@@ -170,9 +209,43 @@
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" id="email2" placeholder="Email" name="email2">
                                 </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="epass" name="epass">
+                                    <label class="form-check-label" for="epass">Đổi mật khẩu</label>
+                                </div>
                                 <div class="form-group">
                                     <label for="pass">Mật khẩu mới</label>
-                                    <input type="password" class="form-control" id="pass2" placeholder="Mật khẩu" name="pass2">
+                                    <input type="password" class="form-control" id="pass2" placeholder="Mật khẩu" name="pass2" disabled>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="eallowPhepNam" name="eallowPhepNam">
+                                    <label class="form-check-label" for="eallowPhepNam">Được dùng phép năm</label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ngày tính phép năm</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <select id="engay" name="engay" class="form-control" disabled>
+                                                @for($i = 1; $i <= 31; $i++)
+                                                    <option value="{{$i}}" <?php if(Date('d') == $i) echo "selected";?>>{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select id="ethang" name="ethang" class="form-control" disabled>
+                                                @for($i = 1; $i <= 12; $i++)
+                                                    <option value="{{$i}}" <?php if(Date('m') == $i) echo "selected";?>>{{$i}}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                        <select id="enam" name="enam" class="form-control" disabled>
+                                            @for($i = 2021; $i < 2100; $i++)
+                                                <option value="{{$i}}" <?php if(Date('Y') == $i) echo "selected";?>>{{$i}}</option>
+                                            @endfor
+                                        </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /.card-body -->
@@ -232,10 +305,18 @@
                 let name = $("input[name=acc]").val();
                 let email = $("input[name=email]").val();
                 let password = $("input[name=pass]").val();
+                let ngay = $("select[name=ngay]").val();
+                let thang = $("select[name=thang]").val();
+                let nam = $("select[name=nam]").val();
                 let active = 0;
+                let allowPhep = 0;
                 if ($('#active').is(":checked"))
                 {
                     active = 1;
+                }
+                if ($('#allowPhepNam').is(":checked"))
+                {
+                    allowPhep = 1;
                 }
                 if (!$("input[name=acc]").val() || !$("input[name=pass]").val()) {
                     alert('Vui lòng nhập tài khoản hoặc mật khẩu');
@@ -252,7 +333,12 @@
                             name: name,
                             email: email,
                             password: password,
-                            active: active
+                            active: active,
+                            password: password,
+                            allow: allowPhep,
+                            ngay: ngay,
+                            thang: thang,
+                            nam: nam,
                         },
                         success:function(data){
                             // alert(data.success);
@@ -274,7 +360,21 @@
                 let name = $("input[name=acc2]").val();
                 let email = $("input[name=email2]").val();
                 let password = $("input[name=pass2]").val();
-                 if (!$("input[name=pass2]").val() ) {
+                let ngay = $("select[name=engay]").val();
+                let thang = $("select[name=ethang]").val();
+                let nam = $("select[name=enam]").val();
+                let allowPhep = 0;
+                let changePass = 0;
+                if ($('#eallowPhepNam').is(":checked"))
+                {
+                    allowPhep = 1;
+                }
+
+                if ($('#epass').is(":checked"))
+                {
+                    changePass = 1;
+                }
+                 if (!$("input[name=pass2]").val() && changePass == 1) {
                     if (confirm('Bạn chưa nhập mật khẩu mới cho người dùng, nếu tiếp tục sẽ để mặc định là 123456')) {
                         password = 123456;
                         $.ajaxSetup({
@@ -289,7 +389,12 @@
                                 id: id,
                                 name: name,
                                 email: email,
-                                password: password
+                                password: password,
+                                allow: allowPhep,
+                                ngay: ngay,
+                                thang: thang,
+                                nam: nam,
+                                changepass: changePass,
                             },
                             success:function(data){
                                 // alert(data.success);
@@ -317,7 +422,12 @@
                             id: id,
                             name: name,
                             email: email,
-                            password: password
+                            password: password,
+                            allow: allowPhep,
+                            ngay: ngay,
+                            thang: thang,
+                            nam: nam,
+                            changepass: changePass,
                         },
                         success:function(data){
                             // alert(data.success);
@@ -357,43 +467,60 @@
             }, 1000);
         }
 
-        function edit(id,name,email) {
+        function edit(id,name,email,phepNam,ngay,thang,nam) {
             document.getElementById("_id").value = id;
             document.getElementById("acc2").value = name;
-            document.getElementById("email2").value = email;
+            document.getElementById("email2").value = email;            
+            document.getElementById("engay").value = ngay ? ngay : 1;
+            document.getElementById("ethang").value = thang ? thang : 1;
+            document.getElementById("enam").value = nam ? nam : 2022;
+            if (phepNam == 1) {
+                document.getElementById("eallowPhepNam").checked = true;
+                $('select[name=engay]').removeAttr('disabled');
+                $('select[name=ethang]').removeAttr('disabled');
+                $('select[name=enam]').removeAttr('disabled');
+            }               
+            else {
+                document.getElementById("eallowPhepNam").checked = false;
+                $('select[name=engay]').attr('disabled','disabled');
+                $('select[name=ethang]').attr('disabled','disabled');
+                $('select[name=enam]').attr('disabled','disabled');
+            }               
         }
 
-        //     $('.swalDefaultSuccess').click(function () {
-        //         Toast.fire({
-        //             icon: 'success',
-        //             title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //         })
-        //     });
-        //
-        //     $('.swalDefaultInfo').click(function() {
-        //         Toast.fire({
-        //             icon: 'info',
-        //             title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //         })
-        //     });
-        //     $('.swalDefaultError').click(function() {
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //         })
-        //     });
-        //     $('.swalDefaultWarning').click(function() {
-        //         Toast.fire({
-        //             icon: 'warning',
-        //             title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //         })
-        //     });
-        //     $('.swalDefaultQuestion').click(function() {
-        //         Toast.fire({
-        //             icon: 'question',
-        //             title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //         })
-        //     });
-        // });
+        $(document).on('change','#allowPhepNam', function(){
+            if($(this).is(':checked')) {
+                $('select[name=ngay]').removeAttr('disabled');
+                $('select[name=thang]').removeAttr('disabled');
+                $('select[name=nam]').removeAttr('disabled');
+            }
+            else {
+                $('select[name=ngay]').attr('disabled','disabled');
+                $('select[name=thang]').attr('disabled','disabled');
+                $('select[name=nam]').attr('disabled','disabled');
+            }
+        });
+
+        $(document).on('change','#eallowPhepNam', function(){
+            if($(this).is(':checked')) {
+                $('select[name=engay]').removeAttr('disabled');
+                $('select[name=ethang]').removeAttr('disabled');
+                $('select[name=enam]').removeAttr('disabled');
+            }
+            else {
+                $('select[name=engay]').attr('disabled','disabled');
+                $('select[name=ethang]').attr('disabled','disabled');
+                $('select[name=enam]').attr('disabled','disabled');
+            }
+        });
+
+        $(document).on('change','#epass', function(){
+            if($(this).is(':checked')) {
+                $('input[name=pass2]').removeAttr('disabled');
+            }
+            else {
+                $('input[name=pass2]').attr('disabled','disabled');
+            }
+        });
     </script>
 @endsection

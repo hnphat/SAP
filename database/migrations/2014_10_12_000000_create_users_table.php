@@ -19,6 +19,10 @@ class CreateUsersTable extends Migration
             $table->string('email')->nullable();
             $table->string('password');
             $table->boolean('active')->default(true);
+            $table->boolean('allowPhepNam')->default(true);
+            $table->string('ngay')->nullable();
+            $table->string('thang')->nullable();
+            $table->string('nam')->nullable();
             $table->timestamps();
         });
     }

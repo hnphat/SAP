@@ -312,6 +312,12 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Thông tin nhân viên</p>
+                                </a>
+                            </li> 
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
@@ -396,13 +402,7 @@
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Biểu mẫu</p>
                                     </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Thông tin nhân viên</p>
-                                    </a>
-                                </li>                                
+                                </li>                                                          
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))                    

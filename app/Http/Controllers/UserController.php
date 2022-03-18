@@ -47,6 +47,12 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->active = $request->active;
+        $user->allowPhepNam = $request->allow;
+        if ($request->allow == 1) {
+            $user->ngay = $request->ngay;
+            $user->thang = $request->thang;
+            $user->nam = $request->nam;
+        }
         $user->save();
         $role = Roles::where('name','normal')->firstOrFail();
         $userAddRole = User::where('id',$user->id)->firstOrFail();
@@ -55,7 +61,7 @@ class UserController extends Controller
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
-        $nhatKy->noiDung = "Thêm người dùng";
+        $nhatKy->noiDung = "Thêm người dùng tài khoản ".$request->name."<br/>Trạng thái phép năm (1: Kích hoạt; 0: Khóa): " . $request->allow . " Ngày ".$request->ngay." tháng ".$request->thang." năm ".$request->nam;
         $nhatKy->save();
         return response()->json(['success'=>'Đã thêm người dùng']);
     }
@@ -95,13 +101,24 @@ class UserController extends Controller
         $user = User::find($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = bcrypt($request->password);
+        if ($request->changepass == 1) 
+            $user->password = bcrypt($request->password);
+        $user->allowPhepNam = $request->allow;
+        if ($request->allow == 1) {
+            $user->ngay = $request->ngay;
+            $user->thang = $request->thang;
+            $user->nam = $request->nam;
+        } else {
+            $user->ngay = null;
+            $user->thang = null;
+            $user->nam = null;
+        }
         $user->save();
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
-        $nhatKy->noiDung = "Cập nhật người dùng";
+        $nhatKy->noiDung = "Cập nhật người dùng tài khoản ".$request->name."<br/>Trạng thái phép năm (1: Kích hoạt; 0: Khóa): " . $request->allow . " Ngày ".$request->ngay." tháng ".$request->thang." năm ".$request->nam;
         $nhatKy->save();
         return response()->json(['success'=>'Đã cập nhật người dùng']);
     }
