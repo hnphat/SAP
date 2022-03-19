@@ -318,6 +318,12 @@
                                     <p>Thông tin nhân viên</p>
                                 </a>
                             </li> 
+                            <li class="nav-item">
+                                <a href="{{route('noiquy.xem')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Nội quy - quy chế</p>
+                                </a>
+                            </li> 
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))

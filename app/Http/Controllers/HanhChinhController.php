@@ -225,6 +225,30 @@ class HanhChinhController extends Controller
             ]);
     }
 
+    // NỘI QUY CHỈ XEM
+    public function showXemNoiQuy() {
+        return view('hanhchinh.xemnoiquy');
+    }
+
+    public function getXemNoiQuy() {
+        $result = BieuMau::select('*')->where([
+            ['allow','=',true],
+            ['type','=','NQ']
+        ])->orderBy('id', 'desc')->get();
+        if ($result) 
+            return response()->json([
+                'message' => 'Đã tải dữ liệu!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        else
+            return response()->json([
+                'message' => 'Lỗi tải dữ liệu!',
+                'code' => 500
+            ]);
+    }
+
+
     // BẢNG GIÁ XE KINH DOANH
     public function showBangGiaXe() {
         return view('hopdong.banggiaxe');

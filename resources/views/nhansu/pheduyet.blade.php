@@ -230,6 +230,12 @@
                             "_token": "{{csrf_token()}}",
                             "id": $(this).data('id')
                         },
+                        beforeSend: function () {
+                            Toast.fire({
+                                icon: 'info',
+                                title: 'Đang xử lý vui lòng đợi........'
+                            })
+                        },
                         success: function(response) {
                             Toast.fire({
                                 icon: response.type,

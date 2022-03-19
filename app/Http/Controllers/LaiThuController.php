@@ -8,9 +8,11 @@ use App\NhatKy;
 use App\EventReal;
 use App\XeLaiThu;
 use App\Mail\TraXe;
+use App\Mail\DuyetXeDemoTBP;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+Use Exception;
 
 class LaiThuController extends Controller
 {
@@ -249,7 +251,11 @@ class LaiThuController extends Controller
                 $reg->id_user_check = $request->leadCheck;
             }
             $reg->id_lead_check = $request->tbpCheck;
-            $reg->save();
+            try {
+                $reg->save();
+            } catch(Exception $e) {
+                return redirect()->route('laithu.reg')->with('err','Không thể đăng ký xe lái thử có lỗi trùng lắp');
+            }
             if($reg) {
                 $check = DangKySuDung::find($reg->id);
                 $carname = $check->xeLaiThu->name. " " .$check->xeLaiThu->number_car;

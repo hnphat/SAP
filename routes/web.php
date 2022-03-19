@@ -341,6 +341,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
          // Xem Chứng từ mộc
          Route::get('list/xemchungtumoc','ChungTuController@showXemChungTu')->name('xemchungtu.panel');
+
+         // nội quy - quy chế xem
+        Route::get('list/noiquy','HanhChinhController@showXemNoiQuy')->name('noiquy.xem');
+        Route::get('ajax/xemnoiquy','HanhChinhController@getXemNoiQuy');
     });
 
     Route::group(['prefix' => 'vpp', 'middleware' => ['f_nhansu']], function(){

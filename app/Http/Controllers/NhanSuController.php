@@ -1149,6 +1149,13 @@ class NhanSuController extends Controller
             }
         }
         //--------------
+        $userDuyetEmail = User::find($check->id_user_duyet);
+        $loaiPhepEmail = LoaiPhep::find($check->id_phep)->tenPhep;
+        $nguoiDuyetEmail = $userDuyetEmail->userDetail->surname;
+        $nhanVien = User::find($check->id_user)->userDetail->surname;
+        $ngayEmail = $check->ngay."-".$check->thang."-".$check->nam;
+        $lyDoEmail = $check->lyDo; 
+
 
         if (Auth::user()->hasRole('system')) {   
             if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
@@ -1177,6 +1184,9 @@ class NhanSuController extends Controller
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
                 $nhatKy->noiDung = "Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                 $nhatKy->save();
+                // -------
+                Mail::to("phongnhansu@hyundaiangiang.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                // -------
                 return response()->json([
                     "type" => "info",
                     "code" => 200,
@@ -1225,6 +1235,9 @@ class NhanSuController extends Controller
                         $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
                         $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                         $nhatKy->save();
+                        // -------
+                            Mail::to("phongnhansu@hyundaiangiang.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                        // -------
                         return response()->json([
                             "type" => "info",
                             "code" => 200,
