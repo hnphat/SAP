@@ -1103,7 +1103,6 @@ class NhanSuController extends Controller
         $current = "1-1-".Date('Y');            
         $phepNamThucTe = 0;
         if ($user->allowPhepNam == true && $user->ngay !== null) {
-            $flag = true;
             $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
             if (strtotime($thangPhepNam) >= strtotime($current))
                 $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
@@ -1185,7 +1184,7 @@ class NhanSuController extends Controller
                 $nhatKy->noiDung = "Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                 $nhatKy->save();
                 // -------
-                Mail::to("phongnhansu@hyundaiangiang.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                Mail::to("phongnhansu@hyundailongxuyen.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
                 // -------
                 return response()->json([
                     "type" => "info",
@@ -1223,7 +1222,7 @@ class NhanSuController extends Controller
                         "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
                     ]);
                 }
-
+                // dd($flag);
                 if ($flag) {
                     $xinPhep = XinPhep::where('id',$request->id)->update([
                         'user_duyet' => true
@@ -1236,7 +1235,7 @@ class NhanSuController extends Controller
                         $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                         $nhatKy->save();
                         // -------
-                            Mail::to("phongnhansu@hyundaiangiang.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                            Mail::to("phongnhansu@hyundailongxuyen.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
                         // -------
                         return response()->json([
                             "type" => "info",

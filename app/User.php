@@ -55,6 +55,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Sale','id_user_create','id');
     }
 
+    public function capHoa() {
+        return $this->hasMany('App\CapHoa','id_user','id');
+    }
+
     public function carSale() {
         return $this->hasMany('App\CarSale','id_user_create','id');
     }

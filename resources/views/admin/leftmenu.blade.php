@@ -390,13 +390,23 @@
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Đề nghị nhiên liệu</p>
                                     </a>
-                                </li>
+                                </li>                                
                                 <li class="nav-item">
                                     <a href="{{route('vpp.denghicongcu.panel')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Đề nghị công cụ</p>
                                     </a>
                                 </li>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('sale')||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))    
+                                <li class="nav-item">
+                                    <a href="{{route('caphoa.panel')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Quản lý cấp hoa</p>
+                                    </a>
+                                </li>
+                                @endif
                                 <li class="nav-item">
                                     <a href="{{route('hanhchinh.xemthongbao')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -430,7 +440,7 @@
                              </li>
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))                    
+                               \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))  
                             <li class="nav-item">
                                 <a href="{{route('vpp.nhapkho.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>

@@ -482,6 +482,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('loadbaocaophepnam','NhanSuController@loadBaoCaoPhepNam');
     });
 
+    Route::group(['prefix' => 'caphoa'], function(){
+        Route::get('panel','CapHoaController@getPanel')->name('caphoa.panel');
+        Route::post('post','CapHoaController@postCapHoa')->name('caphoa.post');
+        Route::post('del','CapHoaController@delCapHoa');
+        Route::post('duyet','CapHoaController@duyetCapHoa');
+    });
+
     Route::get('qr/{content}', function ($content) {
 //        return QrCode::size(200)->generate('https://google.com');
         return view('qr', ['content' => $content]);

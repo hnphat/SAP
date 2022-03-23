@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class NhatKy extends Migration
+class CapHoa extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,18 @@ class NhatKy extends Migration
      */
     public function up()
     {
-        Schema::create('nhat_ky', function (Blueprint $table) {
-            $table->increments('id');           
+        Schema::create('cap_hoa', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');
-            $table->string('chucNang');
-            $table->string('thoiGian');
-            $table->text('noiDung');
+            $table->string('khachHang');
+            $table->string('dongXe');
+            $table->string('num')->unique();;
+            $table->string('gioGiaoXe');
+            $table->string('ngayGiaoXe');
             $table->string('ghiChu')->nullable();
+            $table->boolean('duyet')->default(false);
+            $table->string('ngayGiaoHoa')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +36,6 @@ class NhatKy extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nhat_ky');
+        Schema::dropIfExists('cap_hoa');
     }
 }
