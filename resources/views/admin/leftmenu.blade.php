@@ -41,6 +41,12 @@
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
+                            <a href="{{route('phong.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý phòng</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route("user.list")}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Người dùng</p>

@@ -87,11 +87,12 @@ class User extends Authenticatable
         return $this->hasMany('App\TaiLieu','id_user','id');
     }
 
-//    public function nhomUser() {
-//        return $this->hasMany('App\NhomUser', 'id_user', 'id');
-//    }
     public function nhom() {
         return $this->belongsToMany('App\Nhom','nhom_user', 'id_user', 'id_nhom');
+    }
+
+    public function hasNhom($nhom) {
+        return $nhom = $this->nhom()->where('name', $nhom)->exists();
     }
 
     public function quyen() {

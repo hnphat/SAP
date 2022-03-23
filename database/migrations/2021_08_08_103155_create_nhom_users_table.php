@@ -19,6 +19,7 @@ class CreateNhomUsersTable extends Migration
             $table->foreign('id_nhom')->references('id')->on('nhom');
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');
+            $table->boolean('leader')->default(false);
             $table->timestamps();
         });
     }

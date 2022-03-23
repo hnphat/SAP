@@ -54,7 +54,7 @@ class CapHoaController extends Controller
                 .$request->gioGiaoXe."<br/>Ngày giao xe: ". \HelpFunction::revertDate($request->ngayGiaoXe);
                 $nhatKy->save();
                 //-----
-                Mail::to("phongnhansu@hyundaiangiang.com")
+                Mail::to("phonghanhchinh@hyundailongxuyen.com")
                 ->send(new CapHoaEmail(["Phòng hành chính",$nhanVien, $khachHang,$dongXe,$num,$gioGiaoXe,$ngayGiaoXe,$ghiChu]));
                 //-----
                 return redirect()->route('caphoa.panel')->with('succ','Đã gửi đề nghị cấp hoa');
@@ -89,7 +89,7 @@ class CapHoaController extends Controller
             .$temp->dongXe."<br/>Biển số/số khung: ". $temp->num."<br/>Giờ giao: "
             .$temp->gioGiaoXe."<br/>Ngày giao xe: ". \HelpFunction::revertDate($temp->ngayGiaoXe)
             ."<br/> Ngày giao hoa: " . \HelpFunction::revertDate($temp->ngayGiaoHoa) 
-            . "<br/>Trạng thái duyệt (1: Đã duyệt; 0: Chưa duyệt" . $temp->duyet;
+            . "<br/>Trạng thái duyệt (1: Đã duyệt; 0: Chưa duyệt): " . $temp->duyet;
             $nhatKy->save();
             return response()->json([
                 'code' => 200,

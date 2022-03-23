@@ -50,6 +50,19 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('rm/{role_id}/{user_id}','RolesController@rm');
         Route::get('showdetail/{id}','RolesController@showDetail');
     });
+    Route::group(['prefix' => 'phong', 'middleware' => ['f_role']], function(){
+        Route::get('panel','PhongController@getPanel')->name('phong.panel');
+        Route::get('getlist','PhongController@getList');
+        Route::post('add','PhongController@addPhong');
+        Route::post('edit','PhongController@editPhong');
+        Route::post('update','PhongController@updatePhong');
+        Route::post('delete','PhongController@deletePhong');
+        Route::get('more/{id}','PhongController@showMore');
+        Route::post('more/add','PhongController@moreAdd');
+        Route::post('more/delete','PhongController@moreDelete');
+        Route::post('more/addplus','PhongController@addPlus');
+
+    });
     Route::group(['prefix' => 'hoso', 'middleware' => ['f_hoso']], function(){
         Route::get('list','HoSoController@index')->name('hoso.list');
         Route::get('users','HoSoController@getUser')->name('hoso.users');
