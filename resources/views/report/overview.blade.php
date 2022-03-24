@@ -60,12 +60,12 @@
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv'))
                                         <option value="pdv">Phòng dịch vụ</option>
                                     @endif
-                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    <!-- @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('xuong'))
                                         <option value="xuong">Xưởng</option>
-                                    @endif
+                                    @endif -->
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                         \Illuminate\Support\Facades\Auth::user()->hasRole('watch')||

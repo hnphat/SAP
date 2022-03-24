@@ -471,7 +471,8 @@
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('report') ||
-                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('watch'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-binoculars"></i>
                         <p>
@@ -482,7 +483,12 @@
                     @endif
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                        (\Illuminate\Support\Facades\Auth::user()->hasRole('report') && \Illuminate\Support\Facades\Auth::user()->hasRole('lead')))
+                        ((\Illuminate\Support\Facades\Auth::user()->hasRole('report') 
+                        && \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))
+                        && (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') 
+                            || \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv') 
+                            || \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') 
+                            || \Illuminate\Support\Facades\Auth::user()->hasRole('cskh'))))
                             <li class="nav-item">
                                 <a href="{{route("report")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
@@ -491,8 +497,13 @@
                             </li>
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                            (\Illuminate\Support\Facades\Auth::user()->hasRole('report') && \Illuminate\Support\Facades\Auth::user()->hasRole('lead')))
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('watch') ||
+                            ((\Illuminate\Support\Facades\Auth::user()->hasRole('report') && \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))) 
+                            && (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') 
+                            || \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv') 
+                            || \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') 
+                            || \Illuminate\Support\Facades\Auth::user()->hasRole('cskh')))
                             <li class="nav-item">
                                 <a href="{{route("overview.list")}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>

@@ -136,7 +136,7 @@
                                                 <label>Trạng thái</label>
                                                 <select name="trangThai" class="form-control">
                                                     <option value="0">Nhân viên</option>
-                                                    <option value="1">Trưởng nhóm</option>
+                                                    <option value="1">Quản lý</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -191,7 +191,7 @@
                                                 <label>Trạng thái</label>
                                                 <select name="etrangThai" class="form-control">
                                                     <option value="0">Nhân viên</option>
-                                                    <option value="1">Trưởng nhóm</option>
+                                                    <option value="1">Quản lý</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">

@@ -42,23 +42,12 @@
                     {{session('err')}}
                 </div>
             @endif
-            <div class="container">
+            <div>
                 <div class="row">
                     <div class="col-md-4">
                         <form id="phongBan">
                             <div class="form-group">
-                                <select name="chonUser" id="chonUser" class="form-control">
-                                    @foreach($user as $row)
-                                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                                            \Illuminate\Support\Facades\Auth::user()->hasRole('watch'))
-                                            @if($row->hasRole('report'))
-                                                <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                            @endif
-                                        @elseif($row->hasRole('report') && $row->id == \Illuminate\Support\Facades\Auth::user()->id)
-                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                        @endif
-                                    @endforeach
+                                <select name="chonUser" id="chonUser" class="form-control">                                   
                                 </select>
                             </div>
                         </form>
@@ -116,6 +105,26 @@
             timer: 3000
         });
         $(document).ready(function(){
+            $.ajax({
+                url: "management/overview/getworklist/",
+                type: "get",
+                dataType: 'text',
+                success: function(response) {
+                    Toast.fire({
+                        icon: 'info',
+                        title: " Loaded!"
+                    })
+                    $('#chonUser').html(response);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Không thể tải danh sách nhân viên!"
+                    })
+                }
+            });
+
+
             $("#watchFull").click(function(){
                 let url = "";
                 let _check = false;
@@ -137,7 +146,7 @@
                         })
                     }
                 });
-            });
+            });            
         });
     </script>
 @endsection

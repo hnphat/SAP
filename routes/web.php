@@ -530,6 +530,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'overview', 'middleware' => ['f_report']], function(){
         Route::get('list','ReportController@overviewList')->name('overview.list');
         Route::get('worklist','ReportController@overviewWorkList')->name('overview.worklist');
+        Route::get('getworklist','ReportController@getWorkList');
         Route::get('status','ReportController@status')->name('overview.status');
         Route::get('statusmonth/{_month}/room/{_room}','ReportController@statusMonth')->name('overview.status.month');
         //-- pkd

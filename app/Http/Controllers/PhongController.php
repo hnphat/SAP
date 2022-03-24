@@ -124,7 +124,7 @@ class PhongController extends Controller
         $result = NhomUser::where('id_nhom',$id)->get();
         echo "<table class='table'><tr class='bg-orange'><th>Tên phòng</th><th>Nhân viên</th><th>Trạng thái</th><th>Tác vụ</th></tr>";
         foreach($result as $row) {
-            $stt = ($row->leader == true) ? "<strong class='text-success'>Trưởng</strong>" : "<strong>Nhân viên</strong>" ;
+            $stt = ($row->leader == true) ? "<strong class='text-success'>Quản lý</strong>" : "<strong>Nhân viên</strong>" ;
             $nhom = Nhom::find($row->id_nhom);
             $user = User::find($row->id_user);
             echo "<tr><td>"

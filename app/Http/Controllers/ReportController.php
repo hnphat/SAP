@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Report;
 use App\User;
+use App\Nhom;
+use App\NhomUser;
 use App\ReportNhap;
 use App\ReportWork;
 use App\ReportCar;
@@ -1069,8 +1071,49 @@ class ReportController extends Controller
 
     public function overviewWorkList()
     {
-        $user = User::all();
-        return view('report.reportwork', ['user' => $user]);
+        return view('report.reportwork');
+    }
+
+    public function getWorkList() {
+        if (Auth::user()->hasRole('system') 
+        || Auth::user()->hasRole('boss') 
+        || Auth::user()->hasRole('watch')) {
+            $nhom = Nhom::all();
+            foreach($nhom as $row) {
+                $nhomUser = NhomUser::select("*")->where("id_nhom",$row->id)->get();
+                foreach($nhomUser as $item){
+                    $stt = ($item->leader) ? "[Quản lý]" : "";
+                    $user = User::find($item->id_user);
+                    if ($user->hasRole('report') && $user->hasNhom($row->name)) {                            
+                        echo "<option value='".$user->id."'>[".$row->name."] ".$user->userDetail->surname." $stt</option>";
+                    }    
+                }
+            }    
+            // $user = User::all();
+            // foreach($user as $row) {
+            //     if ($row->hasRole('report'))
+            //         echo "<option value='".$row->id."'>".$row->userDetail->surname."</option>";
+            // }            
+        }
+        else {
+            $nhom = NhomUser::select("*")->where("id_user",Auth::user()->id)->get();
+            foreach($nhom as $row) {
+                $tenNhom = Nhom::select("*")->where("id",$row->id_nhom)->first();  
+               if ($row->leader == true) {                                                      
+                    $user = User::all();
+                    foreach($user as $item) {
+                        $stt = ($item->id == $row->id_user) ? "[Quản lý]" : "";
+                        if ($item->hasRole('report') && $item->hasNhom($tenNhom->name)) {                            
+                            echo "<option value='".$item->id."'>".$item->userDetail->surname." [".$tenNhom->name."] $stt</option>";
+                        }
+                    }                         
+               } else {
+                    $user = User::find($row->id_user);
+                    if ($user->hasRole('report'))
+                        echo "<option value='".$user->id."'>".$user->userDetail->surname." [".$tenNhom->name."]</option>";
+               }
+            }   
+        }
     }
 
     public function getPKDAll($_from, $_to)
@@ -1716,10 +1759,10 @@ class ReportController extends Controller
     public function status()
     {
         if (Auth::user()->hasRole('system') 
-        || Auth::user()->hasRole('drp') 
-        || Auth::user()->hasRole('boss')) {
+        || Auth::user()->hasRole('boss') || Auth::user()->hasRole('watch')) {
             $_date = Date('d-m-Y');
-            $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh'];
+            // $arr = ['pkd', 'pdv', 'mkt', 'xuong', 'cskh'];
+            $arr = ['pkd', 'pdv', 'mkt', 'cskh'];
             echo "<h3>BÁO CÁO SỐ LIỆU</h3><table class='table table-striped table-border'>
                                 <tr>
                                     <th>Thời gian</th>
@@ -1743,9 +1786,9 @@ class ReportController extends Controller
                     case 'mkt':
                         $phong = "Marketing";
                         break;
-                    case 'xuong':
-                        $phong = "Xưởng";
-                        break;
+                    // case 'xuong':
+                    //     $phong = "Xưởng";
+                    //     break;
                     case 'cskh':
                         $phong = "CSKH";
                         break;
@@ -1795,14 +1838,14 @@ class ReportController extends Controller
             case 'mkt':
                 $phong = "Marketing";
                 break;
-            case 'xuong':
-                $phong = "Xưởng";
-                break;
+            // case 'xuong':
+            //     $phong = "Xưởng";
+            //     break;
             case 'cskh':
                 $phong = "CSKH";
                 break;
         }
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('drp') || Auth::user()->hasRole('boss')) {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('boss') || Auth::user()->hasRole('watch')) {
             echo "<table class='table table-striped table-border'>
                                 <tr>
                                     <th>Thời gian</th>
@@ -1853,10 +1896,10 @@ class ReportController extends Controller
         $_to = \HelpFunction::revertDate($_to);
         $check = ($check == "true") ? true : false;
         $check = ($check == "false") ? false : true;
-        $_user = Auth::user()->id;
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('watch') || Auth::user()->hasRole('boss')) {
+        // $_user = Auth::user()->id;
+        // if (Auth::user()->hasRole('system') || Auth::user()->hasRole('watch') || Auth::user()->hasRole('boss')) {
             $_user = $id;
-        }
+        // }
 
         if (!$check) {
             $personal = ReportWork::where([
