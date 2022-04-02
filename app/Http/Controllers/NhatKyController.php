@@ -12,7 +12,7 @@ class NhatKyController extends Controller
     public function getList() {
         $nhatKy = NhatKy::select("*")
         ->orderBy('id', 'desc')
-        ->take(500)
+        ->take(1500)
         ->get();
         return view('nhatky.nhatky', ['nk' => $nhatKy]);
     }

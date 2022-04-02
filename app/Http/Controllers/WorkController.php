@@ -390,7 +390,7 @@ class WorkController extends Controller
             $nhatKy->noiDung = "Thêm giao việc";
             $nhatKy->save();
             //----
-                // Mail::to($emailNhan)->send(new GiaoViec([$nguoiNhan,$nguoiYeuCau,$ngayBatDau,$ngayKetThuc,$yeuCau]));
+                Mail::to($emailNhan)->send(new GiaoViec([$nguoiNhan,$nguoiYeuCau,$ngayBatDau,$ngayKetThuc,$yeuCau]));
             //----
             return response()->json([
                 'type' => 'success',
