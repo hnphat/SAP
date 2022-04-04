@@ -237,7 +237,24 @@
         });
 
         $(document).ready(function(){
-
+           
+           function loadWithRoom() {
+                $.ajax({
+                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvienroom')}}",
+                    type: "get",
+                    dataType: "text",
+                    success: function(response){                        
+                        $("select[name=nhanVien]").append(response);                                  
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: "error",
+                            title: "Lỗi! Không tải bổ sung"
+                        })
+                    }
+                });
+           } 
+           loadWithRoom();
            function reload() {
                 $.ajax({
                     url: "{{url('management/nhansu/chitiet/ajax/getnhanvien')}}",

@@ -22,6 +22,7 @@ class CreateXeLaiThusTable extends Migration
             $table->integer('id_user_use')->unsigned()->nullable();
             $table->foreign('id_user_use')->references('id')->on('users');
             $table->string('duKien',255)->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

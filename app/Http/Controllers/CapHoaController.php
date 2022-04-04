@@ -15,7 +15,7 @@ class CapHoaController extends Controller
 {
     //
     public function getPanel() {
-        if (Auth::user()->hasRole('system'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns') )
             $capHoa = CapHoa::select("*")->orderBy('id', 'desc')->get();
         else
             $capHoa = CapHoa::select("*")->where('id_user',Auth::user()->id)->orderBy('id', 'desc')->get();

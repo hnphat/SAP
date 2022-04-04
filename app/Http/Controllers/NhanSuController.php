@@ -7,6 +7,8 @@ use App\LoaiPhep;
 use App\User;
 use App\XinPhep;
 use App\TangCa;
+use App\Nhom;
+use App\NhomUser;
 use App\QuanLyTangCa;
 use App\XacNhanCong;
 use App\NhatKy;
@@ -22,6 +24,21 @@ class NhanSuController extends Controller
     public function quanLyChamCong() {
         $user = User::select("*")->where('active', true)->get();
         return view("nhansu.quanlychamcong", ['user' => $user]);
+    }
+
+    public function chiTietGetNhanVienRoom() {
+        $room = NhomUser::select("*")
+        ->where('id_user', Auth::user()->id)
+        ->first();
+        if ($room->leader == true) {
+            $nhom = Nhom::find($room->id_nhom)->name;
+            $user = User::select("*")->where('active', true)->get();
+            foreach($user as $row) {
+                if ($row->hasRole('chamcong') && $row->hasNhom($nhom) && $row->id != Auth::user()->id) {
+                    echo "<option value='".$row->id."'>".$row->userDetail->surname."</option>";
+                }
+            }
+        }
     }
 
     public function quanLyChamCongGetNhanVien(Request $request) {

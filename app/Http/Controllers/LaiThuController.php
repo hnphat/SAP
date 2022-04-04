@@ -91,8 +91,33 @@ class LaiThuController extends Controller
         }
     }
 
+    public function showNow(Request $request) {
+        $check = XeLaiThu::find($request->id);
+        $stt = ($check->active == true) ? false : true;
+        $car = XeLaiThu::where('id', $request->id)->update([
+            'active' => $stt
+        ]);
+        if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
+            $nhatKy->noiDung = "Chuyển trạng thái hiển thị xe: " . $stt;
+            $nhatKy->save();
+            return response()->json([
+                'message' => 'Đã chuyển trạng thái hiển thị xe!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function showReg() {
-        $car = XeLaiThu::all();
+        $car = XeLaiThu::select("*")->where('active',true)->get();
         $lead = User::all();
         if (Auth::user()->hasRole('system')) {
             $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
@@ -689,5 +714,56 @@ class LaiThuController extends Controller
         $nhatKy->noiDung = "In phiếu cấp nhiên liệu";
         $nhatKy->save();
         return view('laithu.in', ['car' => $car, 'content' => $car, 'tbp' => $tbp]);
+    }
+
+    public function getEdit(Request $request) {
+        $xe = XeLaiThu::find($request->id);
+        if($xe) {
+            return response()->json([
+                'type' => "success",
+                'message' => 'Đã load dữ liệu',
+                'code' => 200,
+                'data' => $xe
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function update(Request $request){
+        $xe = XeLaiThu::find($request->idCar);
+        $name = $xe->name;
+        $num = $xe->number_car;
+        $mau = $xe->mau;
+        $xe->name = $request->etenXe;
+        $xe->number_car= $request->ebienSo;
+        $xe->mau = $request->ecolor;
+        $xe->save();
+        if($xe) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Quản lý xe demo";
+            $nhatKy->noiDung = "Cập nhật thông tin xe từ <br/>$name sang "
+            .$request->etenXe."<br/>$num sang "
+            .$request->ebienSo."<br/>$mau sang "
+            .$request->ecolor;
+            $nhatKy->save();
+            return response()->json([
+                'type' => "success",
+                'message' => 'Đã cập nhật thông tin xe',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
     }
 }

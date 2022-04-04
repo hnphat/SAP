@@ -283,6 +283,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('post','LaiThuController@store')->name('laithu.post');
         Route::post('del','LaiThuController@destroy');
         Route::post('change','LaiThuController@change');
+        Route::post('show','LaiThuController@showNow');
+        Route::post('getedit','LaiThuController@getEdit');
+        Route::post('update','LaiThuController@update');
     });
 
     Route::group(['prefix' => 'status'], function(){
@@ -426,6 +429,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');
+        Route::get('chitiet/ajax/getnhanvienroom','NhanSuController@chiTietGetNhanVienRoom');
         Route::post('chitiet/ajax/themphep','NhanSuController@chiTietThemPhep');
 
         // xin phép

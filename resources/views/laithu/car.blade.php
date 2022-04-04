@@ -151,8 +151,18 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                <button  data-toggle="modal" data-target="#editModal" id="edit" data-id="{{$row->id}}" class="btn btn-success btn-xs">
+                                                        <span class="fas fa-edit">&nbsp;</span>
+                                                </button>
                                                 <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
                                                 <button id="change" data-id="{{$row->id}}" class="btn btn-warning btn-xs">&nbsp;<span class="fas fa-exclamation">&nbsp;</span></button>
+                                                <button id="showNow" data-id="{{$row->id}}" class="btn btn-info btn-xs">&nbsp;
+                                                    @if($row->active == true)
+                                                        <span title="Tắt hiển thị" class="fas fa-eye-slash">&nbsp;</span>
+                                                    @else
+                                                        <span title="Cho phép hiển thị" class="fas fa-eye">&nbsp;</span>
+                                                    @endif
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -166,6 +176,56 @@
         </div>
         <!-- /.content -->
     </div>
+    <!-- Medal -->
+    <div class="modal fade" id="editModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chỉnh sửa xe demo</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form id="editForm" autocomplete="off">
+                            {{csrf_field()}}         
+                            <input type="hidden" name="idCar">    
+                            <div class="form-group">
+                                <label>Tên xe</label>
+                                <input type="text" placeholder="Tên xe" name="etenXe" class="form-control">    
+                            </div>
+                            <div class="form-group">
+                                <label>Biển số</label>
+                                <input type="text" placeholder="Biển số" name="ebienSo" class="form-control">    
+                            </div>
+                            <div class="form-group">
+                                <label>Màu sắc</label>
+                                <select name="ecolor" class="form-control">
+                                    <option value="Đỏ">Đỏ</option>
+                                    <option value="Xanh">Xanh</option>
+                                    <option value="Trắng">Trắng</option>
+                                    <option value="Vàng">Vàng</option>
+                                    <option value="Ghi">Ghi</option>
+                                    <option value="Nâu">Nâu</option>
+                                    <option value="Bạc">Bạc</option>
+                                    <option value="Xám">Xám</option>
+                                    <option value="Đen">Đen</option>
+                                    <option value="Vàng cát">Vàng cát</option>
+                                    <option value="Xe tải">Xe tải</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        <button id="btnEdit" class="btn btn-primary" form="editForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -240,12 +300,99 @@
             }
         });
 
+        //Get edit data
+        $(document).on('click','#edit', function(){
+            $.ajax({
+                url: "{{url('management/laithu/getedit/')}}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "id": $(this).data('id')
+                },
+                success: function(response) {
+                    Toast.fire({
+                        icon: response.type,
+                        title: response.message
+                    })
+                    $("input[name=idCar]").val(response.data.id);
+                    $("input[name=etenXe]").val(response.data.name);
+                    $("input[name=ebienSo]").val(response.data.number_car);
+                    $("select[name=ecolor]").val(response.data.mau);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Không thể xóa lúc này!"
+                    })
+                }
+            });
+        });
+
 
         //Change data
         $(document).on('click','#change', function(){
             if(confirm('Chuyển trạng thái xe?')) {
                 $.ajax({
                     url: "{{url('management/laithu/change/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        })
+                        setTimeout(function(){
+                            open('{{route('laithu.list')}}','_self');
+                        }, 2000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể xóa lúc này!"
+                        })
+                    }
+                });
+            }
+        });
+
+        // Post edit car
+        $("#btnEdit").click(function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "{{url('management/laithu/update/')}}",
+                type: "post",
+                dataType: 'json',
+                data: $("#editForm").serialize(),
+                success: function(response) {
+                    $("#editForm")[0].reset();
+                    Toast.fire({
+                        icon: response.type,
+                        title: response.message
+                    })
+                    $("#editModal").hide();
+                    setTimeout(function(){
+                            open('{{route('laithu.list')}}','_self');
+                    }, 2000);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Lỗi"
+                    })
+                }
+            });
+        });
+
+        //Show car
+        $(document).on('click','#showNow', function(){
+            if(confirm('Chuyển trạng thái hiển thị xe?')) {
+                $.ajax({
+                    url: "{{url('management/laithu/show/')}}",
                     type: "post",
                     dataType: "json",
                     data: {
