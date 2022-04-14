@@ -18,7 +18,8 @@ class NhanSuPheDuyetMiddleWare
     {
         if (Auth::user()->hasRole('system') ||
             Auth::user()->hasRole('hcns') ||
-            Auth::user()->hasRole('lead'))
+            Auth::user()->hasRole('lead') ||
+            Auth::user()->hasRole('lead_chamcong'))
             return $next($request);
         else abort(403);
     }

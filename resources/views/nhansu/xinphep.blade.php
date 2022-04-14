@@ -18,11 +18,13 @@
                     <div class="col-sm-8">
                         <h1 class="m-0"><strong>Quản lý xin phép</strong> 
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
                             <a href="{{route('pheduyet.panel')}}" class="btn btn-xs btn-warning">Phê duyệt phép</a> &nbsp;
                             <a href="{{route('tangca.panel')}}" class="btn btn-xs btn-success">Phê duyệt tăng ca</a> &nbsp;
                         @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
                             <a href="{{route('quanlytangcale.panel')}}" class="btn btn-xs btn-info">Quản lý tăng ca/ngày lễ</a>  &nbsp;                          
                             <button id="dongBo" type="button" class="btn btn-xs btn-primary">Đồng bộ phép</button> &nbsp;
                             <a href="{{route('baocaophepnam.panel')}}" class="btn btn-xs btn-secondary">Báo cáo sử dụng phép năm</a>  &nbsp;                          

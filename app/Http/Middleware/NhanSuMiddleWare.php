@@ -18,7 +18,8 @@ class NhanSuMiddleWare
     {
         if (Auth::user()->hasRole('system') ||
             Auth::user()->hasRole('hcns') ||
-            Auth::user()->hasRole('boss'))
+            Auth::user()->hasRole('boss') ||
+            Auth::user()->hasRole('lead_chamcong'))
             return $next($request);
         else abort(403);
     }

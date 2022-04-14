@@ -835,6 +835,7 @@ class VPPController extends Controller
 
         if ($flag) {
             $phieu->duyet = true;
+            $phieu->nhan = true;
             $phieu->save();
             if ($phieu) {
                 $nhatKy = new NhatKy();
@@ -865,15 +866,10 @@ class VPPController extends Controller
     }
 
     public function huyDuyetPhieu(Request $request) {
-        $phieu = PhieuXuat::find($request->phieu);
-        if ($phieu->nhan == true) {
-            return response()->json([
-                'code' => 500,        
-                'type' => 'error',
-                'message' => 'Không thể hủy (hoàn trạng) yêu cầu vì nhân viên đã xác nhận CCDC'
-            ]);
-        } else {
+        if (Auth::user()->hasRole("system")) {
+            $phieu = PhieuXuat::find($request->phieu);
             $phieu->duyet = false;
+            $phieu->nhan = false;
             $phieu->save();
             if ($phieu) {
                 $nhatKy = new NhatKy();
@@ -894,7 +890,42 @@ class VPPController extends Controller
                     'type' => 'error',
                     'message' => 'Không thể duyệt yêu cầu'
                 ]);
-        }        
+        }  else {
+                return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không thể hủy (hoàn trạng) yêu cầu vì đã giao CCDC cho nhân viên'
+            ]);
+        }     
+        // if ($phieu->nhan == true) {
+        //     return response()->json([
+        //         'code' => 500,        
+        //         'type' => 'error',
+        //         'message' => 'Không thể hủy (hoàn trạng) yêu cầu vì đã giao CCDC cho nhân viên'
+        //     ]);
+        // } else {
+        //     $phieu->duyet = false;
+        //     $phieu->save();
+        //     if ($phieu) {
+        //         $nhatKy = new NhatKy();
+        //         $nhatKy->id_user = Auth::user()->id;
+        //         $nhatKy->thoiGian = Date("H:m:s");
+        //         $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+        //         $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
+        //         $nhatKy->save();
+        //         return response()->json([
+        //             'code' => 200,        
+        //             'type' => 'info',
+        //             'message' => "Đã HỦY duyệt phiếu. Đang đồng bộ và tải lại danh sách phiếu...."
+        //         ]);
+        //     }
+        //     else
+        //         return response()->json([
+        //             'code' => 500,        
+        //             'type' => 'error',
+        //             'message' => 'Không thể duyệt yêu cầu'
+        //         ]);
+        // }        
     }
 
     // Báo cáo kho

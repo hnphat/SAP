@@ -57,7 +57,7 @@ class CapHoaController extends Controller
                 Mail::to("phonghanhchinh@hyundailongxuyen.com")
                 ->send(new CapHoaEmail(["Phòng hành chính",$nhanVien, $khachHang,$dongXe,$num,$gioGiaoXe,$ngayGiaoXe,$ghiChu]));
                 Mail::to("bichlien@hyundailongxuyen.com")
-                ->send(new CapHoaEmail(["Liên mập địch",$nhanVien, $khachHang,$dongXe,$num,$gioGiaoXe,$ngayGiaoXe,$ghiChu]));
+                ->send(new CapHoaEmail(["Bộ phận cấp hoa",$nhanVien, $khachHang,$dongXe,$num,$gioGiaoXe,$ngayGiaoXe,$ghiChu]));
                 //-----
                 return redirect()->route('caphoa.panel')->with('succ','Đã gửi đề nghị cấp hoa');
             } else

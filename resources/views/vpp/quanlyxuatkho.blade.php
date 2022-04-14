@@ -285,6 +285,7 @@
                             $("select[name=chonPhieu]").empty();
                             phieunhap = ``;
                             setTimeout(autoLoad,3000);
+                            phieunhap = ``;
                             setTimeout(reload,3000);
                         },
                         error: function(){

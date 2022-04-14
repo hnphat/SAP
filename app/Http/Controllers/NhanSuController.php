@@ -1060,7 +1060,7 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhepGetList() {
-        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns'))
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns') && !Auth::user()->hasRole('lead_chamcong'))
             $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
             ->join('users as u','u.id','=','xin_phep.id_user')
             ->join('users_detail as d','d.id_user','=','u.id')

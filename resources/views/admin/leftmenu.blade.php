@@ -331,8 +331,10 @@
                                 </a>
                             </li> 
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
                             <li class="nav-item">
                                 <a href="{{route('nhansu.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
@@ -573,14 +575,14 @@
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-mail-bulk"></i>
                         <p>
                             <strong>QUẢN LÝ MAIL</strong>
                         </p>
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a href="{{route('nhatky.list')}}" class="nav-link">
                         <i class="nav-icon fas fa-history"></i>
@@ -590,7 +592,7 @@
                     </a>
                 </li>                
                 @endif
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
@@ -598,7 +600,7 @@
                             <span class="right badge badge-danger">New</span>
                         </p>
                     </a>
-                </li>                
+                </li>                 -->
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
