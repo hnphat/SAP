@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -31,31 +32,22 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container">
+            <div>
                 <button class="btn btn-success" data-toggle="modal" data-target="#add"><span class="fas fa-plus-circle"></span></button><br/><br/>
                 <table id="showData" class="display" style="width:100%">
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Hình ảnh</th>
                         <th>Tài khoản</th>
                         <th>Họ và tên</th>
                         <th>Điện thoại</th>
                         <th>Ngày sinh</th>
                         <th>Địa chỉ</th>
+                        <th>Hồ sơ nén</th>
                         <th>Tác vụ</th>
                     </tr>
-                    </thead>
-                    <tfoot>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tài khoản</th>
-                        <th>Họ và tên</th>
-                        <th>Điện thoại</th>
-                        <th>Ngày sinh</th>
-                        <th>Địa chỉ</th>
-                        <th>Tác vụ</th>
-                    </tr>
-                    </tfoot>
+                    </thead>                    
                 </table>
 
                 <!-- Medal Add -->
@@ -85,7 +77,7 @@
 {{--                                                        <option value="{{$row->id}}">{{$row->name}}</option>--}}
 {{--                                                    @endforeach--}}
                                                 </select>
-                                            </div>
+                                            </div>                                            
                                             <div class="form-group">
                                                 <label for="hoTen">Họ và tên</label>
                                                 <input type="text" class="form-control" id="hoTen" placeholder="Họ và tên" name="hoTen">
@@ -101,7 +93,7 @@
                                             <div class="form-group">
                                                 <label for="diaChi">Địa chỉ</label>
                                                 <input type="text" class="form-control" id="diaChi" placeholder="Địa chỉ" name="diaChi">
-                                            </div>
+                                            </div>                                           
                                             <div class="form-group">
                                                 <button id="submit" class="btn btn-primary">Lưu</button>
                                             </div>
@@ -164,6 +156,53 @@
                                                 <button id="update" class="btn btn-success">Cập nhật</button>
                                             </div>
                                         </div>
+                                    </form>
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+
+                <!-- Medal Upload file -->
+                <div class="modal fade" id="upModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- general form elements -->
+                                <div class="card card-info">
+                                    <div class="card-header">
+                                        <h3 class="card-title">CẬP NHẬT HÌNH ẢNH VÀ HỒ SƠ</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
+                                    <form id="upForm" autocomplete="off">
+                                        {{csrf_field()}}
+                                        <div class="card-body">
+                                            <input type="hidden" name="up_id" />                                            
+                                            <div class="form-group">
+                                                <label for="fileAnh">Hình ảnh</label>
+                                                <input type="file" class="form-control" name="fileAnh" id="fileAnh">
+                                                <span>Tối đa 10MB (jpg,png,JPG,PNG)</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="fileHoso">Tệp hồ sơ</label>
+                                                <input type="file" class="form-control" name="fileHoso" id="fileHoso">
+                                                <span>Tối đa 20MB (pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx)</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <button id="upload" class="btn btn-success">Tải tệp lên</button>
+                                            </div>
+                                        </div>                                       
                                     </form>
                                 </div>
                                 <!-- /.card -->
@@ -238,16 +277,32 @@
                 ajax: "{{url('management/hoso/get/')}}",
                 columns: [
                     { "data": "id" },
+                    {  "data": null,
+                        render: function(data, type, row) {
+                            if (row.anh == null)
+                                return "<span class='badge badge-danger'>Chưa có</span>";
+                            else
+                                return "<img src='upload/hoso/"+row.anh+"' style='max-width: 100px; height: auto;'/>";
+                        } 
+                    },
                     { "data": "name" },
                     { "data": "surname" },
                     { "data": "phone" },
                     { "data": "birthday" },
                     { "data": "address" },
+                    {   "data": null,
+                        render: function(data, type, row) {
+                            if (row.hoSo == null)
+                                return "<span class='badge badge-danger'>Chưa có</span>";
+                            else
+                                return "<a href='upload/tephoso/"+row.hoSo+"' download>Tải về</a>";
+                        }  },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#edit' id='editForm'><span class='far fa-edit'></span></button>&nbsp;" +
-                                "<button data-id='"+row.id+"' class='btn btn-danger btn-sm' id='delete'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                            return "<button data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#edit' id='editForm'><span class='far fa-edit'></span></button>&nbsp;" 
+                            + "<button data-id='"+row.id+"' class='btn btn-danger btn-sm' id='delete'><span class='fas fa-times-circle'></span></button>&nbsp;"
+                            + "<button data-id='"+row.id+"' class='btn btn-info btn-sm' data-toggle='modal' data-target='#upModal' id='up'><span class='fab fa-wpforms'></span></button>&nbsp;";
                         }
                     }
                 ]
@@ -295,6 +350,57 @@
                         }
                     });
                 }
+            });
+
+            //up form
+            $(document).on('click','#up',function(){
+                $("input[name=up_id]").val($(this).data('id'));
+            });
+
+            //upload
+            $(document).one('click','#upload',function(e){
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $('#upForm').submit(function(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/hoso/ajax/posttep/')}}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#upload").attr('disabled', true).html("Đang xử lý....");
+                        },
+                        success: (response) => {
+                            this.reset();
+                            Toast.fire({
+                                icon: 'info',
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            $("#upModal").modal('hide');
+                            $("#upload").attr('disabled', false).html("Tải tệp lên");
+                            console.log(response);
+                            $("#upModal").modal("hide");
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Có lỗi Ảnh: ' + response.responseJSON.errors.fileAnh + " Hồ sơ: " + response.responseJSON.errors.fileHoso 
+                            })
+                            $("#upModal").modal('hide');
+                            $("#upload").attr('disabled', false).html("Tải tệp lên");
+                            console.log(response);
+                        }
+                    });
+                });                
+                table.ajax.reload();              
             });
 
             //delete code here

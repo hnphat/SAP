@@ -128,7 +128,9 @@ class HoSoController extends Controller
     }
 
     public function getHoSo() {
-        $hoso = User::select('ud.id','users.name','ud.surname','ud.phone','ud.birthday','ud.address')->join('users_detail as ud','ud.id_user','=','users.id')->get();
+        $hoso = User::select('ud.id','ud.hoSo','ud.anh','users.name','ud.surname','ud.phone','ud.birthday','ud.address')
+        ->join('users_detail as ud','ud.id_user','=','users.id')
+        ->get();
         if($hoso) {
             return response()->json([
                 'message' => 'Data found',
@@ -197,8 +199,15 @@ class HoSoController extends Controller
     public function deleteHoSo(Request $request)
     {
         $temp = UsersDetail::where('id', $request->id)->first();
+        $hoSo = UsersDetail::find($request->id);
+        $temp_anh = $hoSo->anh;        
+        $temp_hoSo = $hoSo->hoSo;        
         $hoso = UsersDetail::where('id', $request->id)->delete();
         if($hoso) {
+            if ($temp_anh != null && file_exists('upload/hoso/' . $temp_anh))
+                unlink('upload/hoso/'.$temp_anh); 
+            if ($temp_hoSo != null && file_exists('upload/tephoso/' . $temp_hoSo))
+                unlink('upload/tephoso/'.$temp_hoSo); 
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Quản trị - Hồ sơ";
@@ -217,5 +226,66 @@ class HoSoController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    public function postTep(Request $request) {
+        $hoSo = UsersDetail::find($request->up_id);
+        $temp_anh = $hoSo->anh;
+        $temp_hoSo = $hoSo->hoSo;
+        $name_temp = $hoSo->surname;
+        $txt = "";
+        $checkAnh = false;
+        $checkHoso = false;
+        $this->validate($request,[
+            // 'fileAnh'  => 'required|mimes:jpg,JPG,png,PNG|max:10480',
+            // 'fileHoso'  => 'required|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx|max:20480',
+            'fileAnh'  => 'mimes:jpg,JPG,png,PNG|max:10480',
+            'fileHoso'  => 'mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx|max:20480',
+        ]);      
+        
+        if ($request->hasFile('fileAnh') && $files = $request->file('fileAnh')) {
+            if ($temp_anh != null && file_exists('upload/hoso/' . $temp_anh))
+                unlink('upload/hoso/'.$temp_anh); 
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/hoso/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }
+            $hoSo->anh = $name;
+            $hoSo->save();
+            $files->move('upload/hoso/', $name);
+            
+            if ($hoSo) {
+                $txt .= "Bổ sung hình ảnh của " . $name_temp . "<br/>";
+            }            
+        }
+
+        if ($request->hasFile('fileHoso') && $files = $request->file('fileHoso')) {
+            if ($temp_hoSo != null && file_exists('upload/tephoso/' . $temp_hoSo))
+                unlink('upload/tephoso/'.$temp_hoSo);     
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/tephoso/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }
+            $hoSo->hoSo = $name;
+            $hoSo->save();
+            $files->move('upload/tephoso/', $name);            
+            if ($hoSo) {
+                $txt .= "Bổ sung tệp hồ sơ của " . $name_temp . "<br/>";
+            }           
+        }
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "Quản lý hồ sơ";
+        $nhatKy->noiDung = ($txt == "" ? "Cập nhật nội dung file trống" : $txt);
+        $nhatKy->save(); 
+        return response()->json([
+            "type" => 'info',
+            "message" => 'File: Đã xử lý các file, vui lòng kiểm tra lại dữ liệu',
+            "code" => 200
+        ]);
     }
 }

@@ -63,7 +63,7 @@
                                                 <td>{{$loop->iteration}}</td>
                                                 <td>{{\HelpFunction::revertCreatedAtGetTime($row->created_at)}}</td>
                                                 <td>{{\HelpFunction::getDateRevertCreatedAt($row->created_at)}}</td>
-                                                <td>{{$row->user->userDetail->surname}}</td>
+                                                <td>{{(isset($row->user->userDetail) ? $row->user->userDetail->surname : "Not know user")}}</td>
                                                 <td>{{$row->chucNang}}</td>
                                                 <td>{!! $row->noiDung!!}</td>
                                                 <td>{{$row->ghiChu}}</td>

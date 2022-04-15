@@ -21,6 +21,8 @@ class CreateUsersDetailsTable extends Migration
             $table->string('birthday',10);
             $table->string('address',255);
             $table->string('phone', 20);
+            $table->string('anh')->nullable();
+            $table->string('hoSo')->nullable();
             $table->timestamps();
         });
     }

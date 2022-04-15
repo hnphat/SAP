@@ -71,6 +71,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('edit', 'HoSoController@editHoSo')->name('ajax.hoso.edit');
         Route::post('update', 'HoSoController@updateHoSo')->name('ajax.hoso.update');
         Route::post('delete', 'HoSoController@deleteHoSo')->name('ajax.hoso.delete');
+        Route::post('ajax/posttep', 'HoSoController@postTep');
     });
     Route::group(['prefix' => 'typecar', 'middleware' => ['f_typecar']], function(){
         Route::get('list','TypeCarController@index')->name('typecar.list');
