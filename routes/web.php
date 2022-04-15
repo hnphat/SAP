@@ -36,6 +36,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     // Realtime
    Route::get('user/changepass','UserController@changePass')->name('changepass.list');
    Route::post('user/change','UserController@change')->name('change');
+   Route::post('user/ajax/posttep','UserController@upPic');
    Route::group(['prefix' => 'user', 'middleware' => ['f_roleuser']], function(){
         Route::get('list', 'UserController@index')->name('user.list');
         Route::get('del/{id}', 'UserController@destroy');

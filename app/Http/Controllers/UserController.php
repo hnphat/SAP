@@ -207,7 +207,7 @@ class UserController extends Controller
         return view('user.pass', ['user' => $user]);
     }
 
-    public function change(Request $request) {
+    public function change(Request $request) {        
         $user = User::find(Auth::user()->id);
         if ($request->passRequest == 'on') {
             $data = ['name' => Auth::user()->name, 'password' => $request->oldPass];
@@ -240,10 +240,11 @@ class UserController extends Controller
 
         $user->email = $request->email;
         $user->save();
-        $userDetail = UsersDetail::where('id_user', Auth::user()->id)->first();
+        $userDetail = UsersDetail::where('id_user', Auth::user()->id)->first();  
         $userDetail->phone = $request->phone;
         $userDetail->address = $request->address;
-        $userDetail->birthday = $request->birthday;
+        $userDetail->birthday = $request->birthday;       
+
         $userDetail->save();
         if($user) {
             $nhatKy = new NhatKy();
@@ -266,4 +267,42 @@ class UserController extends Controller
         }      
         
     }
+
+    public function upPic(Request $request) {
+        $hoSo = UsersDetail::find($request->up_id);
+        $temp_anh = $hoSo->anh;
+        $name = $temp_anh;
+        if ($request->hasFile('fileAnh') && $files = $request->file('fileAnh')) {
+            if ($temp_anh != null && file_exists('upload/hoso/' . $temp_anh))
+                unlink('upload/hoso/'.$temp_anh); 
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/hoso/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }
+            $hoSo->anh = $name;
+            $files->move('upload/hoso/', $name);                
+        }
+        $hoSo->save();
+        if($hoSo) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Quản trị - người dùng";
+            $nhatKy->noiDung = "Cập nhật hình ảnh đại diện";
+            $nhatKy->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã cập nhật hình ảnh. Đang tải ảnh mới....',
+                'code' => 200,
+                'newimage' => $name 
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi: Không thể cập nhật!',
+                'code' => 500
+            ]);
+        }      
+    } 
 }

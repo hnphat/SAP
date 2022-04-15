@@ -5,6 +5,7 @@
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -28,7 +29,7 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container">
+            <div>
                 @if(session('loi'))
                     <div class="alert alert-danger">
                         {{session('loi')}}
@@ -69,13 +70,32 @@
                                     <label for="birthday">Ngày sinh</label>
                                     <input type="text" value="{{$user->userDetail->birthday}}" name="birthday" id="birthday" class="form-control" form="changeInfo"  required="required"/>
                                 </div>
-                                 <div class="form-group">
+                                <div class="form-group">
                                     <label for="address">Địa chỉ</label>
                                     <input type="text" value="{{$user->userDetail->address}}" name="address" id="address" class="form-control" required="required" form="changeInfo"/>
                                 </div>
+                                <form id="upForm" autocomplete="off">
+                                    {{csrf_field()}}
+                                    <input type="hidden" name="up_id" value="{{$user->userDetail->id}}"/>   
+                                    <div class="form-group">
+                                        <label for="fileAnh">Ảnh đại diện</label>
+                                        <input type="file" class="form-control" name="fileAnh" id="fileAnh">
+                                                    <span>Tối đa 10MB (jpg,png,JPG,PNG)</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <button id="upload" class="btn btn-sm btn-info">CẬP NHẬT ẢNH</button> 
+                                    </div>
+                                </form>
+                        </div>
+                        <div class="col-md-4">
+                            @if($user->userDetail && $user->userDetail->anh != null)
+                                <img id="yourImage" style="max-width:400px; height:auto;" src="upload/hoso/{{$user->userDetail->anh}}" alt="Hình ảnh" />
+                            @else
+                                <h2><span class="badge badge-danger">Chưa có ảnh đại diện</span></h2>
+                            @endif
                         </div>
                 </div>
-                <button id="updateInfo" type="button" class="btn btn-success" form="changeInfo">CẬP NHẬT</button>
+                <button id="updateInfo" type="button" class="btn btn-success" form="changeInfo">CẬP NHẬT THÔNG TIN</button>
             </div>
         </div>
         <!-- /.content -->
@@ -119,7 +139,7 @@
                             $('#oldPass').val("");
                             $('#newPass').val("");
                             $('#newPassAgain').val("");
-                            $('.pass').attr('disabled','disabled');
+                            $('.pass').attr('disabled','disabled');                            
                         }
                     },
                     error: function(){
@@ -137,6 +157,50 @@
                 $('.pass').removeAttr('disabled');
             else
                 $('.pass').attr('disabled','disabled');
+        });
+
+        //upload
+        $(document).one('click','#upload',function(e){
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('#upForm').submit(function(e) {
+                e.preventDefault();   
+                var formData = new FormData(this);
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('management/user/ajax/posttep/')}}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $("#upload").attr('disabled', true).html("Đang xử lý....");
+                    },
+                    success: (response) => {
+                        this.reset();
+                        Toast.fire({
+                            icon: 'info',
+                            title: response.message
+                        })
+                        $("#upload").attr('disabled', false).html("CẬP NHẬT ẢNH");
+                        setTimeout(() => {
+                            $("#yourImage").attr('src','upload/hoso/'+response.newimage);
+                        }, 3000);
+                        console.log(response);
+                    },
+                        error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: ' Có lỗi Ảnh: ' + response.responseJSON.errors.fileAnh + " Hồ sơ: " + response.responseJSON.errors.fileHoso 
+                        })
+                        $("#upload").attr('disabled', false).html("CẬP NHẬT ẢNH");
+                        console.log(response);
+                    }
+                });
+            });                
         });
     </script>
 @endsection

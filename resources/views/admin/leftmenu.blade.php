@@ -9,6 +9,18 @@
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img class="img-circle elevation-2" src="upload/hoso/<?php 
+                    try {
+                        if (\Illuminate\Support\Facades\Auth::user()->userDetail->anh != null)
+                            echo \Illuminate\Support\Facades\Auth::user()->userDetail->anh;
+                        else 
+                            echo "noavatar.jpg";
+                    } catch (Throwable $ex) {
+                        echo "noavatar.jpg";
+                    }
+                ?>" alt="Hình ảnh">
+            </div>           
             <div class="info">
                 <a href="{{route('changepass.list')}}" class="d-block">
                     <?php
@@ -201,6 +213,8 @@
                 </li>
                 @endif
                 <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('normal') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-car-side"></i>
                         <p>
@@ -208,6 +222,7 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
@@ -310,6 +325,8 @@
                 </li>
                 @endif
                 <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('normal') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-person-booth"></i>
                         <p>
@@ -317,6 +334,7 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
@@ -385,6 +403,8 @@
                     </ul>
                 </li>
                 <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('normal') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-address-book"></i>
                         <p>
@@ -392,6 +412,7 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview">
                                <li class="nav-item">
                                     <a href="{{route('capxang.denghi')}}" class="nav-link">

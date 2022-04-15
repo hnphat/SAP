@@ -111,6 +111,12 @@ class EventRealController extends Controller
             $total_full += ($duyetPhep + $duyetTangCa);
         }
 
+        if (Auth::user()->hasRole('lead_chamcong')) {
+            $s_duyetphep = 1;
+            $s_duyettangca = 1;
+            $total_full += ($duyetPhep + $duyetTangCa);
+        }
+
         if (Auth::user()->hasRole('work'))
             $s_work = 1;
         if (Auth::user()->hasRole('car'))
