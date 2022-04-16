@@ -237,6 +237,7 @@
                                         </h4>
                             </div>
                             <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
+                            <button id="xoaDeNghi" class="btn btn-danger">XOÁ ĐỀ NGHỊ</button>
                             <!-- <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
                             <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button> -->
                             <hr>
@@ -470,9 +471,9 @@
         $(document).ready(function() {
             // default set
             $("#deNghiHopDong").hide();
+            $("#xoaDeNghi").hide();
             $("#deNghiHuy").hide();
             $("#deNghiChinhSua").hide();
-            $("#xoaDeNghi").hide();
             $("#pkCostAdd").hide();
             $("#pkFreeAdd").hide();
             $("#pkPayAdd").hide();
@@ -536,9 +537,9 @@
                             // BUTTON
                             if (response.data.requestCheck == false) {
                                 $("#deNghiHopDong").show();
+                                $("#xoaDeNghi").show();
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").hide();
-                                $("#xoaDeNghi").show();
                                 $("#pkCostAdd").show();
                                 $("#pkFreeAdd").show();
                                 $("#pkPayAdd").show();
@@ -556,9 +557,9 @@
                                 $("#inForm").hide();
                             } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
+                                $("#xoaDeNghi").hide();
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").hide();
-                                $("#xoaDeNghi").show();
                                 $("#pkCostAdd").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
@@ -578,9 +579,9 @@
                             } else if (response.data.requestCheck == true 
                             && response.data.admin_check == true && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
+                                $("#xoaDeNghi").hide();
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").show();
-                                $("#xoaDeNghi").hide();
                                 $("#pkCostAdd").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
@@ -598,9 +599,9 @@
                             } else if (response.data.requestCheck == true 
                             && response.data.admin_check == true && response.data.lead_check == true) {
                                 $("#deNghiHopDong").hide();
+                                $("#xoaDeNghi").hide();
                                 if (response.data.lead_check_cancel == false)
                                     $("#deNghiHuy").show();
-                                $("#xoaDeNghi").hide();
                                 $("#pkCostAdd").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
@@ -617,9 +618,9 @@
                                 $("#inForm").show();
                             } else {
                                 $("#deNghiHopDong").hide();
+                                $("#xoaDeNghi").hide();
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").hide();
-                                $("#xoaDeNghi").hide();
                                 $("#pkCostAdd").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
@@ -642,9 +643,9 @@
                             title: "Không lấy được dữ liệu"
                         })
                         $("#deNghiHopDong").hide();
+                        $("#xoaDeNghi").hide();
                         $("#deNghiHuy").hide();
                         $("#deNghiChinhSua").hide();
-                        $("#xoaDeNghi").hide();
                         $("#pkCostAdd").hide();
                         $("#pkFreeAdd").hide();
                         $("#pkPayAdd").hide();
@@ -657,12 +658,11 @@
                     url: "management/hd/hd/denghi/chondenghi/" + $("select[name=chonDeNghi]").val(),
                     dataType: "json",
                     success: function(response) {
-                        if (response.code != 500) {
-                            
+                        if (response.code != 500) {                            
                             $("#sHoTen").text(response.data.guestname);
                             $("#sDienThoai").text(response.data.phone);
                             $("#smst").text(response.data.mst);
-                            $("#scmnd").text(response.data.CMND);
+                            $("#scmnd").text(response.data.cmnd);
                             $("#sNgayCap").text(response.data.ngayCap);
                             $("#sNoiCap").text(response.data.noiCap);
                             $("#sNgaySinh").text(response.data.ngaySinh);
@@ -763,10 +763,9 @@
                             loadPKPay(null);
                             loadPKCost(null);
                             $("#deNghiHopDong").hide();
+                            $("#xoaDeNghi").hide();
                             $("#deNghiHuy").hide();
                             $("#deNghiChinhSua").hide();
-                            $("#xoaDeNghi").hide();
-                            $("#deNghiHopDong").hide();
                             $("#pkCostAdd").hide();
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
@@ -1189,7 +1188,7 @@
                     });
                 }
             });
-
+      
             $("#xoaDeNghi").click(function(){
                 if(confirm('Xác nhận xóa đề nghị (hợp đồng) này!')) {
                     $.ajax({
@@ -1226,10 +1225,12 @@
                             $("#cmnd").val("");
                             $("#dienThoai").val("");
                             $("#deNghiHopDong").hide();
+                            $("#xoaDeNghi").hide();
                             $("#deNghiHuy").hide();
                             $("#deNghiChinhSua").hide();
                             $("#xoaDeNghi").hide();
                             $("#deNghiHopDong").hide();
+                            $("#xoaDeNghi").hide();
                             $("#pkCostAdd").hide();
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();

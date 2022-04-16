@@ -2079,6 +2079,11 @@ class HDController extends Controller
     public function xoaDeNghi(Request $request){
         $result = HopDong::find($request->id);
         if($result->admin_check == false && $result->lead_check == false) {
+            $saleoff = SaleOffV2::where('id_hd', $request->id)->get();
+            $saleoffdel = SaleOffV2::where('id_hd', $request->id)->delete();
+            foreach($saleoff as $row) {
+                $package = PackageV2::find($row->id_bh_pk_package)->delete();
+            }            
             $result->delete();
             if($result) {                
                 return response()->json([

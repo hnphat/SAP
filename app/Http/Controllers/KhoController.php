@@ -846,4 +846,9 @@ class KhoController extends Controller
                 break;
         }
     }
+
+     // get report hợp đồng
+     public function getReportHopDong() {
+        return view('khoxe.baocaohopdong');
+    }
 }

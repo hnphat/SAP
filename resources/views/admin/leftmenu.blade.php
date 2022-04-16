@@ -206,9 +206,15 @@
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2.report')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Báo cáo</p>
+                                <p>Báo cáo nhanh</p>
                             </a>
                         </li>
+                        <!-- <li class="nav-item">
+                            <a href="{{route('get.khohd.v2.reporthopdong')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Báo cáo hợp đồng</p>
+                            </a>
+                        </li> -->
                     </ul>
                 </li>
                 @endif
