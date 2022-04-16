@@ -601,7 +601,7 @@ class HDController extends Controller
                     '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
-                'thanhTien' => number_format($gisaleaXe->giaXe),
+                'thanhTien' => number_format($sale->giaXe),
                 'tamUng' => number_format($sale->tienCoc),
                 'tamUngBangChu' => \HelpFunction::convert($sale->tienCoc),
                 'phuKien' => number_format($sumpk),

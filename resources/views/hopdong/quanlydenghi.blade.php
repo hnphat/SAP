@@ -236,7 +236,7 @@
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
                             </div>
-                            <button id="deNghiHopDong" class="btn btn-info">ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
+                            <button id="deNghiHopDong" class="btn btn-info">GỬI ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
                             <button id="xoaDeNghi" class="btn btn-danger">XOÁ ĐỀ NGHỊ</button>
                             <!-- <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
                             <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button> -->
