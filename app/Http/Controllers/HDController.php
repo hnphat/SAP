@@ -1772,7 +1772,7 @@ class HDController extends Controller
 
     public function postEditPKCost(Request $request){
         $check = HopDong::find($request->idSaleHD);
-        if ($check->admin_check != 1) {
+        if ($check->admin_check != 1 && $check->requestCheck == false) {
             $pkpay = PackageV2::find($request->idPkCost);
             $pkpay->name = $request->endpk;
             $pkpay->cost = $request->egiapk;
@@ -1799,7 +1799,7 @@ class HDController extends Controller
         }
         return response()->json([
             'type' => 'warning',
-            'message' => 'Quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
+            'message' => 'Bạn đã gửi đề nghị hoặc quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
             'code' => 200
         ]);
     }
@@ -2602,7 +2602,7 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/PDIXE.docx');
             $sale = HopDong::find($id);
             $kho = KhoV2::find($sale->id_car_kho);
-            $year = $kho->year;
+            $year = (isset($kho) ? $kho->year : "Chưa có năm sản xuất");
             $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -2626,8 +2626,8 @@ class HDController extends Controller
                 'year' => $year,
                 'seat' => $car->seat,
                 'color' => $sale->mau,
-                'vin' => $kho->vin,
-                'frame' => $kho->frame
+                'vin' => (isset($kho) ? $kho->vin : "Chưa có VIN"),
+                'frame' => (isset($kho) ? $kho->frame : "Chưa có Số máy")
             ]);
 
         $pathToSave = 'template/PDIXEDOWN.docx';

@@ -59,7 +59,7 @@
                                     <div>
                                         <label>Số hợp đồng:</label>
                                         <div class="row">
-                                            <div class="col-sm-1">
+                                            <div class="col-sm-2">
                                                 <input name="soHD" min="1" type="number" class="form-control">
                                             </div>
                                         </div>
@@ -501,7 +501,7 @@
                     $("input[name=soHD]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == false) {
-                    $("#duyetDeNghi").show();
+                    $("#duyetDeNghi").hide();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").hide();

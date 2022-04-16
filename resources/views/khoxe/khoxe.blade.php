@@ -134,7 +134,7 @@
                                                 <option value="Bạc">Bạc</option>
                                                 <option value="Xám">Xám</option>
                                                 <option value="Đen">Đen</option>
-                                                <option value="Vàng cát">Vàng cát</option>
+                                                <option value="Vàng_cát">Vàng_cát</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -268,7 +268,7 @@
                                                 <option value="Bạc">Bạc</option>
                                                 <option value="Xám">Xám</option>
                                                 <option value="Đen">Đen</option>
-                                                <option value="Vàng cát">Vàng cát</option>
+                                                <option value="Vàng_cát">Vàng_cát</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
