@@ -218,7 +218,8 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.xuatXe == true)
-                                return "<button id='inBB' data-id='"+row.idhopdong+"' class='btn btn-info btn-sm'>In</button>";                        
+                                return "<button id='inQT' data-id='"+row.idhopdong+"' class='btn btn-info btn-sm'>InQT</button>" +
+                                "<button id='inBB' data-id='"+row.idhopdong+"' class='btn btn-primary btn-sm'>InBB</button>";                        
                             else
                                 return "";                        
                         }
@@ -287,6 +288,9 @@
 
             $(document).on('click','#inBB', function(){
                 open("{{url('management/ketoan/hopdong/bienban/')}}/" + $(this).data('id'),"_blank");
+            });
+            $(document).on('click','#inQT', function(){
+                open("{{url('management/ketoan/hopdong/quyettoan/')}}/" + $(this).data('id'),"_blank");
             });
         });
     </script>

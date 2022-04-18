@@ -414,9 +414,10 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                if ($row->type == 'pay')
+                if ($row->type == 'pay') {
                     $sumpk += $row->cost;
-                $sum += $row->cost;
+                    $sum += $row->cost;
+                }
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -477,7 +478,7 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                $sum += $row->cost;
+                // $sum += $row->cost;
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -566,9 +567,10 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                if ($row->type == 'pay')
+                if ($row->type == 'pay') {
                     $sumpk += $row->cost;
-                $sum += $row->cost;
+                    $sum += $row->cost;
+                }
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -629,7 +631,7 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                $sum += $row->cost;
+                // $sum += $row->cost;
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -718,9 +720,10 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                if ($row->type == 'pay')
+                if ($row->type == 'pay') {
                     $sumpk += $row->cost;
-                $sum += $row->cost;
+                    $sum += $row->cost;
+                }
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -779,7 +782,7 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                $sum += $row->cost;
+                // $sum += $row->cost;
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -866,9 +869,10 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                if ($row->type == 'pay')
+                if ($row->type == 'pay') {
                     $sumpk += $row->cost;
-                $sum += $row->cost;
+                    $sum += $row->cost;
+                }
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -927,7 +931,7 @@ class HDController extends Controller
                     $pkcost .=  $row->name . ', ';
                     $tongChiPhi += $row->cost;
                 }
-                $sum += $row->cost;
+                // $sum += $row->cost;
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -994,6 +998,7 @@ class HDController extends Controller
             $tongChiPhi = 0;
             $i = 1;
             $stt = "";
+            $tang = "";
             $chiPhiChiTiet = "";
             $pkcost = "";
             $package = $sale->package;
@@ -1004,7 +1009,13 @@ class HDController extends Controller
                     $chiPhiChiTiet .=  number_format($row->cost) . '<w:br/>';
                     $tongChiPhi += $row->cost;
                     $i++;
-                }
+                    if ($row->cost_tang == true) {
+                        $tang .= 'Tặng <w:br/>';
+                        $tongChiPhi -= $row->cost;
+                    } else {
+                        $tang .= '<w:br/>';
+                    }
+                }               
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -1031,6 +1042,7 @@ class HDController extends Controller
                 'tenDaiDien' => $sale->guest->name,
                 'phuLucLoaiXe' => $tenXe,
                 'stt' => $stt,
+                'tang' => $tang,
                 'cacLoaiPhi' => $pkcost,
                 'thanhTienPhi' => $chiPhiChiTiet,
                 'tongPhi' => number_format($tongChiPhi),
@@ -1062,6 +1074,7 @@ class HDController extends Controller
             $tongChiPhi = 0;
             $i = 1;
             $stt = "";
+            $tang = "";
             $chiPhiChiTiet = "";
             $pkcost = "";
             $package = $sale->package;
@@ -1072,6 +1085,12 @@ class HDController extends Controller
                     $chiPhiChiTiet .=  number_format($row->cost) . '<w:br/>';
                     $tongChiPhi += $row->cost;
                     $i++;
+                    if ($row->cost_tang == true) {
+                        $tang .= 'Tặng <w:br/>';
+                        $tongChiPhi -= $row->cost;
+                    } else {
+                        $tang .= '<w:br/>';
+                    }
                 }
             }
             $car_detail = $sale->carSale;
@@ -1097,6 +1116,7 @@ class HDController extends Controller
                 'mst' => $sale->guest->mst,
                 'phuLucLoaiXe' => $tenXe,
                 'stt' => $stt,
+                'tang' => $tang,
                 'cacLoaiPhi' => $pkcost,
                 'thanhTienPhi' => $chiPhiChiTiet,
                 'tongPhi' => number_format($tongChiPhi),
@@ -1131,6 +1151,7 @@ class HDController extends Controller
             $k = 1;
             $dem = 0;
             $stt = "";
+            $tang = "";
             $sttPK = "";
             $sttPKB = "";
             $dspk = "";
@@ -1153,6 +1174,12 @@ class HDController extends Controller
                     $chiPhiChiTiet .=  number_format($row->cost) . '<w:br/>';
                     $tongChiPhi += $row->cost;
                     $i++;
+                    if ($row->cost_tang == true) {
+                        $tang .= 'Tặng <w:br/>';
+                        $tongChiPhi -= $row->cost;
+                    } else {
+                        $tang .= '<w:br/>';
+                    }
                 }
                 if ($row->type == 'pay') {
                     $tongPhuKien += $row->cost;
@@ -1198,6 +1225,7 @@ class HDController extends Controller
                 'phuLucLoaiXe' => $tenXe,
                 'thanhTien' => number_format($giaXe),
                 'stt' => $stt,
+                'tang' => $tang,
                 'cpKhac' => $other,
                 'niemYet' => number_format($sale->giaNiemYet),
                 'donGiaPK' => number_format($tongPhuKien),
@@ -1252,6 +1280,7 @@ class HDController extends Controller
             $j = 1;
             $k = 1;
             $dem = 0;
+            $tang = "";
             $stt = "";
             $sttPK = "";
             $sttPKB = "";
@@ -1275,6 +1304,12 @@ class HDController extends Controller
                     $chiPhiChiTiet .=  number_format($row->cost) . '<w:br/>';
                     $tongChiPhi += $row->cost;
                     $i++;
+                    if ($row->cost_tang == true) {
+                        $tang .= 'Tặng <w:br/>';
+                        $tongChiPhi -= $row->cost;
+                    } else {
+                        $tang .= '<w:br/>';
+                    }
                 }
                 if ($row->type == 'pay') {
                     $tongPhuKien += $row->cost;
@@ -1321,6 +1356,7 @@ class HDController extends Controller
                 'phuLucLoaiXe' => $tenXe,
                 'thanhTien' => number_format($giaXe),
                 'stt' => $stt,
+                'tang' => $tang,
                 'cpKhac' => $other,
                 'niemYet' => number_format($sale->giaNiemYet),
                 'donGiaPK' => number_format($tongPhuKien),
@@ -1645,7 +1681,7 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.name as name','package.cost as cost')
+        $pkban = SaleOffV2::select('saleoffv2.*','package.free_kem as free_kem','package.name as name','package.cost as cost')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
         ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')
         ->where([
@@ -1724,12 +1760,33 @@ class HDController extends Controller
         }
     }
 
+    public function getEditPkFree($id) {
+        $pkfree = PackageV2::select('*')
+        ->where([
+            ['id','=', $id]
+        ])->first();
+        if($pkfree) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Get PK Free Success!',
+                'code' => 200,
+                'pkfree' => $pkfree
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function addPkCost(Request $request){
         $check = HopDong::find($request->idHD3);
         if ($check->lead_check != 1) {
             $pkpay = new PackageV2;
             $pkpay->name = $request->namePkCost;
             $pkpay->cost = $request->giaPkCost;
+            $pkpay->cost_tang = $request->tang;
             $pkpay->id_user_create = Auth::user()->id;
             $pkpay->type = 'cost';
             $pkpay->save();
@@ -1775,6 +1832,7 @@ class HDController extends Controller
         if ($check->admin_check != 1 && $check->requestCheck == false) {
             $pkpay = PackageV2::find($request->idPkCost);
             $pkpay->name = $request->endpk;
+            $pkpay->cost_tang = $request->etang;
             $pkpay->cost = $request->egiapk;
             $pkpay->save();
             if($pkpay) {
@@ -1783,6 +1841,41 @@ class HDController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
                 $nhatKy->noiDung = "Điều chỉnh nội dung chi phí cho mã định danh: ".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
+                $nhatKy->save();
+
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã chỉnh sửa!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'type' => 'warning',
+            'message' => 'Bạn đã gửi đề nghị hoặc quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
+            'code' => 200
+        ]);
+    }
+
+    public function postEditPKFree(Request $request){
+        $check = HopDong::find($request->idSaleHDFree);
+        if ($check->admin_check != 1 && $check->requestCheck == false) {
+            $pkpay = PackageV2::find($request->idPkFree);
+            $pkpay->name = $request->ndfree;
+            $pkpay->free_kem = $request->freetang;
+            $pkpay->cost = $request->giafree;
+            $pkpay->save();
+            if($pkpay) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho mã định danh: ".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -1856,6 +1949,7 @@ class HDController extends Controller
             $pkpay = new PackageV2;
             $pkpay->name = $request->namePkFree;
             $pkpay->cost = $request->giaPkFree;
+            $pkpay->free_kem = $request->addfreetang;
             $pkpay->id_user_create = Auth::user()->id;
             $pkpay->type = 'free';
             $pkpay->save();
@@ -2005,6 +2099,8 @@ class HDController extends Controller
         foreach($package as $row) {
             if ($row->type == 'free') continue;
             $sum += $row->cost;
+            if ($row->type == 'cost' && $row->cost_tang == true) 
+                $sum -= $row->cost;
         }
         echo $sum + $sale->giaXe;
     }
@@ -2613,7 +2709,7 @@ class HDController extends Controller
             $car = $sale->carSale;
             $tenXe = $car_detail->name;
             // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
-            $outhd = 'PDI XE và CẤP HOA ' . $sale->guest->name;
+            $outhd = 'PDI XE ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
             $templateProcessor->setValues([
                 'soHopDong' => $soHopDong,
@@ -2631,8 +2727,10 @@ class HDController extends Controller
                 'year' => $year,
                 'seat' => $car->seat,
                 'color' => $sale->mau,
-                'vin' => (isset($kho) ? $kho->vin : "Chưa có VIN"),
-                'frame' => (isset($kho) ? $kho->frame : "Chưa có Số máy")
+                'vin' => $kho->vin,
+                'frame' => $kho->frame
+                // 'vin' => (isset($kho) ? $kho->vin : "Chưa có VIN"),
+                // 'frame' => (isset($kho) ? $kho->frame : "Chưa có Số máy")
             ]);
 
         $pathToSave = 'template/PDIXEDOWN.docx';
@@ -2651,8 +2749,22 @@ class HDController extends Controller
 
     public function inBHBB($id) {
         $outhd = "";
+        $stt = "";
+        $noidung = "";
+        $sl = "";
+        $tong = "";
+        $k = 1;
         $templateProcessor = new TemplateProcessor('template/BH5MON.docx');
             $sale = HopDong::find($id);
+            $package = $sale->package;
+            foreach($package as $row) {                
+                if ($row->type == 'free' && $row->free_kem == true) {
+                    $stt .= $k . '<w:br/>';
+                    $noidung .=  $row->name . '<w:br/>';                  
+                    $sl .= '1<w:br/>';
+                    $k++;
+                }
+            }
             $kho = KhoV2::find($sale->id_car_kho);
             $year = $kho->year;
             $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
@@ -2681,7 +2793,11 @@ class HDController extends Controller
                 'seat' => $car->seat,
                 'color' => $sale->mau,
                 'vin' => $kho->vin,
-                'frame' => $kho->frame
+                'frame' => $kho->frame,
+                'stt' => $stt,
+                'noiDung' => $noidung,
+                'sl' => $sl,
+                'tong' => ($k - 1)
             ]);
 
         $pathToSave = 'template/BH5MONDOWN.docx';
@@ -2727,7 +2843,8 @@ class HDController extends Controller
             $pkfreesl = "";
             $pkfreegia = "";
             $j = 1;
-
+            $tonggiaban = 0;
+            $tongkm = 0;
             foreach($package as $row) {
                 if ($row->type == 'pay') {
                     $sttpkban .= $i . '<w:br/>';
@@ -2735,13 +2852,15 @@ class HDController extends Controller
                     $pkban .= $row->name . '<w:br/>';
                     $pkbangia .= number_format($row->cost) . '<w:br/>';
                     $i++;
+                    $tonggiaban += $row->cost;
                 }
-                if ($row->type == 'free') {
+                if ($row->type == 'free' && $row->free_kem == false) {
                     $sttpkfree .= $j . '<w:br/>';
                     $pkfreesl .= '1 <w:br/>';
                     $pkfree .= $row->name . '<w:br/>';
                     $pkfreegia .= number_format($row->cost) . '<w:br/>';
                     $j++;
+                    $tongkm += $row->cost;
                 }
             }
 
@@ -2771,7 +2890,9 @@ class HDController extends Controller
                 'sttpkfree' => $sttpkfree,
                 'pkfree' => $pkfree,
                 'pkfreesl' => $pkfreesl,
-                'pkfreegia' => $pkfreegia
+                'pkfreegia' => $pkfreegia,
+                'tonggiaban' => number_format($tonggiaban),
+                'tongkm' => number_format($tongkm)
             ]);
 
         $pathToSave = 'template/PHUKIENDOWN.docx';

@@ -194,7 +194,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
         Route::post('hd/denghi/yeucauhuy','HDController@yeuCauHuy');
         Route::get('getedit/pkcost/{id}','HDController@getEditPkCost');
+        Route::get('getedit/pkfree/{id}','HDController@getEditPkFree');
         Route::post('postedit/pkcost/','HDController@postEditPKCost');
+        Route::post('postedit/pkfree/','HDController@postEditPKFree');
 
         //----- quản lý đề nghị
         Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');
@@ -257,6 +259,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hopdongxe','KetoanController@getKeToan')->name('ketoan');
         Route::get('hopdong/danhsach','KetoanController@getDanhSachHopDong');
         Route::get('hopdong/bienban/{id}','KetoanController@inBienBan');
+        Route::get('hopdong/quyettoan/{id}','KetoanController@inQuyetToan');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

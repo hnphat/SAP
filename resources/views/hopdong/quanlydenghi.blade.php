@@ -198,6 +198,7 @@
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
+                                                <th>Tặng</th>
                                                 <th>Giá</th>
                                                 <th>Tác vụ</th>
                                             </tr>
@@ -226,6 +227,7 @@
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
+                                                <th>Loại</th>
                                                 <th>Giá</th>
                                                 <th>Tác vụ</th>
                                             </tr>
@@ -260,7 +262,7 @@
                                                     <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option>
                                                     <option value="3">Đề nghị thực hiện hợp đồng</option>
-                                                    <option value="4">Yêu cầu PDI xe và cấp hoa</option>
+                                                    <option value="4">Yêu cầu PDI xe</option>
                                                     <option value="5">Đề nghị BHBB & 5 món</option>
                                                     <option value="6">Yêu cầu lắp đặt phụ kiện</option>
                                                 </select>
@@ -342,6 +344,13 @@
                                     <label>Giá</label>
                                     <input name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
+                                <div class="form-group">
+                                    <label>Loại</label>
+                                    <select name="addfreetang" class="form-control">
+                                        <option value="1">Kèm theo xe</option>
+                                        <option value="0">Tặng thêm</option>
+                                    </select>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -379,6 +388,13 @@
                                 <div class="form-group">
                                     <label>Giá</label>
                                     <input name="giaPkCost" value="0" placeholder="Nhập giá" type="number" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tặng</label>
+                                    <select name="tang" class="form-control">
+                                        <option value="0">Không</option>
+                                        <option value="1">Có</option>
+                                    </select>
                                 </div>
                             </div>
                         </form>
@@ -419,6 +435,13 @@
                                     <label>Giá</label>
                                     <input name="egiapk" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
+                                <div class="form-group">
+                                    <label>Tặng</label>
+                                    <select name="etang" class="form-control">
+                                        <option value="0">Không</option>
+                                        <option value="1">Có</option>
+                                    </select>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -426,6 +449,53 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                     <button id="btnEditPKCost" class="btn btn-primary" form="editPkCostForm">Lưu</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+     <!-- Edit pk cost medal-->
+     <div class="modal fade" id="editPkFreeMedal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">CHỈNH SỬA QUÀ TẶNG, KHUYẾN MÃI</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <form id="editPkFreeForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="idSaleHDFree">
+                            <input type="hidden" name="idPkFree">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <input name="ndfree" placeholder="Nhập nội dung" type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Giá</label>
+                                    <input name="giafree" value="0" placeholder="Nhập giá" type="number" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Loại</label>
+                                    <select name="freetang" class="form-control">
+                                        <option value="1">Kèm theo xe</option>
+                                        <option value="0">Tặng thêm</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    <button id="btnEditPKFree" class="btn btn-primary" form="editPkCostForm">Lưu</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -803,8 +873,11 @@
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td>" + (response.pkfree[i].free_kem == true ? "Kèm theo xe" : "<strong class='text-success'>Tặng thêm</strong>") + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>" +
-                                "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
+                                "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
+                                + "<button id='editPkFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
+                                "</td>" +                                
                                 "</tr>";
                         }
                         $("#showPKFREE").html(txt);
@@ -870,6 +943,7 @@
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
+                                "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
                                 "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
                                 +"<button id='editPkCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"'  data-toggle='modal' data-target='#editPkCostMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>"+
@@ -1335,12 +1409,38 @@
                                 title: response.message
                             })   
                             $("input[name=endpk]").val(response.pkcost.name);
-                            $("input[name=egiapk]").val(response.pkcost.cost);                                     
+                            $("input[name=egiapk]").val(response.pkcost.cost); 
+                            $("select[name=etang]").val(response.pkcost.cost_tang);                                        
                         },
                         error: function() {
                             Toast.fire({
                                 icon: 'warning',
                                 title: "Không thể load chỉnh sửa chi phí!"
+                            })
+                        }
+                    });
+            });
+
+            $(document).on('click','#editPkFree', function(){
+                $("input[name=idSaleHDFree]").val($(this).data('sale'));
+                $("input[name=idPkFree]").val($(this).data('id'));
+                $.ajax({
+                        url: "{{url('management/hd/getedit/pkfree/')}}" + '/' + $(this).data('id'),
+                        type: "get",
+                        dataType: "json",
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })   
+                            $("input[name=ndfree]").val(response.pkfree.name);
+                            $("input[name=giafree]").val(response.pkfree.cost); 
+                            $("select[name=freetang]").val(response.pkfree.free_kem);                                        
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể load chỉnh sửa quà tặng!"
                             })
                         }
                     });
@@ -1362,6 +1462,31 @@
                         loadPKCost($("input[name=idHopDong]").val());
                         loadTotal($("input[name=idHopDong]").val());
                         $("#editPkCostMedal").modal('hide');
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể chỉnh sửa"
+                        })
+                    }
+                });
+            });
+            $("#btnEditPKFree").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/postedit/pkfree/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: $("#editPkFreeForm").serialize(),
+                    success: function(response) {
+                        $("#editPkFreeForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        loadPKFree($("input[name=idSaleHDFree]").val());
+                        loadTotal($("input[name=idSaleHDFree]").val());
+                        $("#editPkFreeMedal").modal('hide');
                     },
                     error: function() {
                         Toast.fire({
