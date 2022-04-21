@@ -2203,7 +2203,7 @@ class HDController extends Controller
     }
 
     public function duyetDeNghi(Request $request){
-        $result = HopDong::find($request->id);         
+        $result = HopDong::find($request->id);      
         if($request->sohd == 0) {
             return response()->json([
                 'type' => 'warning',
@@ -2221,6 +2221,14 @@ class HDController extends Controller
                 'data' => $result
             ]);
         } 
+
+        if ($request->wait == 1 && $request->daiLy == 1) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Hợp đồng không thể đồng thời là hợp đồng chờ và hợp đồng Đại lý!',
+                'code' => 200
+            ]);
+        }
 
         if((Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) && $result->requestCheck == true) {
             if ($request->wait == 1) {
@@ -2297,6 +2305,13 @@ class HDController extends Controller
 
     public function ganXeHDCho(Request $request){
         $result = HopDong::find($request->id); 
+        if ($result->lead_check_cancel == true) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Hợp đồng này đã huỷ không thể gán xe!',
+                'code' => 200
+            ]);
+        } 
         if($result->id_car_kho != null) {
             return response()->json([
                 'type' => 'warning',
@@ -2620,6 +2635,7 @@ class HDController extends Controller
                 }
             $result->id_car_kho = null;
             $result->hdWait = false;
+            $result->hdDaily = false;
             $code = $result->code;
             $result->code = 0; 
             $result->save();
@@ -2907,5 +2923,331 @@ class HDController extends Controller
         $nhatKy->noiDung = "In yêu cầu lắp phụ kiện số hợp đồng " . $soHopDong;
         $nhatKy->save();
         return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+    public function baoCaoHopDong(Request $request){
+        $_from = \HelpFunction::revertDate($request->tu);
+        $_to = \HelpFunction::revertDate($request->den);
+
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('boss') || Auth::user()->hasRole('ketoan')) {
+            switch($request->baoCao) {
+                case 1: {
+                    $hd = HopDong::orderBy('id','desc')->get();
+                } break;
+                case 2: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 3: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 4: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',true],
+                        ['hdWait','=',false],
+                        ['lead_check_cancel','=',false],
+                        ['hdDaily','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 5: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',true],
+                        ['hdWait','=',true],
+                        ['lead_check_cancel','=',false],
+                        ['hdDaily','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 6: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',true],
+                        ['hdWait','=',false],
+                        ['lead_check_cancel','=',false],
+                        ['hdDaily','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 7: {
+                    $hd = HopDong::where([
+                        ['lead_check_cancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 8: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                default: $type = 0;
+            }
+        } else {
+            switch($request->baoCao) {
+                case 1: {
+                    $hd = HopDong::where('id_user_create','=',Auth::user()->id)
+                    ->orderBy('id','desc')->get();
+                } break;
+                case 2: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',false],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 3: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',false],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 4: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',true],
+                        ['hdWait','=',false],
+                        ['lead_check_cancel','=',false],
+                        ['hdDaily','=',false],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 5: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',true],
+                        ['hdWait','=',true],
+                        ['lead_check_cancel','=',false],
+                        ['hdDaily','=',false],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 6: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',true],
+                        ['hdWait','=',false],
+                        ['lead_check_cancel','=',false],
+                        ['hdDaily','=',true],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 7: {
+                    $hd = HopDong::where([
+                        ['lead_check_cancel','=',true],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                case 8: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',false],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
+                default: abort(403);
+            }
+        }        
+        $i = 1;
+        foreach($hd as $row) {
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                $codeCar = $row->carSale->typeCar->code;
+                $guest = $row->guest->name;
+                $phone = $row->guest->phone;
+                $status = "";
+                if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
+                    $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                } elseif ($row->lead_check_cancel == true) {
+                    $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+                } else {
+                    if ($row->requestCheck == false) 
+                    $status = "<strong class='text-secondary'>Mới tạo</strong>";
+                    elseif ($row->requestCheck == true && $row->admin_check == false)
+                        $status = "<strong class='text-info'>Đợi duyệt (admin)</strong>";
+                    elseif ($row->requestCheck == true 
+                    && $row->admin_check == true 
+                    && $row->lead_check == false)
+                        $status = "<strong class='text-primary'>Đợi duyệt (Trưởng phòng)</strong>";
+                    elseif ($row->requestCheck == true 
+                    && $row->admin_check == true 
+                    && $row->lead_check == true 
+                    && $row->hdWait == true)
+                        $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                    elseif ($row->requestCheck == true 
+                    && $row->admin_check == true 
+                    && $row->lead_check == true 
+                    && $row->hdWait == false)
+                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                }                
+
+                echo "<tr>
+                    <td>".($i++)."</td>
+                    <td>ĐN/0".$row->id."/".$codeCar."</td>
+                    <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                    <td>".$guest."</td>
+                    <td>".$phone."</td>
+                    <td>".$status."</td>
+                    <td>
+                        <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                    </td>
+                </tr>";
+            }            
+        } 
+    }
+
+    public function loadChiTietHopDong(Request $request){
+        $hd = HopDong::find($request->idhopdong);
+        $maDeNghi = "ĐN/".$hd->id."/".$hd->carSale->typeCar->code;
+        $ngayTao = \HelpFunction::getDateRevertCreatedAt($hd->created_at);
+        $soHopDong = "Chưa gán";
+        if ($hd->code != null)
+            $soHopDong = $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA";
+        $tenNhanVien = $hd->user->userDetail->surname;
+        $tenKhachHang = $hd->guest->name;
+        $ngaySinh = $hd->guest->ngaySinh;
+        $soDienThoai = $hd->guest->phone;
+        $maSoThue = $hd->guest->mst;
+        $cmnd = $hd->guest->cmnd;
+        $ngayCap = $hd->guest->ngayCap;
+        $noiCap = $hd->guest->noiCap;
+        $diaChi = $hd->guest->address;
+        $chucVu = $hd->guest->chucVu;
+        //-----------
+        $carSale = TypeCarDetail::find($hd->id_car_sale);
+        //-------
+        $namsx = "Chưa gán";
+        $soKhung = "Chưa gán";
+        $soMay = "Chưa gán";
+        if ($hd->id_car_kho) {
+            $kho = KhoV2::find($hd->id_car_kho);
+            $namsx = $kho->year;
+            $soKhung = $kho->vin;
+            $soMay = $kho->frame;
+        }
+        $tenXeBan = $carSale->name;
+        $mauXeBan = $hd->mau;
+        $giaXeBan = $hd->giaXe;
+        $tienDatCoc = $hd->tienCoc;        
+        $chiTietXe = 'Màu: '.$hd->mau
+        .'; Năm SX: '.$namsx
+        .'; Hộp số: '.$carSale->gear
+        .'; Chỗ ngồi: '.$carSale->seat
+        .'; Động cơ: '.$carSale->machine
+        .'; Nhiên liệu: '.$carSale->fuel;
+        //----------
+        $phi = SaleOffV2::select('package.*')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+        ->where([
+            ['saleoffv2.id_hd','=', $hd->id],
+            ['package.type','=','cost']
+        ])->get();
+        $tongCongPhi = 0;
+        $truPhi = 0;
+        foreach($phi as $row) {
+            $tongCongPhi += $row->cost;
+            if ($row->cost_tang)
+                $truPhi += $row->cost;
+        }            
+        $cacLoaiPhi = $phi;
+        
+        //--------
+        $phuKien = SaleOffV2::select('package.*')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+        ->where([
+            ['saleoffv2.id_hd','=', $hd->id],
+            ['package.type','=','pay']
+        ])->get();
+        $tongPhuKienBan = 0;
+        foreach($phuKien as $row)
+            $tongPhuKienBan += $row->cost;
+        $phuKienBan = $phuKien;
+
+        //--------
+        $phuKienKM = SaleOffV2::select('package.*')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+        ->where([
+            ['saleoffv2.id_hd','=', $hd->id],
+            ['package.type','=','free']
+        ])->get();
+        $tongPhuKienKhuyenMai = 0;
+        foreach($phuKienKM as $row)
+            $tongPhuKienKhuyenMai += $row->cost;
+        $phuKienKhuyenMai = $phuKienKM;
+        $tongGiaTriHopDong = ($hd->giaXe + $tongPhuKienBan + $tongCongPhi) - $truPhi;
+        return response()->json([
+            'type' => 'info',
+            'code' => 200,
+            'message' => "Đã tải thông tin hợp đồng",
+            'maDeNghi' => $maDeNghi,
+            'ngayTao' => $ngayTao,
+            'soHopDong' => $soHopDong,
+            'tenNhanVien' => $tenNhanVien,
+            'tenKhachHang' => $tenKhachHang,
+            'ngaySinh' => \HelpFunction::revertDate($ngaySinh),
+            'soDienThoai' => $soDienThoai,
+            'maSoThue' => $maSoThue,
+            'cmnd' => $cmnd,
+            'ngayCap' => \HelpFunction::revertDate($ngayCap),
+            'noiCap' => $noiCap,
+            'diaChi' => $diaChi,
+            'chucVu' => $chucVu,
+            'tenXeBan' => $tenXeBan,
+            'tenXeBan2' => $tenXeBan,
+            'soKhung' => $soKhung,
+            'soMay' => $soMay,
+            'mauXeBan' => $mauXeBan,
+            'giaXeBan' => number_format($giaXeBan),
+            'tienDatCoc' => number_format($tienDatCoc),
+            'chiTietXe' => $chiTietXe,
+            'cacLoaiPhi' => $cacLoaiPhi,
+            'tongCongPhi' => number_format($tongCongPhi),
+            'phuKienBan' => $phuKienBan,
+            'tongPhuKienBan' => number_format($tongPhuKienBan),
+            'phuKienKhuyenMai' => $phuKienKhuyenMai,
+            'tongPhuKienKhuyenMai' => number_format($tongPhuKienKhuyenMai),
+            'tongGiaTriHopDong' => number_format($tongGiaTriHopDong)
+        ]);
     }
 }

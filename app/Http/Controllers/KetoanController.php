@@ -215,4 +215,8 @@ class KetoanController extends Controller
         //     echo "<script>alert('Chưa xuất xe, chưa thể in quyết toán');</script>";
         // }        
     }
+
+    public function getBaoCaoHopDong(){
+        return view('ketoan.hopdongchitiet');
+    }
 }

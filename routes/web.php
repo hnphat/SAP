@@ -81,6 +81,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('ajax/get','CauHinhController@getAjax');    
         Route::post('ajax/saveconfig','CauHinhController@saveConfig'); 
     });
+    Route::group(['prefix' => 'baocaohopdong', 'middleware' => ['f_baocaohopdong']], function(){
+        Route::get('reporthopdong','KhoController@getReportHopDong')->name('get.khohd.v2.reporthopdong');
+        Route::post('danhsachhopdong','HDController@baoCaoHopDong')->name('baocaohopdong.post');  
+        Route::post('loadchitiet','HDController@loadChiTietHopDong')->name('chitiethopdong.post');  
+    });
     Route::group(['prefix' => 'typecar', 'middleware' => ['f_typecar']], function(){
         Route::get('list','TypeCarController@index')->name('typecar.list');
         Route::get('getlist','TypeCarController@getList')->name('typecar.getlist');
@@ -153,9 +158,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // report kho
         Route::get('report','KhoController@getReport')->name('get.khohd.v2.report');
         Route::get('getreportkho/{chose}/ngayfrom/{ngayfrom}/ngayto/{ngayto}','KhoController@getReportKho');
-
-        // report hợp đồng
-        Route::get('reporthopdong','KhoController@getReportHopDong')->name('get.khohd.v2.reporthopdong');
         
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
@@ -267,6 +269,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hopdong/danhsach','KetoanController@getDanhSachHopDong');
         Route::get('hopdong/bienban/{id}','KetoanController@inBienBan');
         Route::get('hopdong/quyettoan/{id}','KetoanController@inQuyetToan');
+        Route::get('baocaohopdong','KetoanController@getBaoCaoHopDong')->name('ketoan.baocaohopdong');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

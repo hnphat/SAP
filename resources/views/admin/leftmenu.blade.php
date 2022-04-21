@@ -136,6 +136,12 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{route('get.khohd.v2.reporthopdong')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Báo cáo hợp đồng</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{route('sale.kho')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Tồn kho</p>
@@ -185,7 +191,7 @@
                                         <p>Phê duyệt hợp đồng</p>
                                     </a>
                                 </li>
-                            @endif
+                            @endif                            
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
@@ -214,13 +220,7 @@
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Báo cáo nhanh</p>
                             </a>
-                        </li>
-                        <!-- <li class="nav-item">
-                            <a href="{{route('get.khohd.v2.reporthopdong')}}" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Báo cáo hợp đồng</p>
-                            </a>
-                        </li> -->
+                        </li>                        
                     </ul>
                 </li>
                 @endif
@@ -303,7 +303,7 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
                         <li class="nav-item">
-                            <a href="{{route('ketoan')}}" class="nav-link">
+                            <a href="{{route('ketoan.baocaohopdong')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Hợp đồng xe chi tiết</p>
                             </a>

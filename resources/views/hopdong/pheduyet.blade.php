@@ -467,6 +467,56 @@
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
             });
 
+            function defaultVal() {
+                $("#sHoTen").text("");
+                $("#sDienThoai").text("");
+                $("#smst").text("");
+                $("#scmnd").text("");
+                $("#sNgayCap").text("");
+                $("#sNoiCap").text("");
+                $("#sNgaySinh").text("");
+                $("#sDiaChi").text("");
+                $("#sDaiDien").text("");
+                $("#sChucVu").text("");
+                $("#mauSac").val("");
+                $("#xeBan").val("");
+                $("#tamUng").val("");
+                $("#giaBanXe").val("");
+                $("#giaNiemYet").val("");
+                $("#hoaHongMoiGioi").val("");
+                $("#hoTen").val("");
+                $("#cmnd").val("");
+                $("#dienThoai").val("");
+                $("#xeCheck").text("");
+                $("#xeCheckMau").text("");
+                $("input[name=idHopDong]").val("");
+                $("#showXeGan").html("");
+                $("input[name=xeGan]").val("");
+                $("input[name=soHD]").val("");
+                loadPKFree(null);
+                loadPKPay(null);
+                loadPKCost(null);
+                $("#deNghiHopDong").hide();
+                $("#deNghiHuy").hide();
+                $("#deNghiChinhSua").hide();
+                $("#xoaDeNghi").hide();
+                $("#deNghiHopDong").hide();
+                $("#pkCostAdd").hide();
+                $("#pkFreeAdd").hide();
+                $("#pkPayAdd").hide();
+                $("#tamUng").prop('disabled', true);
+                $("#giaBanXe").prop('disabled', true);
+                $("#giaNiemYet").prop('disabled', true);
+                $("#hoaHongMoiGioi").prop('disabled', true);
+                $("#hoTen").prop('disabled', true);
+                $("#cmnd").prop('disabled', true);
+                $("#dienThoai").prop('disabled', true);
+                $("input[name=soHD]").prop('disabled', true);
+                $("#duyetDeNghi").hide();
+                $("#choPhepSua").hide();
+                $("#huyDeNghi").hide();
+            }
+
             function reloadSS(request, admin, lead) {
                 if (lead == true) {
                     $("#duyetDeNghi").hide();
@@ -807,6 +857,8 @@
                             })
                             reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
                             loadList();
+                            // defaultVal();
+                            $("input[name=idHopDong]").val("");
                         },
                         error: function() {
                             Toast.fire({
@@ -836,6 +888,7 @@
                             })
                             reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
                             loadList();
+                            defaultVal();
                         },
                         error: function() {
                             Toast.fire({
@@ -868,6 +921,7 @@
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             loadList();
+                            defaultVal();
                         },
                         error: function() {
                             Toast.fire({
@@ -899,6 +953,7 @@
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             loadList();
+                            defaultVal();
                         },
                         error: function() {
                             Toast.fire({
