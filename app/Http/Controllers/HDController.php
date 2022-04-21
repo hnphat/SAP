@@ -2929,7 +2929,7 @@ class HDController extends Controller
         $_from = \HelpFunction::revertDate($request->tu);
         $_to = \HelpFunction::revertDate($request->den);
 
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('boss') || Auth::user()->hasRole('ketoan')) {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('boss') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('tpkd')) {
             switch($request->baoCao) {
                 case 1: {
                     $hd = HopDong::orderBy('id','desc')->get();

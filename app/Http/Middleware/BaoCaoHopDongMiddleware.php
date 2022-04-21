@@ -20,7 +20,8 @@ class BaoCaoHopDongMiddleware
          Auth::user()->hasRole('sale') ||
          Auth::user()->hasRole('adminsale') ||
          Auth::user()->hasRole('ketoan') ||
-         Auth::user()->hasRole('boss'))
+         Auth::user()->hasRole('boss') ||
+         Auth::user()->hasRole('tpkd'))
             return $next($request);
         else abort(403);
     }
