@@ -56,7 +56,7 @@ class HanhChinhController extends Controller
     public function postBieuMau(Request $request) {
         $bm = new BieuMau();
         $this->validate($request,[
-            'file'  => 'required|mimes:doc,docx,pdf,txt,xls,xlsx,ppt,pptx|max:20480',
+            'file'  => 'required|mimes:jpg,JPG,PNG,png,doc,docx,pdf,txt,xls,xlsx,ppt,pptx|max:20480',
         ]);
     
         if ($files = $request->file('file')) {

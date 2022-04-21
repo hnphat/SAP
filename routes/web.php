@@ -17,8 +17,10 @@ use \Illuminate\Support\Facades\Auth;
 Route::get('show/{id}', 'LaiThuController@showQR')->name('showbv');
 
 Route::get('/', function () {
+    $jsonString = file_get_contents('upload/cauhinh/app.json');
+    $data = json_decode($jsonString, true);   
     if (Auth::check()) {
-        return view('admin.home');
+        return view('admin.home', ['data' => $data]);
     }
     return view('login');
 })->name('trangchu');
@@ -73,6 +75,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('update', 'HoSoController@updateHoSo')->name('ajax.hoso.update');
         Route::post('delete', 'HoSoController@deleteHoSo')->name('ajax.hoso.delete');
         Route::post('ajax/posttep', 'HoSoController@postTep');
+    });
+    Route::group(['prefix' => 'cauhinh', 'middleware' => ['f_hoso']], function(){
+        Route::get('viewlist','CauHinhController@viewList')->name('cauhinh.panel');   
+        Route::get('ajax/get','CauHinhController@getAjax');    
+        Route::post('ajax/saveconfig','CauHinhController@saveConfig'); 
     });
     Route::group(['prefix' => 'typecar', 'middleware' => ['f_typecar']], function(){
         Route::get('list','TypeCarController@index')->name('typecar.list');

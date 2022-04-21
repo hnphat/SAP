@@ -23,10 +23,16 @@ class KetoanController extends Controller
             $result = HopDong::select('*')
             ->where([
                 ['lead_check','=',true],
-                ['lead_check_cancel', '=', false],
-                ['hdWait', '=', false]
+                ['lead_check_cancel', '=', false]
             ])
             ->orderby('id','desc')->get();
+            // $result = HopDong::select('*')
+            // ->where([
+            //     ['lead_check','=',true],
+            //     ['lead_check_cancel', '=', false],
+            //     ['hdWait', '=', false]
+            // ])
+            // ->orderby('id','desc')->get();
         if($result) {
                 echo "<option value='0'>Chọn</option>";
             foreach($result as $row){
@@ -137,7 +143,7 @@ class KetoanController extends Controller
         //----- Đã xuất xe mới in được quyết toán
         $hd = HopDong::find($id);
         $khoXe = KhoV2::find($hd->id_car_kho);
-        if($khoXe->xuatXe == true) {
+        // if($khoXe->xuatXe == true) {
         //-----        
             $outhd = "";
             $templateProcessor = new TemplateProcessor('template/QUYETTOAN.docx');
@@ -205,8 +211,8 @@ class KetoanController extends Controller
             $nhatKy->noiDung = "In quyết toán xe hợp đồng số " . $hd->code;
             $nhatKy->save();
             return response()->download($pathToSave,$outhd . '.docx',$headers);
-        } else {
-            echo "<script>alert('Chưa xuất xe, chưa thể in quyết toán');</script>";
-        }        
+        // } else {
+        //     echo "<script>alert('Chưa xuất xe, chưa thể in quyết toán');</script>";
+        // }        
     }
 }

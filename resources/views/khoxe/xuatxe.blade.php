@@ -218,10 +218,9 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.xuatXe == true)
-                                return "<button id='inQT' data-id='"+row.idhopdong+"' class='btn btn-info btn-sm'>InQT</button>" +
-                                "<button id='inBB' data-id='"+row.idhopdong+"' class='btn btn-primary btn-sm'>InBB</button>";                        
+                                return "<button id='inBB' data-id='"+row.idhopdong+"' class='btn btn-primary btn-sm'>InBB</button>";                        
                             else
-                                return "";                        
+                                return "<button id='inQT' data-id='"+row.idhopdong+"' class='btn btn-info btn-sm'>InQT</button>";                        
                         }
                     }
                 ]

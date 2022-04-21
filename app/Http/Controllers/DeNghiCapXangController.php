@@ -59,9 +59,11 @@ class DeNghiCapXangController extends Controller
             $nhatKy->save();
 
             //-----
+            $jsonString = file_get_contents('upload/cauhinh/app.json');
+            $data = json_decode($jsonString, true); 
                 if ($userDuyetEmail)
                     Mail::to($emailDuyet)->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
-                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetCapXangTBP(['Phòng hành chính',$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
+                Mail::to($data['emailNhienLieu'])->send(new DuyetCapXangTBP(['Phòng hành chính',$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
             //-----
 
             return redirect()

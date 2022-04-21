@@ -1201,7 +1201,9 @@ class NhanSuController extends Controller
                 $nhatKy->noiDung = "Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                 $nhatKy->save();
                 // -------
-                Mail::to("phongnhansu@hyundailongxuyen.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                $data = json_decode($jsonString, true); 
+                Mail::to($data['emailPhep'])->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
                 // -------
                 return response()->json([
                     "type" => "info",
@@ -1252,7 +1254,9 @@ class NhanSuController extends Controller
                         $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                         $nhatKy->save();
                         // -------
-                            Mail::to("phongnhansu@hyundailongxuyen.com")->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                        $jsonString = file_get_contents('upload/cauhinh/app.json');
+                        $data = json_decode($jsonString, true); 
+                        Mail::to($data['emailPhep'])->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
                         // -------
                         return response()->json([
                             "type" => "info",

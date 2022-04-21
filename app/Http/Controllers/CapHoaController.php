@@ -54,7 +54,9 @@ class CapHoaController extends Controller
                 .$request->gioGiaoXe."<br/>Ngày giao xe: ". \HelpFunction::revertDate($request->ngayGiaoXe);
                 $nhatKy->save();
                 //-----
-                Mail::to("phonghanhchinh@hyundailongxuyen.com")
+                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                $data = json_decode($jsonString, true); 
+                Mail::to($data['emailCapHoa'])
                 ->send(new CapHoaEmail(["Phòng hành chính",$nhanVien, $khachHang,$dongXe,$num,$gioGiaoXe,$ngayGiaoXe,$ghiChu]));
                 Mail::to("bichlien@hyundailongxuyen.com")
                 ->send(new CapHoaEmail(["Bộ phận cấp hoa",$nhanVien, $khachHang,$dongXe,$num,$gioGiaoXe,$ngayGiaoXe,$ghiChu]));

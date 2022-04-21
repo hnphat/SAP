@@ -224,7 +224,9 @@ class LaiThuController extends Controller
             $nhatKy->save();
 
             //---
-                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new TraXe(['Phòng hành chính',$nguoiYeuCau,$ngayDi,$ngayTra,$xeDangKy,$km,$kmXang,$str,$hoSo]));
+                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                $data = json_decode($jsonString, true); 
+                Mail::to($data['emailTraXe'])->send(new TraXe(['Phòng hành chính',$nguoiYeuCau,$ngayDi,$ngayTra,$xeDangKy,$km,$kmXang,$str,$hoSo]));
             //---
 
             return redirect()->route('laithu.pay')->with('succ','Đã gửi yêu cầu trả xe!');
@@ -292,9 +294,11 @@ class LaiThuController extends Controller
                 $nhatKy->save();
 
                 //---
+                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                $data = json_decode($jsonString, true); 
                 if ($userDuyetEmail)
                     Mail::to($emailDuyet)->send(new DuyetXeDemoTBP([$nguoiDuyet,$nguoiYeuCau,$ngayDangKy,$carname,$lyDo,$km,$kmXang,$str,$batDau,$ketThuc]));
-                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetXeDemoTBP(['Phòng hành chính',$nguoiYeuCau,$ngayDangKy,$carname,$lyDo,$km,$kmXang,$str,$batDau,$ketThuc]));
+                Mail::to($data['emailDuyetXe'])->send(new DuyetXeDemoTBP(['Phòng hành chính',$nguoiYeuCau,$ngayDangKy,$carname,$lyDo,$km,$kmXang,$str,$batDau,$ketThuc]));
                 //---
                 return redirect()->route('laithu.reg')->with('succ','Đã đăng ký xe lái thử');
             } else {

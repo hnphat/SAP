@@ -100,6 +100,7 @@
                                    <option value="BBH">Biên bản họp</option>
                                    <option value="CS">Chính sách</option>
                                    <option value="NQ">Nội quy - quy định</option>
+                                   <option value="ANH">Các loại hình ảnh</option>
                                    <option value="K">Khác</option>
                                </select>
                             </div>
@@ -114,7 +115,7 @@
                             <div class="form-group">
                                 <input type="file" class="form-control" name="file" placeholder="Choose File" id="file">
                                 <span class="text-danger">{{ $errors->first('file') }}</span>
-                                <span>Tối đa 20MB (doc,docx,pdf,txt,xls,xlsx,ppt,pptx)</span>
+                                <span>Tối đa 20MB (jpg,png,doc,docx,pdf,txt,xls,xlsx,ppt,pptx)</span>
                             </div>
                             <div class="form-group">
                                <label>Hiển thị</label> 
@@ -170,6 +171,7 @@
                                    <option value="BBH">Biên bản họp</option>
                                    <option value="CS">Chính sách</option>
                                    <option value="NQ">Nội quy - quy định</option>
+                                   <option value="ANH">Các loại hình ảnh</option>
                                    <option value="K">Khác</option>                                    
                                </select>
                             </div>

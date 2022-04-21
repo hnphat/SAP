@@ -507,7 +507,9 @@ class VPPController extends Controller
                 $nhatKy->noiDung = "Tạo đề nghị (phiếu xuất) <strong>".$code."</strong>";
                 $nhatKy->save(); 
                 //-----
-                Mail::to("phonghanhchinh@hyundailongxuyen.com")->send(new DuyetVanPhongPham([$nguoiYeuCau,$codeEmail,$noiDung]));
+                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                $data = json_decode($jsonString, true); 
+                Mail::to($data['emailCCDC'])->send(new DuyetVanPhongPham([$nguoiYeuCau,$codeEmail,$noiDung]));
                 //-----
                     return response()->json([
                         'code' => 200,        

@@ -93,6 +93,12 @@
                                     </a>
                                 </li>
                         @endif
+                        <li class="nav-item">
+                            <a href="{{route('cauhinh.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Cấu hình hệ thống</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">
