@@ -3150,6 +3150,7 @@ class HDController extends Controller
         $ngayCap = $hd->guest->ngayCap;
         $noiCap = $hd->guest->noiCap;
         $diaChi = $hd->guest->address;
+        $daiDien = $hd->guest->daiDien;
         $chucVu = $hd->guest->chucVu;
         //-----------
         $carSale = TypeCarDetail::find($hd->id_car_sale);
@@ -3232,6 +3233,7 @@ class HDController extends Controller
             'ngayCap' => \HelpFunction::revertDate($ngayCap),
             'noiCap' => $noiCap,
             'diaChi' => $diaChi,
+            'daiDien' => $daiDien,
             'chucVu' => $chucVu,
             'tenXeBan' => $tenXeBan,
             'tenXeBan2' => $tenXeBan,

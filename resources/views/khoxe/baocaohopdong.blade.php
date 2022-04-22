@@ -114,8 +114,8 @@
           <h6>CMND/CCCD: <span id="cmnd" class="text-bold"></span>
           - Ngày Cấp: <span id="ngayCap" class="text-bold"></span> 
           - Nơi cấp: <span id="noiCap" class="text-bold"></span></h6>
-          <h6>Địa chỉ: <span id="diaChi" class="text-bold"></span>
-          - Chức vụ: <span id="chucVu" class="text-bold"></span></h6>
+          <h6>Địa chỉ: <span id="diaChi" class="text-bold"></span></h6>
+          <h6>Đại diện: <span id="daiDien" class="text-bold"></span> - Chức vụ: <span id="chucVu" class="text-bold"></span></h6>
           <hr>
           <h5 class="text-bold">THÔNG TIN XE BÁN</h5>
           <h6>Xe bán: <span id="tenXeBan" class="text-bold"></span>
@@ -270,6 +270,7 @@
                     $('#ngayCap').text(response.ngayCap);
                     $('#noiCap').text(response.noiCap);
                     $('#diaChi').text(response.diaChi);
+                    $('#daiDien').text(response.daiDien);
                     $('#chucVu').text(response.chucVu);
                     $('#tenXeBan').text(response.tenXeBan);
 

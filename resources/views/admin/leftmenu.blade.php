@@ -305,14 +305,14 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
                         <li class="nav-item">
                             <a href="{{route('ketoan.baocaohopdong')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Hợp đồng xe chi tiết</p>
                             </a>
                         </li>       
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))                        
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
