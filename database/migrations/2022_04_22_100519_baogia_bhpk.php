@@ -1,0 +1,54 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class BaogiaBhpk extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('baogia_bhpk', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('id_user_create')->unsigned();
+            $table->foreign('id_user_create')->references('id')->on('users');
+            $table->boolean('isPKD')->default(false);
+            $table->string('hopDongKD')->nullable();
+            $table->integer('nvKD')->nullable();
+            $table->string('thoiGianVao');
+            $table->string('thoiGianHoanThanh');
+            $table->string('hoTen');
+            $table->string('dienThoai');
+            $table->string('mst')->nullable();
+            $table->string('diaChi');
+            $table->string('bienSo')->nullable();
+            $table->string('soKhung')->nullable();
+            $table->string('soMay')->nullable();
+            $table->string('thongTinXe')->nullable();
+            $table->boolean('isGuest')->default(true);
+            $table->string('taiXe')->nullable();
+            $table->string('dienThoaiTaiXe')->nullbale();
+            $table->string('yeuCau');
+            $table->boolean('inProcess')->default(false);
+            $table->boolean('isDone')->default(false);
+            $table->string('lyDoHuy')->nullable();
+            $table->boolean('isCancel')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('baogia_bhpk');
+    }
+}

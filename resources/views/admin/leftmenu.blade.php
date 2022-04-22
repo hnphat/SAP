@@ -199,6 +199,57 @@
                             @endif                            
                     </ul>
                 </li>
+                <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fab fa-servicestack"></i>
+                        <p>
+                            <strong>DỊCH VỤ</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    @endif
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý khách hàng</p>
+                            </a>
+                        </li>   
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý bảo hiểm</p>
+                            </a>
+                        </li>      
+                        <li class="nav-item">
+                            <a href="{{route('phukien.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý phụ kiện</p>
+                            </a>
+                        </li>      
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Danh sách hạng mục</p>
+                            </a>
+                        </li>   
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Báo cáo</p>
+                            </a>
+                        </li>      
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Báo cáo tiến độ</p>
+                            </a>
+                        </li>                             
+                    </ul>
+                </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))

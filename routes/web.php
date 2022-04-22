@@ -616,6 +616,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','NhatKyController@getList')->name('nhatky.list');   
         Route::get('ajax/xem','NhatKyController@loadList');      
     });
+
+    Route::group(['prefix' => 'dichvu'], function(){
+        Route::get('phukienpanel','DichVuController@phuKienPanel')->name('phukien.panel');        
+    });
 });
 
 // Route::get('mail', function () { 

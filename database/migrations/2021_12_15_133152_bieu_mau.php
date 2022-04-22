@@ -22,7 +22,7 @@ class BieuMau extends Migration
             $table->string('moTa')->nullable();
             $table->string('ghiChu')->nullable();
             $table->string('url')->nullable();
-            $table->enum('type', ['TB', 'BM', 'CT', 'TBKD', 'GX']);
+            $table->enum('type', ['TB','BM','TBKD','GX','HĐ','CT','QĐ','CV','BBH','CS','NQ','K','ANH']);
             $table->boolean('allow')->default(false);
             $table->boolean('all')->default(false);
             // $table->integer('user_see')->unsigned();
