@@ -291,11 +291,12 @@
                                 "<td>" + (response.cacLoaiPhi[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
                                 "</tr>"; 
                                 if (response.cacLoaiPhi[i].cost_tang == true)  
-                                    tangChiPhi += response.cacLoaiPhi[i].cost;                         
+                                    tangChiPhi += parseInt(response.cacLoaiPhi[i].cost);                         
                         }
-                    $("#cacLoaiPhi").html(cacLoaiPhi);
-                    $('#tongCongPhi').text(response.tongCongPhi);
-                    $('#chiPhiTang').text(" (Đã bao gồm chi phí tặng: " + tangChiPhi.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,').replaceAll('.0', '') + ")");
+                        $("#cacLoaiPhi").html(cacLoaiPhi);                   
+                    let tongCongFinal = parseInt(response.tongCongPhi.replaceAll(',', '')) - parseInt(tangChiPhi.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,').replaceAll('.0', '').replaceAll(',', ''));
+                    $('#tongCongPhi').text(tongCongFinal.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,').replaceAll('.0', ''));
+                    $('#chiPhiTang').text(" (Đã trừ chi phí tặng: " + tangChiPhi.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,').replaceAll('.0', '') + ")");
                     let phuKienBan = "";
                     for(let i = 0; i < response.phuKienBan.length; i++) {
                         phuKienBan += "<tr>" +

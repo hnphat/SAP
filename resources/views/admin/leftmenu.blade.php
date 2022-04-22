@@ -135,12 +135,17 @@
                                         <p>Quản lý đề nghị</p>
                                     </a>
                                 </li>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
                                     <a href="{{route('get.khohd.v2.reporthopdong')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Báo cáo hợp đồng</p>
                                     </a>
                                 </li>
+                                @endif
                                 <li class="nav-item">
                                     <a href="{{route('sale.kho')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>

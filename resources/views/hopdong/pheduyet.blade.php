@@ -191,6 +191,7 @@
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
                                                 <th>Giá</th>
+                                                <th>Tặng</th>
                                             </tr>
                                             <tbody id="showPKCOST">
                                             </tbody>
@@ -214,6 +215,8 @@
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
+                                                <th>Giá</th>
+                                                <th>Loại</th>
                                             </tr>
                                             <tbody id="showPKFREE">
                                             </tbody>
@@ -741,6 +744,8 @@
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + "</td>" +
+                                "<td>" + (response.pkfree[i].free_kem == true ? "Kèm theo xe" : "<strong class='text-success'>Tặng thêm</strong>") + "</td>" +
                                 "</tr>";
                         }
                         $("#showPKFREE").html(txt);
@@ -792,16 +797,21 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
+                        tru = 0;
                         for(let i = 0; i < response.pkcost.length; i++) {
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
+                                "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
                                 "</tr>";
                             sum += parseInt(response.pkcost[i].cost);
+                            if (response.pkcost[i].cost_tang == true) 
+                                tru += parseInt(response.pkcost[i].cost);
                         }
+                        let totalTang = sum - tru;
                         $("#showPKCOST").html(txt);
-                        $("#xtongCost").text(formatNumber(sum));
+                        $("#xtongCost").text(formatNumber(totalTang) + " (Đã trừ chi phí tặng " +formatNumber(tru)+")");
                     },
                     error: function() {
                         Toast.fire({
