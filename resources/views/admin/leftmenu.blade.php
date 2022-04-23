@@ -213,7 +213,7 @@
                     @endif
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('phukien.khachhang')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý khách hàng</p>
                             </a>
@@ -231,7 +231,7 @@
                             </a>
                         </li>      
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('dichvu.hangmuc')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Danh sách hạng mục</p>
                             </a>

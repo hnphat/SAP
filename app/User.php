@@ -47,6 +47,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Guest', 'id_user_create', 'id');
     }
 
+    public function guestDichVu() {
+        return $this->hasMany('App\GuestDv', 'id_user_create', 'id');
+    }
+
     public function bieuMau() {
         return $this->hasMany('App\BieuMau', 'user_create', 'id');
     }

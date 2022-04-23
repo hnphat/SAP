@@ -18,7 +18,7 @@ class GuestDichvu extends Migration
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->string('hoTen');
-            $table->string('dienThoai');
+            $table->string('dienThoai')->unique();
             $table->string('mst')->nullable();
             $table->string('diaChi');
             $table->string('bienSo')->nullable();
@@ -26,7 +26,7 @@ class GuestDichvu extends Migration
             $table->string('soMay')->nullable();
             $table->string('thongTinXe')->nullable();
             $table->string('taiXe')->nullable();
-            $table->string('dienThoaiTaiXe')->nullbale();
+            $table->string('dienThoaiTaiXe')->nullable();
             $table->timestamps();
         });
     }

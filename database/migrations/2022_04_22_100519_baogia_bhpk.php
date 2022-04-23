@@ -21,7 +21,9 @@ class BaogiaBhpk extends Migration
             $table->string('hopDongKD')->nullable();
             $table->integer('nvKD')->nullable();
             $table->string('thoiGianVao');
+            $table->string('ngayVao');
             $table->string('thoiGianHoanThanh');
+            $table->string('ngayHoanThanh');
             $table->string('hoTen');
             $table->string('dienThoai');
             $table->string('mst')->nullable();
@@ -30,7 +32,6 @@ class BaogiaBhpk extends Migration
             $table->string('soKhung')->nullable();
             $table->string('soMay')->nullable();
             $table->string('thongTinXe')->nullable();
-            $table->boolean('isGuest')->default(true);
             $table->string('taiXe')->nullable();
             $table->string('dienThoaiTaiXe')->nullbale();
             $table->string('yeuCau');

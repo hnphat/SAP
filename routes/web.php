@@ -618,7 +618,33 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'dichvu'], function(){
-        Route::get('phukienpanel','DichVuController@phuKienPanel')->name('phukien.panel');        
+        // quản lý phụ kiện
+        Route::get('phukienpanel','DichVuController@phuKienPanel')->name('phukien.panel');     
+        Route::post('phukien/timhopdong','DichVuController@timHopDong')->name('timhopdong');  
+        Route::post('phukien/timkhachhang','DichVuController@timKhachHang')->name('timkhachhang');        
+        Route::post('phukien/postbaogia','DichVuController@postBaoGia')->name('postbaogia');        
+        Route::post('phukien/editbaogia','DichVuController@editBaoGia')->name('editbaogia');        
+
+
+        // quản lý khách hàng
+        Route::get('khachhang','DichVuController@khachHangPanel')->name('phukien.khachhang');   
+        Route::get('get/list','DichVuController@getKhachHang');    
+        Route::post('guest/add','DichVuController@addKhachHang');    
+        Route::post('guest/delete','DichVuController@delKhachHang');    
+        Route::post('guest/edit/show/','DichVuController@getKhachHangEdit'); 
+        Route::post('guest/update/','DichVuController@updateKhachHang'); 
+
+        // quản lý hạng mục
+        Route::get('hangmuc','DichVuController@hangMucPanel')->name('dichvu.hangmuc');   
+        Route::get('hangmuc/get/list','DichVuController@getHangMuc');    
+        Route::post('hangmuc/guest/add','DichVuController@addHangMuc');  
+        Route::post('hangmuc/guest/delete','DichVuController@delHangMuc');      
+        Route::post('hangmuc/guest/edit/show/','DichVuController@getHangMucEdit'); 
+        Route::post('hangmuc/guest/update/','DichVuController@updateHangMuc'); 
+
+
+
+
     });
 });
 

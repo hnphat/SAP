@@ -18,7 +18,7 @@ class BaoHiemPhuKien extends Migration
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->boolean('isPK')->default(true);
-            $table->string('ma');
+            $table->string('ma')->unique();
             $table->string('noiDung');
             $table->string('dvt');
             $table->integer('donGia')->nullable();

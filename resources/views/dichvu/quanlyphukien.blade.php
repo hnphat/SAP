@@ -78,13 +78,13 @@
                                     <th>Ngày vào</th>
                                 </tr>
                                 <tbody style="font-size: 10pt;">
-                                    <tr id="tes">
+                                    <tr id="tes" data-id="">
                                         <td>BG01-202204</td>
                                         <td>67A-21322</td>
                                         <td>RUOSQKOMSS0223232</td>
                                         <td>16/01/2021</td>
                                     </tr>
-                                    <tr id="tes">
+                                    <tr id="tes" data-id="">
                                         <td>BG01-202204</td>
                                         <td>67A-21322</td>
                                         <td>RUOSQKOMSS0223232</td>
@@ -96,60 +96,80 @@
                </div>
                <div class="col-md-8">
                     <div class="container">
-                        <button class="btn btn-success btn-sm">Thêm mới</button>
-                        <button class="btn btn-info btn-sm">Lưu</button>
-                        <button class="btn btn-secondary btn-sm">Không Lưu</button>
-                        <button class="btn btn-primary btn-sm">Thực hiện</button>
-                        <button class="btn btn-warning btn-sm">Hoàn tất</button>    
-                        <button class="btn btn-danger btn-sm">Huỷ BG</button>    
+                        <button id="add" class="btn btn-success btn-sm">Thêm mới</button>
+                        <button id="save" class="btn btn-info btn-sm">Lưu</button>
+                        <button id="edit" class="btn btn-primary btn-sm">Sửa</button>
+                        <button id="notsave" class="btn btn-secondary btn-sm">Không Lưu</button>
+                        <button id="process" class="btn btn-primary btn-sm">Thực hiện</button>
+                        <button id="done" class="btn btn-warning btn-sm">Hoàn tất</button>    
+                        <button id="cancel" class="btn btn-danger btn-sm">Huỷ BG</button>    
                         <button id="in" class="btn btn-secondary"><span class="fas fa-print"></span> IN</button>
                         <hr>                
                         <div class="row">   
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Số báo giá</label><br/>                                      
-                                    <input type="text" name="soBaoGia" class="form-control">                                                                        
+                                    <input id="soBaoGia" type="text" name="soBaoGia" class="form-control">                                                                        
+                                    <input type="hidden" name="eid" id="eid">
                                 </div>        
-                            </div>        
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Thời gian xe vào</label><br/>                                      
-                                    <input type="text" name="ngayVao" class="form-control">                                                                        
-                                </div>        
-                            </div>     
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Thời gian xe ra</label><br/>                                      
-                                    <input type="text" name="ngayRa" class="form-control">                                                                        
-                                </div>        
-                            </div>                                                
+                            </div>                                    
                         </div>
+                        <hr>
+                        <h4 class="text-bold text-info">TIẾN ĐỘ</h4>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Thời gian vào</label><br/>                                      
+                                    <input id="gioVao" type="time" name="gioVao" class="form-control">                                                                        
+                                </div>        
+                            </div>  
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Ngày vào</label><br/>                                      
+                                    <input id="ngayVao" type="date" name="ngayVao" class="form-control">                                                                        
+                                </div>        
+                            </div> 
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Thời gian ra</label><br/>                                      
+                                    <input id="gioRa" type="time" name="gioRa" class="form-control">                                                                        
+                                </div>        
+                            </div>  
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Ngày ra</label><br/>                                      
+                                    <input id="ngayRa" type="date" name="ngayRa" class="form-control">                                                                        
+                                </div>        
+                            </div> 
+                        </div>
+                        <hr>
+                        <h4 class="text-bold text-info">TÌM THÔNG TIN</h4>
                         <div class="row">                            
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Loại báo giá</label>
-                                    <select name="isPKD" class="form-control">
-                                        <option value="1">Báo giá kinh doanh (sale)</option>
+                                    <select id="isPKD" name="isPKD" class="form-control">
+                                        <option value="1">Báo giá kinh doanh</option>
                                         <option value="0">Báo giá khai thác</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                        <label><span class="text-danger">(*)</span>Nhập mã HD hoặc sđt KH</label><br/>                                      
-                                        <input placeholder="Nhập số hợp đồng vd: 233" type="text" name="timHopDong" class="form-control">                                                                        
+                                        <label><span class="text-danger">(*)</span>Nhập thông tin tìm kiếm</label><br/>                                      
+                                        <input id="timHopDong" placeholder="Nhập số hợp đồng" type="text" name="timHopDong" class="form-control">                                                                        
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                         <label>Hợp đồng số</label><br/>                                      
-                                        <input type="text" name="hopDong" class="form-control">                                                                        
+                                        <input disabled id="hopDong" type="text" name="hopDong" class="form-control">                                                                        
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                         <label>NV Kinh doanh</label><br/>                                      
-                                        <input type="text" name="nhanVien" class="form-control">                                                                        
+                                        <input disabled id="nhanVien" type="text" name="nhanVien" class="form-control">                                                                        
                                 </div>
                             </div>
                         </div>
@@ -159,19 +179,19 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Họ tên</label><br/>                                      
-                                    <input type="text" name="hoTen" class="form-control">                                                                        
+                                    <input id="hoTen" type="text" name="hoTen" class="form-control">                                                                        
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Điện thoại</label><br/>                                      
-                                    <input type="text" name="dienThoai" class="form-control">                                                                        
+                                    <input id="dienThoai" type="number" name="dienThoai" class="form-control">                                                                        
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>MST</label><br/>                                      
-                                    <input type="text" name="mst" class="form-control">                                                                        
+                                    <input id="mst" type="text" name="mst" class="form-control">                                                                        
                                 </div>                                
                             </div>
                         </div>
@@ -179,7 +199,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Địa chỉ</label><br/>                                      
-                                    <input type="text" name="diaChi" class="form-control">                                                                        
+                                    <input id="diaChi" type="text" name="diaChi" class="form-control">                                                                        
                                 </div>        
                             </div>                                                
                         </div>
@@ -187,13 +207,13 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Người liên hệ</label><br/>                                      
-                                    <input type="text" name="taiXe" class="form-control">                                                                        
+                                    <input id="taiXe" type="text" name="taiXe" class="form-control">                                                                        
                                 </div>        
                             </div>    
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Điện thoại</label><br/>                                      
-                                    <input type="text" name="dienThoaiTaiXe" class="form-control">                                                                        
+                                    <input id="dienThoaiTaiXe" type="number" name="dienThoaiTaiXe" class="form-control">                                                                        
                                 </div>        
                             </div>                                           
                         </div>
@@ -203,19 +223,19 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Biển số</label><br/>                                      
-                                    <input type="text" name="bienSo" class="form-control">                                                                        
+                                    <input id="bienSo" type="text" name="bienSo" class="form-control">                                                                        
                                 </div>        
                             </div>    
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Số khung</label><br/>                                      
-                                    <input type="text" name="soKhung" class="form-control">                                                                        
+                                    <input id="soKhung" type="text" name="soKhung" class="form-control">                                                                        
                                 </div>        
                             </div> 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Số máy</label><br/>                                      
-                                    <input type="text" name="soMay" class="form-control">                                                                        
+                                    <input id="soMay" type="text" name="soMay" class="form-control">                                                                        
                                 </div>        
                             </div>   
                         </div>
@@ -223,7 +243,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Chi tiết xe</label><br/>                                      
-                                    <input placeholder="VD: Hyundai; Màu đỏ; Năm SX: 2022;" type="text" name="chiTietXe" class="form-control">                                                                        
+                                    <input id="thongTinXe" placeholder="VD: Hyundai; Màu đỏ; Năm SX: 2022;" type="text" name="chiTietXe" class="form-control">                                                                        
                                 </div>        
                             </div>   
                         </div>
@@ -232,73 +252,75 @@
                         <div class="row"> 
                             <div class="col-md-12">
                                 <div class="form-group">    
-                                    <input placeholder="Nhập yêu cầu KH" type="text" name="yeuCau" class="form-control">                                                                        
+                                    <input id="yeuCau" placeholder="Nhập yêu cầu KH" type="text" name="yeuCau" class="form-control">                                                                        
                                 </div>        
                             </div>   
                         </div>
                         <hr>
                         <h4 class="text-bold text-info">CHI TIẾT HẠNG MỤC</h4>
-                        <button class="btn btn-success" data-toggle='modal' data-target='#showModal'><span class="fas fa-plus-circle"></span></button>
-                        <div class="row">
-                            <div style="overflow:auto;">
-                                <table class="table table-striped table-bordered" style="font-size:11pt;">
-                                    <tr class="bg-primary">
-                                        <th>Bộ phận</th>  
-                                        <th>Loại</th>                                    
-                                        <th>Mã</th>
-                                        <th>Nội dung</th>
-                                        <th>Đơn vị tính</th>
-                                        <th>Số lượng</th>
-                                        <th>Đơn giá</th>
-                                        <th>Chiết khấu</th>
-                                        <th>Thành tiền</th>
-                                        <th>Tặng</th>
-                                        <th>Thực hiện</th>
-                                        <th>Tác vụ</th>
-                                    </tr>
-                                    <tbody>
-                                        <tr>
-                                            <td>Phụ kiện</td>  
-                                            <td>CONG</td>                                    
-                                            <td>ABC</td>
-                                            <td>Lắp cản trước 5 chỗ</td>
-                                            <td>Cái</td>
-                                            <td>1</td>
-                                            <td>375,500</td>
-                                            <td>0</td>
-                                            <td>375,500</td>
-                                            <td>Không</td>
-                                            <td>Nguyễn Văn Hoàng Phi Hợp</td>
-                                            <td>
-                                                <button class="btn btn-success btn-xs">Sửa</button>
-                                                <button class="btn btn-danger btn-xs">Xoá</button>
-                                            </td>
+                        <div id="showChiTietHangMuc">
+                            <button class="btn btn-success" data-toggle='modal' data-target='#showModal'><span class="fas fa-plus-circle"></span></button>
+                            <div class="row">
+                                <div style="overflow:auto;">
+                                    <table class="table table-striped table-bordered" style="font-size:11pt;">
+                                        <tr class="bg-primary">
+                                            <th>Bộ phận</th>  
+                                            <th>Loại</th>                                    
+                                            <th>Mã</th>
+                                            <th>Nội dung</th>
+                                            <th>Đơn vị tính</th>
+                                            <th>Số lượng</th>
+                                            <th>Đơn giá</th>
+                                            <th>Chiết khấu</th>
+                                            <th>Thành tiền</th>
+                                            <th>Tặng</th>
+                                            <th>Thực hiện</th>
+                                            <th>Tác vụ</th>
                                         </tr>
-                                        <tr>
-                                            <td>Phụ kiện</td>  
-                                            <td>CONG</td>                                    
-                                            <td>ABC</td>
-                                            <td>Lắp cản trước 5 chỗ</td>
-                                            <td>Cái</td>
-                                            <td>1</td>
-                                            <td>375,500</td>
-                                            <td>0</td>
-                                            <td>375,500</td>
-                                            <td>Không</td>
-                                            <td>Nguyễn Văn Hoàng Phi Hợp</td>
-                                            <td>
-                                                <button class="btn btn-success btn-xs">Sửa</button>
-                                                <button class="btn btn-danger btn-xs">Xoá</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>     
-                            </div>                                                  
-                        </div>
+                                        <tbody id="chiTietHangMuc">
+                                            <tr>
+                                                <td>Phụ kiện</td>  
+                                                <td>CONG</td>                                    
+                                                <td>ABC</td>
+                                                <td>Lắp cản trước 5 chỗ</td>
+                                                <td>Cái</td>
+                                                <td>1</td>
+                                                <td>375,500</td>
+                                                <td>0</td>
+                                                <td>375,500</td>
+                                                <td>Không</td>
+                                                <td>Nguyễn Văn Hoàng Phi Hợp</td>
+                                                <td>
+                                                    <button class="btn btn-success btn-xs">Sửa</button>
+                                                    <button class="btn btn-danger btn-xs">Xoá</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Phụ kiện</td>  
+                                                <td>CONG</td>                                    
+                                                <td>ABC</td>
+                                                <td>Lắp cản trước 5 chỗ</td>
+                                                <td>Cái</td>
+                                                <td>1</td>
+                                                <td>375,500</td>
+                                                <td>0</td>
+                                                <td>375,500</td>
+                                                <td>Không</td>
+                                                <td>Nguyễn Văn Hoàng Phi Hợp</td>
+                                                <td>
+                                                    <button class="btn btn-success btn-xs">Sửa</button>
+                                                    <button class="btn btn-danger btn-xs">Xoá</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>     
+                                </div>                                                  
+                            </div>
+                        </div>                        
                         <hr>
-                        <h5>Tổng báo giá: <strong class="text-primary">8,000,000</strong></h5>
-                        <h5>Chiết khấu: <strong class="text-primary">800,000</strong></h5>
-                        <h4>Tổng cần thanh toán: <strong class="text-primary">7,200,000</strong> (Đã bao gồm VAT)</h4>
+                        <h5>Tổng báo giá: <strong class="text-primary" id="tongBaoGia">8,000,000</strong></h5>
+                        <h5>Chiết khấu: <strong class="text-primary" id="chietKhau">800,000</strong></h5>
+                        <h4>Tổng cần thanh toán: <strong class="text-primary" id="tongThanhToan">7,200,000</strong> (Đã bao gồm VAT)</h4>
                     </div>
                </div>
             </div>
@@ -318,19 +340,7 @@
         </div>
         
         <!-- Modal body -->
-        <div class="modal-body">          
-                <!-- <th>Bộ phận</th>  
-                <th>Loại</th>                                    
-                <th>Mã</th>
-                <th>Nội dung</th>
-                <th>Đơn vị tính</th>
-                <th>Số lượng</th>
-                <th>Đơn giá</th>
-                <th>Chiết khấu</th>
-                <th>Thành tiền</th>
-                <th>Tặng</th>
-                <th>Thực hiện</th>
-                <th>Tác vụ</th> -->
+        <div class="modal-body">         
                 <form id="addForm">
                     @csrf
                     <div class="row">
@@ -435,6 +445,311 @@
 
         // show data
         $(document).ready(function() {
+            function startUp() {
+                $("#showChiTietHangMuc").hide();
+                $("#chiTietHangMuc").text('');
+                $("#add").show();
+                $("#save").hide();
+                $("#edit").hide();
+                $("#notsave").hide();
+                $("#process").hide();
+                $("#done").hide();
+                $("#cancel").hide();
+                $("#in").hide();
+                $("#soBaoGia").prop('disabled', true);
+                $("#gioVao").prop('disabled', true);
+                $("#gioRa").prop('disabled', true);
+                $("#ngayRa").prop('disabled', true);
+                $("#ngayVao").prop('disabled', true);
+                $("#soBaoGia").val('');
+                $("#ngayRa").val('');
+                $("#ngayVao").val('');
+                $("#gioVao").val('');
+                $("#gioRa").val('');
+
+                $("#isPKD").prop('disabled', true);
+                $("#timHopDong").prop('disabled', true);
+                $("#hopDong").prop('disabled', true);
+                $("#nhanVien").prop('disabled', true);
+                $("#hoTen").prop('disabled', true);
+                $("#dienThoai").prop('disabled', true);
+                $("#mst").prop('disabled', true);
+                $("#diaChi").prop('disabled', true);
+                $("#taiXe").prop('disabled', true);
+                $("#dienThoaiTaiXe").prop('disabled', true);
+                $("#bienSo").prop('disabled', true);
+                $("#soKhung").prop('disabled', true);
+                $("#soMay").prop('disabled', true);
+                $("#thongTinXe").prop('disabled', true);
+                $("#yeuCau").prop('disabled', true);
+                //----------xoa
+                $("#timHopDong").val('');
+                $("#hopDong").val('');
+                $("#nhanVien").val('');
+                $("#hoTen").val('');
+                $("#dienThoai").val('');
+                $("#mst").val('');
+                $("#diaChi").val('');
+                $("#taiXe").val('');
+                $("#dienThoaiTaiXe").val('');
+                $("#bienSo").val('');
+                $("#soKhung").val('');
+                $("#soMay").val('');
+                $("#thongTinXe").val('');
+                $("#yeuCau").val('');
+                //--------------
+                $("#tongBaoGia").text("");
+                $("#chietKhau").text("");
+                $("#tongThanhToan").text("");
+                $("#eid").val('');
+            }
+            function disAfterSave() {
+                $("#add").show();  
+                $("#edit").show();
+                $("#process").show();
+                $("#cancel").hide();
+                $("#soBaoGia").prop('disabled', true);
+                $("#gioVao").prop('disabled', true);
+                $("#gioRa").prop('disabled', true);
+                $("#ngayRa").prop('disabled', true);
+                $("#ngayVao").prop('disabled', true);
+
+                $("#isPKD").prop('disabled', true);
+                $("#timHopDong").prop('disabled', true);
+                $("#hopDong").prop('disabled', true);
+                $("#nhanVien").prop('disabled', true);
+                $("#hoTen").prop('disabled', true);
+                $("#dienThoai").prop('disabled', true);
+                $("#mst").prop('disabled', true);
+                $("#diaChi").prop('disabled', true);
+                $("#taiXe").prop('disabled', true);
+                $("#dienThoaiTaiXe").prop('disabled', true);
+                $("#bienSo").prop('disabled', true);
+                $("#soKhung").prop('disabled', true);
+                $("#soMay").prop('disabled', true);
+                $("#thongTinXe").prop('disabled', true);
+                $("#yeuCau").prop('disabled', true);
+            }
+            startUp();
+
+            $("#add").click(function(){
+                startUp();
+                $(this).hide();
+                $("#save").show();
+                $("#notsave").show();
+                $("#soBaoGia").val('');
+                $("#ngayRa").prop('disabled', false);
+                $("#ngayVao").prop('disabled', false);
+                $("#gioVao").prop('disabled', false);
+                $("#gioRa").prop('disabled', false);
+                $("#isPKD").prop('disabled', false);
+                $("#timHopDong").prop('disabled', false);
+                $("#hoTen").prop('disabled', false);
+                $("#dienThoai").prop('disabled', false);
+                $("#mst").prop('disabled', false);
+                $("#diaChi").prop('disabled', false);
+                $("#taiXe").prop('disabled', false);
+                $("#dienThoaiTaiXe").prop('disabled', false);
+                $("#bienSo").prop('disabled', false);
+                $("#soKhung").prop('disabled', false);
+                $("#soMay").prop('disabled', false);
+                $("#thongTinXe").prop('disabled', false);
+                $("#yeuCau").prop('disabled', false);
+                $("#showChiTietHangMuc").hide();
+                $("#chiTietHangMuc").text('');
+                $("#eid").val('');
+                $("#soBaoGia").val('');
+                $("#ngayRa").val('');
+                $("#ngayVao").val('');
+                $("#gioVao").val('');
+                $("#gioRa").val('');
+                //----------xoa
+                $("#timHopDong").val('');
+                $("#hopDong").val('');
+                $("#nhanVien").val('');
+                $("#hoTen").val('');
+                $("#dienThoai").val('');
+                $("#mst").val('');
+                $("#diaChi").val('');
+                $("#taiXe").val('');
+                $("#dienThoaiTaiXe").val('');
+                $("#bienSo").val('');
+                $("#soKhung").val('');
+                $("#soMay").val('');
+                $("#thongTinXe").val('');
+                $("#yeuCau").val('');
+                //--------------
+                //--------------
+                $("#tongBaoGia").text("");
+                $("#chietKhau").text("");
+                $("#tongThanhToan").text("");
+            });
+
+            $("#notsave").click(function(){
+                $(this).hide();
+                if ($('#eid').val()) {
+                  $("#save").hide();
+                  disAfterSave();
+                } else {
+                  startUp();
+                }
+            });
+
+            $("#edit").click(function(){
+                $(this).hide();
+                $("#save").show();
+                $("#notsave").show();
+                $("#add").hide();
+                $("#process").hide();
+                $("#done").hide();
+                $("#cancel").hide();
+                $("#in").hide();
+                $("#ngayRa").prop('disabled', false);
+                $("#ngayVao").prop('disabled', false);
+                $("#gioVao").prop('disabled', false);
+                $("#gioRa").prop('disabled', false);
+                $("#isPKD").prop('disabled', false);
+                $("#timHopDong").prop('disabled', false);
+                $("#hoTen").prop('disabled', false);
+                $("#dienThoai").prop('disabled', false);
+                $("#mst").prop('disabled', false);
+                $("#diaChi").prop('disabled', false);
+                $("#taiXe").prop('disabled', false);
+                $("#dienThoaiTaiXe").prop('disabled', false);
+                $("#bienSo").prop('disabled', false);
+                $("#soKhung").prop('disabled', false);
+                $("#soMay").prop('disabled', false);
+                $("#thongTinXe").prop('disabled', false);
+                $("#yeuCau").prop('disabled', false);                
+            });
+
+            $("#save").click(function(){
+                if ($('#eid').val()) {
+                    if (!$("#ngayVao").val() || !$("#gioVao").val())
+                        alert("Bạn chưa nhập thời gian xe vào")
+                    else if (!$("#ngayRa").val() || !$("#gioRa").val())
+                        alert("Bạn chưa nhập thời gian xe hoàn tất")
+                    else if (!$("#hoTen").val() || !$("#dienThoai").val())
+                        alert("Bạn chưa nhập họ tên hoặc số điện thoại khách hàng")
+                    else if (!$("#soKhung").val() || !$("#bienSo").val())
+                        alert("Bạn chưa nhập biển số hoặc số khung xe")
+                    else if (!$("#yeuCau").val())
+                        alert("Bạn chưa nhập yêu cầu của khách hàng");
+                    else if ($("input[name=dienThoai]").val().match(/\d/g).length !== 10) {
+                        alert("Số điện thoại không đúng định dạng 10 số");                    
+                    } else {
+                        $.ajax({
+                            type: "post",
+                            url: "{{route('editbaogia')}}",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "eid": $("#eid").val(),
+                                "isPKD": $("#isPKD").val(),
+                                "hopDong": $("#hopDong").val(),
+                                "nhanVien": $("#nhanVien").val(),
+                                "gioVao": $("#gioVao").val(),
+                                "ngayVao": $("#ngayVao").val(),
+                                "gioRa": $("#gioRa").val(),
+                                "ngayRa": $("#ngayRa").val(),
+                                "hoTen": $("#hoTen").val(),
+                                "dienThoai": $("#dienThoai").val(),
+                                "mst": $("#mst").val(),
+                                "diaChi": $("#diaChi").val(),
+                                "bienSo": $("#bienSo").val(),
+                                "soKhung": $("#soKhung").val(),
+                                "soMay": $("#soMay").val(),
+                                "thongTinXe": $("#thongTinXe").val(),
+                                "taiXe": $("#taiXe").val(),
+                                "dienThoaiTaiXe": $("#dienThoaiTaiXe").val(),
+                                "yeuCau": $("#yeuCau").val()
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                }) 
+                                if (response.code == 200) {
+                                    $("#showChiTietHangMuc").show();
+                                    disAfterSave();
+                                    $("#save").hide();
+                                    $("#notsave").hide();
+                                    $("#soBaoGia").val(response.soBG);
+                                    $("#eid").val(response.idBG);
+                                }
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: " Không tìm thấy!"
+                                })                       
+                            }
+                        });                     
+                }
+                } else {
+                    if (!$("#ngayVao").val() || !$("#gioVao").val())
+                    alert("Bạn chưa nhập thời gian xe vào")
+                    else if (!$("#ngayRa").val() || !$("#gioRa").val())
+                            alert("Bạn chưa nhập thời gian xe hoàn tất")
+                    else if (!$("#hoTen").val() || !$("#dienThoai").val())
+                            alert("Bạn chưa nhập họ tên hoặc số điện thoại khách hàng")
+                    else if (!$("#soKhung").val() || !$("#bienSo").val())
+                            alert("Bạn chưa nhập biển số hoặc số khung xe")
+                    else if (!$("#yeuCau").val())
+                            alert("Bạn chưa nhập yêu cầu của khách hàng");
+                    else if ($("input[name=dienThoai]").val().match(/\d/g).length !== 10) {
+                            alert("Số điện thoại không đúng định dạng 10 số");                    
+                    } else {
+                            $.ajax({
+                                type: "post",
+                                url: "{{route('postbaogia')}}",
+                                dataType: "json",
+                                data: {
+                                    "_token": "{{csrf_token()}}",
+                                    "isPKD": $("#isPKD").val(),
+                                    "hopDong": $("#hopDong").val(),
+                                    "nhanVien": $("#nhanVien").val(),
+                                    "gioVao": $("#gioVao").val(),
+                                    "ngayVao": $("#ngayVao").val(),
+                                    "gioRa": $("#gioRa").val(),
+                                    "ngayRa": $("#ngayRa").val(),
+                                    "hoTen": $("#hoTen").val(),
+                                    "dienThoai": $("#dienThoai").val(),
+                                    "mst": $("#mst").val(),
+                                    "diaChi": $("#diaChi").val(),
+                                    "bienSo": $("#bienSo").val(),
+                                    "soKhung": $("#soKhung").val(),
+                                    "soMay": $("#soMay").val(),
+                                    "thongTinXe": $("#thongTinXe").val(),
+                                    "taiXe": $("#taiXe").val(),
+                                    "dienThoaiTaiXe": $("#dienThoaiTaiXe").val(),
+                                    "yeuCau": $("#yeuCau").val()
+                                },
+                                success: function(response) {
+                                    Toast.fire({
+                                        icon: response.type,
+                                        title: response.message
+                                    }) 
+                                    if (response.code == 200) {
+                                        $("#showChiTietHangMuc").show();
+                                        disAfterSave();
+                                        $("#save").hide();
+                                        $("#notsave").hide();
+                                        $("#soBaoGia").val(response.soBG);
+                                        $("#eid").val(response.idBG);
+                                    }
+                                },
+                                error: function() {
+                                    Toast.fire({
+                                        icon: 'warning',
+                                        title: " Không tìm thấy!"
+                                    })                       
+                                }
+                            });                     
+                    }
+                }
+            });
+
             $("#xemReport").click(function(e){
                 e.preventDefault();
                 $.ajax({
@@ -461,7 +776,141 @@
                         })
                     }
                 });
-            });            
+            });    
+            
+            $('#isPKD').on('change', function (e) {
+                var optionSelected = $("option:selected", this);
+                var valueSelected = this.value;
+                if (valueSelected == 1) {
+                    $('#timHopDong').attr('placeholder','Nhập số hợp đồng');
+                } else {
+                    $('#timHopDong').attr('placeholder','Nhập số điện thoại');
+                }                    
+            });
+
+            $("#timHopDong").keyup(function(e){
+                let isPKD = $("#isPKD").val();
+                let findVal = $(this).val();
+                if(e.keyCode == 13) {
+                    switch(parseInt(isPKD)) {
+                        case 1: {
+                            $.ajax({
+                                type: "post",
+                                url: "{{route('timhopdong')}}",
+                                dataType: "json",
+                                data: {
+                                    "_token": "{{csrf_token()}}",
+                                    "findVal": findVal
+                                },
+                                success: function(response) {
+                                    Toast.fire({
+                                        icon: response.type,
+                                        title: response.message
+                                    }) 
+                                    if (response.code == 200) { 
+                                        $('#hopDong').val(response.hopDong);
+                                        $('#nhanVien').val(response.nhanVien);
+                                        $('#hoTen').val(response.hoTen);
+                                        $('#dienThoai').val(response.dienThoai);
+                                        $('#mst').val(response.mst);
+                                        $('#diaChi').val(response.diaChi);
+                                        $('#bienSo').val(response.bienSo);
+                                        $('#soKhung').val(response.soKhung);
+                                        $('#soMay').val(response.soMay);
+                                        $('#thongTinXe').val(response.thongTinXe);
+                                    } else {
+                                        $('#hopDong').val("");
+                                        $('#nhanVien').val("");
+                                        $('#hoTen').val("");
+                                        $('#dienThoai').val("");
+                                        $('#mst').val("");
+                                        $('#diaChi').val("");
+                                        $('#bienSo').val("");
+                                        $('#soKhung').val("");
+                                        $('#soMay').val("");
+                                        $('#thongTinXe').val("");
+                                    }
+                                },
+                                error: function() {
+                                    Toast.fire({
+                                        icon: 'warning',
+                                        title: " Không tìm thấy!"
+                                    })
+                                    $('#hopDong').val("");
+                                    $('#nhanVien').val("");
+                                    $('#hoTen').val("");
+                                    $('#dienThoai').val("");
+                                    $('#mst').val("");
+                                    $('#diaChi').val("");
+                                    $('#bienSo').val("");
+                                    $('#soKhung').val("");
+                                    $('#soMay').val("");
+                                    $('#thongTinXe').val("");
+                                }
+                            });  
+                        } break;
+                        case 0: {
+                            $.ajax({
+                                type: "post",
+                                url: "{{route('timkhachhang')}}",
+                                dataType: "json",
+                                data: {
+                                    "_token": "{{csrf_token()}}",
+                                    "findVal": findVal
+                                },
+                                success: function(response) {
+                                    Toast.fire({
+                                        icon: response.type,
+                                        title: response.message
+                                    }) 
+                                    if (response.code == 200) {                                        
+                                        $('#hoTen').val(response.hoTen);
+                                        $('#dienThoai').val(response.dienThoai);
+                                        $('#mst').val(response.mst);
+                                        $('#diaChi').val(response.diaChi);
+                                        $('#bienSo').val(response.bienSo);
+                                        $('#soKhung').val(response.soKhung);
+                                        $('#soMay').val(response.soMay);
+                                        $('#thongTinXe').val(response.thongTinXe);
+                                        $('#bienSo').val(response.bienSo);
+                                        $('#taiXe').val(response.taiXe);
+                                        $('#dienThoaiTaiXe').val(response.dienThoaiTaiXe);
+                                    } else {                                       
+                                        $('#hoTen').val("");
+                                        $('#dienThoai').val("");
+                                        $('#mst').val("");
+                                        $('#diaChi').val("");
+                                        $('#bienSo').val("");
+                                        $('#soKhung').val("");
+                                        $('#soMay').val("");
+                                        $('#thongTinXe').val("");
+                                        $('#bienSo').val("");
+                                        $('#taiXe').val("");
+                                        $('#dienThoaiTaiXe').val("");
+                                    }                              
+                                },
+                                error: function() {
+                                    Toast.fire({
+                                        icon: 'warning',
+                                        title: " Không tìm thấy!"
+                                    })
+                                    $('#hoTen').val("");
+                                    $('#dienThoai').val("");
+                                    $('#mst').val("");
+                                    $('#diaChi').val("");
+                                    $('#bienSo').val("");
+                                    $('#soKhung').val("");
+                                    $('#soMay').val("");
+                                    $('#thongTinXe').val("");
+                                    $('#bienSo').val("");
+                                    $('#taiXe').val("");
+                                    $('#dienThoaiTaiXe').val("");
+                                }
+                            }); 
+                        } break;
+                    }
+                }
+            });
         });
         $(document).on('click','#tes',function(){
             $("table tr").removeClass("bg-secondary");
