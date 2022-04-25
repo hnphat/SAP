@@ -65,6 +65,12 @@
                                 <input type="submit" id="xemReport" class="form-control btn btn-info" value="TÌM"/>
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                           Mới tạo: <span class="bg-secondary"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+                           Đang thực hiện: <span class="bg-success"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+                           Hoàn tất: <span class="bg-info"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+                           Huỷ: <span class="bg-danger"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+                        </div>
                 </div>
             </form>
             <div class="row">               
@@ -77,19 +83,8 @@
                                     <th>Số khung</th>
                                     <th>Ngày vào</th>
                                 </tr>
-                                <tbody style="font-size: 10pt;">
-                                    <tr id="tes" data-id="">
-                                        <td>BG01-202204</td>
-                                        <td>67A-21322</td>
-                                        <td>RUOSQKOMSS0223232</td>
-                                        <td>16/01/2021</td>
-                                    </tr>
-                                    <tr id="tes" data-id="">
-                                        <td>BG01-202204</td>
-                                        <td>67A-21322</td>
-                                        <td>RUOSQKOMSS0223232</td>
-                                        <td>16/01/2021</td>
-                                    </tr>                                    
+                                <tbody style="font-size: 10pt;" id="showDataFind">
+                                                                                          
                                 </tbody>
                         </table>
                     </div>
@@ -99,6 +94,7 @@
                         <button id="add" class="btn btn-success btn-sm">Thêm mới</button>
                         <button id="save" class="btn btn-info btn-sm">Lưu</button>
                         <button id="edit" class="btn btn-primary btn-sm">Sửa</button>
+                        <button id="delete" class="btn btn-danger btn-sm">Xoá</button>
                         <button id="notsave" class="btn btn-secondary btn-sm">Không Lưu</button>
                         <button id="process" class="btn btn-primary btn-sm">Thực hiện</button>
                         <button id="done" class="btn btn-warning btn-sm">Hoàn tất</button>    
@@ -259,7 +255,7 @@
                         <hr>
                         <h4 class="text-bold text-info">CHI TIẾT HẠNG MỤC</h4>
                         <div id="showChiTietHangMuc">
-                            <button class="btn btn-success" data-toggle='modal' data-target='#showModal'><span class="fas fa-plus-circle"></span></button>
+                            <button id="btnAdd" class="btn btn-success" data-toggle='modal' data-target='#showModal'><span class="fas fa-plus-circle"></span></button>
                             <div class="row">
                                 <div style="overflow:auto;">
                                     <table class="table table-striped table-bordered" style="font-size:11pt;">
@@ -343,13 +339,14 @@
         <div class="modal-body">         
                 <form id="addForm">
                     @csrf
+                    <input type="hidden" name="bgid"/>
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Chọn bộ phận</label>
-                                <select name="boPhan" class="form-control">
-                                    <option value="1">Bảo hiểm</option>
-                                    <option value="0">Phụ kiện</option>
+                                <select id="boPhan" name="boPhan" class="form-control">
+                                    <option value="0">Bảo hiểm</option>
+                                    <option value="1">Phụ kiện</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -367,9 +364,9 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Chọn loại hạng mục</label>
-                                <select name="hangMuc" class="form-control">
-                                    <option value="1">Công</option>
-                                    <option value="0">Phụ tùng</option>
+                                <select id="hangMuc" name="hangMuc" class="form-control">
+                                    <option value="CONG">Công</option>
+                                    <option value="PHUTUNG">Phụ tùng</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -377,20 +374,22 @@
                                 <input type="number" name="donGia" value="0" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label>Chọn kỹ thuật viên thực hiện</label>
+                                <label>Chọn kỹ thuật viên thực hiện</label>                              
                                 <select name="kyThuatVien" class="form-control">
-                                    <option value="2">Không có</option>
-                                    <option value="1">Nguyễn Văn Hoàng Phi Hợp</option>
-                                    <option value="0">Nguyễn Tuấn Thanh</option>
-                                </select>
+                                    <option value="0">Không có</option>
+                                    @foreach($user as $row)
+                                        @if($row->hasRole('to_phu_kien') == true)
+                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                        @endif
+                                    @endforeach
+                                </select>                                
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Chọn hạng mục chi tiết</label>
-                                <select name="hangMucChiTiet" class="form-control">
-                                    <option value="1">TNDS 5 chỗ</option>
-                                    <option value="0">Dán film phủ gầm Accent</option>
+                                <select id="hangMucChiTiet" name="hangMucChiTiet" class="form-control">
+                                   
                                 </select>
                             </div>
                             <div class="form-group">
@@ -400,13 +399,13 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Đơn vị tính: <span class="text-primary">Cái</span></label><br/>
-                                <label>Giá đã nhập: <span class="text-primary">567,000</span> (VAT)</label>
+                                <label>Đơn vị tính: <span class="text-primary" id="s_dvt"></span></label><br/>
+                                <label>Giá đã nhập: <span class="text-primary" id="s_gia"></span> (VAT)</label>
                             </div>                            
                         </div>
                     </div>
                     <div class="container row">
-                        <button class="btn btn-success">LƯU</button>
+                        <button id="saveBtn" type="button" class="btn btn-success">LƯU</button>
                     </div>
                 </form>
         </div>
@@ -447,9 +446,11 @@
         $(document).ready(function() {
             function startUp() {
                 $("#showChiTietHangMuc").hide();
+                $("#btnAdd").hide();
                 $("#chiTietHangMuc").text('');
                 $("#add").show();
                 $("#save").hide();
+                $("#delete").hide();
                 $("#edit").hide();
                 $("#notsave").hide();
                 $("#process").hide();
@@ -503,9 +504,52 @@
                 $("#tongThanhToan").text("");
                 $("#eid").val('');
             }
+
+            function butChonseMain(process,done,cancel) {    
+                if (!process) {
+                    $("#add").show();  
+                    $("#edit").show();
+                    $("#done").hide();
+                    $("#process").show();
+                    $("#delete").show();  
+                    $("#cancel").hide();
+                    $("#in").hide();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                } else if(process && !done && !cancel){
+                    $("#add").show();  
+                    $("#edit").show();
+                    $("#done").show();
+                    $("#cancel").show();
+                    $("#process").hide();
+                    $("#in").show();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                } else if(process && done && !cancel) {
+                    $("#add").show(); 
+                    $("#cancel").show();
+                    $("#done").hide();
+                    $("#process").hide();
+                    $("#in").show();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                } else {
+                    $("#add").show();  
+                    $("#edit").hide();
+                    $("#done").hide();
+                    $("#process").hide();
+                    $("#delete").hide();  
+                    $("#cancel").hide();
+                    $("#in").hide();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                }   
+            }
+
             function disAfterSave() {
                 $("#add").show();  
                 $("#edit").show();
+                $("#delete").show();
                 $("#process").show();
                 $("#cancel").hide();
                 $("#soBaoGia").prop('disabled', true);
@@ -529,6 +573,7 @@
                 $("#soMay").prop('disabled', true);
                 $("#thongTinXe").prop('disabled', true);
                 $("#yeuCau").prop('disabled', true);
+                $("#btnAdd").hide(); 
             }
             startUp();
 
@@ -536,6 +581,7 @@
                 startUp();
                 $(this).hide();
                 $("#save").show();
+                $("#delete").hide();
                 $("#notsave").show();
                 $("#soBaoGia").val('');
                 $("#ngayRa").prop('disabled', false);
@@ -555,8 +601,6 @@
                 $("#soMay").prop('disabled', false);
                 $("#thongTinXe").prop('disabled', false);
                 $("#yeuCau").prop('disabled', false);
-                $("#showChiTietHangMuc").hide();
-                $("#chiTietHangMuc").text('');
                 $("#eid").val('');
                 $("#soBaoGia").val('');
                 $("#ngayRa").val('');
@@ -585,6 +629,39 @@
                 $("#tongThanhToan").text("");
             });
 
+            $("#delete").click(function(){
+                if(confirm("Bạn có chắc muốn xoá báo giá này?")) {
+                    $.ajax({
+                            type: "post",
+                            url: "{{route('deletebaogia')}}",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "eid": $("#eid").val(),                              
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                }) 
+                                if (response.code == 200) {
+                                   setTimeout(() => {
+                                    startUp();
+                                    reloadData(); 
+                                    butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                   
+                                   }, 2000);
+                                }
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: " Không tìm thấy!"
+                                })                       
+                            }
+                        });  
+                }
+            });
+
             $("#notsave").click(function(){
                 $(this).hide();
                 if ($('#eid').val()) {
@@ -597,7 +674,10 @@
 
             $("#edit").click(function(){
                 $(this).hide();
+                $("#showChiTietHangMuc").show();
+                $("#btnAdd").show();
                 $("#save").show();
+                $("#delete").hide();
                 $("#notsave").show();
                 $("#add").hide();
                 $("#process").hide();
@@ -665,17 +745,23 @@
                                 "yeuCau": $("#yeuCau").val()
                             },
                             success: function(response) {
+                                $("#save").hide();
+                                $("#notsave").hide();
                                 Toast.fire({
                                     icon: response.type,
                                     title: response.message
                                 }) 
                                 if (response.code == 200) {
-                                    $("#showChiTietHangMuc").show();
-                                    disAfterSave();
-                                    $("#save").hide();
-                                    $("#notsave").hide();
-                                    $("#soBaoGia").val(response.soBG);
-                                    $("#eid").val(response.idBG);
+                                    setTimeout(() => {
+                                        $("#btnAdd").show();
+                                        $("#showChiTietHangMuc").show();
+                                        disAfterSave();
+                                        $("#save").hide();
+                                        $("#notsave").hide();
+                                        $("#soBaoGia").val(response.soBG);
+                                        $("#eid").val(response.idBG);
+                                        reloadData();
+                                    }, 2000);
                                 }
                             },
                             error: function() {
@@ -726,17 +812,23 @@
                                     "yeuCau": $("#yeuCau").val()
                                 },
                                 success: function(response) {
+                                    $("#save").hide();
+                                    $("#notsave").hide();                                   
                                     Toast.fire({
                                         icon: response.type,
                                         title: response.message
                                     }) 
                                     if (response.code == 200) {
-                                        $("#showChiTietHangMuc").show();
-                                        disAfterSave();
-                                        $("#save").hide();
-                                        $("#notsave").hide();
-                                        $("#soBaoGia").val(response.soBG);
-                                        $("#eid").val(response.idBG);
+                                        setTimeout(() => {
+                                            $("#btnAdd").show();
+                                            $("#showChiTietHangMuc").show();
+                                            disAfterSave();
+                                            $("#save").hide();
+                                            $("#notsave").hide();
+                                            $("#soBaoGia").val(response.soBG);
+                                            $("#eid").val(response.idBG);  
+                                            reloadData();                                          
+                                        }, 2000);
                                     }
                                 },
                                 error: function() {
@@ -749,12 +841,10 @@
                     }
                 }
             });
-
-            $("#xemReport").click(function(e){
-                e.preventDefault();
+            function reloadData() {
                 $.ajax({
                     type: "post",
-                    url: "{{route('baocaohopdong.post')}}",
+                    url: "{{route('timkiembaogia')}}",
                     dataType: "text",
                     data: {
                         "_token": "{{csrf_token()}}",
@@ -767,7 +857,8 @@
                             icon: 'info',
                             title: " Đã gửi yêu cầu! "
                         }) 
-                        $("#showBaoCao").html(response);
+                        $("#showDataFind").html(response);
+                       // startUp();
                     },
                     error: function() {
                         Toast.fire({
@@ -776,7 +867,145 @@
                         })
                     }
                 });
-            });    
+            }
+            $("#xemReport").click(function(e){
+                e.preventDefault();
+                reloadData();
+            });  
+            
+            $("#process").click(function(){
+                if (confirm("Xác nhận thực hiện báo giá?")) {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('thuchienbaogia')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": $("#eid").val()
+                        },
+                        success: function(response) {
+                            $("#process").hide();
+                            $("#delete").hide();
+                            $("#edit").hide();
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            }) 
+                            if (response.code == 200) {
+                                setTimeout(() => {
+                                    reloadData();   
+                                    $("#delete").hide();
+                                    butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                   
+                                }, 2000);
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không tìm thấy!"
+                            })                       
+                        }
+                    });
+                }
+            });
+
+            $("#saveBtn").click(function(e){
+                $("input[name=bgid]").val($("#eid").val());
+                $.ajax({
+                    type: "post",
+                    url: "{{route('luuhangmuc')}}",
+                    dataType: "json",
+                    data: $("#addForm").serialize(),
+                    success: function(response) {                       
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        console.log(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể lưu!"
+                        })                       
+                    }
+                });
+            });
+
+            $("#cancel").click(function(){
+                if (confirm("Xác nhận huỷ báo giá này?")) {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('huybaogia')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": $("#eid").val()
+                        },
+                        success: function(response) {
+                            $("#cancel").hide();
+                            $("#delete").hide();
+                            $("#edit").hide();
+                            $("#process").hide();
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            }) 
+                            if (response.code == 200) {
+                                setTimeout(() => {
+                                    reloadData();  
+                                    $("#delete").hide();
+                                    butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
+                                }, 2000);
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không tìm thấy!"
+                            })                       
+                        }
+                    });
+                }
+            });
+
+            $("#done").click(function(){
+                if (confirm("Xác nhận hoàn tất báo giá này?")) {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('donebaogia')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": $("#eid").val()
+                        },
+                        success: function(response) {
+                            $("#done").hide();
+                            $("#delete").hide();
+                            $("#edit").hide();
+                            $("#process").hide();
+                            $("#cancel").hide();
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            }) 
+                            if (response.code == 200) {
+                                setTimeout(() => {
+                                    reloadData();  
+                                    $("#delete").hide();
+                                    butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
+                                }, 2000);
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không tìm thấy!"
+                            })                       
+                        }
+                    });
+                }
+            });
             
             $('#isPKD').on('change', function (e) {
                 var optionSelected = $("option:selected", this);
@@ -786,6 +1015,129 @@
                 } else {
                     $('#timHopDong').attr('placeholder','Nhập số điện thoại');
                 }                    
+            });
+
+            function onloadHangMuc() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadhangmuc')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "boPhan": $("select[name=boPhan]").val(),     
+                        "hangMuc": $("select[name=hangMuc]").val(),                              
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("#hangMucChiTiet").empty();
+                        let dataVal = response.data;
+                        for(let i = 0; i < dataVal.length; i++) {
+                            $("#hangMucChiTiet").append("<option value='"+dataVal[i].id+"'>"+dataVal[i].noiDung+"</option>");
+                        }      
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hạng mục nào!"
+                        })                       
+                    }
+                });  
+            }
+            onloadHangMuc();
+
+            $('#hangMuc').on('change', function (e) {
+                var optionSelected = $("option:selected", this);
+                var valueSelected = this.value;
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadhangmuc')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "boPhan": $("select[name=boPhan]").val(),     
+                        "hangMuc": valueSelected,                              
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("#hangMucChiTiet").empty();
+                        let dataVal = response.data;
+                        for(let i = 0; i < dataVal.length; i++) {
+                            $("#hangMucChiTiet").append("<option value='"+dataVal[i].id+"'>"+dataVal[i].noiDung+"</option>");
+                        }      
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hạng mục nào!"
+                        })                       
+                    }
+                });  
+            });
+
+            $('#boPhan').on('change', function (e) {
+                var optionSelected = $("option:selected", this);
+                var valueSelected = this.value;
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadhangmuc')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "boPhan": valueSelected,     
+                        "hangMuc":  $("select[name=hangMuc]").val(),                              
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("#hangMucChiTiet").empty();
+                        let dataVal = response.data;
+                        for(let i = 0; i < dataVal.length; i++) {
+                            $("#hangMucChiTiet").append("<option value='"+dataVal[i].id+"'>"+dataVal[i].noiDung+"</option>");
+                        }                           
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hạng mục nào!"
+                        })                       
+                    }
+                });  
+            });
+
+            $('#hangMucChiTiet').on('change', function (e) {
+                var optionSelected = $("option:selected", this);
+                var valueSelected = this.value;
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadbhpk')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": valueSelected                           
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("#s_dvt").text(response.data.dvt);              
+                        $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));              
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hạng mục nào!"
+                        })                       
+                    }
+                });  
             });
 
             $("#timHopDong").keyup(function(e){
@@ -912,9 +1264,146 @@
                 }
             });
         });
+
+
         $(document).on('click','#tes',function(){
-            $("table tr").removeClass("bg-secondary");
-           $(this).attr("class","bg-secondary");
+            function startUpIn() {
+                $("#showChiTietHangMuc").hide();
+                $("#chiTietHangMuc").text('');
+                $("#add").show();
+                $("#save").hide();
+                $("#edit").hide();
+                $("#delete").hide();
+                $("#notsave").hide();
+                $("#process").hide();
+                $("#done").hide();
+                $("#cancel").hide();
+                $("#in").hide();
+                $("#soBaoGia").prop('disabled', true);
+                $("#gioVao").prop('disabled', true);
+                $("#gioRa").prop('disabled', true);
+                $("#ngayRa").prop('disabled', true);
+                $("#ngayVao").prop('disabled', true);
+                $("#soBaoGia").val('');
+                $("#ngayRa").val('');
+                $("#ngayVao").val('');
+                $("#gioVao").val('');
+                $("#gioRa").val('');
+
+                $("#isPKD").prop('disabled', true);
+                $("#timHopDong").prop('disabled', true);
+                $("#hopDong").prop('disabled', true);
+                $("#nhanVien").prop('disabled', true);
+                $("#hoTen").prop('disabled', true);
+                $("#dienThoai").prop('disabled', true);
+                $("#mst").prop('disabled', true);
+                $("#diaChi").prop('disabled', true);
+                $("#taiXe").prop('disabled', true);
+                $("#dienThoaiTaiXe").prop('disabled', true);
+                $("#bienSo").prop('disabled', true);
+                $("#soKhung").prop('disabled', true);
+                $("#soMay").prop('disabled', true);
+                $("#thongTinXe").prop('disabled', true);
+                $("#yeuCau").prop('disabled', true);
+                //----------xoa
+                $("#timHopDong").val('');
+                $("#hopDong").val('');
+                $("#nhanVien").val('');
+                $("#hoTen").val('');
+                $("#dienThoai").val('');
+                $("#mst").val('');
+                $("#diaChi").val('');
+                $("#taiXe").val('');
+                $("#dienThoaiTaiXe").val('');
+                $("#bienSo").val('');
+                $("#soKhung").val('');
+                $("#soMay").val('');
+                $("#thongTinXe").val('');
+                $("#yeuCau").val('');
+                //--------------
+                $("#tongBaoGia").text("");
+                $("#chietKhau").text("");
+                $("#tongThanhToan").text("");
+                $("#eid").val('');
+            }
+
+            function butChonse(process,done,cancel) {    
+                if (!process) {
+                    $("#add").show();  
+                    $("#edit").show();
+                    $("#process").show();
+                    $("#done").hide();
+                    $("#delete").show();  
+                    $("#cancel").hide();
+                    $("#in").hide();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                } else if(process && !done && !cancel){
+                    $("#add").show();  
+                    $("#edit").show();
+                    $("#cancel").show();
+                    $("#done").show();
+                    $("#process").hide();
+                    $("#in").show();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                } else if(process && done && !cancel) {
+                    $("#add").show(); 
+                    $("#done").hide();
+                    $("#cancel").show();
+                    $("#process").hide();
+                    $("#in").show();
+                    $("#save").hide();
+                    $("#unsave").hide();
+                }    
+            }
+
+        //    $("table tr").removeClass("border border-primary");
+        //    $(this).attr("class","border border-primary");
+           $.ajax({
+                type: "post",
+                url: "{{route('loadbaogia')}}",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "eid": $(this).data('id')
+                },
+                success: function(response) {
+                    Toast.fire({
+                        icon: 'info',
+                        title: " Đã gửi yêu cầu! "
+                    })
+                    startUpIn();
+                    $("#eid").val(response.data.id);
+                    $("#isPKD").val(response.data.isPKD);
+                    $("#soBaoGia").val(response.soBG);
+                    $("#gioVao").val(response.data.thoiGianVao);
+                    $("#gioRa").val(response.data.thoiGianHoanThanh);
+                    $("#ngayVao").val(response.data.ngayVao);
+                    $("#ngayRa").val(response.data.ngayHoanThanh);
+                    $("#hopDong").val(response.data.hopDong);
+                    $("#nhanVien").val(response.data.nhanVien);
+                    $("#hoTen").val(response.data.hoTen);
+                    $("#dienThoai").val(response.data.dienThoai);
+                    $("#mst").val(response.data.mst);
+                    $("#diaChi").val(response.data.diaChi);
+                    $("#taiXe").val(response.data.taiXe);
+                    $("#dienThoaiTaiXe").val(response.data.dienThoaiTaiXe);
+                    $("#thongTinXe").val(response.data.thongTinXe);
+                    $("#bienSo").val(response.data.bienSo);
+                    $("#soKhung").val(response.data.soKhung);
+                    $("#soMay").val(response.data.soMay);
+                    $("#yeuCau").val(response.data.yeuCau);
+                    butChonse(response.data.inProcess,response.data.isDone,response.data.isCancel);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Lỗi!"
+                    })
+                    startUpIn();
+                }
+            });
         });
     </script>
 @endsection

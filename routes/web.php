@@ -619,6 +619,18 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'dichvu'], function(){
         // quản lý phụ kiện
+        Route::post('loadtimkiem','DichVuController@timKiem')->name('timkiembaogia'); 
+        Route::post('loadbaogia','DichVuController@loadBaoGia')->name('loadbaogia');     
+        Route::post('deletebaogia','DichVuController@deleteBaoGia')->name('deletebaogia');  
+        Route::post('thuchienbaogia','DichVuController@thucHienBaoGia')->name('thuchienbaogia');     
+        Route::post('huybaogia','DichVuController@huyBaoGia')->name('huybaogia');     
+        Route::post('donebaogia','DichVuController@doneBaoGia')->name('donebaogia'); 
+        // hạng mục
+        Route::post('loadhangmuc','DichVuController@taiHangMuc')->name('loadhangmuc');     
+        Route::post('loadbhpk','DichVuController@taiBHPK')->name('loadbhpk');     
+        Route::post('luubhpk','DichVuController@luuBHPK')->name('luuhangmuc');   
+
+        // quản lý phụ kiện
         Route::get('phukienpanel','DichVuController@phuKienPanel')->name('phukien.panel');     
         Route::post('phukien/timhopdong','DichVuController@timHopDong')->name('timhopdong');  
         Route::post('phukien/timkhachhang','DichVuController@timKhachHang')->name('timkhachhang');        
@@ -641,8 +653,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hangmuc/guest/delete','DichVuController@delHangMuc');      
         Route::post('hangmuc/guest/edit/show/','DichVuController@getHangMucEdit'); 
         Route::post('hangmuc/guest/update/','DichVuController@updateHangMuc'); 
-
-
 
 
     });

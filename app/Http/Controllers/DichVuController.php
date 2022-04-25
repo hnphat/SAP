@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\GuestDv;
 use App\BHPK;
+use App\User;
 use App\HopDong;
 use App\KhoV2;
+use App\ChiTietBHPK;
 use App\BaoGiaBHPK;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +16,8 @@ class DichVuController extends Controller
 {
     //
     public function phuKienPanel() {
-        return view('dichvu.quanlyphukien');
+        $user = User::all();
+        return view('dichvu.quanlyphukien',['user' => $user]);
     }
 
     public function khachHangPanel() {
@@ -376,5 +379,300 @@ class DichVuController extends Controller
                 'code' => 500,
                 'message' => 'Lỗi'
             ]);
+    }
+
+    public function timKiem(Request $request) {
+        $_from = $request->tu;
+        $_to = $request->den;
+        switch($request->baoCao) {
+            case 1: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 2: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 3: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 4: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isDone','=',true],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 5: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isCancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isCancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            default: abort(403);
+        }
+        foreach($bg as $row) {
+            $stt = "";
+            if (!$row->inProcess)
+                $stt = "class='bg-secondary'";
+            if ($row->inProcess && !$row->isDone && !$row->isCancel)
+                $stt = "class='bg-success'";
+            if ($row->inProcess && $row->isDone && !$row->isCancel)
+                $stt = "class='bg-info'";
+            if ($row->isCancel)
+                $stt = "class='bg-danger'";
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                echo "
+                <tr id='tes' data-id='".$row->id."' ".$stt.">
+                    <td>BG0".$row->id."-".Date('Y')."".Date('m')."</td>
+                    <td>".$row->bienSo."</td>
+                    <td>".$row->soKhung."</td>
+                    <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                </tr>";
+            }
+        }      
+    }
+
+    public function loadBaoGia(Request $request){
+        $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg)
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã tải báo giá',
+                'data' => $bg,
+                'soBG' => "BG0".$bg->id."-".Date('Y')."".Date('m'),
+            ]);
+        else
+            return response()->json([
+                'type' => 'info',
+                'code' => 500,
+                'message' => 'Lỗi'
+            ]);
+    }
+
+    public function deleteBaoGia(Request $request){
+        $bg = BaoGiaBHPK::find($request->eid);
+        if (!$bg->isDone || !$bg->inProcess || !$bg->isCancel) {
+            $bg->delete();
+            if ($bg)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã xoá báo giá'
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi'
+                ]);
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'code' => 500,
+                'message' => 'Báo giá đang thực hiện, hoàn tất, huỷ không thể xoá!'
+            ]);
+        }
+    }
+
+    public function thucHienBaoGia(Request $request){
+        $bg = BaoGiaBHPK::find($request->eid);
+        $bg->inProcess = true;
+        $bg->save();
+        if ($bg)
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã tiến hành thực hiện báo giá',
+                'data' => $bg
+            ]);
+        else
+            return response()->json([
+                'type' => 'info',
+                'code' => 500,
+                'message' => 'Lỗi'
+            ]);
+    }
+
+    public function huyBaoGia(Request $request){
+        $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->inProcess) {
+            $bg->isCancel = true;
+            $bg->save();
+            if ($bg)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã huỷ báo giá',
+                    'data' => $bg
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi'
+                ]);
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'code' => 500,
+                'message' => 'Báo giá chưa tiến hành chưa thể huỷ'
+            ]);
+        }
+    }
+
+    public function doneBaoGia(Request $request){
+        $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->inProcess) {
+            $bg->isDone = true;
+            $bg->save();
+            if ($bg)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã hoàn tất báo giá',
+                    'data' => $bg
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi'
+                ]);
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'code' => 500,
+                'message' => 'Báo giá chưa tiến hành chưa thể hoàn tất'
+            ]);
+        }
+    }
+
+    public function taiHangMuc(Request $request) {
+        $item = BHPK::where([
+            ['isPK','=',$request->boPhan],
+            ['type','=',$request->hangMuc]
+        ])->orderBy('noiDung', 'asc')
+        ->get();
+        if ($item)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã tải danh sách hạng mục',
+                    'data' => $item
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi'
+                ]);
+    }
+
+    public function taiBHPK(Request $request) {
+        $item = BHPK::find($request->eid);
+        if ($item)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Load!',
+                    'data' => $item
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi'
+                ]);
+    }
+
+    public function luuBHPK(Request $request) {
+        $ct = new ChiTietBHPK();
+        $ct->id_baogia = $request->bgid;
+        $ct->id_baohiem_phukien = $request->hangMucChiTiet;
+        $ct->soLuong = $request->soLuong;
+        $ct->donGia = $request->donGia;
+        $ct->chietKhau = $request->chietKhau;
+        $ct->isTang = $request->tang;
+        $ct->id_user_work = $request->kyThuatVien;
+        $ct->thanhTien = ($request->soLuong * $request->donGia) - $request->chietKhau;
+        $ct->save();
+        if ($ct)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã lưu!'
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi '
+                ]);
     }
 }

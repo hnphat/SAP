@@ -20,6 +20,7 @@ class ChitietBhpk extends Migration
             $table->integer('id_baohiem_phukien')->unsigned();
             $table->foreign('id_baohiem_phukien')->references('id')->on('baohiem_phukien');
             $table->integer('soLuong');
+            $table->integer('donGia');
             $table->integer('thanhTien');
             $table->integer('chietKhau')->nullable();
             $table->integer('isTang')->default(false);
