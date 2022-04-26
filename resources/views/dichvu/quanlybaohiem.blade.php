@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-   Quản lý phụ kiện
+   Quản lý bảo hiểm
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
@@ -17,13 +17,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Quản lý phụ kiện</strong></h1>
+                        <h1 class="m-0"><strong>Quản lý bảo hiểm</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Dịch vụ</li>
-                            <li class="breadcrumb-item active">Quản lý phụ kiện</li>
+                            <li class="breadcrumb-item active">Quản lý bảo hiểm</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->

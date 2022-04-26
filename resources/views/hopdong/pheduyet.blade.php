@@ -229,7 +229,7 @@
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA</button>
                                         <button id="huyDeNghi" class="btn btn-danger">BỎ DUYỆT ĐỀ NGHỊ</button>
-                                        <button id="ganXeHDCho" class="btn btn-success">GÁN XE HỢP ĐỒNG CHỜ</button>
+                                        <button id="ganXeHDCho" class="btn btn-primary">GÁN XE HỢP ĐỒNG CHỜ</button>
                                         <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA HỢP ĐỒNG</button>
                                         <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY HỢP ĐỒNG</button>
                             </div>

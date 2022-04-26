@@ -89,6 +89,7 @@
                                                                             <option value="Bộ">Bộ</option>
                                                                             <option value="Cái">Cái</option>
                                                                             <option value="Gói">Gói</option>
+                                                                            <option value="Công">Công</option>
                                                                         </select>
                                                                     </div>                
                                                                     <div class="form-group">
@@ -186,6 +187,7 @@
                                         <option value="Bộ">Bộ</option>
                                         <option value="Cái">Cái</option>
                                         <option value="Gói">Gói</option>
+                                        <option value="Công">Công việc</option>
                                     </select>
                                 </div>                
                                 <div class="form-group">

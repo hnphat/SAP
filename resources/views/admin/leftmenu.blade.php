@@ -222,7 +222,7 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('baohiem.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý bảo hiểm</p>
                             </a>

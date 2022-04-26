@@ -625,6 +625,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('thuchienbaogia','DichVuController@thucHienBaoGia')->name('thuchienbaogia');     
         Route::post('huybaogia','DichVuController@huyBaoGia')->name('huybaogia');     
         Route::post('donebaogia','DichVuController@doneBaoGia')->name('donebaogia'); 
+        // in ấn
+        Route::get('inbaogia/{idbg}','DichVuController@printBaoGia'); 
+        Route::get('inyeucaucapvattu/{idbg}','DichVuController@printYeuCauCapVatTu'); 
+        Route::get('inlenhsuachua/{idbg}','DichVuController@printLenhSuaChua'); 
+        Route::get('inquyettoan/{idbg}','DichVuController@printQuyetToan'); 
         // hạng mục
         Route::post('loadhangmuc','DichVuController@taiHangMuc')->name('loadhangmuc');     
         Route::post('loadbhpk','DichVuController@taiBHPK')->name('loadbhpk');     
@@ -633,14 +638,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('delhangmuc','DichVuController@delHM')->name('delhangmuc'); 
         Route::post('loadtongcong','DichVuController@getTong')->name('loadtongcong');     
   
-
         // quản lý phụ kiện
         Route::get('phukienpanel','DichVuController@phuKienPanel')->name('phukien.panel')->middleware(['f_bhpk']);     
         Route::post('phukien/timhopdong','DichVuController@timHopDong')->name('timhopdong');  
         Route::post('phukien/timkhachhang','DichVuController@timKhachHang')->name('timkhachhang');        
         Route::post('phukien/postbaogia','DichVuController@postBaoGia')->name('postbaogia');        
-        Route::post('phukien/editbaogia','DichVuController@editBaoGia')->name('editbaogia');        
-
+        Route::post('phukien/editbaogia','DichVuController@editBaoGia')->name('editbaogia');  
+        
+         // quản lý phụ kiện
+         Route::get('baohiempanel','DichVuController@baoHiemPanel')->name('baohiem.panel')->middleware(['f_bhpk']);     
 
         // quản lý khách hàng
         Route::get('khachhang','DichVuController@khachHangPanel')->name('phukien.khachhang')->middleware(['f_bhpk']);   
