@@ -83,5 +83,6 @@ class Kernel extends HttpKernel
         'f_nhansu' => \App\Http\Middleware\NhanSuMiddleWare::class,
         'f_nhansupheduyet' => \App\Http\Middleware\NhanSuPheDuyetMiddleWare::class,
         'f_baocaohopdong' => \App\Http\Middleware\BaoCaoHopDongMiddleware::class,
+        'f_bhpk' => \App\Http\Middleware\BHPKMiddleware::class,
     ];
 }

@@ -202,7 +202,8 @@
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
-                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fab fa-servicestack"></i>
                         <p>
@@ -218,25 +219,31 @@
                                 <p>Quản lý khách hàng</p>
                             </a>
                         </li>   
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý bảo hiểm</p>
                             </a>
-                        </li>      
+                        </li>     
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('phukien.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý phụ kiện</p>
                             </a>
                         </li>      
+                        @endif
                         <li class="nav-item">
                             <a href="{{route('dichvu.hangmuc')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Danh sách hạng mục</p>
                             </a>
                         </li>   
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Báo cáo</p>
@@ -247,7 +254,7 @@
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Báo cáo tiến độ</p>
                             </a>
-                        </li>                             
+                        </li>                              -->
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||

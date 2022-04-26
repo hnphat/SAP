@@ -108,7 +108,13 @@
                                     <input id="soBaoGia" type="text" name="soBaoGia" class="form-control">                                                                        
                                     <input type="hidden" name="eid" id="eid">
                                 </div>        
-                            </div>                                    
+                            </div>     
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label>Lý do huỷ (nếu có)</label><br/>                                      
+                                    <input disabled id="lyDoHuy" type="text" name="lyDoHuy" class="form-control">                                                                        
+                                </div>        
+                            </div>                                     
                         </div>
                         <hr>
                         <h4 class="text-bold text-info">TIẾN ĐỘ</h4>
@@ -274,40 +280,7 @@
                                             <th>Tác vụ</th>
                                         </tr>
                                         <tbody id="chiTietHangMuc">
-                                            <tr>
-                                                <td>Phụ kiện</td>  
-                                                <td>CONG</td>                                    
-                                                <td>ABC</td>
-                                                <td>Lắp cản trước 5 chỗ</td>
-                                                <td>Cái</td>
-                                                <td>1</td>
-                                                <td>375,500</td>
-                                                <td>0</td>
-                                                <td>375,500</td>
-                                                <td>Không</td>
-                                                <td>Nguyễn Văn Hoàng Phi Hợp</td>
-                                                <td>
-                                                    <button class="btn btn-success btn-xs">Sửa</button>
-                                                    <button class="btn btn-danger btn-xs">Xoá</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Phụ kiện</td>  
-                                                <td>CONG</td>                                    
-                                                <td>ABC</td>
-                                                <td>Lắp cản trước 5 chỗ</td>
-                                                <td>Cái</td>
-                                                <td>1</td>
-                                                <td>375,500</td>
-                                                <td>0</td>
-                                                <td>375,500</td>
-                                                <td>Không</td>
-                                                <td>Nguyễn Văn Hoàng Phi Hợp</td>
-                                                <td>
-                                                    <button class="btn btn-success btn-xs">Sửa</button>
-                                                    <button class="btn btn-danger btn-xs">Xoá</button>
-                                                </td>
-                                            </tr>
+                                            
                                         </tbody>
                                     </table>     
                                 </div>                                                  
@@ -355,7 +328,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Tặng</label>
-                                <select name="tang" class="form-control">
+                                <select name="tang" class="form-control">                                    
                                     <option value="0">Không</option>
                                     <option value="1">Có</option>
                                 </select>
@@ -371,7 +344,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Đơn giá</label>
-                                <input type="number" name="donGia" value="0" class="form-control">
+                                <input id="donGia" type="number" name="donGia" value="0" class="form-control">
+                                <span id="showDonGias"></span>
                             </div>
                             <div class="form-group">
                                 <label>Chọn kỹ thuật viên thực hiện</label>                              
@@ -394,13 +368,15 @@
                             </div>
                             <div class="form-group">
                                 <label>Chiết khấu (nếu có)</label>
-                                <input type="number" name="chietKhau" value="0" class="form-control">
+                                <input id="chietKhaun" type="number" name="chietKhau" value="0" class="form-control">
+                                <span id="showChietKhaus"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
+                                <label>Mặt hàng: <span class="text-primary" id="s_noiDung"></span></label><br/>
                                 <label>Đơn vị tính: <span class="text-primary" id="s_dvt"></span></label><br/>
-                                <label>Giá đã nhập: <span class="text-primary" id="s_gia"></span> (VAT)</label>
+                                <label>Giá tham khảo: <span class="text-primary" id="s_gia"></span> (VAT)</label>
                             </div>                            
                         </div>
                     </div>
@@ -444,6 +420,26 @@
 
         // show data
         $(document).ready(function() {
+            function refreshHangMuc() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('refreshhangmuc')}}",
+                    dataType: "text",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": $("#eid").val()
+                    },
+                    success: function(response) {    
+                        $("#chiTietHangMuc").html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tải danh mục!"
+                        })                       
+                    }
+                });
+            }
             function startUp() {
                 $("#showChiTietHangMuc").hide();
                 $("#btnAdd").hide();
@@ -521,6 +517,7 @@
                     $("#edit").show();
                     $("#done").show();
                     $("#cancel").show();
+                    $("#delete").hide();
                     $("#process").hide();
                     $("#in").show();
                     $("#save").hide();
@@ -655,7 +652,7 @@
                             error: function() {
                                 Toast.fire({
                                     icon: 'warning',
-                                    title: " Không tìm thấy!"
+                                    title: " Không thể xoá! Báo giá đang có hạng mục, vui lòng xoá hạng mục trước!"
                                 })                       
                             }
                         });  
@@ -761,6 +758,7 @@
                                         $("#soBaoGia").val(response.soBG);
                                         $("#eid").val(response.idBG);
                                         reloadData();
+                                        butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
                                     }, 2000);
                                 }
                             },
@@ -827,7 +825,8 @@
                                             $("#notsave").hide();
                                             $("#soBaoGia").val(response.soBG);
                                             $("#eid").val(response.idBG);  
-                                            reloadData();                                          
+                                            reloadData();   
+                                            butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                                                             
                                         }, 2000);
                                     }
                                 },
@@ -907,7 +906,7 @@
                         }
                     });
                 }
-            });
+            });    
 
             $("#saveBtn").click(function(e){
                 $("input[name=bgid]").val($("#eid").val());
@@ -916,12 +915,15 @@
                     url: "{{route('luuhangmuc')}}",
                     dataType: "json",
                     data: $("#addForm").serialize(),
-                    success: function(response) {                       
+                    success: function(response) {      
+                        $("#addForm")[0].reset();               
                         Toast.fire({
                             icon: response.type,
                             title: response.message
                         }) 
-                        console.log(response);
+                        $("#showModal").modal('hide');
+                        refreshHangMuc();
+                        onloadTongCong();
                     },
                     error: function() {
                         Toast.fire({
@@ -932,40 +934,49 @@
                 });
             });
 
-            $("#cancel").click(function(){
+            $("#cancel").click(function(){                
                 if (confirm("Xác nhận huỷ báo giá này?")) {
-                    $.ajax({
-                        type: "post",
-                        url: "{{route('huybaogia')}}",
-                        dataType: "json",
-                        data: {
-                            "_token": "{{csrf_token()}}",
-                            "eid": $("#eid").val()
-                        },
-                        success: function(response) {
-                            $("#cancel").hide();
-                            $("#delete").hide();
-                            $("#edit").hide();
-                            $("#process").hide();
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            }) 
-                            if (response.code == 200) {
-                                setTimeout(() => {
-                                    reloadData();  
-                                    $("#delete").hide();
-                                    butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
-                                }, 2000);
+                    let lyDo = prompt("Lý do huỷ báo giá");
+                    if (lyDo) {
+                        $.ajax({
+                            type: "post",
+                            url: "{{route('huybaogia')}}",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "eid": $("#eid").val(),
+                                "lyDo": lyDo
+                            },
+                            success: function(response) {
+                                $("#cancel").hide();
+                                $("#delete").hide();
+                                $("#edit").hide();
+                                $("#process").hide();
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                }) 
+                                if (response.code == 200) {
+                                    setTimeout(() => {
+                                        reloadData();  
+                                        $("#delete").hide();
+                                        butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
+                                    }, 2000);
+                                }
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: " Không tìm thấy!"
+                                })                       
                             }
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: " Không tìm thấy!"
-                            })                       
-                        }
-                    });
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: "info",
+                            title: "Bạn chưa nhập lý do huỷ!"
+                        }) 
+                    }                   
                 }
             });
 
@@ -1048,6 +1059,29 @@
             }
             onloadHangMuc();
 
+            function onloadTongCong() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadtongcong')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": $("#eid").val()                             
+                    },
+                    success: function(response) {
+                        $("#tongBaoGia").text(formatNumber(parseInt(response.tongBaoGia)));
+                        $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
+                        $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tính tổng báo giá!"
+                        })                       
+                    }
+                });  
+            }
+
             $('#hangMuc').on('change', function (e) {
                 var optionSelected = $("option:selected", this);
                 var valueSelected = this.value;
@@ -1128,6 +1162,7 @@
                             icon: response.type,
                             title: response.message
                         }) 
+                        $("#s_noiDung").text(response.data.noiDung);
                         $("#s_dvt").text(response.data.dvt);              
                         $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));              
                     },
@@ -1138,6 +1173,15 @@
                         })                       
                     }
                 });  
+            });
+
+            $('#donGia').keyup(function(){
+                var cos = $(this).val();
+                $('#showDonGias').text("(" + DOCSO.doc(cos) + ")");
+            });
+            $('#chietKhaun').keyup(function(){
+                var cos = $(this).val();
+                $('#showChietKhaus').text("(" + DOCSO.doc(cos) + ")");
             });
 
             $("#timHopDong").keyup(function(e){
@@ -1266,9 +1310,53 @@
         });
 
 
-        $(document).on('click','#tes',function(){
+        $(document).on('click','#tes',function(){     
+            function onloadTongCongIn() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadtongcong')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": $("#eid").val()                             
+                    },
+                    success: function(response) {
+                        $("#tongBaoGia").text(formatNumber(parseInt(response.tongBaoGia)));
+                        $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
+                        $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tính tổng báo giá!"
+                        })                       
+                    }
+                });  
+            }
+
+            function refreshHangMucIn(idBG) {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('refreshhangmuc')}}",
+                    dataType: "text",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": idBG
+                    },
+                    success: function(response) {    
+                        $("#chiTietHangMuc").html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tải danh mục!"
+                        })                       
+                    }
+                });
+            }
             function startUpIn() {
-                $("#showChiTietHangMuc").hide();
+                $("#showChiTietHangMuc").show();
+                $("#btnAdd").hide();
                 $("#chiTietHangMuc").text('');
                 $("#add").show();
                 $("#save").hide();
@@ -1285,6 +1373,7 @@
                 $("#ngayRa").prop('disabled', true);
                 $("#ngayVao").prop('disabled', true);
                 $("#soBaoGia").val('');
+                $("#lyDoHuy").val('');
                 $("#ngayRa").val('');
                 $("#ngayVao").val('');
                 $("#gioVao").val('');
@@ -1368,12 +1457,12 @@
                     "_token": "{{csrf_token()}}",
                     "eid": $(this).data('id')
                 },
-                success: function(response) {
+                success: function(response) {  
                     Toast.fire({
                         icon: 'info',
-                        title: " Đã gửi yêu cầu! "
-                    })
-                    startUpIn();
+                        title: " Đã gửi yêu cầu tải hạng mục! "
+                    })                    
+                    startUpIn();                                  
                     $("#eid").val(response.data.id);
                     $("#isPKD").val(response.data.isPKD);
                     $("#soBaoGia").val(response.soBG);
@@ -1394,7 +1483,13 @@
                     $("#soKhung").val(response.data.soKhung);
                     $("#soMay").val(response.data.soMay);
                     $("#yeuCau").val(response.data.yeuCau);
+                    if (response.data.lyDoHuy != null)
+                        $("#lyDoHuy").val(response.data.lyDoHuy);
+                    else
+                        $("#lyDoHuy").val('');
                     butChonse(response.data.inProcess,response.data.isDone,response.data.isCancel);
+                    refreshHangMucIn(response.data.id);
+                    onloadTongCongIn();
                 },
                 error: function() {
                     Toast.fire({
@@ -1405,5 +1500,60 @@
                 }
             });
         });
+
+        $(document).on('click','#delHangMuc', function(){
+            function refreshHangMucTwo(idBG) {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('refreshhangmuc')}}",
+                        dataType: "text",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": idBG
+                        },
+                        success: function(response) {    
+                            $("#chiTietHangMuc").html(response);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không thể tải danh mục!"
+                            })                       
+                        }
+                    });
+            }
+
+            if($("#edit").is(":visible")){
+                alert("Bạn phải chọn chỉnh sửa báo giá trước khi thực hiện thao tác này!")
+            } else {
+                if(confirm("Bạn có chắc muốn xoá?")) {
+                    let idBG = $(this).data('bgid');
+                    let idHM = $(this).data('hm');                
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('delhangmuc')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": idBG,
+                            "ehm": idHM
+                        },
+                        success: function(response) {    
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            }) 
+                            refreshHangMucTwo(idBG);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không thể tải hạng mục!"
+                            })                       
+                        }
+                    });
+                } 
+            }
+        })
     </script>
 @endsection
