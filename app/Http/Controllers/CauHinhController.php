@@ -29,7 +29,8 @@ class CauHinhController extends Controller
         $data["emailCCDC"] = $request->emailCCDC;   
         $data["emailCapHoa"] = $request->emailCapHoa;        
         $data["emailDuyetXe"] = $request->emailDuyetXe;        
-        $data["emailTraXe"] = $request->emailTraXe;       
+        $data["emailTraXe"] = $request->emailTraXe; 
+        $data["capNhatThongTin"] = $request->capNhatThongTin;       
 
         $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
         file_put_contents('upload/cauhinh/app.json', $newJsonString);

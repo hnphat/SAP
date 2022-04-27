@@ -33,7 +33,7 @@
 
         <!-- Main content -->
         <div>
-            <form>
+            <form autocomplete="off">
                 <div class="container row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -109,12 +109,32 @@
                                     <input type="hidden" name="eid" id="eid">
                                 </div>        
                             </div>     
-                            <div class="col-md-9">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Lý do huỷ (nếu có)</label><br/>                                      
                                     <input disabled id="lyDoHuy" type="text" name="lyDoHuy" class="form-control">                                                                        
                                 </div>        
-                            </div>                                     
+                            </div>        
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Hình thức</label><br/>        
+                                    <select 
+                                    @if(!\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    disabled
+                                    @endif id="isBaoHiem" name="isBaoHiem" class="form-control">
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                        <option value="1">Báo giá bảo hiểm</option>
+                                        <option value="0">Báo giá phụ kiện</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem'))
+                                        <option value="1">Báo giá bảo hiểm</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
+                                        <option value="0">Báo giá phụ kiện</option>
+                                    @endif
+                                    </select>                              
+                                </div>        
+                            </div>                               
                         </div>
                         <hr>
                         <h4 class="text-bold text-info">TIẾN ĐỘ</h4>
@@ -276,7 +296,7 @@
                                             <th>Chiết khấu</th>
                                             <th>Thành tiền</th>
                                             <th>Tặng</th>
-                                            <th>Thực hiện</th>
+                                            <th>KTV</th>
                                             <th>Tác vụ</th>
                                         </tr>
                                         <tbody id="chiTietHangMuc">
@@ -319,7 +339,7 @@
                                 <label>Chọn bộ phận</label>
                                 <select id="boPhan" name="boPhan" class="form-control">
                                     <option value="0">Bảo hiểm</option>
-                                    <option value="1">Phụ kiện</option>
+                                    <!-- <option value="1">Phụ kiện</option> -->
                                 </select>
                             </div>
                             <div class="form-group">
@@ -339,24 +359,13 @@
                                 <label>Chọn loại hạng mục</label>
                                 <select id="hangMuc" name="hangMuc" class="form-control">
                                     <option value="CONG">Công</option>
-                                    <option value="PHUTUNG">Phụ tùng</option>
+                                    <!-- <option value="PHUTUNG">Phụ tùng</option> -->
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Đơn giá</label>
                                 <input id="donGia" type="number" name="donGia" value="0" class="form-control">
                                 <span id="showDonGias"></span>
-                            </div>
-                            <div class="form-group">
-                                <label>Chọn kỹ thuật viên thực hiện</label>                              
-                                <select name="kyThuatVien" class="form-control">
-                                    <option value="0">Không có</option>
-                                    @foreach($user as $row)
-                                        @if($row->hasRole('to_phu_kien') == true)
-                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>                                
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -759,6 +768,7 @@
                                 "_token": "{{csrf_token()}}",
                                 "eid": $("#eid").val(),
                                 "isPKD": $("#isPKD").val(),
+                                "isBaoHiem": $("#isBaoHiem").val(),
                                 "hopDong": $("#hopDong").val(),
                                 "nhanVien": $("#nhanVien").val(),
                                 "gioVao": $("#gioVao").val(),
@@ -792,6 +802,7 @@
                                         $("#save").hide();
                                         $("#notsave").hide();
                                         $("#soBaoGia").val(response.soBG);
+                                        $("#isBaoHiem").val(response.isBaoHiem);
                                         $("#eid").val(response.idBG);
                                         reloadData();
                                         butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
@@ -827,6 +838,7 @@
                                 data: {
                                     "_token": "{{csrf_token()}}",
                                     "isPKD": $("#isPKD").val(),
+                                    "isBaoHiem": $("#isBaoHiem").val(),
                                     "hopDong": $("#hopDong").val(),
                                     "nhanVien": $("#nhanVien").val(),
                                     "gioVao": $("#gioVao").val(),
@@ -860,6 +872,7 @@
                                             $("#save").hide();
                                             $("#notsave").hide();
                                             $("#soBaoGia").val(response.soBG);
+                                            $("#isBaoHiem").val(response.isBaoHiem);
                                             $("#eid").val(response.idBG);  
                                             reloadData();   
                                             butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                                                             
@@ -1546,6 +1559,7 @@
                     startUpIn();                                  
                     $("#eid").val(response.data.id);
                     $("#isPKD").val(response.data.isPKD);
+                    $("#isBaoHiem").val(response.data.isBaoHiem);
                     $("#soBaoGia").val(response.soBG);
                     $("#gioVao").val(response.data.thoiGianVao);
                     $("#gioRa").val(response.data.thoiGianHoanThanh);

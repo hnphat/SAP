@@ -427,6 +427,13 @@ class DichVuController extends Controller
         $bg = new BaoGiaBHPK();
         $bg->id_user_create = Auth::user()->id;
         $bg->isPKD = $request->isPKD;
+        if (Auth::user()->hasRole('nv_baohiem')) {
+            $bg->isBaoHiem = true;
+        } elseif (Auth::user()->hasRole('nv_phukien')) {
+            $bg->isBaoHiem = false;
+        } else {
+            $bg->isBaoHiem = $request->isBaoHiem;
+        }
         $bg->hopDongKD = $request->hopDong;
         $bg->nvKD = $request->nhanVien;
         $bg->thoiGianVao = $request->gioVao;
@@ -444,6 +451,9 @@ class DichVuController extends Controller
         $bg->taiXe = $request->taiXe;
         $bg->dienThoaiTaiXe = $request->dienThoaiTaiXe;
         $bg->yeuCau = $request->yeuCau;
+        $bg->inProcess = false;
+        $bg->isDone = false;
+        $bg->isCancel = false;
         $bg->save();
         //--------Auto add guest
         //--- check guest exist
@@ -477,14 +487,15 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-            $nhatKy->noiDung = "Tạo báo giá: BG0".$bg->id."-".Date('Y')."".Date('m').";";
+            $nhatKy->noiDung = "Tạo báo giá: BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
                 'code' => 200,
                 'message' => 'Đã tạo báo giá',
                 'data' => $bg,
-                'soBG' => "BG0".$bg->id."-".Date('Y')."".Date('m'),
+                'soBG' => "BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at),
+                'isBaoHiem' => $bg->isBaoHiem,
                 'idBG' => $bg->id
             ]);
         }
@@ -522,14 +533,15 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-            $nhatKy->noiDung = "Chỉnh sửa báo giá: BG0".$request->eid."-".Date('Y')."".Date('m').";";
+            $nhatKy->noiDung = "Chỉnh sửa báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
                 'code' => 200,
                 'message' => 'Đã chỉnh sửa báo giá',
                 'data' => $bg,
-                'soBG' => "BG0".$bg->id."-".Date('Y')."".Date('m'),
+                'soBG' => "BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at),
+                'isBaoHiem' => $bg->isBaoHiem,
                 'idBG' => $bg->id
             ]);
         }
@@ -648,7 +660,7 @@ class DichVuController extends Controller
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                 echo "
                 <tr id='tes' data-id='".$row->id."' ".$stt.">
-                    <td>BG0".$row->id."-".Date('Y')."".Date('m')."</td>
+                    <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                     <td>".$row->bienSo."</td>
                     <td>".$row->soKhung."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
@@ -665,7 +677,7 @@ class DichVuController extends Controller
                 'code' => 200,
                 'message' => 'Đã tải báo giá',
                 'data' => $bg,
-                'soBG' => "BG0".$bg->id."-".Date('Y')."".Date('m'),
+                'soBG' => "BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at),
             ]);
         else
             return response()->json([
@@ -684,7 +696,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Xoá báo giá: BG0".$request->eid."-".Date('Y')."".Date('m').";";
+                $nhatKy->noiDung = "Xoá báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -716,7 +728,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-            $nhatKy->noiDung = "Thực hiện báo giá: BG0".$request->eid."-".Date('Y')."".Date('m').";";
+            $nhatKy->noiDung = "Thực hiện báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -744,7 +756,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Huỷ báo giá: BG0".$request->eid."-".Date('Y')."".Date('m').";";
+                $nhatKy->noiDung = "Huỷ báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -778,7 +790,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Hoàn tất báo giá: BG0".$request->eid."-".Date('Y')."".Date('m').";";
+                $nhatKy->noiDung = "Hoàn tất báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -850,6 +862,8 @@ class DichVuController extends Controller
         $ct->isTang = $request->tang;
         $ct->id_user_work = ($request->kyThuatVien == 0) ? null : $request->kyThuatVien;
         $ct->thanhTien = ($request->soLuong * $request->donGia) - $request->chietKhau;
+        $ct->id_user_work_two = ($request->kyThuatVienTwo == 0) ? null : $request->kyThuatVienTwo;
+        $ct->tiLe = ($request->tiLe == 0) ? 10 : $request->tiLe;
         $ct->save();
         $pk = BHPK::find($request->hangMucChiTiet);
         if ($ct) {
@@ -857,12 +871,13 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->bgid."-".Date('Y')."".Date('m').";"
+                $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->bgid.";"
                 .$pk->noiDung."; Số lượng: "
                 .$request->soLuong."; Đơn giá: "
                 .$request->donGia."; Chiết khấu: "
                 .$request->chietKhau."; Tặng (1: Có; 0: Không): "
-                .$request->tang.";";
+                .$request->tang."; Tỉ lệ công "
+                .$request->tiLe."/".(10 - $request->tiLe)."; Chiết khấu: ";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -901,7 +916,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Xoá hạng mục cho báo giá: BG0".$request->eid."-".Date('Y')."".Date('m').";"
+                $nhatKy->noiDung = "Xoá hạng mục cho báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";"
                 .$bhpk->noiDung."; Số lượng: "
                 .$temp->soLuong."; Đơn giá: "
                 .$temp->donGia."; Chiết khấu: "
@@ -928,6 +943,8 @@ class DichVuController extends Controller
         $ct = ChiTietBHPK::where('id_baogia',$id_bg)->get();
         foreach($ct as $row) {
             $bhpk = BHPK::find($row->id_baohiem_phukien);
+            $namektv = ($row->userWork) ? explode(" ", $row->userWork->userDetail->surname) : "";  
+            $namektv2 = ($row->userWorkTwo) ? explode(" ", $row->userWorkTwo->userDetail->surname) : "";            
             echo "<tr>
                 <td>".($bhpk->isPK ? "Phụ kiện" : "Bảo hiểm")."</td>  
                 <td>".($bhpk->type == "CONG" ? "CÔNG" : "PHỤ TÙNG")."</td>                                    
@@ -939,7 +956,10 @@ class DichVuController extends Controller
                 <td>".number_format($row->chietKhau)."</td>
                 <td>".number_format($row->thanhTien)."</td>
                 <td>".(($row->isTang == true) ? "Có" : "Không")."</td>
-                <td>".(($row->userWork) ? $row->userWork->userDetail->surname : "Không có")."</td>
+                <td>"
+                .(($row->userWork) ? $namektv[count($namektv)-1] : "")
+                .", "
+                .(($row->userWorkTwo) ? $namektv2[count($namektv2)-1] : "")."</td>
                 <td>
                     <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>
                 </td>
@@ -970,7 +990,7 @@ class DichVuController extends Controller
         $ngay = Date('d');
         $thang = Date('m');
         $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-".Date('Y')."".Date('m');
+        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
         $khachHang = $bg->hoTen;
         $dienThoai = $bg->dienThoai;
         $diaChi = $bg->diaChi;
@@ -1006,14 +1026,12 @@ class DichVuController extends Controller
             $donGia .= number_format($row->donGia) . "<w:br/>";
             $chietKhau .= number_format($row->chietKhau) . "<w:br/>";
             if (!$row->isTang) {
-                $noiDung .= $bh->noiDung . "<w:br/>";
-                $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
-                $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+                $noiDung .= $bh->noiDung . "<w:br/>";               
             } else {
-                $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
-                $thanhTien .= "0<w:br/>";
-                $tongCong += 0;
+                $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
             }            
+            $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
+            $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
         }
         $tienBangChu = \HelpFunction::convert($tongCong);
         $yeuCau = $bg->yeuCau;
@@ -1076,7 +1094,7 @@ class DichVuController extends Controller
         $ngay = Date('d');
         $thang = Date('m');
         $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-".Date('Y')."".Date('m');
+        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
         $bienSo = $bg->bienSo;
         $thongTinXe = $bg->thongTinXe;
         $soKhung = $bg->soKhung;
@@ -1152,7 +1170,7 @@ class DichVuController extends Controller
         $ngay = Date('d');
         $thang = Date('m');
         $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-".Date('Y')."".Date('m');
+        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
         $bienSo = $bg->bienSo;
         $thongTinXe = $bg->thongTinXe;
         $soKhung = $bg->soKhung;
@@ -1180,8 +1198,9 @@ class DichVuController extends Controller
                 $noiDung .= $bh->noiDung . "<w:br/>";
                 $dvt .= $bh->dvt . "<w:br/>";
                 $sl .= $row->soLuong . "<w:br/>";
-                $namektv = explode(" ", $row->userWork->userDetail->surname);
-                $ktv .= ($row->userWork) ? $namektv[count($namektv)-1]." <w:br/>" : "Không <w:br/>";
+                $namektv = ($row->userWork) ? explode(" ", $row->userWork->userDetail->surname) : "";
+                $namektv2 = ($row->userWorkTwo) ? explode(" ", $row->userWorkTwo->userDetail->surname) : "";
+                $ktv .= (($row->userWork) ? $namektv[count($namektv)-1] : "").  ", ".(($row->userWorkTwo) ? $namektv2[count($namektv2)-1] : "")." <w:br/>";
             }            
         }
 
@@ -1232,7 +1251,7 @@ class DichVuController extends Controller
         $ngay = Date('d');
         $thang = Date('m');
         $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-".Date('Y')."".Date('m');
+        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
         $khachHang = $bg->hoTen;
         $dienThoai = $bg->dienThoai;
         $diaChi = $bg->diaChi;
@@ -1268,14 +1287,14 @@ class DichVuController extends Controller
             $donGia .= number_format($row->donGia) . "<w:br/>";
             $chietKhau .= number_format($row->chietKhau) . "<w:br/>";
             if (!$row->isTang) {
-                $noiDung .= $bh->noiDung . "<w:br/>";
-                $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
-                $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+                $noiDung .= $bh->noiDung . "<w:br/>";                
             } else {
-                $thanhTien .= "0<w:br/>";
-                $tongCong += 0;
+                // $thanhTien .= "0<w:br/>";
+                // $tongCong += 0;
                 $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
             }
+            $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
+            $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
             
         }
         $tienBangChu = \HelpFunction::convert($tongCong);
@@ -1332,5 +1351,584 @@ class DichVuController extends Controller
             return response()->download($pathToSave,$outhd . '.docx',$headers);
         else
             return redirect()->back();
+    }
+
+    public function baoCaoDoanhThuPanel() {
+        $user = User::all();
+        $iduser = Auth::user()->id;
+        $nameuser = Auth::user()->userDetail->surname;
+        return view('dichvu.baocaodoanhthu',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser]);
+    }
+
+    public function loadBaoCaoDoanhThu(Request $request) {
+        $loai = $request->baoCao;
+        $nv = $request->nhanVien;
+        $tu = $request->tu;
+        $den = $request->den;
+        $c_kd = 0;
+        $pt_kd = 0;
+        $ck_kd = 0;
+        $tong_ck_kd = 0;
+        $tong_ck_ptkd = 0;
+        $tong_kd = 0;
+        $c_kt = 0;
+        $pt_kt = 0;
+        $ck_kt = 0;
+        $tong_ck_kt = 0;
+        $tong_ck_ptkt = 0;
+        $tong_kt = 0;
+        $tb = "";
+        $i = 1;
+        //--------------
+        $toTong = 0;
+        $toTongKD = 0;
+        $toTongCKKD = 0;
+        $toTongKT = 0;
+        $toTongCKKT = 0;
+        //--------------
+        switch($loai) {
+            case 1: {
+                echo "
+                <table class='table table-striped table-bordered'>
+                <tr>
+                    <th>STT</th>
+                    <th>Ngày</th>
+                    <th>Người tạo</th>
+                    <th>Loại BG</th>
+                    <th>Số BG</th>
+                    <th>Công</th>
+                    <th>Phụ tùng</th>
+                    <th>Chiết khấu</th>
+                    <th>Tổng</th>
+                </tr>
+                <tbody>";   
+                if ($nv == 0) {
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=', true]
+                    ])
+                    ->orderBy('isPKD','desc')->get();
+                    foreach($bg as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                            $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                            $temp_cong = 0;
+                            $temp_phutung = 0;
+                            $temp_chietkhau = 0;
+                            foreach($ct as $item) {
+                                $bhpk = BHPK::where([
+                                    ['id','=',$item->id_baohiem_phukien],
+                                    ['isPK','=',false]
+                                ])->exists();
+                                if ($bhpk) {
+                                    $temp_cong += $item->thanhTien;
+                                    $temp_chietkhau += $item->chietKhau;
+                                    if ($row->isPKD) {
+                                        $c_kd += $item->thanhTien;
+                                        $tong_kd += $item->thanhTien;
+                                        $tong_ck_kd += $item->chietKhau;
+                                    } else {
+                                        $c_kt += $item->thanhTien;
+                                        $tong_kt += $item->thanhTien;
+                                        $tong_ck_kt += $item->chietKhau;
+                                    }         
+                                }                                      
+                            }
+                            echo "<tr>
+                                        <td>".($i++)."</td>
+                                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                        <td>".$row->user->userDetail->surname."</td>
+                                        <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
+                                        <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                        <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_chietkhau).")</span></td>
+                                        <td class='text-bold text-success'></td>
+                                        <td class='text-bold text-secondary'>".number_format($temp_chietkhau)."</td>
+                                        <td class='text-bold text-primary'>".number_format($temp_cong)."</td>
+                                    </tr>";
+                        }
+                    }
+                    echo "</tbody>
+                        </table>        
+                        <h5>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_kd + $tong_kt)."</span> trong đó:</h5>
+                    <div class='row'>
+                            <div class='col-md-3'>
+                                <h6>Báo giá kinh doanh:</h6>
+                                <p>
+                                    - Công: <span class='text-bold text-success'>".number_format($c_kd)."</span> <span class='text-secondary'> (".number_format($tong_ck_kd).")</span><br/>
+                                    - Phụ tùng: <span class='text-bold text-success'>0</span> <span class='text-secondary'>(0)</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kd)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($c_kd)."</span>
+                                </p>
+                            </div>
+                            <div class='col-md-3'>
+                                <h6>Báo giá khai thác:</h6>
+                                <p>
+                                - Công: <span class='text-bold text-success'>".number_format($c_kt)."</span> <span class='text-secondary'> (".number_format($tong_ck_kt).")</span><br/>
+                                - Phụ tùng: <span class='text-bold text-success'>0</span> <span class='text-secondary'>(0)</span><br/>
+                                - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kt)."</span><br/>
+                                => Tổng: <span class='text-bold text-primary'>".number_format($c_kt)."</span>
+                                </p>
+                            </div>
+                    </div>";
+                } else {    
+                    $bg = BaoGiaBHPK::select("*")
+                        ->where([
+                            ['isDone','=',true],
+                            ['isCancel','=',false],
+                            ['isBaoHiem','=', true],
+                            ['id_user_create','=',$nv]
+                        ])
+                        ->orderBy('isPKD','desc')->get();
+                        foreach($bg as $row) {
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                                $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                                $temp_cong = 0;
+                                $temp_phutung = 0;
+                                $temp_chietkhau = 0;
+                                foreach($ct as $item) {
+                                    $bhpk = BHPK::where([
+                                        ['id','=',$item->id_baohiem_phukien],
+                                        ['isPK','=',false]
+                                    ])->exists();
+                                    if ($bhpk) {
+                                        $temp_cong += $item->thanhTien;
+                                        $temp_chietkhau += $item->chietKhau;
+                                        if ($row->isPKD) {
+                                            $c_kd += $item->thanhTien;
+                                            $tong_kd += $item->thanhTien;
+                                            $tong_ck_kd += $item->chietKhau;
+                                        } else {
+                                            $c_kt += $item->thanhTien;
+                                            $tong_kt += $item->thanhTien;
+                                            $tong_ck_kt += $item->chietKhau;
+                                        }         
+                                    }                
+                                }
+                                echo "<tr>
+                                            <td>".($i++)."</td>
+                                            <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                            <td>".$row->user->userDetail->surname."</td>
+                                            <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
+                                            <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                            <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_chietkhau).")</span></td>
+                                            <td class='text-bold text-success'></td>
+                                            <td class='text-bold text-secondary'>".number_format($temp_chietkhau)."</td>
+                                            <td class='text-bold text-primary'>".number_format($temp_cong)."</td>
+                                        </tr>";
+                            }
+                        }
+                        echo "</tbody>
+                            </table>        
+                            <h5>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_kd + $tong_kt)."</span> trong đó:</h5>
+                        <div class='row'>
+                                <div class='col-md-3'>
+                                    <h6>Báo giá kinh doanh:</h6>
+                                    <p>
+                                        - Công: <span class='text-bold text-success'>".number_format($c_kd)."</span> <span class='text-secondary'> (".number_format($tong_ck_kd).")</span><br/>
+                                        - Phụ tùng: <span class='text-bold text-success'>0</span> <span class='text-secondary'>(0)</span><br/>
+                                        - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kd)."</span><br/>
+                                        => Tổng: <span class='text-bold text-primary'>".number_format($c_kd)."</span>
+                                    </p>
+                                </div>
+                                <div class='col-md-3'>
+                                    <h6>Báo giá khai thác:</h6>
+                                    <p>
+                                    - Công: <span class='text-bold text-success'>".number_format($c_kt)."</span> <span class='text-secondary'> (".number_format($tong_ck_kt).")</span><br/>
+                                    - Phụ tùng: <span class='text-bold text-success'>0</span> <span class='text-secondary'>(0)</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kt)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($c_kt)."</span>
+                                    </p>
+                                </div>
+                        </div>";
+                }
+            } break;     
+            case 2: {
+                echo "
+                <table class='table table-striped table-bordered'>
+                <tr>
+                    <th>STT</th>
+                    <th>Ngày</th>
+                    <th>Người tạo</th>
+                    <th>Loại BG</th>
+                    <th>Số BG</th>
+                    <th>Công</th>
+                    <th>Phụ tùng</th>
+                    <th>Chiết khấu</th>                    
+                    <th>Tổng</th>
+                </tr>
+                <tbody>";   
+                if ($nv == 0) {
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=', false]
+                    ])
+                    ->orderBy('isPKD','desc')->get();
+                    foreach($bg as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                            $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                            $temp_cong = 0;
+                            $temp_ck_cong = 0;
+                            $temp_phutung = 0;
+                            $temp_ck_phutung = 0;
+                            $temp_chietkhau = 0;
+                            foreach($ct as $item) {
+                                $bhpk = BHPK::where([
+                                    ['id','=',$item->id_baohiem_phukien],
+                                    ['isPK','=',true]
+                                ])->exists();
+                                if ($bhpk) {
+                                    $subbhpk = BHPK::where([
+                                        ['id','=',$item->id_baohiem_phukien],
+                                        ['isPK','=',true]
+                                    ])->first();
+                                    if ($subbhpk->type == "CONG") {
+                                        $temp_cong += $item->thanhTien;   
+                                        $temp_ck_cong += $item->chietKhau;   
+                                        if ($row->isPKD) {
+                                            $c_kd += $item->thanhTien;                                        
+                                            $tong_kd += $item->thanhTien;
+                                            $tong_ck_kd += $item->chietKhau;
+                                            $ck_kd = 0;
+                                        } else {
+                                            $c_kt += $item->thanhTien;
+                                            $tong_kt += $item->thanhTien;
+                                            $tong_ck_kt += $item->chietKhau;
+                                            $ck_kt = 0;
+                                        }                                     
+                                    }
+                                    if ($subbhpk->type == "PHUTUNG") {
+                                        $temp_phutung += $item->thanhTien;
+                                        $temp_ck_phutung += $item->chietKhau; 
+                                        if ($row->isPKD) {
+                                            $pt_kd += $item->thanhTien;                                        
+                                            $tong_kd += $item->thanhTien;
+                                            $tong_ck_ptkd += $item->chietKhau;
+                                            $ck_kd = 0;
+                                        } else {
+                                            $pt_kt += $item->thanhTien;
+                                            $tong_kt += $item->thanhTien;
+                                            $tong_ck_ptkt += $item->chietKhau;
+                                            $ck_kt = 0;
+                                        }                  
+                                    }
+                                    $temp_chietkhau += $item->chietKhau;                                    
+                                }                                      
+                            }
+                            echo "<tr>
+                                        <td>".($i++)."</td>
+                                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                        <td>".$row->user->userDetail->surname."</td>
+                                        <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
+                                        <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                        <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_ck_cong ).")</span></td>
+                                        <td class='text-bold text-success'>".number_format($temp_phutung)."<span class='text-secondary'> (".number_format($temp_ck_phutung).")</span></td>
+                                        <td class='text-bold text-secondary'>".number_format($temp_chietkhau)."</td>
+                                        <td class='text-bold text-primary'>".number_format($temp_cong + $temp_phutung)."</td>
+                                    </tr>";
+                        }
+                    }
+                    echo "</tbody>
+                        </table>        
+                        <h5>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_kd + $tong_kt)."</span> trong đó:</h5>
+                    <div class='row'>
+                            <div class='col-md-3'>
+                                <h6>Báo giá kinh doanh:</h6>
+                                <p>
+                                    - Công: <span class='text-bold text-success'>".number_format($c_kd)."</span> <span class='text-secondary'> (".number_format($tong_ck_kd).")</span><br/>
+                                    - Phụ tùng: <span class='text-bold text-success'>".number_format($pt_kd)."</span> <span class='text-secondary'> (".number_format($tong_ck_ptkd).")</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kd + $tong_ck_ptkd)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($c_kd + $pt_kd)."</span>
+                                </p>
+                            </div>
+                            <div class='col-md-3'>
+                                <h6>Báo giá khai thác:</h6>
+                                <p>
+                                - Công: <span class='text-bold text-success'>".number_format($c_kt)."</span> <span class='text-secondary'> (".number_format($tong_ck_kt).")</span><br/>
+                                    - Phụ tùng: <span class='text-bold text-success'>".number_format($pt_kt)."</span> <span class='text-secondary'> (".number_format($tong_ck_ptkt).")</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kt + $tong_ck_ptkt)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($c_kt + $pt_kt)."</span>
+                                </p>
+                            </div>
+                    </div>";
+                } else {    
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=', false],
+                        ['id_user_create','=', $nv]
+                    ])
+                    ->orderBy('isPKD','desc')->get();
+                    foreach($bg as $row) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                            $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                            $temp_cong = 0;
+                            $temp_ck_cong = 0;
+                            $temp_phutung = 0;
+                            $temp_ck_phutung = 0;
+                            $temp_chietkhau = 0;                            
+                            foreach($ct as $item) {
+                                $bhpk = BHPK::where([
+                                    ['id','=',$item->id_baohiem_phukien],
+                                    ['isPK','=',true]
+                                ])->exists();
+                                if ($bhpk) {
+                                    $subbhpk = BHPK::where([
+                                        ['id','=',$item->id_baohiem_phukien],
+                                        ['isPK','=',true]
+                                    ])->first();
+                                    if ($subbhpk->type == "CONG") {
+                                        $temp_cong += $item->thanhTien;   
+                                        $temp_ck_cong += $item->chietKhau;   
+                                        if ($row->isPKD) {
+                                            $c_kd += $item->thanhTien;                                        
+                                            $tong_kd += $item->thanhTien;
+                                            $tong_ck_kd += $item->chietKhau;
+                                            $ck_kd = 0;
+                                        } else {
+                                            $c_kt += $item->thanhTien;
+                                            $tong_kt += $item->thanhTien;
+                                            $tong_ck_kt += $item->chietKhau;
+                                            $ck_kt = 0;
+                                        }                                     
+                                    }
+                                    if ($subbhpk->type == "PHUTUNG") {
+                                        $temp_phutung += $item->thanhTien;
+                                        $temp_ck_phutung += $item->chietKhau; 
+                                        if ($row->isPKD) {
+                                            $pt_kd += $item->thanhTien;                                        
+                                            $tong_kd += $item->thanhTien;
+                                            $tong_ck_ptkd += $item->chietKhau;
+                                            $ck_kd = 0;
+                                        } else {
+                                            $pt_kt += $item->thanhTien;
+                                            $tong_kt += $item->thanhTien;
+                                            $tong_ck_ptkt += $item->chietKhau;
+                                            $ck_kt = 0;
+                                        }                  
+                                    }
+                                    $temp_chietkhau += $item->chietKhau;                                    
+                                }                                      
+                            }
+                            echo "<tr>
+                                        <td>".($i++)."</td>
+                                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                        <td>".$row->user->userDetail->surname."</td>
+                                        <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
+                                        <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                        <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_ck_cong ).")</span></td>
+                                        <td class='text-bold text-success'>".number_format($temp_phutung)."<span class='text-secondary'> (".number_format($temp_ck_phutung).")</span></td>
+                                        <td class='text-bold text-secondary'>".number_format($temp_chietkhau)."</td>
+                                        <td class='text-bold text-primary'>".number_format($temp_cong + $temp_phutung)."</td>
+                                    </tr>";
+                        }
+                    }
+                    echo "</tbody>
+                        </table>        
+                        <h5>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_kd + $tong_kt)."</span> trong đó:</h5>
+                    <div class='row'>
+                            <div class='col-md-3'>
+                                <h6>Báo giá kinh doanh:</h6>
+                                <p>
+                                    - Công: <span class='text-bold text-success'>".number_format($c_kd)."</span> <span class='text-secondary'> (".number_format($tong_ck_kd).")</span><br/>
+                                    - Phụ tùng: <span class='text-bold text-success'>".number_format($pt_kd)."</span> <span class='text-secondary'> (".number_format($tong_ck_ptkd).")</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kd + $tong_ck_ptkd)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($c_kd + $pt_kd)."</span>
+                                </p>
+                            </div>
+                            <div class='col-md-3'>
+                                <h6>Báo giá khai thác:</h6>
+                                <p>
+                                - Công: <span class='text-bold text-success'>".number_format($c_kt)."</span> <span class='text-secondary'> (".number_format($tong_ck_kt).")</span><br/>
+                                    - Phụ tùng: <span class='text-bold text-success'>".number_format($pt_kt)."</span> <span class='text-secondary'> (".number_format($tong_ck_ptkt).")</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($tong_ck_kt + $tong_ck_ptkt)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($c_kt + $pt_kt)."</span>
+                                </p>
+                            </div>
+                    </div>";
+                }
+            } break;  
+            case 3: {
+                echo "
+                <table class='table table-striped table-bordered'>
+                <tr>
+                    <th>STT</th>
+                    <th>Ngày</th>
+                    <th>KTV 1</th>
+                    <th>KTV 2</th>
+                    <th>Tỉ lệ</th>                    
+                    <th>Người tạo BG</th>
+                    <th>Loại BG</th>
+                    <th>Số BG</th>
+                    <th>Công</th>
+                    <th>Chiết khấu</th>
+                </tr>
+                <tbody>";   
+                if ($nv == 0) {
+                    $user = User::all();
+                    $i = 1;
+                    foreach($user as $row) {
+                        if ($row->hasRole("to_phu_kien")) {
+                            $ct = ChiTietBHPK::where('id_user_work','=',$row->id)
+                            ->orWhere('id_user_work_two','=',$row->id)
+                            ->get();
+                            foreach($ct as $item) {
+                                $tiLe = 1;
+                                $cong = 0;
+                                $chietKhau = 0;
+                                $ktv1 = "";
+                                $ktv2 = "";
+                                $nguoiTao = "";
+                                $loaiBaoGia = false;
+                                $soBaoGia = "";
+                                if ($item->baoGia->isDone && !$item->baoGia->isCancel 
+                                    && ((strtotime(\HelpFunction::getDateRevertCreatedAt($item->baoGia->created_at)) >= strtotime($tu)) 
+                                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($item->baoGia->created_at)) <= strtotime($den)))) {
+                                    if ($item->id_user_work != $row->id) {
+                                        $tiLe = 10 - $item->tiLe;
+                                        $ktv2 = $item->userWorkTwo->userDetail->surname;
+                                    } elseif ($item->id_user_work_two != $row->id) {
+                                        $tiLe = $item->tiLe;
+                                        $ktv1 = $item->userWork->userDetail->surname;
+                                    } else {
+                                        
+                                    }
+                                    $cong = $item->thanhTien * $tiLe/10;
+                                    $chietKhau = $item->chietKhau * $tiLe/10;
+                                    $nguoiTao = $item->baoGia->user->userDetail->surname;
+                                    $loaiBaoGia = $item->baoGia->isPKD;
+                                    if ($loaiBaoGia) {
+                                        $toTongKD += ($item->thanhTien * $tiLe/10);
+                                        $toTongCKKD +=  $item->chietKhau * $tiLe/10;
+                                    } else {
+                                        $toTongKT += ($item->thanhTien * $tiLe/10);
+                                        $toTongCKKT +=  $item->chietKhau * $tiLe/10;
+                                    }
+                                    $toTong += ($item->thanhTien * $tiLe/10);
+                                    $soBaoGia = "BG0".$item->baoGia->id."-".\HelpFunction::getDateCreatedAtRevert($item->baoGia->created_at);
+                                    echo "<tr>
+                                        <td>".($i++)."</td>
+                                        <td>".\HelpFunction::getDateRevertCreatedAt($item->baoGia->created_at)."</td>
+                                        <td>".$ktv1."</td>
+                                        <td>".$ktv2."</td>
+                                        <td class='text-bold text-pink'>".$tiLe."/".(10-$tiLe)."</td>                                        
+                                        <td>".$nguoiTao."</td>
+                                        <td>".($loaiBaoGia == true ? "Báo giá KD" : "Báo giá khai thác")."</td>
+                                        <td>".$soBaoGia."</td>
+                                        <td>".number_format($cong)."</td>
+                                        <td>".number_format($chietKhau)."</td>
+                                        </tr>";
+                                }
+                            }
+                        }
+                    }                    
+                    echo "</tbody>
+                        </table>        
+                        <h5>Tổng doanh thu: <span class='text-bold text-info'>".number_format($toTong)."</span> trong đó:</h5>
+                    <div class='row'>
+                            <div class='col-md-3'>
+                                <h6>Báo giá kinh doanh:</h6>
+                                <p>
+                                    - Công: <span class='text-bold text-success'>".number_format($toTongKD)."</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($toTongCKKD)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($toTongKD)."</span>
+                                </p>
+                            </div>
+                            <div class='col-md-3'>
+                                <h6>Báo giá khai thác:</h6>
+                                <p>
+                                - Công: <span class='text-bold text-success'>".number_format($toTongKT)."</span><br/>
+                                - Chiết khấu: <span class='text-bold text-secondary'>".number_format($toTongCKKT)."</span><br/>
+                                => Tổng: <span class='text-bold text-primary'>".number_format($toTongKT)."</span>
+                                </p>
+                            </div>
+                    </div>";
+                } else {    
+                    $i = 1;
+                    $ct = ChiTietBHPK::where('id_user_work','=',$nv)
+                    ->orWhere('id_user_work_two','=',$nv)
+                    ->get();
+                    foreach($ct as $item) {
+                        $tiLe = 1;
+                        $cong = 0;
+                        $chietKhau = 0;
+                        $ktv1 = "";
+                        $ktv2 = "";
+                        $nguoiTao = "";
+                        $loaiBaoGia = false;
+                        $soBaoGia = "";
+                        if ($item->baoGia->isDone && !$item->baoGia->isCancel 
+                            && ((strtotime(\HelpFunction::getDateRevertCreatedAt($item->baoGia->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($item->baoGia->created_at)) <= strtotime($den)))) {
+                            if ($item->id_user_work != $nv) {
+                                $tiLe = 10 - $item->tiLe;
+                                if ($item->id_user_work_two == $nv)
+                                    $ktv2 = $item->userWorkTwo->userDetail->surname;
+                            } elseif ($item->id_user_work_two != $nv)  {
+                                $tiLe = $item->tiLe;
+                                if ($item->id_user_work == $nv)
+                                    $ktv1 = $item->userWork->userDetail->surname;
+                            } else {
+
+                            }
+
+                            $cong = $item->thanhTien * $tiLe/10;
+                            $chietKhau = $item->chietKhau * $tiLe/10;
+                            $nguoiTao = $item->baoGia->user->userDetail->surname;
+                            $loaiBaoGia = $item->baoGia->isPKD;
+                            if ($loaiBaoGia) {
+                                $toTongKD += ($item->thanhTien * $tiLe/10);
+                                $toTongCKKD +=  $item->chietKhau * $tiLe/10;
+                            } else {
+                                $toTongKT += ($item->thanhTien * $tiLe/10);
+                                $toTongCKKT +=  $item->chietKhau * $tiLe/10;
+                            }
+                            $toTong += ($item->thanhTien * $tiLe/10);
+                            $soBaoGia = "BG0".$item->baoGia->id."-".\HelpFunction::getDateCreatedAtRevert($item->baoGia->created_at);
+                            echo "<tr>
+                                <td>".($i++)."</td>
+                                <td>".\HelpFunction::getDateRevertCreatedAt($item->baoGia->created_at)."</td>
+                                <td>".$ktv1."</td>
+                                <td>".$ktv2."</td>
+                                <td class='text-bold text-pink'>".$tiLe."/".(10-$tiLe)."</td>                                        
+                                <td>".$nguoiTao."</td>
+                                <td>".($loaiBaoGia == true ? "Báo giá KD" : "Báo giá khai thác")."</td>
+                                <td>".$soBaoGia."</td>
+                                <td>".number_format($cong)."</td>
+                                <td>".number_format($chietKhau)."</td>
+                                </tr>";
+                        }
+                    }              
+                    echo "</tbody>
+                        </table>        
+                        <h5>Tổng doanh thu: <span class='text-bold text-info'>".number_format($toTong)."</span> trong đó:</h5>
+                    <div class='row'>
+                            <div class='col-md-3'>
+                                <h6>Báo giá kinh doanh:</h6>
+                                <p>
+                                    - Công: <span class='text-bold text-success'>".number_format($toTongKD)."</span><br/>
+                                    - Chiết khấu: <span class='text-bold text-secondary'>".number_format($toTongCKKD)."</span><br/>
+                                    => Tổng: <span class='text-bold text-primary'>".number_format($toTongKD)."</span>
+                                </p>
+                            </div>
+                            <div class='col-md-3'>
+                                <h6>Báo giá khai thác:</h6>
+                                <p>
+                                - Công: <span class='text-bold text-success'>".number_format($toTongKT)."</span><br/>
+                                - Chiết khấu: <span class='text-bold text-secondary'>".number_format($toTongCKKT)."</span><br/>
+                                => Tổng: <span class='text-bold text-primary'>".number_format($toTongKT)."</span>
+                                </p>
+                            </div>
+                    </div>";
+                }
+            } break;     
+        }
     }
 }

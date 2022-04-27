@@ -664,7 +664,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hangmuc/guest/edit/show/','DichVuController@getHangMucEdit'); 
         Route::post('hangmuc/guest/update/','DichVuController@updateHangMuc'); 
 
-
+        // báo cáo doanh thu
+        Route::get('baocaodoanhthu','DichVuController@baoCaoDoanhThuPanel')->name('dichvu.baocaodoanhthu.panel')->middleware(['f_bhpk']); 
+        Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu');     
     });
 });
 

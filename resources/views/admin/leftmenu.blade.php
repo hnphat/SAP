@@ -213,12 +213,16 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') )
                         <li class="nav-item">
                             <a href="{{route('phukien.khachhang')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý khách hàng</p>
                             </a>
                         </li>   
+                        @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
@@ -237,24 +241,31 @@
                             </a>
                         </li>      
                         @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
                         <li class="nav-item">
                             <a href="{{route('dichvu.hangmuc')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Danh sách hạng mục</p>
                             </a>
-                        </li>   
-                        <!-- <li class="nav-item">
-                            <a href="#" class="nav-link">
+                        </li> 
+                        @endif  
+                        <li class="nav-item">
+                            <a href="{{route('dichvu.baocaodoanhthu.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Báo cáo</p>
+                                <p>Báo cáo doanh thu</p>
                             </a>
                         </li>      
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Báo cáo tiến độ</p>
                             </a>
-                        </li>                              -->
+                        </li>          
+                        @endif                   
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||

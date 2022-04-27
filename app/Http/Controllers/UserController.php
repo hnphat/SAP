@@ -203,8 +203,10 @@ class UserController extends Controller
     }
 
     public function changePass() {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true); 
         $user = User::find(Auth::user()->id);
-        return view('user.pass', ['user' => $user]);
+        return view('user.pass', ['user' => $user, 'data' => $data]);
     }
 
     public function change(Request $request) {        

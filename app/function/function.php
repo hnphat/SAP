@@ -308,6 +308,14 @@ class HelpFunction {
         return $arr2[1] . "/" . $arr2[0];
     }
 
+    public static function getDateCreatedAtRevert($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $arr2 = explode('-', $newDate);
+        return $arr2[0] . "" . $arr2[1];
+    }
+
     public static function getArrCreatedAt($date = '2020-01-01') {
         if ($date == null) return "";
         $arr = explode(' ', $date);

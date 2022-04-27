@@ -84,6 +84,13 @@
                                         <textarea name="thongBao" class="form-control" name="thongBao" cols="30" rows="5">
                                         </textarea>
                                     </div>   
+                                    <div class="form-group">
+                                        <label>Cho phép nhân viên cập nhật thông tin cá nhân</label>
+                                        <select name="capNhatThongTin" class="form-control">
+                                            <option value="1">Không</option>
+                                            <option value="0">Có</option>
+                                        </select>
+                                    </div>   
                                 </div>
                                 <div class="col-md-4">  
                                     <!-- <div class="form-group">
@@ -176,6 +183,7 @@
                         $("input[name=emailCapHoa]").val(response.data.emailCapHoa);
                         $("input[name=emailDuyetXe]").val(response.data.emailDuyetXe);
                         $("input[name=emailTraXe]").val(response.data.emailTraXe);
+                        $("select[name=capNhatThongTin]").val(response.data.capNhatThongTin);
                     },
                     error: function() {
                         Toast.fire({

@@ -57,29 +57,49 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="phone">Số điện thoại</label>
-                                    <input type="text" value="{{$user->userDetail->phone}}" name="phone" id="phone" class="form-control" required="required" />
+                                    <input
+                                    @if($data["capNhatThongTin"]) 
+                                        readonly
+                                    @endif
+                                    type="text" value="{{$user->userDetail->phone}}" name="phone" id="phone" class="form-control" required="required" />
                                 </div>
                             </form> 
                         </div>
                         <div class="col-md-4">
                                <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" value="{{$user->email}}" name="email" id="email" class="form-control" form="changeInfo" required="required" >
+                                    <input 
+                                    @if($data["capNhatThongTin"]) 
+                                        readonly
+                                    @endif
+                                    type="email" value="{{$user->email}}" name="email" id="email" class="form-control" form="changeInfo" required="required" >
                                 </div>
                                 <div class="form-group">
                                     <label for="birthday">Ngày sinh</label>
-                                    <input type="text" value="{{$user->userDetail->birthday}}" name="birthday" id="birthday" class="form-control" form="changeInfo"  required="required"/>
+                                    <input
+                                    @if($data["capNhatThongTin"]) 
+                                        readonly
+                                    @endif
+                                     type="text" value="{{$user->userDetail->birthday}}" name="birthday" id="birthday" class="form-control" form="changeInfo"  required="required"/>
                                 </div>
                                 <div class="form-group">
                                     <label for="address">Địa chỉ</label>
-                                    <input type="text" value="{{$user->userDetail->address}}" name="address" id="address" class="form-control" required="required" form="changeInfo"/>
+                                    <input
+                                    @if($data["capNhatThongTin"]) 
+                                        readonly
+                                    @endif
+                                     type="text" value="{{$user->userDetail->address}}" name="address" id="address" class="form-control" required="required" form="changeInfo"/>
                                 </div>
                                 <form id="upForm" autocomplete="off">
                                     {{csrf_field()}}
                                     <input type="hidden" name="up_id" value="{{$user->userDetail->id}}"/>   
                                     <div class="form-group">
                                         <label for="fileAnh">Ảnh đại diện</label>
-                                        <input type="file" class="form-control" name="fileAnh" id="fileAnh">
+                                        <input
+                                        @if($data["capNhatThongTin"]) 
+                                            disabled
+                                        @endif
+                                        type="file" class="form-control" name="fileAnh" id="fileAnh">
                                                     <span>Tối đa 10MB (jpg,png,JPG,PNG)</span>
                                     </div>
                                     <div class="form-group">

@@ -33,7 +33,7 @@
 
         <!-- Main content -->
         <div>
-            <form>
+            <form autocomplete="off">
                 <div class="container row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -109,12 +109,32 @@
                                     <input type="hidden" name="eid" id="eid">
                                 </div>        
                             </div>     
-                            <div class="col-md-9">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Lý do huỷ (nếu có)</label><br/>                                      
                                     <input disabled id="lyDoHuy" type="text" name="lyDoHuy" class="form-control">                                                                        
                                 </div>        
-                            </div>                                     
+                            </div>    
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Hình thức</label><br/>        
+                                    <select 
+                                    @if(!\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    disabled
+                                    @endif id="isBaoHiem" name="isBaoHiem" class="form-control">
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                        <option value="1">Báo giá bảo hiểm</option>
+                                        <option value="0">Báo giá phụ kiện</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem'))
+                                        <option value="1">Báo giá bảo hiểm</option>
+                                    @endif
+                                    @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
+                                        <option value="0">Báo giá phụ kiện</option>
+                                    @endif
+                                    </select>                              
+                                </div>        
+                            </div>                                    
                         </div>
                         <hr>
                         <h4 class="text-bold text-info">TIẾN ĐỘ</h4>
@@ -276,7 +296,7 @@
                                             <th>Chiết khấu</th>
                                             <th>Thành tiền</th>
                                             <th>Tặng</th>
-                                            <th>Thực hiện</th>
+                                            <th>KTV</th>
                                             <th>Tác vụ</th>
                                         </tr>
                                         <tbody id="chiTietHangMuc">
@@ -318,7 +338,7 @@
                             <div class="form-group">
                                 <label>Chọn bộ phận</label>
                                 <select id="boPhan" name="boPhan" class="form-control">
-                                    <option value="0">Bảo hiểm</option>
+                                    <!-- <option value="0">Bảo hiểm</option> -->
                                     <option value="1">Phụ kiện</option>
                                 </select>
                             </div>
@@ -348,8 +368,34 @@
                                 <span id="showDonGias"></span>
                             </div>
                             <div class="form-group">
-                                <label>Chọn kỹ thuật viên thực hiện</label>                              
+                                <label>Chọn kỹ thuật viên 1</label>                              
                                 <select name="kyThuatVien" class="form-control">
+                                    <option value="0">Không có</option>
+                                    @foreach($user as $row)
+                                        @if($row->hasRole('to_phu_kien') == true)
+                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                        @endif
+                                    @endforeach
+                                </select>                                
+                            </div>
+                            <div class="form-group">
+                                <label>Tỉ lệ</label>                              
+                                <select name="tiLe" class="form-control">
+                                    <option value="0">Không có</option>
+                                    <option value="1">1/9</option>
+                                    <option value="2">2/8</option>
+                                    <option value="3">3/7</option>
+                                    <option value="4">4/6</option>
+                                    <option value="5">5/5</option>
+                                    <option value="6">6/4</option>
+                                    <option value="7">7/3</option>
+                                    <option value="8">8/2</option>
+                                    <option value="9">9/1</option>
+                                </select>                                
+                            </div>
+                            <div class="form-group">
+                                <label>Chọn kỹ thuật viên 2</label>                              
+                                <select name="kyThuatVienTwo" class="form-control">
                                     <option value="0">Không có</option>
                                     @foreach($user as $row)
                                         @if($row->hasRole('to_phu_kien') == true)
@@ -370,14 +416,14 @@
                                 <label>Chiết khấu (nếu có)</label>
                                 <input id="chietKhaun" type="number" name="chietKhau" value="0" class="form-control">
                                 <span id="showChietKhaus"></span>
-                            </div>
+                            </div>                            
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Mặt hàng: <span class="text-primary" id="s_noiDung"></span></label><br/>
                                 <label>Đơn vị tính: <span class="text-primary" id="s_dvt"></span></label><br/>
                                 <label>Giá tham khảo: <span class="text-primary" id="s_gia"></span> (VAT)</label>
-                            </div>                            
+                            </div>                                                        
                         </div>
                     </div>
                     <div class="container row">
@@ -759,6 +805,7 @@
                                 "_token": "{{csrf_token()}}",
                                 "eid": $("#eid").val(),
                                 "isPKD": $("#isPKD").val(),
+                                "isBaoHiem": $("#isBaoHiem").val(),
                                 "hopDong": $("#hopDong").val(),
                                 "nhanVien": $("#nhanVien").val(),
                                 "gioVao": $("#gioVao").val(),
@@ -792,6 +839,7 @@
                                         $("#save").hide();
                                         $("#notsave").hide();
                                         $("#soBaoGia").val(response.soBG);
+                                        $("#isBaoHiem").val(response.isBaoHiem);
                                         $("#eid").val(response.idBG);
                                         reloadData();
                                         butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                      
@@ -827,6 +875,7 @@
                                 data: {
                                     "_token": "{{csrf_token()}}",
                                     "isPKD": $("#isPKD").val(),
+                                    "isBaoHiem": $("#isBaoHiem").val(),
                                     "hopDong": $("#hopDong").val(),
                                     "nhanVien": $("#nhanVien").val(),
                                     "gioVao": $("#gioVao").val(),
@@ -860,6 +909,7 @@
                                             $("#save").hide();
                                             $("#notsave").hide();
                                             $("#soBaoGia").val(response.soBG);
+                                            $("#isBaoHiem").val(response.isBaoHiem);
                                             $("#eid").val(response.idBG);  
                                             reloadData();   
                                             butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                                                             
@@ -1182,6 +1232,60 @@
                 });  
             });
 
+            function getChiTietHangMuc(val) {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadbhpk')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": valueSelected                           
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("#s_noiDung").text(response.data.noiDung);
+                        $("#s_dvt").text(response.data.dvt);              
+                        $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));              
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hạng mục nào!"
+                        })                       
+                    }
+                }); 
+            }
+            // $("#hangMucChiTiet").click(function(){
+            //     var optionSelected = $("option:selected", this);
+            //     var valueSelected = this.value;
+            //     $.ajax({
+            //         type: "post",
+            //         url: "{{route('loadbhpk')}}",
+            //         dataType: "json",
+            //         data: {
+            //             "_token": "{{csrf_token()}}",
+            //             "eid": valueSelected                           
+            //         },
+            //         success: function(response) {
+            //             Toast.fire({
+            //                 icon: response.type,
+            //                 title: response.message
+            //             }) 
+            //             $("#s_noiDung").text(response.data.noiDung);
+            //             $("#s_dvt").text(response.data.dvt);              
+            //             $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));              
+            //         },
+            //         error: function() {
+            //             Toast.fire({
+            //                 icon: 'warning',
+            //                 title: " Không tìm thấy hạng mục nào!"
+            //             })                       
+            //         }
+            //     });  
+            // });
             $('#hangMucChiTiet').on('change', function (e) {
                 var optionSelected = $("option:selected", this);
                 var valueSelected = this.value;
@@ -1547,6 +1651,7 @@
                     $("#eid").val(response.data.id);
                     $("#isPKD").val(response.data.isPKD);
                     $("#soBaoGia").val(response.soBG);
+                    $("#isBaoHiem").val(response.data.isBaoHiem);
                     $("#gioVao").val(response.data.thoiGianVao);
                     $("#gioRa").val(response.data.thoiGianHoanThanh);
                     $("#ngayVao").val(response.data.ngayVao);

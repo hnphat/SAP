@@ -18,6 +18,7 @@ class BaogiaBhpk extends Migration
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->boolean('isPKD')->default(false);
+            $table->boolean('isBaoHiem')->default(false);
             $table->string('hopDongKD')->nullable();
             $table->string('nvKD')->nullable();
             $table->string('thoiGianVao');
