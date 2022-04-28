@@ -260,7 +260,7 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('dichvu.baocaotiendo.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Báo cáo tiến độ</p>
                             </a>
@@ -482,6 +482,21 @@
                                 <a href="{{route('chitiet.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Chấm công chi tiết</p>
+                                </a>
+                            </li>
+                            @endif
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
+                            <li class="nav-item">
+                                <a href="{{route('khenthuong.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Quản lý khen thưởng</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('bienban.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Quản lý biên bản</p>
                                 </a>
                             </li>
                             @endif

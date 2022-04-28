@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Báo cáo doanh thu
+    Báo cáo tiến độ
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -13,13 +13,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Báo cáo doanh thu</strong></h1>
+                        <h1 class="m-0"><strong>Báo cáo tiến độ</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Dịch vụ</li>
-                            <li class="breadcrumb-item active">Báo cáo doanh thu</li>
+                            <li class="breadcrumb-item active">Báo cáo tiến độ</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -35,7 +35,7 @@
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="false">
-                                    <strong>Báo cáo doanh thu</strong>
+                                    <strong>Báo cáo tiến độ</strong>
                                 </a>
                             </li>
                         </ul>
@@ -44,40 +44,14 @@
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
                               <form>
-                                <div class="card-body row">
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label>Chọn loại báo cáo</label>
-                                                <select name="chonBaoCao" class="form-control">     
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))                                               
-                                                    <option value="1">Doanh thu bảo hiểm</option>
-                                                    <option value="2">Doanh thu phụ kiện</option>
-                                                    <option value="3">Doanh thu tổ phụ kiện</option>         
-                                                @else
-                                                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem'))
-                                                    <option value="1">Doanh thu bảo hiểm</option>
-                                                    @endif
-                                                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
-                                                    <option value="2">Doanh thu phụ kiện</option>
-                                                    @endif
-                                                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien'))
-                                                    <option value="3">Doanh thu tổ phụ kiện</option>         
-                                                    @endif
-                                                @endif
-                                                </select> <br/>
-                                                <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
-                                            </div>
-                                        </div>
+                                <div class="card-body row">                                        
                                         <div class="col-sm-3">
                                             <div class="form-group">
                                                 <label>Chọn nhân viên</label>
                                                 <select name="nhanVien" class="form-control"> 
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                                    <option value="0">Tất cả</option>                                                               
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))                                                            
                                                     @foreach($user as $row)
-                                                        @if($row->hasRole('to_phu_kien') 
-                                                        || $row->hasRole('nv_phukien') 
-                                                        || $row->hasRole('nv_baohiem'))
+                                                        @if($row->hasRole('to_phu_kien'))
                                                             <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
                                                         @endif
                                                     @endforeach   
@@ -85,6 +59,7 @@
                                                     <option value="{{$iduser}}">{{$nameuser}}</option>
                                                 @endif
                                                 </select> <br/>
+                                                <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
@@ -103,7 +78,6 @@
                               </form>
                               <hr/>
                               <div id="all">
-       
                               </div>
                             </div>
                         </div>
@@ -136,11 +110,10 @@
          $("#xemReport").click(function(){
             $.ajax({
                 type: "post",
-                url: "{{url('management/dichvu/loadbaocaodoanhthu/')}}",
+                url: "{{url('management/dichvu/loadbaocaotiendo/')}}",
                 dataType: "text",
                 data: {
                     "_token": "{{csrf_token()}}",
-                    "baoCao": $("select[name=chonBaoCao]").val(),
                     "nhanVien": $("select[name=nhanVien]").val(),
                     "tu": $("input[name=chonNgayOne]").val(),
                     "den": $("input[name=chonNgayTwo").val()

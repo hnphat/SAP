@@ -12,6 +12,7 @@ use App\NhomUser;
 use App\QuanLyTangCa;
 use App\XacNhanCong;
 use App\NhatKy;
+use App\BienBanKhenThuong;
 use App\ChamCongChiTiet;
 use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
@@ -509,7 +510,7 @@ class NhanSuController extends Controller
             if (!$xacNhan) {
                 session(['engaycong' => (round(($tongCong/8),2) - $phepNam), 'etangca' => round(($lamThem/8),2), 'ephepnam' => $phepNam]);
                 echo "<tr>
-                        <td colspan='12' style='text-align:left;'><button type='button' 
+                        <td colspan='2' style='text-align:left;'><button type='button' 
                         data-thang='".$thang."' 
                         data-nam='".$nam."' 
                         data-ngaycong='".(round(($tongCong/8),2) - $phepNam)."' 
@@ -519,6 +520,10 @@ class NhanSuController extends Controller
                         data-khongphepcangay='".$khongPhepCaNgay."' 
                         data-phepnam='".$phepNam."' 
                         id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
+                        <td colspan='4'>
+                        <strong>Biên bản vi phạm:</strong> <strong class='text-danger'>06</strong>
+                        <br/><strong><a href='#'>XEM CHI TIẾT</a></strong>
+                        </td>
                     </tr>
                     ";
             }
@@ -3328,5 +3333,234 @@ class NhanSuController extends Controller
                     </tr>";
            }
         }
+    }
+
+    // Quản lý biên bản
+    public function getPanelBB() {
+        $nhom = Nhom::all();
+        return view('nhansu.bienban',['phongban' => $nhom]);
+    }
+
+    public function loadNhanVien(Request $request){
+        $nhom = NhomUser::select("u.id","d.surname")
+        ->join('users as u','u.id','=','nhom_user.id_user')
+        ->join('nhom as n','n.id','=','nhom_user.id_nhom')
+        ->join('users_detail as d','d.id_user','=','u.id')
+        ->where("nhom_user.id_nhom",$request->eid)
+        ->get();
+        if($nhom)
+            return response()->json([
+                "code" => 200,
+                "type" => "info",
+                "message" => "Đã load danh sách nhân viên từ phòng ban",
+                "data" => $nhom
+            ]);
+        else
+            return response()->json([
+                "code" => 500,
+                "type" => "info",
+                "message" => "Lỗi tải danh sách"
+            ]);
+    }
+
+    public function loadBienBan() {
+        $xl = BienBanKhenThuong::select("bienban_khenthuong.*","n.name","d.surname")
+        ->join('users as u','u.id','=','bienban_khenthuong.id_user')
+        ->join('nhom_user as nu','nu.id_user','=','u.id')
+        ->join('users_detail as d','d.id_user','=','u.id')
+        ->join('nhom as n','n.id','=','nu.id_nhom')
+        ->where('bienban_khenthuong.loai','BIENBAN')
+        ->orderBy('bienban_khenthuong.id','desc')
+        ->get();
+        if($xl)
+            return response()->json([
+                "code" => 200,
+                "type" => "info",
+                "message" => "Đã tải danh sách",
+                "data" => $xl
+            ]);
+        else
+            return response()->json([
+                "code" => 500,
+                "type" => "info",
+                "message" => "Lỗi tải danh sách"
+            ]);
+    }
+
+    public function postBienBan(Request $request) {
+        $xl = new BienBanKhenThuong();
+        $this->validate($request,[
+            'fileTaiLieu'  => 'required|mimes:jpg,JPG,PNG,png,doc,docx,pdf|max:20480',
+        ]);
+    
+        if ($files = $request->file('fileTaiLieu')) {
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/bienbankhenthuong/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }            
+            $xl->ngay = $request->ngay;
+            $xl->thang = $request->thang;
+            $xl->nam = $request->nam;
+            $xl->id_user = $request->nhanVien;
+            $xl->url = $name;           
+            $xl->noiDung = $request->noiDung;
+            $xl->hinhThuc = $request->hinhThuc;
+            $xl->loai = "BIENBAN";
+            $xl->save();
+            $files->move('upload/bienbankhenthuong/', $name);
+            
+            if ($xl) {
+                $user = User::find($request->nhanVien);
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Nhân sự - Quản lý biên bản";
+                $nhatKy->noiDung = "Bổ sung biên bản vi phạm cho nhân viên: " 
+                . $user->userDetail->surname. "<br/>Ngày: "
+                .$request->ngay."/".$request->thang."/".$request->nam."<br/>Nội dung: "
+                .$request->noiDung."<br/>Hình thức xử lý: " . $request->hinhThuc;
+                $nhatKy->save(); 
+
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'File: Đã upload file',
+                    "code" => 200,
+                    "file" => $files
+                ]);
+            } else {
+                return response()->json([
+                    "type" => 'error',
+                    "message" => 'File: lỗi upload',
+                    "code" => 500
+                ]);
+            }
+           
+        }
+        return response()->json([
+            "type" => 'danger',
+            "message" => 'File: Không thể upload file và nội dung',
+            "code" => 500
+        ]);
+    }
+
+    public function deleteBBKT(Request $request) {
+        $xl = BienBanKhenThuong::find($request->id);
+        $temp = $xl;
+        $name = $temp->url;
+        if (file_exists('upload/bienbankhenthuong/'.$name))
+            unlink('upload/bienbankhenthuong/'.$name);
+        $xl->delete();
+        if ($xl){
+            $user = User::find($temp->id_user);
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Nhân sự - Quản lý biên bản";
+            $nhatKy->noiDung = "Xóa thông tin biên bản, khen thưởng của <br/>Nhân viên: "
+            .$user->userDetail->surname."<br/>Ngày: ".$temp->ngay."/".$temp->thang."/".$temp->nam."<br/>Nội dung: "
+            .$temp->noiDung. "<br/>Hình thức: ".$temp->hinhThuc;
+            $nhatKy->save(); 
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã xóa file!',
+                'code' => 200,
+                'data' => $xl
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi xóa file từ máy chủ!',
+                'code' => 500
+            ]);
+    }
+
+
+    // Quản lý khen thưởng
+    public function getPanelKT() {
+        $nhom = Nhom::all();
+        return view('nhansu.khenthuong',['phongban' => $nhom]);
+    }
+
+    public function loadKhenThuong() {
+        $xl = BienBanKhenThuong::select("bienban_khenthuong.*","n.name","d.surname")
+        ->join('users as u','u.id','=','bienban_khenthuong.id_user')
+        ->join('nhom_user as nu','nu.id_user','=','u.id')
+        ->join('users_detail as d','d.id_user','=','u.id')
+        ->join('nhom as n','n.id','=','nu.id_nhom')
+        ->where('bienban_khenthuong.loai','KHEN')
+        ->orderBy('bienban_khenthuong.id','desc')
+        ->get();
+        if($xl)
+            return response()->json([
+                "code" => 200,
+                "type" => "info",
+                "message" => "Đã tải danh sách",
+                "data" => $xl
+            ]);
+        else
+            return response()->json([
+                "code" => 500,
+                "type" => "info",
+                "message" => "Lỗi tải danh sách"
+            ]);
+    }
+
+    public function postKhenThuong(Request $request) {
+        $xl = new BienBanKhenThuong();
+        $this->validate($request,[
+            'fileTaiLieu'  => 'required|mimes:jpg,JPG,PNG,png,doc,docx,pdf|max:20480',
+        ]);
+    
+        if ($files = $request->file('fileTaiLieu')) {
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/bienbankhenthuong/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }            
+            $xl->ngay = $request->ngay;
+            $xl->thang = $request->thang;
+            $xl->nam = $request->nam;
+            $xl->id_user = $request->nhanVien;
+            $xl->url = $name;           
+            $xl->noiDung = $request->noiDung;
+            $xl->hinhThuc = $request->hinhThuc;
+            $xl->loai = "KHEN";
+            $xl->save();
+            $files->move('upload/bienbankhenthuong/', $name);
+            
+            if ($xl) {
+                $user = User::find($request->nhanVien);
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Nhân sự - Quản lý biên bản";
+                $nhatKy->noiDung = "Bổ sung khen thưởng cho nhân viên: " 
+                . $user->userDetail->surname. "<br/>Ngày: "
+                .$request->ngay."/".$request->thang."/".$request->nam."<br/>Nội dung: "
+                .$request->noiDung."<br/>Hình thức: " . $request->hinhThuc;
+                $nhatKy->save(); 
+
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'File: Đã upload file',
+                    "code" => 200,
+                    "file" => $files
+                ]);
+            } else {
+                return response()->json([
+                    "type" => 'error',
+                    "message" => 'File: lỗi upload',
+                    "code" => 500
+                ]);
+            }
+           
+        }
+        return response()->json([
+            "type" => 'danger',
+            "message" => 'File: Không thể upload file và nội dung',
+            "code" => 500
+        ]);
     }
 }

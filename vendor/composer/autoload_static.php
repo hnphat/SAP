@@ -545,12 +545,15 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
     );
 
     public static $classMap = array (
+        'App\\BHPK' => __DIR__ . '/../..' . '/app/BHPK.php',
+        'App\\BaoGiaBHPK' => __DIR__ . '/../..' . '/app/BaoGiaBHPK.php',
         'App\\BhPkPackage' => __DIR__ . '/../..' . '/app/BhPkPackage.php',
         'App\\BieuMau' => __DIR__ . '/../..' . '/app/BieuMau.php',
         'App\\CancelHD' => __DIR__ . '/../..' . '/app/CancelHD.php',
         'App\\CapHoa' => __DIR__ . '/../..' . '/app/CapHoa.php',
         'App\\CarSale' => __DIR__ . '/../..' . '/app/CarSale.php',
         'App\\ChamCongChiTiet' => __DIR__ . '/../..' . '/app/ChamCongChiTiet.php',
+        'App\\ChiTietBHPK' => __DIR__ . '/../..' . '/app/ChiTietBHPK.php',
         'App\\ChungTu' => __DIR__ . '/../..' . '/app/ChungTu.php',
         'App\\Cong' => __DIR__ . '/../..' . '/app/Cong.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
@@ -595,6 +598,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\Http\\Controllers\\WorkController' => __DIR__ . '/../..' . '/app/Http/Controllers/WorkController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
+        'App\\Http\\Middleware\\BHPKMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/BHPKMiddleware.php',
         'App\\Http\\Middleware\\BaoCaoHopDongMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/BaoCaoHopDongMiddleware.php',
         'App\\Http\\Middleware\\CancelMiddleWare' => __DIR__ . '/../..' . '/app/Http/Middleware/CancelMiddleWare.php',
         'App\\Http\\Middleware\\CapXangMiddleWare' => __DIR__ . '/../..' . '/app/Http/Middleware/CapXangMiddleWare.php',

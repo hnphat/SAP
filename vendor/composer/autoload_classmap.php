@@ -6,12 +6,15 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\BHPK' => $baseDir . '/app/BHPK.php',
+    'App\\BaoGiaBHPK' => $baseDir . '/app/BaoGiaBHPK.php',
     'App\\BhPkPackage' => $baseDir . '/app/BhPkPackage.php',
     'App\\BieuMau' => $baseDir . '/app/BieuMau.php',
     'App\\CancelHD' => $baseDir . '/app/CancelHD.php',
     'App\\CapHoa' => $baseDir . '/app/CapHoa.php',
     'App\\CarSale' => $baseDir . '/app/CarSale.php',
     'App\\ChamCongChiTiet' => $baseDir . '/app/ChamCongChiTiet.php',
+    'App\\ChiTietBHPK' => $baseDir . '/app/ChiTietBHPK.php',
     'App\\ChungTu' => $baseDir . '/app/ChungTu.php',
     'App\\Cong' => $baseDir . '/app/Cong.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
@@ -56,6 +59,7 @@ return array(
     'App\\Http\\Controllers\\WorkController' => $baseDir . '/app/Http/Controllers/WorkController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',
+    'App\\Http\\Middleware\\BHPKMiddleware' => $baseDir . '/app/Http/Middleware/BHPKMiddleware.php',
     'App\\Http\\Middleware\\BaoCaoHopDongMiddleware' => $baseDir . '/app/Http/Middleware/BaoCaoHopDongMiddleware.php',
     'App\\Http\\Middleware\\CancelMiddleWare' => $baseDir . '/app/Http/Middleware/CancelMiddleWare.php',
     'App\\Http\\Middleware\\CapXangMiddleWare' => $baseDir . '/app/Http/Middleware/CapXangMiddleWare.php',

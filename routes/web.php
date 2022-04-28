@@ -515,6 +515,20 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Báo cáo phép năm
         Route::get('baocaophepnam','NhanSuController@getBaoCaoPhepNam')->name('baocaophepnam.panel')->middleware(['f_nhansupheduyet']);
         Route::get('loadbaocaophepnam','NhanSuController@loadBaoCaoPhepNam');
+
+        // Quản lý biên bản
+        Route::get('quanlybienban','NhanSuController@getPanelBB')->name('bienban.panel')->middleware(['f_nhansupheduyet']);
+        Route::get('ajax/loadbienban','NhanSuController@loadBienBan'); 
+        Route::post('ajax/postbienban','NhanSuController@postBienBan'); 
+        Route::post('ajax/loadnhanvienbbkt','NhanSuController@loadNhanVien')->name('loadnhanvienbbkt'); 
+        Route::post('ajax/delete/bienbankhenthuong','NhanSuController@deleteBBKT'); 
+
+        // Quản lý khen thưởng
+        Route::get('quanlykhenthuong','NhanSuController@getPanelKT')->name('khenthuong.panel')->middleware(['f_nhansupheduyet']);
+        Route::get('ajax/loadkhenthuong','NhanSuController@loadKhenThuong'); 
+        Route::post('ajax/postkhenthuong','NhanSuController@postKhenThuong'); 
+        Route::post('ajax/loadnhanvienbbkt','NhanSuController@loadNhanVien')->name('loadnhanvienbbkt'); 
+        Route::post('ajax/delete/bienbankhenthuong','NhanSuController@deleteBBKT'); 
     });
 
     Route::group(['prefix' => 'caphoa'], function(){
@@ -666,7 +680,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // báo cáo doanh thu
         Route::get('baocaodoanhthu','DichVuController@baoCaoDoanhThuPanel')->name('dichvu.baocaodoanhthu.panel')->middleware(['f_bhpk']); 
-        Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu');     
+        Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu');  
+        
+        // báo cáo tiến độ
+        Route::get('baocaotiendo','DichVuController@baoCaoTienDoPanel')->name('dichvu.baocaotiendo.panel')->middleware(['f_bhpk']); 
+        Route::post('loadbaocaotiendo','DichVuController@loadTienDo');  
+
     });
 });
 

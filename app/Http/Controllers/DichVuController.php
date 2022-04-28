@@ -1931,4 +1931,64 @@ class DichVuController extends Controller
             } break;     
         }
     }
+
+    public function baoCaoTienDoPanel() {
+        $user = User::all();
+        $iduser = Auth::user()->id;
+        $nameuser = Auth::user()->userDetail->surname;
+        return view('dichvu.baocaotiendo',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser]);
+    }
+
+    public function loadTienDo(Request $request) {
+        $nv = $request->nhanVien;
+        $tu = $request->tu;
+        $den = $request->den;
+        echo "<div style='overflow:auto;'><table class='table table-striped table-bordered'>
+                <tr>
+                    <th>STT</th>
+                    <th>Ngày</th>
+                    <th>Mã lệnh</th>
+                    <th>Biển số</th>
+                    <th>Số khung</th>
+                    <th>Công việc</th>                         
+                    <th>Bắt đầu</th>
+                    <th>Hoàn tất</th>
+                    <th>Trạng thái</th>               
+                </tr>
+                <tbody>";
+                
+        $ct = ChiTietBHPK::where('id_user_work','=',$nv)
+        ->orWhere('id_user_work_two','=',$nv)
+        ->get();
+        $i = 1;
+        foreach($ct as $row) {
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->baoGia->created_at)) >= strtotime($tu)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->baoGia->created_at)) <= strtotime($den))) {
+                $bhpk = BHPK::find($row->id_baohiem_phukien);                
+                $stt = "";
+                if ($row->baoGia->isCancel)
+                    $stt = "<span class='text-bold text-danger'>Đã huỷ</span>";
+                elseif (!$row->baoGia->isCancel && $row->baoGia->isDone)
+                    $stt = "<span class='text-bold text-success'>Hoàn tất</span>";
+                elseif (!$row->baoGia->isCancel && !$row->baoGia->isDone && $row->baoGia->inProcess)
+                    $stt = "<span class='text-bold text-info'>Đang thực hiện</span>";
+                elseif (!$row->baoGia->isCancel && !$row->baoGia->isDone && !$row->baoGia->inProcess)
+                    $stt = "<span class='text-bold text-secondary'>Mới tạo</span>";
+
+                echo "<tr>
+                <td>".($i++)."</td>
+                <td>".\HelpFunction::getDateRevertCreatedAt($row->baoGia->created_at)."</td>
+                <td class='text-bold text-secondary'>BG0".$row->baoGia->id."-".\HelpFunction::getDateCreatedAtRevert($row->baoGia->created_at)."</td>
+                <td class='text-bold text-primary'>".$row->baoGia->bienSo."</td>
+                <td class='text-bold text-primary'>".$row->baoGia->soKhung."</td>
+                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                <td>".$row->baoGia->thoiGianVao." ".\HelpFunction::revertDate($row->baoGia->ngayVao)."</td>
+                <td>".$row->baoGia->thoiGianHoanThanh." ".\HelpFunction::revertDate($row->baoGia->ngayHoanThanh)."</td>
+                <td>".$stt."</td>
+                </tr>";            
+            }
+        }
+        echo "</tbody>
+                </table></div>";
+    }
 }
