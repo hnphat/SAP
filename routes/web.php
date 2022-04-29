@@ -529,6 +529,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('ajax/postkhenthuong','NhanSuController@postKhenThuong'); 
         Route::post('ajax/loadnhanvienbbkt','NhanSuController@loadNhanVien')->name('loadnhanvienbbkt'); 
         Route::post('ajax/delete/bienbankhenthuong','NhanSuController@deleteBBKT'); 
+
+        // Quản lý khen thưởng
+        Route::post('xembienban','NhanSuController@xemBienBan');
     });
 
     Route::group(['prefix' => 'caphoa'], function(){

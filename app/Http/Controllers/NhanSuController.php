@@ -312,6 +312,13 @@ class NhanSuController extends Controller
                 ['thang','=',$thang],
                 ['nam','=',$nam]
             ])->first();
+
+            $bienBan = BienBanKhenThuong::select("*")
+            ->where([
+                ['id_user','=',$request->id],
+                ['thang','=',$thang],
+                ['nam','=',$nam]
+            ])->count();
             
             $xinPhep = XinPhep::select("*")
             ->where([
@@ -521,8 +528,8 @@ class NhanSuController extends Controller
                         data-phepnam='".$phepNam."' 
                         id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
                         <td colspan='4'>
-                        <strong>Biên bản vi phạm:</strong> <strong class='text-danger'>06</strong>
-                        <br/><strong><a href='#'>XEM CHI TIẾT</a></strong>
+                        <strong>Biên bản vi phạm:</strong> <strong class='text-danger'>".$bienBan."</strong>
+                        <br/><strong><button id='xemBienBan' class='btn btn-warning btn-sm' data-toggle='modal' data-target='#showModal' data-id='".$request->id."' data-thang='".$chiTiet->thang."' data-nam='".$chiTiet->nam."'>XEM CHI TIẾT</button></strong>
                         </td>
                     </tr>
                     ";
@@ -3562,5 +3569,26 @@ class NhanSuController extends Controller
             "message" => 'File: Không thể upload file và nội dung',
             "code" => 500
         ]);
+    }
+
+    public function xemBienBan(Request $request) {
+        $bb = BienBanKhenThuong::where([
+            ['id_user','=',$request->id],
+            ['thang','=',$request->thang],
+            ['nam','=',$request->nam]
+        ])->get();
+        if ($bb) 
+            return response()->json([
+                "type" => 'info',
+                "message" => 'Đã load thông tin biên bản',
+                "code" => 200,
+                "data" => $bb
+            ]);
+        else 
+            return response()->json([
+                "type" => 'error',
+                "message" => 'Lỗi load thông tin biên bản',
+                "code" => 500
+            ]);        
     }
 }

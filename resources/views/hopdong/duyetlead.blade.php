@@ -127,6 +127,17 @@
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
+                                                    <label>Hình thức thanh toán</label>
+                                                    <select disabled name="hinhThucThanhToan" id="hinhThucThanhToan" class="form-control">
+                                                        <option value="1">Tiền mặt</option>   
+                                                        <option value="0">Ngân hàng</option>                                                      
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
                                                     <label>Giá niêm yết:</label>
                                                     <input disabled name="giaNiemYet" id="giaNiemYet" value="0" placeholder="Nhập giá niêm yết" type="number" class="form-control"/>
                                                 </div>
@@ -363,6 +374,7 @@
                             $("#tamUng").val(response.data.tienCoc);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
+                            $("#hinhThucThanhToan").val(response.data.isTienMat);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
                             $("#cmnd").val(response.data.CMND2);
@@ -434,6 +446,7 @@
                             $("#tamUng").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
+                            $("#hinhThucThanhToan").val("");
                             $("#hoaHongMoiGioi").val("");
                             $("#hoTen").val("");
                             $("#cmnd").val("");
@@ -457,6 +470,7 @@
                             $("#tamUng").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
+                            $("#hinhThucThanhToan").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
                             $("#cmnd").prop('disabled', true);

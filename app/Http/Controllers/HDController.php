@@ -1474,6 +1474,7 @@ class HDController extends Controller
         $code = new HopDong();
         $code->id_user_create = Auth::user()->id;
         $code->id_car_sale = $request->chonXe;
+        $code->isTienMat = $request->hinhThucThanhToan;
         $code->mau = $request->chonMauXe;
         $code->tienCoc = $request->tamUng;
         $code->giaXe = $request->giaBanXe;
@@ -3093,6 +3094,7 @@ class HDController extends Controller
                 $codeCar = $row->carSale->typeCar->code;
                 $guest = $row->guest->name;
                 $phone = $row->guest->phone;
+                $sale = $row->user->userDetail->surname;
                 $status = "";
                 if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
                     $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
@@ -3126,6 +3128,7 @@ class HDController extends Controller
                     <td>".$guest."</td>
                     <td>".$phone."</td>
                     <td>".$status."</td>
+                    <td>".$sale."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
@@ -3154,6 +3157,7 @@ class HDController extends Controller
         $chucVu = $hd->guest->chucVu;
         //-----------
         $carSale = TypeCarDetail::find($hd->id_car_sale);
+        $hinhThucThanhToan = ($hd->isTienMat) ? "Tiền mặt" : "Ngân hàng";
         //-------
         $namsx = "Chưa gán";
         $soKhung = "Chưa gán";
@@ -3249,7 +3253,8 @@ class HDController extends Controller
             'tongPhuKienBan' => number_format($tongPhuKienBan),
             'phuKienKhuyenMai' => $phuKienKhuyenMai,
             'tongPhuKienKhuyenMai' => number_format($tongPhuKienKhuyenMai),
-            'tongGiaTriHopDong' => number_format($tongGiaTriHopDong)
+            'tongGiaTriHopDong' => number_format($tongGiaTriHopDong),
+            'hinhThucThanhToan' => $hinhThucThanhToan,
         ]);
     }
 }

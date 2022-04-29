@@ -136,6 +136,17 @@
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
+                                                    <label>Hình thức thanh toán</label>
+                                                    <select name="hinhThucThanhToan" id="hinhThucThanhToan" class="form-control">
+                                                        <option value="1">Tiền mặt</option>   
+                                                        <option value="0">Ngân hàng</option>                                                      
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
                                                     <label>Giá niêm yết:</label>
                                                     <input name="giaNiemYet" id="giaNiemYet" value="0" placeholder="Nhập giá niêm yết" type="number" class="form-control"/>
                                                 </div>
@@ -199,34 +210,7 @@
                                             <tbody id="showPKCOST">
                                             </tbody>
                                         </table>
-                                        <p>Tổng cộng: <strong id="xtongCost"></strong></p>
-                                        <!-- <h5>PHỤ KIỆN BÁN</h5>
-                                        <button id="pkPayAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkPay"><span class="fas fa-plus-circle"></span></button><br/><br/>
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr class="bg-cyan">
-                                                    <th>TT</th>
-                                                    <th>Nội dung</th>
-                                                    <th>Giá</th>
-                                                    <th>Tác vụ</th>
-                                                </tr>
-                                                <tbody id="showPKPAY">
-                                                </tbody>
-                                            </thead>
-                                        </table>
-                                        <p>Tổng cộng: <strong id="xtongPay"></strong></p> -->
-                                        <!-- <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
-                                        <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/>
-                                        <table class="table table-bordered table-striped">
-                                            <tr class="bg-cyan">
-                                                <th>TT</th>
-                                                <th>Nội dung</th>
-                                                <th>Tác vụ</th>
-                                            </tr>
-                                            <tbody id="showPKFREE">
-                                            </tbody>
-                                        </table> 
-                            -->
+                                        <p>Tổng cộng: <strong id="xtongCost"></strong></p>                                        
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>

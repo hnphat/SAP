@@ -75,6 +75,7 @@
                             <th>Khách hàng</th>
                             <th>Số điện thoại</th>
                             <th>Trạng thái</th>
+                            <th>Nhân viên kinh doanh</th>
                             <th>Tác vụ</th>
                         </tr>
                         <tbody id="showBaoCao">
@@ -122,6 +123,7 @@
           - Màu sắc: <span id="mauXeBan" class="text-bold"></span> 
           - Giá xe: <span id="giaXeBan" class="text-bold text-primary"></span> 
           - Tiền cọc: <span id="tienDatCoc" class="text-bold text-primary"></span></h6>
+          <h6>Hình thức thanh toán: <span id="hinhThucThanhToan" class="text-bold"></span></h6>
           <h5 class="text-bold">CHI TIẾT XE</h5>
           <table class="table table-striped table-bordered">
               <tr class="bg-info">
@@ -280,6 +282,7 @@
                     $('#mauXeBan').text(response.mauXeBan);
                     $('#giaXeBan').text(response.giaXeBan);
                     $('#tienDatCoc').text(response.tienDatCoc);
+                    $('#hinhThucThanhToan').text(response.hinhThucThanhToan);
                     $('#chiTietXe').text(response.chiTietXe);
 
                     let cacLoaiPhi = "";

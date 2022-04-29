@@ -209,6 +209,35 @@
             <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+
+    <!-- Medal Add -->
+    <div class="modal fade" id="showModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">BIÊN BẢN VI PHẠM</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <table class="table table-striped table-bordered">
+                            <tr>
+                                <th>STT</th>
+                                <th>Nội dung</th>
+                                <th>Hình thức xử lý</th>
+                                <th>Biên bản chi tiết</th>
+                            </tr>
+                            <tbody id="showChiTietBB">                                
+                            </tbody>
+                        </table>
+                    </div>                   
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -402,6 +431,45 @@
                         }
                     });
                 }
+           });
+
+
+
+           $(document).on('click','#xemBienBan', function(){
+                $.ajax({
+                    url: "{{url('management/nhansu/xembienban')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "id": $(this).data('id'),
+                        "_token": "{{csrf_token()}}",
+                        "thang": $(this).data('thang'),
+                        "nam": $(this).data('nam')                        
+                    },
+                    success: function(response){
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        $("#showChiTietBB").empty();
+                        let bbHtml = "";
+                        for(let i = 0; i < response.data.length; i++) {
+                            bbHtml += `<tr>
+                                <td>${(i+1)}</td>
+                                <td>${response.data[i].noiDung}</td>
+                                <td>${response.data[i].hinhThuc}</td>
+                                <td><a class="btn btn-primary btn-sm" href="{{asset('upload/bienbankhenthuong/${response.data[i].url}')}}" target="_blank">XEM</a></td>
+                            </tr>`;
+                        }
+                        $("#showChiTietBB").html(bbHtml);
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: "error",
+                            title: "Lỗi! Không thể xem biên bản lúc này"
+                        })
+                    }
+                });
            });
         });
     </script>

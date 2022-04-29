@@ -26,6 +26,7 @@ class HopDong extends Migration
             $table->boolean('requestCheck')->default(false);
             $table->boolean('admin_check')->default(false);
             $table->boolean('lead_check')->default(false);
+            $table->boolean('isTienMat')->default(true);
             $table->string('lyDoCancel')->nullable();
             $table->string('code')->nullable();
             $table->boolean('lead_check_cancel')->default(false);
