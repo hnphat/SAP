@@ -441,7 +441,7 @@
     </div>
   </div>
 
-  <!-- IN -->
+  <!-- Sửa  -->
   <div class="modal fade" id="inModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -466,6 +466,75 @@
                     </div>
                     <div class="container row">
                         <button id="inLoad" type="button" class="btn btn-primary">TẢI FILE IN</button>
+                    </div>
+                </form>
+        </div>        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>        
+      </div>
+    </div>
+  </div>
+
+   <!-- IN -->
+   <div class="modal fade" id="editModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title"><strong>Chỉnh sửa hạng mục</strong></h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>        
+        <!-- Modal body -->
+        <div class="modal-body">         
+                <form id="editForm">
+                    @csrf   
+                    <input type="hidden" name="editID"> 
+                    <input type="hidden" name="editIDHM"> 
+                    <div class="form-group">
+                        <label>Công việc: <strong id="congViec" class="text-success">Phủ gầm xe</strong></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Chọn kỹ thuật viên 1</label>                              
+                        <select name="ekyThuatVien" class="form-control">
+                            <option value="0">Không có</option>
+                            @foreach($user as $row)
+                                @if($row->hasRole('to_phu_kien') == true)
+                                    <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                @endif
+                            @endforeach
+                        </select>                                
+                    </div>
+                    <div class="form-group">
+                        <label>Tỉ lệ</label>                              
+                        <select name="etiLe" class="form-control">
+                            <option value="0">Không có</option>
+                            <option value="1">1/9</option>
+                            <option value="2">2/8</option>
+                            <option value="3">3/7</option>
+                            <option value="4">4/6</option>
+                            <option value="5">5/5</option>
+                            <option value="6">6/4</option>
+                            <option value="7">7/3</option>
+                            <option value="8">8/2</option>
+                            <option value="9">9/1</option>
+                        </select>                                
+                    </div>
+                    <div class="form-group">
+                        <label>Chọn kỹ thuật viên 2</label>                              
+                        <select name="ekyThuatVienTwo" class="form-control">
+                            <option value="0">Không có</option>
+                            @foreach($user as $row)
+                                @if($row->hasRole('to_phu_kien') == true)
+                                    <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                @endif
+                            @endforeach
+                        </select>                                
+                    </div>
+                    <div class="container row">
+                        <button id="updateHangMuc" type="button" class="btn btn-primary">CẬP NHẬT</button>
                     </div>
                 </form>
         </div>        
@@ -1143,7 +1212,29 @@
                     }
                 });  
             }
-            onloadHangMuc();
+
+            $("#updateHangMuc").click(function(){
+                $.ajax({
+                    type: "post",
+                    url: "{{route('postedithangmuc')}}",
+                    dataType: "json",
+                    data: $("#editForm").serialize(),
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })   
+                        $("#editModal").modal('hide');
+                        refreshHangMuc();  
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể cập nhật hạng mục!"
+                        })                       
+                    }
+                });  
+            });
 
             function onloadTongCong() {
                 $.ajax({
@@ -1740,6 +1831,39 @@
                     });
                 } 
             }
+        })
+
+
+
+        $(document).on('click','#editHangMuc', function(){
+            $.ajax({
+                type: "post",
+                url: "{{route('getedithangmuc')}}",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "eid": $(this).data('bgid'),
+                    "ehm": $(this).data('hm')
+                },
+                success: function(response) {    
+                    Toast.fire({
+                        icon: response.type,
+                        title: response.message
+                    }) 
+                    $("input[name=editID]").val(response.data.id_baogia);
+                    $("input[name=editIDHM]").val(response.data.id_baohiem_phukien);
+                    $("#congViec").text(response.congViec);
+                    $("select[name=ekyThuatVien]").val((response.data.id_user_work) ? response.data.id_user_work : 0);
+                    $("select[name=ekyThuatVienTwo]").val((response.data.id_user_work_two) ? response.data.id_user_work : 0);
+                    $("select[name=etiLe]").val((response.data.tiLe == 10) ? 0 : response.data.tiLe);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Không thể tải hạng mục!"
+                    })                       
+                }
+            });      
         })
     </script>
 @endsection

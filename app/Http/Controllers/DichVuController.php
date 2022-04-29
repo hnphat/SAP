@@ -961,7 +961,8 @@ class DichVuController extends Controller
                 .", "
                 .(($row->userWorkTwo) ? $namektv2[count($namektv2)-1] : "")."</td>
                 <td>
-                    <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>
+                    <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>&nbsp;
+                    <button id='editHangMuc' data-toggle='modal' data-target='#editModal' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-success btn-xs'>Sửa</button>
                 </td>
             </tr>";
         }        
@@ -1990,5 +1991,60 @@ class DichVuController extends Controller
         }
         echo "</tbody>
                 </table></div>";
+    }
+
+    public function getEditHangMuc(Request $request) {
+        $ct = ChiTietBHPK::where([
+            ['id_baogia','=',$request->eid],
+            ['id_baohiem_phukien','=',$request->ehm]
+        ])->first();
+        if ($ct) {
+            $bhpk = BHPK::find($ct->id_baohiem_phukien);
+            return response()->json([
+                "code" => 200,
+                "type" => "info",
+                "message" => "Đã load hạng mục chỉnh sửa",
+                "data" => $ct,
+                "congViec" => $bhpk->noiDung
+            ]);
+        }
+        else
+            return response()->json([
+                "code" => 500,
+                "type" => "info",
+                "message" => "Lỗi tải hạng mục"
+            ]);
+    }
+
+    public function editHangMuc(Request $request) {
+        $bg = BaoGiaBHPK::find($request->editID);
+        if ($bg->isDone || $bg->isCancel) {
+            return response()->json([
+                "code" => 500,
+                "type" => "error",
+                "message" => "Báo giá đã hoàn tất hoặc đã huỷ không thể cập nhật hạng mục"
+            ]);
+        } else {
+            $ct = ChiTietBHPK::where([
+                ['id_baogia','=',$request->editID],
+                ['id_baohiem_phukien','=',$request->editIDHM]
+            ])->update([
+                "id_user_work" => ($request->ekyThuatVien) ? $request->ekyThuatVien : null,
+                "id_user_work_two" => ($request->ekyThuatVienTwo) ? $request->ekyThuatVienTwo : null,
+                "tiLe" => ($request->etiLe) ? $request->etiLe : 10
+            ]);
+            if ($ct)
+                return response()->json([
+                    "code" => 200,
+                    "type" => "info",
+                    "message" => "Đã cập nhật hạng mục chỉnh sửa"
+                ]);
+            else
+                return response()->json([
+                    "code" => 500,
+                    "type" => "info",
+                    "message" => "Lỗi cập nhật hạng mục"
+                ]);
+        }        
     }
 }

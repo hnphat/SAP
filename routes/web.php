@@ -689,6 +689,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('baocaotiendo','DichVuController@baoCaoTienDoPanel')->name('dichvu.baocaotiendo.panel')->middleware(['f_bhpk']); 
         Route::post('loadbaocaotiendo','DichVuController@loadTienDo');  
 
+        // Lấy dữ liệu chỉnh sửa
+        Route::post('hangmuc/baohiemphukien/getedit/','DichVuController@getEditHangMuc')->name('getedithangmuc');
+        // cập nhật dữ liệu chỉnh sửa 
+        Route::post('hangmuc/baohiemphukien/postedit/','DichVuController@editHangMuc')->name('postedithangmuc'); 
     });
 });
 
