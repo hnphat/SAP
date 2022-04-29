@@ -528,8 +528,16 @@ class NhanSuController extends Controller
                         data-phepnam='".$phepNam."' 
                         id='xacNhan' class='btn btn-info'>Xác nhận giờ công</button></td>
                         <td colspan='4'>
-                        <strong>Biên bản vi phạm:</strong> <strong class='text-danger'>".$bienBan."</strong>
-                        <br/><strong><button id='xemBienBan' class='btn btn-warning btn-sm' data-toggle='modal' data-target='#showModal' data-id='".$request->id."' data-thang='".$chiTiet->thang."' data-nam='".$chiTiet->nam."'>XEM CHI TIẾT</button></strong>
+                        <strong>Biên bản vi phạm:</strong> 
+                        <strong class='text-danger'>".$bienBan."</strong>
+                        <br/>
+                        <button id='xemBienBan' class='btn btn-warning btn-sm' 
+                        data-toggle='modal' 
+                        data-target='#showModal' 
+                        data-id='".$request->id."' 
+                        data-thang='".$thang."' 
+                        data-nam='".$nam."'>
+                        XEM CHI TIẾT</button>
                         </td>
                     </tr>
                     ";
