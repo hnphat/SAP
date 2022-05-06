@@ -2033,12 +2033,24 @@ class DichVuController extends Controller
                 "id_user_work_two" => ($request->ekyThuatVienTwo) ? $request->ekyThuatVienTwo : null,
                 "tiLe" => ($request->etiLe) ? $request->etiLe : 10
             ]);
-            if ($ct)
+            if ($ct) {
+                $userOne = User::find($request->ekyThuatVien);
+                $userTwo = User::find($request->ekyThuatVienTwo);
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Dịch vụ - Quản lý phụ kiện";
+                $nhatKy->noiDung = "Cập nhật kỹ thuật viên cho BG0" 
+                . $bg->id . "-" .\HelpFunction::getDateCreatedAtRevert($bg->created_at)
+                .";<br/>KTV1: ".(($userOne) ? $userOne->userDetail->surname : "Không")."<br/>Tỉ lệ: ".(($request->etiLe) ? $request->etiLe : 10)."<br/>KTV2: " 
+                . (($userTwo) ? $userTwo->userDetail->surname : "Không");
+                $nhatKy->save();
                 return response()->json([
                     "code" => 200,
                     "type" => "info",
                     "message" => "Đã cập nhật hạng mục chỉnh sửa"
                 ]);
+            }
             else
                 return response()->json([
                     "code" => 500,

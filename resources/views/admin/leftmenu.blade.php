@@ -165,7 +165,8 @@
                                     </a>
                                 </li>
                                 @endif
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                     <li class="nav-item">
                                         <a href="{{route('sale.banggiaxe')}}" class="nav-link">
                                             <i class="fas fa-caret-right nav-icon"></i>

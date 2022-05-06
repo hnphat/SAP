@@ -80,9 +80,28 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Thông báo màn hình chính</label>
+                                        <label>Loại thông báo</label>
+                                        <select name="loaiThongBao" id="loaiThongBao" class="form-control">
+                                            <option value="1">Treo gốc</option>
+                                            <option value="0">Cửa sổ bật lên</option>                                            
+                                        </select>
+                                    </div>   
+                                    <div class="form-group">
+                                        <label>Nội dung thông báo</label>
                                         <textarea name="thongBao" class="form-control" name="thongBao" cols="30" rows="5">
                                         </textarea>
+                                    </div>   
+                                    <div class="form-group">
+                                        <label>Màu thông báo</label>
+                                        <select name="mauThongBao" id="mauThongBao" class="form-control">
+                                            <option value="bg-mute">Không màu</option>
+                                            <option value="bg-success">Xanh lá cây</option>
+                                            <option value="bg-danger">Đỏ</option>
+                                            <option value="bg-info">Xanh nước biển</option>
+                                            <option value="bg-primary">Xanh đậm</option>
+                                            <option value="bg-warning">Cam</option>
+                                            <option value="bg-secondary">Bạc</option>                                            
+                                        </select>
                                     </div>   
                                     <div class="form-group">
                                         <label>Cho phép nhân viên cập nhật thông tin cá nhân</label>
@@ -93,44 +112,7 @@
                                     </div>   
                                 </div>
                                 <div class="col-md-4">  
-                                    <!-- <div class="form-group">
-                                        <label>Thử nghiệm</label>
-                                        <select name="test" class="form-control">
-                                            <option value="1">Có</option>
-                                            <option value="0">Không</option>
-                                        </select>
-                                    </div>              
-                                    <div class="form-group">
-                                        <label>Chế độ quay</label>
-                                        <select name="cheDoQuay" class="form-control">
-                                            <option value="1">Quay thưởng </option>
-                                            <option value="2">Quay thưởng bỏ chọn</option>
-                                        </select>
-                                        <p><i>1/ Chế độ quay thưởng: Khách hàng nhập thông tin rồi tiến hành quay thưởng, phần thưởng nhận đc sẽ lưu vào cơ sỡ dữ liệu của khách hàng. Sử dụng dữ liệu <strong class="text-danger">Ảnh chủ đề</strong> để hiển thị cho khách hàng <strong>chọn</strong>, sử dụng <strong class="text-danger">Chi tiết ảnh</strong> để ghi nhận phần thưởng. Hình ảnh sẽ không bị xoá ở chế độ này.</i></p>
-                                        <p><i>2/ Chế độ quay thưởng bỏ chọn: Phần thưởng sẽ được quay ngẫu nhiên và tự xoá chính nó khi quay trúng. Sử dụng dữ liệu <strong class="text-danger">Ảnh chủ đề</strong> để quay ngẫu nhiên và tự xoá chính nó trong cơ sỡ dữ liệu, kèm <strong class="text-danger">Chi tiết ảnh</strong> liên quan cũng sẽ bị xoá</i></p>
-                                    </div> -->
-                                    <!-- <div class="form-group">
-                                        <label>Âm thanh quay (chế độ bỏ chọn)</label>
-                                        <input name="amThanh" class="form-control" type="text" placeholder="VD: https://abc.com/amthanh.mp3"/>
-                                    </div> -->
-                                    <!-- <div class="form-group">
-                                        <label>Thời gian chờ kết quả (chế độ bỏ chọn)</label>
-                                        <input name="thoiGianCho" class="form-control" type="text" placeholder="VD: 1000 (tương ứng 1s)"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Tải trang bắt đầu quay số (chế độ bỏ chọn)</label>
-                                        <select name="batDauTrucTiep" class="form-control">
-                                            <option value="1">Có </option>
-                                            <option value="2">Không (Dùng nút BẮT ĐẦU)</option>
-                                        </select>                  
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Cho phép quay số (chế độ bỏ chọn)</label>
-                                        <select name="active" class="form-control">
-                                            <option value="1">Có </option>
-                                            <option value="0">Không</option>
-                                        </select>   
-                                    </div> -->
+                                    
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -184,6 +166,8 @@
                         $("input[name=emailDuyetXe]").val(response.data.emailDuyetXe);
                         $("input[name=emailTraXe]").val(response.data.emailTraXe);
                         $("select[name=capNhatThongTin]").val(response.data.capNhatThongTin);
+                        $("select[name=mauThongBao]").val(response.data.mauThongBao);
+                        $("select[name=loaiThongBao]").val(response.data.loaiThongBao);
                     },
                     error: function() {
                         Toast.fire({

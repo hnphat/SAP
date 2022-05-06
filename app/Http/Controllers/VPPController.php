@@ -1135,6 +1135,7 @@ class VPPController extends Controller
             $_dm = "";
             $_sl = "";
             $_dg = "";
+            $_tt = "";
             if ((strtotime($_day) >= strtotime($tuNgay)) 
                 &&  (strtotime($_day) <= strtotime($denNgay))) {
                     $nhap = NhapSP::where('id_nhap', $row->id)->get();
@@ -1143,6 +1144,7 @@ class VPPController extends Controller
                         $_dm .= "<span>".$dm->tenSanPham." </span><br/>";
                         $_sl .= $item->soLuong." ".$dm->donViTinh."<br/>";
                         $_dg .= number_format($item->donGia)."<br/>";
+                        $_tt .= number_format($item->soLuong*$item->donGia)."<br/>";
                     }
 
                     echo "<tr class='text-center'>
@@ -1159,7 +1161,10 @@ class VPPController extends Controller
                             </td>  
                             <td>
                                 ".$_dg."                                              
-                            </td>                                             
+                            </td>     
+                            <td class='text-primary text-bold'>
+                                ".$_tt."                                              
+                            </td>                                           
                         </tr>";    
                 }              
         }

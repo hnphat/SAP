@@ -144,7 +144,8 @@
                                             <th>Nội dung</th> 
                                             <th>Danh mục</th> 
                                             <th>Số lượng</th> 
-                                            <th>Đơn giá</th>         
+                                            <th>Đơn giá</th>
+                                            <th>Thành tiền</th>         
                                         </tr>
                                     </thead>
                                     <tbody id="nhapKhoChiTietShow">

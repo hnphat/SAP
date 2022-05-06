@@ -17,6 +17,28 @@
         </div>
         <!-- /.content -->
     </div>
+    <!-- /.modal -->
+    <div class="modal fade" id="modal-lg">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content {{$data['mauThongBao']}}">
+            <div class="modal-header">
+              <h4 class="modal-title">THÔNG BÁO</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>{{$data['thongBao']}}</p>
+            </div>
+            <div class="modal-footer justify-content-right">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -37,14 +59,18 @@
             timer: 3000
         });
 
-        $(document).ready(function(){           
-            $(document).Toasts('create', {
-                class: 'bg-danger',
-                body: "{{$data['thongBao']}}",
-                title: 'THÔNG BÁO',
-                subtitle: 'Quan trọng',
-                icon: 'fas fa-envelope fa-lg',
-            })           
+        $(document).ready(function(){     
+            @if($data['loaiThongBao'])     
+                $(document).Toasts('create', {
+                    class: "{{$data['mauThongBao']}}",
+                    body: "{{$data['thongBao']}}",
+                    title: 'THÔNG BÁO',
+                    subtitle: 'Quan trọng',
+                    icon: 'fas fa-envelope fa-lg',
+                })         
+            @else
+                $("#modal-lg").modal('show');
+            @endif  
         });        
     </script>
 @endsection
