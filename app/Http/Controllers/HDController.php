@@ -1443,25 +1443,14 @@ class HDController extends Controller
                 else
                     $code = "[HĐ: ".$row->code.".".$row->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($row->created_at)."/HĐMB-PA]";
 
-                // if($row->lead_check_cancel	== true) 
-                //     echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
-                // elseif ($row->requestCheck == false)
-                //     echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
-                // elseif($row->requestCheck == true && $row->admin_check == false) 
-                //     echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
-                // elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
-                //     echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
-                // elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
-                //     echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCarDetail->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
-
-                    if($row->lead_check_cancel	== true) 
-                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
+                if($row->lead_check_cancel	== true) 
+                    echo "<option class='bg-danger' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
                 elseif ($row->requestCheck == false)
-                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
+                    echo "<option class='bg-secondary' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == false) 
-                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
+                    echo "<option class='bg-success' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
-                    echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
+                    echo "<option class='bg-warning' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
                 elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
                     echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
             }
@@ -2930,7 +2919,11 @@ class HDController extends Controller
         $_from = \HelpFunction::revertDate($request->tu);
         $_to = \HelpFunction::revertDate($request->den);
 
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('boss') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('tpkd')) {
+        if (Auth::user()->hasRole('system') 
+        || Auth::user()->hasRole('adminsale') 
+        || Auth::user()->hasRole('boss') 
+        || Auth::user()->hasRole('ketoan') 
+        || Auth::user()->hasRole('tpkd')) {
             switch($request->baoCao) {
                 case 1: {
                     $hd = HopDong::orderBy('id','desc')->get();
