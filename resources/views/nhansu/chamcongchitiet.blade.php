@@ -83,8 +83,8 @@
                             <th>Ra Chiều</th>
                             <th>Công sáng</th>
                             <th>Công chiều</th>
-                            <th>Trể/Sớm Sáng</th>
-                            <th>Trể/Sớm Chiều</th>
+                            <th>Trễ/Sớm Sáng</th>
+                            <th>Trễ/Sớm Chiều</th>
                             <th>Trạng thái</th>
                             <th>Phép</th>
                             <th>Tăng ca</th>

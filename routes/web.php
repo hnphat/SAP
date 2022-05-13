@@ -170,7 +170,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Route::post('deleteWait','HDController@deleteWait');
         // // ajax get quickly
         Route::get('get/guest/personal/','HDController@getGuestPersonal');
-        // Route::get('get/guest/company/','HDController@getGuestCompany');
+        Route::get('get/guest/company/','HDController@getGuestCompany');
         Route::get('get/guest/{id}','HDController@getGuest');
         // Route::get('get/car/{id}','HDController@getCar');
         // Route::get('get/load/hd/','HDController@loadHD');
@@ -693,6 +693,31 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hangmuc/baohiemphukien/getedit/','DichVuController@getEditHangMuc')->name('getedithangmuc');
         // cập nhật dữ liệu chỉnh sửa 
         Route::post('hangmuc/baohiemphukien/postedit/','DichVuController@editHangMuc')->name('postedithangmuc'); 
+    });
+
+
+    Route::group(['prefix' => 'cuochop'], function(){
+        Route::get('quanlyhop','HopController@getQuanLy')->name('cuochop.panel');
+        Route::get('quanlyhop/getlist','HopController@getList');
+        Route::post('quanlyhop/post','HopController@postHop');
+        Route::post('quanlyhop/postedit','HopController@postEdit');
+        Route::post('quanlyhop/delete','HopController@deleteHop');
+        Route::post('quanlyhop/loadmember','HopController@loadMember');
+        Route::post('quanlyhop/loadedit','HopController@loadEdit');
+        Route::post('quanlyhop/postmem','HopController@postMember');
+        Route::post('quanlyhop/deletemem','HopController@deleteMem');
+
+        // Mở rộng họp
+        Route::get('quanlyhop/morong/{id}','HopController@hopMoRong');
+        Route::post('chitiethop/postvande','HopController@postVanDe');
+        Route::post('chitiethop/loadchitiet','HopController@loadChiTiet');
+        Route::post('chitiethop/xoavande','HopController@xoaVanDe');
+        Route::post('chitiethop/postmem','HopController@postMemVanDe');
+        Route::post('chitiethop/loadchitietmem','HopController@loadChiTietMem');
+
+
+
+
     });
 });
 

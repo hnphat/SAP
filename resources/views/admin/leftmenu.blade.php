@@ -595,6 +595,22 @@
                                 </a>
                             </li>
                         @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('meeter'))    
+                            <li class="nav-item">
+                                <a href="{{route('cuochop.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Quản lý cuộc họp</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Tra cứu cuộc họp</p>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
                 <li class="nav-item">
