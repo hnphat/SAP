@@ -181,7 +181,9 @@
                                     <label>Bổ sung:</label>    
                                     <select name="thanhVien" id="thanhVien" class="form-control">
                                         @foreach($user as $row)
+                                            @if($row->hasRole('hop'))
                                             <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                            @endif
                                         @endforeach
                                     </select>                                                   
                                 </div>     

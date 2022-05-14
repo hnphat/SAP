@@ -597,15 +597,19 @@
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('meeter'))    
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhop'))   
                             <li class="nav-item">
                                 <a href="{{route('cuochop.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Quản lý cuộc họp</p>
                                 </a>
                             </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('hop') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhop')) 
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{route('cuochop.tracuu.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Tra cứu cuộc họp</p>
                                 </a>

@@ -696,7 +696,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
 
-    Route::group(['prefix' => 'cuochop'], function(){
+    Route::group(['prefix' => 'cuochop', 'middleware' => ['f_hop']], function(){
         Route::get('quanlyhop','HopController@getQuanLy')->name('cuochop.panel');
         Route::get('quanlyhop/getlist','HopController@getList');
         Route::post('quanlyhop/post','HopController@postHop');
@@ -714,9 +714,20 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chitiethop/xoavande','HopController@xoaVanDe');
         Route::post('chitiethop/postmem','HopController@postMemVanDe');
         Route::post('chitiethop/loadchitietmem','HopController@loadChiTietMem');
+        Route::post('chitiethop/deletemem','HopController@deleteMemChiTiet');
+        Route::post('chitiethop/loadgopy','HopController@loadGopY');
+        Route::post('chitiethop/postgopy','HopController@postGopY');
+        Route::post('chitiethop/xoagopy','HopController@xoaGopY');
+        Route::post('chitiethop/loadsuagopy','HopController@suaLoadGopY');
+        Route::post('chitiethop/suagopy','HopController@suaGopY');
+        Route::post('chitiethop/loadcapnhat','HopController@loadCapNhat');
+        Route::post('chitiethop/capnhatketluan','HopController@capNhatKetLuan');
 
-
-
+        // Tra cứu
+        Route::get('tracuuhop','HopController@getTraCuu')->name('cuochop.tracuu.panel');
+        Route::get('tracuuhop/getlist','HopController@getListTraCuu');
+        Route::post('tracuuhop/loadchitietvande','HopController@loadChiTietVanDe');
+        Route::get('tracuuhop/morong/{id}','HopController@hopMoRongVanDe');
 
     });
 });
