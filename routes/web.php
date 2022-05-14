@@ -728,6 +728,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('tracuuhop/getlist','HopController@getListTraCuu');
         Route::post('tracuuhop/loadchitietvande','HopController@loadChiTietVanDe');
         Route::get('tracuuhop/morong/{id}','HopController@hopMoRongVanDe');
+        Route::post('tracuuhop/xacnhan','HopController@xacNhan');
 
     });
 });

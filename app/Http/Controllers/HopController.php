@@ -300,10 +300,14 @@ class HopController extends Controller
 
                 $hopMem = NoiDungHopMem::where('id_noidung', $row->id)->get();                
                 foreach($hopMem as $_hopMem) {
+                    if ($_hopMem->id_user ==  Auth::user()->id && $_hopMem->xacNhan == false)
+                        $btnNut = "&nbsp;<button id='xacNhanBtn' data-idnoidung='".$row->id."' data-iduser='".$_hopMem->id_user."' class='btn btn-warning btn-sm'>XÁC NHẬN</button></p>";
+                    else
+                        $btnNut = "";                    
                     $user = User::find($_hopMem->id_user);
                     $stt = ($_hopMem->xacNhan) ? "<span class='text-success text-bold'>Đã xác nhận</span>" : "<span class='text-danger text-bold'>Chưa xác nhận</span>";
                     echo "<p><strong>".$user->userDetail->surname.":</strong> 
-                        ".$stt;
+                        ".$stt."".$btnNut;
                 }
 
                 echo "</div>
@@ -688,8 +692,8 @@ class HopController extends Controller
 
                 $hopMem = NoiDungHopMem::where('id_noidung', $row->id)->get();                
                 foreach($hopMem as $_hopMem) {
-                    if ($_hopMem->id_user ==  Auth::user()->id)
-                        $btnNut = "&nbsp;<button class='btn btn-warning btn-sm'>XÁC NHẬN</button></p>";
+                    if ($_hopMem->id_user ==  Auth::user()->id && $_hopMem->xacNhan == false)
+                        $btnNut = "&nbsp;<button id='xacNhanBtn' data-idnoidung='".$row->id."' data-iduser='".$_hopMem->id_user."' class='btn btn-warning btn-sm'>XÁC NHẬN</button></p>";
                     else
                         $btnNut = "";
                     $user = User::find($_hopMem->id_user);
@@ -713,5 +717,27 @@ class HopController extends Controller
         } else {
             return view('hoptuan.morong', ['hop' => $hop, 'user' => $user]);
         }
+    }
+
+    public function xacNhan(Request $request) {
+        $hop = NoiDungHopMem::where([
+            ['id_noidung','=',$request->idnoidung],
+            ['id_user','=',$request->iduser]
+        ])->update([
+            'xacNhan' => true
+        ]);    
+        if ($hop) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã xác nhận!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Không thể xác nhận!',
+                'code' => 500
+            ]);
+        }       
     }
 }

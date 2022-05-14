@@ -562,5 +562,54 @@
                     }
                 });
             }); 
+
+             // load nội dung cập nhật
+             $(document).on('click','#xacNhanBtn', function(){   
+                function load() {
+                    $.ajax({
+                        url: "{{url('management/cuochop/tracuuhop/loadchitietvande/')}}",
+                        type: "post",
+                        dataType: "text",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $("input[name=idHop1]").val()
+                        },
+                        success: function(response) {
+                            $("#noiDungChiTiet").html(response);
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Error 500!"
+                            })
+                        }
+                    });
+                }   
+                if(confirm("Xác nhận vấn đề đã được thông qua?")) {
+                    $.ajax({
+                        url: "{{url('management/cuochop/tracuuhop/xacnhan/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "idnoidung": $(this).data('idnoidung'),
+                            "iduser": $(this).data('iduser')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            load();
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Error 500!"
+                            })
+                        }
+                    });
+                } 
+            }); 
     </script>
 @endsection
