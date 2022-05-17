@@ -731,6 +731,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('tracuuhop/xacnhan','HopController@xacNhan');
 
     });
+
+    Route::group(['prefix' => 'danhgia'], function(){
+        Route::get('list','DanhGiaController@getPanel')->name('danhgia.panel');   
+        Route::get('getlist','DanhGiaController@getList');   
+        Route::post('them','DanhGiaController@post');   
+    });
 });
 
 // Route::get('mail', function () { 

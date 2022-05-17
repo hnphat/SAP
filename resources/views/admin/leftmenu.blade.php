@@ -270,6 +270,21 @@
                                 <p>Báo cáo tiến độ</p>
                             </a>
                         </li>          
+                        @endif   
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        <li class="nav-item">
+                            <a href="{{route('danhgia.panel')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý đánh giá</p>
+                            </a>
+                        </li>  
+                        <li class="nav-item">
+                            <a href="" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Góp ý khách hàng</p>
+                            </a>
+                        </li>          
                         @endif                   
                     </ul>
                 </li>
