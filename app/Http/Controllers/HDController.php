@@ -1432,7 +1432,7 @@ class HDController extends Controller
             ->orderby('id','desc')->get();
         if($result) {
                 echo "<option value='0'>Chọn</option>";
-            foreach($result as $row){
+            foreach($result as $row){ 
                 if($row->hdWait == true) 
                     $hdWait = "(Hợp đồng chờ)";
                 else
@@ -1460,6 +1460,12 @@ class HDController extends Controller
     }
 
     public function taoMau(Request $request) {
+        if ($request->chonXe == 0 || $request->chonMauXe == 0)
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Lỗi tạo mẫu, chưa chọn xe đề nghị!',
+                'code' => 500
+            ]);
         $code = new HopDong();
         $code->id_user_create = Auth::user()->id;
         $code->id_car_sale = $request->chonXe;
