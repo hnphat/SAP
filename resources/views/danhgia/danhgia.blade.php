@@ -7,12 +7,21 @@
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
-    <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="http://keith-wood.name/css/jquery.signature.css">
-  
+    <link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        .kbw-signature { width: 100%; height: 200px;}
+        .kbw-signature {
+            display: inline-block;
+            border: 1px solid #a0a0a0;
+            -ms-touch-action: none;
+        }
+        .kbw-signature-disabled {
+            opacity: 0.35;
+        }
+        .kbw-signature { 
+            width: 500px; 
+            height: 200px;
+        }
         #sig canvas{
             #sig canvas{
             width: 100% !important;
@@ -138,7 +147,7 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form id="editForm" method="post" autocomplete="off">
+                        <form id="editForm" method="post" autocomplete="off" >
                             {{csrf_field()}}
                             <div class="card-body">
                                <input type="hidden" name="idDanhGia">
@@ -169,12 +178,13 @@
                                </div>
                                <div class="form-group">
                                     <label class='text-primary'>B. Quý khách có nhu cầu được vệ sinh xe thêm 01 lần nữa?</label>
-                                    <h3><input style='transform: scale(1.5);' type="radio" id="co" name="veSinhLai"> <label for="co">Có</label></h3>
-                                    <h3><input style='transform: scale(1.5);' type="radio" id="khong" name="veSinhLai"> <label for="khong">Không</label></h3>
+                                    <h3><input style='transform: scale(1.5);' value="1" type="radio" id="co" name="veSinhLai"> <label for="co">Có</label></h3>
+                                    <h3><input style='transform: scale(1.5);' value="0" type="radio" id="khong" name="veSinhLai"> <label for="khong">Không</label></h3>
                                </div>
                                <div class="form-group">
-                                    <label class='text-primary'>C. Xác nhận của khách hàng</label>
+                                    <label class='text-primary'>C. Xác nhận của khách hàng</label><br/>
                                     <div id="sig"></div>
+                                    <textarea id="signature64" name="signed" style="display: none"></textarea>
                                </div>
                                <h6>Xin  chân thành cảm ơn Quý khách đã tham gia khảo sát.</h6>
                             </div>
@@ -212,8 +222,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="http://keith-wood.name/js/jquery.signature.js"></script>  
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="script/jquery.signature.js"></script>  
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -255,17 +265,21 @@
                     { "data": "soBaoGia" },
                     { "data": null,
                         render: function(data, type, row) {
-                            if (row.chuKy != null)
-                                return "<span class='text-bold text-info'>"+row.diemVeSinh+"</span>";
+                            if (row.chuKy != null) {
+                                if (row.diemVeSinh < 5)
+                                    return "<span class='text-bold text-danger'>"+row.diemVeSinh+"</span>";
+                                else
+                                    return "<span class='text-bold text-info'>"+row.diemVeSinh+"</span>";
+                            }                                
                             else
                                 return "<span class='text-bold text-pink'>Chưa đánh giá</span>";                          
                         } 
                     },
                     { "data": null,
                         render: function(data, type, row) {
-                            if (row.veSinhLai && row.chuKy != null)
+                            if (row.veSinhLai == true && row.chuKy != null)
                                 return "<span class='text-bold text-danger'>Có</span>";
-                            else if (row.veSinhLai && row.chuKy == null)
+                            else if (row.veSinhLai == false && row.chuKy != null)
                                 return "<span class='text-bold'>Không</span>";
                             else
                                 return "<span class='text-bold text-pink'>Chưa đánh giá</span>";
@@ -274,7 +288,8 @@
                     { "data": null,
                         render: function(data, type, row) {
                             if (row.chuKy != null)
-                                return "<a href='#' target='_blank'>Xem</a>";
+                                return "<img src='{{asset('upload/sign/')}}/"+row.chuKy+"' style='width: 100%;'/>";
+                                
                             else
                                 return "<span class='text-bold text-pink'>Chưa đánh giá</span>";
                         } 
@@ -282,8 +297,17 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='danhGia' data-toggle='modal' data-target='#editModal' data-id='"+row.id+"' class='btn btn-primary btn-sm'>Mở đánh giá</button>";
-                           
+                            if (row.chuKy == null) {
+                                return "<button id='danhGia' data-toggle='modal' data-target='#editModal' data-id='"+row.id+"' class='btn btn-primary btn-sm'>Mở đánh giá</button>"
+                                +  "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'>Xoá</button>";
+                            }
+                            else {
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'>Xoá</button>";
+                                @else
+                                    return "";
+                                @endif
+                            }                             
                         }
                     }
                 ]
@@ -295,11 +319,11 @@
                 } );
             } ).draw();
 
-            // delete data
-            $(document).on('click','#del', function(){
+            // // delete data
+            $(document).on('click','#delete', function(){
                 if(confirm("Bạn có chắc muốn xoá?")) {
                     $.ajax({
-                        url: "{{url('management/cuochop/quanlyhop/delete/')}}",
+                        url: "{{url('management/danhgia/delete/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
@@ -322,6 +346,52 @@
                     });
                 }
             });
+
+            // load
+            $(document).on('click','#danhGia', function(){
+               $("input[name=idDanhGia]").val($(this).data('id'));
+            });
+
+             //upload
+         $(document).one('click','#btnUpdate',function(e){
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('#editForm').submit(function(e) {
+                e.preventDefault();   
+                var formData = new FormData(this);
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('management/danhgia/ajax/post/')}}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $("#btnUpdate").attr('disabled', true).html("Đang xử lý....");
+                    },
+                    success: (response) => {
+                        this.reset();
+                        Toast.fire({
+                            icon: 'info',
+                            title: response.message
+                        })
+                        $("#btnUpdate").attr('disabled', false).html("GỬI");
+                        $("#editModal").modal('hide');
+                        table.ajax.reload();
+                    },
+                        error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: ' Có lỗi' 
+                        })
+                        $("#btnUpdate").attr('disabled', false).html("GỬI");
+                    }
+                });
+            });                
+        });
 
             $("#btnAdd").click(function(e){
                 e.preventDefault();

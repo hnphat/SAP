@@ -113,6 +113,14 @@ class RoleSeed extends Seeder
                 'name' => 'hop',
                 'description' => 'Được tham gia họp và tạo cuộc họp'
             ],
+            [
+                'name' => 'covan',
+                'description' => 'Quản lý đánh giá khách hàng'
+            ],
+            [
+                'name' => 'qlcovan',
+                'description' => 'Quản lý tất cả đánh giá'
+            ],
         ]);
 
         DB::table('role_user')->insert([

@@ -736,6 +736,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','DanhGiaController@getPanel')->name('danhgia.panel');   
         Route::get('getlist','DanhGiaController@getList');   
         Route::post('them','DanhGiaController@post');   
+        Route::post('delete','DanhGiaController@delete');   
+        Route::post('ajax/post','DanhGiaController@postSign');   
     });
 });
 

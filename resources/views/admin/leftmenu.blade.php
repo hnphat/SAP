@@ -208,7 +208,9 @@
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                    \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien'))
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fab fa-servicestack"></i>
                         <p>
@@ -220,7 +222,7 @@
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') )
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
                         <li class="nav-item">
                             <a href="{{route('phukien.khachhang')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -256,12 +258,17 @@
                             </a>
                         </li> 
                         @endif  
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien'))
                         <li class="nav-item">
                             <a href="{{route('dichvu.baocaodoanhthu.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Báo cáo doanh thu</p>
                             </a>
-                        </li>      
+                        </li>   
+                        @endif   
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
@@ -272,19 +279,14 @@
                         </li>          
                         @endif   
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan'))
                         <li class="nav-item">
                             <a href="{{route('danhgia.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý đánh giá</p>
                             </a>
-                        </li>  
-                        <li class="nav-item">
-                            <a href="" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Góp ý khách hàng</p>
-                            </a>
-                        </li>          
+                        </li>        
                         @endif                   
                     </ul>
                 </li>
