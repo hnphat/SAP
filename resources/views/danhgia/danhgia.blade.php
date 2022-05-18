@@ -112,7 +112,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label>Số báo giá:</label>                                                        
-                                    <input placeholder="Số báo giá" type="text" name="soBaoGia" class="form-control"/>
+                                    <input placeholder="Số báo giá VD: VS067-220101-001" type="text" name="soBaoGia" class="form-control"/>
                                 </div>     
                             </div>
                             <!-- /.card-body -->

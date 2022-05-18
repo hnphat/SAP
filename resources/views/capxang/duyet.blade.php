@@ -89,7 +89,7 @@
                                         <td>{{$row->fuel_num}}</td>
                                         <td>{{$row->fuel_guest}}</td>
                                         <td>{{$row->fuel_lyDo}}</td>
-                                        <td>{{$row->ghiChu}}</td>
+                                        <td>{{$row->fuel_ghiChu}}</td>
                                         <td>@if($row->lead_id !== null)
                                                 {{$row->userLead->userDetail->surname}}
                                                 @if($row->lead_check == true)

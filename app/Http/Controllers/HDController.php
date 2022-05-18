@@ -1460,7 +1460,7 @@ class HDController extends Controller
     }
 
     public function taoMau(Request $request) {
-        if ($request->chonXe == 0 || $request->chonMauXe == 0)
+        if ($request->chonXe == false || $request->chonMauXe == false)
             return response()->json([
                 'type' => 'info',
                 'message' => 'Lỗi tạo mẫu, chưa chọn xe đề nghị!',
