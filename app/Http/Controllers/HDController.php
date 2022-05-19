@@ -3101,7 +3101,7 @@ class HDController extends Controller
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                $giaVon = $row->carSale->typeCar->giaVon;
+                $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
                 $htvSupport = $row->htvSupport;
                 $khuyenMai = 0;
                 $hh = $row->hoaHongMoiGioi;               
@@ -3118,8 +3118,8 @@ class HDController extends Controller
                 }
 
                 $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
-                $tiSuat = ($giaXe) ? ($loiNhuan/$giaXe) : 0;
-                $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."</span>";
+                $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
 
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {

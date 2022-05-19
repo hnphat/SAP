@@ -396,7 +396,8 @@
                     </a>
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                         <li class="nav-item">
                             <a href="{{route('ketoan.baocaohopdong')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -409,7 +410,7 @@
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Xe hợp đồng</p>
+                                <p>Biên bản bàn giao</p>
                             </a>
                         </li>     
                         @endif
