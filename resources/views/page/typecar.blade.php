@@ -171,6 +171,10 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
+                                                <label>Giá vốn</label>
+                                                <input type="number" name="giaVon" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">
                                                 <button id="btnAddPlus" class="btn btn-primary">Thêm</button>
                                             </div>
                                         </div>
@@ -243,6 +247,10 @@
                                                     <option value="Điện/Dầu">Điện/Dầu</option>
                                                     <option value="Điện/Xăng">Điện/Xăng</option>
                                                 </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Giá vốn</label>
+                                                <input type="number" name="_giaVon" class="form-control"/>
                                             </div>
                                             <div class="form-group">
                                                 <button id="btnUpdateAddPlus" class="btn btn-primary">Cập nhật</button>
@@ -518,6 +526,7 @@
                         $("select[name=_seat]").val(response.data.seat);
                         $("input[name=_machine]").val(response.data.machine);
                         $("select[name=_gear]").val(response.data.gear);
+                        $("input[name=_giaVon]").val(response.data.giaVon);
                     }
                 });
             });

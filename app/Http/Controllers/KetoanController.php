@@ -217,6 +217,7 @@ class KetoanController extends Controller
     }
 
     public function getBaoCaoHopDong(){
-        return view('ketoan.hopdongchitiet');
+        return view('khoxe.baocaohopdong');
+        // return view('ketoan.hopdongchitiet');
     }
 }

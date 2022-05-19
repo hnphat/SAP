@@ -70,12 +70,22 @@
                     <table class="table table-striped table-bordered">
                         <tr>
                             <th>STT</th>
-                            <th>Mã đề nghị</th>
                             <th>Ngày tạo</th>
+                            <th>Loại HĐ</th>
+                            <th>Sale</th>
                             <th>Khách hàng</th>
-                            <th>Số điện thoại</th>
+                            <th>Dòng xe</th>
+                            <th>Màu</th>
+                            <th>Thanh toán</th>
+                            <th>Giá bán</th>
+                            <th>Giá vốn</th>
+                            <th>Hỗ trợ HTV</th>
+                            <th>Khuyến mãi</th>
+                            <th>Hoa hồng MG</th>
+                            <th>Lợi nhuận</th>
+                            <th>Tỉ suất</th>
                             <th>Trạng thái</th>
-                            <th>Nhân viên kinh doanh</th>
+                            <th>Ngày xuất xe</th>
                             <th>Tác vụ</th>
                         </tr>
                         <tbody id="showBaoCao">

@@ -237,6 +237,16 @@
                                         </h4>
                                         <h5>Yêu cầu sửa: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
                                         <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
+                                       
+                                        <strong class="text-pink">HỖ TRỢ TỪ HTV:</strong> 
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <input id="htvSupport" placeholder="Nhập số tiền (nếu có)" value="0" name="htvSupport" min="1" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong id="htvSupportShow"></strong>
+                                            </div>
+                                        </div><br/>
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA</button>
                                         <button id="huyDeNghi" class="btn btn-danger">BỎ DUYỆT ĐỀ NGHỊ</button>
@@ -459,6 +469,8 @@
                 $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#hoaHongMoiGioi').val();
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#htvSupport').val();
+                $('#htvSupportShow').text("(" + DOCSO.doc(cos) + ")");
             }
 
             $('#tamUng').keyup(function(){
@@ -479,6 +491,11 @@
             $('#hoaHongMoiGioi').keyup(function(){
                 var cos = $('#hoaHongMoiGioi').val();
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
+            });
+
+            $('#htvSupport').keyup(function(){
+                var cos = $('#htvSupport').val();
+                $('#htvSupportShow').text("(" + DOCSO.doc(cos) + ")");
             });
 
             function defaultVal() {
@@ -508,6 +525,7 @@
                 $("#showXeGan").html("");
                 $("input[name=xeGan]").val("");
                 $("input[name=soHD]").val("");
+                $("input[name=htvSupport]").val(0);
                 loadPKFree(null);
                 loadPKPay(null);
                 loadPKCost(null);
@@ -544,6 +562,7 @@
                     $("input[name=hdWait]").prop('disabled', true);
                     $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
+                    $("input[name=htvSupport]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == true && admin == false) {
                     $("#duyetDeNghi").show();
@@ -555,6 +574,7 @@
                     $("input[name=hdWait]").prop('disabled', false);
                     $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
+                    $("input[name=htvSupport]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
                     $("#choPhepSua").show();
@@ -565,6 +585,7 @@
                     $("input[name=hdWait]").prop('disabled', true);
                     $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
+                    $("input[name=htvSupport]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == false) {
                     $("#duyetDeNghi").hide();
@@ -576,6 +597,7 @@
                     $("input[name=hdWait]").prop('disabled', false);
                     $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
+                    $("input[name=htvSupport]").prop('disabled', false);
                     $("#inForm").hide();
                 }
             }
@@ -612,6 +634,7 @@
                             $("input[name=idRequestEdit]").val(response.data.id);
                             $("input[name=idRequestHuy]").val(response.data.id);
                             $("input[name=soHD]").val(response.data.code);
+                            $("input[name=htvSupport]").val(response.data.htvSupport);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             
@@ -707,6 +730,7 @@
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             $("input[name=soHD]").val("");
+                            $("input[name=htvSupport]").val(0);
                             loadPKFree(null);
                             loadPKPay(null);
                             loadPKCost(null);
@@ -727,6 +751,7 @@
                             $("#cmnd").prop('disabled', true);
                             $("#dienThoai").prop('disabled', true);
                             $("input[name=soHD]").prop('disabled', true);
+                            $("input[name=htvSupport]").prop('disabled', true);
                             $("#duyetDeNghi").hide();
                             $("#choPhepSua").hide();
                             $("#huyDeNghi").hide();
@@ -874,7 +899,8 @@
                             "wait": wait,
                             "daiLy": daiLy,
                             "sohd": $("input[name=soHD]").val(),
-                            "id": $("input[name=idHopDong]").val()
+                            "id": $("input[name=idHopDong]").val(),
+                            "htvSupport": $("input[name=htvSupport]").val()
                         },
                         success: function(response) {
                             Toast.fire({

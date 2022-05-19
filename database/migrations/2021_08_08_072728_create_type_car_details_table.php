@@ -22,6 +22,7 @@ class CreateTypeCarDetailsTable extends Migration
             $table->string('machine', 10)->nullable();
             $table->string('seat', 10)->nullable();
             $table->string('fuel', 10)->nullable();
+            $table->integer('giaVon')->nullable();
             $table->timestamps();
         });
     }

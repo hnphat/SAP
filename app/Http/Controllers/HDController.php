@@ -2231,6 +2231,7 @@ class HDController extends Controller
                 $result->admin_check = true;
                 $result->hdWait = true;    
                 $result->code = $request->sohd; 
+                $result->htvSupport = $request->htvSupport;
                 $result->save();
                 if($result) {
 
@@ -2268,6 +2269,7 @@ class HDController extends Controller
                     $car->save();
                 $result->code = $request->sohd; 
                 $result->hdDaiLy = $request->daiLy; 
+                $result->htvSupport = $request->htvSupport;
                 $result->save();
                 if($result) {
                     $nhatKy = new NhatKy();
@@ -3094,6 +3096,37 @@ class HDController extends Controller
                 $guest = $row->guest->name;
                 $phone = $row->guest->phone;
                 $sale = $row->user->userDetail->surname;
+                $loaihd = ($row->hdDaiLy) ? "Đại lý" : "Bán lẻ";
+                $isTienMat = ($row->isTienMat) ? "Tiền mặt" : "Ngân hàng";
+                $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
+                $mau = $row->mau;
+                $giaXe = $row->giaXe;
+                $giaVon = $row->carSale->typeCar->giaVon;
+                $htvSupport = $row->htvSupport;
+                $khuyenMai = 0;
+                $hh = $row->hoaHongMoiGioi;               
+                
+               
+                $package = $row->package;
+                foreach($package as $row2) {                
+                    if ($row2->type == 'free' && $row2->free_kem == false) {
+                       $khuyenMai += $row2->cost;
+                    }
+                    if ($row2->type == 'cost' && $row2->cost_tang == true) {
+                       $khuyenMai += $row2->cost;
+                    }
+                }
+
+                $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $tiSuat = ($giaXe) ? ($loiNhuan/$giaXe) : 0;
+                $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."</span>";
+
+                $ngayXuatXe = "";
+                if ($row->id_car_kho != null) {
+                    $kho = KhoV2::find($row->id_car_kho);
+                    $ngayXuatXe = ($kho->ngayGiaoXe) ? $kho->ngayGiaoXe : "";
+                }               
+
                 $status = "";
                 if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
                     $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
@@ -3119,15 +3152,25 @@ class HDController extends Controller
                     && $row->hdWait == false)
                         $status = "<strong class='text-success'>Hợp đồng ký</strong>";
                 }                
-
+                // <td>ĐN/0".$row->id."/".$codeCar."</td>
                 echo "<tr>
                     <td>".($i++)."</td>
-                    <td>ĐN/0".$row->id."/".$codeCar."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                    <td>".$guest."</td>
-                    <td>".$phone."</td>
-                    <td>".$status."</td>
+                    <td>".$loaihd."</td>
                     <td>".$sale."</td>
+                    <td>".$guest."</td>
+                    <td>".$dongxe."</td>
+                    <td>".$mau."</td>$giaXe
+                    <td>".$isTienMat."</td>
+                    <td>".number_format($giaXe)."</td>
+                    <td>".number_format($giaVon)."</td>
+                    <td>".number_format($htvSupport)."</td>
+                    <td>".number_format($khuyenMai)."</td>
+                    <td>".number_format($hh)."</td>
+                    <td>".number_format($loiNhuan)."</td>
+                    <td>".$tiSuat."</td>
+                    <td>".$status."</td>
+                    <td>".(($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : "")."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
