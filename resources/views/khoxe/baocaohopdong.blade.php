@@ -41,7 +41,8 @@
                                     <option value="5">Hợp đồng ký chờ</option>      
                                     <option value="6">Hợp đồng ký đại lý</option> 
                                     <option value="7">Hợp đồng huỷ</option>                               
-                                    <option value="8">Hợp đồng đợi duyệt (trưởng phòng)</option>                                                              
+                                    <option value="8">Hợp đồng đợi duyệt (trưởng phòng)</option> 
+                                    <option value="9">Đã giao xe</option>                                                              
                                 </select> <br/>
                             </div>
                         </div>

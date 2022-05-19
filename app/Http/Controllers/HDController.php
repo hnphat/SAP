@@ -3003,6 +3003,21 @@ class HDController extends Controller
                     ->orderBy('id','desc')
                     ->get();
                 } break;
+                case 9: {
+                    $hd = HopDong::select("hop_dong.*")
+                    ->join("kho_v2 as k","k.id","=","hop_dong.id_car_kho")
+                    ->where([
+                        ['hop_dong.requestCheck','=',true],
+                        ['hop_dong.admin_check','=',true],
+                        ['hop_dong.lead_check','=',true],
+                        ['hop_dong.hdWait','=',false],
+                        ['hop_dong.lead_check_cancel','=',false],
+                        ['k.xuatXe','=',true],
+                        ['hop_dong.hdDaily','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
                 default: $type = 0;
             }
         } else {
@@ -3085,6 +3100,22 @@ class HDController extends Controller
                     ->orderBy('id','desc')
                     ->get();
                 } break;
+                case 9: {
+                    $hd = HopDong::select("hop_dong.*")
+                    ->join("kho_v2 as k","k.id","=","hop_dong.id_car_kho")
+                    ->where([
+                        ['hop_dong.requestCheck','=',true],
+                        ['hop_dong.admin_check','=',true],
+                        ['hop_dong.lead_check','=',true],
+                        ['hop_dong.hdWait','=',false],
+                        ['hop_dong.lead_check_cancel','=',false],
+                        ['hop_dong.hdDaily','=',false],
+                        ['k.xuatXe','=',true],
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
                 default: abort(403);
             }
         }        
@@ -3096,8 +3127,8 @@ class HDController extends Controller
                 $guest = $row->guest->name;
                 $phone = $row->guest->phone;
                 $sale = $row->user->userDetail->surname;
-                $loaihd = ($row->hdDaiLy) ? "Đại lý" : "Bán lẻ";
-                $isTienMat = ($row->isTienMat) ? "Tiền mặt" : "Ngân hàng";
+                $loaihd = ($row->hdDaiLy) ? "<span class='text-bold'>Đại lý</span>" : "<span class='text-secondary'>Bán lẻ</span>";
+                $isTienMat = ($row->isTienMat) ? "<span class='text-bold text-success'>Tiền mặt</span>" : "<span class='text-bold'>Ngân hàng</span>";
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
@@ -3162,15 +3193,15 @@ class HDController extends Controller
                     <td>".$dongxe."</td>
                     <td>".$mau."</td>$giaXe
                     <td>".$isTienMat."</td>
-                    <td>".number_format($giaXe)."</td>
-                    <td>".number_format($giaVon)."</td>
-                    <td>".number_format($htvSupport)."</td>
+                    <td class='text-bold'>".number_format($giaXe)."</td>
+                    <td class='text-bold text-secondary'>".number_format($giaVon)."</td>
+                    <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($hh)."</td>
-                    <td>".number_format($loiNhuan)."</td>
+                    <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
                     <td>".$status."</td>
-                    <td>".(($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : "")."</td>
+                    <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
