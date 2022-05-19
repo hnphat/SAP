@@ -3121,7 +3121,7 @@ class HDController extends Controller
         }        
         $i = 1;
         foreach($hd as $row) {
-            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+            if ($request->baoCao != 9 && (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                 $codeCar = $row->carSale->typeCar->code;
                 $guest = $row->guest->name;
@@ -3206,7 +3206,100 @@ class HDController extends Controller
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
                 </tr>";
-            }            
+            }    
+
+            $ngayGiaoXe = "";
+            if ($row->id_car_kho != null) {
+                $kho = KhoV2::find($row->id_car_kho);
+                $ngayGiaoXe = ($kho->ngayGiaoXe) ? $kho->ngayGiaoXe : "";
+            }      
+            
+            if ($ngayGiaoXe != "" && $request->baoCao == 9 && (strtotime(\HelpFunction::revertDate($ngayGiaoXe)) >= strtotime($_from)) 
+            &&  (strtotime(\HelpFunction::revertDate($ngayGiaoXe)) <= strtotime($_to))) {
+                $codeCar = $row->carSale->typeCar->code;
+                $guest = $row->guest->name;
+                $phone = $row->guest->phone;
+                $sale = $row->user->userDetail->surname;
+                $loaihd = ($row->hdDaiLy) ? "<span class='text-bold'>Đại lý</span>" : "<span class='text-secondary'>Bán lẻ</span>";
+                $isTienMat = ($row->isTienMat) ? "<span class='text-bold text-success'>Tiền mặt</span>" : "<span class='text-bold'>Ngân hàng</span>";
+                $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
+                $mau = $row->mau;
+                $giaXe = $row->giaXe;
+                $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                $htvSupport = $row->htvSupport;
+                $khuyenMai = 0;
+                $hh = $row->hoaHongMoiGioi;               
+                
+               
+                $package = $row->package;
+                foreach($package as $row2) {                
+                    if ($row2->type == 'free' && $row2->free_kem == false) {
+                       $khuyenMai += $row2->cost;
+                    }
+                    if ($row2->type == 'cost' && $row2->cost_tang == true) {
+                       $khuyenMai += $row2->cost;
+                    }
+                }
+
+                $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
+
+                $ngayXuatXe = "";
+                if ($row->id_car_kho != null) {
+                    $kho = KhoV2::find($row->id_car_kho);
+                    $ngayXuatXe = ($kho->ngayGiaoXe) ? $kho->ngayGiaoXe : "";
+                }               
+
+                $status = "";
+                if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
+                    $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                } elseif ($row->lead_check_cancel == true) {
+                    $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+                } else {
+                    if ($row->requestCheck == false) 
+                    $status = "<strong class='text-secondary'>Mới tạo</strong>";
+                    elseif ($row->requestCheck == true && $row->admin_check == false)
+                        $status = "<strong class='text-info'>Đợi duyệt (admin)</strong>";
+                    elseif ($row->requestCheck == true 
+                    && $row->admin_check == true 
+                    && $row->lead_check == false)
+                        $status = "<strong class='text-primary'>Đợi duyệt (Trưởng phòng)</strong>";
+                    elseif ($row->requestCheck == true 
+                    && $row->admin_check == true 
+                    && $row->lead_check == true 
+                    && $row->hdWait == true)
+                        $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                    elseif ($row->requestCheck == true 
+                    && $row->admin_check == true 
+                    && $row->lead_check == true 
+                    && $row->hdWait == false)
+                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                }                
+                // <td>ĐN/0".$row->id."/".$codeCar."</td>
+                echo "<tr>
+                    <td>".($i++)."</td>
+                    <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                    <td>".$loaihd."</td>
+                    <td>".$sale."</td>
+                    <td>".$guest."</td>
+                    <td>".$dongxe."</td>
+                    <td>".$mau."</td>$giaXe
+                    <td>".$isTienMat."</td>
+                    <td class='text-bold'>".number_format($giaXe)."</td>
+                    <td class='text-bold text-secondary'>".number_format($giaVon)."</td>
+                    <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
+                    <td>".number_format($khuyenMai)."</td>
+                    <td>".number_format($hh)."</td>
+                    <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
+                    <td>".$tiSuat."</td>
+                    <td>".$status."</td>
+                    <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
+                    <td>
+                        <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                    </td>
+                </tr>";
+            }  
         } 
     }
 
