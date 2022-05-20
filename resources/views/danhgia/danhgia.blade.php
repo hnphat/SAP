@@ -224,6 +224,7 @@
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="script/jquery.signature.js"></script>  
+    <script src="script/jquery.ui.touch-punch.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -235,8 +236,8 @@
                
         // show data
         $(document).ready(function() {   
-            var sig = $('#sig').signature({syncField: '#signature64', syncFormat: 'PNG'});         
-
+            var sig = $('#sig').signature({syncField: '#signature64', syncFormat: 'PNG', color: '#00f'});         
+            $('#widget').draggable();
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,

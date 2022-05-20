@@ -241,16 +241,29 @@
                                         <strong class="text-pink">HỖ TRỢ TỪ HTV:</strong> 
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <input id="htvSupport" placeholder="Nhập số tiền (nếu có)" value="0" name="htvSupport" min="1" class="form-control">
+                                                <input id="htvSupport" placeholder="Nhập số tiền (nếu có)" value="0" name="htvSupport" class="form-control">
                                             </div>
                                             <div class="col-md-6">
                                                 <strong id="htvSupportShow"></strong>
+                                            </div>
+                                        </div><br/>
+                                        <strong class="text-pink">HÌNH THỨC GIÁ VỐN:</strong> 
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <select name="hinhThucGiaVon" class="form-control">
+                                                    <option value="1">Mặc định</option>
+                                                    <option value="0">Linh động</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong id="giaVonShow"></strong>
                                             </div>
                                         </div><br/>
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT ĐỀ NGHỊ</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA</button>
                                         <button id="huyDeNghi" class="btn btn-danger">BỎ DUYỆT ĐỀ NGHỊ</button>
                                         <button id="ganXeHDCho" class="btn btn-primary">GÁN XE HỢP ĐỒNG CHỜ</button>
+                                        <button id="ganGiaVon" class="btn btn-secondary">GÁN GIÁ VỐN</button>
                                         <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA HỢP ĐỒNG</button>
                                         <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY HỢP ĐỒNG</button>
                             </div>
@@ -438,6 +451,7 @@
             $("#choPhepSua").hide();
             $("#huyDeNghi").hide();
             $("#ganXeHDCho").hide();
+            $("#ganGiaVon").hide();
             $("#inForm").hide();
             $("#deNghiHuy").hide();
             $("#deNghiChinhSua").hide();
@@ -534,6 +548,7 @@
                 $("#deNghiChinhSua").hide();
                 $("#xoaDeNghi").hide();
                 $("#deNghiHopDong").hide();
+                $("#ganGiaVon").hide();
                 $("#pkCostAdd").hide();
                 $("#pkFreeAdd").hide();
                 $("#pkPayAdd").hide();
@@ -548,6 +563,7 @@
                 $("input[name=soHD]").prop('disabled', true);
                 $("#duyetDeNghi").hide();
                 $("#choPhepSua").hide();
+                $("#ganGiaVon").hide();
                 $("#huyDeNghi").hide();
             }
 
@@ -563,6 +579,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("input[name=htvSupport]").prop('disabled', true);
+                    $("select[name=hinhThucGiaVon]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == true && admin == false) {
                     $("#duyetDeNghi").show();
@@ -575,6 +592,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                     $("input[name=htvSupport]").prop('disabled', false);
+                    $("select[name=hinhThucGiaVon]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
                     $("#choPhepSua").show();
@@ -586,6 +604,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("input[name=htvSupport]").prop('disabled', true);
+                    $("select[name=hinhThucGiaVon]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == false) {
                     $("#duyetDeNghi").hide();
@@ -598,6 +617,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                     $("input[name=htvSupport]").prop('disabled', false);
+                    $("select[name=hinhThucGiaVon]").prop('disabled', false);
                     $("#inForm").hide();
                 }
             }
@@ -635,9 +655,18 @@
                             $("input[name=idRequestHuy]").val(response.data.id);
                             $("input[name=soHD]").val(response.data.code);
                             $("input[name=htvSupport]").val(response.data.htvSupport);
+                            $("select[name=hinhThucGiaVon]").val(response.data.isGiaVon);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             
+                            if (response.data.isGiaVon == 0) {
+                                $("#ganGiaVon").show();
+                                let str = " (" + DOCSO.doc(response.data.giaVon) + ")";
+                                $("#giaVonShow").text(response.data.giaVon + " " + str);
+                            } else {
+                                $("#ganGiaVon").hide();
+                                $("#giaVonShow").text("");
+                            }
                             if (response.data.lyDoEdit != null)
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
                             else
@@ -752,6 +781,7 @@
                             $("#dienThoai").prop('disabled', true);
                             $("input[name=soHD]").prop('disabled', true);
                             $("input[name=htvSupport]").prop('disabled', true);
+                            $("select[name=hinhThucGiaVon]").prop('disabled', true);                            
                             $("#duyetDeNghi").hide();
                             $("#choPhepSua").hide();
                             $("#huyDeNghi").hide();
@@ -900,7 +930,8 @@
                             "daiLy": daiLy,
                             "sohd": $("input[name=soHD]").val(),
                             "id": $("input[name=idHopDong]").val(),
-                            "htvSupport": $("input[name=htvSupport]").val()
+                            "htvSupport": $("input[name=htvSupport]").val(),
+                            "isGiaVon": $("select[name=hinhThucGiaVon]").val()
                         },
                         success: function(response) {
                             Toast.fire({
@@ -1180,6 +1211,37 @@
                         Toast.fire({
                             icon: 'warning',
                             title: "Không thể thêm!"
+                        })
+                    }
+                });
+            });
+
+
+            $("#ganGiaVon").click(function(e){
+                e.preventDefault();
+                let val = prompt("Vui lòng nhập giá vốn xe này");
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/gangiavon/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $("input[name=idHopDong]").val(),
+                        "giaVon": val
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
+                        loadList();
+                        defaultVal();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể gán giá vốn!"
                         })
                     }
                 });

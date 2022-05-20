@@ -1205,6 +1205,28 @@ class HDController extends Controller
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'ĐNTHHĐ ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            // Xử lý tỉ suất
+            $giaVon = 0;
+            if ($sale->isGiaVon) {
+                $giaVon = TypeCarDetail::find($sale->id_car_sale)->giaVon;
+            } else {
+                $giaVon = $sale->giaVon;
+            }
+            $htvSupport = $sale->htvSupport;
+            $khuyenMai = 0;
+            $hh = $sale->hoaHongMoiGioi;        
+            $pkm = $sale->package;
+            foreach($pkm as $row2) {                
+                if ($row2->type == 'free' && $row2->free_kem == false) {
+                    $khuyenMai += $row2->cost;
+                }
+                if ($row2->type == 'cost' && $row2->cost_tang == true) {
+                    $khuyenMai += $row2->cost;
+                }
+            }
+            $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+            // ----------------
             // Cá nhân
             $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
@@ -1251,6 +1273,8 @@ class HDController extends Controller
                 'thanhTienPhiPKB' => $chiPhiChiTietPKB,
                 'tongPhuKienFree' => number_format($tongPhuKienFree),
                 'tongPhuKienBan' => number_format($tongPhuKien),
+                'tisuat' => round($tiSuat,2) . " %",
+                'htvSupport' => number_format($htvSupport),
             ]);
 
         $pathToSave = 'template/DENGHIDOWN.docx';
@@ -1335,6 +1359,28 @@ class HDController extends Controller
             $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
             $outhd = 'ĐNTHHĐ ' . $sale->guest->name;
             $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            // Xử lý tỉ suất
+            $giaVon = 0;
+            if ($sale->isGiaVon) {
+                $giaVon = TypeCarDetail::find($sale->id_car_sale)->giaVon;
+            } else {
+                $giaVon = $sale->giaVon;
+            }
+            $htvSupport = $sale->htvSupport;
+            $khuyenMai = 0;
+            $hh = $sale->hoaHongMoiGioi;        
+            $pkm = $sale->package;
+            foreach($pkm as $row2) {                
+                if ($row2->type == 'free' && $row2->free_kem == false) {
+                    $khuyenMai += $row2->cost;
+                }
+                if ($row2->type == 'cost' && $row2->cost_tang == true) {
+                    $khuyenMai += $row2->cost;
+                }
+            }
+            $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+            // ----------------
             // Cá nhân
             $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
             $templateProcessor->setValues([
@@ -1382,6 +1428,8 @@ class HDController extends Controller
                 'thanhTienPhiPKB' => $chiPhiChiTietPKB,
                 'tongPhuKienFree' => number_format($tongPhuKienFree),
                 'tongPhuKienBan' => number_format($tongPhuKien),
+                'tisuat' => round($tiSuat,2) . " %",
+                'htvSupport' => number_format($htvSupport),
             ]);
 
         $pathToSave = 'template/DENGHICONGTYDOWN.docx';
@@ -2231,6 +2279,7 @@ class HDController extends Controller
                 $result->admin_check = true;
                 $result->hdWait = true;    
                 $result->code = $request->sohd; 
+                $result->isGiaVon = $request->isGiaVon; 
                 $result->htvSupport = $request->htvSupport;
                 $result->save();
                 if($result) {
@@ -2269,6 +2318,7 @@ class HDController extends Controller
                     $car->save();
                 $result->code = $request->sohd; 
                 $result->hdDaiLy = $request->daiLy; 
+                $result->isGiaVon = $request->isGiaVon; 
                 $result->htvSupport = $request->htvSupport;
                 $result->save();
                 if($result) {
@@ -2299,6 +2349,71 @@ class HDController extends Controller
             'code' => 200,
             'data' => null
         ]);
+    }
+
+    public function ganGiaVon(Request $request){ 
+        $result = HopDong::find($request->id);
+        $sohd = $result->code.".".$result->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($result->created_at)."/HĐMB-PA";
+        if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
+            if ($result->id_car_kho != null) {
+                $car = KhoV2::find($result->id_car_kho);
+                if ($car->xuatXe == true)
+                    return response()->json([
+                        'type' => 'warning',
+                        'message' => 'Xe đã xuất kho không thể gán giá vốn!',
+                        'code' => 200
+                    ]);                   
+                else {
+                    $result->giaVon = $request->giaVon;
+                    $result->save();
+                    if ($result) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->noiDung = "Gán giá vốn " . number_format($request->giaVon) 
+                        . " cho hợp đồng " . $sohd;
+                        $nhatKy->save();
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Đã gán giá vốn!',
+                            'code' => 200,
+                            'data' => $result
+                        ]);  
+                    }
+                    else
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Lỗi giá vốn!',
+                            'code' => 500
+                        ]);  
+                }
+            } else {
+                $result->giaVon = $request->giaVon;
+                $result->save();
+                if ($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->noiDung = "Gán giá vốn " . number_format($request->giaVon) 
+                    . " cho hợp đồng " . $sohd;
+                    $nhatKy->save();
+                    return response()->json([
+                        'type' => 'info',
+                        'message' => 'Đã gán giá vốn!',
+                        'code' => 200,
+                        'data' => $result
+                    ]);  
+                }
+                else
+                    return response()->json([
+                        'type' => 'info',
+                        'message' => 'Lỗi giá vốn!',
+                        'code' => 500
+                    ]);  
+            }
+        }
     }
 
     public function ganXeHDCho(Request $request){
@@ -3132,7 +3247,12 @@ class HDController extends Controller
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                $giaVon = 0;
+                if ($row->isGiaVon) {
+                    $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                } else {
+                    $giaVon = $row->giaVon;
+                }
                 $htvSupport = $row->htvSupport;
                 $khuyenMai = 0;
                 $hh = $row->hoaHongMoiGioi;               
@@ -3194,7 +3314,7 @@ class HDController extends Controller
                     <td>".$mau."</td>$giaXe
                     <td>".$isTienMat."</td>
                     <td class='text-bold'>".number_format($giaXe)."</td>
-                    <td class='text-bold text-secondary'>".number_format($giaVon)."</td>
+                    <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($hh)."</td>
@@ -3225,7 +3345,12 @@ class HDController extends Controller
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                $giaVon = 0;
+                if ($row->isGiaVon) {
+                    $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                } else {
+                    $giaVon = $row->giaVon;
+                }
                 $htvSupport = $row->htvSupport;
                 $khuyenMai = 0;
                 $hh = $row->hoaHongMoiGioi;               
@@ -3287,7 +3412,7 @@ class HDController extends Controller
                     <td>".$mau."</td>$giaXe
                     <td>".$isTienMat."</td>
                     <td class='text-bold'>".number_format($giaXe)."</td>
-                    <td class='text-bold text-secondary'>".number_format($giaVon)."</td>
+                    <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($hh)."</td>

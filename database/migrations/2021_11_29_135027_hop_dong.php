@@ -45,6 +45,8 @@ class HopDong extends Migration
             $table->boolean('hdWait')->default(false);
             $table->boolean('hdDaiLy')->default(false);
             $table->integer('htvSupport')->nullable();
+            $table->boolean('isGiaVon')->default(true);
+            $table->integer('giaVon')->default(0);
             $table->timestamps();
         });
     }
