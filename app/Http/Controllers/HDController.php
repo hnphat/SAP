@@ -3255,6 +3255,9 @@ class HDController extends Controller
                 }
                 $htvSupport = $row->htvSupport;
                 $khuyenMai = 0;
+                $bhvc = 0;
+                $pkban = 0;
+                $dangky = 0;
                 $hh = $row->hoaHongMoiGioi;               
                 
                
@@ -3265,6 +3268,18 @@ class HDController extends Controller
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Bảo hiểm vật chất") {
+                        $bhvc += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                        $dangky += $row2->cost;
+                    }
+
+                    if ($row2->type == 'pay') {
+                        $pkban += $row2->cost;
                     }
                 }
 
@@ -3317,6 +3332,9 @@ class HDController extends Controller
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
+                    <td>".number_format($bhvc)."</td>
+                    <td>".number_format($pkban)."</td>
+                    <td>".number_format($dangky)."</td>
                     <td>".number_format($hh)."</td>
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
@@ -3353,6 +3371,9 @@ class HDController extends Controller
                 }
                 $htvSupport = $row->htvSupport;
                 $khuyenMai = 0;
+                $bhvc = 0;
+                $pkban = 0;
+                $dangky = 0;
                 $hh = $row->hoaHongMoiGioi;               
                 
                
@@ -3363,6 +3384,18 @@ class HDController extends Controller
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Bảo hiểm vật chất") {
+                        $bhvc += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                        $dangky += $row2->cost;
+                    }
+
+                    if ($row2->type == 'pay') {
+                        $pkban += $row2->cost;
                     }
                 }
 
@@ -3415,6 +3448,9 @@ class HDController extends Controller
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
+                    <td>".number_format($bhvc)."</td>
+                    <td>".number_format($pkban)."</td>
+                    <td>".number_format($dangky)."</td>
                     <td>".number_format($hh)."</td>
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>

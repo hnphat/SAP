@@ -82,6 +82,9 @@
                             <th>Giá vốn</th>
                             <th>Hỗ trợ HTV</th>
                             <th>Khuyến mãi</th>
+                            <th>Bảo hiểm bán</th>
+                            <th>Phụ kiện bán</th>
+                            <th>Đăng ký</th>
                             <th>Hoa hồng MG</th>
                             <th>Lợi nhuận</th>
                             <th>Tỉ suất</th>
