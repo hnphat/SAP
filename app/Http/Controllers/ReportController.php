@@ -1226,8 +1226,8 @@ class ReportController extends Controller
                     <div class='row'>
                         <div class='col-md-8'>
                             <h5>- Xuất xe: <span class='text-success'><strong>" . ($xuatNgoaiTinh + $xuatTrongTinh) . "</strong></span></h5>
-                            <p>+ Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span><br/>
-                            + Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></p>
+                            <p>+ Xuất ngoài tỉnh: <span class='text-success'><strong>" . $xuatNgoaiTinh . "</strong></span><br/>
+                            + Xuất trong tỉnh: <span class='text-success'><strong>" . $xuatTrongTinh . "</strong></span></p>
                             ";
             foreach ($report as $row) {
                         if ((strtotime($row->ngayReport) >= strtotime($_from)) 
