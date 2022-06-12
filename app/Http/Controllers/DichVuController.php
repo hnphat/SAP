@@ -1395,6 +1395,7 @@ class DichVuController extends Controller
                     <th>STT</th>
                     <th>Ngày</th>
                     <th>Người tạo</th>
+                    <th>Sale</th>
                     <th>Loại BG</th>
                     <th>Số BG</th>
                     <th>Công</th>
@@ -1441,6 +1442,7 @@ class DichVuController extends Controller
                                         <td>".($i++)."</td>
                                         <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                         <td>".$row->user->userDetail->surname."</td>
+                                        <td>".$row->nvKD."</td>
                                         <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
                                         <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                         <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_chietkhau).")</span></td>
@@ -1512,6 +1514,7 @@ class DichVuController extends Controller
                                             <td>".($i++)."</td>
                                             <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                             <td>".$row->user->userDetail->surname."</td>
+                                            <td>".$row->nvKD."</td>
                                             <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
                                             <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                             <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_chietkhau).")</span></td>
@@ -1553,6 +1556,7 @@ class DichVuController extends Controller
                     <th>STT</th>
                     <th>Ngày</th>
                     <th>Người tạo</th>
+                    <th>Sale</th>
                     <th>Loại BG</th>
                     <th>Số BG</th>
                     <th>Công</th>
@@ -1625,6 +1629,7 @@ class DichVuController extends Controller
                                         <td>".($i++)."</td>
                                         <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                         <td>".$row->user->userDetail->surname."</td>
+                                        <td>".$row->nvKD."</td>
                                         <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
                                         <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                         <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_ck_cong ).")</span></td>
@@ -1722,6 +1727,7 @@ class DichVuController extends Controller
                                         <td>".($i++)."</td>
                                         <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                         <td>".$row->user->userDetail->surname."</td>
+                                        <td>".$row->nvKD."</td>
                                         <td>".($row->isPKD ? "Báo giá kinh doanh" : "Báo giá khai thác")."</td>
                                         <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                         <td class='text-bold text-success'>".number_format($temp_cong)."<span class='text-secondary'> (".number_format($temp_ck_cong ).")</span></td>
