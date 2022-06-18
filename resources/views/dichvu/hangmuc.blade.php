@@ -94,7 +94,7 @@
                                                                     </div>                
                                                                     <div class="form-group">
                                                                         <label>Đơn giá tiêu chuẩn:</label>
-                                                                        <input id="donGia" name="donGia" type="number" class="form-control" placeholder="Giá">
+                                                                        <input id="donGia" name="donGia" value="0" type="number" class="form-control" placeholder="Giá">
                                                                         <i id="showGia"></i>
                                                                     </div>
                                                                     <div class="form-group">
@@ -383,7 +383,7 @@
                     },
                     success: function(response) {
                         $("input[name=eid]").val(response.data.id);
-                        $("input[name=eisPK]").val(response.data.isPK);
+                        $("select[name=eisPK]").val(response.data.isPK);
                         $("input[name=ema]").val(response.data.ma);
                         $("input[name=enoiDung]").val(response.data.noiDung);
                         $("select[name=edvt]").val(response.data.dvt);

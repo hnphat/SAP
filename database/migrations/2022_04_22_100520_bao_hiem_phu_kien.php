@@ -21,7 +21,7 @@ class BaoHiemPhuKien extends Migration
             $table->string('ma')->unique();
             $table->string('noiDung');
             $table->string('dvt');
-            $table->integer('donGia')->nullable();
+            $table->integer('donGia')->default(0);
             $table->enum('type', ['CONG', 'PHUTUNG']);
             $table->timestamps();
         });
