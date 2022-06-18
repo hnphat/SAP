@@ -276,7 +276,7 @@
                     {  
                         "data": null,
                         render: function(data, type, row) {
-                           if (row.isPK)
+                           if (row.isPK == 1)
                                 return "Phụ kiện";
                             else
                                 return "Bảo hiểm";

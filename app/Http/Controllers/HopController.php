@@ -20,9 +20,9 @@ class HopController extends Controller
 
     public function getList() {
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('quanlyhop'))
-            $hop = HopTuan::all();
+            $hop = HopTuan::select("*")->orderBy("id","desc")->get();
         else
-            $hop = HopTuan::where('id_user', Auth::user()->id)->get();
+            $hop = HopTuan::where('id_user', Auth::user()->id)->orderBy("id","desc")->get();
         if ($hop) {
             return response()->json([
                 'type' => 'info',
