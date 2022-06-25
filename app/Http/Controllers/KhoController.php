@@ -196,6 +196,7 @@ class KhoController extends Controller
     public function getKhoList() {
         $result = KhoV2::select('kho_v2.*','t.name as ten', 't.fuel as fuel', 't.seat as seat', 't.machine as machine', 't.gear as gear')
         ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        ->where('kho_v2.xuatXe','=',false)
         ->orderBy('id', 'desc')->get();
         if($result) {
             return response()->json([
@@ -506,15 +507,27 @@ class KhoController extends Controller
     }
 
     public function getTonKho() {
+        // $result = KhoV2::select('kho_v2.*','t.name as ten')
+        // ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        // ->where([
+        //     ['kho_v2.type','=', 'HD']
+        // ])
+        // ->orWhere([
+        //     ['kho_v2.type','=', 'STORE']
+        // ])
+        // ->orderBy('id', 'desc')->get();
         $result = KhoV2::select('kho_v2.*','t.name as ten')
         ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
         ->where([
-            ['kho_v2.type','=', 'HD']
+            ['kho_v2.type','=', 'HD'],
+            ['kho_v2.xuatXe','=', false],
         ])
         ->orWhere([
-            ['kho_v2.type','=', 'STORE']
+            ['kho_v2.type','=', 'STORE'],
+            ['kho_v2.xuatXe','=', false],
         ])
-        ->orderBy('id', 'desc')->get();
+        ->orderBy('id', 'desc')
+        ->get();
         if($result) {
             return response()->json([
                 'message' => 'Đã check tồn kho!',

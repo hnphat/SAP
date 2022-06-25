@@ -635,6 +635,15 @@
                                 </a>
                             </li>
                         @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss')) 
+                            <li class="nav-item">
+                                <a href="{{route('cuochop.tracuuad.panel')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Các vấn đề họp</p>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
                 <li class="nav-item">

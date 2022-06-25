@@ -731,6 +731,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('tracuuhop/morong/{id}','HopController@hopMoRongVanDe');
         Route::post('tracuuhop/xacnhan','HopController@xacNhan');
 
+        // Tra cứu ADMIN
+        Route::get('tracuuhopad','HopController@getTraCuuAd')->name('cuochop.tracuuad.panel');
+        Route::get('tracuuhop/getlistad','HopController@getListTraCuuAd');
+
     });
 
     Route::group(['prefix' => 'danhgia'], function(){

@@ -605,12 +605,44 @@ class HopController extends Controller
         return view('hoptuan.tracuucuochop');
     }
 
+     // Tra cứu họp admin
+     public function getTraCuuAd() {
+        return view('hoptuan.tracuucuochopad');
+    }
+
+
     public function getListTraCuu() {
         $hop = NoiDungHopMem::select("t.ngay","t.thang","t.nam","noi_dung_hop_mem.xacNhan","t.id","h.noiDungHop","h.status","noi_dung_hop_mem.id_noidung","noi_dung_hop_mem.id_user")
         ->join('noi_dung_hop as h','h.id','=','noi_dung_hop_mem.id_noidung')
         ->join('hop_tuan as t','t.id','=','h.id_hop')
         ->where('noi_dung_hop_mem.id_user',Auth::user()->id)
         ->orderBy("h.id", "desc")
+        ->get();
+        if ($hop) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã tải thông tin!',
+                'code' => 200,
+                'data' => $hop
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Không thể tải thông tin!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getListTraCuuAd() {
+        // $hop = NoiDungHopMem::select("t.ngay","t.thang","t.nam","noi_dung_hop_mem.xacNhan","t.id","h.noiDungHop","h.status","noi_dung_hop_mem.id_noidung","noi_dung_hop_mem.id_user")
+        // ->join('noi_dung_hop as h','h.id','=','noi_dung_hop_mem.id_noidung')
+        // ->join('hop_tuan as t','t.id','=','h.id_hop')
+        // ->orderBy("h.id", "desc")
+        // ->get();
+        $hop = NoiDungHop::select("t.id as idhop","noi_dung_hop.*","t.ngay","t.thang","t.nam")
+        ->join('hop_tuan as t','t.id','=','noi_dung_hop.id_hop')
+        ->orderBy("id", "desc")
         ->get();
         if ($hop) {
             return response()->json([
@@ -718,6 +750,16 @@ class HopController extends Controller
             return view('hoptuan.morong', ['hop' => $hop, 'user' => $user]);
         }
     }
+
+    // public function hopMoRongVanDeAd($id) {
+    //     $hop = HopTuan::find($id);
+    //     $user = HopTuanMem::where('id_hop', $id)->get();
+    //     if ($hop->id_user != Auth::user()->id) {
+    //         return view('hoptuan.morongvande', ['hop' => $hop, 'user' => $user]);
+    //     } else {
+    //         return view('hoptuan.morong', ['hop' => $hop, 'user' => $user]);
+    //     }
+    // }
 
     public function xacNhan(Request $request) {
         $hop = NoiDungHopMem::where([
