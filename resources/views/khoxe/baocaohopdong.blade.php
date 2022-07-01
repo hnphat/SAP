@@ -254,7 +254,7 @@
                     error: function() {
                         Toast.fire({
                             icon: 'warning',
-                            title: " Lỗi!"
+                            title: " Lỗi Server!"
                         })
                     }
                 });

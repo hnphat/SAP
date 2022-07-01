@@ -3039,6 +3039,7 @@ class HDController extends Controller
     }
 
     public function baoCaoHopDong(Request $request){
+        // dd($request);
         $_from = \HelpFunction::revertDate($request->tu);
         $_to = \HelpFunction::revertDate($request->den);
 

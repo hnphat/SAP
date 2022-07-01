@@ -81,7 +81,7 @@
                                                 <div class="form-group">
                                                     <label>Chọn xe</label>
                                                     <select name="chonXe" id="chonXe" class="form-control">
-                                                        <option value="0">Chọn</option>
+                                                        <!-- <option value="0">Chọn</option> -->
                                                         @foreach($xeList as $row)
                                                             <option value="{{$row->id}}">{{$row->name}}</option>
                                                         @endforeach
@@ -106,7 +106,7 @@
                                                 <div class="form-group">
                                                     <label>Màu sắc</label>
                                                     <select name="chonMauXe" id="chonMauXe" class="form-control">
-                                                        <option value="0">Chọn</option>
+                                                        <option value="Trắng">Chọn</option>
                                                         <option value="Đỏ">Đỏ</option>
                                                         <option value="Xanh">Xanh</option>
                                                         <option value="Trắng">Trắng</option>
