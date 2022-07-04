@@ -452,6 +452,15 @@ class KhoController extends Controller
                 'code' => 200
             ]);
             $temp = KhoV2::where('id', $request->eid)->first();
+            // system check
+            if ($temp->xuatXe == 1) {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => 'Xe đã xuất! Không thể thay đổi ngày giao xe!',
+                    'code' => 200
+                ]);
+            }            
+            // -------------
             $kho = KhoV2::where('id', $request->eid)->update([
                 "xuatXe" => $request->xuatXe,
                 "ngayGiaoXe" => $request->ngayGiaoXe
@@ -476,6 +485,16 @@ class KhoController extends Controller
                 ]);
             }
         } elseif ($request->xuatXe == 0) {
+            // check system allow change status
+            $temp = KhoV2::where('id', $request->eid)->first();
+            if ($temp->xuatXe == 1 && !Auth::user()->hasRole('system')) {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => 'Bạn không thể hoàn trạng thái xuất xe vui lòng liên hệ quản trị viên!',
+                    'code' => 200
+                ]);
+            }
+            // -----------------
             $kho = KhoV2::where('id', $request->eid)->update([
                 "xuatXe" => $request->xuatXe,
                 "ngayGiaoXe" => null

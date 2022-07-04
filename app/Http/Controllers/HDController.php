@@ -3285,7 +3285,8 @@ class HDController extends Controller
                 }
 
                 $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
-                $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
 
                 $ngayXuatXe = "";
@@ -3401,7 +3402,8 @@ class HDController extends Controller
                 }
 
                 $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
-                $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
 
                 $ngayXuatXe = "";
