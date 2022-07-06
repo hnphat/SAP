@@ -302,6 +302,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('post','LaiThuController@store')->name('laithu.post');
         Route::post('del','LaiThuController@destroy');
         Route::post('change','LaiThuController@change');
+        Route::post('setboss','LaiThuController@setBoss');
+        Route::post('setblank','LaiThuController@setBlank');
         Route::post('show','LaiThuController@showNow');
         Route::post('getedit','LaiThuController@getEdit');
         Route::post('update','LaiThuController@update');

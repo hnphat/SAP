@@ -85,6 +85,8 @@
                                                 <span class="btn btn-info btn-xs">Trống</span>
                                             @elseif($row->status == 'DSD')
                                                 <span class="btn btn-warning btn-xs">Đang sử dụng</span>
+                                            @elseif($row->status == 'S')
+                                                <span class="btn btn-secondary btn-xs">Sếp đang sử dụng</span>
                                             @else
                                                 <span class="btn btn-danger btn-xs">Đang sửa chữa</span>
                                             @endif

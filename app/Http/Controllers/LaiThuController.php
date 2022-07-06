@@ -91,6 +91,61 @@ class LaiThuController extends Controller
         }
     }
 
+    public function setBoss(Request $request) {
+        $check = XeLaiThu::find($request->id);
+        if ($check->status == 'DSD' || $check->status == 'DSC')
+            return response()->json([
+                'message' => 'Xe đang được sử dụng/sửa chữa không thể chuyển trạng thái!',
+                'code' => 200
+            ]);
+        else {
+            $car = XeLaiThu::where('id', $request->id)->update([
+                'status' => 'S'
+            ]);
+            if($car) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
+                $nhatKy->noiDung = "Chuyển trạng thái xe cho lãnh đạo sử dụng: ";
+                $nhatKy->save();
+                return response()->json([
+                    'message' => 'Đã chuyển trạng thái xe cho lãnh đạo!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
+    public function setBlank(Request $request) {
+        $car = XeLaiThu::where('id', $request->id)->update([
+            'status' => 'T'
+        ]);
+        if($car) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Quản lý xe demo - Quản lý xe";
+            $nhatKy->noiDung = "Xác nhận lãnh đạo trả xe: ";
+            $nhatKy->save();
+            return response()->json([
+                'message' => 'Đã chuyển trạng thái xe cho lãnh đạo!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+
     public function showNow(Request $request) {
         $check = XeLaiThu::find($request->id);
         $stt = ($check->active == true) ? false : true;
@@ -306,6 +361,8 @@ class LaiThuController extends Controller
             }
         } elseif($check->status == 'DSC') {
             return redirect()->route('laithu.reg')->with('err','Xe này đăng trong tình trạng sửa chữa không thể đăng ký sử dụng');
+        } elseif($check->status == 'S') {
+            return redirect()->route('laithu.reg')->with('err','Xe này sếp đang sử dụng nên không thể đăng ký sử dụng');
         } else {
             return redirect()->route('laithu.reg')->with('err','Xe này đang được sử dụng bởi ' .$check->user->userDetail->surname. ' không thể đăng ký');
         }
