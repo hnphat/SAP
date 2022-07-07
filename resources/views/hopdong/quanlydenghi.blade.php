@@ -132,6 +132,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Nguồn khách hàng</label>
+                                                    <select name="nguonKH" id="nguonKH" class="form-control">
+                                                        <option value="Showroom">Showroom</option>   
+                                                        <option value="Thị Trường">Thị Trường</option>
+                                                        <option value="Online">Online</option>
+                                                        <option value="Giới thiệu">Giới thiệu</option>
+                                                        <option value="Marketing">Marketing</option>                                                      
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-3">
@@ -629,6 +641,7 @@
                                 $("#giaBanXe").prop('disabled', false);
                                 $("#giaNiemYet").prop('disabled', false);
                                 $("#hinhThucThanhToan").prop('disabled', false);
+                                $("#nguonKH").prop('disabled',false);
                                 $("#hoaHongMoiGioi").prop('disabled', false);
                                 $("#hoTen").prop('disabled', false);
                                 $("input[name=cmnd]").prop('disabled', false);
@@ -650,6 +663,7 @@
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
+                                $("#nguonKH").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -672,6 +686,7 @@
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
+                                $("#nguonKH").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -693,6 +708,7 @@
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
+                                $("#nguonKH").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -713,6 +729,7 @@
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
+                                $("#nguonKH").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -773,7 +790,7 @@
                             $('select[name=hinhThucThanhToan] option[selected=selected]').removeAttr('selected');
                             $('select[name=hinhThucThanhToan] option[value='+response.data.isTienMat+']').attr('selected','selected');
 
-                          
+                            $("#nguonKH").val(response.data.nguonKH);
                             $("#tamUng").val(response.data.tienCoc);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
@@ -838,7 +855,9 @@
                             $("input[name=mauSac]").prop('disabled', true);
                             $("input[name=xeBan]").prop('disabled', true);
                             $("input[name=hinhThucThanhToan]").prop('disabled', true);
-                           
+                            $("input[name=nguonKH]").prop('disabled', true);
+
+                            
                             $("#tamUng").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
@@ -862,6 +881,7 @@
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);
+                            $("#nguonKH").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
                             $("input[name=cmnd]").prop('disabled', true);

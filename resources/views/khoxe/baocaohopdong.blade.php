@@ -72,6 +72,7 @@
                         <tr>
                             <th>STT</th>
                             <th>Ngày tạo</th>
+                            <th>Nguồn KH</th>
                             <th>Loại HĐ</th>
                             <th>Sale</th>
                             <th>Khách hàng</th>

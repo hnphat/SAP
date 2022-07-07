@@ -1145,6 +1145,8 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/DENGHI.docx');
             // Set data from database
             $sale = HopDong::find($id);
+            $nguonKH = $sale->nguonKH;
+            $isTienMat = ($sale->isTienMat) ? "Tiền mặt" : "Ngân hàng";
             $tongChiPhi = 0;
             $i = 2;
             $j = 1;
@@ -1275,6 +1277,8 @@ class HDController extends Controller
                 'tongPhuKienBan' => number_format($tongPhuKien),
                 'tisuat' => round($tiSuat,2) . " %",
                 'htvSupport' => number_format($htvSupport),
+                'nguonKH' => $nguonKH,
+                'isTienMat' => $isTienMat
             ]);
 
         $pathToSave = 'template/DENGHIDOWN.docx';
@@ -1299,6 +1303,8 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/DENGHICONGTY.docx');
             // Set data from database
             $sale = HopDong::find($id);
+            $nguonKH = $sale->nguonKH;
+            $isTienMat = ($sale->isTienMat) ? "Tiền mặt" : "Ngân hàng";
             $tongChiPhi = 0;
             $i = 2;
             $j = 1;
@@ -1430,6 +1436,8 @@ class HDController extends Controller
                 'tongPhuKienBan' => number_format($tongPhuKien),
                 'tisuat' => round($tiSuat,2) . " %",
                 'htvSupport' => number_format($htvSupport),
+                'nguonKH' => $nguonKH,
+                'isTienMat' => $isTienMat,
             ]);
 
         $pathToSave = 'template/DENGHICONGTYDOWN.docx';
@@ -1518,6 +1526,7 @@ class HDController extends Controller
         $code->id_user_create = Auth::user()->id;
         $code->id_car_sale = $request->chonXe;
         $code->isTienMat = $request->hinhThucThanhToan;
+        $code->nguonKH = $request->nguonKH;
         $code->mau = $request->chonMauXe;
         $code->tienCoc = $request->tamUng;
         $code->giaXe = $request->giaBanXe;
@@ -2185,6 +2194,8 @@ class HDController extends Controller
         $result->tienCoc = $request->tamUng;
         $result->giaXe = $request->giaBanXe;
         $result->giaNiemYet = $request->giaNiemYet;
+        $result->isTienMat = $request->hinhThucThanhToan;
+        $result->nguonKH = $request->nguonKH;
         $result->hoaHongMoiGioi = $request->hoaHongMoiGioi;
         $result->hoTen = $request->hoTen;
         $result->CMND2 = $request->cmnd;
@@ -3324,6 +3335,7 @@ class HDController extends Controller
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                    <td>".$row->nguonKH."</td>
                     <td>".$loaihd."</td>
                     <td>".$sale."</td>
                     <td>".$guest."</td>
@@ -3441,6 +3453,7 @@ class HDController extends Controller
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                    <td>".$row->nguonKH."</td>
                     <td>".$loaihd."</td>
                     <td>".$sale."</td>
                     <td>".$guest."</td>

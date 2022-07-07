@@ -143,6 +143,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Nguồn khách hàng</label>
+                                                    <select name="nguonKH" id="nguonKH" class="form-control">
+                                                        <option value="Showroom">Showroom</option>   
+                                                        <option value="Thị Trường">Thị Trường</option>
+                                                        <option value="Online">Online</option>
+                                                        <option value="Giới thiệu">Giới thiệu</option>
+                                                        <option value="Marketing">Marketing</option>                                                      
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-3">
