@@ -331,7 +331,8 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                         <li class="nav-item">
                             <a href="{{route('laithu.list')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

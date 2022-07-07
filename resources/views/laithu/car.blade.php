@@ -53,7 +53,9 @@
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-one-tabContent">
                         <div class="tab-pane fade show active" id="so-00" role="tabpanel" aria-labelledby="so-00-tab">
-                            <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                            @endif
                             <!-- Medal Add -->
                             <div class="modal fade" id="addModal">
                                 <div class="modal-dialog modal-lg">
@@ -155,10 +157,12 @@
                                                 @endif
                                             </td>
                                             <td>
+                                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                                 <button  data-toggle="modal" data-target="#editModal" id="edit" data-id="{{$row->id}}" class="btn btn-success btn-xs">
                                                         <span class="fas fa-edit">&nbsp;</span>
                                                 </button>
                                                 <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                            @endif
                                                 <button id="change" data-id="{{$row->id}}" class="btn btn-warning btn-xs">&nbsp;<span class="fas fa-exclamation">&nbsp;</span></button>
                                                 <button id="showNow" data-id="{{$row->id}}" class="btn btn-info btn-xs">&nbsp;
                                                     @if($row->active == true)
@@ -347,7 +351,7 @@
                     },
                     success: function(response) {
                         Toast.fire({
-                            icon: 'success',
+                            icon: 'info',
                             title: response.message
                         })
                         setTimeout(function(){

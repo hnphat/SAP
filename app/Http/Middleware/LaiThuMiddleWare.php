@@ -16,7 +16,8 @@ class LaiThuMiddleWare
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->hasRole('system'))
+        if (Auth::user()->hasRole('system') ||
+            Auth::user()->hasRole('hcns'))
             return $next($request);
         else abort(403);
     }

@@ -61,9 +61,9 @@ class LaiThuController extends Controller
 
     public function change(Request $request) {
         $check = XeLaiThu::find($request->id);
-        if ($check->status == 'DSD')
+        if ($check->status == 'DSD' || $check->status == 'S')
             return response()->json([
-                'message' => 'Xe đang được sử dụng không thể chuyển trạng thái!',
+                'message' => 'Xe đang được sếp/người khác sử dụng không thể chuyển trạng thái!',
                 'code' => 200
             ]);
         else {
