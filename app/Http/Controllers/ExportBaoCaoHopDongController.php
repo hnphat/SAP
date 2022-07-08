@@ -28,6 +28,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
 
     public function collection()
     {
+        $hds = [];
         $_from = \HelpFunction::revertDate($this->from);
         $_to = \HelpFunction::revertDate($this->to);
 
@@ -305,7 +306,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     && $row->hdWait == false)
                         $status = "Hợp đồng ký";
                 }                
-                $hd[] = array(
+                $hds[] = array(
                     '0' => $i++,
                     '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
                     '2' => $row->nguonKH,
@@ -417,7 +418,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     && $row->hdWait == false)
                         $status = "Hợp đồng ký";
                 }                
-                $hd[] = array(
+                $hds[] = array(
                     '0' => $i++,
                     '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
                     '2' => $row->nguonKH,
@@ -444,7 +445,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
         }
 
 
-        return (collect($hd));
+        return (collect($hds));
     }
 
     public function headings(): array
