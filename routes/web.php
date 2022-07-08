@@ -85,6 +85,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('reporthopdong','KhoController@getReportHopDong')->name('get.khohd.v2.reporthopdong');
         Route::post('danhsachhopdong','HDController@baoCaoHopDong')->name('baocaohopdong.post');  
         Route::post('loadchitiet','HDController@loadChiTietHopDong')->name('chitiethopdong.post');  
+        // Route::get('exportexcel', 'ExportController@export')->name('exportexcel');
+        Route::get('exportexcel/{from}/den/{to}/loaibaocao/{loai}', 'HDController@exportExcel');
     });
     Route::group(['prefix' => 'typecar', 'middleware' => ['f_typecar']], function(){
         Route::get('list','TypeCarController@index')->name('typecar.list');

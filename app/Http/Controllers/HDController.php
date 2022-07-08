@@ -13,6 +13,7 @@ use App\KhoV2;
 use App\HopDong;
 use App\SaleOff;
 use App\NhatKy;
+use Excel;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -3055,10 +3056,7 @@ class HDController extends Controller
         $_to = \HelpFunction::revertDate($request->den);
 
         if (Auth::user()->hasRole('system') 
-        || Auth::user()->hasRole('adminsale') 
-        || Auth::user()->hasRole('boss') 
-        || Auth::user()->hasRole('ketoan') 
-        || Auth::user()->hasRole('tpkd')) {
+        || Auth::user()->hasRole('baocaohopdong')) {
             switch($request->baoCao) {
                 case 1: {
                     $hd = HopDong::orderBy('id','desc')->get();
@@ -3478,6 +3476,10 @@ class HDController extends Controller
                 </tr>";
             }  
         } 
+    }
+
+    public function exportExcel($from,$to,$loai) {
+        return Excel::download(new ExportBaoCaoHopDongController($from,$to,$loai), 'baocaohopdong.xlsx');
     }
 
     public function loadChiTietHopDong(Request $request){

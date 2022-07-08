@@ -105,7 +105,8 @@
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
-                        \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('baocaohopdong'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-dollar-sign"></i>
                             <p>
@@ -115,6 +116,15 @@
                         </a>
                     @endif
                     <ul class="nav nav-treeview">
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('baocaohopdong') || 
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                <li class="nav-item">
+                                    <a href="{{route('get.khohd.v2.reporthopdong')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Báo cáo hợp đồng</p>
+                                    </a>
+                                </li>
+                                @endif
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
@@ -136,16 +146,6 @@
                                     <a href="{{route('hd.quanly.denghi')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Quản lý đề nghị</p>
-                                    </a>
-                                </li>
-                                @endif
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                <li class="nav-item">
-                                    <a href="{{route('get.khohd.v2.reporthopdong')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Báo cáo hợp đồng</p>
                                     </a>
                                 </li>
                                 @endif
@@ -396,16 +396,12 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{route('ketoan.baocaohopdong')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Hợp đồng xe chi tiết</p>
                             </a>
-                        </li>       
-                        @endif
+                        </li>        -->
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))                        
                         <li class="nav-item">

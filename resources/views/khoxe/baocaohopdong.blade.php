@@ -60,8 +60,10 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label>&nbsp;</label>
                                 <input type="submit" id="xemReport" class="form-control btn btn-info" value="XEM"/>
+                                <br><br>
+                                <button type="button" id="exportExcel" class="form-control btn btn-primary export">Xuất dữ liệu</button>
+                                <!-- <a href ="{{url('exportexcel/') }} " class="form-control btn btn-primary export"> Xuất dữ liệu </a> -->
                             </div>
                         </div>
                 </div>
@@ -233,6 +235,21 @@
 
         // show data
         $(document).ready(function() {
+
+            $("#exportExcel").click(function(){
+                if(confirm('Xác nhận xuất dữ liệu excel')) {
+                    open("{{url('management/baocaohopdong/exportexcel/')}}" 
+                + "/" 
+                + $("input[name=tu]").val() 
+                + "/den/" 
+                + $("input[name=den]").val()
+                + "/loaibaocao/" 
+                +  $("select[name=baoCao]").val()
+                ,'_blank');
+                }
+            });
+
+
             $("#xemReport").click(function(e){
                 e.preventDefault();
                 $.ajax({
