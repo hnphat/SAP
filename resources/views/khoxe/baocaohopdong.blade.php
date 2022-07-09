@@ -82,6 +82,7 @@
                             <th>Màu</th>
                             <th>Thanh toán</th>
                             <th>Giá bán</th>
+                            <th>Cộng tiền mặt</th>
                             <th>Giá vốn</th>
                             <th>Hỗ trợ HTV</th>
                             <th>Khuyến mãi</th>

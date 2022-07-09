@@ -245,6 +245,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $bhvc = 0;
                 $pkban = 0;
                 $dangky = 0;
+                $cpkhac = 0;
                 $hh = $row->hoaHongMoiGioi;               
                 
                
@@ -263,6 +264,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     && $row2->cost_tang == false
                     && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
                         $dangky += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Chi phí khác") {
+                        $cpkhac += $row2->cost;
                     }
 
                     if ($row2->type == 'pay') {
@@ -270,7 +275,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     }
                 }
 
-                $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "".round($tiSuat,2)."" : "".round($tiSuat,2)."";
@@ -317,17 +322,18 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '7' => $mau,
                     '8' => $isTienMat,
                     '9' => $giaXe,
-                    '10' => $giaVon,
-                    '11' => $htvSupport,
-                    '12' => $khuyenMai,
-                    '13' => $bhvc,
-                    '14' => $pkban,
-                    '15' => $dangky,
-                    '16' => $hh,
-                    '17' => $loiNhuan,
-                    '18' => $tiSuat,
-                    '19' => $status,
-                    '20' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
+                    '10' => $cpkhac,
+                    '11' => $giaVon,
+                    '12' => $htvSupport,
+                    '13' => $khuyenMai,
+                    '14' => $bhvc,
+                    '15' => $pkban,
+                    '16' => $dangky,
+                    '17' => $hh,
+                    '18' => $loiNhuan,
+                    '19' => $tiSuat,
+                    '20' => $status,
+                    '21' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
                 );
             }    
             $ngayGiaoXe = "";
@@ -357,6 +363,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $bhvc = 0;
                 $pkban = 0;
                 $dangky = 0;
+                $cpkhac = 0;
                 $hh = $row->hoaHongMoiGioi;               
                 
                
@@ -375,6 +382,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     && $row2->cost_tang == false
                     && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
                         $dangky += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Chi phí khác") {
+                        $dangky += $row2->cost;
                     }
 
                     if ($row2->type == 'pay') {
@@ -382,7 +393,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     }
                 }
 
-                $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "".round($tiSuat,2)."" : "".round($tiSuat,2)."";
@@ -429,17 +440,18 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '7' => $mau,
                     '8' => $isTienMat,
                     '9' => $giaXe,
-                    '10' => $giaVon,
-                    '11' => $htvSupport,
-                    '12' => $khuyenMai,
-                    '13' => $bhvc,
-                    '14' => $pkban,
-                    '15' => $dangky,
-                    '16' => $hh,
-                    '17' => $loiNhuan,
-                    '18' => $tiSuat,
-                    '19' => $status,
-                    '20' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
+                    '10' => $cpkhac,
+                    '11' => $giaVon,
+                    '12' => $htvSupport,
+                    '13' => $khuyenMai,
+                    '14' => $bhvc,
+                    '15' => $pkban,
+                    '16' => $dangky,
+                    '17' => $hh,
+                    '18' => $loiNhuan,
+                    '19' => $tiSuat,
+                    '20' => $status,
+                    '21' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
                 );
             }  
         }
@@ -461,6 +473,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
             'Màu',
             'Thanh toán',
             'Giá bán',
+            'Cộng tiền mặt',
             'Giá vốn',
             'Hỗ trợ HTV',
             'Khuyến mãi',

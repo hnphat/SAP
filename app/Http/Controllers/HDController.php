@@ -1639,6 +1639,21 @@ class HDController extends Controller
             $saleOff->save();
         }
 
+        $pkcost = new PackageV2;
+        $pkcost->name = "Chi phí khác";
+        $pkcost->cost = 0;
+        $pkcost->id_user_create = Auth::user()->id;
+        $pkcost->type = 'cost';
+        $pkcost->save();
+
+        if($pkcost) {
+            $saleOff = new SaleOffV2;
+            $saleOff->id_hd = $idSale;
+            $saleOff->id_bh_pk_package = $pkcost->id;
+            $saleOff->save();
+        }
+
+
         // --------------- Add 05 phụ kiện theo xe
         $pkpay = new PackageV2;
         $pkpay->name = "Áo trùm xe";
@@ -3268,6 +3283,7 @@ class HDController extends Controller
                 $bhvc = 0;
                 $pkban = 0;
                 $dangky = 0;
+                $cpkhac = 0;
                 $hh = $row->hoaHongMoiGioi;               
                 
                
@@ -3286,6 +3302,10 @@ class HDController extends Controller
                     && $row2->cost_tang == false
                     && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
                         $dangky += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Chi phí khác") {
+                        $cpkhac += $row2->cost;
                     }
 
                     if ($row2->type == 'pay') {
@@ -3293,7 +3313,7 @@ class HDController extends Controller
                     }
                 }
 
-                $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
@@ -3341,6 +3361,7 @@ class HDController extends Controller
                     <td>".$mau."</td>$giaXe
                     <td>".$isTienMat."</td>
                     <td class='text-bold'>".number_format($giaXe)."</td>
+                    <td class='text-bold'>".number_format($cpkhac)."</td>
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
@@ -3386,6 +3407,7 @@ class HDController extends Controller
                 $bhvc = 0;
                 $pkban = 0;
                 $dangky = 0;
+                $cpkhac = 0;
                 $hh = $row->hoaHongMoiGioi;               
                 
                
@@ -3404,6 +3426,10 @@ class HDController extends Controller
                     && $row2->cost_tang == false
                     && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
                         $dangky += $row2->cost;
+                    } elseif ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Chi phí khác") {
+                        $cpkhac += $row2->cost;
                     }
 
                     if ($row2->type == 'pay') {
@@ -3411,7 +3437,7 @@ class HDController extends Controller
                     }
                 }
 
-                $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
@@ -3459,6 +3485,7 @@ class HDController extends Controller
                     <td>".$mau."</td>$giaXe
                     <td>".$isTienMat."</td>
                     <td class='text-bold'>".number_format($giaXe)."</td>
+                    <td class='text-bold'>".number_format($cpkhac)."</td>
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($khuyenMai)."</td>
