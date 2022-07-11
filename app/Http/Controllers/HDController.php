@@ -1217,6 +1217,7 @@ class HDController extends Controller
             }
             $htvSupport = $sale->htvSupport;
             $khuyenMai = 0;
+            $cpkhac = 0;
             $hh = $sale->hoaHongMoiGioi;        
             $pkm = $sale->package;
             foreach($pkm as $row2) {                
@@ -1226,9 +1227,17 @@ class HDController extends Controller
                 if ($row2->type == 'cost' && $row2->cost_tang == true) {
                     $khuyenMai += $row2->cost;
                 }
+
+                if ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Chi phí khác") {
+                        $cpkhac += $row2->cost;
+                    }
             }
-            $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
-            $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+            $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            // $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
+            // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
             // ----------------
             // Cá nhân
             $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
@@ -1375,6 +1384,7 @@ class HDController extends Controller
             }
             $htvSupport = $sale->htvSupport;
             $khuyenMai = 0;
+            $cpkhac = 0;
             $hh = $sale->hoaHongMoiGioi;        
             $pkm = $sale->package;
             foreach($pkm as $row2) {                
@@ -1384,9 +1394,16 @@ class HDController extends Controller
                 if ($row2->type == 'cost' && $row2->cost_tang == true) {
                     $khuyenMai += $row2->cost;
                 }
+                if ($row2->type == 'cost' 
+                    && $row2->cost_tang == false
+                    && $row2->name == "Chi phí khác") {
+                        $cpkhac += $row2->cost;
+                    }
             }
-            $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
-            $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+            $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            // $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
+            // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
             // ----------------
             // Cá nhân
             $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
