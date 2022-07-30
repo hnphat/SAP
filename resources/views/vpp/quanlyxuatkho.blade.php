@@ -132,7 +132,7 @@
                             title: response.message
                         })
                         response.data.forEach((x) => {
-                            danhmuc += `<option value="${x.id}">${x.tenSanPham}</option>`;
+                            danhmuc += `<option value="${x.id}">${x.tenSanPham} (${x.donViTinh})</option>`;
                         });                     
                     },
                     error: function(){
