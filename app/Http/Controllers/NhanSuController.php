@@ -502,16 +502,18 @@ class NhanSuController extends Controller
         }
         echo "
             <tr>
-                <td colspan='2'><strong>Tổng công</strong></td>
-                <td class='text-success'><strong>".round(($tongCong/8),2)." (ngày)</strong></td>
-                <td colspan='2'><strong>Tổng Trể/Sớm</strong></td>
-                <td class='text-danger'><strong>".$tongTre." (phút)</strong></td>
-                <td><strong>Có phép</strong></td>
-                <td class='text-success'><strong>".$coPhep."</strong></td>
-                <td><strong>Không phép (cả ngày)</strong></td>
-                <td class='text-danger'><strong>".$khongPhepCaNgay."</strong></td>
-                <td><strong>Tăng ca</strong></td>
-                <td class='text-info'><strong>".$lamThem." (giờ)</strong><br/> <strong>".round($lamThem/8,2)." (ngày)</strong></td>
+                <td colspan='2'><strong>TỔNG HỢP</strong></td>
+                <td style='text-align:left;' colspan='10'>
+                <strong style='font-size:80%;'>Công ngày làm việc: <span class='text-success'>".round((($tongCong/8) - $phepNam),2)." (ngày)</span>
+                <br/><span>Phép năm: <span class='text-primary'>".round($phepNam,2)." (ngày)</span></span>
+                <br/><span>Tăng ca: <span class='text-info'><strong>".$lamThem." (giờ) => ".round($lamThem/8,2)." (ngày)</strong></span>
+                <br/><span>Trể/Sớm: <span class='text-danger'>".$tongTre."  (phút)</span></span>
+                <br/><span>Có phép: <span class='text-success'>".$coPhep."</span></span>
+                <br/><span>Không phép (cả ngày): <span class='text-danger'>".$khongPhepCaNgay."</span></span>
+                <hr/>
+                </strong>
+                <strong>TỔNG CÔNG TÍNH LƯƠNG: <span class='text-primary'>".round((($tongCong/8) + ($lamThem/8)),2)." (ngày)</span></strong>
+                </td>
             </tr>
             ";
             if (!$xacNhan) {
