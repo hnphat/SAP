@@ -289,6 +289,10 @@ class NhanSuController extends Controller
         $lamThem = 0;
         $phepNam = 0;  
         $khongPhepCaNgay = 0;    
+        // ----
+        $chuaXinPhep = 0;
+        $tongPhep = 0;
+        // ----
         for($i = 1; $i <= $day; $i++) {            
             $tangCaGioHanhChinh = 0; 
             $thuMay = "";
@@ -350,6 +354,15 @@ class NhanSuController extends Controller
                 ['nam','=',$nam]
             ])->exists();
            
+            //Xử lý chưa xin phép
+            if ($chiTiet !== null && $xinPhep === null && (($chiTiet->gioSang + $chiTiet->gioChieu) != 8)) {
+                $chuaXinPhep += 1;        
+            }
+
+            //Xử lý tổng phép
+            if ($xinPhep !== null)
+                $tongPhep += 1;
+
             //Xử lý không phép
             if ($chiTiet !== null && (($chiTiet->gioSang + $chiTiet->gioChieu) == 8)) {
                 $khongPhep -= 1;
@@ -358,9 +371,11 @@ class NhanSuController extends Controller
             }
 
             if ($chiTiet === null && !\HelpFunction::isSunday($i,$thang,$nam)) {
-                if ($xinPhep === null)
+                // strtotime($i."/".$thang."/".$nam) <= strtotime(Date('d-m-Y'))
+                // dd(strtotime(Date('d-m-Y')));
+                if ($xinPhep === null && ( strtotime($i."-".$thang."-".$nam) <= strtotime(Date('d-m-Y')) ))
                     $khongPhepCaNgay += 1;
-                elseif ($xinPhep->user_duyet == false)
+                elseif ($xinPhep !== null && $xinPhep->user_duyet == false  && ( strtotime($i."-".$thang."-".$nam) <= strtotime(Date('d-m-Y')) ))
                     $khongPhepCaNgay += 1;
             }
 
@@ -508,8 +523,10 @@ class NhanSuController extends Controller
                 <br/><span>Phép năm: <span class='text-primary'>".round($phepNam,2)." (ngày)</span></span>
                 <br/><span>Tăng ca: <span class='text-info'><strong>".$lamThem." (giờ) => ".round($lamThem/8,2)." (ngày)</strong></span>
                 <br/><span>Trể/Sớm: <span class='text-danger'>".$tongTre."  (phút)</span></span>
-                <br/><span>Có phép: <span class='text-success'>".$coPhep."</span></span>
-                <br/><span>Không phép (cả ngày): <span class='text-danger'>".$khongPhepCaNgay."</span></span>
+                <br/><span>Phép được duyệt: <span class='text-success'>".$coPhep."</span></span>
+                <br/><span>Phép chưa duyệt: <span class='text-danger'>".($tongPhep - $coPhep)."</span></span>
+                <br/><span>Chưa xin phép (Vào trể; Về sớm; QCC; Vắng nữa buổi; Lý do khác): <span class='text-danger'>".$chuaXinPhep."</span></span>
+                <br/><span>Vắng mặt không phép (cả ngày): <span class='text-danger'>".$khongPhepCaNgay."</span></span>
                 <hr/>
                 </strong>
                 <strong>TỔNG CÔNG TÍNH LƯƠNG: <span class='text-primary'>".round((($tongCong/8) + ($lamThem/8)),2)." (ngày)</span></strong>
