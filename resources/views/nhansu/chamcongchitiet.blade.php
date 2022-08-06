@@ -52,7 +52,7 @@
                     </div>
                     <div class="col-md-3">
                         <label>Nhân viên</label>
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
                         <select name="nhanVien" class="form-control">
                             @foreach($user as $row)
                                 @if($row->active == true)
