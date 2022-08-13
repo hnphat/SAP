@@ -253,7 +253,7 @@
                         <li class="nav-item">
                             <a href="{{route('dichvu.hangmuc')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Danh sách hạng mục</p>
+                                <p>Danh mục phụ kiện</p>
                             </a>
                         </li> 
                         @endif  

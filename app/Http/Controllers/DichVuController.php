@@ -13,6 +13,7 @@ use App\BaoGiaBHPK;
 use Illuminate\Support\Facades\Auth;
 use App\NhatKy;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Excel;
 
 class DichVuController extends Controller
 {
@@ -218,12 +219,14 @@ class DichVuController extends Controller
     public function addHangMuc(Request $request) {
         $kh = new BHPK();
         $kh->id_user_create = Auth::user()->id;
-        $kh->isPK = $request->isPK;
+        $kh->isPK = 1;
         $kh->ma = strtoupper($request->ma);
         $kh->noiDung = $request->noiDung;
         $kh->dvt = $request->dvt;
         $kh->donGia = $request->donGia;
-        $kh->type = $request->loai;        
+        $kh->giaVon = $request->giaVon;
+        $kh->congKTV = $request->congKTV;
+        $kh->loai = $request->loai;        
         $kh->save();
         if($kh) {
             $nhatKy = new NhatKy();
@@ -236,7 +239,7 @@ class DichVuController extends Controller
             .$request->ma."; Đơn vị tính: "
             .$request->dvt."; Đơn giá: "
             .$request->donGia."; Loại: "
-            .$request->type.";";
+            .$request->loai.";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -304,12 +307,14 @@ class DichVuController extends Controller
     public function updateHangMuc(Request $request) {
         $kh = BHPK::find($request->eid);
         $temp = $kh;
-        $kh->isPK = $request->eisPK;
+        // $kh->isPK = $request->eisPK;
         $kh->ma = strtoupper($request->ema);
         $kh->noiDung = $request->enoiDung;
         $kh->dvt = $request->edvt;
         $kh->donGia = $request->edonGia;
-        $kh->type = $request->eloai;        
+        $kh->loai = $request->eloai; 
+        $kh->giaVon = $request->egiaVon; 
+        $kh->congKTV = $request->econgKTV;        
         $kh->save();
         if($kh) {
             $nhatKy = new NhatKy();
@@ -2065,4 +2070,53 @@ class DichVuController extends Controller
                 ]);
         }        
     }
+
+    public function importDanhMuc(Request $request) {
+        $this->validate($request,[
+            'fileBase'  => 'required|mimes:xls,xlsx|max:20480',
+        ]);
+        if($request->hasFile('fileBase')){
+            $theArray = Excel::toArray([], request()->file('fileBase')); 
+
+            if (strval($theArray[0][0][0]) == "LOAI" && strval($theArray[0][0][1]) == "MA" && 
+            strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
+            strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
+            strval($theArray[0][0][6]) == "GIABAN") {
+                $numlen = count($theArray[0]);                    
+                for($i = 1; $i < $numlen; $i++) {
+                    $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();
+                    if (!$check) {
+                        $kh = new BHPK();
+                        $kh->id_user_create = Auth::user()->id;
+                        $kh->isPK = 1;
+                        $kh->ma = strtoupper($theArray[0][$i][1]);
+                        $kh->noiDung = $theArray[0][$i][2];
+                        $kh->dvt = $theArray[0][$i][3];
+                        $kh->donGia = $theArray[0][$i][6];
+                        $kh->giaVon = $theArray[0][$i][4];
+                        $kh->congKTV = $theArray[0][$i][5];
+                        $kh->loai = $theArray[0][$i][0];        
+                        $kh->save();
+                    }                    
+                }    
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Dịch vụ - Danh mục phụ kiện - Import excel";
+                $nhatKy->noiDung = "Import excel file danh mục phụ kiện vào hệ thống";
+                $nhatKy->save();                
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã thực hiện import excel danh mục phụ kiện',
+                    'code' => 200
+                ]);                  
+            }
+		} else {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Không tìm thấy file import danh mục',
+                'code' => 200
+            ]);    
+        }           
+    } 
 }

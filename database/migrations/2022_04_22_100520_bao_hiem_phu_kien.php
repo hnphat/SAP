@@ -22,7 +22,9 @@ class BaoHiemPhuKien extends Migration
             $table->string('noiDung');
             $table->string('dvt');
             $table->integer('donGia')->default(0);
-            $table->enum('type', ['CONG', 'PHUTUNG']);
+            $table->integer('giaVon')->default(0);
+            $table->integer('congKTV')->default(0);
+            $table->string('loai');
             $table->timestamps();
         });
     }

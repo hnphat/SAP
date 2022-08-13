@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -15,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Danh sách hạng mục</strong></h1>
+                        <h1 class="m-0"><strong>Danh mục phụ kiện</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Dịch vụ</li>
-                            <li class="breadcrumb-item active">Danh sách hạng mục</li>
+                            <li class="breadcrumb-item active">Danh mục phụ kiện</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -46,7 +47,10 @@
                             <div class="card-body">
                                 <div class="tab-content" id="custom-tabs-one-tabContent">
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
-                                        <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button> 
+                                        <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>
+                                        <br/><br/>
+
                                         <!-- Medal Add -->
                                         <div class="modal fade" id="addModal">
                                             <div class="modal-dialog modal-lg">
@@ -67,13 +71,22 @@
                                                             <form id="addForm" autocomplete="off">
                                                                 {{csrf_field()}}
                                                                 <div class="card-body">
-                                                                    <div class="form-group">
-                                                                        <label>Loại hạng mục</label>
+                                                                    <!-- <div class="form-group">
+                                                                        <label>Loại dịch vụ</label>
                                                                         <select name="isPK" class="form-control">
                                                                             <option value="1">Phụ kiện</option>
                                                                             <option value="0">Bảo hiểm</option>
                                                                         </select>
-                                                                    </div>
+                                                                    </div> -->
+                                                                    <div class="form-group">
+                                                                        <label>Hình thức</label>
+                                                                        <select name="loai" class="form-control">
+                                                                            <option value="KTV lắp đặt">KTV lắp đặt</option>
+                                                                            <option value="Gia công ngoài">Gia công ngoài</option>
+                                                                            <option value="Tặng kèm">Tặng kèm</option>
+                                                                            <option value="Bán thêm">Bán thêm</option>
+                                                                        </select>
+                                                                    </div>  
                                                                     <div class="form-group">
                                                                         <label>Mã</label>
                                                                         <input name="ma" type="text" class="form-control" placeholder="Mã">
@@ -85,7 +98,6 @@
                                                                     <div class="form-group">
                                                                         <label>Đơn vị tính</label>
                                                                         <select name="dvt" class="form-control">
-                                                                            <option value="Chiếc">Chiếc</option>
                                                                             <option value="Bộ">Bộ</option>
                                                                             <option value="Cái">Cái</option>
                                                                             <option value="Gói">Gói</option>
@@ -93,18 +105,20 @@
                                                                         </select>
                                                                     </div>                
                                                                     <div class="form-group">
-                                                                        <label>Đơn giá tiêu chuẩn:</label>
+                                                                        <label>Giá bán:</label>
                                                                         <input id="donGia" name="donGia" value="0" type="number" class="form-control" placeholder="Giá">
                                                                         <i id="showGia"></i>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Loại</label>
-                                                                        <select name="loai" class="form-control">
-                                                                            <option value="CONG">Công</option>
-                                                                            <option value="PHUTUNG">Phụ tùng</option>                                                                            
-                                                                        </select>
-                                                                    </div>                                                                       
+                                                                        <label>Giá vốn:</label>
+                                                                        <input id="giaVon" name="giaVon" value="0" type="number" class="form-control" placeholder="Giá">
+                                                                        <i id="showGiaVon"></i>
                                                                     </div>
+                                                                    <div class="form-group">
+                                                                        <label>Công KTV:</label>
+                                                                        <input id="congKTV" name="congKTV" value="0" type="number" class="form-control" placeholder="Giá">
+                                                                        <i id="showCongKTV"></i>
+                                                                    </div>  
                                                                 </div>
                                                                 <!-- /.card-body -->
                                                                 <div class="card-footer">
@@ -119,17 +133,71 @@
                                             </div>
                                             <!-- /.modal-dialog -->
                                         </div>
-                                        <!-- /.modal -->                                       
+                                        <!-- /.modal -->        
+                                        
+                                        <!-- Medal Export -->
+                                        <div class="modal fade" id="importModal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- general form elements -->
+                                                        <div class="card card-primary">
+                                                            <div class="card-header">
+                                                                <h3 class="card-title">IMPORT EXCEL</h3>
+                                                            </div>
+                                                            <!-- /.card-header -->
+                                                            <!-- form start -->
+                                                            <form id="importForm" autocomplete="off" enctype>
+                                                                {{csrf_field()}}
+                                                                <div class="card-body">    
+                                                                    <div class="form-group">
+                                                                        <label>File mẫu</label>
+                                                                        <a href="{{asset('store/ImportSampleDMPK.xlsx')}}" download>TẢI VỀ</a>
+                                                                    </div>                                                                
+                                                                    <!-- <div class="form-group">
+                                                                        <label>Phương thức nhập</label>
+                                                                        <select name="mode" class="form-control">
+                                                                            <option value="0">Cập nhật dữ liệu đang có</option>
+                                                                            <option value="1">Tạo mới</option>
+                                                                        </select>
+                                                                    </div> -->
+                                                                    <div class="form-group">
+                                                                        <label>Tệp</label>
+                                                                        <input type="file" class="form-control" name="fileBase" id="fileBase">
+                                                                        <span>Tối đa 10MB (xls, xlsx)</span>
+                                                                    </div>                                                                   
+                                                                </div>
+                                                                <!-- /.card-body -->
+                                                                <div class="card-footer">
+                                                                    <button id="btnImport" class="btn btn-primary">Import</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                        <!-- /.modal -->        
+
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
-                                                <th>Hạng mục</th>
+                                                <th>Loại</th>                                                
                                                 <th>Mã</th>
                                                 <th>Nội dung</th>
                                                 <th>Đơn vị tính</th>
-                                                <th>Đơn giá</th>
-                                                <th>Loại</th>                                               
+                                                <th>Giá vốn</th>
+                                                <th>Giá bán</th>
+                                                <th>Công KTV</th>                                               
                                                 <th>Tác vụ</th>
                                             </tr>
                                             </thead>
@@ -165,13 +233,22 @@
                             {{csrf_field()}}
                             <input type="hidden" name="eid">
                             <div class="card-body">
-                                <div class="form-group">
-                                    <label>Loại hạng mục</label>
+                                <!-- <div class="form-group">
+                                    <label>Loại dịch vụ</label>
                                     <select name="eisPK" class="form-control">
                                         <option value="1">Phụ kiện</option>
                                         <option value="0">Bảo hiểm</option>
                                     </select>
-                                </div>
+                                </div> -->
+                                <div class="form-group">
+                                    <label>Hình thức</label>
+                                    <select name="eloai" class="form-control">
+                                        <option value="KTV lắp đặt">KTV lắp đặt</option>
+                                        <option value="Gia công ngoài">Gia công ngoài</option>
+                                        <option value="Tặng kèm">Tặng kèm</option>
+                                        <option value="Bán thêm">Bán thêm</option>
+                                    </select>
+                                </div>  
                                 <div class="form-group">
                                     <label>Mã</label>
                                     <input name="ema" type="text" class="form-control" placeholder="Mã">
@@ -183,7 +260,6 @@
                                 <div class="form-group">
                                     <label>Đơn vị tính</label>
                                     <select name="edvt" class="form-control">
-                                        <option value="Chiếc">Chiếc</option>
                                         <option value="Bộ">Bộ</option>
                                         <option value="Cái">Cái</option>
                                         <option value="Gói">Gói</option>
@@ -191,18 +267,20 @@
                                     </select>
                                 </div>                
                                 <div class="form-group">
-                                    <label>Đơn giá tiêu chuẩn:</label>
+                                    <label>Giá bán:</label>
                                     <input id="edonGia" name="edonGia" type="number" class="form-control" placeholder="Giá">
                                     <i id="eshowGia"></i>
-                                </div>
+                                </div>   
                                 <div class="form-group">
-                                    <label>Loại</label>
-                                    <select name="eloai" class="form-control">
-                                        <option value="CONG">Công</option>
-                                        <option value="PHUTUNG">Phụ tùng</option>                                                                            
-                                    </select>
-                                </div>                                                                       
-                                </div>
+                                    <label>Giá vốn:</label>
+                                    <input id="egiaVon" name="egiaVon" type="number" class="form-control" placeholder="Giá">
+                                    <i id="eshowGiaVon"></i>
+                                </div>  
+                                <div class="form-group">
+                                    <label>Công KTV:</label>
+                                    <input id="econgKTV" name="econgKTV" type="number" class="form-control" placeholder="Giá">
+                                    <i id="eshowCongKTV"></i>
+                                </div>                               
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
@@ -273,25 +351,28 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
-                    {  
-                        "data": null,
-                        render: function(data, type, row) {
-                           if (row.isPK == 1)
-                                return "Phụ kiện";
-                            else
-                                return "Bảo hiểm";
-                        } 
-                    },
+                    { "data": "loai" },
                     { "data": "ma" },
                     { "data": "noiDung" },
                     { "data": "dvt" },
                     { 
                         "data": null,
                         render: function(data, type, row) {
+                          return formatNumber(row.giaVon);
+                        } 
+                    },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
                           return formatNumber(row.donGia);
                         } 
-                     },
-                    { "data": "type" },                   
+                    },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                          return formatNumber(row.congKTV);
+                        } 
+                    },                 
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -312,9 +393,30 @@
                 var cos = $(this).val();
                 $('#showGia').text("(" + DOCSO.doc(cos) + ")");
             });
+
+            $('#giaVon').keyup(function(){
+                var cos = $(this).val();
+                $('#showGiaVon').text("(" + DOCSO.doc(cos) + ")");
+            });
+
+            $('#congKTV').keyup(function(){
+                var cos = $(this).val();
+                $('#showCongKTV').text("(" + DOCSO.doc(cos) + ")");
+            });
+
             $('#edonGia').keyup(function(){
                 var cos = $(this).val();
                 $('#eshowGia').text("(" + DOCSO.doc(cos) + ")");
+            });
+
+            $('#egiaVon').keyup(function(){
+                var cos = $(this).val();
+                $('#eshowGiaVon').text("(" + DOCSO.doc(cos) + ")");
+            });
+
+            $('#econgKTV').keyup(function(){
+                var cos = $(this).val();
+                $('#eshowCongKTV').text("(" + DOCSO.doc(cos) + ")");
             });
 
             // Add data
@@ -383,13 +485,17 @@
                     },
                     success: function(response) {
                         $("input[name=eid]").val(response.data.id);
-                        $("select[name=eisPK]").val(response.data.isPK);
+                        // $("select[name=eisPK]").val(response.data.isPK);
                         $("input[name=ema]").val(response.data.ma);
                         $("input[name=enoiDung]").val(response.data.noiDung);
                         $("select[name=edvt]").val(response.data.dvt);
                         $("input[name=edonGia]").val(response.data.donGia);
-                        $("select[name=eloai]").val(response.data.type);
+                        $("input[name=egiaVon]").val(response.data.giaVon);
+                        $("input[name=econgKTV]").val(response.data.congKTV);
+                        $("select[name=eloai]").val(response.data.loai);
                         $('#eshowGia').text("(" + DOCSO.doc(response.data.donGia) + ")");
+                        $('#eshowGiaVon').text("(" + DOCSO.doc(response.data.giaVon) + ")");
+                        $('#eshowCongKTV').text("(" + DOCSO.doc(response.data.congKTV) + ")");
                     },
                     error: function(){
                         Toast.fire({
@@ -424,6 +530,50 @@
                     }
                 });
             });
+        });
+
+         //upload
+         $(document).one('click','#btnImport',function(e){
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('#importForm').submit(function(e) {
+                e.preventDefault();   
+                var formData = new FormData(this);
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('management/dichvu/hangmuc/ajax/importfile/')}}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $("#btnImport").attr('disabled', true).html("Đang xử lý....");
+                    },
+                    success: (response) => {
+                        this.reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        });
+                        $("#btnImport").attr('disabled', false).html("IMPORT");                      
+                        $("#importModal").modal('hide');
+                        setTimeout(() => {
+                            open("{{route('dichvu.hangmuc')}}","_self");
+                        }, 3000);
+                    },
+                        error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: ' Có lỗi: ' + response.responseJSON.errors.fileBase
+                        })
+                        $("#btnImport").attr('disabled', false).html("IMPORT");  
+                        console.log(response);
+                    }
+                });
+            });                
         });
     </script>
 @endsection

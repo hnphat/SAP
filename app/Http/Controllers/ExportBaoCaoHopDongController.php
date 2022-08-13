@@ -20,6 +20,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
     private $from;
     private $to;
     private $baoCao;
+
     public function __construct($from,$to,$baoCao){
         $this->from = $from;
         $this->to = $to;
@@ -385,7 +386,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Chi phí khác") {
-                        $dangky += $row2->cost;
+                        $cpkhac += $row2->cost;
                     }
 
                     if ($row2->type == 'pay') {
