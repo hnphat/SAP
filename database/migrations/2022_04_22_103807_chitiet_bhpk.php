@@ -22,13 +22,13 @@ class ChitietBhpk extends Migration
             $table->integer('soLuong');
             $table->integer('donGia');
             $table->integer('thanhTien');
-            $table->integer('chietKhau')->nullable();
+            // $table->integer('chietKhau')->nullable();
             $table->integer('isTang')->default(false);
-            $table->integer('id_user_work')->unsigned()->nullable();
-            $table->foreign('id_user_work')->references('id')->on('users');
-            $table->integer('id_user_work_two')->unsigned()->nullable();
-            $table->foreign('id_user_work_two')->references('id')->on('users');
-            $table->integer('tiLe')->default(10);
+            // $table->integer('id_user_work')->unsigned()->nullable();
+            // $table->foreign('id_user_work')->references('id')->on('users');
+            // $table->integer('id_user_work_two')->unsigned()->nullable();
+            // $table->foreign('id_user_work_two')->references('id')->on('users');
+            // $table->integer('tiLe')->default(10);
             $table->timestamps();
         });
     }

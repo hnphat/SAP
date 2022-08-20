@@ -20,7 +20,8 @@ class DichVuController extends Controller
     //
     public function phuKienPanel() {
         $user = User::all();
-        return view('dichvu.quanlyphukien',['user' => $user]);
+        $bhpk = BHPK::all();
+        return view('dichvu.quanlyphukien',['user' => $user, 'bhpk' => $bhpk]);
     }
 
     public function baoHiemPanel() {
@@ -432,6 +433,7 @@ class DichVuController extends Controller
         $bg = new BaoGiaBHPK();
         $bg->id_user_create = Auth::user()->id;
         $bg->isPKD = $request->isPKD;
+        $bg->saler = $request->saler;
         if (Auth::user()->hasRole('nv_baohiem')) {
             $bg->isBaoHiem = true;
         } elseif (Auth::user()->hasRole('nv_phukien')) {
@@ -517,6 +519,7 @@ class DichVuController extends Controller
         $bg->isPKD = $request->isPKD;
         $bg->hopDongKD = $request->hopDong;
         $bg->nvKD = $request->nhanVien;
+        $bg->saler = $request->saler;
         $bg->thoiGianVao = $request->gioVao;
         $bg->ngayVao = $request->ngayVao;
         $bg->thoiGianHoanThanh = $request->gioRa;
@@ -840,6 +843,25 @@ class DichVuController extends Controller
                 ]);
     }
 
+    public function taiHangHoa(Request $request) {
+        $item = BHPK::where([
+            ['ma','=',$request->ma]
+        ])->first();
+        if ($item)
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã tìm được hàng hóa',
+                    'data' => $item
+                ]);
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => ' Không tìm thấy'
+                ]);
+    }
+
     public function taiBHPK(Request $request) {
         $item = BHPK::find($request->eid);
         if ($item)
@@ -858,19 +880,20 @@ class DichVuController extends Controller
     }
 
     public function luuBHPK(Request $request) {
+        $idbhpk = BHPK::where('ma',$request->hangHoa)->first()->id;
         $ct = new ChiTietBHPK();
         $ct->id_baogia = $request->bgid;
-        $ct->id_baohiem_phukien = $request->hangMucChiTiet;
+        $ct->id_baohiem_phukien = $idbhpk;
         $ct->soLuong = $request->soLuong;
         $ct->donGia = $request->donGia;
-        $ct->chietKhau = $request->chietKhau;
+        $ct->chietKhau = 0;
         $ct->isTang = $request->tang;
-        $ct->id_user_work = ($request->kyThuatVien == 0) ? null : $request->kyThuatVien;
-        $ct->thanhTien = ($request->soLuong * $request->donGia) - $request->chietKhau;
-        $ct->id_user_work_two = ($request->kyThuatVienTwo == 0) ? null : $request->kyThuatVienTwo;
-        $ct->tiLe = ($request->tiLe == 0) ? 10 : $request->tiLe;
+        // $ct->id_user_work = ($request->kyThuatVien == 0) ? null : $request->kyThuatVien;
+        $ct->thanhTien = ($request->soLuong * $request->donGia);
+        // $ct->id_user_work_two = ($request->kyThuatVienTwo == 0) ? null : $request->kyThuatVienTwo;
+        // $ct->tiLe = ($request->tiLe == 0) ? 10 : $request->tiLe;
         $ct->save();
-        $pk = BHPK::find($request->hangMucChiTiet);
+        $pk = BHPK::find($idbhpk);
         if ($ct) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
@@ -879,10 +902,8 @@ class DichVuController extends Controller
                 $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->bgid.";"
                 .$pk->noiDung."; Số lượng: "
                 .$request->soLuong."; Đơn giá: "
-                .$request->donGia."; Chiết khấu: "
-                .$request->chietKhau."; Tặng (1: Có; 0: Không): "
-                .$request->tang."; Tỉ lệ công "
-                .$request->tiLe."/".(10 - $request->tiLe)."; Chiết khấu: ";
+                .$request->donGia."; Tặng (1: Có; 0: Không): "
+                .$request->tang.";";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -950,24 +971,18 @@ class DichVuController extends Controller
             $bhpk = BHPK::find($row->id_baohiem_phukien);
             $namektv = ($row->userWork) ? explode(" ", $row->userWork->userDetail->surname) : "";  
             $namektv2 = ($row->userWorkTwo) ? explode(" ", $row->userWorkTwo->userDetail->surname) : "";            
-            echo "<tr>
-                <td>".($bhpk->isPK ? "Phụ kiện" : "Bảo hiểm")."</td>  
-                <td>".($bhpk->type == "CONG" ? "CÔNG" : "PHỤ TÙNG")."</td>                                    
+            echo "<tr>                                                   
                 <td>".$bhpk->ma."</td>
                 <td>".$bhpk->noiDung."</td>
                 <td>".$bhpk->dvt."</td>
                 <td>".$row->soLuong."</td>
                 <td>".number_format($row->donGia)."</td>
-                <td>".number_format($row->chietKhau)."</td>
                 <td>".number_format($row->thanhTien)."</td>
-                <td>".(($row->isTang == true) ? "Có" : "Không")."</td>
-                <td>"
-                .(($row->userWork) ? $namektv[count($namektv)-1] : "")
-                .", "
-                .(($row->userWorkTwo) ? $namektv2[count($namektv2)-1] : "")."</td>
+                <td>".(($row->isTang == true) ? "Có" : "Không")."</td>    
+                <td></td>                
                 <td>
                     <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>&nbsp;
-                    <button id='editHangMuc' data-toggle='modal' data-target='#editModal' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-success btn-xs'>Sửa</button>
+                    <button id='editHangMuc' data-toggle='modal' data-target='#editModal' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>
                 </td>
             </tr>";
         }        

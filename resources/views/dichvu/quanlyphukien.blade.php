@@ -118,13 +118,11 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Hình thức</label><br/>        
-                                    <select 
-                                    @if(!\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                    disabled
-                                    @endif id="isBaoHiem" name="isBaoHiem" class="form-control">
+                                    <select                                    
+                                    disabled id="isBaoHiem" name="isBaoHiem" class="form-control">
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                         <option value="1">Báo giá bảo hiểm</option>
-                                        <option value="0">Báo giá phụ kiện</option>
+                                        <option value="0" selected>Báo giá phụ kiện</option>
                                     @endif
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem'))
                                         <option value="1">Báo giá bảo hiểm</option>
@@ -176,22 +174,31 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                        <label><span class="text-danger">(*)</span>Nhập thông tin tìm kiếm</label><br/>                                      
+                                        <label>Tìm nhanh khách hàng</label><br/>                                      
                                         <input id="timHopDong" placeholder="Nhập số hợp đồng" type="text" name="timHopDong" class="form-control">                                                                        
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
+                            <div class="col-md-5">
+                                <div class="form-group" style="display:none;">
                                         <label>Hợp đồng số</label><br/>                                      
                                         <input disabled id="hopDong" type="text" name="hopDong" class="form-control">                                                                        
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
+                                </div>                           
+                                <div class="form-group" style="display:none;">
                                         <label>NV Kinh doanh</label><br/>                                      
                                         <input disabled id="nhanVien" type="text" name="nhanVien" class="form-control">                                                                        
+                                </div>
+                                <div class="form-group">
+                                        <label>NV Kinh doanh</label><br/>   
+                                        <select disabled name="saler" id="saler" class="form-control">
+                                            <option value="0">Không có</option>
+                                            @foreach($user as $r)
+                                                @if($r->hasRole('sale'))
+                                                    <option value="{{$r->id}}">{{$r->userDetail->surname}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>                                   
                                 </div>
                             </div>
                         </div>
@@ -285,15 +292,12 @@
                             <div class="row">
                                 <div style="overflow:auto;">
                                     <table class="table table-striped table-bordered" style="font-size:11pt;">
-                                        <tr class="bg-primary">
-                                            <th>Bộ phận</th>  
-                                            <th>Loại</th>                                    
+                                        <tr class="bg-primary">                                   
                                             <th>Mã</th>
                                             <th>Nội dung</th>
-                                            <th>Đơn vị tính</th>
-                                            <th>Số lượng</th>
+                                            <th>Đvt</th>
+                                            <th>SL</th>
                                             <th>Đơn giá</th>
-                                            <th>Chiết khấu</th>
                                             <th>Thành tiền</th>
                                             <th>Tặng</th>
                                             <th>KTV</th>
@@ -308,8 +312,8 @@
                         </div>                        
                         <hr>
                         <h5>Tổng báo giá: <strong class="text-primary" id="tongBaoGia">8,000,000</strong></h5>
-                        <h5>Chiết khấu: <strong class="text-primary" id="chietKhau">800,000</strong></h5>
-                        <h4>Tổng cần thanh toán: <strong class="text-primary" id="tongThanhToan">7,200,000</strong> (Đã bao gồm VAT)</h4>
+                        <!-- <h5>Chiết khấu: <strong class="text-primary" id="chietKhau">800,000</strong></h5> -->
+                        <!-- <h4>Tổng cần thanh toán: <strong class="text-primary" id="tongThanhToan">7,200,000</strong></h4> -->
                     </div>
                </div>
             </div>
@@ -334,98 +338,61 @@
                     @csrf
                     <input type="hidden" name="bgid"/>
                     <div class="row">
+                        <div class="form-group">
+                                <label>Mặt hàng: <span class="text-primary" id="s_noiDung"></span></label> ----
+                                <label>Đơn vị tính: <span class="text-primary" id="s_dvt"></span></label> ----
+                                <label>Giá đề nghị: <span class="text-primary" id="s_gia"></span></label> ----
+                                <label>Công KTV (nếu có): <span class="text-primary" id="s_congktv"></span></label>
+                        </div>   
+                    </div>
+                    <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Chọn bộ phận</label>
-                                <select id="boPhan" name="boPhan" class="form-control">
-                                    <!-- <option value="0">Bảo hiểm</option> -->
-                                    <option value="1">Phụ kiện</option>
-                                </select>
+                                <label for="hangHoa">Mã hàng</label>
+                                <input placeholder="Nhập nội dung gợi ý" list="hangHoas" name="hangHoa" id="hangHoa" class="form-control">
+                                <datalist id="hangHoas">
+                                    @foreach($bhpk as $bh)
+                                        <option value="{{$bh->ma}}">{{$bh->noiDung}}</option>
+                                    @endforeach                                    
+                                </datalist>
                             </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Tên hàng</label>
+                                <input type="text" name="tenHang" disabled class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
                             <div class="form-group">
                                 <label>Số lượng</label>
                                 <input type="number" name="soLuong" value="0" class="form-control">
                             </div>
-                            <div class="form-group">
-                                <label>Tặng</label>
-                                <select name="tang" class="form-control">                                    
-                                    <option value="0">Không</option>
-                                    <option value="1">Có</option>
-                                </select>
-                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Chọn loại hạng mục</label>
-                                <select id="hangMuc" name="hangMuc" class="form-control">
-                                    <option value="CONG">Công</option>
-                                    <option value="PHUTUNG">Phụ tùng</option>
-                                </select>
-                            </div>
+                        <div class="col-md-2">                            
                             <div class="form-group">
                                 <label>Đơn giá</label>
                                 <input id="donGia" type="number" name="donGia" value="0" class="form-control">
                                 <span id="showDonGias"></span>
-                            </div>
-                            <div class="form-group">
-                                <label>Chọn kỹ thuật viên 1</label>                              
-                                <select name="kyThuatVien" class="form-control">
-                                    <option value="0">Không có</option>
-                                    @foreach($user as $row)
-                                        @if($row->hasRole('to_phu_kien') == true)
-                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>                                
-                            </div>
-                            <div class="form-group">
-                                <label>Tỉ lệ</label>                              
-                                <select name="tiLe" class="form-control">
-                                    <option value="0">Không có</option>
-                                    <option value="1">1/9</option>
-                                    <option value="2">2/8</option>
-                                    <option value="3">3/7</option>
-                                    <option value="4">4/6</option>
-                                    <option value="5">5/5</option>
-                                    <option value="6">6/4</option>
-                                    <option value="7">7/3</option>
-                                    <option value="8">8/2</option>
-                                    <option value="9">9/1</option>
-                                </select>                                
-                            </div>
-                            <div class="form-group">
-                                <label>Chọn kỹ thuật viên 2</label>                              
-                                <select name="kyThuatVienTwo" class="form-control">
-                                    <option value="0">Không có</option>
-                                    @foreach($user as $row)
-                                        @if($row->hasRole('to_phu_kien') == true)
-                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>                                
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Chọn hạng mục chi tiết</label>
-                                <select id="hangMucChiTiet" name="hangMucChiTiet" class="form-control">
-                                   
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Chiết khấu (nếu có)</label>
-                                <input id="chietKhaun" type="number" name="chietKhau" value="0" class="form-control">
-                                <span id="showChietKhaus"></span>
                             </div>                            
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">       
                             <div class="form-group">
-                                <label>Mặt hàng: <span class="text-primary" id="s_noiDung"></span></label><br/>
-                                <label>Đơn vị tính: <span class="text-primary" id="s_dvt"></span></label><br/>
-                                <label>Giá tham khảo: <span class="text-primary" id="s_gia"></span> (VAT)</label>
-                            </div>                                                        
-                        </div>
-                    </div>
+                                <label>Thành tiền</label>
+                                <input disabled id="thanhTien" type="number" name="thanhTien" value="0" class="form-control">
+                                <span id="showThanhTien"></span>
+                            </div>   
+                        </div>     
+                        <div class="col-md-1">       
+                            <div class="form-group">
+                                <label>Tặng</label>
+                                <select name="tang" class="form-control">                                    
+                                    <option value="0" selected>Không</option>
+                                    <option value="1">Có</option>
+                                </select>
+                            </div>
+                        </div>                                            
+                    </div>                
                     <div class="container row">
                         <button id="saveBtn" type="button" class="btn btn-success">LƯU</button>
                     </div>
@@ -484,7 +451,7 @@
       
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title"><strong>Chỉnh sửa hạng mục</strong></h4>
+          <h4 class="modal-title"><strong>Cập nhật KTV</strong></h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>        
         <!-- Modal body -->
@@ -497,45 +464,24 @@
                         <label>Công việc: <strong id="congViec" class="text-success">Phủ gầm xe</strong></label>
                     </div>
                     <div class="form-group">
-                        <label>Chọn kỹ thuật viên 1</label>                              
-                        <select name="ekyThuatVien" class="form-control">
-                            <option value="0">Không có</option>
-                            @foreach($user as $row)
-                                @if($row->hasRole('to_phu_kien') == true)
-                                    <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                        <label for="chonKTV">Chọn KTV</label>
+                        <select name="chonKTV" id="chonKTV" class="form-control">
+                            @foreach($user as $u)
+                                @if($u->hasRole('to_phu_kien'))
+                                    <option value="{{$u->id}}">{{$u->userDetail->surname}}</option>
                                 @endif
-                            @endforeach
-                        </select>                                
-                    </div>
-                    <div class="form-group">
-                        <label>Tỉ lệ</label>                              
-                        <select name="etiLe" class="form-control">
-                            <option value="0">Không có</option>
-                            <option value="1">1/9</option>
-                            <option value="2">2/8</option>
-                            <option value="3">3/7</option>
-                            <option value="4">4/6</option>
-                            <option value="5">5/5</option>
-                            <option value="6">6/4</option>
-                            <option value="7">7/3</option>
-                            <option value="8">8/2</option>
-                            <option value="9">9/1</option>
-                        </select>                                
-                    </div>
-                    <div class="form-group">
-                        <label>Chọn kỹ thuật viên 2</label>                              
-                        <select name="ekyThuatVienTwo" class="form-control">
-                            <option value="0">Không có</option>
-                            @foreach($user as $row)
-                                @if($row->hasRole('to_phu_kien') == true)
-                                    <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                @endif
-                            @endforeach
-                        </select>                                
-                    </div>
-                    <div class="container row">
+                            @endforeach                            
+                        </select>
+                        <br/>
+                        <button id="btnAddKTV" class="btn btn-info btn-sm">THÊM</button>
+                        <br/><br/>
+                        <p id="showKTVChon">
+                            <span>[ĐÃ THÊM] Nguyễn Hoàng Mới</span> <span class="badge badge-danger">Xóa</span>
+                        </p>
+                    </div>                    
+                    <!-- <div class="container row">
                         <button id="updateHangMuc" type="button" class="btn btn-primary">CẬP NHẬT</button>
-                    </div>
+                    </div> -->
                 </form>
         </div>        
         <!-- Modal footer -->
@@ -604,6 +550,7 @@
                 $("#done").hide();
                 $("#cancel").hide();
                 $("#in").hide();
+                $("#saler").prop('disabled', true);
                 $("#soBaoGia").prop('disabled', true);
                 $("#gioVao").prop('disabled', true);
                 $("#gioRa").prop('disabled', true);
@@ -710,6 +657,7 @@
                 $("#timHopDong").prop('disabled', true);
                 $("#hopDong").prop('disabled', true);
                 $("#nhanVien").prop('disabled', true);
+                $("#saler").prop('disabled', true);
                 $("#hoTen").prop('disabled', true);
                 $("#dienThoai").prop('disabled', true);
                 $("#mst").prop('disabled', true);
@@ -738,6 +686,7 @@
                 $("#gioRa").prop('disabled', false);
                 $("#isPKD").prop('disabled', false);
                 $("#timHopDong").prop('disabled', false);
+                $("#saler").prop('disabled', false);
                 $("#hoTen").prop('disabled', false);
                 $("#dienThoai").prop('disabled', false);
                 $("#mst").prop('disabled', false);
@@ -759,6 +708,7 @@
                 $("#timHopDong").val('');
                 $("#hopDong").val('');
                 $("#nhanVien").val('');
+                $("#saler").val(0);
                 $("#hoTen").val('');
                 $("#dienThoai").val('');
                 $("#mst").val('');
@@ -838,6 +788,7 @@
                 $("#gioRa").prop('disabled', false);
                 $("#isPKD").prop('disabled', false);
                 $("#timHopDong").prop('disabled', false);
+                $("#saler").prop('disabled', false);
                 $("#hoTen").prop('disabled', false);
                 $("#dienThoai").prop('disabled', false);
                 $("#mst").prop('disabled', false);
@@ -877,6 +828,7 @@
                                 "isBaoHiem": $("#isBaoHiem").val(),
                                 "hopDong": $("#hopDong").val(),
                                 "nhanVien": $("#nhanVien").val(),
+                                "saler": $("#saler").val(),
                                 "gioVao": $("#gioVao").val(),
                                 "ngayVao": $("#ngayVao").val(),
                                 "gioRa": $("#gioRa").val(),
@@ -947,6 +899,7 @@
                                     "isBaoHiem": $("#isBaoHiem").val(),
                                     "hopDong": $("#hopDong").val(),
                                     "nhanVien": $("#nhanVien").val(),
+                                    "saler": $("#saler").val(),
                                     "gioVao": $("#gioVao").val(),
                                     "ngayVao": $("#ngayVao").val(),
                                     "gioRa": $("#gioRa").val(),
@@ -1178,8 +1131,10 @@
                 var valueSelected = this.value;
                 if (valueSelected == 1) {
                     $('#timHopDong').attr('placeholder','Nhập số hợp đồng');
+                    $('#saler').prop('disabled',false);
                 } else {
                     $('#timHopDong').attr('placeholder','Nhập số điện thoại');
+                    $('#saler').prop('disabled',true);
                 }                    
             });
 
@@ -1349,34 +1304,7 @@
                     }
                 }); 
             }
-            // $("#hangMucChiTiet").click(function(){
-            //     var optionSelected = $("option:selected", this);
-            //     var valueSelected = this.value;
-            //     $.ajax({
-            //         type: "post",
-            //         url: "{{route('loadbhpk')}}",
-            //         dataType: "json",
-            //         data: {
-            //             "_token": "{{csrf_token()}}",
-            //             "eid": valueSelected                           
-            //         },
-            //         success: function(response) {
-            //             Toast.fire({
-            //                 icon: response.type,
-            //                 title: response.message
-            //             }) 
-            //             $("#s_noiDung").text(response.data.noiDung);
-            //             $("#s_dvt").text(response.data.dvt);              
-            //             $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));              
-            //         },
-            //         error: function() {
-            //             Toast.fire({
-            //                 icon: 'warning',
-            //                 title: " Không tìm thấy hạng mục nào!"
-            //             })                       
-            //         }
-            //     });  
-            // });
+
             $('#hangMucChiTiet').on('change', function (e) {
                 var optionSelected = $("option:selected", this);
                 var valueSelected = this.value;
@@ -1408,7 +1336,10 @@
 
             $('#donGia').keyup(function(){
                 var cos = $(this).val();
+                var cos_soluong = $("input[name=soLuong]").val();
                 $('#showDonGias').text("(" + DOCSO.doc(cos) + ")");
+                $('input[name=thanhTien]').val(cos * cos_soluong);
+                $('#showThanhTien').text("(" + DOCSO.doc(cos * cos_soluong) + ")");
             });
             $('#chietKhaun').keyup(function(){
                 var cos = $(this).val();
@@ -1659,6 +1590,7 @@
                 $("#timHopDong").prop('disabled', true);
                 $("#hopDong").prop('disabled', true);
                 $("#nhanVien").prop('disabled', true);
+                $("#saler").prop('disabled', true);
                 $("#hoTen").prop('disabled', true);
                 $("#dienThoai").prop('disabled', true);
                 $("#mst").prop('disabled', true);
@@ -1749,6 +1681,7 @@
                     $("#ngayRa").val(response.data.ngayHoanThanh);
                     $("#hopDong").val(response.data.hopDongKD);
                     $("#nhanVien").val(response.data.nvKD);
+                    $("#saler").val(response.data.saler);
                     $("#hoTen").val(response.data.hoTen);
                     $("#dienThoai").val(response.data.dienThoai);
                     $("#mst").val(response.data.mst);
@@ -1833,8 +1766,6 @@
             }
         })
 
-
-
         $(document).on('click','#editHangMuc', function(){
             $.ajax({
                 type: "post",
@@ -1865,5 +1796,46 @@
                 }
             });      
         })
+
+        $('#hangHoa').keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadhanghoa')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "ma": $("input[name=hangHoa]").val(),                         
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })      
+                        if (response.code == 200) {    
+                            $("input[name=tenHang]").val(response.data.noiDung);     
+                            $("#s_noiDung").text(response.data.noiDung);
+                            $("#s_dvt").text(response.data.dvt);
+                            $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));
+                            $("#s_congktv").text(formatNumber(parseInt(response.data.congKTV)));
+                        }
+                        else {
+                            $("input[name=tenHang]").val("");    
+                            $("#s_noiDung").text("");
+                            $("#s_dvt").text("");
+                            $("#s_gia").text("");
+                            $("#s_congktv").text("");
+                        }                            
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hàng hóa yêu cầu!"
+                        })                       
+                    }
+                });  
+            }
+        });        
     </script>
 @endsection

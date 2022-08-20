@@ -247,9 +247,7 @@
                             </a>
                         </li>      
                         @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('dichvu.hangmuc')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

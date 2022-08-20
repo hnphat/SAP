@@ -642,7 +642,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'dichvu'], function(){
         // quản lý phụ kiện
         Route::post('loadtimkiem','DichVuController@timKiem')->name('timkiembaogia'); 
-        Route::post('loadbaogia','DichVuController@loadBaoGia')->name('loadbaogia');     
+        Route::post('loadbaogia','DichVuController@loadBaoGia')->name('loadbaogia'); 
+        Route::post('loadhanghoa','DichVuController@taiHangHoa')->name('loadhanghoa');    
         Route::post('deletebaogia','DichVuController@deleteBaoGia')->name('deletebaogia');  
         Route::post('thuchienbaogia','DichVuController@thucHienBaoGia')->name('thuchienbaogia');     
         Route::post('huybaogia','DichVuController@huyBaoGia')->name('huybaogia');     
