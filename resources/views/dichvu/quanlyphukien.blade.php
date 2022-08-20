@@ -461,7 +461,7 @@
                     <input type="hidden" name="editID"> 
                     <input type="hidden" name="editIDHM"> 
                     <div class="form-group">
-                        <label>Công việc: <strong id="congViec" class="text-success">Phủ gầm xe</strong></label>
+                        <label>Công việc: <strong id="congViec" class="text-success"></strong></label>
                     </div>
                     <div class="form-group">
                         <label for="chonKTV">Chọn KTV</label>
@@ -1785,6 +1785,7 @@
                             icon: response.type,
                             title: response.message
                         }) 
+                        $("#congViec").text(response.congViec);
                         $("input[name=editID]").val(response.data.id_baogia);
                         $("input[name=editIDHM]").val(response.data.id_baohiem_phukien);
                         let l_ktv = response.ktv;
