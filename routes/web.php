@@ -698,6 +698,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // Lấy dữ liệu chỉnh sửa
         Route::post('hangmuc/baohiemphukien/getedit/','DichVuController@getEditHangMuc')->name('getedithangmuc');
+        Route::post('hangmuc/baohiemphukien/postktv/','DichVuController@postKTV')->name('postktv');
+        Route::post('hangmuc/baohiemphukien/xoaktv/','DichVuController@xoaKTV')->name('xoaktv');
         // cập nhật dữ liệu chỉnh sửa 
         Route::post('hangmuc/baohiemphukien/postedit/','DichVuController@editHangMuc')->name('postedithangmuc'); 
     });

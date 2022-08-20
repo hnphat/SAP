@@ -15,6 +15,8 @@ class KtvBhpk extends Migration
     {
         Schema::create('ktv_bhpk', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('id_baogia')->unsigned();
+            $table->foreign('id_baogia')->references('id')->on('baogia_bhpk');
             $table->integer('id_bhpk')->unsigned();
             $table->foreign('id_bhpk')->references('id')->on('baohiem_phukien');
             $table->integer('id_work')->unsigned();

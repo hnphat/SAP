@@ -476,7 +476,7 @@
                         <button id="btnAddKTV" class="btn btn-info btn-sm">THÊM</button>
                         <br/><br/>
                         <p id="showKTVChon">
-                            <span>[ĐÃ THÊM] Nguyễn Hoàng Mới</span> <span class="badge badge-danger">Xóa</span>
+                            <!-- <span>[ĐÃ THÊM] Nguyễn Hoàng Mới</span> <span class="badge badge-danger">Xóa</span> -->
                         </p>
                     </div>                    
                     <!-- <div class="container row">
@@ -1767,34 +1767,76 @@
         })
 
         $(document).on('click','#editHangMuc', function(){
-            $.ajax({
-                type: "post",
-                url: "{{route('getedithangmuc')}}",
-                dataType: "json",
-                data: {
-                    "_token": "{{csrf_token()}}",
-                    "eid": $(this).data('bgid'),
-                    "ehm": $(this).data('hm')
-                },
-                success: function(response) {    
-                    Toast.fire({
-                        icon: response.type,
-                        title: response.message
-                    }) 
-                    $("input[name=editID]").val(response.data.id_baogia);
-                    $("input[name=editIDHM]").val(response.data.id_baohiem_phukien);
-                    $("#congViec").text(response.congViec);
-                    $("select[name=ekyThuatVien]").val((response.data.id_user_work) ? response.data.id_user_work : 0);
-                    $("select[name=ekyThuatVienTwo]").val((response.data.id_user_work_two) ? response.data.id_user_work : 0);
-                    $("select[name=etiLe]").val((response.data.tiLe == 10) ? 0 : response.data.tiLe);
-                },
-                error: function() {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: " Không thể tải hạng mục!"
-                    })                       
-                }
-            });      
+            if($("#edit").is(":visible")){
+                alert("Bạn phải chọn chỉnh sửa báo giá trước khi thực hiện thao tác này!")
+            } else {
+                $("#editModal").modal('show');
+                $.ajax({
+                    type: "post",
+                    url: "{{route('getedithangmuc')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": $(this).data('bgid'),
+                        "ehm": $(this).data('hm')
+                    },
+                    success: function(response) {    
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("input[name=editID]").val(response.data.id_baogia);
+                        $("input[name=editIDHM]").val(response.data.id_baohiem_phukien);
+                        let l_ktv = response.ktv;
+                        let txt_ktv = ``;
+                        for(let i = 0; i < l_ktv.length; i++)
+                            txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-bgid="${l_ktv[i].id_baogia}" data-hm="${l_ktv[i].id_bhpk}" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
+                        $("#showKTVChon").html(txt_ktv);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tải hạng mục!"
+                        })        
+                        $("#showKTVChon").html("<span></span>");               
+                    }
+                });   
+            }              
+        })
+
+       
+        $(document).on('click','#xoaKTV', function(){
+            if (confirm('Xác nhận xóa?')) {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('xoaktv')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('idktv'),
+                        "eid": $(this).data('bgid'),
+                        "ehm": $(this).data('hm')
+                    },
+                    success: function(response) {    
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })                    
+                        let l_ktv = response.ktv;
+                        let txt_ktv = ``;
+                        for(let i = 0; i < l_ktv.length; i++)
+                            txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
+                        $("#showKTVChon").html(txt_ktv);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tải hạng mục!"
+                        })        
+                        $("#showKTVChon").html("<span></span>");               
+                    }
+                });    
+            }                   
         })
 
         $('#hangHoa').keypress(function(event){
@@ -1836,6 +1878,38 @@
                     }
                 });  
             }
-        });        
+        });   
+        
+        $(document).on('click','#btnAddKTV', function(e){
+            e.preventDefault();
+            $.ajax({
+                type: "post",
+                url: "{{route('postktv')}}",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "idbg": $("input[name=editID]").val(),
+                    "idhh": $("input[name=editIDHM]").val(),
+                    "work": $("select[name=chonKTV]").val(),
+                },
+                success: function(response) {    
+                    Toast.fire({
+                        icon: response.type,
+                        title: response.message
+                    })                   
+                    let l_ktv = response.ktv;
+                    let txt_ktv = ``;
+                    for(let i = 0; i < l_ktv.length; i++)
+                        txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
+                    $("#showKTVChon").html(txt_ktv);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Không thể thêm kỹ thuật viên!"
+                    })                       
+                }
+            });             
+        })
     </script>
 @endsection

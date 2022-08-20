@@ -12,6 +12,7 @@ use App\ChiTietBHPK;
 use App\BaoGiaBHPK;
 use Illuminate\Support\Facades\Auth;
 use App\NhatKy;
+use App\KTVBHPK;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Excel;
 
@@ -936,7 +937,11 @@ class DichVuController extends Controller
             $ct = ChiTietBHPK::where([
                 ['id_baogia','=', $request->eid],
                 ['id_baohiem_phukien','=', $request->ehm],
-            ])->delete();        
+            ])->delete();      
+            $ktv = KTVBHPK::where([
+                ['id_baogia','=',$request->eid],
+                ['id_bhpk','=',$request->ehm]
+            ])->delete();
             if ($ct) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
@@ -966,11 +971,25 @@ class DichVuController extends Controller
 
     public function refreshHM(Request $request){
         $id_bg = BaoGiaBHPK::find($request->eid)->id;
-        $ct = ChiTietBHPK::where('id_baogia',$id_bg)->get();
+        $ct = ChiTietBHPK::where('id_baogia',$id_bg)->get();       
         foreach($ct as $row) {
             $bhpk = BHPK::find($row->id_baohiem_phukien);
             $namektv = ($row->userWork) ? explode(" ", $row->userWork->userDetail->surname) : "";  
             $namektv2 = ($row->userWorkTwo) ? explode(" ", $row->userWorkTwo->userDetail->surname) : "";            
+            
+            //Xử lý ktv
+            $n_ktv = "";
+            $ktv = KTVBHPK::where([
+                ['id_baogia','=',$row->id_baogia],
+                ['id_bhpk','=',$row->id_baohiem_phukien],
+            ])->get(); 
+            foreach($ktv as $k) {
+                $u = User::find($k->id_work);
+                $namektv = explode(" ", $u->userDetail->surname);
+                $n_ktv .= $namektv[count($namektv) - 1] . "; ";
+            }
+            //-----           
+
             echo "<tr>                                                   
                 <td>".$bhpk->ma."</td>
                 <td>".$bhpk->noiDung."</td>
@@ -979,10 +998,10 @@ class DichVuController extends Controller
                 <td>".number_format($row->donGia)."</td>
                 <td>".number_format($row->thanhTien)."</td>
                 <td>".(($row->isTang == true) ? "Có" : "Không")."</td>    
-                <td></td>                
+                <td>".$n_ktv."</td>                
                 <td>
                     <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>&nbsp;
-                    <button id='editHangMuc' data-toggle='modal' data-target='#editModal' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>
+                    <button id='editHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>
                 </td>
             </tr>";
         }        
@@ -2024,6 +2043,13 @@ class DichVuController extends Controller
             ['id_baogia','=',$request->eid],
             ['id_baohiem_phukien','=',$request->ehm]
         ])->first();
+        $ktv = KTVBHPK::select("ktv_bhpk.id","ktv_bhpk.id_baogia","ktv_bhpk.id_bhpk","d.surname","d.id_user")
+        ->join("users as u","u.id","=","ktv_bhpk.id_work")
+        ->join("users_detail as d","u.id","=","d.id_user")
+        ->where([
+            ['ktv_bhpk.id_baogia','=',$request->eid],
+            ['ktv_bhpk.id_bhpk','=',$request->ehm]
+        ])->get();  
         if ($ct) {
             $bhpk = BHPK::find($ct->id_baohiem_phukien);
             return response()->json([
@@ -2031,7 +2057,8 @@ class DichVuController extends Controller
                 "type" => "info",
                 "message" => "Đã load hạng mục chỉnh sửa",
                 "data" => $ct,
-                "congViec" => $bhpk->noiDung
+                "congViec" => $bhpk->noiDung,
+                "ktv" => $ktv
             ]);
         }
         else
@@ -2039,6 +2066,47 @@ class DichVuController extends Controller
                 "code" => 500,
                 "type" => "info",
                 "message" => "Lỗi tải hạng mục"
+            ]);
+    }
+
+    public function xoaKTV(Request $request) {    
+        $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->isDone || $bg->isCancel) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Báo giá đã huỷ, đã hoàn tất không thể xóa KTV!'
+            ]);
+        }
+        
+        $xoa = KTVBHPK::find($request->id);
+        $xoa->delete();        
+        if ($xoa) {
+            $ktv = KTVBHPK::select("ktv_bhpk.id","ktv_bhpk.id_baogia","ktv_bhpk.id_bhpk","d.surname","d.id_user")
+            ->join("users as u","u.id","=","ktv_bhpk.id_work")
+            ->join("users_detail as d","u.id","=","d.id_user")
+            ->where([
+                ['ktv_bhpk.id_baogia','=',$request->eid],
+                ['ktv_bhpk.id_bhpk','=',$request->ehm]
+            ])->get();  
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý phụ kiện";
+            $nhatKy->noiDung = "Xóa KTV ra khỏi hạng mục công việc";
+            $nhatKy->save();    
+            return response()->json([
+                "code" => 200,
+                "type" => "info",
+                "message" => "Đã xóa KTV khỏi hạng mục",               
+                "ktv" => $ktv
+            ]);
+        }
+        else
+            return response()->json([
+                "code" => 500,
+                "type" => "info",
+                "message" => "Lỗi xóa KTV"
             ]);
     }
 
@@ -2134,4 +2202,61 @@ class DichVuController extends Controller
             ]);    
         }           
     } 
+
+    public function postKTV(Request $request){
+        $bg = BaoGiaBHPK::find($request->idbg);
+        if ($bg->isDone || $bg->isCancel) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Báo giá đã huỷ, đã hoàn tất không thể thêm KTV!'
+            ]);
+        }
+
+        $check = KTVBHPK::where([
+            ["id_baogia","=",$request->idbg],
+            ["id_bhpk","=",$request->idhh],
+            ["id_work","=",$request->work],
+        ])->exists();
+        if (!$check) {
+            $ktv = new KTVBHPK();
+            $ktv->id_baogia = $request->idbg;
+            $ktv->id_bhpk = $request->idhh;
+            $ktv->id_work = $request->work;
+            $ktv->save();
+            if ($ktv) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Dịch vụ - Quản lý phụ kiện";
+                $nhatKy->noiDung = "Gán KTV vào hạng mục công việc";
+                $nhatKy->save();    
+                $ktv = KTVBHPK::select("ktv_bhpk.id","ktv_bhpk.id_baogia","ktv_bhpk.id_bhpk","d.surname","d.id_user")
+                ->join("users as u","u.id","=","ktv_bhpk.id_work")
+                ->join("users_detail as d","u.id","=","d.id_user")
+                ->where([
+                    ['ktv_bhpk.id_baogia','=',$request->idbg],
+                    ['ktv_bhpk.id_bhpk','=',$request->idhh]
+                ])->get();          
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã thêm ktv vào hạng mục',
+                    'code' => 200,
+                    'ktv' => $ktv
+                ]);         
+            } else {
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Không thể thêm KTV',
+                    'code' => 500
+                ]);    
+            }
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'KTV đã có sẵn trên hạng mục',
+                'code' => 500
+            ]);
+        }
+    }
 }
