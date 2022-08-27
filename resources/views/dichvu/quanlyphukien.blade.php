@@ -1770,7 +1770,6 @@
             if($("#edit").is(":visible")){
                 alert("Bạn phải chọn chỉnh sửa báo giá trước khi thực hiện thao tác này!")
             } else {
-                $("#editModal").modal('show');
                 $.ajax({
                     type: "post",
                     url: "{{route('getedithangmuc')}}",
@@ -1785,14 +1784,17 @@
                             icon: response.type,
                             title: response.message
                         }) 
-                        $("#congViec").text(response.congViec);
-                        $("input[name=editID]").val(response.data.id_baogia);
-                        $("input[name=editIDHM]").val(response.data.id_baohiem_phukien);
-                        let l_ktv = response.ktv;
-                        let txt_ktv = ``;
-                        for(let i = 0; i < l_ktv.length; i++)
-                            txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-bgid="${l_ktv[i].id_baogia}" data-hm="${l_ktv[i].id_bhpk}" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
-                        $("#showKTVChon").html(txt_ktv);
+                        if (response.code != 500) {
+                            $("#editModal").modal('show');
+                            $("#congViec").text(response.congViec);
+                            $("input[name=editID]").val(response.data.id_baogia);
+                            $("input[name=editIDHM]").val(response.data.id_baohiem_phukien);
+                            let l_ktv = response.ktv;
+                            let txt_ktv = ``;
+                            for(let i = 0; i < l_ktv.length; i++)
+                                txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-bgid="${l_ktv[i].id_baogia}" data-hm="${l_ktv[i].id_bhpk}" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
+                            $("#showKTVChon").html(txt_ktv);
+                        }
                     },
                     error: function() {
                         Toast.fire({

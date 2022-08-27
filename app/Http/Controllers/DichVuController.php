@@ -887,7 +887,7 @@ class DichVuController extends Controller
         $ct->id_baohiem_phukien = $idbhpk;
         $ct->soLuong = $request->soLuong;
         $ct->donGia = $request->donGia;
-        $ct->chietKhau = 0;
+        // $ct->chietKhau = 0;
         $ct->isTang = $request->tang;
         // $ct->id_user_work = ($request->kyThuatVien == 0) ? null : $request->kyThuatVien;
         $ct->thanhTien = ($request->soLuong * $request->donGia);
@@ -1155,13 +1155,14 @@ class DichVuController extends Controller
         $i = 1;
         foreach($ct as $row){
             $bh = BHPK::find($row->id_baohiem_phukien);
-            if ($bh->type == "PHUTUNG") {
-                $tt .= $i++ . "<w:br/>"; 
+
+            if ($bh->loai != "Gia công ngoài") {
+                $tt .= $i++ . "<w:br/>";
                 $ma .= $bh->ma . "<w:br/>"; 
                 $noiDung .= $bh->noiDung . "<w:br/>";
                 $dvt .= $bh->dvt . "<w:br/>";
                 $sl .= $row->soLuong . "<w:br/>";
-            }            
+            }    
         }
 
         $templateProcessor = new TemplateProcessor('template/BHPK/CAPVATTU.docx');                    
@@ -1222,8 +1223,9 @@ class DichVuController extends Controller
         $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
 
         $tt = "";
+        $loai = "";
         $ma = "";
-        $ktv = "";
+        $ktvn = ""; 
         $noiDung = "";
         $dvt = "";
         $sl = "";
@@ -1232,15 +1234,53 @@ class DichVuController extends Controller
         $i = 1;
         foreach($ct as $row){
             $bh = BHPK::find($row->id_baohiem_phukien);
-            if ($bh->type == "CONG") {
-                $tt .= $i++ . "<w:br/>"; 
-                $ma .= $bh->ma . "<w:br/>"; 
-                $noiDung .= $bh->noiDung . "<w:br/>";
-                $dvt .= $bh->dvt . "<w:br/>";
-                $sl .= $row->soLuong . "<w:br/>";
-                $namektv = ($row->userWork) ? explode(" ", $row->userWork->userDetail->surname) : "";
-                $namektv2 = ($row->userWorkTwo) ? explode(" ", $row->userWorkTwo->userDetail->surname) : "";
-                $ktv .= (($row->userWork) ? $namektv[count($namektv)-1] : "").  ", ".(($row->userWorkTwo) ? $namektv2[count($namektv2)-1] : "")." <w:br/>";
+            
+            $checkktv = KTVBHPK::where([
+                ['id_baogia','=',$idbg],
+                ['id_bhpk','=',$row->id_baohiem_phukien],
+            ])->exists(); 
+
+            if ($bh->loai != "Bán thêm" && $bh->loai != "Tặng kèm") {
+                if ($checkktv) {
+                    $tt .= $i++ . "<w:br/>";
+                    $loai .= $bh->loai . "<w:br/>"; 
+                    $ma .= $bh->ma . "<w:br/>"; 
+                    // $noiDung .= $bh->noiDung . "<w:br/>";
+             
+                    if (!$row->isTang) {
+                        $noiDung .= $bh->noiDung . "<w:br/>";               
+                    } else {
+                        $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
+                    }
+                    
+                    $dvt .= $bh->dvt . "<w:br/>";
+                    $sl .= $row->soLuong . "<w:br/>";
+
+                    //Xử lý ktv
+                    $n_ktv = "";
+                    $ktv = KTVBHPK::where([
+                        ['id_baogia','=',$idbg],
+                        ['id_bhpk','=',$row->id_baohiem_phukien],
+                    ])->get(); 
+                    foreach($ktv as $k) {
+                        $u = User::find($k->id_work);
+                        $namektv = explode(" ", $u->userDetail->surname);
+                        $n_ktv .= $namektv[count($namektv) - 1] . "; ";
+                    }
+                    if ($n_ktv == "")
+                        $ktvn .= "<w:br/>";
+                    else
+                        $ktvn .= $n_ktv . "<w:br/>";;
+                    //-----         
+                } else if ($bh->loai == "Gia công ngoài") {
+                    $tt .= $i++ . "<w:br/>";
+                    $loai .= $bh->loai . "<w:br/>"; 
+                    $ma .= $bh->ma . "<w:br/>"; 
+                    $noiDung .= $bh->noiDung . "<w:br/>";
+                    $dvt .= $bh->dvt . "<w:br/>";
+                    $sl .= $row->soLuong . "<w:br/>";
+                    $ktvn .= "<w:br/>";
+                }                
             }            
         }
 
@@ -1266,7 +1306,8 @@ class DichVuController extends Controller
                 'noiDung' => $noiDung,
                 'dvt' => $dvt,
                 'sl' => $sl,        
-                'ktv' => $ktv           
+                'ktv' => $ktvn,
+                'loai' => $loai,           
             ]);
 
         $pathToSave = 'template/BHPK/LENHSUACHUADOWN.docx';
@@ -2052,14 +2093,22 @@ class DichVuController extends Controller
         ])->get();  
         if ($ct) {
             $bhpk = BHPK::find($ct->id_baohiem_phukien);
-            return response()->json([
-                "code" => 200,
-                "type" => "info",
-                "message" => "Đã load hạng mục chỉnh sửa",
-                "data" => $ct,
-                "congViec" => $bhpk->noiDung,
-                "ktv" => $ktv
-            ]);
+            if ($bhpk->loai == "KTV lắp đặt") {
+                return response()->json([
+                    "code" => 200,
+                    "type" => "info",
+                    "message" => "Đã load hạng mục chỉnh sửa",
+                    "data" => $ct,
+                    "congViec" => $bhpk->noiDung,
+                    "ktv" => $ktv
+                ]);
+            } else {                
+                return response()->json([
+                    "code" => 500,
+                    "type" => "warning",
+                    "message" => "Hạng mục này không thể thêm KTV",
+                ]);
+            }      
         }
         else
             return response()->json([
