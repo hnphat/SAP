@@ -691,6 +691,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // báo cáo doanh thu
         Route::get('baocaodoanhthu','DichVuController@baoCaoDoanhThuPanel')->name('dichvu.baocaodoanhthu.panel')->middleware(['f_bhpk']); 
         Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu');  
+        Route::get('exportexcel/{from}/den/{to}/loaibaocao/{loai}/u/{u}', 'DichVuController@exportExcel');
         
         // báo cáo tiến độ
         Route::get('baocaotiendo','DichVuController@baoCaoTienDoPanel')->name('dichvu.baocaotiendo.panel')->middleware(['f_bhpk']); 

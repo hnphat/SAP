@@ -50,12 +50,12 @@
                                                 <label>Chọn loại báo cáo</label>
                                                 <select name="chonBaoCao" class="form-control">     
                                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))                                               
-                                                    <option value="1">Doanh thu bảo hiểm</option>
+                                                    <!-- <option value="1">Doanh thu bảo hiểm</option> -->
                                                     <option value="2">Doanh thu phụ kiện</option>
                                                     <option value="3">Doanh thu tổ phụ kiện</option>         
                                                 @else
                                                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem'))
-                                                    <option value="1">Doanh thu bảo hiểm</option>
+                                                    <!-- <option value="1">Doanh thu bảo hiểm</option> -->
                                                     @endif
                                                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
                                                     <option value="2">Doanh thu phụ kiện</option>
@@ -66,6 +66,9 @@
                                                 @endif
                                                 </select> <br/>
                                                 <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                                <button id="taiReport" type="button" class="btn btn-primary btn-xs">TẢI EXCEL</button>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-sm-3">
@@ -77,8 +80,8 @@
                                                     @foreach($user as $row)
                                                         @if($row->hasRole('to_phu_kien') 
                                                         || $row->hasRole('nv_phukien') 
-                                                        || $row->hasRole('nv_baohiem'))
-                                                            <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                                        || $row->hasRole('nv_baohiem') || $row->hasRole('sale'))
+                                                            <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
                                                         @endif
                                                     @endforeach   
                                                 @else   
@@ -133,6 +136,22 @@
         });
 
        $(document).ready(function(){
+            $("#taiReport").click(function(){
+                if(confirm('Xác nhận xuất dữ liệu excel')) {
+                    open("{{url('management/dichvu/exportexcel/')}}" 
+                + "/" 
+                + $("input[name=chonNgayOne]").val() 
+                + "/den/" 
+                + $("input[name=chonNgayTwo]").val()
+                + "/loaibaocao/" 
+                +  $("select[name=chonBaoCao]").val()
+                + "/u/" 
+                +  $("select[name=nhanVien]").val()
+                ,'_blank');
+                }
+            });
+
+
          $("#xemReport").click(function(){
             $.ajax({
                 type: "post",
