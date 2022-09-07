@@ -45,6 +45,7 @@
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
+                                <a href="{{route('tracuunangcao')}}" class="btn btn-sm btn-primary">TRA CỨU NÂNG CAO</a><br/><br/>
                                 <table id="dataTable" class="display" style="width:100%">
                                     <thead>
                                     <tr class="bg-gradient-lightblue">

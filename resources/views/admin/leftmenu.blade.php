@@ -209,7 +209,8 @@
                     \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
-                    \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan'))
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fab fa-servicestack"></i>
                         <p>
@@ -258,7 +259,8 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
                             \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') || 
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien'))
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))
                         <li class="nav-item">
                             <a href="{{route('dichvu.baocaodoanhthu.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

@@ -637,6 +637,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'nhatky', 'middleware' => ['f_role']], function(){
         Route::get('list','NhatKyController@getList')->name('nhatky.list');   
         Route::get('ajax/xem','NhatKyController@loadList');      
+
+        // Tra cứu nâng cao
+        Route::get('gettracuu','NhatKyController@getTraCuu')->name('tracuunangcao');
+        Route::post('loadnhatky','NhatKyController@loadNhatKy')->name('nhatky.loadnhatky');
+
     });
 
     Route::group(['prefix' => 'dichvu'], function(){

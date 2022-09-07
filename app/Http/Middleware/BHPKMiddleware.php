@@ -19,7 +19,8 @@ class BHPKMiddleware
         if (Auth::user()->hasRole('system') ||
         Auth::user()->hasRole('nv_baohiem') ||
         Auth::user()->hasRole('nv_phukien') ||
-        Auth::user()->hasRole('to_phu_kien'))
+        Auth::user()->hasRole('to_phu_kien') ||
+        Auth::user()->hasRole('baocaophukienbaohiem'))
         return $next($request);
     else abort(403);
     }

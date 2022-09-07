@@ -38,4 +38,43 @@ class NhatKyController extends Controller
                 'message' => 'Lỗi tải dữ liệu'
             ]);
     }
+
+    public function getTraCuu() {
+        return view('nhatky.tracuunangcao');
+    }
+
+    public function loadNhatKy(Request $request) {
+        $noiDung = $request->str_find;
+        $soLuong = $request->num_row;
+        $nhatKy = NhatKy::select("nhat_ky.*","d.surname as name")
+        ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
+        ->where("nhat_ky.noiDung","LIKE","%".$noiDung."%")
+        ->orWhere("nhat_ky.chucNang","LIKE","%".$noiDung."%")
+        ->orWhere("d.surname","LIKE","%".$noiDung."%")
+        ->orderBy('nhat_ky.id', 'desc')
+        ->take($soLuong)
+        ->get();
+        // if ($nhatKy->count() == 0) {
+        //     $nhatKy2 = NhatKy::select("nhat_ky.*","d.surname as name")
+        //     ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
+        //     ->where("nhat_ky.chucNang","LIKE","%".$noiDung."%")
+        //     ->orderBy('nhat_ky.id', 'desc')
+        //     ->take($soLuong)
+        //     ->get();
+        //     if ($nhatKy2->count() == 0)  {
+        //         $nhatKy3 = NhatKy::select("nhat_ky.*","d.surname as name")
+        //         ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
+        //         ->where("d.surname","LIKE","%".$noiDung."%")
+        //         ->orderBy('nhat_ky.id', 'desc')
+        //         ->take($soLuong)
+        //         ->get();
+        //         if ($nhatKy3->count() == 0) {
+        //             return view('nhatky.tracuunangcao');            
+        //         } else 
+        //         return view('nhatky.tracuunangcao', ['nk' => $nhatKy3, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
+        //     } else 
+        //     return view('nhatky.tracuunangcao', ['nk' => $nhatKy2, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
+        // } else 
+        return view('nhatky.tracuunangcao', ['nk' => $nhatKy, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
+    }
 }

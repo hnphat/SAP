@@ -49,7 +49,8 @@
                                             <div class="form-group">
                                                 <label>Chọn loại báo cáo</label>
                                                 <select name="chonBaoCao" class="form-control">     
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))                                               
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))                                               
                                                     <!-- <option value="1">Doanh thu bảo hiểm</option> -->
                                                     <option value="2">Doanh thu phụ kiện</option>
                                                     <option value="3">Doanh thu tổ phụ kiện</option>         
@@ -75,7 +76,8 @@
                                             <div class="form-group">
                                                 <label>Chọn nhân viên</label>
                                                 <select name="nhanVien" class="form-control"> 
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))
                                                     <option value="0">Tất cả</option>                                                               
                                                     @foreach($user as $row)
                                                         @if($row->hasRole('to_phu_kien') 
