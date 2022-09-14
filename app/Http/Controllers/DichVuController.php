@@ -2229,4 +2229,102 @@ class DichVuController extends Controller
     public function exportExcel($from,$to,$loai,$u) {
         return Excel::download(new ExportBaoCaoDoanhThuController($from,$to,$loai,$u), 'baocaodoanhthu.xlsx');
     }
+
+    public function getDTPK() {
+        return view("dichvu.ghinhandoanhthu");
+    }
+
+    public function getDTPKList() {
+        $result = BaoGiaBHPK::select('baogia_bhpk.*','d.surname as nguoiTao','dd.surname as saleMan')
+        ->join('users_detail as d','d.id_user','=','baogia_bhpk.id_user_create')
+        ->leftJoin('users_detail as dd','dd.id_user','=','baogia_bhpk.saler')
+        ->orderBy('id', 'desc')->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function showEditThu(Request $request) {
+        $bg = BaoGiaBHPK::find($request->id);
+        if($bg) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã lấy thông tin!',
+                'code' => 200,
+                'data' => $bg
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Lỗi! Lấy thông tin thất bại!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function updateThu(Request $request) {
+        $bg = BaoGiaBHPK::find($request->eid);
+        $bg->trangThaiThu = $request->trangThaiThu;
+        $bg->ngayThu = $request->ngayThu;
+        $bg->save();
+        if($bg) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Doanh thu phụ kiện";
+            $nhatKy->noiDung = "Xác nhận đã thu tiền phụ kiện số báo giá BG0" . $request->eid 
+            . "<br/>Ngày thu: " . $request->ngayThu;
+            $nhatKy->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã thu tiền!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function hoanTrang(Request $request) {
+        if(!Auth::user()->hasRole('system')) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền hoàn trạng, liên hệ quản trị viên!',
+                'code' => 200
+            ]);
+        }
+        $bg = BaoGiaBHPK::find($request->id);
+        $bg->trangThaiThu = false;
+        $bg->ngayThu = null;
+        $bg->save();
+        if($bg) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Doanh thu phụ kiện";
+            $nhatKy->noiDung = "Huỷ bỏ xác nhận thu tiền số báo giá BG0" . $request->id;
+            $nhatKy->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã hoàn trạng!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
 }

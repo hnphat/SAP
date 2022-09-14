@@ -708,6 +708,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hangmuc/baohiemphukien/xoaktv/','DichVuController@xoaKTV')->name('xoaktv');
         // cập nhật dữ liệu chỉnh sửa 
         Route::post('hangmuc/baohiemphukien/postedit/','DichVuController@editHangMuc')->name('postedithangmuc'); 
+
+        // Ghi nhận doanh thu
+        Route::get('doanhthuphukien/panel','DichVuController@getDTPK')->name('dichvu.doanhthuphukien');
+        Route::get('ghinhandoanhthu/getDTPK/list','DichVuController@getDTPKList');
+        Route::post('geteditthu/show','DichVuController@showEditThu');
+        Route::post('updatethu','DichVuController@updateThu');
+        Route::post('hoantrang','DichVuController@hoanTrang');
+
     });
 
 
