@@ -756,6 +756,15 @@ class DichVuController extends Controller
 
     public function huyBaoGia(Request $request){
         $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->trangThaiThu) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Báo giá đã thu tiền không thể huỷ!',
+                'data' => $bg
+            ]);
+        }
+
         if ($bg->inProcess) {
             $bg->isCancel = true;
             $bg->lyDoHuy = $request->lyDo;
@@ -790,8 +799,19 @@ class DichVuController extends Controller
     }
 
     public function doneBaoGia(Request $request){
+        $tongCong = 0;
+        $tongTang = 0;
         $bg = BaoGiaBHPK::find($request->eid);
         if ($bg->inProcess) {
+            $ct = ChiTietBHPK::where('id_baogia', $request->eid)->get();
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                if ($row->isTang)
+                    $tongTang += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+                $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+            } 
+            $bg->doanhThu = $tongCong;
+            $bg->tang = $tongTang;
             $bg->isDone = true;
             $bg->save();
             if ($bg) {
@@ -1631,7 +1651,7 @@ class DichVuController extends Controller
                 <table class='table table-striped table-bordered'>
                     <tr>
                         <th>STT</th>
-                        <th>Ngày</th>
+                        <th>Ngày tạo</th>
                         <th>Người tạo</th>
                         <th>Sale</th>
                         <th>Loại BG</th>
@@ -1639,20 +1659,29 @@ class DichVuController extends Controller
                         <th>Doanh thu</th>                    
                         <th>Chi phí tặng</th>
                         <th>Thực tế</th>
+                        <th>KT xác nhận</th>
                     </tr>
                 <tbody>";   
                 if ($nv == 0) {
                     $_tongdoanhthu = 0;
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
+                        ['trangThaiThu','=',true],
+                        ['isBaoHiem','=', false],
                         ['isDone','=',true],
                         ['isCancel','=',false],
-                        ['isBaoHiem','=', false]
                     ])
+                    // ->where([
+                    //     ['isDone','=',true],
+                    //     ['isCancel','=',false],
+                    //     ['isBaoHiem','=', false]
+                    // ])
                     ->orderBy('isPKD','desc')->get();
                     foreach($bg as $row) {
-                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
-                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                        // if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+                        // &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                        if ((strtotime($row->ngayThu) >= strtotime($tu)) 
+                        &&  (strtotime($row->ngayThu) <= strtotime($den))) {
                             $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                             $_doanhthu = 0;
                             $_chiphitang = 0;
@@ -1679,6 +1708,7 @@ class DichVuController extends Controller
                                         <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                         <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
                                         <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
+                                        <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
                                     </tr>";
                         }
                     }
@@ -1689,14 +1719,22 @@ class DichVuController extends Controller
                     $_tongdoanhthu = 0;
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
+                        ['trangThaiThu','=',true],
+                        ['isBaoHiem','=', false],
                         ['isDone','=',true],
                         ['isCancel','=',false],
-                        ['isBaoHiem','=', false]
                     ])
+                    // ->where([
+                    //     ['isDone','=',true],
+                    //     ['isCancel','=',false],
+                    //     ['isBaoHiem','=', false]
+                    // ])
                     ->orderBy('isPKD','desc')->get();
                     foreach($bg as $row) {
-                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
-                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                        // if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+                        // &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                        if ((strtotime($row->ngayThu) >= strtotime($tu)) 
+                        &&  (strtotime($row->ngayThu) <= strtotime($den))) {
                             if ($row->saler && $row->saler == $nv) {
                                 $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                                 $_doanhthu = 0;
@@ -1723,6 +1761,7 @@ class DichVuController extends Controller
                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                     <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
                                     <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
+                                    <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
                                 </tr>";
                             } 
                             
@@ -1749,6 +1788,7 @@ class DichVuController extends Controller
                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                     <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
                                     <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
+                                    <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
                                 </tr>";
                             }                                                         
                             
@@ -1955,40 +1995,43 @@ class DichVuController extends Controller
                     <th>Biển số</th>
                     <th>Số khung</th>
                     <th>Công việc</th>                         
-                    <th>Bắt đầu</th>
-                    <th>Hoàn tất</th>
-                    <th>Trạng thái</th>               
+                    <th>Xe vào</th>
+                    <th>Xe ra (dự kiến)</th>
+                    <th>Trạng thái</th>   
+                    <th>Tác vụ</th>            
                 </tr>
                 <tbody>";
                 
-        $ct = ChiTietBHPK::where('id_user_work','=',$nv)
-        ->orWhere('id_user_work_two','=',$nv)
+        $ct = KTVBHPK::where('id_work','=',$nv)
+        ->orderBy('id', 'desc')
         ->get();
         $i = 1;
         foreach($ct as $row) {
-            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->baoGia->created_at)) >= strtotime($tu)) 
-            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->baoGia->created_at)) <= strtotime($den))) {
-                $bhpk = BHPK::find($row->id_baohiem_phukien);                
+            $bg = BaoGiaBHPK::find($row->id_baogia);
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) >= strtotime($tu)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
+                $bhpk = BHPK::find($row->id_bhpk);                
                 $stt = "";
-                if ($row->baoGia->isCancel)
-                    $stt = "<span class='text-bold text-danger'>Đã huỷ</span>";
-                elseif (!$row->baoGia->isCancel && $row->baoGia->isDone)
-                    $stt = "<span class='text-bold text-success'>Hoàn tất</span>";
-                elseif (!$row->baoGia->isCancel && !$row->baoGia->isDone && $row->baoGia->inProcess)
-                    $stt = "<span class='text-bold text-info'>Đang thực hiện</span>";
-                elseif (!$row->baoGia->isCancel && !$row->baoGia->isDone && !$row->baoGia->inProcess)
-                    $stt = "<span class='text-bold text-secondary'>Mới tạo</span>";
-
+                if ($row->isDone) {
+                    $stt = "<span class='text-bold text-success'>Đã hoàn tất</span>";
+                }
+                else {
+                    $tacVu = "<button class='btn btn-info'>Hoàn tất</button>";
+                    $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
+                }                 
                 echo "<tr>
                 <td>".($i++)."</td>
-                <td>".\HelpFunction::getDateRevertCreatedAt($row->baoGia->created_at)."</td>
-                <td class='text-bold text-secondary'>BG0".$row->baoGia->id."-".\HelpFunction::getDateCreatedAtRevert($row->baoGia->created_at)."</td>
-                <td class='text-bold text-primary'>".$row->baoGia->bienSo."</td>
-                <td class='text-bold text-primary'>".$row->baoGia->soKhung."</td>
+                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                <td class='text-bold text-primary'>".$bg->soKhung."</td>
                 <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                <td>".$row->baoGia->thoiGianVao." ".\HelpFunction::revertDate($row->baoGia->ngayVao)."</td>
-                <td>".$row->baoGia->thoiGianHoanThanh." ".\HelpFunction::revertDate($row->baoGia->ngayHoanThanh)."</td>
+                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
                 <td>".$stt."</td>
+                <td>
+                    ".$tacVu."
+                </td>
                 </tr>";            
             }
         }
@@ -2037,13 +2080,13 @@ class DichVuController extends Controller
 
     public function xoaKTV(Request $request) {    
         $bg = BaoGiaBHPK::find($request->eid);
-        if ($bg->isDone || $bg->isCancel) {
-            return response()->json([
-                'type' => 'error',
-                'code' => 500,
-                'message' => 'Báo giá đã huỷ, đã hoàn tất không thể xóa KTV!'
-            ]);
-        }
+        // if ($bg->isDone || $bg->isCancel) {
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'code' => 500,
+        //         'message' => 'Báo giá đã huỷ, đã hoàn tất không thể xóa KTV!'
+        //     ]);
+        // }
         
         $xoa = KTVBHPK::find($request->id);
         $xoa->delete();        
@@ -2171,13 +2214,13 @@ class DichVuController extends Controller
 
     public function postKTV(Request $request){
         $bg = BaoGiaBHPK::find($request->idbg);
-        if ($bg->isDone || $bg->isCancel) {
-            return response()->json([
-                'type' => 'error',
-                'code' => 500,
-                'message' => 'Báo giá đã huỷ, đã hoàn tất không thể thêm KTV!'
-            ]);
-        }
+        // if ($bg->isDone || $bg->isCancel) {
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'code' => 500,
+        //         'message' => 'Báo giá đã huỷ, đã hoàn tất không thể thêm KTV!'
+        //     ]);
+        // }
 
         $check = KTVBHPK::where([
             ["id_baogia","=",$request->idbg],
@@ -2238,6 +2281,11 @@ class DichVuController extends Controller
         $result = BaoGiaBHPK::select('baogia_bhpk.*','d.surname as nguoiTao','dd.surname as saleMan')
         ->join('users_detail as d','d.id_user','=','baogia_bhpk.id_user_create')
         ->leftJoin('users_detail as dd','dd.id_user','=','baogia_bhpk.saler')
+        ->where([
+            ['baogia_bhpk.isBaoHiem','=',false],
+            ['baogia_bhpk.isDone','=',true],
+            ['baogia_bhpk.isCancel','=',false],
+        ])
         ->orderBy('id', 'desc')->get();
         if($result) {
             return response()->json([
@@ -2272,6 +2320,13 @@ class DichVuController extends Controller
 
     public function updateThu(Request $request) {
         $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->isCancel) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Báo giá đã huỷ không thể thu tiền!',
+                'code' => 500
+            ]);
+        }
         $bg->trangThaiThu = $request->trangThaiThu;
         $bg->ngayThu = $request->ngayThu;
         $bg->save();

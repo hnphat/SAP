@@ -43,7 +43,8 @@
                                     <option value="2">Mới tạo</option>                                 
                                     <option value="3">Đang thực hiện</option>  
                                     <option value="4">Hoàn tất</option>    
-                                    <option value="5">Huỷ</option>                                                          
+                                    <option value="5">Huỷ</option>     
+                                    <option value="6">Hoàn tất (KTV chưa có)</option>                                                     
                                 </select> <br/>
                             </div>
                         </div>
@@ -69,6 +70,7 @@
                            Mới tạo: <span class="bg-secondary"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
                            Đang thực hiện: <span class="bg-success"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
                            Hoàn tất: <span class="bg-info"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+                           Hoàn tất (KTV chưa có): <span class="bg-orange"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
                            Huỷ: <span class="bg-danger"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
                         </div>
                 </div>

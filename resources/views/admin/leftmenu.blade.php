@@ -286,16 +286,7 @@
                                 <p>Quản lý đánh giá</p>
                             </a>
                         </li>        
-                        @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                        <li class="nav-item">
-                            <a href="{{route('dichvu.doanhthuphukien')}}" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Doanh thu phụ kiện</p>
-                            </a>
-                        </li>                      
-                        @endif
+                        @endif                        
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
@@ -418,7 +409,13 @@
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Biên bản bàn giao</p>
                             </a>
-                        </li>     
+                        </li> 
+                        <li class="nav-item">
+                            <a href="{{route('dichvu.doanhthuphukien')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Doanh thu phụ kiện</p>
+                            </a>
+                        </li>           
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))

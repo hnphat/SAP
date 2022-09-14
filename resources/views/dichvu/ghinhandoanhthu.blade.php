@@ -20,7 +20,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Dịch vụ</li>
+                            <li class="breadcrumb-item active">Kế toán</li>
                             <li class="breadcrumb-item active">Doanh thu phụ kiện</li>
                         </ol>
                     </div><!-- /.col -->

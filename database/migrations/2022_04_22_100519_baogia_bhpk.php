@@ -41,6 +41,10 @@ class BaogiaBhpk extends Migration
             $table->boolean('isDone')->default(false);
             $table->string('lyDoHuy')->nullable();
             $table->boolean('isCancel')->default(false);
+            $table->boolean('trangThaiThu')->default(false);
+            $table->string('ngayThu', 10)->nullable();
+            $table->integer('doanhThu')->default(0);
+            $table->integer('tang')->default(0);
             $table->timestamps();
         });
     }
