@@ -21,6 +21,7 @@ class KtvBhpk extends Migration
             $table->foreign('id_bhpk')->references('id')->on('baohiem_phukien');
             $table->integer('id_work')->unsigned();
             $table->foreign('id_work')->references('id')->on('users');
+            $table->boolean('isDone')->default(false);
             $table->timestamps();
         });
     }

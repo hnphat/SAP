@@ -715,6 +715,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('geteditthu/show','DichVuController@showEditThu');
         Route::post('updatethu','DichVuController@updateThu');
         Route::post('hoantrang','DichVuController@hoanTrang');
+        Route::post('hoantatcongviec','DichVuController@hoanTatCongViec');
 
     });
 

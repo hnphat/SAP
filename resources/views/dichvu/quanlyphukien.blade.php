@@ -44,7 +44,7 @@
                                     <option value="3">Đang thực hiện</option>  
                                     <option value="4">Hoàn tất</option>    
                                     <option value="5">Huỷ</option>     
-                                    <option value="6">Hoàn tất (KTV chưa có)</option>                                                     
+                                    <!-- <option value="6">Hoàn tất (KTV chưa có)</option>                                                      -->
                                 </select> <br/>
                             </div>
                         </div>
@@ -1811,7 +1811,29 @@
 
        
         $(document).on('click','#xoaKTV', function(){
+            function delKTVrefresh(idBG) {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('refreshhangmuc')}}",
+                        dataType: "text",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": idBG
+                        },
+                        success: function(response) {    
+                            $("#chiTietHangMuc").html(response);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không thể tải danh mục!"
+                            })                       
+                        }
+                    });
+            }
+
             if (confirm('Xác nhận xóa?')) {
+                let idbg = $(this).data('bgid');
                 $.ajax({
                     type: "post",
                     url: "{{route('xoaktv')}}",
@@ -1832,6 +1854,7 @@
                         for(let i = 0; i < l_ktv.length; i++)
                             txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
                         $("#showKTVChon").html(txt_ktv);
+                        delKTVrefresh(idbg);
                     },
                     error: function() {
                         Toast.fire({
@@ -1887,6 +1910,27 @@
         
         $(document).on('click','#btnAddKTV', function(e){
             e.preventDefault();
+            function addKTVrefresh(idBG) {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('refreshhangmuc')}}",
+                        dataType: "text",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "eid": idBG
+                        },
+                        success: function(response) {    
+                            $("#chiTietHangMuc").html(response);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không thể tải danh mục!"
+                            })                       
+                        }
+                    });
+            }
+            let idbg = $("input[name=editID]").val();
             $.ajax({
                 type: "post",
                 url: "{{route('postktv')}}",
@@ -1907,6 +1951,7 @@
                     for(let i = 0; i < l_ktv.length; i++)
                         txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
                     $("#showKTVChon").html(txt_ktv);
+                    addKTVrefresh(idbg);
                 },
                 error: function() {
                     Toast.fire({

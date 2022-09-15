@@ -132,7 +132,63 @@
                     })
                 }
             });
-         });  
+         });
+         
+         function autoLoad() {
+            $.ajax({
+                type: "post",
+                url: "{{url('management/dichvu/loadbaocaotiendo/')}}",
+                dataType: "text",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "nhanVien": $("select[name=nhanVien]").val(),
+                    "tu": $("input[name=chonNgayOne]").val(),
+                    "den": $("input[name=chonNgayTwo").val()
+                },
+                success: function(response) {
+                    Toast.fire({
+                        icon: 'info',
+                        title: " Đã gửi yêu cầu! "
+                    })
+                    $("#all").html(response);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Lỗi!"
+                    })
+                }
+            });
+         }
+
+        $(document).on('click','#hoanTat',function() {   
+            if (confirm("Xác nhận hoàn tất công việc?\nLưu ý: Không thể hoàn lại sau khi đã xác nhận công việc!")) {
+                $.ajax({
+                    type: "post",
+                    url: "{{url('management/dichvu/hoantatcongviec/')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        setTimeout(() => {
+                            autoLoad();
+                        }, 2000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi!"
+                        })
+                    }
+                });
+            }
+        });
        });
     </script>
 @endsection

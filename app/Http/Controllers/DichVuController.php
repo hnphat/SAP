@@ -657,12 +657,35 @@ class DichVuController extends Controller
         }
         foreach($bg as $row) {
             $stt = "";
+            $flag = true;
             if (!$row->inProcess)
                 $stt = "class='bg-secondary'";
             if ($row->inProcess && !$row->isDone && !$row->isCancel)
                 $stt = "class='bg-success'";
-            if ($row->inProcess && $row->isDone && !$row->isCancel)
-                $stt = "class='bg-info'";
+            if ($row->inProcess && $row->isDone && !$row->isCancel) {
+                // xử lý chưa thêm KTV start
+                $ct = ChiTietBHPK::select("*")
+                ->where('id_baogia', $row->id)
+                ->get();
+                foreach($ct as $c){
+                    $bhpk = BHPK::find($c->id_baohiem_phukien);
+                    if ($bhpk->loai != "KTV lắp đặt") continue;
+                    $check = KTVBHPK::select("*")
+                    ->where([
+                        ['id_baogia','=',$row->id],
+                        ['id_bhpk','=',$c->id_baohiem_phukien]
+                    ])->exists();
+                    if (!$check) {
+                        $flag = false;
+                        break;
+                    }        
+                }
+                // xử lý chưa thêm KTV end
+                if ($flag)
+                    $stt = "class='bg-info'";
+                else 
+                    $stt = "class='bg-orange'";
+            }
             if ($row->isCancel)
                 $stt = "class='bg-danger'";
             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
@@ -1822,18 +1845,22 @@ class DichVuController extends Controller
                     foreach($u as $r){
                         if ($r->hasRole('to_phu_kien')) {
                             $ten = $r->userDetail->surname;
-                            $ktv = KTVBHPK::where("id_work",$r->id)->orderBy('id_baogia','desc')->get();
+                            $ktv = KTVBHPK::where([
+                                ["id_work","=",$r->id],
+                                ["isDone","=",true]
+                            ])->orderBy('id_baogia','desc')->get();
                             foreach($ktv as $k) {
                                 $bg = BaoGiaBHPK::select("*")
                                 ->where([
+                                    ['trangThaiThu','=',true],
                                     ['isDone','=',true],
                                     ['isCancel','=',false],
                                     ['isBaoHiem','=', false],
                                     ['id','=',$k->id_baogia]
                                 ])->get();
                                 foreach($bg as $row) {
-                                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
-                                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                                    if ((strtotime($row->ngayThu) >= strtotime($tu)) 
+                                    &&  (strtotime($row->ngayThu) <= strtotime($den))) {
                                         $ct = ChiTietBHPK::where([
                                             ['id_baogia','=',$k->id_baogia],
                                             ['id_baohiem_phukien','=',$k->id_bhpk]
@@ -1900,10 +1927,14 @@ class DichVuController extends Controller
                     $i = 1;
                     if ($r->hasRole('to_phu_kien')) {
                         $ten = $r->userDetail->surname;
-                        $ktv = KTVBHPK::where("id_work",$r->id)->orderBy('id_baogia','desc')->get();
+                        $ktv = KTVBHPK::where([
+                            ["id_work","=",$r->id],
+                            ["isDone","=",true]
+                        ])->orderBy('id_baogia','desc')->get();
                         foreach($ktv as $k) {
                             $bg = BaoGiaBHPK::select("*")
                             ->where([
+                                ['trangThaiThu','=',true],
                                 ['isDone','=',true],
                                 ['isCancel','=',false],
                                 ['isBaoHiem','=', false],
@@ -2012,11 +2043,12 @@ class DichVuController extends Controller
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
                 $bhpk = BHPK::find($row->id_bhpk);                
                 $stt = "";
+                $tacVu = "";
                 if ($row->isDone) {
                     $stt = "<span class='text-bold text-success'>Đã hoàn tất</span>";
                 }
                 else {
-                    $tacVu = "<button class='btn btn-info'>Hoàn tất</button>";
+                    $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
                     $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
                 }                 
                 echo "<tr>
@@ -2089,6 +2121,15 @@ class DichVuController extends Controller
         // }
         
         $xoa = KTVBHPK::find($request->id);
+        
+        if ($xoa->isDone) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'KTV này đã xác nhận hoàn tất công việc, không thể xoá!'
+            ]);
+        }
+
         $xoa->delete();        
         if ($xoa) {
             $ktv = KTVBHPK::select("ktv_bhpk.id","ktv_bhpk.id_baogia","ktv_bhpk.id_bhpk","d.surname","d.id_user")
@@ -2373,6 +2414,33 @@ class DichVuController extends Controller
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã hoàn trạng!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function hoanTatCongViec(Request $request) {
+        $ktv = KTVBHPK::find($request->id);
+        $bhpk = BHPK::find($ktv->id_bhpk);
+        $bg = BaoGiaBHPK::find($ktv->id_baogia);
+        $ktv->isDone = true;
+        $ktv->save();
+        if($ktv) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Báo cáo tiến độ";
+            $nhatKy->noiDung = "Đã xác nhận hoàn tất công việc: " . $bhpk->noiDung 
+            . "; Số báo giá BG0" . $bg->id;
+            $nhatKy->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã hoàn tất công việc!',
                 'code' => 200
             ]);
         } else {
