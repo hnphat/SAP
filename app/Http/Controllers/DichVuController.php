@@ -1837,6 +1837,7 @@ class DichVuController extends Controller
                         <th>Công việc</th>
                         <th>Doanh thu</th>                    
                         <th>Công</th>
+                        <th>Ngày hoàn tất</th>
                     </tr>
                 <tbody>";   
                 if ($nv == 0) {
@@ -1859,8 +1860,10 @@ class DichVuController extends Controller
                                     ['id','=',$k->id_baogia]
                                 ])->get();
                                 foreach($bg as $row) {
-                                    if ((strtotime($row->ngayThu) >= strtotime($tu)) 
-                                    &&  (strtotime($row->ngayThu) <= strtotime($den))) {
+                                    // if ((strtotime($row->ngayThu) >= strtotime($tu)) 
+                                    // &&  (strtotime($row->ngayThu) <= strtotime($den))) {
+                                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($k->updated_at)) >= strtotime($tu)) 
+                                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($k->updated_at)) <= strtotime($den))) {
                                         $ct = ChiTietBHPK::where([
                                             ['id_baogia','=',$k->id_baogia],
                                             ['id_baohiem_phukien','=',$k->id_bhpk]
@@ -1913,6 +1916,7 @@ class DichVuController extends Controller
                                                     <td class='text-bold text-info'>".$_congviec."</span></td>
                                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                                     <td class='text-bold text-success'>".number_format($_cong)."</td>
+                                                    <td>".\HelpFunction::getDateRevertCreatedAt($k->updated_at)."</td>
                                                 </tr>";
                                     }
                                 }                                
@@ -1941,8 +1945,8 @@ class DichVuController extends Controller
                                 ['id','=',$k->id_baogia]
                             ])->get();
                             foreach($bg as $row) {
-                                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
-                                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($k->updated_at)) >= strtotime($tu)) 
+                                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($k->updated_at)) <= strtotime($den))) {
                                     $ct = ChiTietBHPK::where([
                                         ['id_baogia','=',$k->id_baogia],
                                         ['id_baohiem_phukien','=',$k->id_bhpk]
@@ -1994,6 +1998,7 @@ class DichVuController extends Controller
                                                 <td class='text-bold text-info'>".$_congviec."</span></td>
                                                 <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                                 <td class='text-bold text-success'>".number_format($_cong)."</td>
+                                                <td>".\HelpFunction::getDateRevertCreatedAt($k->updated_at)."</td>
                                             </tr>";
                                 }
                             }                                
