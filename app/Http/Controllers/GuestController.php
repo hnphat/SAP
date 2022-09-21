@@ -18,15 +18,23 @@ class GuestController extends Controller
         return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
     }
 
+    public function indexBaoCao() {
+        $type_guest = TypeGuest::all();
+        $sale = Sale::where('id_user_create',Auth::user()->id)->get();
+        return view('page.khachhangkdbaocao', ['typeGuest' => $type_guest, 'sale' => $sale]);
+    }
+
     public function getList() {
-        if (Auth::user()->hasRole('system'))
-            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster')
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
+            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                 ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                 ->orderBy('guest.id', 'DESC')
                 ->get();
         if (Auth::user()->hasRole('sale'))
-            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster')
+            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                 ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                 ->where('id_user_create', Auth::user()->id)
                 ->orderBy('guest.id', 'DESC')
                 ->get();
@@ -67,6 +75,7 @@ class GuestController extends Controller
         $guest->phone = $request->dienThoai;
         $guest->address = $request->diaChi;
         $guest->id_user_create = Auth::user()->id;
+        $guest->nguon = $request->nguon;
         $guest->save();
 
         if($guest) {
@@ -98,7 +107,8 @@ class GuestController extends Controller
     public function delete(Request $request) {
         $result = Guest::find($request->id);
         $temp = $result;
-        $result->delete();
+        if (Auth::user()->hasRole('system') || Auth::user()->id == $result->id_user_create)
+            $result->delete();    
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
@@ -139,19 +149,22 @@ class GuestController extends Controller
 
     public function update(Request $request) {
         $temp = Guest::find($request->eid);
-        $result = Guest::where('id',$request->eid)->update([
-            'id_type_guest' => $request->eloai,
-            'name' => $request->eten,
-            'phone' => $request->edienThoai,
-            'address' => $request->ediaChi,
-            'mst' => $request->emst,
-            'cmnd' => $request->ecmnd,
-            'ngayCap' => $request->engayCap,
-            'noiCap' => $request->enoiCap,
-            'ngaySinh' => $request->engaySinh,
-            'daiDien' => $request->edaiDien,
-            'chucVu' => $request->echucVu
-        ]);
+        if (Auth::user()->hasRole('system') || Auth::user()->id == $temp->id_user_create) {
+            $result = Guest::where('id',$request->eid)->update([
+                'id_type_guest' => $request->eloai,
+                'name' => $request->eten,
+                'phone' => $request->edienThoai,
+                'address' => $request->ediaChi,
+                'mst' => $request->emst,
+                'cmnd' => $request->ecmnd,
+                'ngayCap' => $request->engayCap,
+                'noiCap' => $request->enoiCap,
+                'ngaySinh' => $request->engaySinh,
+                'daiDien' => $request->edaiDien,
+                'chucVu' => $request->echucVu,
+                'nguon' => $request->enguon
+            ]);
+        }
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;

@@ -127,6 +127,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
     Route::group(['prefix' => 'guest', 'middleware' => ['f_guest']], function(){
         Route::get('list','GuestController@index')->name('guest.list');
+        Route::get('list/baocao','GuestController@indexBaoCao')->name('guest.list.baocao');
         Route::get('get/list','GuestController@getList');
         Route::get('check/{num}','GuestController@checkPhone');
         Route::post('add','GuestController@add');

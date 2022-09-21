@@ -29,6 +29,9 @@ class CreateGuestsTable extends Migration
             $table->string('ngaySinh',255)->nullable();
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
+            $table->string('nguon',50)->nullable();
+            // $table->boolean('mode_guest')->default(false);
+            // $table->string('ngayNhap',10)->nullable();
             $table->timestamps();
         });
     }

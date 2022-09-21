@@ -119,6 +119,17 @@
                                                                                 <label>Chức vụ (nếu có)</label>
                                                                                 <input name="chucVu" type="text" class="form-control" placeholder="Chức vụ">
                                                                             </div>
+                                                                            <div class="form-group">
+                                                                                <label>Nguồn khách hàng</label>
+                                                                                <select name="nguon" id="nguon" class="form-control">
+                                                                                    <option value="Showroom">Showroom</option>   
+                                                                                    <option value="Thị Trường">Thị Trường</option>
+                                                                                    <option value="Online">Online</option>
+                                                                                    <option value="Giới thiệu">Giới thiệu</option>
+                                                                                    <option value="Marketing">Marketing</option>
+                                                                                    <option value="Sự kiện">Sự kiện</option>                                                          
+                                                                                </select>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -217,6 +228,18 @@
                                                                                 <label>Chức vụ (nếu có)</label>
                                                                                 <input name="echucVu" type="text" class="form-control" placeholder="Chức vụ">
                                                                             </div>
+                                                                            <div class="form-group">
+                                                                                <label>Nguồn khách hàng</label>
+                                                                                <select name="enguon" id="enguon" class="form-control">
+                                                                                    <option value="Showroom">Showroom</option>   
+                                                                                    <option value="Thị Trường">Thị Trường</option>
+                                                                                    <option value="Online">Online</option>
+                                                                                    <option value="Giới thiệu">Giới thiệu</option>
+                                                                                    <option value="Marketing">Marketing</option>  
+                                                                                    <option value="Sự kiện">Sự kiện</option>                                                    
+                                                                                </select>
+                                                                            </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                     <div class="card-footer">
@@ -237,7 +260,9 @@
                                             <thead>
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
-                                                <th>Loại KH</th>
+                                                <th>Ngày nhập</th>
+                                                <th>Loại</th>
+                                                <th>Nguồn</th>
                                                 <th>Tên</th>
                                                 <th>Điện thoại</th>
                                                 <th>Mã số thuế</th>
@@ -248,6 +273,7 @@
                                                 <th>Đại diện</th>
                                                 <th>Chức vụ</th>
                                                 <th>Địa chỉ</th>
+                                                <th>Người nhập</th>
                                                 <th>Tác vụ</th>
                                             </tr>
                                             </thead>
@@ -311,7 +337,14 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
+                    { "data": null,
+                        render: function(data, type, row) {
+                            let arr = row.created_at.split("T")[0].split("-");
+                            return arr[2] + "-" + arr[1] + "-" + arr[0];
+                        } 
+                    },
                     { "data": "type" },
+                    { "data": "nguon" },
                     { "data": "name" },
                     { "data": "phone" },
                     { "data": "mst" },
@@ -322,6 +355,7 @@
                     { "data": "daiDien" },
                     { "data": "chucVu" },
                     { "data": "address" },
+                    { "data": "sale" },
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -450,6 +484,7 @@
                         console.log(response);
                         $("input[name=eid]").val(response.data.id);
                         $("select[name=eloai]").val(response.data.id_type_guest);
+                        $("select[name=enguon]").val(response.data.nguon);
                         $("input[name=eten]").val(response.data.name);
                         $("input[name=engaySinh]").val(response.data.ngaySinh);
                         $("input[name=emst]").val(response.data.mst);
@@ -509,6 +544,7 @@
                                 'ediaChi': $("input[name=ediaChi]").val(),
                                 'edaiDien': $("input[name=edaiDien]").val(),
                                 'echucVu': $("input[name=echucVu]").val(),
+                                'enguon': $("select[name=enguon]").val(),
                             },
                             success: function(response) {
                                 $("#editForm")[0].reset();
