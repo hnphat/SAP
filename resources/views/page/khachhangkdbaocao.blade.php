@@ -112,7 +112,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/guest/get/list') }}",
+                ajax: "{{ url('management/guest/get/list/report') }}",
                 "columnDefs": [ {
                     "searchable": false,
                     "orderable": false,

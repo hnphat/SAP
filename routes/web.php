@@ -129,11 +129,16 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list','GuestController@index')->name('guest.list');
         Route::get('list/baocao','GuestController@indexBaoCao')->name('guest.list.baocao');
         Route::get('get/list','GuestController@getList');
+        Route::get('get/list/report','GuestController@getListReport');
         Route::get('check/{num}','GuestController@checkPhone');
         Route::post('add','GuestController@add');
         Route::post('delete','GuestController@delete');
         Route::post('edit/show','GuestController@editShow');
         Route::post('update','GuestController@update');
+
+        // khách hàng - sale - hợp đồng
+        Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd');
+        Route::post('loadbaocaokhachhang','GuestController@loadBaoCaoKhachhangSaleHD');  
     });
     Route::group(['prefix' => 'kho', 'middleware' => ['f_kho']], function(){
         Route::get('list','KhoController@index')->name('kho.list');

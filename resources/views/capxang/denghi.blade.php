@@ -105,8 +105,10 @@
                                                             <label>Lý do cấp:</label>                                                        
                                                             <select name="lyDoCap" class="form-control">
                                                                 <option value="Xe showroom">Xe showroom</option>
-                                                                <option value="Công tác + sếp">Công tác + sếp</option>
-                                                                <option value="Lái thử + thị trường">Lái thử + thị trường</option>
+                                                                <option value="Công tác">Công tác</option>
+                                                                <option value="Sếp">Sếp</option>
+                                                                <option value="Lái thử">Lái thử</option>
+                                                                <option value="Thị trường">Thị trường</option>
                                                                 <option value="Giao xe mới">Giao xe mới</option>
                                                                 <option value="Xe lưu kho">Xe lưu kho</option>
                                                                 <option value="Dịch vụ">Dịch vụ</option>

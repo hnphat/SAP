@@ -131,9 +131,13 @@
                                  @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
-                                    <a href="{{route('guest.list.baocao')}}" class="nav-link">
+                                    <!-- <a href="{{route('guest.list.baocao')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Báo cáo khách hàng</p>
+                                    </a> -->
+                                    <a href="{{route('khachhang.sale.hd')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Quản lý saler</p>
                                     </a>
                                 </li>
                                 @endif
@@ -178,7 +182,8 @@
                                 </li>
                                 @endif
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
-                                    \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                     <li class="nav-item">
                                         <a href="{{route('sale.banggiaxe')}}" class="nav-link">
                                             <i class="fas fa-caret-right nav-icon"></i>
@@ -241,12 +246,12 @@
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{route('baohiem.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý bảo hiểm</p>
                             </a>
-                        </li>     
+                        </li>      -->
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))

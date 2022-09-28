@@ -127,7 +127,8 @@
                                                                                     <option value="Online">Online</option>
                                                                                     <option value="Giới thiệu">Giới thiệu</option>
                                                                                     <option value="Marketing">Marketing</option>
-                                                                                    <option value="Sự kiện">Sự kiện</option>                                                          
+                                                                                    <option value="Sự kiện">Sự kiện</option>
+                                                                                    <option value="Công ty">Công ty</option>                                                          
                                                                                 </select>
                                                                             </div>
                                                                         </div>
@@ -236,7 +237,8 @@
                                                                                     <option value="Online">Online</option>
                                                                                     <option value="Giới thiệu">Giới thiệu</option>
                                                                                     <option value="Marketing">Marketing</option>  
-                                                                                    <option value="Sự kiện">Sự kiện</option>                                                    
+                                                                                    <option value="Sự kiện">Sự kiện</option>
+                                                                                    <option value="Công ty">Công ty</option>                                                    
                                                                                 </select>
                                                                             </div>
                                                                             </div>

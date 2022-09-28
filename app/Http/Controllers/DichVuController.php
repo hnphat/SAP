@@ -27,7 +27,8 @@ class DichVuController extends Controller
 
     public function baoHiemPanel() {
         $user = User::all();
-        return view('dichvu.quanlybaohiem',['user' => $user]);
+        $bhpk = BHPK::all();
+        return view('dichvu.quanlybaohiem',['user' => $user, 'bhpk' => $bhpk]);
     }
 
     public function khachHangPanel() {
