@@ -337,7 +337,7 @@ class GuestController extends Controller
                             <td><strong class='text-success'>".$tonghdxuat."</strong></td>
                             <td><strong class='text-orange'>".$tongkh."</strong></td>
                             <td><strong class='text-info'>".number_format($tongpkban)."<strong></td>
-                        </tr></div>";
+                        </tr><tbody></table></div>";
         } else {
             $u = User::find($nv);
             $hdky = 0;
@@ -404,7 +404,40 @@ class GuestController extends Controller
                     <td><strong class='text-success'>".$hdxuat."</strong></td>
                     <td><strong class='text-orange'>".$guestnew."</strong></td>
                     <td><strong class='text-info'>".number_format($pkban)."<strong></td>
-                </tr>";
+                </tr><tbody></table>";
+            
+            // Show danh sách khách hàng Chăm sóc
+            echo "<h5>THÔNG TIN KHÁCH HÀNG CHI TIẾT</h5>
+            <table class='table table-striped table-bordered'>
+                        <tr class='text-center'>
+                            <th>STT</th>
+                            <th>Họ và tên</th>
+                            <th>Nguồn</th>
+                            <th>Dòng xe tìm hiểu</th>
+                            <th>CS L1</th>
+                            <th>CS L2</th>
+                            <th>CS L3</th>
+                            <th>CS L4</th>
+                        </tr>
+                        <tbody>";
+            $chamSoc = Guest::select("*")->where('id_user_create', $u->id)->get();
+            $j = 1;
+            foreach($chamSoc as $khach){
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($khach->created_at)) >= strtotime($tu)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($khach->created_at)) <= strtotime($den))) {
+                    echo "<tr class='text-center'>
+                        <td>".($j++)."</td>
+                        <td>".$khach->name."</td>
+                        <td><strong class='text-primary'>".$khach->nguon."</strong></td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                    </tr>";
+                }
+            }    
+            echo "</tbody></table></div>";
         }
     }
 }
