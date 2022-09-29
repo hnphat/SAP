@@ -19,7 +19,9 @@ class GuestMiddleWare
         if (Auth::user()->hasRole('system') ||
             Auth::user()->hasRole('sale') ||
             Auth::user()->hasRole('tpkd') ||
-            Auth::user()->hasRole('adminsale'))
+            Auth::user()->hasRole('adminsale') ||
+            Auth::user()->hasRole('boss') ||
+            Auth::user()->hasRole('mkt'))
             return $next($request);
         else abort(403);
     }
