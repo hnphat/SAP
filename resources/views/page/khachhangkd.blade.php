@@ -120,6 +120,19 @@
                                                                                 <input name="chucVu" type="text" class="form-control" placeholder="Chức vụ">
                                                                             </div>
                                                                             <div class="form-group">
+                                                                                <label>Lên hợp đồng</label>
+                                                                                <select name="lenHopDong" id="lenHopDong" class="form-control">
+                                                                                    <option value="0">KHÔNG</option>
+                                                                                    <option value="1">CÓ</option>
+                                                                                </select>
+                                                                            </div>                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr>
+                                                                    <h5>CHĂM SÓC KHÁCH HÀNG</h5>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-4">
+                                                                            <div class="form-group">
                                                                                 <label>Nguồn khách hàng</label>
                                                                                 <select name="nguon" id="nguon" class="form-control">
                                                                                     <option value="Showroom">Showroom</option>   
@@ -130,6 +143,36 @@
                                                                                     <option value="Sự kiện">Sự kiện</option>
                                                                                     <option value="Công ty">Công ty</option>                                                          
                                                                                 </select>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Xe quan tâm</label>
+                                                                                <input name="quanTam" type="text" class="form-control" placeholder="Xe quan tâm">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Đánh giá</label>
+                                                                                <select name="danhGia" id="danhGia" class="form-control">
+                                                                                    <option value="HOT">HOT</option>
+                                                                                    <option value="WARM">WARM</option>
+                                                                                    <option value="COLD" selected>COLD</option>                                                          
+                                                                                </select>
+                                                                            </div>                                                                                                                                          
+                                                                        </div>
+                                                                        <div class="col-sm-8">
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 1</label>
+                                                                                <input name="cs1" type="text" class="form-control" placeholder="Chăm sóc lần 1">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 2</label>
+                                                                                <input name="cs2" type="text" class="form-control" placeholder="Chăm sóc lần 2">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 3</label>
+                                                                                <input name="cs3" type="text" class="form-control" placeholder="Chăm sóc lần 3">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 4</label>
+                                                                                <input name="cs4" type="text" class="form-control" placeholder="Chăm sóc lần 4">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -230,24 +273,67 @@
                                                                                 <input name="echucVu" type="text" class="form-control" placeholder="Chức vụ">
                                                                             </div>
                                                                             <div class="form-group">
+                                                                                <label>Lên hợp đồng</label>
+                                                                                <select name="elenHopDong" id="elenHopDong" class="form-control">
+                                                                                    <option value="0">KHÔNG</option>
+                                                                                    <option value="1">CÓ</option>
+                                                                                </select>
+                                                                            </div>
+                                                                          </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                                <h5>CHĂM SÓC KHÁCH HÀNG</h5>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-4">
+                                                                            <div class="form-group">
                                                                                 <label>Nguồn khách hàng</label>
                                                                                 <select name="enguon" id="enguon" class="form-control">
                                                                                     <option value="Showroom">Showroom</option>   
                                                                                     <option value="Thị Trường">Thị Trường</option>
                                                                                     <option value="Online">Online</option>
                                                                                     <option value="Giới thiệu">Giới thiệu</option>
-                                                                                    <option value="Marketing">Marketing</option>  
+                                                                                    <option value="Marketing">Marketing</option>
                                                                                     <option value="Sự kiện">Sự kiện</option>
-                                                                                    <option value="Công ty">Công ty</option>                                                    
+                                                                                    <option value="Công ty">Công ty</option>                                                          
                                                                                 </select>
                                                                             </div>
+                                                                            <div class="form-group">
+                                                                                <label>Xe quan tâm</label>
+                                                                                <input name="equanTam" type="text" class="form-control" placeholder="Xe quan tâm">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Đánh giá</label>
+                                                                                <select name="edanhGia" id="edanhGia" class="form-control">
+                                                                                    <option value="HOT">HOT</option>
+                                                                                    <option value="WARM">WARM</option>
+                                                                                    <option value="COLD">COLD</option>                                                          
+                                                                                </select>
+                                                                            </div>                                                                                                                                          
+                                                                        </div>
+                                                                        <div class="col-sm-8">
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 1</label>
+                                                                                <input name="ecs1" type="text" class="form-control" placeholder="Chăm sóc lần 1">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 2</label>
+                                                                                <input name="ecs2" type="text" class="form-control" placeholder="Chăm sóc lần 2">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 3</label>
+                                                                                <input name="ecs3" type="text" class="form-control" placeholder="Chăm sóc lần 3">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc lần 4</label>
+                                                                                <input name="ecs4" type="text" class="form-control" placeholder="Chăm sóc lần 4">
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                    
                                                                     <div class="card-footer">
                                                                         <button id="btnUpdate" class="btn btn-success">Cập nhật</button>
-                                                                    </div>
-                                                                </div>
+                                                                    </div>                                                            
                                                             </form>
                                                         </div>
                                                         <!-- /.card -->
@@ -267,16 +353,22 @@
                                                 <th>Nguồn</th>
                                                 <th>Tên</th>
                                                 <th>Điện thoại</th>
-                                                <th>Mã số thuế</th>
+                                                <th>Địa chỉ</th>                                                
+                                                <th>Đánh giá</th>
+                                                <th>Xe quan tâm</th>
+                                                <th>CSL1</th>
+                                                <th>CSL2</th>
+                                                <th>CSL3</th>
+                                                <th>CSL4</th>
+                                                <th>Người nhập</th>
+                                                <th>Tác vụ</th>
                                                 <th>Ngày sinh</th>
+                                                <th>MST</th>
                                                 <th>CMND</th>
                                                 <th>Ngày cấp</th>
                                                 <th>Nơi cấp</th>
                                                 <th>Đại diện</th>
                                                 <th>Chức vụ</th>
-                                                <th>Địa chỉ</th>
-                                                <th>Người nhập</th>
-                                                <th>Tác vụ</th>
                                             </tr>
                                             </thead>
                                         </table>
@@ -349,14 +441,23 @@
                     { "data": "nguon" },
                     { "data": "name" },
                     { "data": "phone" },
-                    { "data": "mst" },
-                    { "data": "ngaySinh" },
-                    { "data": "cmnd" },
-                    { "data": "ngayCap" },
-                    { "data": "noiCap" },
-                    { "data": "daiDien" },
-                    { "data": "chucVu" },
                     { "data": "address" },
+                    { "data": null,
+                        render: function(data, type, row) {
+                            let stt = "";
+                            switch(row.danhGia) {
+                                case "COLD": stt = "<strong class='text-blue'>" + row.danhGia + "</strong>"; break;
+                                case "WARM": stt = "<strong class='text-orange'>" + row.danhGia + "</strong>"; break;
+                                case "HOT": stt = "<strong class='text-red'>" + row.danhGia + "</strong>"; break;
+                            }              
+                            return stt;
+                        }
+                    },
+                    { "data": "xeQuanTam" },
+                    { "data": "cs1" },
+                    { "data": "cs2" },
+                    { "data": "cs3" },
+                    { "data": "cs4" },
                     { "data": "sale" },
                     {
                         "data": null,
@@ -364,7 +465,14 @@
                             return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
                         }
-                    }
+                    },
+                    { "data": "ngaySinh" },
+                    { "data": "mst" },
+                    { "data": "cmnd" },
+                    { "data": "ngayCap" },
+                    { "data": "noiCap" },
+                    { "data": "daiDien" },
+                    { "data": "chucVu" },
                 ]
             });
             table.on( 'order.dt search.dt', function () {
@@ -425,8 +533,8 @@
                             success: function(response) {
                                 $("#addForm")[0].reset();
                                 Toast.fire({
-                                    icon: 'success',
-                                    title: " Đã thêm " + response.noidung
+                                    icon: response.type,
+                                    title: response.message
                                 })
                                 table.ajax.reload();
                                 $("#addModal").modal('hide');
@@ -498,6 +606,14 @@
                         $("input[name=edienThoai]").val(response.data.phone);
                         $("input[name=edienThoaiCopy]").val(response.data.phone);
                         $("input[name=ediaChi]").val(response.data.address);
+                        //-----------------
+                        $("input[name=equanTam]").val(response.data.xeQuanTam);
+                        $("select[name=edanhGia]").val(response.data.danhGia);
+                        $("select[name=elenHopDong]").val(response.data.lenHopDong);
+                        $("input[name=ecs1]").val(response.data.cs1);
+                        $("input[name=ecs2]").val(response.data.cs2);
+                        $("input[name=ecs3]").val(response.data.cs3);
+                        $("input[name=ecs4]").val(response.data.cs4);
                     },
                     error: function(){
                         Toast.fire({
@@ -547,6 +663,13 @@
                                 'edaiDien': $("input[name=edaiDien]").val(),
                                 'echucVu': $("input[name=echucVu]").val(),
                                 'enguon': $("select[name=enguon]").val(),
+                                'elenHopDong': $("select[name=elenHopDong]").val(),
+                                'edanhGia': $("select[name=edanhGia]").val(),
+                                'equanTam': $("input[name=equanTam]").val(),
+                                'ecs1': $("input[name=ecs1]").val(),
+                                'ecs2': $("input[name=ecs2]").val(),
+                                'ecs3': $("input[name=ecs3]").val(),
+                                'ecs4': $("input[name=ecs4]").val(),
                             },
                             success: function(response) {
                                 $("#editForm")[0].reset();

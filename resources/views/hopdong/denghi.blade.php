@@ -144,14 +144,16 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
-                                                <div class="form-group">
+                                                <div class="form-group" style="display:none;">
                                                     <label>Nguồn khách hàng</label>
                                                     <select name="nguonKH" id="nguonKH" class="form-control">
                                                         <option value="Showroom">Showroom</option>   
                                                         <option value="Thị Trường">Thị Trường</option>
                                                         <option value="Online">Online</option>
                                                         <option value="Giới thiệu">Giới thiệu</option>
-                                                        <option value="Marketing">Marketing</option>                                                      
+                                                        <option value="Marketing">Marketing</option>
+                                                        <option value="Sự kiện">Sự kiện</option>
+                                                        <option value="Công ty">Công ty</option>                                                      
                                                     </select>
                                                 </div>
                                             </div>

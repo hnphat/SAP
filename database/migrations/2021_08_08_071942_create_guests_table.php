@@ -30,8 +30,14 @@ class CreateGuestsTable extends Migration
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->string('nguon',50)->nullable();
-            // $table->boolean('mode_guest')->default(false);
-            // $table->string('ngayNhap',10)->nullable();
+            // ----------------------
+            $table->boolean('lenHopDong')->default(false);
+            $table->string('danhGia',10)->default('COLD');
+            $table->string('xeQuanTam',255)->nullable();
+            $table->string('cs1',255)->nullable();
+            $table->string('cs2',255)->nullable();
+            $table->string('cs3',255)->nullable();
+            $table->string('cs4',255)->nullable();
             $table->timestamps();
         });
     }

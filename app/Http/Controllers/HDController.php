@@ -161,7 +161,10 @@ class HDController extends Controller
 
     public function getGuestPersonal(){
         $result = Guest::where('id_type_guest',1)
-            ->where('id_user_create', Auth::user()->id)
+            ->where([
+                ['id_user_create','=', Auth::user()->id],
+                ['lenHopDong','=', true],
+            ])
             ->get();
         if($result) {
                 echo "<option value='0'>Chọn</option>";
@@ -175,7 +178,10 @@ class HDController extends Controller
 
     public function getGuestCompany(){
         $result = Guest::where('id_type_guest',2)
-            ->where('id_user_create', Auth::user()->id)
+            ->where([
+                ['id_user_create','=', Auth::user()->id],
+                ['lenHopDong','=', true],
+            ])
             ->get();
         if($result) {
             echo "<option value='0'>Chọn</option>";
@@ -1146,7 +1152,8 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/DENGHI.docx');
             // Set data from database
             $sale = HopDong::find($id);
-            $nguonKH = $sale->nguonKH;
+            // $nguonKH = $sale->nguonKH;
+            $nguonKH = $sale->guest->nguon;
             $isTienMat = ($sale->isTienMat) ? "Tiền mặt" : "Ngân hàng";
             $tongChiPhi = 0;
             $i = 2;
@@ -1313,7 +1320,8 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/DENGHICONGTY.docx');
             // Set data from database
             $sale = HopDong::find($id);
-            $nguonKH = $sale->nguonKH;
+            // $nguonKH = $sale->nguonKH;
+            $nguonKH = $sale->guest->nguon;
             $isTienMat = ($sale->isTienMat) ? "Tiền mặt" : "Ngân hàng";
             $tongChiPhi = 0;
             $i = 2;

@@ -18,6 +18,8 @@ use App\SaleOff;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpWord\TemplateProcessor;
+use Excel;
 
 class GuestController extends Controller
 {
@@ -99,47 +101,73 @@ class GuestController extends Controller
     }
 
     public function add(Request $request) {
-        $guest = new Guest;
+        $theArray = Excel::toArray([], storage_path('oldcus/data.xlsx'));
+        $numlen = count($theArray[1]);
+        $flag = true;
+        // dd($theArray[1][2][0]);                    
+        for($i = 1; $i < $numlen; $i++) {
+            if ($request->dienThoai == $theArray[1][$i][0]) {
+                $flag = false;
+                break;
+            }
+        }
 
-        $guest->id_type_guest = $request->loai;
-        $guest->name = $request->ten;
-        $guest->mst = $request->mst;
-        $guest->cmnd = $request->cmnd;
-        $guest->ngayCap = $request->ngayCap;
-        $guest->noiCap = $request->noiCap;
-        $guest->ngaySinh = $request->ngaySinh;
-        $guest->daiDien = $request->daiDien;
-        $guest->chucVu = $request->chucVu;
-        $guest->phone = $request->dienThoai;
-        $guest->address = $request->diaChi;
-        $guest->id_user_create = Auth::user()->id;
-        $guest->nguon = $request->nguon;
-        $guest->save();
+        if ($flag) {
+            $guest = new Guest;
+            $guest->id_type_guest = $request->loai;
+            $guest->name = $request->ten;
+            $guest->mst = $request->mst;
+            $guest->cmnd = $request->cmnd;
+            $guest->ngayCap = $request->ngayCap;
+            $guest->noiCap = $request->noiCap;
+            $guest->ngaySinh = $request->ngaySinh;
+            $guest->daiDien = $request->daiDien;
+            $guest->chucVu = $request->chucVu;
+            $guest->phone = $request->dienThoai;
+            $guest->address = $request->diaChi;
+            $guest->id_user_create = Auth::user()->id;
+            $guest->nguon = $request->nguon;
+            $guest->lenHopDong = $request->lenHopDong;
+            $guest->danhGia = $request->danhGia;
+            $guest->xeQuanTam = $request->quanTam;
+            $guest->cs1 = $request->cs1;
+            $guest->cs2 = $request->cs2;
+            $guest->cs3 = $request->cs3;
+            $guest->cs4 = $request->cs4;
+            $guest->save();
 
-        if($guest) {
-            
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->chucNang = "Kinh doanh - Khách hàng";
-            $nhatKy->noiDung = "Thêm khách hàng mới <br/>Họ tên: "
-            .$request->ten." <br/>CMND: ".$request->cmnd." <br/>Ngày cấp: ".$request->ngayCap." <br/>Nơi cấp: "
-            .$request->noiCap." <br/>MST: ".$request->mst." <br/>Đại diện: ".$request->daiDien." <br/>Chức vụ: "
-            .$request->chucVu." <br/>Điện thoại: ".$request->dienThoai." <br/>Địa chỉ: " . $request->diaChi;
-            $nhatKy->save();
+            if($guest) {
+                
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                $nhatKy->noiDung = "Thêm khách hàng mới <br/>Họ tên: "
+                .$request->ten." <br/>CMND: ".$request->cmnd." <br/>Ngày cấp: ".$request->ngayCap." <br/>Nơi cấp: "
+                .$request->noiCap." <br/>MST: ".$request->mst." <br/>Đại diện: ".$request->daiDien." <br/>Chức vụ: "
+                .$request->chucVu." <br/>Điện thoại: ".$request->dienThoai." <br/>Địa chỉ: " . $request->diaChi;
+                $nhatKy->save();
 
-            return response()->json([
-                'message' => 'Insert data successfully!',
-                'code' => 200,
-                'noidung' => $request->ten
-            ]);
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã thêm: ' . $request->ten,
+                    'code' => 200,
+                    'noidung' => $request->ten
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
         } else {
             return response()->json([
-                'message' => 'Internal server fail!',
+                'type' => 'error',
+                'message' => ' Đây là khách hàng cũ từ Hcare không thể thêm!',
                 'code' => 500
             ]);
         }
-
     }
 
     public function delete(Request $request) {
@@ -200,7 +228,14 @@ class GuestController extends Controller
                 'ngaySinh' => $request->engaySinh,
                 'daiDien' => $request->edaiDien,
                 'chucVu' => $request->echucVu,
-                'nguon' => $request->enguon
+                'nguon' => $request->enguon,
+                'lenHopDong' => $request->elenHopDong,
+                'danhGia' => $request->edanhGia,
+                'xeQuanTam' => $request->equanTam,
+                'cs1' => $request->ecs1,
+                'cs2' => $request->ecs2,
+                'cs3' => $request->ecs3,
+                'cs4' => $request->ecs4,
             ]);
         }
         if($result) {
@@ -413,7 +448,8 @@ class GuestController extends Controller
                             <th>STT</th>
                             <th>Họ và tên</th>
                             <th>Nguồn</th>
-                            <th>Dòng xe tìm hiểu</th>
+                            <th>Đánh giá</th>
+                            <th>Xe quan tâm</th>
                             <th>CS L1</th>
                             <th>CS L2</th>
                             <th>CS L3</th>
@@ -425,15 +461,22 @@ class GuestController extends Controller
             foreach($chamSoc as $khach){
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($khach->created_at)) >= strtotime($tu)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($khach->created_at)) <= strtotime($den))) {
+                    $stt = "";
+                    switch($khach->danhGia) {
+                        case "COLD": $stt = "<strong class='text-blue'>".$khach->danhGia."</strong>"; break;
+                        case "WARM": $stt = "<strong class='text-orange'>".$khach->danhGia."</strong>"; break;
+                        case "HOT": $stt = "<strong class='text-red'>".$khach->danhGia."</strong>"; break;
+                    }
                     echo "<tr class='text-center'>
                         <td>".($j++)."</td>
                         <td>".$khach->name."</td>
                         <td><strong class='text-primary'>".$khach->nguon."</strong></td>
-                        <td>Processing...</td>
-                        <td>Processing...</td>
-                        <td>Processing...</td>
-                        <td>Processing...</td>
-                        <td>Processing...</td>
+                        <td>".$stt."</td>
+                        <td>".$khach->xeQuanTam."</td>
+                        <td><i>".$khach->cs1."</i></td>
+                        <td><i>".$khach->cs2."</i></td>
+                        <td><i>".$khach->cs3."</i></td>
+                        <td><i>".$khach->cs4."</i></td>
                     </tr>";
                 }
             }    
