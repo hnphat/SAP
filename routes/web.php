@@ -139,6 +139,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // khách hàng - sale - hợp đồng
         Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd');
         Route::post('loadbaocaokhachhang','GuestController@loadBaoCaoKhachhangSaleHD');  
+
+        // -------------- upload
+        Route::post('up/file','GuestController@upFile')->name('guest.upload.file');
     });
     Route::group(['prefix' => 'kho', 'middleware' => ['f_kho']], function(){
         Route::get('list','KhoController@index')->name('kho.list');

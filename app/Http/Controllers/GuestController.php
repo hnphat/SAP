@@ -101,7 +101,8 @@ class GuestController extends Controller
     }
 
     public function add(Request $request) {
-        $theArray = Excel::toArray([], storage_path('oldcus/data.xlsx'));
+        // $theArray = Excel::toArray([], storage_path('oldcus/data.xlsx'));
+        $theArray = Excel::toArray([], 'upload/oldcus/data.xlsx');
         $numlen = count($theArray[1]);
         $flag = true;
         // dd($theArray[1][2][0]);                    
@@ -482,5 +483,19 @@ class GuestController extends Controller
             }    
             echo "</tbody></table></div>";
         }
+    }
+
+    public function upFile(Request $request) {
+        $this->validate($request,[
+            '_tep'  => 'required|mimes:xls,xlsx|max:10480',
+        ]);
+        // echo "OK";
+        // $files = $request->file('_tep');
+        // $etc = strtolower($files->getClientOriginalExtension());
+        // $files->move('upload/oldcus/', "data." . $etc);
+        // return redirect()->route('guest.upload.file')->with('succ','Đã tải dữ liệu!');  
+        $fileName = 'data.'.$request->_tep->extension();  
+        $request->_tep->move(public_path('upload/oldcus/'), $fileName);
+        return back()->with('succ','You have successfully upload file.');      
     }
 }

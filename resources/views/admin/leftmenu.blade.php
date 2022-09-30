@@ -89,7 +89,7 @@
                                 <li class="nav-item">
                                     <a href="{{route('cong.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Loại công - phụ tùng</p>
+                                        <p>Khách hàng HCare</p>
                                     </a>
                                 </li>
                         @endif

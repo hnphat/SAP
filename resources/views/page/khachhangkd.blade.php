@@ -349,9 +349,9 @@
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
                                                 <th>Ngày nhập</th>
-                                                <th>Loại</th>
-                                                <th>Nguồn</th>
                                                 <th>Tên</th>
+                                                <th>Nguồn</th>
+                                                <th>Loại</th>
                                                 <th>Điện thoại</th>
                                                 <th>Địa chỉ</th>                                                
                                                 <th>Đánh giá</th>
@@ -437,9 +437,9 @@
                             return arr[2] + "-" + arr[1] + "-" + arr[0];
                         } 
                     },
-                    { "data": "type" },
-                    { "data": "nguon" },
                     { "data": "name" },
+                    { "data": "nguon" },
+                    { "data": "type" },
                     { "data": "phone" },
                     { "data": "address" },
                     { "data": null,

@@ -111,8 +111,7 @@
                                         </select>
                                     </div>   
                                 </div>
-                                <div class="col-md-4">  
-                                    
+                                <div class="col-md-4">
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
