@@ -1697,6 +1697,8 @@ class DichVuController extends Controller
                                 if ($item->isTang) {
                                     $_chiphitang += $item->thanhTien;
                                     $_tongdoanhthu -= $item->thanhTien;
+                                    if ($row->saler) 
+                                        $baogiakd -= $item->thanhTien;
                                 }       
                                 if ($row->saler) {
                                     $_sale = User::find($row->saler)->userDetail->surname;
@@ -1721,9 +1723,10 @@ class DichVuController extends Controller
                     echo "</tbody>
                         </table>";
                     echo "
-                    <h4>Báo giá khai thác: <span class='text-bold text-info'>".number_format($_tongdoanhthu - $baogiakd)."</span></h4>
-                    <h4>Báo giá kinh doanh: <span class='text-bold text-info'>".number_format($baogiakd)."</span></h4>
-                    <h3>Tổng: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>";
+                    <h3>Tổng: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>
+                    <h4><i>Báo giá kinh doanh: <span class='text-bold text-info'>".number_format($baogiakd)."</span></i></h4>
+                    <h4><i>Báo giá khai thác: <span class='text-bold text-info'>".number_format($_tongdoanhthu - $baogiakd)."</span></i></h4>
+                    ";
                 } else {    
                     $_tongdoanhthu = 0;
                     $bg = BaoGiaBHPK::select("*")
