@@ -291,7 +291,8 @@
                         </li>   
                         @endif   
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))
                         <li class="nav-item">
                             <a href="{{route('dichvu.baocaotiendo.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

@@ -1490,27 +1490,8 @@ class DichVuController extends Controller
         $nv = $request->nhanVien;
         $tu = $request->tu;
         $den = $request->den;
-        // $c_kd = 0;
-        // $pt_kd = 0;
-        // $ck_kd = 0;
-        // $tong_ck_kd = 0;
-        // $tong_ck_ptkd = 0;
-        // $tong_kd = 0;
-        // $c_kt = 0;
-        // $pt_kt = 0;
-        // $ck_kt = 0;
-        // $tong_ck_kt = 0;
-        // $tong_ck_ptkt = 0;
-        // $tong_kt = 0;
-        // $tb = "";
+        $baogiakd = 0;
         $i = 1;
-        //--------------
-        // $toTong = 0;
-        // $toTongKD = 0;
-        // $toTongCKKD = 0;
-        // $toTongKT = 0;
-        // $toTongCKKT = 0;
-        //--------------
         switch($loai) {
             case 1: {
                 echo "
@@ -1719,6 +1700,7 @@ class DichVuController extends Controller
                                 }       
                                 if ($row->saler) {
                                     $_sale = User::find($row->saler)->userDetail->surname;
+                                    $baogiakd += $item->thanhTien;
                                 }      
                                                        
                             }
@@ -1738,7 +1720,10 @@ class DichVuController extends Controller
                     }
                     echo "</tbody>
                         </table>";
-                    echo "<h3>Tổng: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>";
+                    echo "
+                    <h4>Báo giá khai thác: <span class='text-bold text-info'>".number_format($_tongdoanhthu - $baogiakd)."</span></h4>
+                    <h4>Báo giá kinh doanh: <span class='text-bold text-info'>".number_format($baogiakd)."</span></h4>
+                    <h3>Tổng: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>";
                 } else {    
                     $_tongdoanhthu = 0;
                     $bg = BaoGiaBHPK::select("*")
@@ -2030,7 +2015,8 @@ class DichVuController extends Controller
                     <th>Ngày</th>
                     <th>Mã lệnh</th>
                     <th>Biển số</th>
-                    <th>Số khung</th>
+                    <th>Khách hàng</th>
+                    <th>Thông tin xe</th>
                     <th>Công việc</th>                         
                     <th>Xe vào</th>
                     <th>Xe ra (dự kiến)</th>
@@ -2062,7 +2048,8 @@ class DichVuController extends Controller
                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                 <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
                 <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                <td class='text-bold text-primary'>".$bg->soKhung."</td>
+                <td>".$bg->hoTen."</td>
+                <td>".$bg->thongTinXe."</td>
                 <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
                 <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
