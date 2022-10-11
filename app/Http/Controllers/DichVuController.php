@@ -2340,12 +2340,18 @@ class DichVuController extends Controller
 
     public function showEditThu(Request $request) {
         $bg = BaoGiaBHPK::find($request->id);
+        $ct = ChiTietBHPK::select("b.noiDung","chitiet_bhpk.thanhTien","chitiet_bhpk.isTang")
+        ->join("baohiem_phukien as b","b.id","=","chitiet_bhpk.id_baohiem_phukien")
+        ->where([
+            ['chitiet_bhpk.id_baogia','=',$request->id],
+        ])->get();
         if($bg) {
             return response()->json([
                 'type' => 'info',
                 'message' => 'Đã lấy thông tin!',
                 'code' => 200,
-                'data' => $bg
+                'data' => $bg,
+                'chiTiet' => $ct
             ]);
         } else {
             return response()->json([

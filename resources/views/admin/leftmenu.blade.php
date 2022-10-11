@@ -474,6 +474,12 @@
                     @endif
                     <ul class="nav nav-treeview">
                             <li class="nav-item">
+                                <a href="{{route('nhansu.baocaoluong')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Lương</p>
+                                </a>
+                            </li> 
+                            <li class="nav-item">
                                 <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Thông tin nhân viên</p>

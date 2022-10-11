@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\LoaiPhep;
 use App\User;
+use App\Luong;
 use App\XinPhep;
 use App\TangCa;
 use App\Nhom;
@@ -3617,5 +3618,107 @@ class NhanSuController extends Controller
                 "message" => 'Lỗi load thông tin biên bản',
                 "code" => 500
             ]);        
+    }
+
+    public function loadBaoCaoLuong(){
+        $user = User::all();
+        return view('nhansu.luong', ['user' => $user]);
+    }
+
+    public function quanLyLuong(){
+        return view('nhansu.quanlyluong');
+    }
+
+    public function importLuong(Request $request) {
+        $this->validate($request,[
+            'fileBase'  => 'required|mimes:xls,xlsx|max:20480',
+        ]);
+        if($request->hasFile('fileBase')){
+            $theArray = Excel::toArray([], request()->file('fileBase')); 
+            // dd($theArray[1][1][0]);
+            if (strval($theArray[1][0][0]) == "CODE" && strval($theArray[1][0][1]) == "DOT1" && 
+            strval($theArray[1][0][2]) == "DOT2" && strval($theArray[1][0][3]) == "TNCN" && 
+            strval($theArray[1][0][4]) == "TOTAL") {
+                $luong = Luong::where([
+                    ['thang','=',$request->thang],
+                    ['nam','=',$request->nam],
+                ])->delete();
+                $numlen = count($theArray[1]);                    
+                for($i = 1; $i < $numlen; $i++) {
+                    if ($theArray[1][$i][0]) {
+                        $luongImport = new Luong();
+                        $luongImport->manv = strtolower($theArray[1][$i][0]);
+                        $luongImport->thang = $request->thang;
+                        $luongImport->nam = $request->nam;
+                        $luongImport->dot1 = ($theArray[1][$i][1] == null) ? 0 : $theArray[1][$i][1];
+                        $luongImport->dot2 = ($theArray[1][$i][2] == null) ? 0 : $theArray[1][$i][2];
+                        $luongImport->thue = ($theArray[1][$i][3] == null) ? 0 : $theArray[1][$i][3];
+                        $luongImport->thucLanh = ($theArray[1][$i][4] == null) ? 0 : $theArray[1][$i][4];
+                        $luongImport->save();        
+                    }            
+                }    
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Nhân sự - Lương - Quản lý";
+                $nhatKy->noiDung = "Import excel file lương tháng " . $request->thang . " năm " . $request->nam;
+                $nhatKy->save();                
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã Import, kiểm tra lại tại Nhân sự -> Lương',
+                    'code' => 200
+                ]);                  
+            }
+		} else {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Không tìm thấy file import lương',
+                'code' => 200
+            ]);    
+        }           
+    } 
+
+    public function loadLuong(Request $request) {
+        $nv = $request->nhanVien;
+        $thang = $request->thang;
+        $nam = $request->nam;
+
+        if ($nv = 0) {
+            // $luong = Luong::select("*")
+            // ->where([
+            //     ['thang','=',$thang],
+            //     ['nam','=',$nam],
+            // ])->get();
+            echo "<h4>PHÒNG KINH DOANH</h4>
+            <table class='table table-striped table-bordered'>
+                <tr>
+                    <th>NHÂN VIÊN</th>
+                    <th>THÁNG</th>
+                    <th>LƯƠNG ĐỢT 1</th>
+                    <th>LƯƠNG ĐỢT 2</th>
+                    <th>THUẾ CNCN</th>
+                    <th>TỔNG THỰC LÃNH</th>
+                </tr>
+                <tr>
+                    <td>Nguyễn Văn An</td>
+                    <td>Tháng 09</td>
+                    <td>1.567.223</td>
+                    <td>15.221.312</td>
+                    <td>2.560.000</td>
+                    <td>12.033.222</td>
+                </tr>
+                <tr>
+                    <td>Nguyễn Văn An</td>
+                    <td>Tháng 09</td>
+                    <td>1.567.223</td>
+                    <td>15.221.312</td>
+                    <td>2.560.000</td>
+                    <td>12.033.222</td>
+                </tr>
+            </table>";
+        } else {
+
+        }
+        
     }
 }

@@ -546,6 +546,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // Quản lý khen thưởng
         Route::post('xembienban','NhanSuController@xemBienBan');
+
+        // Báo cáo lương
+        Route::get('loadbaocaoluong','NhanSuController@loadBaoCaoLuong')->name('nhansu.baocaoluong');
+        Route::get('loadquanlyluong','NhanSuController@quanLyLuong')->name('nhansu.quanlyluong')->middleware(['f_nhansu']);
+        Route::post('ajax/importfileluong/','NhanSuController@importLuong');
+        Route::post('loadluong','NhanSuController@loadLuong');
     });
 
     Route::group(['prefix' => 'caphoa'], function(){

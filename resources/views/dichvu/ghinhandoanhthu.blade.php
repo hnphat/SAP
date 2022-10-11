@@ -93,6 +93,14 @@
                                 {{csrf_field()}}
                                 <input type="hidden" name="eid"/>
                                 <div class="card-body row">
+                                    <h5>Nội dung:</h5>
+                                    <div id="noiDungChiTiet" class="container">
+                                        <p>Đầu cá hồi: 5.000.000<br/>
+                                        Đầu cá hồi: 5.000.000 (tặng)<br/>
+                                        Đầu cá hồi: 5.000.000</p>
+                                    </div>
+                                </div>
+                                <div class="card-body row">
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Cần thu</label>
@@ -259,13 +267,24 @@
                         "id": $(this).data('id')
                     },
                     success: function(response) {
+                        $("#noiDungChiTiet").html("<p></p>");
                         $("input[name=eid]").val(response.data.id);
                         // $("select[name=trangThaiThu]").val(response.data.trangThaiThu);
                         $("input[name=canThu]").val( formatNumber(response.data.doanhThu - response.data.tang));
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
+                        //
+                        let txt = `<p>`;
+                        let chiTiet = response.chiTiet;
+                        for (let i = 0; i < chiTiet.length; i++) {
+                            txt += `${chiTiet[i].noiDung} giá: <strong>${formatNumber(chiTiet[i].thanhTien)}</strong>`;
+                            txt += (chiTiet[i].isTang == 1) ? ` (Tặng) <br/>` : ` <br/>`;
+                        }
+                        txt += `</p>`;
+                        $("#noiDungChiTiet").html(txt);                    
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        
                     },
                     error: function(){
                         Toast.fire({
