@@ -2275,52 +2275,57 @@ class NhanSuController extends Controller
         $user = User::select("*")->where('active', true)->get();
         $tong = 0;
         $chuaXacNhan = 0;
-        foreach($user as $row) {
-            if ($row->hasRole('chamcong')) {
-                $tong++;
-                $xacNhan = XacNhanCong::where([
-                    ['id_user','=', $row->id],
-                    ['thang','=', $request->thang],
-                    ['nam','=', $request->nam],
-                ])->first();
-                $stt = "";
-                if ($xacNhan !== null && $xacNhan->count() > 0) 
-                    $stt = "<span class='text-info'><strong>Đã xác nhận</strong></span>";
-                else {
-                    $chuaXacNhan++;
-                    $stt = "<span class='text-danger'><strong>Chưa xác nhận</strong></span>";
-                }     
-                if ($xacNhan !== null && $xacNhan->count() > 0) {
-                    echo "
-                        <tr>
-                            <td>".$row->userDetail->surname."</td>
-                            <td class='text-success'>".$xacNhan->ngayCong." (ngày)</td>
-                            <td class='text-success'>".$xacNhan->phepNam." (ngày)</td>
-                            <td class='text-info'>".$xacNhan->tangCa." (ngày)</td>
-                            <td><strong style='color: pink;'>".$xacNhan->tongTre."</strong> (phút)</td>
-                            <td class='text-danger'>".($xacNhan->khongPhep >= 0 ? $xacNhan->khongPhep : 0)."</td>
-                            <td class='text-danger'><strong>".$xacNhan->khongPhepNgay."</strong></td>
-                            <td>$stt</td>
-                            <td>
-                                <button id='huy' data-id='".$xacNhan->id_user."' data-thang='".$xacNhan->thang."' data-nam='".$xacNhan->nam."' class='btn btn-danger btn-sm'>Hủy</button>
-                            </td>
-                        </tr>
-                    ";
-                } else {
-                    echo "
-                        <tr>
-                            <td>".$row->userDetail->surname."</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>$stt</td>
-                            <td></td>
-                        </tr>
-                    ";
-                }    
+        $nhom = Nhom::all();
+        foreach($nhom as $n) {
+            $user = $n->user;
+            echo "<tr><td colspan='9' class='text-primary text-bold'>".$n->name."</td></tr>";
+            foreach($user as $row) {
+                if ($row->hasRole('chamcong')) {
+                    $tong++;
+                    $xacNhan = XacNhanCong::where([
+                        ['id_user','=', $row->id],
+                        ['thang','=', $request->thang],
+                        ['nam','=', $request->nam],
+                    ])->first();
+                    $stt = "";
+                    if ($xacNhan !== null && $xacNhan->count() > 0) 
+                        $stt = "<span class='text-info'><strong>Đã xác nhận</strong></span>";
+                    else {
+                        $chuaXacNhan++;
+                        $stt = "<span class='text-danger'><strong>Chưa xác nhận</strong></span>";
+                    }     
+                    if ($xacNhan !== null && $xacNhan->count() > 0) {
+                        echo "
+                            <tr>
+                                <td>".$row->userDetail->surname."</td>
+                                <td class='text-success'>".$xacNhan->ngayCong." (ngày)</td>
+                                <td class='text-success'>".$xacNhan->phepNam." (ngày)</td>
+                                <td class='text-info'>".$xacNhan->tangCa." (ngày)</td>
+                                <td><strong style='color: pink;'>".$xacNhan->tongTre."</strong> (phút)</td>
+                                <td class='text-danger'>".($xacNhan->khongPhep >= 0 ? $xacNhan->khongPhep : 0)."</td>
+                                <td class='text-danger'><strong>".$xacNhan->khongPhepNgay."</strong></td>
+                                <td>$stt</td>
+                                <td>
+                                    <button id='huy' data-id='".$xacNhan->id_user."' data-thang='".$xacNhan->thang."' data-nam='".$xacNhan->nam."' class='btn btn-danger btn-sm'>Hủy</button>
+                                </td>
+                            </tr>
+                        ";
+                    } else {
+                        echo "
+                            <tr>
+                                <td>".$row->userDetail->surname."</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>$stt</td>
+                                <td></td>
+                            </tr>
+                        ";
+                    }    
+                }
             }
         }
         echo "
@@ -3682,42 +3687,63 @@ class NhanSuController extends Controller
         $nv = $request->nhanVien;
         $thang = $request->thang;
         $nam = $request->nam;
-
-        if ($nv = 0) {
-            // $luong = Luong::select("*")
-            // ->where([
-            //     ['thang','=',$thang],
-            //     ['nam','=',$nam],
-            // ])->get();
-            echo "<h4>PHÒNG KINH DOANH</h4>
-            <table class='table table-striped table-bordered'>
-                <tr>
-                    <th>NHÂN VIÊN</th>
-                    <th>THÁNG</th>
-                    <th>LƯƠNG ĐỢT 1</th>
-                    <th>LƯƠNG ĐỢT 2</th>
-                    <th>THUẾ CNCN</th>
-                    <th>TỔNG THỰC LÃNH</th>
-                </tr>
-                <tr>
-                    <td>Nguyễn Văn An</td>
-                    <td>Tháng 09</td>
-                    <td>1.567.223</td>
-                    <td>15.221.312</td>
-                    <td>2.560.000</td>
-                    <td>12.033.222</td>
-                </tr>
-                <tr>
-                    <td>Nguyễn Văn An</td>
-                    <td>Tháng 09</td>
-                    <td>1.567.223</td>
-                    <td>15.221.312</td>
-                    <td>2.560.000</td>
-                    <td>12.033.222</td>
-                </tr>
-            </table>";
+        if ($nv == 0 && (Auth::user()->hasRole("system") || Auth::user()->hasRole("boss") || Auth::user()->hasRole("lead_chamcong"))) {
+            $nhom = Nhom::all();
+            foreach($nhom as $row) {
+                echo "<h4 class='text-primary'>".$row->name."</h4>";
+                echo "<table class='table table-striped table-bordered'>
+                    <tr>
+                        <th>NHÂN VIÊN</th>
+                        <th>LƯƠNG ĐỢT 1</th>
+                        <th>LƯƠNG ĐỢT 2</th>
+                        <th>THUẾ TNCN</th>
+                        <th>TỔNG THỰC LÃNH</th>
+                    </tr>";
+                $users = $row->user;
+                foreach($users as $r) {
+                    $luong = Luong::select("*")
+                    ->where([
+                        ['thang','=',$thang],
+                        ['nam','=',$nam],
+                        ['manv','=', strtolower($r->name)],
+                    ])->first();
+                    echo "
+                    <tr>
+                        <td>".$r->userDetail->surname."</td>
+                        <td>".(($luong) ? number_format($luong->dot1) : 0)."</td>
+                        <td>".(($luong) ? number_format($luong->dot2) : 0)."</td>
+                        <td>".(($luong) ? number_format($luong->thue) : 0)."</td>
+                        <td>".(($luong) ? number_format($luong->thucLanh) : 0)."</td>
+                    </tr>
+                    ";
+                }
+                echo "</table>";        
+            }
         } else {
-
+            echo "<table class='table table-striped table-bordered'>
+                    <tr>
+                        <th>NHÂN VIÊN</th>
+                        <th>LƯƠNG ĐỢT 1</th>
+                        <th>LƯƠNG ĐỢT 2</th>
+                        <th>THUẾ TNCN</th>
+                        <th>TỔNG THỰC LÃNH</th>
+                    </tr>";
+                    $luong = Luong::select("*")
+                    ->where([
+                        ['thang','=',$thang],
+                        ['nam','=',$nam],
+                        ['manv','=', strtolower(Auth::user()->name)],
+                    ])->first();
+                    echo "
+                    <tr>
+                        <td>".Auth::user()->userDetail->surname."</td>
+                        <td>".(($luong) ? number_format($luong->dot1) : 0)."</td>
+                        <td>".(($luong) ? number_format($luong->dot2) : 0)."</td>
+                        <td>".(($luong) ? number_format($luong->thue) : 0)."</td>
+                        <td>".(($luong) ? number_format($luong->thucLanh) : 0)."</td>
+                    </tr>
+                    ";
+            echo "</table>";
         }
         
     }

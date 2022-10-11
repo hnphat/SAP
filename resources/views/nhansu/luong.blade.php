@@ -49,7 +49,9 @@
                                             <div class="form-group">
                                                 <label>Chọn nhân viên</label>
                                                 <select name="nhanVien" class="form-control"> 
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                                                     <option value="0">Tất cả</option>                                                               
                                                     @foreach($user as $row)
                                                         @if($row->hasRole('chamcong') && $row->active)
@@ -57,12 +59,12 @@
                                                         @endif
                                                     @endforeach   
                                                 @else   
-                                                    <option value="{{$iduser}}">{{$nameuser}}</option>
+                                                    <option value="{{Auth::user()->id}}">{{Auth::user()->userDetail->surname}}</option>
                                                 @endif
                                                 </select> <br/>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <label>Tháng</label>
                                             <select name="thang" class="form-control">
                                                 @for($i = 1; $i <= 12; $i++)
@@ -82,7 +84,8 @@
                                             <div class="form-group">
                                                 <br/>
                                                 <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
                                                 <a href="{{route('nhansu.quanlyluong')}}" class="btn btn-primary btn-xs">QUẢN LÝ</a>
                                                 @endif
                                             </div>    
@@ -129,14 +132,14 @@
                 data: {
                     "_token": "{{csrf_token()}}",
                     "nhanVien": $("select[name=nhanVien]").val(),
-                    "thang": $("input[name=thang]").val(),
-                    "nam": $("input[name=nam").val()
+                    "thang": $("select[name=thang]").val(),
+                    "nam": $("select[name=nam").val()
                 },
                 success: function(response) {
-                    Toast.fire({
-                        icon: response.type,
-                        title: response.message
-                    })
+                    // Toast.fire({
+                    //     icon: response.type,
+                    //     title: response.message
+                    // })
                     $("#all").html(response);
                 },
                 error: function() {
