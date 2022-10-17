@@ -248,12 +248,13 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                 '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
                                 '2' => $row->user->userDetail->surname,
                                 '3' => $_sale,
-                                '4' => $_loaibg,
-                                '5' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
-                                '6' => $_doanhthu,
-                                '7' => $_chiphitang,
-                                '8' => ($_doanhthu-$_chiphitang),
-                                '9' => \HelpFunction::revertDate($row->ngayThu),
+                                '4' => $row->hoTen,
+                                '5' => $_loaibg,
+                                '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
+                                '7' => $_doanhthu,
+                                '8' => $_chiphitang,
+                                '9' => ($_doanhthu-$_chiphitang),
+                                '10' => \HelpFunction::revertDate($row->ngayThu),
                             );
                         }
                     }
@@ -298,12 +299,13 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                     '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
                                     '2' => $row->user->userDetail->surname,
                                     '3' => $_sale,
-                                    '4' => "Báo giá kinh doanh",
-                                    '5' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
-                                    '6' => $_doanhthu,
-                                    '7' => $_chiphitang,
-                                    '8' => ($_doanhthu-$_chiphitang),
-                                    '9' => \HelpFunction::revertDate($row->ngayThu)
+                                    '4' => $row->hoTen,
+                                    '5' => "Báo giá kinh doanh",
+                                    '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
+                                    '7' => $_doanhthu,
+                                    '8' => $_chiphitang,
+                                    '9' => ($_doanhthu-$_chiphitang),
+                                    '10' => \HelpFunction::revertDate($row->ngayThu)
                                 );
                             } 
                             
@@ -325,12 +327,13 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                     '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
                                     '2' => $row->user->userDetail->surname,
                                     '3' => $_sale,
-                                    '4' => "Báo giá khai thác",
-                                    '5' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
-                                    '6' => $_doanhthu,
-                                    '7' => $_chiphitang,
-                                    '8' => ($_doanhthu-$_chiphitang),
-                                    '9' => \HelpFunction::revertDate($row->ngayThu)
+                                    '4' => $row->hoTen,
+                                    '5' => "Báo giá khai thác",
+                                    '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
+                                    '7' => $_doanhthu,
+                                    '8' => $_chiphitang,
+                                    '9' => ($_doanhthu-$_chiphitang),
+                                    '10' => \HelpFunction::revertDate($row->ngayThu)
                                 );
                             }                                                         
                             
@@ -524,6 +527,7 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
             'Ngày tạo',
             'Người tạo',
             'Sale',
+            'KH',
             'Loại báo giá',
             'Số báo giá',
             'Doanh thu',
