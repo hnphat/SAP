@@ -1770,6 +1770,7 @@ class DichVuController extends Controller
                                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                     <td>".$row->user->userDetail->surname."</td>
                                     <td>".$_sale."</td>
+                                    <td>".$row->hoTen."</td>
                                     <td><span class='text-bold text-secondary'>Báo giá kinh doanh</span></td>
                                     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
