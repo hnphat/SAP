@@ -315,7 +315,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $hds[] = array(
                     '0' => $i++,
                     '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
-                    '2' => $row->nguonKH,
+                    '2' => $row->guest->nguon,
                     '3' => $loaihd,
                     '4' => $sale,
                     '5' => $guest,
@@ -433,7 +433,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $hds[] = array(
                     '0' => $i++,
                     '1' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
-                    '2' => $row->nguonKH,
+                    '2' => $row->guest->nguon,
                     '3' => $loaihd,
                     '4' => $sale,
                     '5' => $guest,

@@ -62,7 +62,9 @@
                             <div class="form-group">
                                 <input type="submit" id="xemReport" class="form-control btn btn-info" value="XEM"/>
                                 <br><br>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <button type="button" id="exportExcel" class="form-control btn btn-primary export">Xuất dữ liệu</button>
+                                @endif
                                 <!-- <a href ="{{url('exportexcel/') }} " class="form-control btn btn-primary export"> Xuất dữ liệu </a> -->
                             </div>
                         </div>

@@ -153,8 +153,10 @@
                                                 <label>Số chỗ ngồi</label>
                                                 <select name="seat" class="form-control">
                                                     <option value="0">Chọn</option>
+                                                    <option value="3">3 chỗ</option>
                                                     <option value="4">4 chỗ</option>
                                                     <option value="5">5 chỗ</option>
+                                                    <option value="6">6 chỗ</option>
                                                     <option value="7">7 chỗ</option>
                                                     <option value="9">9 chỗ</option>
                                                 </select>
@@ -231,8 +233,10 @@
                                                 <label>Số chỗ ngồi</label>
                                                 <select name="_seat" class="form-control">
                                                     <option value="0">Chọn</option>
+                                                    <option value="3">3 chỗ</option>
                                                     <option value="4">4 chỗ</option>
                                                     <option value="5">5 chỗ</option>
+                                                    <option value="6">6 chỗ</option>
                                                     <option value="7">7 chỗ</option>
                                                     <option value="9">9 chỗ</option>
                                                 </select>

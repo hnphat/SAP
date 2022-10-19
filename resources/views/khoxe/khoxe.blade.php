@@ -133,6 +133,7 @@
                                                 <option value="Nâu">Nâu</option>
                                                 <option value="Bạc">Bạc</option>
                                                 <option value="Xám">Xám</option>
+                                                <option value="Xám_kim_loại">Xám_kim_loại</option>
                                                 <option value="Đen">Đen</option>
                                                 <option value="Vàng_cát">Vàng_cát</option>
                                             </select>
@@ -267,6 +268,7 @@
                                                 <option value="Nâu">Nâu</option>
                                                 <option value="Bạc">Bạc</option>
                                                 <option value="Xám">Xám</option>
+                                                <option value="Xám_kim_loại">Xám_kim_loại</option>
                                                 <option value="Đen">Đen</option>
                                                 <option value="Vàng_cát">Vàng_cát</option>
                                             </select>

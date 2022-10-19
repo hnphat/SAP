@@ -1798,6 +1798,7 @@ class DichVuController extends Controller
                                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                     <td>".$row->user->userDetail->surname."</td>
                                     <td>".$_sale."</td>
+                                    <td>".$row->hoTen."</td>
                                     <td><span class='text-bold'>Báo giá khai thác</span></td>
                                     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
@@ -2027,6 +2028,7 @@ class DichVuController extends Controller
                     <th>Xe vào</th>
                     <th>Xe ra (dự kiến)</th>
                     <th>Trạng thái</th>   
+                    <th>Thu tiền</th>
                     <th>Tác vụ</th>            
                 </tr>
                 <tbody>";
@@ -2041,6 +2043,7 @@ class DichVuController extends Controller
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
                 $bhpk = BHPK::find($row->id_bhpk);                
                 $stt = "";
+                $sttThu = "";
                 $tacVu = "";
                 if ($row->isDone) {
                     $stt = "<span class='text-bold text-success'>Đã hoàn tất</span>";
@@ -2048,7 +2051,15 @@ class DichVuController extends Controller
                 else {
                     $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
                     $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                }                 
+                }     
+
+                if ($bg->trangThaiThu) {
+                    $sttThu = "<span class='text-bold text-success'>Đã thu</span>";
+                }
+                else {
+                    $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
+                }     
+
                 echo "<tr>
                 <td>".($i++)."</td>
                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
@@ -2060,6 +2071,7 @@ class DichVuController extends Controller
                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
                 <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
                 <td>".$stt."</td>
+                <td>".$sttThu."</td>
                 <td>
                     ".$tacVu."
                 </td>

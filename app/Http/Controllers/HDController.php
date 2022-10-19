@@ -3378,7 +3378,7 @@ class HDController extends Controller
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                    <td>".$row->nguonKH."</td>
+                    <td>".$row->guest->nguon."</td>
                     <td>".$loaihd."</td>
                     <td>".$sale."</td>
                     <td>".$guest."</td>
@@ -3502,7 +3502,7 @@ class HDController extends Controller
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                    <td>".$row->nguonKH."</td>
+                    <td>".$row->guest->nguon."</td>
                     <td>".$loaihd."</td>
                     <td>".$sale."</td>
                     <td>".$guest."</td>
