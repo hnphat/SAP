@@ -27,7 +27,9 @@ class GuestController extends Controller
     public function index() {
         $type_guest = TypeGuest::all();
         $sale = Sale::where('id_user_create',Auth::user()->id)->get();
-        return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
+        // return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
+        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale]);
+
     }
 
     public function indexBaoCao() {

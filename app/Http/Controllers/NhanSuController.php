@@ -1096,7 +1096,8 @@ class NhanSuController extends Controller
     }
     // Phê duyệt phép
     public function pheDuyetGetList() {
-        return view("nhansu.pheduyet");
+        // return view("nhansu.pheduyet");
+        return view("nhansu.pheduyetdemo");
     }
 
     public function pheDuyetPhepGetList() {

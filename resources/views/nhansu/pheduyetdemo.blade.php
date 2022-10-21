@@ -1,11 +1,11 @@
 @extends('admin.index')
 @section('title')
-    Phê duyệt phép v1
+    Phê duyệt phép v2
 @endsection
 @section('script_head')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
@@ -35,7 +35,7 @@
                 <table id="dataTable">
                     <thead>
                         <tr>
-                            <th>STT</th>
+                            <!-- <th>STT</th> -->
                             <th>Người xin</th>
                             <th>Tạo phiếu</th>
                             <th>Ngày xin</th>
@@ -55,7 +55,7 @@
 @section('script')
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Bootstrap 4 -->
@@ -80,25 +80,25 @@
 
         // Exe
         $(document).ready(function() {
-            var table = $('#dataTable').DataTable({
-                // paging: false,    use to show all data
+           let table = $('#dataTable').DataTable({
+                // // paging: false,    use to show all data
                 responsive: true,
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 ajax: "{{ url('management/nhansu/pheduyet/ajax/getlist') }}",
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
-                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                order: [[8, 'asc']],
+                // "columnDefs": [ {
+                //     "searchable": false,
+                //     "orderable": false,
+                //     "targets": 0
+                // } ],
+                // "order": [
+                //     [ 0, 'desc' ]
+                // ],
+                // lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
-                    { "data": null },
                     { 
                         "data": null,
                         render: function(data, type, row) {
@@ -111,7 +111,7 @@
                             let theDate = row.created_at.toString().slice(0, 19).split('T')[0].split('-');
                             let newDate = theDate[2] + "/" +  theDate[1] + "/" + theDate[0];
                             return "<span class='text-secondary'>"+newDate+"</span>";
-                            
+
                         } 
                     },
                     { 
@@ -156,12 +156,12 @@
                     }
                 ]
             });
-            table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                    cell.innerHTML = i+1;
-                    table.cell(cell).invalidate('dom');
-                } );
-            } ).draw();
+            // table.on( 'order.dt search.dt', function () {
+            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            //         cell.innerHTML = i+1;
+            //         table.cell(cell).invalidate('dom');
+            //     } );
+            // } ).draw();
 
             //Delete data
             $(document).on('click','#delete', function(){
