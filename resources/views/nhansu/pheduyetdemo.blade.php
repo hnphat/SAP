@@ -87,6 +87,8 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
+                // processing: true,
+                // serverSide: true,
                 ajax: "{{ url('management/nhansu/pheduyet/ajax/getlist') }}",
                 order: [[8, 'asc']],
                 // "columnDefs": [ {

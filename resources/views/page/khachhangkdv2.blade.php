@@ -354,7 +354,7 @@
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
                                             <tr class="bg-cyan">
-                                                <th>TT</th>
+                                                <!-- <th>TT</th> -->
                                                 <th>Ngày nhập</th>
                                                 <th>Tên</th>
                                                 <th>Nguồn</th>
@@ -445,18 +445,20 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
+                // processing: true,
+                // serverSide: true,
                 ajax: "{{ url('management/guest/get/list') }}",
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
-                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                // "columnDefs": [ {
+                //     "searchable": false,
+                //     "orderable": false,
+                //     "targets": 0
+                // } ],
+                // "order": [
+                //     [ 0, 'desc' ]
+                // ],
+                // lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
-                    { "data": null },
+                    // { "data": null },
                     { "data": null,
                         render: function(data, type, row) {
                             let arr = row.created_at.split("T")[0].split("-");
@@ -501,36 +503,36 @@
                     { "data": "chucVu" },
                 ]
             });
-            table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                    cell.innerHTML = i+1;
-                    table.cell(cell).invalidate('dom');
-                } );
-            } ).draw();
+            // table.on( 'order.dt search.dt', function () {
+            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            //         cell.innerHTML = i+1;
+            //         table.cell(cell).invalidate('dom');
+            //     } );
+            // } ).draw();
 
-            var table2 = $('#dataTableOut').DataTable({
-                // paging: false,    use to show all data
-                responsive: true,
-                dom: 'Blfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
-                lengthMenu:  [5, 10, 25, 50, 75, 100 ]
-            });
-            table2.on( 'order.dt search.dt', function () {
-                table2.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                    cell.innerHTML = i+1;
-                    table2.cell(cell).invalidate('dom');
-                } );
-            } ).draw();
+            // var table2 = $('#dataTableOut').DataTable({
+            //     // paging: false,    use to show all data
+            //     responsive: true,
+            //     dom: 'Blfrtip',
+            //     buttons: [
+            //         'copy', 'csv', 'excel', 'pdf', 'print'
+            //     ],
+            //     "columnDefs": [ {
+            //         "searchable": false,
+            //         "orderable": false,
+            //         "targets": 0
+            //     } ],
+            //     "order": [
+            //         [ 0, 'desc' ]
+            //     ],
+            //     lengthMenu:  [5, 10, 25, 50, 75, 100 ]
+            // });
+            // table2.on( 'order.dt search.dt', function () {
+            //     table2.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            //         cell.innerHTML = i+1;
+            //         table2.cell(cell).invalidate('dom');
+            //     } );
+            // } ).draw();
 
             // Add data
             $("#btnAdd").click(function(e){
