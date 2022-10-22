@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Phê duyệt phép v3
+    Phê duyệt phép v2
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
@@ -81,15 +81,25 @@
         // Exe
         $(document).ready(function() {
            let table = $('#dataTable').DataTable({
+                // // paging: false,    use to show all data
                 responsive: true,
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                processing: true,
-                serverSide: true,
-                ajax: "{{ url('management/nhansu/pheduyet/ssp/getlist') }}",
+                // processing: true,
+                // serverSide: true,
+                ajax: "{{ url('management/nhansu/pheduyet/ajax/getlist') }}",
                 order: [[8, 'asc']],
+                // "columnDefs": [ {
+                //     "searchable": false,
+                //     "orderable": false,
+                //     "targets": 0
+                // } ],
+                // "order": [
+                //     [ 0, 'desc' ]
+                // ],
+                // lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { 
                         "data": null,
@@ -148,6 +158,12 @@
                     }
                 ]
             });
+            // table.on( 'order.dt search.dt', function () {
+            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            //         cell.innerHTML = i+1;
+            //         table.cell(cell).invalidate('dom');
+            //     } );
+            // } ).draw();
 
             //Delete data
             $(document).on('click','#delete', function(){

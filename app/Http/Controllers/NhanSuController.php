@@ -19,6 +19,7 @@ use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Excel;
+use DataTables;
 
 class NhanSuController extends Controller
 {
@@ -1098,6 +1099,7 @@ class NhanSuController extends Controller
     public function pheDuyetGetList() {
         // return view("nhansu.pheduyet");
         return view("nhansu.pheduyetdemo");
+        // return view("nhansu.demo");
     }
 
     public function pheDuyetPhepGetList() {
@@ -1128,6 +1130,9 @@ class NhanSuController extends Controller
                 "type" => "info",
                 "code" => 200,
                 "message" => "Đã tải dữ liệu",
+                "draw" => 1,
+                "recordsTotal" => 57,
+                "recordsFiltered" => 57,
                 "data" => $xinPhep
             ]);
         else
@@ -1136,6 +1141,54 @@ class NhanSuController extends Controller
                 "code" => 500,
                 "message" => "Lỗi tải dữ liệu"
             ]);
+    }
+
+    public function pheDuyetPhepDataTable(Request $request) {
+        if ($request->ajax()) {
+            if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns') && !Auth::user()->hasRole('lead_chamcong'))
+                $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
+                ->join('users as u','u.id','=','xin_phep.id_user')
+                ->join('users_detail as d','d.id_user','=','u.id')
+                ->join('users as un','un.id','=','xin_phep.id_user_duyet')
+                ->join('users_detail as dn','dn.id_user','=','un.id')
+                ->join('loai_phep as p','p.id','=','xin_phep.id_phep')
+                ->where([
+                    ['xin_phep.id_user_duyet', '=', Auth::user()->id]
+                ])
+                ->orderby('user_duyet','asc')
+                ->get();
+            else 
+                $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
+                ->join('users as u','u.id','=','xin_phep.id_user')
+                ->join('users_detail as d','d.id_user','=','u.id')
+                ->join('users as un','un.id','=','xin_phep.id_user_duyet')
+                ->join('users_detail as dn','dn.id_user','=','un.id')
+                ->join('loai_phep as p','p.id','=','xin_phep.id_phep')
+                ->orderby('user_duyet','asc')
+                ->get();    
+
+                return Datatables::of($xinPhep)
+                ->make(true);
+
+        }
+            
+        return view('nhansu.demo');
+        // if ($xinPhep)
+        //     return response()->json([
+        //         "type" => "info",
+        //         "code" => 200,
+        //         "message" => "Đã tải dữ liệu",
+        //         "draw" => 1,
+        //         "recordsTotal" => 57,
+        //         "recordsFiltered" => 57,
+        //         "data" => $xinPhep
+        //     ]);
+        // else
+        //     return response()->json([
+        //         "type" => "info",
+        //         "code" => 500,
+        //         "message" => "Lỗi tải dữ liệu"
+        //     ]);
     }
 
     public function pheDuyetPhep(Request $request) {
