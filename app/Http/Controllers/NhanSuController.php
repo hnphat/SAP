@@ -527,7 +527,7 @@ class NhanSuController extends Controller
                 <br/><span>Trể/Sớm: <span class='text-danger'>".$tongTre."  (phút)</span></span>
                 <br/><span>Phép được duyệt: <span class='text-success'>".$coPhep."</span></span>
                 <br/><span>Phép chưa duyệt: <span class='text-danger'>".($tongPhep - $coPhep)."</span></span>
-                <br/><span>Chưa xin phép (Vào trể; Về sớm; QCC; Vắng nữa buổi; Lý do khác): <span class='text-danger'>".$chuaXinPhep."</span></span>
+                <br/><span>Chưa xin phép: <span class='text-danger'>".$chuaXinPhep."</span><br/>(Vào trể; Về sớm; QCC; Vắng nữa buổi; Lý do khác)</span>
                 <br/><span>Vắng mặt không phép (cả ngày): <span class='text-danger'>".$khongPhepCaNgay."</span></span>
                 <hr/>
                 </strong>
@@ -1144,6 +1144,8 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhepDataTable(Request $request) {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
         if ($request->ajax()) {
             if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('hcns') && !Auth::user()->hasRole('lead_chamcong'))
                 $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
@@ -1156,6 +1158,7 @@ class NhanSuController extends Controller
                     ['xin_phep.id_user_duyet', '=', Auth::user()->id]
                 ])
                 ->orderby('user_duyet','asc')
+                ->take($data["maxRecord"])
                 ->get();
             else 
                 $xinPhep = XinPhep::select("xin_phep.buoi","xin_phep.created_at","xin_phep.updated_at","xin_phep.id_user_duyet","xin_phep.id","xin_phep.ngay","xin_phep.thang","xin_phep.nam","xin_phep.lyDo","xin_phep.user_duyet","dn.surname as nguoiduyet","d.surname as nguoixin","p.tenPhep as loaiphep")
@@ -1165,6 +1168,7 @@ class NhanSuController extends Controller
                 ->join('users_detail as dn','dn.id_user','=','un.id')
                 ->join('loai_phep as p','p.id','=','xin_phep.id_phep')
                 ->orderby('user_duyet','asc')
+                ->take($data["maxRecord"])
                 ->get();    
 
                 return Datatables::of($xinPhep)

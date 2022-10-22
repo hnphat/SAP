@@ -112,6 +112,10 @@
                                     </div>   
                                 </div>
                                 <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Dữ liệu tối đa trả về <br/>(Xin phép, Nhật ký)</label>
+                                        <input type="number" name="maxRecord" class="form-control"/>
+                                    </div>
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -167,6 +171,8 @@
                         $("select[name=capNhatThongTin]").val(response.data.capNhatThongTin);
                         $("select[name=mauThongBao]").val(response.data.mauThongBao);
                         $("select[name=loaiThongBao]").val(response.data.loaiThongBao);
+                        $("input[name=maxRecord]").val(response.data.maxRecord);
+
                     },
                     error: function() {
                         Toast.fire({

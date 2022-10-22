@@ -35,7 +35,7 @@
                 <table id="dataTable">
                     <thead>
                         <tr>
-                            <!-- <th>STT</th> -->
+                            <th>ID</th>
                             <th>Người xin</th>
                             <th>Tạo phiếu</th>
                             <th>Ngày xin</th>
@@ -89,8 +89,9 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ url('management/nhansu/pheduyet/ssp/getlist') }}",
-                order: [[7, 'asc']],
+                order: [[0, 'desc'], [7, 'asc']],
                 columns: [
+                    { 'data': 'id' },
                     { 
                         "data": null,
                         render: function(data, type, row) {

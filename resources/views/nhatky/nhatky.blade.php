@@ -100,7 +100,7 @@
                 ajax: "{{ url('management/nhatky/loadnhatky') }}",
                 order: [[0, 'desc']],
                 columns: [
-                    { "data": "id" },
+                    { "data": "id"},
                     { "data": "thoiGian" },
                     { 
                         "data": null,

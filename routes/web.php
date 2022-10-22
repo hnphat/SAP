@@ -658,8 +658,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // Tra cứu nâng cao
         Route::get('gettracuu','NhatKyController@getTraCuu')->name('tracuunangcao');
-        Route::post('loadnhatky','NhatKyController@loadNhatKy')->name('nhatky.loadnhatky');
-        // Route::get('loadnhatky','NhatKyController@loadNhatKyV2')->name('nhatky.loadnhatky');
+        // Route::post('loadnhatky','NhatKyController@loadNhatKy')->name('nhatky.loadnhatky');
+        Route::get('loadnhatky','NhatKyController@loadNhatKyV2')->name('nhatky.loadnhatky');
 
     });
 
