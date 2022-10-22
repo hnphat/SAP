@@ -3,10 +3,10 @@
     NHẬT KÝ TRUY CẬP
 @endsection
 @section('script_head')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -48,15 +48,29 @@
                                 <a href="{{route('tracuunangcao')}}" class="btn btn-sm btn-primary">TRA CỨU NÂNG CAO</a><br/><br/>
                                 <table id="dataTable" class="display" style="width:100%">
                                     <thead>
-                                        <tr class="bg-gradient-lightblue">
-                                            <th>ID</th>
-                                            <th>Thời gian</th>
-                                            <th>Ngày</th>
-                                            <th>Tài khoản</th>
-                                            <th>Chức năng thao tác</th>
-                                            <th>Nội dung thực hiện</th>
-                                        </tr>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>TT</th>
+                                        <th>Thời gian</th>
+                                        <th>Ngày</th>
+                                        <th>Tài khoản</th>
+                                        <th>Chức năng thao tác</th>
+                                        <th>Nội dung thực hiện</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
                                     </thead>
+                                    <tbody>
+                                       @foreach($nk as $row)
+                                            <tr>
+                                                <td>{{$loop->iteration}}</td>
+                                                <td>{{\HelpFunction::revertCreatedAtGetTime($row->created_at)}}</td>
+                                                <td>{{\HelpFunction::getDateRevertCreatedAt($row->created_at)}}</td>
+                                                <td>{{(isset($row->user->userDetail) ? $row->user->userDetail->surname : "Not know user")}}</td>
+                                                <td>{{$row->chucNang}}</td>
+                                                <td>{!! $row->noiDung!!}</td>
+                                                <td>{{$row->ghiChu}}</td>
+                                            </tr>
+                                       @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -71,49 +85,28 @@
 @section('script')
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
-    <!-- Below is plugin for datatables -->
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
         // Exe
         $(document).ready(function() {
-            let table = $('#dataTable').DataTable({
-                responsive: true,
-                dom: 'Blfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                processing: true,
-                serverSide: true,
-                ajax: "{{ url('management/nhatky/loadnhatky') }}",
-                order: [[0, 'desc']],
-                columns: [
-                    { "data": "id" },
-                    { "data": "thoiGian" },
-                    { 
-                        "data": null,
-                        render: function(data, type, row) {
-                            return row.created_at.split('T')[0];                            
-                        } 
-                      
-                    },
-                    { "data": "name" },
-                    { "data": "chucNang" },
-                    { "data": "noiDung" },
-                ]
-            });
+            $("#dataTable").DataTable({
+                "responsive": true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            });         
         });
     </script>
 @endsection

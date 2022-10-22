@@ -1169,26 +1169,9 @@ class NhanSuController extends Controller
 
                 return Datatables::of($xinPhep)
                 ->make(true);
-
         }
             
         return view('nhansu.demo');
-        // if ($xinPhep)
-        //     return response()->json([
-        //         "type" => "info",
-        //         "code" => 200,
-        //         "message" => "Đã tải dữ liệu",
-        //         "draw" => 1,
-        //         "recordsTotal" => 57,
-        //         "recordsFiltered" => 57,
-        //         "data" => $xinPhep
-        //     ]);
-        // else
-        //     return response()->json([
-        //         "type" => "info",
-        //         "code" => 500,
-        //         "message" => "Lỗi tải dữ liệu"
-        //     ]);
     }
 
     public function pheDuyetPhep(Request $request) {

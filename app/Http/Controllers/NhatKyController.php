@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\NhatKy;
 use Illuminate\Http\Request;
-
+use DataTables;
 
 class NhatKyController extends Controller
 {
@@ -14,7 +14,8 @@ class NhatKyController extends Controller
         ->orderBy('id', 'desc')
         ->take(1500)
         ->get();
-        return view('nhatky.nhatky', ['nk' => $nhatKy]);
+        return view('nhatky.nhatkyold', ['nk' => $nhatKy]);
+        // return view('nhatky.nhatky');
     }
 
     public function loadList() {
@@ -53,28 +54,19 @@ class NhatKyController extends Controller
         ->orWhere("d.surname","LIKE","%".$noiDung."%")
         ->orderBy('nhat_ky.id', 'desc')
         ->take($soLuong)
-        ->get();
-        // if ($nhatKy->count() == 0) {
-        //     $nhatKy2 = NhatKy::select("nhat_ky.*","d.surname as name")
-        //     ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
-        //     ->where("nhat_ky.chucNang","LIKE","%".$noiDung."%")
-        //     ->orderBy('nhat_ky.id', 'desc')
-        //     ->take($soLuong)
-        //     ->get();
-        //     if ($nhatKy2->count() == 0)  {
-        //         $nhatKy3 = NhatKy::select("nhat_ky.*","d.surname as name")
-        //         ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
-        //         ->where("d.surname","LIKE","%".$noiDung."%")
-        //         ->orderBy('nhat_ky.id', 'desc')
-        //         ->take($soLuong)
-        //         ->get();
-        //         if ($nhatKy3->count() == 0) {
-        //             return view('nhatky.tracuunangcao');            
-        //         } else 
-        //         return view('nhatky.tracuunangcao', ['nk' => $nhatKy3, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
-        //     } else 
-        //     return view('nhatky.tracuunangcao', ['nk' => $nhatKy2, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
-        // } else 
+        ->get(); 
         return view('nhatky.tracuunangcao', ['nk' => $nhatKy, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
+    }
+
+    public function loadNhatKyV2(Request $request) {
+        if ($request->ajax()) {
+            $nhatKy = NhatKy::select("nhat_ky.*","d.surname as name")
+            ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
+            ->orderBy('nhat_ky.id', 'desc')
+            ->get();
+            return Datatables::of($nhatKy)
+                   ->make(true);
+        }
+        return view('nhatky.nhatky');
     }
 }

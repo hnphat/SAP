@@ -89,7 +89,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ url('management/nhansu/pheduyet/ssp/getlist') }}",
-                order: [[8, 'asc']],
+                order: [[7, 'asc']],
                 columns: [
                     { 
                         "data": null,
