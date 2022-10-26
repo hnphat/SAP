@@ -557,6 +557,14 @@
                                 </a>
                             </li>
                             @endif
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
+                            <li class="nav-item">
+                                <a href="{{route('khachhang.sale.hd')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Quản lý saler</p>
+                                </a>
+                            </li>
+                            @endif
                         @endif
                     </ul>
                 </li>

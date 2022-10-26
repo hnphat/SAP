@@ -53,7 +53,8 @@
                                                     \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                                                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                                     \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                                                     <option value="0">Tất cả</option>                                                               
                                                     @foreach($user as $row)
                                                         @if($row->hasRole('sale') && $row->active)

@@ -21,7 +21,8 @@ class GuestMiddleWare
             Auth::user()->hasRole('tpkd') ||
             Auth::user()->hasRole('adminsale') ||
             Auth::user()->hasRole('boss') ||
-            Auth::user()->hasRole('mkt'))
+            Auth::user()->hasRole('mkt') ||
+            Auth::user()->hasRole('hcns'))
             return $next($request);
         else abort(403);
     }
