@@ -84,14 +84,6 @@
                                         <p>Model Xe</p>
                                     </a>
                                 </li>
-                            @endif
-                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                <li class="nav-item">
-                                    <a href="{{route('cong.list')}}" class="nav-link">
-                                        <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Khách hàng HCare</p>
-                                    </a>
-                                </li>
                         @endif
                         <li class="nav-item">
                             <a href="{{route('cauhinh.panel')}}" class="nav-link">
@@ -108,7 +100,8 @@
                         \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('baocaohopdong') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
-                        \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhcare'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-dollar-sign"></i>
                             <p>
@@ -118,6 +111,15 @@
                         </a>
                     @endif
                     <ul class="nav nav-treeview">
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhcare'))
+                                    <li class="nav-item">
+                                        <a href="{{route('cong.list')}}" class="nav-link">
+                                            <i class="fas fa-caret-right nav-icon"></i>
+                                            <p>Khách hàng HCare</p>
+                                        </a>
+                                    </li>
+                            @endif
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('baocaohopdong') || 
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">

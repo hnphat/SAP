@@ -142,6 +142,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // -------------- upload
         Route::post('up/file','GuestController@upFile')->name('guest.upload.file');
+        Route::get('getallphone','GuestController@getAllPhone');
+        Route::post('deleteonphone','GuestController@deleteOnPhone');
+
     });
     Route::group(['prefix' => 'kho', 'middleware' => ['f_kho']], function(){
         Route::get('list','KhoController@index')->name('kho.list');

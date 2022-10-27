@@ -16,6 +16,7 @@ use App\KhoV2;
 use App\HopDong;
 use App\SaleOff;
 use App\TypeCarDetail;
+use App\PhoneHcare;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -104,18 +105,19 @@ class GuestController extends Controller
 
     public function add(Request $request) {
         // $theArray = Excel::toArray([], storage_path('oldcus/data.xlsx'));
-        $theArray = Excel::toArray([], 'upload/oldcus/data.xlsx');
-        $numlen = count($theArray[1]);
-        $flag = true;
+        // $theArray = Excel::toArray([], 'upload/oldcus/data.xlsx');
+        // $numlen = count($theArray[1]);
+        // $flag = true;
         // dd($theArray[1][2][0]);                    
-        for($i = 1; $i < $numlen; $i++) {
-            if ($request->dienThoai == $theArray[1][$i][0]) {
-                $flag = false;
-                break;
-            }
-        }
+        // for($i = 1; $i < $numlen; $i++) {
+        //     if ($request->dienThoai == $theArray[1][$i][0]) {
+        //         $flag = false;
+        //         break;
+        //     }
+        // }
+        $flag = PhoneHcare::select("*")->where('phone',$request->dienThoai)->exists();
 
-        if ($flag) {
+        if (!$flag) {
             $guest = new Guest;
             $guest->id_type_guest = $request->loai;
             $guest->name = $request->ten;
@@ -499,5 +501,52 @@ class GuestController extends Controller
         $fileName = 'data.'.$request->_tep->extension();  
         $request->_tep->move(public_path('upload/oldcus/'), $fileName);
         return back()->with('succ','You have successfully upload file.');      
+    }
+
+    public function getAllPhone() {
+        // $theArray = Excel::toArray([], 'upload/oldcus/data.xlsx');
+        // $numlen = count($theArray[1]);
+        // for($i = 1; $i < $numlen; $i++) {
+        //     if ($theArray[1][$i][0] != null) {
+        //         $p = new PhoneHcare();
+        //         $p->phone = $theArray[1][$i][0];
+        //         $p->save();
+        //     } else {
+        //         break;
+        //     }
+        // }
+        $p = PhoneHcare::all();
+        if ($p) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Load thành công!',
+                'code' => 200,
+                'data' => $p
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deleteOnPhone(Request $request) {
+        $result = PhoneHcare::find($request->id);
+        $result->delete();    
+        if($result) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Delete data successfully!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
     }
 }

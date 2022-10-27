@@ -124,6 +124,7 @@ return array(
     'App\\PackageV2' => $baseDir . '/app/PackageV2.php',
     'App\\PhieuNhap' => $baseDir . '/app/PhieuNhap.php',
     'App\\PhieuXuat' => $baseDir . '/app/PhieuXuat.php',
+    'App\\PhoneHcare' => $baseDir . '/app/PhoneHcare.php',
     'App\\PhuTung' => $baseDir . '/app/PhuTung.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

@@ -22,7 +22,8 @@ class GuestMiddleWare
             Auth::user()->hasRole('adminsale') ||
             Auth::user()->hasRole('boss') ||
             Auth::user()->hasRole('mkt') ||
-            Auth::user()->hasRole('hcns'))
+            Auth::user()->hasRole('hcns') ||
+            Auth::user()->hasRole('quanlyhcare'))
             return $next($request);
         else abort(403);
     }

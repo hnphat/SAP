@@ -672,6 +672,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\PackageV2' => __DIR__ . '/../..' . '/app/PackageV2.php',
         'App\\PhieuNhap' => __DIR__ . '/../..' . '/app/PhieuNhap.php',
         'App\\PhieuXuat' => __DIR__ . '/../..' . '/app/PhieuXuat.php',
+        'App\\PhoneHcare' => __DIR__ . '/../..' . '/app/PhoneHcare.php',
         'App\\PhuTung' => __DIR__ . '/../..' . '/app/PhuTung.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
