@@ -534,19 +534,21 @@ class GuestController extends Controller
 
     public function deleteOnPhone(Request $request) {
         $result = PhoneHcare::find($request->id);
-        $result->delete();    
-        if($result) {
-            return response()->json([
-                'type' => 'info',
-                'message' => 'Delete data successfully!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'type' => 'info',
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("quanlyhcare")) {
+            $result->delete();    
+            if($result) {
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Delete data successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
         }
     }
 }
