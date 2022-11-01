@@ -86,9 +86,14 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                processing: true,
-                serverSide: true,
+                // processing: true,
+                // serverSide: true,
                 ajax: "{{ url('management/nhansu/pheduyet/ssp/getlist') }}",
+                // "columnDefs": [ {
+                //     "searchable": true,
+                //     "orderable": false,
+                //     "targets": 0
+                // } ],
                 order: [[0, 'desc'], [7, 'asc']],
                 columns: [
                     { 'data': 'id' },
