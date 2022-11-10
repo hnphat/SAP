@@ -1826,6 +1826,7 @@ class DichVuController extends Controller
                         <th>Ngày tạo</th>
                         <th>Người tạo</th>
                         <th>TVBH</th>
+                        <th>Khách hàng</th>
                         <th>Loại báo giá</th>
                         <th>Công việc</th>
                         <th>Doanh thu</th>                    
@@ -1905,6 +1906,7 @@ class DichVuController extends Controller
                                                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                                                     <td>".$row->user->userDetail->surname."</td>
                                                     <td>".$_sale."</td>
+                                                    <td>".$row->hoTen."</td>
                                                     <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                                     <td class='text-bold text-info'>".$_congviec."</span></td>
                                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
