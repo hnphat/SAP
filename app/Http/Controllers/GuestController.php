@@ -40,7 +40,7 @@ class GuestController extends Controller
     }
 
     public function getList() {
-        if (Auth::user()->hasRole('system'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
             $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                 ->join('type_guest as t','guest.id_type_guest','=','t.id')
                 ->join('users_detail as d','d.id_user','=','guest.id_user_create')
@@ -453,6 +453,7 @@ class GuestController extends Controller
                             <th>STT</th>
                             <th>Họ và tên</th>
                             <th>Nguồn</th>
+                            <th>Điện thoại</th>
                             <th>Đánh giá</th>
                             <th>Xe quan tâm</th>
                             <th>CS L1</th>
@@ -476,6 +477,7 @@ class GuestController extends Controller
                         <td>".($j++)."</td>
                         <td>".$khach->name."</td>
                         <td><strong class='text-primary'>".$khach->nguon."</strong></td>
+                        <td>".$khach->phone."</td>
                         <td>".$stt."</td>
                         <td>".$khach->xeQuanTam."</td>
                         <td><i>".$khach->cs1."</i></td>

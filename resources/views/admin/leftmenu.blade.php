@@ -152,13 +152,16 @@
                                 </li>
                                 @endif
                                  @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                                 <li class="nav-item">
                                     <a href="{{route('guest.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Khách hàng</p>
                                     </a>
                                 </li>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
                                     <a href="{{route('hd.denghi')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -188,7 +191,8 @@
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Thông báo nội bộ</p>
                                     </a>
-                                </li>                                
+                                </li>
+                                @endif                                
                                 @endif
                                 @endif
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
