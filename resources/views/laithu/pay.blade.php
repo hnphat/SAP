@@ -62,8 +62,8 @@
                                         <th>Xe</th>
                                         <th>Trạng thái</th>
                                         <th>Ngày trả</th>
-                                        <th>Km</th>
-                                        <th>Xăng</th>
+                                        <th>Km cuối</th>
+                                        <th>Xăng cuối</th>
                                         <th>Stt xe</th>
                                         <th>Hồ sơ (trả)</th>
                                         <th>Tác vụ</th>

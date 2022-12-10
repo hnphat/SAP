@@ -61,6 +61,7 @@
                             </thead>
                             <tbody id="dataLoad">
                             @foreach($user as $row)
+                                @if($row->name != "admin")
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$row->name}}</td>
@@ -90,6 +91,7 @@
                                         <button onclick="xoa('{{$row->id}}')" class="btn btn-danger btn-sm"><span class="fas fa-times-circle"></span></button>
                                     </td>
                                 </tr>
+                                @endif
                             @endforeach
                             </tbody>
                         </table>

@@ -51,7 +51,12 @@
                                 <label>Quyền</label>
                                 <select name="chonQuyen" class="form-control">
                                     @foreach($roles as $role)
-                                        <option value="{{$role->id}}">{{$role->name}}</option>
+                                        @if (\Illuminate\Support\Facades\Auth::user()->name != "admin" &&
+                                            $role->name == "system")
+                                           @continue
+                                        @else
+                                           <option value="{{$role->id}}">{{$role->name}}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -76,6 +81,7 @@
                         </thead>
                         <tbody>
                             @foreach($users as $row)
+                                @if($row->name != "admin")
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <!-- <td>{{$row->name}} ({{$row->userDetail->surname}})</td> -->
@@ -88,6 +94,7 @@
                                             @endif
                                         </td>
                                     </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>

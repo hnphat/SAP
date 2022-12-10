@@ -102,7 +102,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Lý do cấp:</label>                                                        
+                                                            <label>Hạng mục:</label>                                                        
                                                             <select name="lyDoCap" class="form-control">
                                                                 <option value="Xe showroom">Xe showroom</option>
                                                                 <option value="Công tác">Công tác</option>
@@ -112,11 +112,14 @@
                                                                 <option value="Giao xe mới">Giao xe mới</option>
                                                                 <option value="Xe lưu kho">Xe lưu kho</option>
                                                                 <option value="Dịch vụ">Dịch vụ</option>
+                                                                <option value="Sự kiện">Sự kiện</option>
+                                                                <option value="Ngân hàng">Ngân hàng</option>
+                                                                <option value="Cứu hộ">Cứu hộ</option>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Ghi chú:</label>                                                        
-                                                            <input placeholder="Ghi chú (nếu có)" type="text" name="ghiChu" class="form-control">
+                                                            <label>Lý do cấp:</label>                                                        
+                                                            <input placeholder="Lý do cấp (nếu có)" type="text" name="ghiChu" class="form-control">
                                                         </div>
                                                         <div class="form-group">
                                                             <select name="leadCheck" class="form-control">
@@ -153,8 +156,8 @@
                                     <th>Nhiên liệu</th>
                                     <th>Số lít</th>
                                     <th>Khách hàng</th>
+                                    <th>Hạng mục</th>
                                     <th>Lý do cấp</th>
-                                    <th>Ghi chú</th>
                                     <th>Trưởng bộ phận</th>
                                     <th>Hành chính</th>
                                     <th>Tác vụ</th>

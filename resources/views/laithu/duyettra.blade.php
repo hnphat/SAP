@@ -61,8 +61,10 @@
                                         <th>Ngày đi</th>
                                         <th>Ngày trả</th>
                                         <th>Xe</th>
-                                        <th>Km</th>
-                                        <th>Xăng</th>
+                                        <th>Km đầu</th>
+                                        <th>Xăng đầu</th>
+                                        <th>Km cuối</th>
+                                        <th>Xăng cuối</th>
                                         <th>Tình trạng</th>
                                         <th>Hồ sơ (trả)</th>
                                         <th>Tác vụ</th>
@@ -91,6 +93,8 @@
                                                 @endif
                                             </td>
                                             {{--                                        <td>{{\HelpFunction::revertTimeInput($row->date_go)}}</td>--}}
+                                            <td>{{$row->km_current}}</td>
+                                            <td>{{$row->fuel_current}}</td>
                                             <td>{{$row->tra_km_current}}</td>
                                             <td>{{$row->tra_fuel_current}}</td>
                                             <td>{{$row->tra_car_status}}</td>

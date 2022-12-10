@@ -64,8 +64,8 @@
                                     <th>Nhiên liệu</th>
                                     <th>Số lít</th>
                                     <th>Khách hàng</th>
+                                    <th>Hạng mục</th>
                                     <th>Lý do cấp</th>
-                                    <th>Ghi chú</th>
                                     <th>Trưởng bộ phận</th>
                                     <th>Hành chính</th>
                                     <th>Tác vụ</th>
