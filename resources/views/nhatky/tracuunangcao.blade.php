@@ -45,7 +45,7 @@
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
-                                <form method="post" action="{{route('nhatky.loadnhatky')}}">
+                                <form method="post" action="{{route('nhatky.loadnhatkyv2')}}">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-4">

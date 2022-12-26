@@ -72,4 +72,18 @@ class NhatKyController extends Controller
         }
         return view('nhatky.nhatky');
     }
+
+    public function loadNhatKyNangCao(Request $request) {
+        $noiDung = $request->str_find;
+        $soLuong = $request->num_row;
+        $nhatKy = NhatKy::select("nhat_ky.*","d.surname as name")
+        ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
+        ->where("nhat_ky.noiDung","LIKE","%".$noiDung."%")
+        ->orWhere("nhat_ky.chucNang","LIKE","%".$noiDung."%")
+        ->orWhere("d.surname","LIKE","%".$noiDung."%")
+        ->orderBy('nhat_ky.id', 'desc')
+        ->take($soLuong)
+        ->get(); 
+        return view('nhatky.nhatkyold', ['nk' => $nhatKy, 'noiDung' => $noiDung, 'soLuong' => $soLuong]);
+    }
 }

@@ -663,7 +663,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('gettracuu','NhatKyController@getTraCuu')->name('tracuunangcao');
         // Route::post('loadnhatky','NhatKyController@loadNhatKy')->name('nhatky.loadnhatky');
         Route::get('loadnhatky','NhatKyController@loadNhatKyV2')->name('nhatky.loadnhatky');
-
+        Route::post('loadnhatkyv2','NhatKyController@loadNhatKyNangCao')->name('nhatky.loadnhatkyv2');
     });
 
     Route::group(['prefix' => 'dichvu'], function(){
