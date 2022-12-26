@@ -796,7 +796,7 @@
                         @endif
                     </ul>
                 </li>
-                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                @if (\Illuminate\Support\Facades\Auth::user()->name == "admin")
                 <!-- <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-mail-bulk"></i>
