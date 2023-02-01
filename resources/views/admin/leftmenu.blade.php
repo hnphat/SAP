@@ -101,6 +101,7 @@
                         \Illuminate\Support\Facades\Auth::user()->hasRole('baocaohopdong') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhcare'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-dollar-sign"></i>
@@ -133,12 +134,14 @@
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale')||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('mkt'))
                                  @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                 <li class="nav-item">
                                     <!-- <a href="{{route('guest.list.baocao')}}" class="nav-link">
