@@ -451,6 +451,7 @@ class GuestController extends Controller
             <table class='table table-striped table-bordered'>
                         <tr class='text-center'>
                             <th>STT</th>
+                            <th>Ngày nhập</th>
                             <th>Họ và tên</th>
                             <th>Nguồn</th>
                             <th>Điện thoại</th>
@@ -475,6 +476,7 @@ class GuestController extends Controller
                     }
                     echo "<tr class='text-center'>
                         <td>".($j++)."</td>
+                        <td>".\HelpFunction::revertCreatedAt($khach->created_at)."</td>
                         <td>".$khach->name."</td>
                         <td><strong class='text-primary'>".$khach->nguon."</strong></td>
                         <td>".$khach->phone."</td>
