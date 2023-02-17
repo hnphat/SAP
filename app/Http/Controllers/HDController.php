@@ -1895,7 +1895,7 @@ class HDController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                    $nhatKy->noiDung = "Bổ sung chi phí cho đề nghị thực hiện hợp đồng mã định danh: ".$request->idHD3."(không phải mã hợp đồng chính thức) <br/>Nội dung: " . $request->namePkCost . " <br/>Giá: " . round($request->giaPkCost,2);
+                    $nhatKy->noiDung = "Bổ sung chi phí cho đề nghị thực hiện hợp đồng ĐN/0".$request->idHD3."(không phải mã hợp đồng chính thức) <br/>Nội dung: " . $request->namePkCost . " <br/>Giá: " . round($request->giaPkCost,2);
                     $nhatKy->save();
 
                     return response()->json([
@@ -1934,7 +1934,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Điều chỉnh nội dung chi phí cho mã định danh: ".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
+                $nhatKy->noiDung = "Điều chỉnh nội dung chi phí đề nghị ĐN/0".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -1969,7 +1969,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho mã định danh: ".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
+                $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho đề nghị ĐN/0".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -2011,7 +2011,7 @@ class HDController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
                     $nhatKy->thoiGian = Date("H:m:s");
-                    $nhatKy->noiDung = "Thêm phụ kiện bán cho mã định danh: ".$request->idHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkPay . " <br/>Giá: " . round($request->giaPkPay,2);
+                    $nhatKy->noiDung = "Thêm phụ kiện bán cho đề nghị ĐN/0".$request->idHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkPay . " <br/>Giá: " . round($request->giaPkPay,2);
                     $nhatKy->save();
 
                     return response()->json([
@@ -2058,7 +2058,7 @@ class HDController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                    $nhatKy->noiDung = "Thêm phụ kiện tặng mã định dang: ".$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkFree . " <br/>Giá: " . round($request->giaPkFree,2);
+                    $nhatKy->noiDung = "Thêm phụ kiện tặng cho đề nghị ĐN/0".$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkFree . " <br/>Giá: " . round($request->giaPkFree,2);
                     $nhatKy->save();
 
                     return response()->json([
@@ -2100,7 +2100,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Xóa phụ kiện bán cho mã định danh: ".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
+                $nhatKy->noiDung = "Xóa phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -2135,7 +2135,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Xóa phụ kiện tặng cho mã định danh: ".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
+                $nhatKy->noiDung = "Xóa phụ kiện tặng cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -2168,7 +2168,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Xóa chi phí cho mã định danh: ".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
+                $nhatKy->noiDung = "Xóa chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -2250,7 +2250,7 @@ class HDController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-            $nhatKy->noiDung = "Gửi đề nghị thực hiện hợp đồng cho mã định danh: ".$request->idHopDong."(không phải mã hợp đồng)";
+            $nhatKy->noiDung = "Gửi đề nghị thực hiện hợp đồng cho đề nghị ĐN/0".$request->idHopDong."(không phải mã hợp đồng)";
             $nhatKy->save();
 
             return response()->json([
@@ -2340,7 +2340,7 @@ class HDController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                    $nhatKy->noiDung = "Phê duyệt hợp đồng chờ <br/>Số hợp đồng ".$request->sohd. " đã được gán!";
+                    $nhatKy->noiDung = "Phê duyệt hợp đồng chờ (Mã đề nghị ĐN/0".$request->id.") <br/>Số hợp đồng ".$request->sohd. " đã được gán!";
                     $nhatKy->save();
         
                     return response()->json([
@@ -2378,7 +2378,7 @@ class HDController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
                     $nhatKy->thoiGian = Date("H:m:s");
-                    $nhatKy->noiDung = "Phê duyệt đề nghị thực hiện hợp đồng<br/>Số hợp đồng ".$request->sohd. " đã được gán! HĐ Đại lý (1: HĐ Đại lý; 0: HĐ Thường): " . $request->daiLy;
+                    $nhatKy->noiDung = "Phê duyệt đề nghị thực hiện hợp đồng (Mã đề nghị ĐN/0".$request->id.")<br/>Số hợp đồng ".$request->sohd. " đã được gán! HĐ Đại lý (1: HĐ Đại lý; 0: HĐ Thường): " . $request->daiLy;
                     $nhatKy->save();
                     return response()->json([
                         'type' => 'success',
@@ -2424,7 +2424,7 @@ class HDController extends Controller
                         $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->noiDung = "Gán giá vốn " . number_format($request->giaVon) 
-                        . " cho hợp đồng " . $sohd;
+                        . " cho hợp đồng số: " . $sohd . " (Mã đề nghị ĐN/0".$request->id.")";
                         $nhatKy->save();
                         return response()->json([
                             'type' => 'info',
@@ -2517,7 +2517,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                $nhatKy->noiDung = "Gán xe: ".$car->typeCarDetail->name." màu: ".$mau." cho hợp đồng chờ số ".$temp. " và chuyển sang thành hợp đồng chính thức";
+                $nhatKy->noiDung = "Gán xe: ".$car->typeCarDetail->name." màu: ".$mau." cho hợp đồng chờ số ".$temp. " (Mã đề nghị ĐN/0".$request->id.") và chuyển sang thành hợp đồng chính thức";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -2546,7 +2546,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
-                $nhatKy->noiDung = "Đã phê duyệt hợp đồng số " . $code;
+                $nhatKy->noiDung = "Đã phê duyệt hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->id.")";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -2589,7 +2589,7 @@ class HDController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
-                        $nhatKy->noiDung = "Thực hiện chuyển xe ".$temp." từ hợp đồng số " . $result->code . " vào kho. Chuyển trạng thái xe sang STORE!";
+                        $nhatKy->noiDung = "Thực hiện chuyển xe ".$temp." từ hợp đồng số " . $result->code . " (Mã đề nghị ĐN/0".$request->id.") vào kho. Chuyển trạng thái xe sang STORE!";
                         $nhatKy->save();
                     }
                 }
@@ -2603,7 +2603,7 @@ class HDController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
-                $nhatKy->noiDung = "Thực hiện hủy hợp đồng số " . $code . " <br/>Lý do hủy: " . $lydo;
+                $nhatKy->noiDung = "Thực hiện hủy hợp đồng số " . $code . " <br/>Lý do hủy: " . $lydo . " (Mã đề nghị ĐN/0".$request->id.")";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -2640,7 +2640,7 @@ class HDController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-            $nhatKy->noiDung = "Gửi yêu cầu chỉnh sửa hợp đồng số " . $code . " <br/>Lý do chỉnh sửa: " . $request->lyDoChinhSua;
+            $nhatKy->noiDung = "Gửi yêu cầu chỉnh sửa hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->idRequestEdit.")";
             $nhatKy->save();
             return response()->json([
                 'type' => 'success',
@@ -2669,7 +2669,7 @@ class HDController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
             $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->noiDung = "Gửi yêu cầu hủy hợp đồng " . $code . " <br/>Lý do hủy: " . $request->lyDoHuy;
+            $nhatKy->noiDung = "Gửi yêu cầu hủy hợp đồng " . $code . " (Mã đề nghị ĐN/0".$request->idRequestHuy.")";
             $nhatKy->save();
             return response()->json([
                 'type' => 'success',
@@ -2701,7 +2701,7 @@ class HDController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                        $nhatKy->noiDung = "Thực hiện yêu cầu sửa hợp đồng số " . $code . " <br/>Lý do chỉnh sửa: " . $lyDo . " Chuyển xe ".$car->typeCarDetail->name." vào kho và trạng thái xe thành STORE";
+                        $nhatKy->noiDung = "Thực hiện yêu cầu sửa hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->id.") <br/>Lý do chỉnh sửa: " . $lyDo . " Chuyển xe ".$car->typeCarDetail->name." vào kho và trạng thái xe thành STORE";
                         $nhatKy->save();
                     $car->save();
                 }    
@@ -2714,7 +2714,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                $nhatKy->noiDung = "Thực hiện duyệt yêu cầu sửa hợp đồng số " . $code . " <br/>Lý do chỉnh sửa: " . $temp;
+                $nhatKy->noiDung = "Thực hiện duyệt yêu cầu sửa hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->id.") <br/>Lý do chỉnh sửa: " . $temp;
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -2753,7 +2753,7 @@ class HDController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                        $nhatKy->noiDung = "Thực hiện yêu cầu sửa hợp đồng số " . $code . " <br/>Lý do chỉnh sửa: " . $lyDo . " Chuyển xe ".$car->typeCarDetail->name." vào kho và trạng thái xe thành STORE";
+                        $nhatKy->noiDung = "Trưởng bộ phận thực hiện phê duyệt yêu cầu sửa hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->id.") <br/>Lý do chỉnh sửa: " . $lyDo . " Chuyển xe ".$car->typeCarDetail->name." vào kho và trạng thái xe thành STORE";
                         $nhatKy->save();
                     $car->type = "STORE";
                     $car->save();
@@ -2770,7 +2770,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                $nhatKy->noiDung = "Thực hiện duyệt yêu cầu sửa hợp đồng số " . $code . " <br/>Lý do chỉnh sửa: " . $lyDo;
+                $nhatKy->noiDung = "Trưởng bộ phận thực hiện duyệt yêu cầu sửa hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->id.") <br/>Lý do chỉnh sửa: " . $lyDo;
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -2809,7 +2809,7 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-                $nhatKy->noiDung = "Hủy bỏ phê duyệt đề nghị thực hiện hợp đồng cho hợp đồng số " . $code;
+                $nhatKy->noiDung = "Hủy bỏ phê duyệt đề nghị thực hiện hợp đồng cho hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->id.")";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -3094,6 +3094,13 @@ class HDController extends Controller
         // dd($request);
         $_from = \HelpFunction::revertDate($request->tu);
         $_to = \HelpFunction::revertDate($request->den);
+        
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "KINH DOANH - BÁO CÁO HỢP ĐỒNG";
+        $nhatKy->noiDung = "Xem báo cáo hợp đồng từ " . $_from . " đến " . $_to;
+        $nhatKy->save();
 
         if (Auth::user()->hasRole('system') 
         || Auth::user()->hasRole('baocaohopdong')) {
@@ -3541,6 +3548,14 @@ class HDController extends Controller
         $soHopDong = "Chưa gán";
         if ($hd->code != null)
             $soHopDong = $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA";
+            
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "KINH DOANH - BÁO CÁO HỢP ĐỒNG";
+        $nhatKy->noiDung = "Xem chi tiết hợp đồng " . $soHopDong . " Đề nghị số: " . $maDeNghi;
+        $nhatKy->save();
+
         $tenNhanVien = $hd->user->userDetail->surname;
         $tenKhachHang = $hd->guest->name;
         $ngaySinh = $hd->guest->ngaySinh;

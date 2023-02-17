@@ -276,6 +276,14 @@ class NhanSuController extends Controller
     public function chiTietChamCong(Request $request){
         $user = User::select("*")->where('active', true)->get();
         $phep = LoaiPhep::all();
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "NHÂN SỰ - CHẤM CÔNG CHI TIẾT";
+        $nhatKy->noiDung = "Vào xem chấm công";
+        $nhatKy->save();
+
         return view("nhansu.chamcongchitiet", ['user' => $user, 'phep' => $phep]);
 
     }

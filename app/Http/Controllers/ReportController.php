@@ -249,7 +249,7 @@ class ReportController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Báo cáo - Báo cáo ngày";
-                $nhatKy->noiDung = "Lưubáo cáo!";
+                $nhatKy->noiDung = "Lưu báo cáo!";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',

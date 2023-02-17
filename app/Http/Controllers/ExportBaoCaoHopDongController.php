@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Excel;
 use App\KhoV2;
+use App\NhatKy;
 use App\HopDong;
 use App\TypeCarDetail;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -490,6 +491,12 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
     }
     
     public function export(){
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "KINH DOANH - BÁO CÁO HỢP ĐỒNG";
+        $nhatKy->noiDung = "Xuất excel báo cáo hợp đồng";
+        $nhatKy->save();
         return Excel::download(new ExportBaoCaoHopDongController(), 'baocaohopdong.xlsx');
     }
 }

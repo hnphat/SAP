@@ -10,6 +10,7 @@ use App\BHPK;
 use App\User;
 use App\HopDong;
 use App\KhoV2;
+use App\NhatKy;
 use App\ChiTietBHPK;
 use App\BaoGiaBHPK;
 use App\KTVBHPK;
@@ -538,6 +539,12 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
     }
     
     public function export(){
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "DỊCH VỤ - BÁO CÁO DOANH THU";
+        $nhatKy->noiDung = "Xuất excel báo cáo doanh thu";
+        $nhatKy->save();
         return Excel::download(new ExportBaoCaoDoanhThuController(), 'baocaodoanhthu.xlsx');
     }
 }

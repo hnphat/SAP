@@ -543,12 +543,12 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-            $nhatKy->noiDung = "Chỉnh sửa báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+            $nhatKy->noiDung = "Cập nhật báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
                 'code' => 200,
-                'message' => 'Đã chỉnh sửa báo giá',
+                'message' => 'Đã cập nhật báo giá',
                 'data' => $bg,
                 'soBG' => "BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at),
                 'isBaoHiem' => $bg->isBaoHiem,
@@ -798,7 +798,8 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Huỷ báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+                $nhatKy->noiDung = "Huỷ báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."; Lý do hủy: "
+                . $request->lyDo . "";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
