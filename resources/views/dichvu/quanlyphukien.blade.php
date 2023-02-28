@@ -196,7 +196,7 @@
                                         <select disabled name="saler" id="saler" class="form-control">
                                             <option value="0">Không có</option>
                                             @foreach($user as $r)
-                                                @if($r->hasRole('sale'))
+                                                @if($r->hasRole('sale') && $r->active)
                                                     <option value="{{$r->id}}">{{$r->userDetail->surname}}</option>
                                                 @endif
                                             @endforeach
