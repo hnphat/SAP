@@ -7,10 +7,16 @@
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
+    <style>
+      #phaohoa {
+        position: absolute;
+        top: 10%;
+        left: 20%;
+      }
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
-
         <!-- Main content -->
         <div class="content">           
             <img src="{{$data['hinhNen']}}" alt="background" style="width: 100%; height:auto;">
@@ -28,6 +34,7 @@
               </button>
             </div>
             <div class="modal-body">
+             <img id="phaohoa" src="{{asset('images/temp/phaohoa.gif')}}" alt="GIF">
               <p>{{$data['thongBao']}}</p>
             </div>
             <div class="modal-footer justify-content-right">
