@@ -460,6 +460,7 @@ class DichVuController extends Controller
         $bg->taiXe = $request->taiXe;
         $bg->dienThoaiTaiXe = $request->dienThoaiTaiXe;
         $bg->yeuCau = $request->yeuCau;
+        $bg->tienCoc = $request->tienCoc;
         $bg->inProcess = false;
         $bg->isDone = false;
         $bg->isCancel = false;
@@ -537,6 +538,7 @@ class DichVuController extends Controller
         $bg->taiXe = $request->taiXe;
         $bg->dienThoaiTaiXe = $request->dienThoaiTaiXe;
         $bg->yeuCau = $request->yeuCau;
+        $bg->tienCoc = $request->tienCoc;
         $bg->save();
         if ($bg) {
             $nhatKy = new NhatKy();
@@ -1120,6 +1122,7 @@ class DichVuController extends Controller
         }
         $tienBangChu = \HelpFunction::convert($tongCong);
         $yeuCau = $bg->yeuCau;
+        $tienCoc = $bg->tienCoc;
         $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
         $templateProcessor = new TemplateProcessor('template/BHPK/BAOGIA.docx');               
             $outhd = 'BÁO GIÁ SỬA CHỮA ' . $soBG;
@@ -1154,6 +1157,7 @@ class DichVuController extends Controller
                 'tongCong' => number_format($tongCong),
                 'tienBangChu' => $tienBangChu,
                 'yeuCau' => $yeuCau,
+                'tienCoc' => number_format($tienCoc),
                 'ttnhanvien' => $ttnhanvien,               
             ]);
 
@@ -1204,7 +1208,12 @@ class DichVuController extends Controller
             if ($bh->loai != "Gia công ngoài") {
                 $tt .= $i++ . "<w:br/>";
                 $ma .= $bh->ma . "<w:br/>"; 
-                $noiDung .= $bh->noiDung . "<w:br/>";
+                if (!$row->isTang) {
+                    $noiDung .= $bh->noiDung . "<w:br/>";               
+                } else {
+                    $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
+                }    
+                // $noiDung .= $bh->noiDung . "<w:br/>";
                 $dvt .= $bh->dvt . "<w:br/>";
                 $sl .= $row->soLuong . "<w:br/>";
             }    
@@ -1423,8 +1432,9 @@ class DichVuController extends Controller
             $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
             
         }
-        $tienBangChu = \HelpFunction::convert($tongCong);
-        $yeuCau = $bg->yeuCau;
+        $tienCoc = $bg->tienCoc;
+        $tienBangChu = \HelpFunction::convert($tongCong-$tienCoc);
+        $yeuCau = $bg->yeuCau;        
         $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
         $templateProcessor = new TemplateProcessor('template/BHPK/QUYETTOAN.docx');               
             $outhd = 'QUYẾT TOÁN SỬA CHỮA ' . $soBG;
@@ -1455,10 +1465,11 @@ class DichVuController extends Controller
                 'sl' => $sl,
                 'donGia' => $donGia,
                 'chietKhau' => $chietKhau,
-                'thanhTien' => $thanhTien,
-                'tongCong' => number_format($tongCong),
+                'thanhTien' => $thanhTien,                
                 'tienBangChu' => $tienBangChu,
                 'yeuCau' => $yeuCau,
+                'tienCoc' => number_format($tienCoc),
+                'tongCong' => number_format($tongCong-$tienCoc),
                 'ttnhanvien' => $ttnhanvien,               
             ]);
 

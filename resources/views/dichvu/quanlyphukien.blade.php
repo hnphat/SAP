@@ -287,6 +287,14 @@
                                 </div>        
                             </div>   
                         </div>
+                        <h6 class="text-bold text-info">TIỀN ĐẶT CỌC (Nếu có)</h6>
+                        <div class="row"> 
+                            <div class="col-md-12">
+                                <div class="form-group">    
+                                    <input id="tienCoc" placeholder="Nhập tiền đặt cọc" type="number" min="0" value="0" name="tienCoc" class="form-control">                                                                        
+                                </div>        
+                            </div>   
+                        </div>
                         <hr>
                         <h4 class="text-bold text-info">CHI TIẾT HẠNG MỤC</h4>
                         <div id="showChiTietHangMuc">
@@ -579,6 +587,7 @@
                 $("#soMay").prop('disabled', true);
                 $("#thongTinXe").prop('disabled', true);
                 $("#yeuCau").prop('disabled', true);
+                $("#tienCoc").prop('disabled', true);
                 //----------xoa
                 $("#timHopDong").val('');
                 $("#hopDong").val('');
@@ -594,6 +603,7 @@
                 $("#soMay").val('');
                 $("#thongTinXe").val('');
                 $("#yeuCau").val('');
+                $("#tienCoc").val(0);
                 //--------------
                 $("#tongBaoGia").text("");
                 $("#chietKhau").text("");
@@ -671,6 +681,7 @@
                 $("#soMay").prop('disabled', true);
                 $("#thongTinXe").prop('disabled', true);
                 $("#yeuCau").prop('disabled', true);
+                $("#tienCoc").prop('disabled', true);
                 $("#btnAdd").hide(); 
             }
             startUp();
@@ -700,6 +711,7 @@
                 $("#soMay").prop('disabled', false);
                 $("#thongTinXe").prop('disabled', false);
                 $("#yeuCau").prop('disabled', false);
+                $("#tienCoc").prop('disabled', false);
                 $("#eid").val('');
                 $("#soBaoGia").val('');
                 $("#ngayRa").val('');
@@ -722,6 +734,7 @@
                 $("#soMay").val('');
                 $("#thongTinXe").val('');
                 $("#yeuCau").val('');
+                $("#tienCoc").val(0);
                 //--------------
                 //--------------
                 $("#tongBaoGia").text("");
@@ -801,7 +814,8 @@
                 $("#soKhung").prop('disabled', false);
                 $("#soMay").prop('disabled', false);
                 $("#thongTinXe").prop('disabled', false);
-                $("#yeuCau").prop('disabled', false);                
+                $("#yeuCau").prop('disabled', false);       
+                $("#tienCoc").prop('disabled', false);                
             });
 
             $("#save").click(function(){
@@ -845,7 +859,8 @@
                                 "thongTinXe": $("#thongTinXe").val(),
                                 "taiXe": $("#taiXe").val(),
                                 "dienThoaiTaiXe": $("#dienThoaiTaiXe").val(),
-                                "yeuCau": $("#yeuCau").val()
+                                "yeuCau": $("#yeuCau").val(),
+                                "tienCoc": $("#tienCoc").val()
                             },
                             success: function(response) {
                                 $("#save").hide();
@@ -916,7 +931,8 @@
                                     "thongTinXe": $("#thongTinXe").val(),
                                     "taiXe": $("#taiXe").val(),
                                     "dienThoaiTaiXe": $("#dienThoaiTaiXe").val(),
-                                    "yeuCau": $("#yeuCau").val()
+                                    "yeuCau": $("#yeuCau").val(),
+                                    "tienCoc": $("#tienCoc").val()
                                 },
                                 success: function(response) {
                                     $("#save").hide();
@@ -1604,6 +1620,7 @@
                 $("#soMay").prop('disabled', true);
                 $("#thongTinXe").prop('disabled', true);
                 $("#yeuCau").prop('disabled', true);
+                $("#tienCoc").prop('disabled', true);
                 //----------xoa
                 $("#timHopDong").val('');
                 $("#hopDong").val('');
@@ -1619,6 +1636,7 @@
                 $("#soMay").val('');
                 $("#thongTinXe").val('');
                 $("#yeuCau").val('');
+                $("#tienCoc").val('');
                 //--------------
                 $("#tongBaoGia").text("");
                 $("#chietKhau").text("");
@@ -1695,6 +1713,7 @@
                     $("#soKhung").val(response.data.soKhung);
                     $("#soMay").val(response.data.soMay);
                     $("#yeuCau").val(response.data.yeuCau);
+                    $("#tienCoc").val(response.data.tienCoc);
                     if (response.data.lyDoHuy != null)
                         $("#lyDoHuy").val(response.data.lyDoHuy);
                     else

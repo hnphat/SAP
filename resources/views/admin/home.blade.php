@@ -34,7 +34,7 @@
               </button>
             </div>
             <div class="modal-body">
-             <img id="phaohoa" src="{{asset('images/temp/phaohoa.gif')}}" alt="GIF">
+             <!-- <img id="phaohoa" src="{{asset('images/temp/phaohoa.gif')}}" alt="GIF"> -->
               <p>{{$data['thongBao']}}</p>
             </div>
             <div class="modal-footer justify-content-right">
