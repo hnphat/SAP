@@ -201,6 +201,8 @@
           <h6><strong>TỔNG CỘNG:</strong> <span id="tongPhuKienKhuyenMai" class="text-bold text-primary"></span></h6>
           <hr>
           <h4><strong>TỔNG GIÁ TRỊ HỢP ĐỒNG:</strong> <span id="tongGiaTriHopDong" class="text-bold text-primary"></span></h4>
+          <hr>
+          <h5 class="text-bold text-primary">Chưa bao gồm phí vận chuyển (nếu có): <span id="phiVanChuyen" class="text-bold text-warning"></span></h5>
         </div>
         
         <!-- Modal footer -->
@@ -357,6 +359,7 @@
                         }
                     $("#phuKienKhuyenMai").html(phuKienKhuyenMai);
                     $('#tongPhuKienKhuyenMai').text(response.tongPhuKienKhuyenMai);
+                    $('#phiVanChuyen').text(formatNumber(response.phiVanChuyen));
                     $('#tongGiaTriHopDong').text(response.tongGiaTriHopDong);      
                 },
                 error: function() {

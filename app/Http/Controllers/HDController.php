@@ -1223,6 +1223,7 @@ class HDController extends Controller
                 $giaVon = $sale->giaVon;
             }
             $htvSupport = $sale->htvSupport;
+            $phiVanChuyen = $sale->phiVanChuyen;
             $khuyenMai = 0;
             $cpkhac = 0;
             $hh = $sale->hoaHongMoiGioi;        
@@ -1241,7 +1242,7 @@ class HDController extends Controller
                         $cpkhac += $row2->cost;
                     }
             }
-            $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh + $phiVanChuyen);
             // $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
             $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
             // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -1295,7 +1296,8 @@ class HDController extends Controller
                 'tisuat' => round($tiSuat,2) . " %",
                 'htvSupport' => number_format($htvSupport),
                 'nguonKH' => $nguonKH,
-                'isTienMat' => $isTienMat
+                'isTienMat' => $isTienMat,
+                'phiVanChuyen' => number_format($phiVanChuyen),
             ]);
 
         $pathToSave = 'template/DENGHIDOWN.docx';
@@ -1391,6 +1393,7 @@ class HDController extends Controller
                 $giaVon = $sale->giaVon;
             }
             $htvSupport = $sale->htvSupport;
+            $phiVanChuyen = $sale->phiVanChuyen;
             $khuyenMai = 0;
             $cpkhac = 0;
             $hh = $sale->hoaHongMoiGioi;        
@@ -1408,7 +1411,7 @@ class HDController extends Controller
                         $cpkhac += $row2->cost;
                     }
             }
-            $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+            $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh + $phiVanChuyen);
             // $loiNhuan = ($giaXe + $htvSupport) - ($khuyenMai + $giaVon + $hh);
             $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
             // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -1464,6 +1467,7 @@ class HDController extends Controller
                 'htvSupport' => number_format($htvSupport),
                 'nguonKH' => $nguonKH,
                 'isTienMat' => $isTienMat,
+                'phiVanChuyen' => number_format($phiVanChuyen),
             ]);
 
         $pathToSave = 'template/DENGHICONGTYDOWN.docx';
@@ -2308,15 +2312,16 @@ class HDController extends Controller
                 'data' => $result
             ]);
         } 
-        $check = HopDong::select('*')->where('code',$request->sohd)->exists(); 
-        if($check) {
-            return response()->json([
-                'type' => 'warning',
-                'message' => 'Số hợp đồng đã tồn tại!',
-                'code' => 200,
-                'data' => $result
-            ]);
-        } 
+
+        // $check = HopDong::select('*')->where('code',$request->sohd)->exists(); 
+        // if($check) {
+        //     return response()->json([
+        //         'type' => 'warning',
+        //         'message' => 'Số hợp đồng đã tồn tại!',
+        //         'code' => 200,
+        //         'data' => $result
+        //     ]);
+        // } 
 
         if ($request->wait == 1 && $request->daiLy == 1) {
             return response()->json([
@@ -2333,6 +2338,7 @@ class HDController extends Controller
                 $result->code = $request->sohd; 
                 $result->isGiaVon = $request->isGiaVon; 
                 $result->htvSupport = $request->htvSupport;
+                $result->phiVanChuyen = $request->phiVanChuyen;
                 $result->save();
                 if($result) {
 
@@ -2372,6 +2378,7 @@ class HDController extends Controller
                 $result->hdDaiLy = $request->daiLy; 
                 $result->isGiaVon = $request->isGiaVon; 
                 $result->htvSupport = $request->htvSupport;
+                $result->phiVanChuyen = $request->phiVanChuyen;
                 $result->save();
                 if($result) {
                     $nhatKy = new NhatKy();
@@ -2462,6 +2469,71 @@ class HDController extends Controller
                     return response()->json([
                         'type' => 'info',
                         'message' => 'Lỗi giá vốn!',
+                        'code' => 500
+                    ]);  
+            }
+        }
+    }
+
+    public function capNhatPhiVanChuyen(Request $request){ 
+        $result = HopDong::find($request->id);
+        $sohd = $result->code.".".$result->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($result->created_at)."/HĐMB-PA";
+        if(Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('system')) {
+            if ($result->id_car_kho != null) {
+                $car = KhoV2::find($result->id_car_kho);
+                if ($car->xuatXe == true)
+                    return response()->json([
+                        'type' => 'warning',
+                        'message' => 'Xe đã xuất kho không thể nhập chi phí vận chuyển!',
+                        'code' => 500
+                    ]);                   
+                else {
+                    $result->phiVanChuyen = $request->phiVanChuyen;
+                    $result->save();
+                    if ($result) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->noiDung = "Cập nhật chi phí vận chuyển " . number_format($request->phiVanChuyen) 
+                        . " cho hợp đồng số: " . $sohd . " (Mã đề nghị ĐN/0".$request->id.")";
+                        $nhatKy->save();
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Đã cập nhật chi phí vận chuyển!',
+                            'code' => 200,
+                            'data' => $result
+                        ]);  
+                    }
+                    else
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Lỗi cập nhật chi phí vận chuyển!',
+                            'code' => 500
+                        ]);  
+                }
+            } else {
+                $result->phiVanChuyen = $request->phiVanChuyen;
+                $result->save();
+                if ($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->noiDung = "Cập nhật chi phí vận chuyển " . number_format($request->phiVanChuyen) 
+                    . " cho hợp đồng " . $sohd;
+                    $nhatKy->save();
+                    return response()->json([
+                        'type' => 'info',
+                        'message' => 'Đã cập nhật chi phí vận chuyển!',
+                        'code' => 200,
+                        'data' => $result
+                    ]);  
+                }
+                else
+                    return response()->json([
+                        'type' => 'info',
+                        'message' => 'Lỗi cập nhật chi phí vận chuyển!',
                         'code' => 500
                     ]);  
             }
@@ -3311,6 +3383,7 @@ class HDController extends Controller
                     $giaVon = $row->giaVon;
                 }
                 $htvSupport = $row->htvSupport;
+                $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
                 $bhvc = 0;
                 $pkban = 0;
@@ -3345,7 +3418,7 @@ class HDController extends Controller
                     }
                 }
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
@@ -3435,6 +3508,7 @@ class HDController extends Controller
                     $giaVon = $row->giaVon;
                 }
                 $htvSupport = $row->htvSupport;
+                $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
                 $bhvc = 0;
                 $pkban = 0;
@@ -3469,7 +3543,7 @@ class HDController extends Controller
                     }
                 }
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
@@ -3584,6 +3658,7 @@ class HDController extends Controller
         $mauXeBan = $hd->mau;
         $giaXeBan = $hd->giaXe;
         $tienDatCoc = $hd->tienCoc;        
+        $phiVanChuyen = $hd->phiVanChuyen;    
         $chiTietXe = 'Màu: '.$hd->mau
         .'; Năm SX: '.$namsx
         .'; Hộp số: '.$carSale->gear
@@ -3667,6 +3742,7 @@ class HDController extends Controller
             'tongPhuKienKhuyenMai' => number_format($tongPhuKienKhuyenMai),
             'tongGiaTriHopDong' => number_format($tongGiaTriHopDong),
             'hinhThucThanhToan' => $hinhThucThanhToan,
+            'phiVanChuyen' => $phiVanChuyen
         ]);
     }
 }

@@ -217,6 +217,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
         Route::post('hd/denghi/yeucauhuy','HDController@yeuCauHuy');
         Route::post('hd/denghi/gangiavon','HDController@ganGiaVon');
+        Route::post('hd/denghi/capnhatphivanchuyen','HDController@capNhatPhiVanChuyen');
         Route::get('getedit/pkcost/{id}','HDController@getEditPkCost');
         Route::get('getedit/pkfree/{id}','HDController@getEditPkFree');
         Route::post('postedit/pkcost/','HDController@postEditPKCost');

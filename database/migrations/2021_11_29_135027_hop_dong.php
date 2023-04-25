@@ -44,9 +44,11 @@ class HopDong extends Migration
             $table->string('mau', 20)->nullable();
             $table->boolean('hdWait')->default(false);
             $table->boolean('hdDaiLy')->default(false);
-            $table->integer('htvSupport')->nullable();
+            $table->integer('htvSupport')->default(0);
             $table->boolean('isGiaVon')->default(true);
             $table->integer('giaVon')->default(0);
+            $table->string('nguonKH')->nullable();
+            $table->integer('phiVanChuyen')->default(0);
             $table->timestamps();
         });
     }

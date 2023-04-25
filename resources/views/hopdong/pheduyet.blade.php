@@ -247,6 +247,18 @@
                                                 <strong id="htvSupportShow"></strong>
                                             </div>
                                         </div><br/>
+                                        <strong class="text-info">PHÍ VẬN CHUYỂN (Nếu có):</strong> 
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <input id="phiVanChuyen" placeholder="Nhập số tiền (nếu có)" value="0" name="phiVanChuyen" class="form-control">
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button id="capNhatPhiVanChuyen" class="btn btn-sm btn-primary" type="button">Cập nhật</button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong id="phiVanChuyenShow"></strong>
+                                            </div>
+                                        </div><br/>
                                         <strong class="text-pink">HÌNH THỨC GIÁ VỐN:</strong> 
                                         <div class="row">
                                             <div class="col-md-3">
@@ -485,6 +497,8 @@
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#htvSupport').val();
                 $('#htvSupportShow').text("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#phiVanChuyen').val();
+                $('#phiVanChuyenShow').text("(" + DOCSO.doc(cos) + ")");
             }
 
             $('#tamUng').keyup(function(){
@@ -510,6 +524,11 @@
             $('#htvSupport').keyup(function(){
                 var cos = $('#htvSupport').val();
                 $('#htvSupportShow').text("(" + DOCSO.doc(cos) + ")");
+            });
+
+            $('#phiVanChuyen').keyup(function(){
+                var cos = $('#phiVanChuyen').val();
+                $('#phiVanChuyenShow').text("(" + DOCSO.doc(cos) + ")");
             });
 
             function defaultVal() {
@@ -540,6 +559,7 @@
                 $("input[name=xeGan]").val("");
                 $("input[name=soHD]").val("");
                 $("input[name=htvSupport]").val(0);
+                $("input[name=phiVanChuyen]").val(0);
                 loadPKFree(null);
                 loadPKPay(null);
                 loadPKCost(null);
@@ -579,6 +599,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("input[name=htvSupport]").prop('disabled', true);
+                    $("input[name=phiVanChuyen]").prop('disabled', true);
                     $("select[name=hinhThucGiaVon]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == true && admin == false) {
@@ -592,6 +613,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                     $("input[name=htvSupport]").prop('disabled', false);
+                    $("input[name=phiVanChuyen]").prop('disabled', false);
                     $("select[name=hinhThucGiaVon]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
@@ -604,6 +626,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', true);
                     $("input[name=soHD]").prop('disabled', true);
                     $("input[name=htvSupport]").prop('disabled', true);
+                    $("input[name=phiVanChuyen]").prop('disabled', true);
                     $("select[name=hinhThucGiaVon]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == false) {
@@ -617,6 +640,7 @@
                     $("input[name=hdDaiLy]").prop('disabled', false);
                     $("input[name=soHD]").prop('disabled', false);
                     $("input[name=htvSupport]").prop('disabled', false);
+                    $("input[name=phiVanChuyen]").prop('disabled', false);
                     $("select[name=hinhThucGiaVon]").prop('disabled', false);
                     $("#inForm").hide();
                 }
@@ -655,6 +679,7 @@
                             $("input[name=idRequestHuy]").val(response.data.id);
                             $("input[name=soHD]").val(response.data.code);
                             $("input[name=htvSupport]").val(response.data.htvSupport);
+                            $("input[name=phiVanChuyen]").val(response.data.phiVanChuyen);
                             $("select[name=hinhThucGiaVon]").val(response.data.isGiaVon);
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
@@ -760,6 +785,7 @@
                             $("input[name=xeGan]").val("");
                             $("input[name=soHD]").val("");
                             $("input[name=htvSupport]").val(0);
+                            $("input[name=phiVanChuyen]").val(0);
                             loadPKFree(null);
                             loadPKPay(null);
                             loadPKCost(null);
@@ -781,6 +807,7 @@
                             $("#dienThoai").prop('disabled', true);
                             $("input[name=soHD]").prop('disabled', true);
                             $("input[name=htvSupport]").prop('disabled', true);
+                            $("input[name=phiVanChuyen]").prop('disabled', true);
                             $("select[name=hinhThucGiaVon]").prop('disabled', true);                            
                             $("#duyetDeNghi").hide();
                             $("#choPhepSua").hide();
@@ -931,6 +958,7 @@
                             "sohd": $("input[name=soHD]").val(),
                             "id": $("input[name=idHopDong]").val(),
                             "htvSupport": $("input[name=htvSupport]").val(),
+                            "phiVanChuyen": $("input[name=phiVanChuyen]").val(),
                             "isGiaVon": $("select[name=hinhThucGiaVon]").val()
                         },
                         success: function(response) {
@@ -1220,31 +1248,65 @@
             $("#ganGiaVon").click(function(e){
                 e.preventDefault();
                 let val = prompt("Vui lòng nhập giá vốn xe này");
-                $.ajax({
-                    url: "{{url('management/hd/hd/denghi/gangiavon/')}}",
-                    type: "post",
-                    dataType: 'json',
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "id": $("input[name=idHopDong]").val(),
-                        "giaVon": val
-                    },
-                    success: function(response) {
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
-                        loadList();
-                        defaultVal();
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Không thể gán giá vốn!"
-                        })
-                    }
-                });
+                if (val) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/gangiavon/')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $("input[name=idHopDong]").val(),
+                            "giaVon": val
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
+                            loadList();
+                            defaultVal();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể gán giá vốn!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $("#capNhatPhiVanChuyen").click(function(e){
+                e.preventDefault();
+                let val = prompt("Nhập chi phí vận chuyển cho hợp đồng này\nLưu ý: Xe đã xuất kho không thể nhập chi phí vận chuyển!");
+                if (val) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/capnhatphivanchuyen/')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $("input[name=idHopDong]").val(),
+                            "phiVanChuyen": val
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reloadSS(response.data.requestCheck,response.data.admin_check,response.data.lead_check);
+                            loadList();
+                            defaultVal();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể cập nhập chi phí vận chuyển!"
+                            })
+                        }
+                    });
+                }
             });
         });
     </script>
