@@ -460,6 +460,7 @@
         $(document).ready(function() {
             // default set
             $("#duyetDeNghi").hide();
+            $("#capNhatPhiVanChuyen").show();
             $("#choPhepSua").hide();
             $("#huyDeNghi").hide();
             $("#ganXeHDCho").hide();
@@ -582,6 +583,7 @@
                 $("#dienThoai").prop('disabled', true);
                 $("input[name=soHD]").prop('disabled', true);
                 $("#duyetDeNghi").hide();
+                $("#capNhatPhiVanChuyen").show();
                 $("#choPhepSua").hide();
                 $("#ganGiaVon").hide();
                 $("#huyDeNghi").hide();
@@ -590,6 +592,7 @@
             function reloadSS(request, admin, lead) {
                 if (lead == true) {
                     $("#duyetDeNghi").hide();
+                    $("#capNhatPhiVanChuyen").show();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").show();
@@ -604,6 +607,7 @@
                     $("#inForm").show();
                 }else if (request == true && admin == false) {
                     $("#duyetDeNghi").show();
+                    $("#capNhatPhiVanChuyen").hide();
                     $("#choPhepSua").show();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").hide();
@@ -617,6 +621,7 @@
                     $("select[name=hinhThucGiaVon]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
+                    $("#capNhatPhiVanChuyen").show();
                     $("#choPhepSua").show();
                     $("#huyDeNghi").show();
                     $("#ganXeHDCho").hide();
@@ -631,6 +636,7 @@
                     $("#inForm").show();
                 }else if (request == false) {
                     $("#duyetDeNghi").hide();
+                    $("#capNhatPhiVanChuyen").show();
                     $("#choPhepSua").hide();
                     $("#huyDeNghi").hide();
                     $("#ganXeHDCho").hide();
@@ -810,6 +816,7 @@
                             $("input[name=phiVanChuyen]").prop('disabled', true);
                             $("select[name=hinhThucGiaVon]").prop('disabled', true);                            
                             $("#duyetDeNghi").hide();
+                            $("#capNhatPhiVanChuyen").show();
                             $("#choPhepSua").hide();
                             $("#huyDeNghi").hide();
                         }
@@ -821,6 +828,7 @@
                         })
                         $("#showXeGan").html("");
                         $("#duyetDeNghi").hide();
+                        $("#capNhatPhiVanChuyen").show();
                         $("#choPhepSua").hide();
                         $("#huyDeNghi").hide();
                         $("#ganXeHDCho").hide();
