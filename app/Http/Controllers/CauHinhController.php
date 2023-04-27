@@ -33,7 +33,11 @@ class CauHinhController extends Controller
         $data["capNhatThongTin"] = $request->capNhatThongTin;       
         $data["mauThongBao"] = $request->mauThongBao;       
         $data["loaiThongBao"] = $request->loaiThongBao;
-        $data["maxRecord"] = $request->maxRecord;       
+        $data["maxRecord"] = $request->maxRecord;
+        $data["vaoSang"] = $request->vaoSang;       
+        $data["raSang"] = $request->raSang;       
+        $data["vaoChieu"] = $request->vaoChieu;       
+        $data["raChieu"] = $request->raChieu;              
 
         $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
         file_put_contents('upload/cauhinh/app.json', $newJsonString);

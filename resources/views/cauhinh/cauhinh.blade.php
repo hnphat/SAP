@@ -116,6 +116,20 @@
                                         <label>Dữ liệu tối đa trả về <br/>(Xin phép, Nhật ký)</label>
                                         <input type="number" name="maxRecord" class="form-control"/>
                                     </div>
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <legend>Cấu hình chấm công</legend>
+                                            <label for="vaoSang">Vào sáng:</label>
+                                            <input type="text" id="vaoSang" name="vaoSang" placeholder="07:30" class="form-control">
+                                            <label for="raSang">Ra sáng:</label>
+                                            <input type="text" id="raSang" name="raSang" placeholder="11:30" class="form-control">
+                                            <label for="vaoChieu">Vào chiều:</label>
+                                            <input type="text" id="vaoChieu" name="vaoChieu" placeholder="13:00" class="form-control">
+                                            <label for="raChieu">Ra chiều:</label>
+                                            <input type="text" id="raChieu" name="raChieu" placeholder="17:00" class="form-control">
+                                            <strong>Lưu ý: <span class="text-danger"><i>Thời gian 01 buổi (Vào sáng + ra sáng hoặc vào chiều + ra chiều) phải là 04 giờ (Theo quy định (01 ngày 08 tiếng, 01 buổi 04 tiếng)). Sai lệch sẽ phát sinh lỗi hoặc kết quả không đúng.</i></span></strong>
+                                        </fieldset>
+                                    </div>
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -172,6 +186,10 @@
                         $("select[name=mauThongBao]").val(response.data.mauThongBao);
                         $("select[name=loaiThongBao]").val(response.data.loaiThongBao);
                         $("input[name=maxRecord]").val(response.data.maxRecord);
+                        $("input[name=vaoSang]").val(response.data.vaoSang);
+                        $("input[name=raSang]").val(response.data.raSang);
+                        $("input[name=vaoChieu]").val(response.data.vaoChieu);
+                        $("input[name=raChieu]").val(response.data.raChieu);
 
                     },
                     error: function() {

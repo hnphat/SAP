@@ -1,6 +1,6 @@
 {
-    "hinhNen": "https:\/\/otophucanh.com\/public\/upload\/bieumau\/teambuilding-jpg.jpg",
-    "thongBao": "L\u01b0u \u00fd: Anh Ch\u1ecb xin ph\u00e9p tr\u00ean ph\u1ea7n m\u1ec1m tr\u01b0\u1edbc 02 ng\u00e0y.",
+    "hinhNen": null,
+    "thongBao": null,
     "emailPhep": "phongnhansu@hyundailongxuyen.com",
     "emailNhienLieu": "phonghanhchinh@hyundailongxuyen.com",
     "emailCCDC": "phonghanhchinh@hyundailongxuyen.com",
@@ -8,7 +8,11 @@
     "emailDuyetXe": "phonghanhchinh@hyundailongxuyen.com",
     "emailTraXe": "phonghanhchinh@hyundailongxuyen.com",
     "capNhatThongTin": "0",
-    "mauThongBao": "bg-success",
-    "loaiThongBao": "0",
-    "maxRecord": "100"
+    "mauThongBao": "bg-mute",
+    "loaiThongBao": "1",
+    "maxRecord": "10000",
+    "vaoSang": "07:30",
+    "raSang": "11:30",
+    "vaoChieu": "13:00",
+    "raChieu": "17:00"
 }

@@ -72,10 +72,17 @@ class NhanSuController extends Controller
 
     public function quanLyChamCongPostNhanVien(Request $request) {
 
-        $time_1 = "07:30";
-        $time_2 = "11:30";
-        $time_3 = "13:00";
-        $time_4 = "17:00";
+        // $time_1 = "07:30";
+        // $time_2 = "11:30";
+        // $time_3 = "13:00";
+        // $time_4 = "17:00";
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);   
+        // Import từ app.json
+        $time_1 = $data['vaoSang'];
+        $time_2 = $data['raSang'];
+        $time_3 = $data['vaoChieu'];
+        $time_4 = $data['raChieu'];
 
         $gioSang = 0;
         $gioChieu = 0;
@@ -1824,14 +1831,22 @@ class NhanSuController extends Controller
     }
 
     public function importExcel(Request $request) {      
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);   
         $ngay = $request->ngay;
         $thang = $request->thang;
         $nam = $request->nam; 
         // Thời gian mặc định ---------------
-        $time_1 = "07:30";
-        $time_2 = "11:30";
-        $time_3 = "13:00";
-        $time_4 = "17:00";
+        // $time_1 = "07:30";
+        // $time_2 = "11:30";
+        // $time_3 = "13:00";
+        // $time_4 = "17:00";
+        // Import từ app.json
+        $time_1 = $data['vaoSang'];
+        $time_2 = $data['raSang'];
+        $time_3 = $data['vaoChieu'];
+        $time_4 = $data['raChieu'];
+
         if($request->hasFile('excel')){
             $theArray = Excel::toArray([], request()->file('excel'));  
             if (strval($theArray[0][0][0]) == "CODE" && strval($theArray[0][0][1]) == "NAME" && 
