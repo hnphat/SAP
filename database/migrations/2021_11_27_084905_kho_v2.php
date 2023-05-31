@@ -34,6 +34,14 @@ class KhoV2 extends Migration
             $table->string('viTri', 255)->nullable();
             $table->integer('id_user_create')->unsigned();
             $table->foreign('id_user_create')->references('id')->on('users');
+            // Bổ sung tính năng cho PKT
+            $table->string('ngayNhanNo')->nullable();
+            $table->string('ngayRutHoSo')->nullable();
+            $table->integer('xangLuuKho')->nullable();
+            // $table->integer('giaTriVay')->nullable();
+            $table->float('giaTriVay', 8, 2)->nullable();
+            // $table->integer('laiSuatVay')->nullable();
+            $table->float('laiSuatVay', 8, 2)->nullable();
             $table->timestamps();
         });
     }

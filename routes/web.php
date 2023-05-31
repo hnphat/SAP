@@ -286,6 +286,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hopdong/bienban/{id}','KetoanController@inBienBan');
         Route::get('hopdong/quyettoan/{id}','KetoanController@inQuyetToan');
         Route::get('baocaohopdong','KetoanController@getBaoCaoHopDong')->name('ketoan.baocaohopdong');
+        // Bổ sung tính năng cho PKT
+        Route::get('xenhanno','KetoanController@getXeNhanNo')->name('ketoan.xenhanno');
+        Route::get('xenhanno/getkho','KetoanController@getKhoHDList');
+        Route::post('xenhanno/edit/show/','KetoanController@getEditXeNhanNo');
+        Route::post('xenhanno/update/','KetoanController@updateXeNhanNo');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\HopDong;
 use App\KhoV2;
 use App\NhatKy;
+use App\TypeCarDetail;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 
@@ -15,6 +16,120 @@ class KetoanController extends Controller
     public function getKeToan() {
         return view("ketoan.hopdongxe");
     }
+
+    // Bổ sung tính năng cho Kế toán
+    public function getXeNhanNo() {
+        $type_detail = TypeCarDetail::all()->sortBy('name');
+        return view('ketoan.xenhanno', ['typecar' =>  $type_detail]);
+    }
+
+    public function getKhoHDList() {
+        // old command
+        // $result = KhoV2::select('kho_v2.*','h.id as idhopdong','t.name as ten', 'h.lead_check as tpkd', 'ud.surname as saleban','g.name as khach')
+        // ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        // ->join('hop_dong as h','h.id_car_kho','=','kho_v2.id')
+        // ->join('guest as g','g.id','=','h.id_guest')
+        // ->join('users as u','u.id','=','h.id_user_create')
+        // ->join('users_detail as ud','ud.id_user','=','u.id')
+        // ->where('kho_v2.type','=','HD')
+        // ->orderBy('xuatXe', 'asc')->get();
+
+        // $result = KhoV2::select('kho_v2.*','t.name as ten')
+        // ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')
+        // ->where('kho_v2.vin','!=',null)  
+        // ->get();
+
+        // ----------- end old command
+        // ->whereNull('kho_v2.vin')
+
+        $result = KhoV2::select('kho_v2.*','t.name as ten','t.giaVon','h.id as idhopdong','h.hoaHongSale','ud.surname as saleban','g.name as khach')
+        ->leftJoin('type_car_detail as t', 'kho_v2.id_type_car_detail', '=', 't.id')
+        ->leftJoin('hop_dong as h','kho_v2.id','=','h.id_car_kho')
+        ->leftJoin('guest as g','g.id','=','h.id_guest')
+        ->leftJoin('users as u','u.id','=','h.id_user_create')
+        ->leftJoin('users_detail as ud','ud.id_user','=','u.id')
+        ->where('kho_v2.vin','!=',null)
+        ->get();
+
+
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getEditXeNhanNo(Request $request) {
+        $idKho = $request->id;
+        $idHopDong = 0;
+        if ($request->idhd)
+            $idHopDong = $request->idhd;
+        $result = KhoV2::find($idKho);
+        $tenXe = $result->typeCarDetail->name;
+        $hoaHongSale = 0;
+        $hopDong = HopDong::find($idHopDong);
+        if($hopDong) {
+            $hoaHongSale = $hopDong->hoaHongSale;
+        }
+        if($result) {
+            return response()->json([
+                'message' => 'Lấy thông tin xe thành công!',
+                'code' => 200,
+                'type' => "info",
+                'data' => $result,
+                'idHopDong' => $idHopDong,
+                'hoaHongSale' => $hoaHongSale,
+                'tenXe' => $tenXe
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        } 
+    }
+
+    public function updateXeNhanNo(Request $request) {
+        $isHopDong = false;
+        if ($request->eidhopdong != 0) {
+            $hopDong = HopDong::find($request->eidhopdong); 
+            $hopDong->hoaHongSale = $request->hoaHongSale;
+            $hopDong->save();
+            if ($hopDong)
+                $isHopDong = true;
+        }       
+
+        $result = KhoV2::find($request->eid);       
+        $result->ngayNhanNo = $request->ngayNhanNo;
+        $result->ngayRutHoSo = $request->ngayRutHoSo;
+        $result->xangLuuKho = $request->xangLuuKho;
+        $result->giaTriVay = $request->giaTriVay;
+        $result->laiSuatVay = $request->laiSuatVay;
+        $result->save();
+
+        if($result) {
+            return response()->json([
+                'message' => 'Cập nhật xe nhận nợ: Thành công; Hoa hồng sale: ' . (($isHopDong) ? "Thành công" : "Thất bại"),
+                'code' => 200,
+                'type' => "success",
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }      
+    }
+    // -------------------
 
     public function getDanhSachHopDong() {
         $hdWait = "";

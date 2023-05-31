@@ -191,7 +191,7 @@ class KhoController extends Controller
     public function getKhoHD() {
         $type_detail = TypeCarDetail::all()->sortBy('name');
         return view('khoxe.xuatxe', ['typecar' =>  $type_detail]);
-    }
+    }    
 
     public function getKhoList() {
         $result = KhoV2::select('kho_v2.*','t.name as ten', 't.fuel as fuel', 't.seat as seat', 't.machine as machine', 't.gear as gear')
