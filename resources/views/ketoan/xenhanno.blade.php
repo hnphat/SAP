@@ -138,7 +138,7 @@
                                     <div class="row">
                                         <div class="col-sm-7">
                                             <div class="form-group">
-                                                <label>Xăng lưu kho (150.000/tháng)</label>
+                                                <label>Xăng lưu kho (Mặc định 150.000)</label>
                                                 <input name="xangLuuKho" placeholder="Xăng lưu kho" value="150000" type="number" class="form-control">
                                             </div>    
                                             <div class="form-group">
@@ -245,7 +245,7 @@
                                 let arr = row.ngayNhanNo.toString().split("-");    
                                 return arr[2] + "-" + arr[1] + "-" + arr[0]; 
                             } else {
-                                return "";
+                                return " ";
                             }                            
                         }
                     },
@@ -256,7 +256,7 @@
                                 let arr = row.ngayRutHoSo.toString().split("-");   
                                 return arr[2] + "-" + arr[1] + "-" + arr[0]; 
                             } else {
-                                return "";
+                                return " ";
                             }                            
                         }
                     },
@@ -269,8 +269,8 @@
                                 if (row.ngayRutHoSo)
                                     date_2 = new Date(row.ngayRutHoSo);
                                 return "<strong class='text-secondary'>" + (Math.abs(CountTheDays(date_1, date_2)) + 1) + " ngày </strong>";
-                            } else 
-                                return "";
+                            }  
+                            return " ";
                         }
                     },
                     {
@@ -285,7 +285,8 @@
                                     let countNgayNhanNo = Math.abs(CountTheDays(date_1, date_2)) + 1;
                                     return "<strong class='text-danger'>" + formatNumber(Math.round((row.giaVon * (row.giaTriVay/100) * (row.laiSuatVay/100)) / 365) * countNgayNhanNo) + "</strong>";
                                 }
-                            } else return 0;                            
+                            } 
+                            return " ";                            
                         }
                     },
                     {
@@ -293,7 +294,7 @@
                         render: function(data, type, row) {           
                             if (row.giaTriVay)                 
                                 return "<strong class='text-primary'>" + row.giaTriVay + "%" + "</strong>"; 
-                            else return "";
+                            else return " ";
                         }
                     },
                     {
@@ -301,7 +302,7 @@
                         render: function(data, type, row) {    
                             if (row.laiSuatVay)                        
                                 return "<strong class='text-primary'>" + row.laiSuatVay + "%" + "</strong>";  
-                            else return "";
+                            else return " ";
                         }
                     },
                     {
@@ -309,7 +310,7 @@
                         render: function(data, type, row) {       
                             if (row.xangLuuKho)     
                                 return "<strong>" + formatNumber(row.xangLuuKho) + "</strong>";   
-                            else return "";  
+                            else return " ";  
                         }
                     },
                     {
@@ -317,26 +318,40 @@
                         render: function(data, type, row) {   
                             if (row.type == "STORE")
                                 return "<strong class='text-primary'>Xe lưu kho</strong>";   
-                            else if (row.type == "HD" && row.xuatXe) {
+                            else if (row.type == "HD" && row.xuatXe == true) {
                                 return "<strong class='text-success'>Đã xuất xe</strong>";   
                             } 
-                            else if (row.type == "HD" && !row.xuatXe) {
+                            else if (row.type == "HD" && row.xuatXe == false) {
                                 return "<strong class='text-info'>Hợp đồng</strong>";   
                             }
                             else return "<strong class='text-warning'>Khác</strong>";
-
-                            
                         }
                     },
-                    { "data": "saleban" },
-                    { "data": "khach" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {                           
+                            if (row.saleban) 
+                                return "" + row.saleban;
+                            else
+                                return " ";
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {                           
+                            if (row.khach) 
+                                return "" + row.khach;
+                            else
+                                return " ";
+                        }
+                    },
                     {
                         "data": null,
                         render: function(data, type, row) {  
                             if (row.hoaHongSale)                          
                                 return "<strong class='text-pink'>" + formatNumber(row.hoaHongSale) + "</strong>"; 
                             else   
-                                return "";
+                                return " ";
                         }
                     },
                     {

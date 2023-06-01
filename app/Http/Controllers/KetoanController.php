@@ -99,15 +99,18 @@ class KetoanController extends Controller
 
     public function updateXeNhanNo(Request $request) {
         $isHopDong = false;
+        $hhSaleOld = 0;
         if ($request->eidhopdong != 0) {
             $hopDong = HopDong::find($request->eidhopdong); 
+            $hhSaleOld = $hopDong->hoaHongSale;
             $hopDong->hoaHongSale = $request->hoaHongSale;
             $hopDong->save();
             if ($hopDong)
                 $isHopDong = true;
         }       
 
-        $result = KhoV2::find($request->eid);       
+        $result = KhoV2::find($request->eid);   
+        $temp = KhoV2::find($request->eid);    
         $result->ngayNhanNo = $request->ngayNhanNo;
         $result->ngayRutHoSo = $request->ngayRutHoSo;
         $result->xangLuuKho = $request->xangLuuKho;
@@ -116,6 +119,19 @@ class KetoanController extends Controller
         $result->save();
 
         if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Kế toán - Xe nhận nợ";
+            $nhatKy->noiDung = "Cập nhật thông tin xe nhận nợ. Xe " . $temp->typeCarDetail->name
+            . "; Số khung: " . $temp->vin . "; Số máy: " . $temp->frame 
+            . "; Ngày nhận nợ từ ". $temp->ngayNhanNo ." thành " . $request->ngayNhanNo
+            . "; Ngày rút hồ sơ từ ". $temp->ngayRutHoSo ." thành " . $request->ngayRutHoSo
+            . "; Xăng lưu kho từ ". $temp->xangLuuKho ." thành " .  $request->xangLuuKho
+            . "; Giá trị vay từ ". $temp->giaTriVay ."% thành " . $request->giaTriVay
+            . "%; Lãi suất vay từ ". $temp->laiSuatVay ."% thành " . $request->laiSuatVay . "%"
+            . "; Hoa hồng sale từ ". $hhSaleOld  ." thành ".$request->hoaHongSale;
+            $nhatKy->save();
             return response()->json([
                 'message' => 'Cập nhật xe nhận nợ: Thành công; Hoa hồng sale: ' . (($isHopDong) ? "Thành công" : "Thất bại"),
                 'code' => 200,

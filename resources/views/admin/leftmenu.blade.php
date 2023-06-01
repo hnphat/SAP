@@ -430,12 +430,12 @@
                     <ul class="nav nav-treeview">                       
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))     
-                        <!-- <li class="nav-item">
+                        <li class="nav-item">
                             <a href="{{route('ketoan.xenhanno')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Xe nhận nợ/HH xe</p>
                             </a>
-                        </li>                    -->
+                        </li>                   
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
