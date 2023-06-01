@@ -214,7 +214,7 @@
                                 </form>
                                 <!-- <button type="button" id="reload"  class="btn btn-info">Tải lại</button><br/><br/> -->
                                 <h5>CÁC LOẠI PHÍ</h5>
-                                        <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <!-- <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/> -->
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
                                                 <th>TT</th>

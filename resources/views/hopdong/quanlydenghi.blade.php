@@ -217,9 +217,11 @@
                                     </div>
                                 </form>
             
-                                <!-- <button type="button" id="reload"  class="btn btn-info">Tải lại</button><br/><br/> -->
                                 <h5>CÁC LOẠI PHÍ</h5>
+                                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                        \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                         <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        @endif
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
@@ -407,9 +409,23 @@
                             {{csrf_field()}}
                             <input type="hidden" name="idHD3">
                             <div class="card-body">
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label>Nội dung</label>
                                     <input name="namePkCost" placeholder="Nhập nội dung" type="text" class="form-control">
+                                </div> -->
+                                <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <select name="namePkCost" id="namePkCost" class="form-control">
+                                        <option value="Phí trước bạ">Phí trước bạ</option>
+                                        <option value="Phí đăng ký xe">Phí đăng ký xe</option>
+                                        <option value="Phí đăng kiểm xe">Phí đăng kiểm xe</option>
+                                        <option value="Phí đường bộ">Phí đường bộ</option>
+                                        <option value="Bảo hiểm TNDS">Bảo hiểm TNDS</option>
+                                        <option value="Bảo hiểm vật chất">Bảo hiểm vật chất</option>
+                                        <option value="Hỗ trợ đăng ký - đăng kiểm">Hỗ trợ đăng ký - đăng kiểm</option>
+                                        <option value="Chi phí khác">Chi phí khác</option>
+                                    </select>
+                                    <!-- <input name="namePkCost" placeholder="Nhập nội dung" type="text" class="form-control"> -->
                                 </div>
                                 <div class="form-group">
                                     <label>Giá</label>
@@ -455,7 +471,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label>Nội dung</label>
-                                    <input name="endpk" placeholder="Nhập nội dung" type="text" class="form-control">
+                                    <input readonly="readonly" name="endpk" placeholder="Nhập nội dung" type="text" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Giá</label>

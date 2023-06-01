@@ -3389,16 +3389,57 @@ class HDController extends Controller
                 $pkban = 0;
                 $dangky = 0;
                 $cpkhac = 0;
-                $hh = $row->hoaHongMoiGioi;               
-                
-               
+                // $hh = $row->hoaHongMoiGioi;               
+                // Support KT ----------
+                $tangTB = 0;
+                $tangBH = 0;
+                $tangPK = 0;
+                $tangCongDK = 0;
+                $ngayNhanNo = 0;
+                $phiLaiVay = 0;
+                $phiLuuKho = 0;
+                $hhSale = $row->hoaHongSale;                
+                $pvc = $row->phiVanChuyen;
+                if ($row->id_car_kho != null) {
+                    $ktKho = KhoV2::find($row->id_car_kho); 
+                    $phiLuuKho = $ktKho->xangLuuKho;                  
+                    if ($ktKho->ngayNhanNo != null) {
+                        $date_1 = strtotime($ktKho->ngayNhanNo);
+                        if ($ktKho->ngayRutHoSo != null)
+                            $date_2 = strtotime($ktKho->ngayRutHoSo);
+                        else
+                            $date_2 = time();
+                        $datediff = $date_2 - $date_1;
+                        $ngayNhanNo = round($datediff / (60 * 60 * 24)) + 1;
+                        if (($ktKho->giaTriVay != null && $ktKho->giaTriVay != 0) && ($ktKho->laiSuatVay != null &&  $ktKho->laiSuatVay != 0)) {
+                            // let countNgayNhanNo = Math.abs(CountTheDays(date_1, date_2)) + 1;
+                            // formatNumber(Math.round((row.giaVon * (row.giaTriVay/100) * (row.laiSuatVay/100)) / 365) * countNgayNhanNo) + "</strong>";
+                            $phiLaiVay = round(($giaVon * ($ktKho->giaTriVay / 100) * ($ktKho->laiSuatVay / 100)) / 365) * $ngayNhanNo;
+                        }                       
+                    }
+                }                  
+                // ---------------------               
                 $package = $row->package;
                 foreach($package as $row2) {                
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        $khuyenMai += $row2->cost;
+                       // ---- Suport KT --------
+                       $tangPK += $row2->cost;
+                       // -----------------------
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;
+                       // ---- Suport KT --------
+                       if ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS") {
+                        $tangBH = $row2->cost;
+                       }
+                       if ($row2->name == "Phí trước bạ") {
+                        $tangTB = $row2->cost;
+                       }
+                       if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                        $tangCongDK = $row2->cost;
+                       }
+                       // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Bảo hiểm vật chất") {
@@ -3418,11 +3459,16 @@ class HDController extends Controller
                     }
                 }
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh + $phiVanChuyen);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
 
+                // ---- Suport KT --------
+                $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
+                $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
+                $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
+                // -----------------------
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -3455,29 +3501,40 @@ class HDController extends Controller
                         $status = "<strong class='text-success'>Hợp đồng ký</strong>";
                 }                
                 // <td>ĐN/0".$row->id."/".$codeCar."</td>
+               
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                     <td>".$row->guest->nguon."</td>
                     <td>".$loaihd."</td>
+                    <td>".$status."</td>
                     <td>".$sale."</td>
                     <td>".$guest."</td>
                     <td>".$dongxe."</td>
-                    <td>".$mau."</td>$giaXe
+                    <td>".$mau."</td>
                     <td>".$isTienMat."</td>
-                    <td class='text-bold'>".number_format($giaXe)."</td>
-                    <td class='text-bold'>".number_format($cpkhac)."</td>
+                    <td class='text-bold'>".number_format($giaXe)."</td>                    
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
+                    <td class='text-bold'>".number_format($cpkhac)."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
+                    <td>".number_format($tangTB)."</td>
+                    <td>".number_format($tangBH)."</td>
+                    <td>".number_format($tangPK)."</td>
+                    <td>".number_format($tangCongDK)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($bhvc)."</td>
                     <td>".number_format($pkban)."</td>
                     <td>".number_format($dangky)."</td>
-                    <td>".number_format($hh)."</td>
+                    <td>".number_format($pvc)."</td>
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
-                    <td>".$status."</td>
                     <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
+                    <td class='text-bold text-warning'>".$ngayNhanNo."</td>
+                    <td>".number_format($phiLaiVay)."</td>
+                    <td>".number_format($phiLuuKho)."</td>
+                    <td>".number_format($hhSale)."</td>
+                    <td class='text-bold text-success'>".number_format($laiGop)."</td>
+                    <td>".$tiSuatLaiGop."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
@@ -3514,16 +3571,58 @@ class HDController extends Controller
                 $pkban = 0;
                 $dangky = 0;
                 $cpkhac = 0;
-                $hh = $row->hoaHongMoiGioi;               
-                
+                // $hh = $row->hoaHongMoiGioi;               
+                // Support KT ----------
+                $tangTB = 0;
+                $tangBH = 0;
+                $tangPK = 0;
+                $tangCongDK = 0;
+                $ngayNhanNo = 0;
+                $phiLaiVay = 0;
+                $phiLuuKho = 0;
+                $hhSale = $row->hoaHongSale;                
+                $pvc = $row->phiVanChuyen;
+                if ($row->id_car_kho != null) {
+                    $ktKho = KhoV2::find($row->id_car_kho); 
+                    $phiLuuKho = $ktKho->xangLuuKho;                  
+                    if ($ktKho->ngayNhanNo != null) {
+                        $date_1 = strtotime($ktKho->ngayNhanNo);
+                        if ($ktKho->ngayRutHoSo != null)
+                            $date_2 = strtotime($ktKho->ngayRutHoSo);
+                        else
+                            $date_2 = time();
+                        $datediff = $date_2 - $date_1;
+                        $ngayNhanNo = round($datediff / (60 * 60 * 24)) + 1;
+                        if (($ktKho->giaTriVay != null && $ktKho->giaTriVay != 0) && ($ktKho->laiSuatVay != null &&  $ktKho->laiSuatVay != 0)) {
+                            // let countNgayNhanNo = Math.abs(CountTheDays(date_1, date_2)) + 1;
+                            // formatNumber(Math.round((row.giaVon * (row.giaTriVay/100) * (row.laiSuatVay/100)) / 365) * countNgayNhanNo) + "</strong>";
+                            $phiLaiVay = round(($giaVon * ($ktKho->giaTriVay / 100) * ($ktKho->laiSuatVay / 100)) / 365) * $ngayNhanNo;
+                        }                       
+                    }
+                }                  
+                // ---------------------      
                
                 $package = $row->package;
                 foreach($package as $row2) {                
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        $khuyenMai += $row2->cost;
+                       // ---- Suport KT --------
+                       $tangPK += $row2->cost;
+                       // -----------------------                      
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;
+                        // ---- Suport KT --------
+                        if ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS") {
+                            $tangBH = $row2->cost;
+                        }
+                        if ($row2->name == "Phí trước bạ") {
+                        $tangTB = $row2->cost;
+                        }
+                        if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                        $tangCongDK = $row2->cost;
+                        }
+                        // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Bảo hiểm vật chất") {
@@ -3543,11 +3642,15 @@ class HDController extends Controller
                     }
                 }
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $hh + $phiVanChuyen);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
-
+                // ---- Suport KT --------
+                $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
+                $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
+                $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
+                // -----------------------
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -3585,24 +3688,34 @@ class HDController extends Controller
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
                     <td>".$row->guest->nguon."</td>
                     <td>".$loaihd."</td>
+                    <td>".$status."</td>
                     <td>".$sale."</td>
                     <td>".$guest."</td>
                     <td>".$dongxe."</td>
-                    <td>".$mau."</td>$giaXe
+                    <td>".$mau."</td>
                     <td>".$isTienMat."</td>
-                    <td class='text-bold'>".number_format($giaXe)."</td>
-                    <td class='text-bold'>".number_format($cpkhac)."</td>
+                    <td class='text-bold'>".number_format($giaXe)."</td>                    
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
+                    <td class='text-bold'>".number_format($cpkhac)."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
+                    <td>".number_format($tangTB)."</td>
+                    <td>".number_format($tangBH)."</td>
+                    <td>".number_format($tangPK)."</td>
+                    <td>".number_format($tangCongDK)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($bhvc)."</td>
                     <td>".number_format($pkban)."</td>
                     <td>".number_format($dangky)."</td>
-                    <td>".number_format($hh)."</td>
+                    <td>".number_format($pvc)."</td>
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
-                    <td>".$status."</td>
                     <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
+                    <td class='text-bold text-warning'>".$ngayNhanNo."</td>
+                    <td>".number_format($phiLaiVay)."</td>
+                    <td>".number_format($phiLuuKho)."</td>
+                    <td>".number_format($hhSale)."</td>
+                    <td class='text-bold text-success'>".number_format($laiGop)."</td>
+                    <td>".$tiSuatLaiGop."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>

@@ -124,14 +124,14 @@
                                     <div class="row">
                                         <div class="col-sm-7">
                                             <div class="form-group">
-                                                <label>Giá trị vay trên giá vốn xe (Mặc định 85%):</label>
-                                                <input min="1" max="100" value="85" name="giaTriVay" placeholder="Chỉ nhập số không nhập %" type="number" class="form-control">
+                                                <label>% vay trên giá vốn xe (Mặc định 85%):</label>
+                                                <input min="1" max="100" value="85" name="giaTriVay" placeholder="VD: 85" type="number" class="form-control">
                                             </div>    
                                         </div>
                                         <div class="col-sm-5">
                                         <div class="form-group">
                                                 <label>Lãi suất vay (%):</label>
-                                                <input min="1" max="100" name="laiSuatVay" placeholder="Chỉ nhập số không nhập %" type="number" class="form-control">
+                                                <input min="1" max="100" name="laiSuatVay" placeholder="VD: 12.5" type="number" class="form-control">
                                             </div>   
                                         </div>
                                     </div>  

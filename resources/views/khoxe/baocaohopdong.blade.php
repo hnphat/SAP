@@ -78,24 +78,38 @@
                             <th>Ngày tạo</th>
                             <th>Nguồn KH</th>
                             <th>Loại HĐ</th>
+                            <th>Trạng thái</th>
                             <th>Sale</th>
                             <th>Khách hàng</th>
                             <th>Dòng xe</th>
                             <th>Màu</th>
                             <th>Thanh toán</th>
                             <th>Giá bán</th>
-                            <th>Cộng tiền mặt</th>
                             <th>Giá vốn</th>
-                            <th>Hỗ trợ HTV</th>
-                            <th>Khuyến mãi</th>
-                            <th>Bảo hiểm bán</th>
-                            <th>Phụ kiện bán</th>
-                            <th>Đăng ký</th>
-                            <th>Hoa hồng MG</th>
-                            <th>Lợi nhuận</th>
-                            <th>Tỉ suất</th>
-                            <th>Trạng thái</th>
+                            <th class="table-primary">Cộng tiền mặt</th>
+                            <th class="table-primary">Hỗ trợ HTV</th>
+
+                            <th class="table-secondary">Tặng trước bạ</th>
+                            <th class="table-secondary">Tặng Bảo hiểm</th>
+                            <th class="table-secondary">Tặng Phụ kiện</th>
+                            <th class="table-secondary">Tặng Công ĐK</th>
+                            <th class="table-secondary">Tổng khuyến mãi</th>
+                            <th class="table-primary">Bảo hiểm bán</th>
+                            <th class="table-primary">Phụ kiện bán</th>
+                            <th class="table-primary">Công đăng ký</th>
+                            <!-- <th>Hoa hồng MG</th> -->
+                            <th class="table-secondary">Phí vận chuyển</th>
+                            <th class="table-success">Lợi nhuận xe</th>
+                            <th class="table-success">Tỉ suất LN xe</th>
                             <th>Ngày xuất xe</th>
+                            
+                            <th>Ngày nhận nợ</th>
+                            <th class="table-secondary">Phí lãi vay</th>
+                            <th class="table-secondary">Phí lưu kho</th>
+                            <th class="table-secondary">HH sale</th>
+                            <th class="table-success">Lãi gộp</th>
+                            <th class="table-success">Tỉ suất lãi gộp</th>
+
                             <th>Tác vụ</th>
                         </tr>
                         <tbody id="showBaoCao">
@@ -240,7 +254,6 @@
 
         // show data
         $(document).ready(function() {
-
             $("#exportExcel").click(function(){
                 if(confirm('Xác nhận xuất dữ liệu excel')) {
                     open("{{url('management/baocaohopdong/exportexcel/')}}" 
