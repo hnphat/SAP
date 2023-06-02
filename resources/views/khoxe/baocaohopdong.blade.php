@@ -3,7 +3,10 @@
    Báo cáo hợp đồng
 @endsection
 @section('script_head')
-    <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css"> 
+    <style>
+        thead th { position: sticky; top: 0;}
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -71,23 +74,25 @@
                 </div>
             </form>
             <div class="container-fluid">
-                <div style="overflow:auto;">
+                <!-- <div style="overflow:auto;"> -->
+                <div>
                     <table class="table table-striped table-bordered">
+                    <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Ngày tạo</th>
-                            <th>Nguồn KH</th>
-                            <th>Loại HĐ</th>
-                            <th>Trạng thái</th>
-                            <th>Sale</th>
-                            <th>Khách hàng</th>
-                            <th>Dòng xe</th>
-                            <th>Màu</th>
-                            <th>Thanh toán</th>
-                            <th>Giá bán</th>
-                            <th>Giá vốn</th>
-                            <th>Cộng tiền mặt</th>
-                            <th>Hỗ trợ HTV</th>
+                            <th class="table-light">STT</th>
+                            <th class="table-light">Ngày tạo</th>
+                            <th class="table-light">Nguồn KH</th>
+                            <th class="table-light">Loại HĐ</th>
+                            <th class="table-light">Trạng thái</th>
+                            <th class="table-light">Sale</th>
+                            <th class="table-light">Khách hàng</th>
+                            <th class="table-light">Dòng xe</th>
+                            <th class="table-light">Màu</th>
+                            <th class="table-light">Thanh toán</th>
+                            <th class="table-light">Giá bán</th>
+                            <th class="table-light">Giá vốn</th>
+                            <th class="table-light">Cộng tiền mặt</th>
+                            <th class="table-light">Hỗ trợ HTV</th>
 
                             <th class="table-secondary">Tặng trước bạ</th>
                             <th class="table-secondary">Tặng Bảo hiểm</th>
@@ -101,17 +106,18 @@
                             <th class="table-secondary">Phí vận chuyển</th>
                             <th class="table-success">Lợi nhuận xe</th>
                             <th class="table-success">Tỉ suất LN xe</th>
-                            <th>Ngày xuất xe</th>
+                            <th class="table-light">Ngày xuất xe</th>
                             
-                            <th>Ngày nhận nợ</th>
+                            <th class="table-light">Ngày nhận nợ</th>
                             <th class="table-secondary">Phí lãi vay</th>
                             <th class="table-secondary">Phí lưu kho</th>
                             <th class="table-secondary">HH sale</th>
                             <th class="table-warning">Lãi gộp</th>
                             <th class="table-warning">Tỉ suất lãi gộp</th>
 
-                            <th>Tác vụ</th>
+                            <th class="table-light">Tác vụ</th>
                         </tr>
+                        </thead>
                         <tbody id="showBaoCao">
                         </tbody>                                         
                     </table>

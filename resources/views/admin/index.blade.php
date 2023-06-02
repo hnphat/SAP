@@ -37,7 +37,7 @@
             border-radius: 50%;
             background: red;
             color: white;
-        }
+        }                
     </style>
     @yield('script_head')
 </head>

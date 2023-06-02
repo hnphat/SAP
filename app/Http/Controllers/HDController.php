@@ -3173,7 +3173,7 @@ class HDController extends Controller
         $nhatKy->chucNang = "KINH DOANH - BÁO CÁO HỢP ĐỒNG";
         $nhatKy->noiDung = "Xem báo cáo hợp đồng từ " . $_from . " đến " . $_to;
         $nhatKy->save();
-
+        
         if (Auth::user()->hasRole('system') 
         || Auth::user()->hasRole('baocaohopdong')) {
             switch($request->baoCao) {
@@ -3721,7 +3721,7 @@ class HDController extends Controller
                     </td>
                 </tr>";
             }  
-        } 
+        }         
     }
 
     public function exportExcel($from,$to,$loai) {
