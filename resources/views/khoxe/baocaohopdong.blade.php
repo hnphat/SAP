@@ -86,8 +86,8 @@
                             <th>Thanh toán</th>
                             <th>Giá bán</th>
                             <th>Giá vốn</th>
-                            <th class="table-primary">Cộng tiền mặt</th>
-                            <th class="table-primary">Hỗ trợ HTV</th>
+                            <th>Cộng tiền mặt</th>
+                            <th>Hỗ trợ HTV</th>
 
                             <th class="table-secondary">Tặng trước bạ</th>
                             <th class="table-secondary">Tặng Bảo hiểm</th>
@@ -107,8 +107,8 @@
                             <th class="table-secondary">Phí lãi vay</th>
                             <th class="table-secondary">Phí lưu kho</th>
                             <th class="table-secondary">HH sale</th>
-                            <th class="table-success">Lãi gộp</th>
-                            <th class="table-success">Tỉ suất lãi gộp</th>
+                            <th class="table-warning">Lãi gộp</th>
+                            <th class="table-warning">Tỉ suất lãi gộp</th>
 
                             <th>Tác vụ</th>
                         </tr>
