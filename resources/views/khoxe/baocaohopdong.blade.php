@@ -89,8 +89,10 @@
                             <th class="table-light">Dòng xe</th>
                             <th class="table-light">Màu</th>
                             <th class="table-light">Thanh toán</th>
+                            <th class="table-light">Giá niêm yết (Nhà máy)</th>
                             <th class="table-light">Giá bán</th>
                             <th class="table-light">Giá vốn</th>
+                            <th class="table-light">Bán giảm (So với giá niêm yết)</th>
                             <th class="table-light">Cộng tiền mặt</th>
                             <th class="table-light">Hỗ trợ HTV</th>
 

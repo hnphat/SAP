@@ -3376,6 +3376,10 @@ class HDController extends Controller
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
+                
+                $giaNiemYet = $row->giaNiemYet;
+                $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
+
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
@@ -3513,8 +3517,10 @@ class HDController extends Controller
                     <td>".$dongxe."</td>
                     <td>".$mau."</td>
                     <td>".$isTienMat."</td>
+                    <td>".number_format($giaNiemYet)."</td>
                     <td class='text-bold'>".number_format($giaXe)."</td>                    
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
+                    <td class='text-bold' style='color: brown;'>".number_format($truTienMat)."</td>
                     <td class='text-bold'>".number_format($cpkhac)."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($tangTB)."</td>
@@ -3558,6 +3564,10 @@ class HDController extends Controller
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
+
+                $giaNiemYet = $row->giaNiemYet;
+                $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
+
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
@@ -3694,8 +3704,10 @@ class HDController extends Controller
                     <td>".$dongxe."</td>
                     <td>".$mau."</td>
                     <td>".$isTienMat."</td>
+                    <td>".number_format($giaNiemYet)."</td> 
                     <td class='text-bold'>".number_format($giaXe)."</td>                    
                     <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
+                    <td class='text-bold' style='color: brown;'>".number_format($truTienMat)."</td>
                     <td class='text-bold'>".number_format($cpkhac)."</td>
                     <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
                     <td>".number_format($tangTB)."</td>

@@ -236,6 +236,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
+
+                $giaNiemYet = $row->giaNiemYet;
+                $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
+
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
@@ -368,28 +372,30 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '8' => $dongxe,
                     '9' => $mau,
                     '10' => $isTienMat,
-                    '11' => $giaXe,
-                    '12' => $giaVon,
-                    '13' => $cpkhac,
-                    '14' => $htvSupport,
-                    '15' => $tangTB,
-                    '16' => $tangBH,
-                    '17' => $tangPK,
-                    '18' => $tangCongDK,
-                    '19' => $khuyenMai,
-                    '20' => $bhvc,
-                    '21' => $pkban,
-                    '22' => $dangky,
-                    '23' => $pvc,
-                    '24' => $loiNhuan,
-                    '25' => $tiSuat,                    
-                    '26' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
-                    '27' => $ngayNhanNo,
-                    '28' => $phiLaiVay,
-                    '29' => $phiLuuKho,
-                    '30' => $hhSale,
-                    '31' => $laiGop,
-                    '32' => $tiSuatLaiGop,
+                    '11' => $giaNiemYet,
+                    '12' => $giaXe,
+                    '13' => $giaVon,
+                    '14' => $truTienMat,
+                    '15' => $cpkhac,
+                    '16' => $htvSupport,
+                    '17' => $tangTB,
+                    '18' => $tangBH,
+                    '19' => $tangPK,
+                    '20' => $tangCongDK,
+                    '21' => $khuyenMai,
+                    '22' => $bhvc,
+                    '23' => $pkban,
+                    '24' => $dangky,
+                    '25' => $pvc,
+                    '26' => $loiNhuan,
+                    '27' => $tiSuat,                    
+                    '28' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
+                    '29' => $ngayNhanNo,
+                    '30' => $phiLaiVay,
+                    '31' => $phiLuuKho,
+                    '32' => $hhSale,
+                    '33' => $laiGop,
+                    '34' => $tiSuatLaiGop,
                 );
             }    
 
@@ -409,6 +415,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
+                
+                $giaNiemYet = $row->giaNiemYet;
+                $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
+
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
@@ -541,28 +551,30 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '8' => $dongxe,
                     '9' => $mau,
                     '10' => $isTienMat,
-                    '11' => $giaXe,
-                    '12' => $giaVon,
-                    '13' => $cpkhac,
-                    '14' => $htvSupport,
-                    '15' => $tangTB,
-                    '16' => $tangBH,
-                    '17' => $tangPK,
-                    '18' => $tangCongDK,
-                    '19' => $khuyenMai,
-                    '20' => $bhvc,
-                    '21' => $pkban,
-                    '22' => $dangky,
-                    '23' => $pvc,
-                    '24' => $loiNhuan,
-                    '25' => $tiSuat,                    
-                    '26' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
-                    '27' => $ngayNhanNo,
-                    '28' => $phiLaiVay,
-                    '29' => $phiLuuKho,
-                    '30' => $hhSale,
-                    '31' => $laiGop,
-                    '32' => $tiSuatLaiGop,
+                    '11' => $giaNiemYet,
+                    '12' => $giaXe,
+                    '13' => $giaVon,
+                    '14' => $truTienMat,
+                    '15' => $cpkhac,
+                    '16' => $htvSupport,
+                    '17' => $tangTB,
+                    '18' => $tangBH,
+                    '19' => $tangPK,
+                    '20' => $tangCongDK,
+                    '21' => $khuyenMai,
+                    '22' => $bhvc,
+                    '23' => $pkban,
+                    '24' => $dangky,
+                    '25' => $pvc,
+                    '26' => $loiNhuan,
+                    '27' => $tiSuat,                    
+                    '28' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
+                    '29' => $ngayNhanNo,
+                    '30' => $phiLaiVay,
+                    '31' => $phiLuuKho,
+                    '32' => $hhSale,
+                    '33' => $laiGop,
+                    '34' => $tiSuatLaiGop,
                 );
             }  
         }
@@ -584,8 +596,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
             'Dòng xe',
             'Màu',
             'Thanh toán',
+            'Giá niêm yết (Nhà máy)',
             'Giá bán',
             'Giá vốn',
+            'Bán giảm (So với giá niêm yết)',
             'Cộng tiền mặt',
             'Hỗ trợ HTV',
             'Tặng trước bạ',
