@@ -2456,6 +2456,39 @@ class DichVuController extends Controller
         }
     }
 
+    public function cancelEnd(Request $request) {
+        if(!Auth::user()->hasRole('system')) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền bỏ kết thúc cho báo giá này, liên hệ quản trị viên!',
+                'code' => 200
+            ]);
+        }
+        $bg = BaoGiaBHPK::find($request->id);
+        $bg->isDone = false;
+        $bg->isCancel = false;
+        $bg->lyDoHuy = "";
+        $bg->save();
+        if($bg) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Doanh thu phụ kiện";
+            $nhatKy->noiDung = "Bỏ kết thúc số báo giá BG0" . $request->id;
+            $nhatKy->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã huỷ bỏ trạng thái kết thúc của báo giá!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function hoanTatCongViec(Request $request) {
         $ktv = KTVBHPK::find($request->id);
         $bhpk = BHPK::find($ktv->id_bhpk);

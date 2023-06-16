@@ -102,7 +102,8 @@
                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
-                        \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhcare'))
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhcare') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-dollar-sign"></i>
                             <p>
@@ -111,7 +112,7 @@
                             </p>
                         </a>
                     @endif
-                    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview">                            
                             @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhcare'))
                                     <li class="nav-item">
@@ -231,7 +232,17 @@
                                         <p>Phê duyệt hợp đồng</p>
                                     </a>
                                 </li>
-                            @endif                            
+                            @endif   
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="fas fa-caret-right nav-icon"></i>
+                                            <p>Danh mục phụ kiện</p>
+                                        </a>
+                                    </li>
+                            @endif                         
                     </ul>
                 </li>
                 <li class="nav-item">

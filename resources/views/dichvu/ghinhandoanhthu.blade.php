@@ -242,7 +242,8 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.trangThaiThu == false)
-                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";     
+                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>" +
+                                "&nbsp;&nbsp;<button id='cancelEnd' data-id='"+row.id+"' class='btn btn-sm btn-warning'>Bỏ kết thúc BG</button>";     
                             else
                                 return "<button id='hoanTrang' data-id='"+row.id+"' class='btn btn-sm btn-danger'>Hoàn trạng</button>";
                         }
@@ -299,6 +300,33 @@
                if (confirm("Xác nhận hoàn trạng?")) {
                     $.ajax({
                         url: "{{url('management/dichvu/hoantrang/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Error 500!"
+                            })
+                        }
+                    });
+               }
+            });
+
+            $(document).on('click','#cancelEnd', function(){
+               if (confirm("Xác nhận bỏ kết thúc cho báo giá này?")) {
+                    $.ajax({
+                        url: "{{url('management/dichvu/cancelend/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
