@@ -178,28 +178,40 @@ class GuestController extends Controller
     public function delete(Request $request) {
         $result = Guest::find($request->id);
         $temp = $result;
-        if (Auth::user()->hasRole('system') || Auth::user()->id == $result->id_user_create)
+        // if (Auth::user()->hasRole('system') || Auth::user()->id == $result->id_user_create)
+        //     $result->delete();    
+        if (Auth::user()->hasRole('system')) {
             $result->delete();    
-        if($result) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->chucNang = "Kinh doanh - Khách hàng";
-            $nhatKy->noiDung = "Xóa khách hàng <br/>Họ tên: "
-            .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
-            .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
-            .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address;
-            $nhatKy->save();
+            if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                $nhatKy->noiDung = "Xóa khách hàng <br/>Họ tên: "
+                .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
+                .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
+                .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address;
+                $nhatKy->save();
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Delete data successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Có lỗi trong quá trình xoá khách hàng!',
+                    'code' => 500
+                ]);
+            }
+        }
+        else {
             return response()->json([
-                'message' => 'Delete data successfully!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
+                'type' => 'error',
+                'message' => 'Bạn không có quyền xoá khách hàng, liên hệ quản trị viên!',
                 'code' => 500
             ]);
-        }
+        }        
     }
 
     public function editShow(Request $request) {

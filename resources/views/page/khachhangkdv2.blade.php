@@ -593,8 +593,8 @@
                         },
                         success: function(response) {
                             Toast.fire({
-                                icon: 'success',
-                                title: "Đã xóa"
+                                icon: response.type,
+                                title: response.message
                             })
                             table.ajax.reload();
                         },
