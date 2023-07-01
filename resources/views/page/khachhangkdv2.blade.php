@@ -702,7 +702,7 @@
                             success: function(response) {
                                 $("#editForm")[0].reset();
                                 Toast.fire({
-                                    icon: 'info',
+                                    icon: response.type,
                                     title: response.message
                                 })
                                 table.ajax.reload();

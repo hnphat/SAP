@@ -180,7 +180,7 @@ class GuestController extends Controller
         $temp = $result;
         // if (Auth::user()->hasRole('system') || Auth::user()->id == $result->id_user_create)
         //     $result->delete();    
-        if (Auth::user()->hasRole('system')) {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale')) {
             $result->delete();    
             if($result) {
                 $nhatKy = new NhatKy();
@@ -208,7 +208,7 @@ class GuestController extends Controller
         else {
             return response()->json([
                 'type' => 'error',
-                'message' => 'Bạn không có quyền xoá khách hàng, liên hệ quản trị viên!',
+                'message' => 'Bạn không có quyền xoá khách hàng!',
                 'code' => 500
             ]);
         }        
@@ -230,9 +230,10 @@ class GuestController extends Controller
         }
     }
 
-    public function update(Request $request) {
+    public function update(Request $request) { 
         $temp = Guest::find($request->eid);
-        if (Auth::user()->hasRole('system') || Auth::user()->id == $temp->id_user_create) {
+        $hopdong = HopDong::where('id_guest', $temp->id)->first();
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale')) {
             $result = Guest::where('id',$request->eid)->update([
                 'id_type_guest' => $request->eloai,
                 'name' => $request->eten,
@@ -254,31 +255,143 @@ class GuestController extends Controller
                 'cs3' => $request->ecs3,
                 'cs4' => $request->ecs4,
             ]);
-        }
-        if($result) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->chucNang = "Kinh doanh - Khách hàng";
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
-            .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
-            .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
-            .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: <br/>Họ tên: "
-            .$request->eten." <br/>CMND: ".$request->ecmnd." <br/>Ngày cấp: ".$request->engayCap." <br/>Nơi cấp: "
-            .$request->enoiCap." <br/>MST: ".$request->emst." <br/>Đại diện: ".$request->edaiDien." <br/>Chức vụ: "
-            .$request->echucVu." <br/>Điện thoại: ".$request->edienThoai." <br/>Địa chỉ: " . $request->ediaChi;
-            $nhatKy->save();
-
-            return response()->json([
-                'message' => 'Updated successfully!',
-                'code' => 200
-            ]);
+            if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
+                .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
+                .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
+                .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: <br/>Họ tên: "
+                .$request->eten." <br/>CMND: ".$request->ecmnd." <br/>Ngày cấp: ".$request->engayCap." <br/>Nơi cấp: "
+                .$request->enoiCap." <br/>MST: ".$request->emst." <br/>Đại diện: ".$request->edaiDien." <br/>Chức vụ: "
+                .$request->echucVu." <br/>Điện thoại: ".$request->edienThoai." <br/>Địa chỉ: " . $request->ediaChi;
+                $nhatKy->save();    
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Updated successfully!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        } elseif (Auth::user()->id == $temp->id_user_create) {
+            if ($hopdong) {
+                if ($hopdong->admin_check) {
+                    return response()->json([
+                        'type' => 'info',
+                        'message' => 'Khách hàng này đã lên hợp đồng và được duyệt bởi admin sale không thể sữa',
+                        'code' => 500
+                    ]);
+                } else {
+                    $result = Guest::where('id',$request->eid)->update([
+                        'id_type_guest' => $request->eloai,
+                        'name' => $request->eten,
+                        'phone' => $request->edienThoai,
+                        'address' => $request->ediaChi,
+                        'mst' => $request->emst,
+                        'cmnd' => $request->ecmnd,
+                        'ngayCap' => $request->engayCap,
+                        'noiCap' => $request->enoiCap,
+                        'ngaySinh' => $request->engaySinh,
+                        'daiDien' => $request->edaiDien,
+                        'chucVu' => $request->echucVu,
+                        'nguon' => $request->enguon,
+                        'lenHopDong' => $request->elenHopDong,
+                        'danhGia' => $request->edanhGia,
+                        'xeQuanTam' => $request->equanTam,
+                        'cs1' => $request->ecs1,
+                        'cs2' => $request->ecs2,
+                        'cs3' => $request->ecs3,
+                        'cs4' => $request->ecs4,
+                    ]);
+                    if($result) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
+                        .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
+                        .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
+                        .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: <br/>Họ tên: "
+                        .$request->eten." <br/>CMND: ".$request->ecmnd." <br/>Ngày cấp: ".$request->engayCap." <br/>Nơi cấp: "
+                        .$request->enoiCap." <br/>MST: ".$request->emst." <br/>Đại diện: ".$request->edaiDien." <br/>Chức vụ: "
+                        .$request->echucVu." <br/>Điện thoại: ".$request->edienThoai." <br/>Địa chỉ: " . $request->ediaChi;
+                        $nhatKy->save();    
+                        return response()->json([
+                            'type' => 'success',
+                            'message' => 'Updated successfully!',
+                            'code' => 200
+                        ]);
+                    } else {
+                        return response()->json([
+                            'type' => 'error',
+                            'message' => 'Internal server fail!',
+                            'code' => 500
+                        ]);
+                    }
+                }
+            } else {
+                $result = Guest::where('id',$request->eid)->update([
+                    'id_type_guest' => $request->eloai,
+                    'name' => $request->eten,
+                    'phone' => $request->edienThoai,
+                    'address' => $request->ediaChi,
+                    'mst' => $request->emst,
+                    'cmnd' => $request->ecmnd,
+                    'ngayCap' => $request->engayCap,
+                    'noiCap' => $request->enoiCap,
+                    'ngaySinh' => $request->engaySinh,
+                    'daiDien' => $request->edaiDien,
+                    'chucVu' => $request->echucVu,
+                    'nguon' => $request->enguon,
+                    'lenHopDong' => $request->elenHopDong,
+                    'danhGia' => $request->edanhGia,
+                    'xeQuanTam' => $request->equanTam,
+                    'cs1' => $request->ecs1,
+                    'cs2' => $request->ecs2,
+                    'cs3' => $request->ecs3,
+                    'cs4' => $request->ecs4,
+                ]);
+                if($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
+                    .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
+                    .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
+                    .$temp->chucVu." <br/>Điện thoại: ".$temp->phone." <br/>Địa chỉ: " . $temp->address." <br/>THÔNG TIN MỚI: <br/>Họ tên: "
+                    .$request->eten." <br/>CMND: ".$request->ecmnd." <br/>Ngày cấp: ".$request->engayCap." <br/>Nơi cấp: "
+                    .$request->enoiCap." <br/>MST: ".$request->emst." <br/>Đại diện: ".$request->edaiDien." <br/>Chức vụ: "
+                    .$request->echucVu." <br/>Điện thoại: ".$request->edienThoai." <br/>Địa chỉ: " . $request->ediaChi;
+                    $nhatKy->save();    
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Updated successfully!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            }
         } else {
             return response()->json([
-                'message' => 'Internal server fail!',
+                'type' => 'error',
+                'message' => 'Bạn không có quyền cập nhật thông tin này!',
                 'code' => 500
             ]);
         }
+        
     }
 
     public function getKhachHangSaleHD() {
