@@ -212,6 +212,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hd/denghi/quanly','HDController@getHDQuanLyDeNghi')->name('hd.quanly.denghi');
         Route::get('hd/denghi/chondenghi/{id}','HDController@chonDeNghi');
         Route::get('hd/danhsach','HDController@getDanhSach');
+        Route::get('hd/ketoan/danhsachhopdong','HDController@getDanhSachHopDong');
         Route::post('hd/denghi/guidenghi','HDController@guiDeNghi');
         Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
         Route::post('hd/denghi/yeucausua','HDController@yeuCauSua');
@@ -291,6 +292,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('xenhanno/getkho','KetoanController@getKhoHDList');
         Route::post('xenhanno/edit/show/','KetoanController@getEditXeNhanNo');
         Route::post('xenhanno/update/','KetoanController@updateXeNhanNo');
+         // Quản lý hợp đồng
+        Route::get('quanlyhopdong','HDController@getQuanLyHopDong')->name('ketoan.quanlyhopdong');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');

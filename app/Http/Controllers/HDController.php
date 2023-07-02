@@ -1511,7 +1511,7 @@ class HDController extends Controller
     public function getDanhSach() {
         $hdWait = "";
         $code = "";
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('tpkd'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('ketoan'))
             $result = HopDong::select('*')->orderby('id','desc')->get();
         else 
             $result = HopDong::select('*')->where('id_user_create', Auth::user()->id)
@@ -1927,7 +1927,9 @@ class HDController extends Controller
 
     public function postEditPKCost(Request $request){
         $check = HopDong::find($request->idSaleHD);
+        // Dành cho admin sale và nhân viên kinh doanh
         if ($check->admin_check != 1 && $check->requestCheck == false) {
+            $temppkpay = PackageV2::find($request->idPkCost);
             $pkpay = PackageV2::find($request->idPkCost);
             $pkpay->name = $request->endpk;
             $pkpay->cost_tang = $request->etang;
@@ -1938,7 +1940,8 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Điều chỉnh nội dung chi phí đề nghị ĐN/0".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
+                $nhatKy->noiDung = "Điều chỉnh nội dung chi phí đề nghị ĐN/0".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Từ giá: "
+                . round($temppkpay->cost,2) . " thành giá: " . round($request->egiapk,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -1952,7 +1955,52 @@ class HDController extends Controller
                     'code' => 500
                 ]);
             }
-        }
+        } 
+        // Dành cho kế toán
+        if (Auth::user()->hasRole('ketoan')) {
+            if ($check->id_car_kho != null && $check->hdWait != true) {
+                $car = KhoV2::find($check->id_car_kho);
+                if ($car->xuatXe == true)
+                    return response()->json([
+                        'type' => 'warning',
+                        'message' => 'Xe đã xuất kho không thể chỉnh sửa nội dung này!',
+                        'code' => 200
+                    ]);
+                else {
+                    $temppkpay = PackageV2::find($request->idPkCost);
+                    $pkpay = PackageV2::find($request->idPkCost);
+                    $pkpay->name = $request->endpk;
+                    $pkpay->cost_tang = $request->etang;
+                    $pkpay->cost = $request->egiapk;
+                    $pkpay->save();
+                    if($pkpay) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->chucNang = "Kế toán - Quản lý hợp đồng";
+                        $nhatKy->noiDung = "Điều chỉnh nội dung chi phí đề nghị ĐN/0".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Từ giá: "
+                        . round($temppkpay->cost,2) . " thành giá: " . round($request->egiapk,2);
+                        $nhatKy->save();
+
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Đã chỉnh sửa!',
+                            'code' => 200
+                        ]);
+                    } else {
+                        return response()->json([
+                            'message' => 'Internal server fail!',
+                            'code' => 500
+                        ]);
+                    }
+                }
+            } else 
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Xe chưa được gán vào hợp đồng, không thể chỉnh sửa nội dung này!',
+                'code' => 200
+            ]);
+        }        
         return response()->json([
             'type' => 'warning',
             'message' => 'Bạn đã gửi đề nghị hoặc quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
@@ -1963,6 +2011,7 @@ class HDController extends Controller
     public function postEditPKFree(Request $request){
         $check = HopDong::find($request->idSaleHDFree);
         if ($check->admin_check != 1 && $check->requestCheck == false) {
+            $temppkpay = PackageV2::find($request->idPkFree);
             $pkpay = PackageV2::find($request->idPkFree);
             $pkpay->name = $request->ndfree;
             $pkpay->free_kem = $request->freetang;
@@ -1973,7 +2022,9 @@ class HDController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
-                $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho đề nghị ĐN/0".$request->idSaleHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk . " <br/>Giá: " . round($request->egiapk,2);
+                $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho đề nghị ĐN/0".$request->idSaleHDFree."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk 
+                . "Từ giá: "
+                . round($temppkpay->cost,2) . " thành giá: " . round($request->giafree,2);
                 $nhatKy->save();
 
                 return response()->json([
@@ -1988,6 +2039,52 @@ class HDController extends Controller
                 ]);
             }
         }
+        // Dành cho kế toán
+        if (Auth::user()->hasRole('ketoan')) {
+            if ($check->id_car_kho != null && $check->hdWait != true) {
+                $car = KhoV2::find($check->id_car_kho);
+                if ($car->xuatXe == true)
+                    return response()->json([
+                        'type' => 'warning',
+                        'message' => 'Xe đã xuất kho không thể chỉnh sửa nội dung này!',
+                        'code' => 200
+                    ]);
+                else {
+                    $temppkpay = PackageV2::find($request->idPkFree);
+                    $pkpay = PackageV2::find($request->idPkFree);
+                    $pkpay->name = $request->ndfree;
+                    $pkpay->free_kem = $request->freetang;
+                    $pkpay->cost = $request->giafree;
+                    $pkpay->save();
+                    if($pkpay) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->chucNang = "Kế toán - Quản lý hợp đồng";
+                        $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho đề nghị ĐN/0".$request->idSaleHDFree."(không phải mã hợp đồng) <br/>Nội dung: " . $request->endpk 
+                        . "Từ giá: "
+                        . round($temppkpay->cost,2) . " thành giá: " . round($request->giafree,2);
+                        $nhatKy->save();
+
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Đã chỉnh sửa!',
+                            'code' => 200
+                        ]);
+                    } else {
+                        return response()->json([
+                            'message' => 'Internal server fail!',
+                            'code' => 500
+                        ]);
+                    }
+                }
+            } else 
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Xe chưa được gán vào hợp đồng, không thể chỉnh sửa nội dung này!',
+                'code' => 200
+            ]);
+        }   
         return response()->json([
             'type' => 'warning',
             'message' => 'Bạn đã gửi đề nghị hoặc quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
@@ -3869,5 +3966,51 @@ class HDController extends Controller
             'hinhThucThanhToan' => $hinhThucThanhToan,
             'phiVanChuyen' => $phiVanChuyen
         ]);
+    }
+
+    // Quản lý hợp đồng cho Kế toán
+    public function getDanhSachHopDong() {
+        $hdWait = "";
+        $code = "";
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan')) {
+            $result = HopDong::select('*')->where([
+                ['lead_check','=',true],
+                ['hdWait','=',false],
+            ])->orderby('id','desc')->get();
+            if($result) {
+                echo "<option value='0'>Chọn</option>";
+                foreach($result as $row){ 
+                    if($row->hdWait == true) 
+                        $hdWait = "(Hợp đồng chờ)";
+                    else
+                        $hdWait = "";
+
+                    if($row->code == 0) 
+                        $code = "";
+                    else
+                        $code = "[HĐ: ".$row->code.".".$row->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($row->created_at)."/HĐMB-PA]";
+
+                    if($row->lead_check_cancel	== true) 
+                        echo "<option class='bg-danger' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
+                    elseif ($row->requestCheck == false)
+                        echo "<option class='bg-secondary' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
+                    elseif($row->requestCheck == true && $row->admin_check == false) 
+                        echo "<option class='bg-success' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
+                    elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
+                        echo "<option class='bg-warning' value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
+                    elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
+                        echo "<option value='".$row->id."'>[ĐN: ĐN/0".$row->id."/".$row->carSale->typeCar->code."]".$code."[KH: ".$row->guest->name."][Sale: ".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
+                }
+            } else {
+                echo "<option value='0'>Không tìm thấy</option>";
+            }
+        } 
+    }
+
+    public function getQuanLyHopDong() {
+        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
+        $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
+        ->orderby('id','desc')->get();
+        return view('ketoan.quanlyhopdong', ['hopdong' => $hopdong, 'xeList' => $xeList]);
     }
 }

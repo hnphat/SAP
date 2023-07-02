@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-   Quản lý đề nghị
+   Quản lý hợp đồng
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Quản lý đề nghị hợp đồng</strong></h1>
+                        <h1 class="m-0"><strong>Quản lý hợp đồng</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Kinh doanh</li>
-                            <li class="breadcrumb-item active">Quản lý đề nghị hợp đồng</li>
+                            <li class="breadcrumb-item active">Kế toán</li>
+                            <li class="breadcrumb-item active">Quản lý hợp đồng</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -71,7 +71,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Xe bán</label>
-                                                    <select name="xeBan" id="xeBan" class="form-control">
+                                                    <select disabled name="xeBan" id="xeBan" class="form-control">
                                                         @foreach($xeList as $row)
                                                             <option value="{{$row->id}}">{{$row->name}}</option>
                                                         @endforeach
@@ -81,13 +81,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Tiền cọc:</label>
-                                                    <input name="tamUng" id="tamUng" value="0" placeholder="Nhập số tiền thu tạm ứng" type="number" class="form-control"/>
+                                                    <input disabled name="tamUng" id="tamUng" value="0" placeholder="Nhập số tiền thu tạm ứng" type="number" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <input type="text" id="showCost" class="form-control" disabled="disabled" />
+                                                    <input disabled type="text" id="showCost" class="form-control" disabled="disabled" />
                                                 </div>
                                             </div>
                                         </div>
@@ -95,7 +95,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Màu sắc</label>
-                                                    <select name="mauSac" id="mauSac" class="form-control">
+                                                    <select disabled name="mauSac" id="mauSac" class="form-control">
                                                         <option value="Đỏ">Đỏ</option>
                                                         <option value="Xanh">Xanh</option>
                                                         <option value="Trắng">Trắng</option>
@@ -113,13 +113,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Giá xe:</label>
-                                                    <input name="giaBanXe" id="giaBanXe" value="0" placeholder="Nhập giá bán xe" type="number" class="form-control"/>
+                                                    <input disabled name="giaBanXe" id="giaBanXe" value="0" placeholder="Nhập giá bán xe" type="number" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <input type="text" id="showCostCar" class="form-control" disabled="disabled" />
+                                                    <input disabled type="text" id="showCostCar" class="form-control" disabled="disabled" />
                                                 </div>
                                             </div>
                                         </div>
@@ -127,7 +127,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Hình thức thanh toán</label>
-                                                    <select name="hinhThucThanhToan" id="hinhThucThanhToan" class="form-control">
+                                                    <select disabled name="hinhThucThanhToan" id="hinhThucThanhToan" class="form-control">
                                                         <option value="1">Tiền mặt</option>   
                                                         <option value="0">Ngân hàng</option>                                                      
                                                     </select>
@@ -136,7 +136,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group" style="display:none;">
                                                     <label>Nguồn khách hàng</label>
-                                                    <select name="nguonKH" id="nguonKH" class="form-control">
+                                                    <select disabled name="nguonKH" id="nguonKH" class="form-control">
                                                         <option value="Showroom">Showroom</option>   
                                                         <option value="Thị Trường">Thị Trường</option>
                                                         <option value="Online">Online</option>
@@ -152,13 +152,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Giá niêm yết:</label>
-                                                    <input name="giaNiemYet" id="giaNiemYet" value="0" placeholder="Nhập giá niêm yết" type="number" class="form-control"/>
+                                                    <input disabled name="giaNiemYet" id="giaNiemYet" value="0" placeholder="Nhập giá niêm yết" type="number" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <input type="text" id="showNiemYet" class="form-control" disabled="disabled" />
+                                                    <input disabled type="text" id="showNiemYet" class="form-control" disabled="disabled" />
                                                 </div>
                                             </div>
                                         </div>
@@ -166,13 +166,13 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Hoa hồng môi giới:</label>
-                                                    <input name="hoaHongMoiGioi" id="hoaHongMoiGioi" value="0" placeholder="Nhập hoa hồng môi giới" type="number" class="form-control"/>
+                                                    <input disabled name="hoaHongMoiGioi" id="hoaHongMoiGioi" value="0" placeholder="Nhập hoa hồng môi giới" type="number" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <input type="text" id="showHoaHongMoiGioi" class="form-control" disabled="disabled" />
+                                                    <input disabled type="text" id="showHoaHongMoiGioi" class="form-control" disabled="disabled" />
                                                 </div>
                                             </div>
                                         </div>
@@ -180,19 +180,19 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Họ và tên:</label>
-                                                    <input name="hoTen" id="hoTen" placeholder="Họ tên" type="text" class="form-control"/>
+                                                    <input disabled name="hoTen" id="hoTen" placeholder="Họ tên" type="text" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>CMND/CCCD:</label>
-                                                    <input name="cmnd" placeholder="CMND/CCCD" type="text" class="form-control"/>
+                                                    <input disabled name="cmnd" placeholder="CMND/CCCD" type="text" class="form-control"/>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Điện thoại:</label>
-                                                    <input name="dienThoai" id="dienThoai" placeholder="Điện thoại" type="text" class="form-control"/>
+                                                    <input disabled name="dienThoai" id="dienThoai" placeholder="Điện thoại" type="text" class="form-control"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -218,7 +218,7 @@
                                 </form>
             
                                 <h5>CÁC LOẠI PHÍ</h5>                                     
-                                        <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <!-- <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/> -->
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
@@ -232,7 +232,7 @@
                                         </table>
                                         <p>Tổng cộng: <strong id="xtongCost"></strong></p>
                                         <h5>PHỤ KIỆN BÁN</h5>
-                                        <button id="pkPayAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkPay"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <!-- <button id="pkPayAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkPay"><span class="fas fa-plus-circle"></span></button><br/><br/> -->
                                         <table class="table table-striped table-bordered">
                                             <thead>
                                                 <tr class="bg-cyan">
@@ -247,7 +247,7 @@
                                         </table>
                                         <p>Tổng cộng: <strong id="xtongPay"></strong></p>
                                         <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
-                                        <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <!-- <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/> -->
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
@@ -263,41 +263,7 @@
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
                             </div>
-                            <button id="deNghiHopDong" class="btn btn-info">GỬI ĐỀ NGHỊ T/H HỢP ĐỒNG</button>
-                            <button id="xoaDeNghi" class="btn btn-danger">XOÁ ĐỀ NGHỊ</button>
-                            <!-- <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
-                            <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button> -->
-                            <hr>
-                            <h5>IN HỢP ĐỒNG</h5>
-                            <form id="inForm">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label>CHỌN LOẠI HỢP ĐỒNG</label>
-                                                <select name="chonLoaiHD" class="form-control">
-                                                    <option value="1">Cá nhân tiền mặt</option>
-                                                    <option value="2">Cá nhân ngân hàng</option>
-                                                    <option value="3">Công ty tiền mặt</option>
-                                                    <option value="4">Công ty ngân hàng</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>CHỌN MẪU CẦN IN</label>
-                                                <select name="mauHD" class="form-control">
-                                                    <option value="1">Hợp đồng mua bán</option>
-                                                    <option value="2">Phụ lục hợp đồng</option>
-                                                    <option value="3">Đề nghị thực hiện hợp đồng</option>
-                                                    <option value="4">Yêu cầu PDI xe</option>
-                                                    <option value="5">Đề nghị BHBB & 5 món</option>
-                                                    <option value="6">Yêu cầu lắp đặt phụ kiện</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <button id="in" class="btn btn-success"><span class="fas fa-print"></span></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                            <hr>                            
                         </div>
                     </div>
                     <!-- /.card -->
@@ -305,150 +271,7 @@
             </div>
         </div>
         <!-- /.content -->
-    </div>
-    <!-- All Medal all -->
-    <!-- Medal Add PK Pay-->
-    <div class="modal fade" id="addPkPay">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">PHỤ KIỆN BÁN</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <form id="addPkFormPay" autocomplete="off">
-                            {{csrf_field()}}
-                            <input type="hidden" name="idHD">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>Nội dung</label>
-                                    <input name="namePkPay" placeholder="Nhập nội dung" type="text" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>Giá</label>
-                                    <input name="giaPkPay" value="0" placeholder="Nhập giá" type="number" class="form-control">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                    <button id="btnAddPK" class="btn btn-primary" form="addPkFormPay">Lưu</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <!-- Medal Add PK Free-->
-    <div class="modal fade" id="addPkFree">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">PHỤ KIỆN, KHUYẾN MÃI, QUÀ TẶNG</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <form id="addPkFormFree" autocomplete="off">
-                            {{csrf_field()}}
-                            <input type="hidden" name="idHD2">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>Nội dung</label>
-                                    <input name="namePkFree" placeholder="Nhập nội dung" type="text" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>Giá</label>
-                                    <input name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>Loại</label>
-                                    <select name="addfreetang" class="form-control">
-                                        <option value="1">Kèm theo xe</option>
-                                        <option value="0">Tặng thêm</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                    <button id="btnAddPKFree" class="btn btn-primary" form="addPkFormFree">Lưu</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <!-- Medal Add PK Pay-->
-    <div class="modal fade" id="addPkCost">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">CÁC LOẠI PHÍ</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <form id="addPkFormCost" autocomplete="off">
-                            {{csrf_field()}}
-                            <input type="hidden" name="idHD3">
-                            <div class="card-body">
-                                <!-- <div class="form-group">
-                                    <label>Nội dung</label>
-                                    <input name="namePkCost" placeholder="Nhập nội dung" type="text" class="form-control">
-                                </div> -->
-                                <div class="form-group">
-                                    <label>Nội dung</label>
-                                    <select name="namePkCost" id="namePkCost" class="form-control">
-                                        <option value="Phí trước bạ">Phí trước bạ</option>
-                                        <option value="Phí đăng ký xe">Phí đăng ký xe</option>
-                                        <option value="Phí đăng kiểm xe">Phí đăng kiểm xe</option>
-                                        <option value="Phí đường bộ">Phí đường bộ</option>
-                                        <option value="Bảo hiểm TNDS">Bảo hiểm TNDS</option>
-                                        <option value="Bảo hiểm vật chất">Bảo hiểm vật chất</option>
-                                        <option value="Hỗ trợ đăng ký - đăng kiểm">Hỗ trợ đăng ký - đăng kiểm</option>
-                                        <option value="Chi phí khác">Chi phí khác</option>
-                                    </select>
-                                    <!-- <input name="namePkCost" placeholder="Nhập nội dung" type="text" class="form-control"> -->
-                                </div>
-                                <div class="form-group">
-                                    <label>Giá</label>
-                                    <input name="giaPkCost" value="0" placeholder="Nhập giá" type="number" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>Tặng</label>
-                                    <select name="tang" class="form-control">
-                                        <option value="0">Không</option>
-                                        <option value="1">Có</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                    <button id="btnAddPKCost" class="btn btn-primary" form="addPkFormCost">Lưu</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
+    </div>    
     <!-- Edit pk cost medal-->
     <div class="modal fade" id="editPkCostMedal">
         <div class="modal-dialog">
@@ -474,7 +297,7 @@
                                     <label>Giá</label>
                                     <input name="egiapk" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" style="display:none">
                                     <label>Tặng</label>
                                     <select name="etang" class="form-control">
                                         <option value="0">Không</option>
@@ -515,13 +338,13 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label>Nội dung</label>
-                                    <input name="ndfree" placeholder="Nhập nội dung" type="text" class="form-control">
+                                    <input readonly="readonly" name="ndfree" placeholder="Nhập nội dung" type="text" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Giá</label>
                                     <input name="giafree" value="0" placeholder="Nhập giá" type="number" class="form-control">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" style="display:none">
                                     <label>Loại</label>
                                     <select name="freetang" class="form-control">
                                         <option value="1">Kèm theo xe</option>
@@ -579,18 +402,18 @@
         // show data
         $(document).ready(function() {
             // default set
-            $("#deNghiHopDong").hide();
-            $("#xoaDeNghi").hide();
-            $("#deNghiHuy").hide();
-            $("#deNghiChinhSua").hide();
-            $("#pkCostAdd").hide();
-            $("#pkFreeAdd").hide();
-            $("#pkPayAdd").hide();
-            $("#inForm").hide();
+            // $("#deNghiHopDong").hide();
+            // $("#xoaDeNghi").hide();
+            // $("#deNghiHuy").hide();
+            // $("#deNghiChinhSua").hide();
+            // $("#pkCostAdd").hide();
+            // $("#pkFreeAdd").hide();
+            // $("#pkPayAdd").hide();
+            // $("#inForm").hide();
             // load list hợp đồng
             function loadList() {
                 $.ajax({
-                    url: "management/hd/hd/danhsach/",
+                    url: "management/hd/hd/ketoan/danhsachhopdong/",
                     dataType: "text",
                     success: function(response) {
                         $('#chonDeNghi').html(response);
@@ -652,7 +475,7 @@
                                 $("#pkCostAdd").show();
                                 $("#pkFreeAdd").show();
                                 $("#pkPayAdd").show();
-
+                                
                                 $("#tamUng").prop('disabled', false);
                                 $("#giaBanXe").prop('disabled', false);
                                 $("#giaNiemYet").prop('disabled', false);
@@ -852,10 +675,10 @@
                             "<td>Màu: "+ response.data.mau +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
                             "</tr>";
                             $("#showXeGan").html(txt);
-                        } else {
+                        } else {    
                             $("#showPKFREE").html("");
                             $("#showPKCOST").html("");
-                            $("#showPKPAY").html("");
+                            $("#showPKPAY").html("");                        
                             Toast.fire({
                                 icon: 'info',
                                 title: "Chọn đề nghị để biết thông tin"
@@ -912,10 +735,10 @@
                         Toast.fire({
                             icon: 'warning',
                             title: "Không lấy được dữ liệu"
-                        })
+                        })         
                         $("#showPKFREE").html("");
-                        $("#showPKCOST").html("");
-                        $("#showPKPAY").html("");
+                        $("#showPKCOST").html("");  
+                        $("#showPKPAY").html("");                  
                         $("#showXeGan").html("");
                         $("#soHD").text("Chưa gán");
                     }
@@ -937,9 +760,8 @@
                                 "<td>" + response.pkfree[i].name + "</td>" +
                                 "<td>" + (response.pkfree[i].free_kem == true ? "Kèm theo xe" : "<strong class='text-success'>Tặng thêm</strong>") + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>" +
-                                "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
-                                + "<button id='editPkFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
-                                "</td>" +                                
+                                "<td><button id='editPkFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
+                                "</td>" +                                                               
                                 "</tr>";
                         }
                         $("#showPKFREE").html(txt);
@@ -971,7 +793,7 @@
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
-                                "<td><button id='delPKPAY' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
+                                "<td></td>" +
                                 "</tr>";
                             sum += parseInt(response.pkban[i].cost);
                         }
@@ -1007,8 +829,7 @@
                                 "<td>" + response.pkcost[i].name + "</td>" +
                                 "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
-                                "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
-                                +"<button id='editPkCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"'  data-toggle='modal' data-target='#editPkCostMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>"+
+                                "<td>"+ (response.pkcost[i].cost_tang == true ? "<button id='editPkCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"'  data-toggle='modal' data-target='#editPkCostMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" : "") +
                                 "</td>" +
                                 "</tr>";
                             sum += parseInt(response.pkcost[i].cost);
