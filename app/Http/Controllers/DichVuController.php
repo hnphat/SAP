@@ -353,7 +353,7 @@ class DichVuController extends Controller
     }
     // quan ly phu kien
     public function timHopDong(Request $request) {
-        $hd = HopDong::where('code',$request->findVal)->first();
+        $hd = HopDong::where('code',$request->findVal)->orderBy('id', 'desc')->first();
         $hopDong = $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA";
         $nhanVien = $hd->user->userDetail->surname;
         $hoTen = $hd->guest->name;
