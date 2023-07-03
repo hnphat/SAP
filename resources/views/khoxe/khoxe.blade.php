@@ -142,7 +142,7 @@
                                             <label>Số máy</label>
                                             <input name="frame" placeholder="Số máy" type="text" class="form-control">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" style="display:none;">
                                             <label>Ghi chú</label>
                                             <input name="ghiChu" placeholder="Ghi chú" type="text" class="form-control">
                                         </div>
@@ -277,7 +277,7 @@
                                             <label>Số máy</label>
                                             <input name="eframe" placeholder="Số máy" type="text" class="form-control">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" style="display:none;">
                                             <label>Ghi chú</label>
                                             <input name="eghiChu" placeholder="Ghi chú" type="text" class="form-control">
                                         </div>

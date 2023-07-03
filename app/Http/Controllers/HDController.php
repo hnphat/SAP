@@ -3501,8 +3501,13 @@ class HDController extends Controller
                 $phiLuuKho = 0;
                 $hhSale = $row->hoaHongSale;                
                 $pvc = $row->phiVanChuyen;
+                $hasNhanNo = "";
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
+                    if ($ktKho->ghiChu != null)
+                        $hasNhanNo = ($ktKho->ghiChu == 1) ? "" : " <i style='font-size: 10pt;'>Không nhận nợ</i>";
+                    else
+                        $hasNhanNo = " <i style='font-size: 10pt;'>Null</i>";
                     $phiLuuKho = $ktKho->xangLuuKho;                  
                     if ($ktKho->ngayNhanNo != null) {
                         $date_1 = strtotime($ktKho->ngayNhanNo);
@@ -3632,7 +3637,7 @@ class HDController extends Controller
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
                     <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
-                    <td class='text-bold text-warning'>".$ngayNhanNo."</td>
+                    <td class='text-bold text-warning'>".($ngayNhanNo == 0 ? "" : $ngayNhanNo)."".$hasNhanNo."</td>
                     <td>".number_format($phiLaiVay)."</td>
                     <td>".number_format($phiLuuKho)."</td>
                     <td>".number_format($hhSale)."</td>
@@ -3689,8 +3694,13 @@ class HDController extends Controller
                 $phiLuuKho = 0;
                 $hhSale = $row->hoaHongSale;                
                 $pvc = $row->phiVanChuyen;
+                $hasNhanNo = "";
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
+                    if ($ktKho->ghiChu != null)
+                        $hasNhanNo = ($ktKho->ghiChu == 1) ? "" : " <i style='font-size: 10pt;'>Không nhận nợ</i>"; 
+                    else
+                        $hasNhanNo = " <i style='font-size: 10pt;'>Null</i>";
                     $phiLuuKho = $ktKho->xangLuuKho;                  
                     if ($ktKho->ngayNhanNo != null) {
                         $date_1 = strtotime($ktKho->ngayNhanNo);
@@ -3819,7 +3829,7 @@ class HDController extends Controller
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
                     <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
-                    <td class='text-bold text-warning'>".$ngayNhanNo."</td>
+                    <td class='text-bold text-warning'>".($ngayNhanNo == 0 ? "" : $ngayNhanNo)."".$hasNhanNo."</td>
                     <td>".number_format($phiLaiVay)."</td>
                     <td>".number_format($phiLuuKho)."</td>
                     <td>".number_format($hhSale)."</td>

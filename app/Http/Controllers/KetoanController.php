@@ -116,6 +116,7 @@ class KetoanController extends Controller
         $result->xangLuuKho = $request->xangLuuKho;
         $result->giaTriVay = $request->giaTriVay;
         $result->laiSuatVay = $request->laiSuatVay;
+        $result->ghiChu = $request->ghiChu;
         $result->save();
 
         if($result) {

@@ -53,6 +53,7 @@
                                         <th>Màu</th>
                                         <th>VIN</th>
                                         <th>Số máy</th>
+                                        <th>Nhận nợ</th>
                                         <th>Ngày nhận nợ</th>
                                         <th>Ngày rút HS</th>
                                         <th>Số ngày</th>
@@ -108,6 +109,17 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                <label>Nhận nợ:</label>
+                                                <select name="ghiChu" class="form-control">
+                                                    <option value="1">Có</option>
+                                                    <option value="0">Không</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group">
                                                 <label>Ngày nhận nợ</label>
@@ -129,7 +141,7 @@
                                             </div>    
                                         </div>
                                         <div class="col-sm-5">
-                                        <div class="form-group">
+                                            <div class="form-group">
                                                 <label>Lãi suất vay (%):</label>
                                                 <input min="1" max="100" name="laiSuatVay" placeholder="VD: 12.5" type="number" class="form-control">
                                             </div>   
@@ -145,7 +157,7 @@
                                                 <label>Hoa hồng sale (Nếu có):</label>
                                                 <input name="hoaHongSale" id="hoaHongSale" placeholder="Hoa hồng sale" type="number" class="form-control">
                                             </div> 
-                                        </div>                             
+                                        </div>                                                                
                                     </div>                                     
                                 </div>                             
                             </form>
@@ -238,6 +250,16 @@
                     { "data": "color" },
                     { "data": "vin" },
                     { "data": "frame" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {    
+                            if (row.ghiChu) {
+                                return (row.ghiChu == 1) ? "<span class='text-danger text-bold'>Có</span>" : "Không";
+                            } else {
+                                return "<span class='text-secondary'>Null</span>";
+                            }                            
+                        }
+                    },
                     {
                         "data": null,
                         render: function(data, type, row) {    
@@ -389,7 +411,11 @@
                             $("input[name=xangLuuKho]").val(response.data.xangLuuKho);
                             $("input[name=giaTriVay]").val(response.data.giaTriVay);
                             $("input[name=laiSuatVay]").val(response.data.laiSuatVay);
-                            $("input[name=hoaHongSale]").val(response.hoaHongSale);
+                            $("input[name=hoaHongSale]").val(response.hoaHongSale); 
+                            if (response.data.ghiChu)
+                                $("select[name=ghiChu]").val(response.data.ghiChu);
+                            else
+                                $("select[name=ghiChu]").val(0);
                             $("#sxe").text(response.tenXe);
                             $("#smau").text(response.data.color);
                             $("#ssokhung").text(response.data.vin);
