@@ -44,15 +44,21 @@ class GuestController extends Controller
             $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                 ->join('type_guest as t','guest.id_type_guest','=','t.id')
                 ->join('users_detail as d','d.id_user','=','guest.id_user_create')
-                ->orderBy('guest.id', 'DESC')
+                ->orderBy('guest.id', 'desc')
                 ->get();
-        if (Auth::user()->hasRole('sale'))
+        elseif (Auth::user()->hasRole('sale'))
             $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                 ->join('type_guest as t','guest.id_type_guest','=','t.id')
                 ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                 ->where('id_user_create', Auth::user()->id)
-                ->orderBy('guest.id', 'DESC')
+                ->orderBy('guest.id', 'desc')
                 ->get();
+        else
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500
+            ]);
+    
         if($result) {
             return response()->json([
                 'message' => 'Get list successfully!',

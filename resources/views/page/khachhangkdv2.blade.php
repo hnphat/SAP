@@ -356,6 +356,7 @@
                                             <tr class="bg-cyan">
                                                 <!-- <th>TT</th> -->
                                                 <th>Ngày nhập</th>
+                                                <th>ID</th>
                                                 <th>Tên</th>
                                                 <th>Nguồn</th>
                                                 <th>Loại</th>
@@ -453,9 +454,9 @@
                 //     "orderable": false,
                 //     "targets": 0
                 // } ],
-                // "order": [
-                //     [ 0, 'desc' ]
-                // ],
+                "order": [
+                    [ 1, 'desc' ]
+                ],
                 // lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     // { "data": null },
@@ -465,6 +466,7 @@
                             return arr[2] + "-" + arr[1] + "-" + arr[0];
                         } 
                     },
+                    { "data": "idmaster" },
                     { "data": "name" },
                     { "data": "nguon" },
                     { "data": "type" },
