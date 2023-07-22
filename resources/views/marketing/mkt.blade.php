@@ -67,8 +67,33 @@
                                 </div>
                               </form>
                               <hr/>
-                              <div id="all">
-       
+                              <div style="overflow: auto;">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="table-light">STT</th>
+                                            <th class="table-light">Ngày tạo</th>
+                                            <th class="table-light">Người tạo</th>
+                                            <th class="table-light">Tên khách</th>
+                                            <th class="table-light">Điện thoại</th>
+                                            <th class="table-light">Nguồn</th>
+                                            <th class="table-light">Yêu cầu</th>
+                                            <th class="table-success">Nhóm nhận</th>
+                                            <th class="table-success">Sale nhận</th>
+                                            <th class="table-success">Ngày nhận</th>
+                                            <th class="table-success">Đánh giá</th>
+                                            <th class="table-success">Xe quan tâm</th>
+                                            <th class="table-success">CS1</th>
+                                            <th class="table-success">CS2</th>
+                                            <th class="table-success">CS3</th>
+                                            <th class="table-success">CS4</th>
+                                            <th class="table-success">Trạng thái</th>
+                                            <th class="table-light">Tác vụ</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="all">
+                                        </tbody>                                         
+                                    </table>
                               </div>
                             </div>
                         </div>
@@ -79,8 +104,6 @@
         </div>
         <!-- /.content -->
     </div>
-
-
     <!-- Medal Add -->
     <div class="modal fade" id="addModal">
         <div class="modal-dialog modal-lg">
@@ -98,51 +121,144 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form id="editForm" autocomplete="off">
+                        <form id="addForm" autocomplete="off">
                             {{csrf_field()}}
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <input type="hidden" name="eid"/>
-                                    <input type="hidden" name="edienThoaiCopy"/>
+                                <div class="col">
                                     <div class="card-body">                                        
                                         <div class="form-group">
-                                            <label>Tên khách hàng</label>
-                                            <input name="eten" type="text" class="form-control" placeholder="Tên khách hàng">
+                                            <label>Tên khách hàng <span class="text-red">(*)</span></label>
+                                            <input name="ten" type="text" class="form-control" placeholder="Tên khách hàng">
                                         </div>
                                         <div class="form-group">
-                                            <label>Số điện thoại</label>
-                                            <input name="edienThoai" type="number" class="form-control" placeholder="Số điện thoại">
+                                            <label>Số điện thoại <span class="text-red">(*)</span></label>
+                                            <input name="dienThoai" type="number" class="form-control" placeholder="10 số VD: 0989990112 hoặc 2963989922">
                                         </div>
                                         <div class="form-group">
-                                            <label>Địa chỉ</label>
-                                            <input name="ediaChi" type="text" class="form-control" placeholder="Địa chỉ">
+                                            <label>Nguồn khách <span class="text-red">(*)</span></label>
+                                            <select name="nguonKH" class="form-control">
+                                                <option value="Hotline">Hotline</option>
+                                                <option value="Hotline">Zalo</option>
+                                                <option value="Facebook_ads">Facebook_ads</option>
+                                                <option value="Google_ads">Google_ads</option>
+                                                <option value="Website">Website</option>
+                                                <option value="Email">Email</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Yêu cầu <span class="text-red">(*)</span></label>
+                                            <input name="yeuCau" type="text" class="form-control" placeholder="Yêu cầu khách hàng">
                                         </div>
                                     </div>
                                     <!-- /.card-body -->
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            <label>Ngày sinh</label>
-                                            <input name="engaySinh" type="date" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>CMND</label>
-                                            <input name="ecmnd" type="text" class="form-control" placeholder="CMND">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Ngày cấp</label>
-                                            <input name="engayCap" type="date" class="form-control">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Nơi cấp</label>
-                                            <input name="enoiCap" type="text" class="form-control" placeholder="Nơi cấp">
-                                        </div>
-                                    </div>
-                                </div>                                
+                                </div>                                                             
                             </div>                               
                             <div class="card-footer">
-                                <button id="btnUpdate" class="btn btn-success">Cập nhật</button>
+                                <button id="btnAdd" class="btn btn-success">Thêm</button>
+                            </div>                                                            
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- Medal Gán Nhóm -->
+     <div class="modal fade" id="groupModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- general form elements -->
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Chuyển khách hàng sang nhóm</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="groupForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <div class="row">
+                                <div class="col">
+                                    <input type="hidden" name="eid"/>                                                                        
+                                    <div class="card-body"> 
+                                        <div class="form-group">
+                                            <h5>Khách hàng:  <span id="sten"></span></h5>
+                                            <h5>Số điện thoại:  <span id="sphone"></span></h5>
+                                        </div>                                       
+                                        <div class="form-group">
+                                            <label>Chuyển khách cho nhóm</label>
+                                            <select name="chonNhom" class="form-control">
+                                               @foreach($group as $row)
+                                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                               @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>                                                             
+                            </div>                               
+                            <div class="card-footer">
+                                <button id="btnSetGroup" class="btn btn-success">Xác nhận</button>
+                            </div>                                                            
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- Medal Gán Sale -->
+    <div class="modal fade" id="saleModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- general form elements -->
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Gán khách hàng cho sale</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="saleForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <div class="row">
+                                <div class="col">
+                                    <input type="hidden" name="eeid"/>                                                                        
+                                    <div class="card-body"> 
+                                        <div class="form-group">
+                                            <h5>Khách hàng:  <span id="ssten"></span></h5>
+                                            <h5>Số điện thoại:  <span id="ssphone"></span></h5>
+                                        </div>                                       
+                                        <div class="form-group">
+                                            <label>Chuyển khách cho sale: Coding...</label>
+                                            <!-- <select name="chonSale" class="form-control">
+                                               
+                                            </select> -->
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>                                                             
+                            </div>                               
+                            <div class="card-footer">
+                                <button id="btnSetSale" class="btn btn-success">Xác nhận</button>
                             </div>                                                            
                         </form>
                     </div>
@@ -172,8 +288,8 @@
             timer: 3000
         });
 
-       $(document).ready(function(){
-         $("#xemReport").click(function(){
+       $(document).ready(function(){      
+        function autoload() {            
             $.ajax({
                 type: "post",
                 url: "{{url('management/marketing/loadbaocao/')}}",
@@ -197,7 +313,133 @@
                     })
                 }
             });
-         });  
+        }
+
+        $("#xemReport").click(function(){
+            autoload();
+        });
+
+        $("#btnAdd").click(function(e){
+                e.preventDefault();
+                let flag = true;
+                if (!$("input[name=ten]").val()) 
+                    alert("Bạn chưa nhập họ tên khách");
+                else if (!$("input[name=dienThoai]").val()) 
+                    alert("Bạn chưa nhập số điện thoại");
+                else if (!$("input[name=yeuCau]").val()) 
+                    alert("Bạn chưa nhập yêu cầu khách hàng");
+                else if ($("input[name=dienThoai]").val().match(/\d/g).length===10) {
+                    // Xử lý trùng số điện thoại
+                    $.ajax({
+                       url: "management/guest/check/" + $("input[name=dienThoai]").val().replace(',','').replace('.',''),
+                       dataType: "text",
+                       success: function(responce) {
+                           let obj = JSON.parse(responce);
+                           if (parseInt(obj.check) === 1) {
+                               flag = false;
+                               alert('Số điện thoại ' + obj.phone + ' đã được tạo bởi ' + obj.user);
+                           }
+                       },
+                       async: false
+                    });
+                    //-------------------
+                    if (flag) {
+                        $.ajax({
+                            url: "management/marketing/postdata",
+                            type: "POST",
+                            dataType: "json",
+                            data: $("#addForm").serialize(),
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#addForm")[0].reset();
+                                $("#addModal").modal('hide');
+                                autoload();
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                            }
+                        });
+                    }                   
+                } else {
+                    alert("Số điện thoại không đúng định dạng!");
+                }         
+            });
+
+            $(document).on('click','#delete', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "management/marketing/deleteguest",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": '{{csrf_token()}}',
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            if (response.code != 500)
+                                setTimeout(autoload, 1000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#setGroup', function(){
+                $("#sten").text($(this).data('hoten'));
+                $("#sphone").text($(this).data('phone'));
+                $("input[name=eid]").val($(this).data('id'));
+            });
+
+            $(document).on('click','#setSale', function(){
+                $("#ssten").text($(this).data('hoten'));
+                $("#ssphone").text($(this).data('phone'));
+                $("input[name=eeid]").val($(this).data('id'));
+            });
+            
+            $("#btnSetGroup").click(function(e){
+                e.preventDefault();
+                if(confirm('Xác nhận chuyển khách hàng cho nhóm này?\nLưu ý: Sau khi chuyển sẽ khách sẽ bị khoá và không thể thu hồi lại.')) {
+                    $.ajax({
+                        url: "management/marketing/setgroup",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": '{{csrf_token()}}',
+                            "id": $("input[name=eid]").val(),
+                            "id_group": $("select[name=chonNhom]").val()
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            $("#groupModal").modal('hide');
+                            setTimeout(autoload, 1000);;
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
+                    });
+                }               
+            });
        });
     </script>
 @endsection

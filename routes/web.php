@@ -690,7 +690,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'marketing', 'middleware' => ['f_mkt']], function(){
         Route::get('getindex','MktController@index')->name('mkt.index');   
-        
+        Route::post('postdata','MktController@postData');
+        Route::post('loadbaocao','MktController@loadBaoCao');
+        Route::post('setgroup','MktController@setGroup');
+        Route::post('deleteguest','MktController@deleteGuest');
     });
 
     Route::group(['prefix' => 'dichvu'], function(){

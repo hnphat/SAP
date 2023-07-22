@@ -104,9 +104,9 @@ class GuestController extends Controller
     public function checkPhone($num) {
         $guest = Guest::where('phone',$num)->first();
         if ($guest)
-            echo '{"phone": "'.$num.'", "check":"1", "user":"'.$guest->user->name.'"}';
+            echo '{"phone": "'.$num.'", "check":"1", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
         else
-            echo '{"phone": "'.$num.'", "check":"0", "user":"'.$guest->user->name.'"}';
+            echo '{"phone": "'.$num.'", "check":"0", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
     }
 
     public function add(Request $request) {

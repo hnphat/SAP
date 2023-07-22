@@ -27,6 +27,10 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function mktguest() {
+        return $this->hasMany('App\MarketingGuest','mkt_guest','id_user_create');
+    }
+
     public function report() {
         return $this->hasMany('App\Report','user_report','id');
     }

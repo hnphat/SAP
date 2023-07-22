@@ -24,7 +24,7 @@ class MktGuest extends Migration
             $table->integer('id_guest_temp')->unsigned()->nullable();
             $table->boolean('block')->default(false);
             $table->string('hoTen');
-            $table->string('dienThoai')->unique();
+            $table->string('dienThoai');
             $table->string('nguonKH');
             $table->string('yeuCau');
             $table->timestamps();
