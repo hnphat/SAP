@@ -66,6 +66,19 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('more/addplus','PhongController@addPlus');
 
     });
+    Route::group(['prefix' => 'group', 'middleware' => ['f_role']], function(){
+        Route::get('panel','GroupController@getPanel')->name('group.panel');
+        Route::get('getlist','GroupController@getList');
+        Route::post('add','GroupController@addPhong');
+        Route::post('edit','GroupController@editPhong');
+        Route::post('update','GroupController@updatePhong');
+        Route::post('delete','GroupController@deletePhong');
+        Route::get('more/{id}','GroupController@showMore');
+        Route::post('more/add','GroupController@moreAdd');
+        Route::post('more/delete','GroupController@moreDelete');
+        Route::post('more/addplus','GroupController@addPlus');
+
+    });
     Route::group(['prefix' => 'hoso', 'middleware' => ['f_hoso']], function(){
         Route::get('list','HoSoController@index')->name('hoso.list');
         Route::get('users','HoSoController@getUser')->name('hoso.users');
@@ -673,6 +686,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Route::post('loadnhatky','NhatKyController@loadNhatKy')->name('nhatky.loadnhatky');
         Route::get('loadnhatky','NhatKyController@loadNhatKyV2')->name('nhatky.loadnhatky');
         Route::post('loadnhatkyv2','NhatKyController@loadNhatKyNangCao')->name('nhatky.loadnhatkyv2');
+    });
+
+    Route::group(['prefix' => 'marketing', 'middleware' => ['f_mkt']], function(){
+        Route::get('getindex','MktController@index')->name('mkt.index');   
+        
     });
 
     Route::group(['prefix' => 'dichvu'], function(){
