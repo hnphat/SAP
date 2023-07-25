@@ -43,7 +43,13 @@
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
                             <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button>
+                            @endif
                               <form>
                                 <div class="card-body row">
                                         <div class="col-sm-3">
@@ -149,12 +155,21 @@
                                             <label>Yêu cầu <span class="text-red">(*)</span></label>
                                             <input name="yeuCau" type="text" class="form-control" placeholder="Yêu cầu khách hàng">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Chuyển khách cho nhóm</label>
+                                            <select name="chonNhom" class="form-control">
+                                               @foreach($group as $row)
+                                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                               @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>                                                             
                             </div>                               
                             <div class="card-footer">
                                 <button id="btnAdd" class="btn btn-success">Thêm</button>
+                                <!-- <button id="btnAddNew" type="button" class="btn btn-info">Thêm và tạo mới</button> -->
                             </div>                                                            
                         </form>
                     </div>
@@ -196,7 +211,7 @@
                                         </div>                                       
                                         <div class="form-group">
                                             <label>Chuyển khách cho nhóm</label>
-                                            <select name="chonNhom" class="form-control">
+                                            <select name="chonNhoms" class="form-control">
                                                @foreach($group as $row)
                                                 <option value="{{$row->id}}">{{$row->name}}</option>
                                                @endforeach
@@ -248,10 +263,10 @@
                                             <h5>Số điện thoại:  <span id="ssphone"></span></h5>
                                         </div>                                       
                                         <div class="form-group">
-                                            <label>Chuyển khách cho sale: Coding...</label>
-                                            <!-- <select name="chonSale" class="form-control">
+                                            <label>Chuyển khách cho sale: </label>
+                                            <select name="chonSale" class="form-control" id="chonSale">
                                                
-                                            </select> -->
+                                            </select>
                                         </div>
                                     </div>
                                     <!-- /.card-body -->
@@ -302,7 +317,7 @@
                 success: function(response) {
                     Toast.fire({
                         icon: 'info',
-                        title: " Đã gửi yêu cầu! "
+                        title: " Loaded! "
                     })
                     $("#all").html(response);
                 },
@@ -344,27 +359,30 @@
                     });
                     //-------------------
                     if (flag) {
-                        $.ajax({
-                            url: "management/marketing/postdata",
-                            type: "POST",
-                            dataType: "json",
-                            data: $("#addForm").serialize(),
-                            success: function(response) {
-                                Toast.fire({
-                                    icon: response.type,
-                                    title: response.message
-                                })
-                                $("#addForm")[0].reset();
-                                $("#addModal").modal('hide');
-                                autoload();
-                            },
-                            error: function() {
-                                Toast.fire({
-                                    icon: response.type,
-                                    title: response.message
-                                })
-                            }
-                        });
+                        if (confirm('Xác nhận chuyển khách hàng cho nhóm này\nLưu ý: Vui lòng kiểm tra kỹ thông tin, khách hàng sẽ bị khoá sau khi chuyển cho nhóm!')) {
+                            $.ajax({
+                                url: "management/marketing/postdata",
+                                type: "POST",
+                                dataType: "json",
+                                data: $("#addForm").serialize(),
+                                success: function(response) {
+                                    Toast.fire({
+                                        icon: response.type,
+                                        title: response.message
+                                    })
+                                    $("#addForm")[0].reset();
+                                    $("#addModal").modal('hide');
+                                    autoload();
+                                },
+                                error: function() {
+                                    Toast.fire({
+                                        icon: response.type,
+                                        title: response.message
+                                    })
+                                }
+                            });
+                        }
+                        
                     }                   
                 } else {
                     alert("Số điện thoại không đúng định dạng!");
@@ -399,6 +417,34 @@
                 }
             });
 
+            $(document).on('click','#revert', function(){
+                if(confirm('Xác nhận recall về trạng thái khách chưa gán cho nhóm (cho sale)?')) {
+                    $.ajax({
+                        url: "management/marketing/revertguest",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": '{{csrf_token()}}',
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            if (response.code != 500)
+                                setTimeout(autoload, 3000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
+                    });
+                }
+            });
+
             $(document).on('click','#setGroup', function(){
                 $("#sten").text($(this).data('hoten'));
                 $("#sphone").text($(this).data('phone'));
@@ -407,8 +453,36 @@
 
             $(document).on('click','#setSale', function(){
                 $("#ssten").text($(this).data('hoten'));
-                $("#ssphone").text($(this).data('phone'));
+                $("#ssphone").text($(this).data('phone').slice(0, 4) + "xxxxxx");
                 $("input[name=eeid]").val($(this).data('id'));
+                $("#chonSale").empty();
+                    $.ajax({
+                        url: "management/marketing/getsalelist",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": '{{csrf_token()}}',
+                            "idgroup": $(this).data('groupid')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })            
+                            if (response.code == 200) {                                
+                                let dataVal = response.data;
+                                for(let i = 0; i < dataVal.length; i++) {
+                                    $("#chonSale").append("<option value='"+dataVal[i].idsale+"'>"+dataVal[i].hoten+"</option>");
+                                }      
+                            }                
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
+                    });
             });
             
             $("#btnSetGroup").click(function(e){
@@ -421,7 +495,7 @@
                         data: {
                             "_token": '{{csrf_token()}}',
                             "id": $("input[name=eid]").val(),
-                            "id_group": $("select[name=chonNhom]").val()
+                            "id_group": $("select[name=chonNhoms]").val()
                         },
                         success: function(response) {
                             Toast.fire({
@@ -430,6 +504,37 @@
                             })
                             $("#groupModal").modal('hide');
                             setTimeout(autoload, 1000);;
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
+                    });
+                }               
+            });
+
+
+            $("#btnSetSale").click(function(e){
+                e.preventDefault();
+                if(confirm('Xác nhận chuyển khách hàng cho sale này?\nLưu ý: Sau khi chuyển sẽ không thể thu hồi lại.')) {
+                    $.ajax({
+                        url: "management/marketing/setsale",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": '{{csrf_token()}}',
+                            "id": $("input[name=eeid]").val(),
+                            "id_sale": $("select[name=chonSale]").val()
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            $("#saleModal").modal('hide');
+                            setTimeout(autoload, 2000);;
                         },
                         error: function() {
                             Toast.fire({

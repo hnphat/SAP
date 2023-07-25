@@ -17,6 +17,7 @@ use App\HopDong;
 use App\SaleOff;
 use App\TypeCarDetail;
 use App\PhoneHcare;
+use App\MarketingGuest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -238,6 +239,7 @@ class GuestController extends Controller
 
     public function update(Request $request) { 
         $temp = Guest::find($request->eid);
+        $mkt = MarketingGuest::where('id_guest_temp',$request->eid)->exists();
         $hopdong = HopDong::where('id_guest', $temp->id)->first();
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale')) {
             $result = Guest::where('id',$request->eid)->update([
@@ -295,27 +297,49 @@ class GuestController extends Controller
                         'code' => 500
                     ]);
                 } else {
-                    $result = Guest::where('id',$request->eid)->update([
-                        'id_type_guest' => $request->eloai,
-                        'name' => $request->eten,
-                        'phone' => $request->edienThoai,
-                        'address' => $request->ediaChi,
-                        'mst' => $request->emst,
-                        'cmnd' => $request->ecmnd,
-                        'ngayCap' => $request->engayCap,
-                        'noiCap' => $request->enoiCap,
-                        'ngaySinh' => $request->engaySinh,
-                        'daiDien' => $request->edaiDien,
-                        'chucVu' => $request->echucVu,
-                        'nguon' => $request->enguon,
-                        'lenHopDong' => $request->elenHopDong,
-                        'danhGia' => $request->edanhGia,
-                        'xeQuanTam' => $request->equanTam,
-                        'cs1' => $request->ecs1,
-                        'cs2' => $request->ecs2,
-                        'cs3' => $request->ecs3,
-                        'cs4' => $request->ecs4,
-                    ]);
+                    if ($mkt) {
+                        $result = Guest::where('id',$request->eid)->update([
+                            'id_type_guest' => $request->eloai,
+                            'name' => $request->eten,
+                            'address' => $request->ediaChi,
+                            'mst' => $request->emst,
+                            'cmnd' => $request->ecmnd,
+                            'ngayCap' => $request->engayCap,
+                            'noiCap' => $request->enoiCap,
+                            'ngaySinh' => $request->engaySinh,
+                            'daiDien' => $request->edaiDien,
+                            'chucVu' => $request->echucVu,
+                            'lenHopDong' => $request->elenHopDong,
+                            'danhGia' => $request->edanhGia,
+                            'xeQuanTam' => $request->equanTam,
+                            'cs1' => $request->ecs1,
+                            'cs2' => $request->ecs2,
+                            'cs3' => $request->ecs3,
+                            'cs4' => $request->ecs4,
+                        ]);
+                    } else {
+                        $result = Guest::where('id',$request->eid)->update([
+                            'id_type_guest' => $request->eloai,
+                            'name' => $request->eten,
+                            'phone' => $request->edienThoai,
+                            'address' => $request->ediaChi,
+                            'mst' => $request->emst,
+                            'cmnd' => $request->ecmnd,
+                            'ngayCap' => $request->engayCap,
+                            'noiCap' => $request->enoiCap,
+                            'ngaySinh' => $request->engaySinh,
+                            'daiDien' => $request->edaiDien,
+                            'chucVu' => $request->echucVu,
+                            'nguon' => $request->enguon,
+                            'lenHopDong' => $request->elenHopDong,
+                            'danhGia' => $request->edanhGia,
+                            'xeQuanTam' => $request->equanTam,
+                            'cs1' => $request->ecs1,
+                            'cs2' => $request->ecs2,
+                            'cs3' => $request->ecs3,
+                            'cs4' => $request->ecs4,
+                        ]);
+                    }                    
                     if($result) {
                         $nhatKy = new NhatKy();
                         $nhatKy->id_user = Auth::user()->id;
@@ -343,27 +367,49 @@ class GuestController extends Controller
                     }
                 }
             } else {
-                $result = Guest::where('id',$request->eid)->update([
-                    'id_type_guest' => $request->eloai,
-                    'name' => $request->eten,
-                    'phone' => $request->edienThoai,
-                    'address' => $request->ediaChi,
-                    'mst' => $request->emst,
-                    'cmnd' => $request->ecmnd,
-                    'ngayCap' => $request->engayCap,
-                    'noiCap' => $request->enoiCap,
-                    'ngaySinh' => $request->engaySinh,
-                    'daiDien' => $request->edaiDien,
-                    'chucVu' => $request->echucVu,
-                    'nguon' => $request->enguon,
-                    'lenHopDong' => $request->elenHopDong,
-                    'danhGia' => $request->edanhGia,
-                    'xeQuanTam' => $request->equanTam,
-                    'cs1' => $request->ecs1,
-                    'cs2' => $request->ecs2,
-                    'cs3' => $request->ecs3,
-                    'cs4' => $request->ecs4,
-                ]);
+                if ($mkt) {
+                    $result = Guest::where('id',$request->eid)->update([
+                        'id_type_guest' => $request->eloai,
+                        'name' => $request->eten,                       
+                        'address' => $request->ediaChi,
+                        'mst' => $request->emst,
+                        'cmnd' => $request->ecmnd,
+                        'ngayCap' => $request->engayCap,
+                        'noiCap' => $request->enoiCap,
+                        'ngaySinh' => $request->engaySinh,
+                        'daiDien' => $request->edaiDien,
+                        'chucVu' => $request->echucVu,                        
+                        'lenHopDong' => $request->elenHopDong,
+                        'danhGia' => $request->edanhGia,
+                        'xeQuanTam' => $request->equanTam,
+                        'cs1' => $request->ecs1,
+                        'cs2' => $request->ecs2,
+                        'cs3' => $request->ecs3,
+                        'cs4' => $request->ecs4,
+                    ]);
+                } else {
+                    $result = Guest::where('id',$request->eid)->update([
+                        'id_type_guest' => $request->eloai,
+                        'name' => $request->eten,
+                        'phone' => $request->edienThoai,
+                        'address' => $request->ediaChi,
+                        'mst' => $request->emst,
+                        'cmnd' => $request->ecmnd,
+                        'ngayCap' => $request->engayCap,
+                        'noiCap' => $request->enoiCap,
+                        'ngaySinh' => $request->engaySinh,
+                        'daiDien' => $request->edaiDien,
+                        'chucVu' => $request->echucVu,
+                        'nguon' => $request->enguon,
+                        'lenHopDong' => $request->elenHopDong,
+                        'danhGia' => $request->edanhGia,
+                        'xeQuanTam' => $request->equanTam,
+                        'cs1' => $request->ecs1,
+                        'cs2' => $request->ecs2,
+                        'cs3' => $request->ecs3,
+                        'cs4' => $request->ecs4,
+                    ]);
+                }                
                 if($result) {
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;

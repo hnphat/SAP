@@ -123,7 +123,8 @@
                             \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
-                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('truongnhomsale'))
                                     <li class="nav-item">
                                         <a href="{{route('mkt.index')}}" class="nav-link">
                                             <i class="fas fa-caret-right nav-icon"></i>
