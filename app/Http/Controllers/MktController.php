@@ -9,8 +9,11 @@ use App\Guest;
 use App\GroupSale;
 use App\HopDong;
 use App\User;
+use App\Mail\GroupGet;
+use App\Mail\SaleGet;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 
 class MktController extends Controller
@@ -143,6 +146,19 @@ class MktController extends Controller
         $mkt->block = true;
         $mkt->save();
         if($mkt) {
+            // Xử lý gửi email
+            $gr = GroupSale::where([
+                ['group_id','=',$request->id_group],
+                ['leader','=',true]
+            ])->first();
+            if ($gr) {
+                $nhom = Group::find($request->id_group)->name;
+                $u = User::find($gr->user_id);
+                $emailDuyet = $u->email;
+                $nguoiDuyet = $u->userDetail->surname;
+                Mail::to($emailDuyet)->send(new GroupGet([$nhom, $nguoiDuyet, $temp->hoTen, $temp->dienThoai, $temp->yeuCau]));
+            }
+            // --------------------
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
@@ -191,6 +207,19 @@ class MktController extends Controller
                 $mkt2 = MarketingGuest::find($request->id);
                 $mkt2->id_guest_temp = $idlastest;
                 $mkt2->save();  
+                // Xử lý gửi email
+                $gr = GroupSale::where([
+                    ['group_id','=',$temp->id_group_send],
+                    ['user_id','=',$request->id_sale]
+                ])->first();
+                if ($gr) {
+                    $nhom = Group::find($temp->id_group_send)->name;
+                    $u = User::find($request->id_sale);
+                    $emailDuyet = $u->email;
+                    $nguoiDuyet = $u->userDetail->surname;
+                    Mail::to($emailDuyet)->send(new SaleGet([$nhom, $nguoiDuyet, $temp->hoTen, $temp->dienThoai, $temp->yeuCau]));
+                }
+                // --------------------
                 if($mkt2) {  
                     return response()->json([
                         'type' => 'info',

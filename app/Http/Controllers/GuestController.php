@@ -655,7 +655,7 @@ class GuestController extends Controller
                 }                
             }
             echo "<tr class='text-center'>
-                            <td colspan='2'><strong>TỔNG</strong></td>                            
+                            <td colspan='3'><strong>TỔNG</strong></td>                            
                             <td><strong class='text-primary'>".$tonghd."</strong></td>
                             <td><strong class='text-success'>".$tonghdxuat."</strong></td>
                             <td><strong class='text-orange'>".$tongkh."</strong></td>

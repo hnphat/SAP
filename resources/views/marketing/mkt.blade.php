@@ -497,11 +497,15 @@
                             "id": $("input[name=eid]").val(),
                             "id_group": $("select[name=chonNhoms]").val()
                         },
+                        beforeSend: function () {
+                            $("#btnSetGroup").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
+                        },
                         success: function(response) {
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
                             })
+                            $("#btnSetGroup").attr('disabled', false).html("Xác nhận");
                             $("#groupModal").modal('hide');
                             setTimeout(autoload, 1000);;
                         },
@@ -528,11 +532,15 @@
                             "id": $("input[name=eeid]").val(),
                             "id_sale": $("select[name=chonSale]").val()
                         },
+                        beforeSend: function () {
+                            $("#btnSetSale").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
+                        },
                         success: function(response) {
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
                             })
+                            $("#btnSetSale").attr('disabled', false).html("Xác nhận");
                             $("#saleModal").modal('hide');
                             setTimeout(autoload, 2000);;
                         },

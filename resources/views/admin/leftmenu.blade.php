@@ -177,7 +177,8 @@
                                 @endif
                                  @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                 <li class="nav-item">
                                     <a href="{{route('guest.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -185,7 +186,8 @@
                                     </a>
                                 </li>
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
-                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                 <li class="nav-item">
                                     <a href="{{route('hd.denghi')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
