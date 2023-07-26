@@ -17,6 +17,8 @@ use App\HopDong;
 use App\SaleOff;
 use App\TypeCarDetail;
 use App\PhoneHcare;
+use App\GroupSale;
+use App\Group;
 use App\MarketingGuest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -447,13 +449,36 @@ class GuestController extends Controller
     }
 
     public function getKhachHangSaleHD() {
+        $arr = [];
+        $groupid = 0;
+        if (Auth::user()->hasRole('truongnhomsale')) {
+            $gr = GroupSale::where('user_id',Auth::user()->id)->first();
+            $groupid = ($gr) ? $gr->group_id : 0;
+        }
         $user = User::all();
         $iduser = Auth::user()->id;
         $nameuser = Auth::user()->userDetail->surname;
-        return view('page.khachhangsalehd',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser]);
+        $group = GroupSale::all();
+        foreach($user as $row){            
+            if ($row->hasRole('sale') && $row->active) {
+                $gr = GroupSale::where('user_id', $row->id)->first();
+                array_push($arr, [
+                    'id' => $row->id,
+                    'code' => $row->name,
+                    'name' => $row->userDetail->surname,
+                    'group' => ($gr) ? $gr->group_id : 0
+                ]);
+            }
+        }
+        // dd($arr);
+        return view('page.khachhangsalehd',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
     }
 
     public function loadBaoCaoKhachhangSaleHD(Request $request) {
+        $idgroupmain = 0;
+        if (Auth::user()->hasRole('truongnhomsale')) {
+            $idgroupmain = GroupSale::where('user_id', Auth::user()->id)->exists() ? GroupSale::where('user_id', Auth::user()->id)->first()->group_id : 0;
+        }
         $nv = $request->nhanVien;
         $tu = $request->tu;
         $den = $request->den;
@@ -462,6 +487,7 @@ class GuestController extends Controller
         <table class='table table-striped table-bordered'>
         <tr class='text-center'>
             <th>STT</th>
+            <th>Nhóm</th>
             <th>Saler</th>
             <th>HĐ ký/chờ</th>
             <th>HĐ xuất</th>
@@ -481,72 +507,152 @@ class GuestController extends Controller
                 $hdxuat = 0;
                 $pkban = 0;
                 $guestnew = 0;
-                if ($row->active && $row->hasRole('sale')) {
-                    $g = Guest::select("*")->where('id_user_create', $row->id)->get();
-                    foreach($g as $kh){
-                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($tu)) 
-                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) <= strtotime($den))) {
-                            $guestnew++;
-                        }
+                $tenNhom = "";
+                if (Auth::user()->hasRole('truongnhomsale')) {                    
+                    $gr = GroupSale::where('user_id',$row->id)->first();
+                    if ($gr) {
+                        $tenNhom = Group::find($gr->group_id)->name;
                     }
-                    
-                    $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
-                    ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
-                    ->where([
-                        ['hop_dong.lead_check','=',true],
-                        ['hdWait','=',false],
-                        ['hop_dong.lead_check_cancel','=',false],
-                        ['hop_dong.id_user_create','=',$row->id]
-                    ])->get();
-                    foreach($hdkyList as $row2){
-                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($tu)) 
-                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($den))) {
-                            $hdky++;
+                    if ($row->active && $row->hasRole('sale') && $gr && $gr->group_id == $idgroupmain) {
+                        $g = Guest::select("*")->where('id_user_create', $row->id)->get();
+                        foreach($g as $kh){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) <= strtotime($den))) {
+                                $guestnew++;
+                            }
                         }
-
-                        $checkDaXuat = KhoV2::find($row2->id_car_kho);
-                        if ($checkDaXuat && $checkDaXuat->xuatXe && ((strtotime($checkDaXuat->ngayGiaoXe) >= strtotime($tu)) 
-                        &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
-                            $hdxuat++;
-                            // Xử lý pk bán
-                            $phuKien = SaleOffV2::select('package.*')
-                            ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
-                            ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
-                            ->where([
-                                ['saleoffv2.id_hd','=', $row2->id],
-                                ['package.type','=','pay']
-                            ])->get();
-                            foreach($phuKien as $rowPK)
-                                $pkban += $rowPK->cost;
+                        
+                        $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
+                        ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
+                        ->where([
+                            ['hop_dong.lead_check','=',true],
+                            ['hdWait','=',false],
+                            ['hop_dong.lead_check_cancel','=',false],
+                            ['hop_dong.id_user_create','=',$row->id]
+                        ])->get();
+                        foreach($hdkyList as $row2){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($den))) {
+                                $hdky++;
+                            }
+    
+                            $checkDaXuat = KhoV2::find($row2->id_car_kho);
+                            if ($checkDaXuat && $checkDaXuat->xuatXe && ((strtotime($checkDaXuat->ngayGiaoXe) >= strtotime($tu)) 
+                            &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
+                                $hdxuat++;
+                                // Xử lý pk bán
+                                $phuKien = SaleOffV2::select('package.*')
+                                ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+                                ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+                                ->where([
+                                    ['saleoffv2.id_hd','=', $row2->id],
+                                    ['package.type','=','pay']
+                                ])->get();
+                                foreach($phuKien as $rowPK)
+                                    $pkban += $rowPK->cost;
+                            }
                         }
+            
+                        $hdchoList = HopDong::select('*')->where([
+                            ['lead_check','=',true],
+                            ['hdWait','=',true],
+                            ['lead_check_cancel','=',false],
+                            ['id_user_create','=',$row->id]
+                        ])->get();
+                        foreach($hdchoList as $row3){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) <= strtotime($den))) {
+                                    $hdcho++;
+                            }
+                        }
+    
+                        echo "<tr class='text-center'>
+                                <td>".($i++)."</td>
+                                <td>".$tenNhom."</td>
+                                <td>".$row->userDetail->surname."</td>
+                                <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
+                                <td><strong class='text-success'>".$hdxuat."</strong></td>
+                                <td><strong class='text-orange'>".$guestnew."</strong></td>
+                                <td><strong class='text-info'>".number_format($pkban)."<strong></td>
+                            </tr>";
+                        $tonghd += ($hdky + $hdcho);
+                        $tonghdxuat += $hdxuat;
+                        $tongkh += $guestnew;
+                        $tongpkban += $pkban;
                     }
-        
-                    $hdchoList = HopDong::select('*')->where([
-                        ['lead_check','=',true],
-                        ['hdWait','=',true],
-                        ['lead_check_cancel','=',false],
-                        ['id_user_create','=',$row->id]
-                    ])->get();
-                    foreach($hdchoList as $row3){
-                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) >= strtotime($tu)) 
-                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) <= strtotime($den))) {
-                                $hdcho++;
+                } else {
+                    if ($row->active && $row->hasRole('sale')) {
+                        $g = Guest::select("*")->where('id_user_create', $row->id)->get();
+                        $gr = GroupSale::where('user_id',$row->id)->first();
+                        if ($gr) {
+                            $tenNhom = Group::find($gr->group_id)->name;
                         }
+                        foreach($g as $kh){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) <= strtotime($den))) {
+                                $guestnew++;
+                            }
+                        }
+                        
+                        $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
+                        ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
+                        ->where([
+                            ['hop_dong.lead_check','=',true],
+                            ['hdWait','=',false],
+                            ['hop_dong.lead_check_cancel','=',false],
+                            ['hop_dong.id_user_create','=',$row->id]
+                        ])->get();
+                        foreach($hdkyList as $row2){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($den))) {
+                                $hdky++;
+                            }
+    
+                            $checkDaXuat = KhoV2::find($row2->id_car_kho);
+                            if ($checkDaXuat && $checkDaXuat->xuatXe && ((strtotime($checkDaXuat->ngayGiaoXe) >= strtotime($tu)) 
+                            &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
+                                $hdxuat++;
+                                // Xử lý pk bán
+                                $phuKien = SaleOffV2::select('package.*')
+                                ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+                                ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+                                ->where([
+                                    ['saleoffv2.id_hd','=', $row2->id],
+                                    ['package.type','=','pay']
+                                ])->get();
+                                foreach($phuKien as $rowPK)
+                                    $pkban += $rowPK->cost;
+                            }
+                        }
+            
+                        $hdchoList = HopDong::select('*')->where([
+                            ['lead_check','=',true],
+                            ['hdWait','=',true],
+                            ['lead_check_cancel','=',false],
+                            ['id_user_create','=',$row->id]
+                        ])->get();
+                        foreach($hdchoList as $row3){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) <= strtotime($den))) {
+                                    $hdcho++;
+                            }
+                        }
+    
+                        echo "<tr class='text-center'>
+                                <td>".($i++)."</td>
+                                <td>".$tenNhom."</td>
+                                <td>".$row->userDetail->surname."</td>
+                                <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
+                                <td><strong class='text-success'>".$hdxuat."</strong></td>
+                                <td><strong class='text-orange'>".$guestnew."</strong></td>
+                                <td><strong class='text-info'>".number_format($pkban)."<strong></td>
+                            </tr>";
+                        $tonghd += ($hdky + $hdcho);
+                        $tonghdxuat += $hdxuat;
+                        $tongkh += $guestnew;
+                        $tongpkban += $pkban;
                     }
-
-                    echo "<tr class='text-center'>
-                            <td>".($i++)."</td>
-                            <td>".$row->userDetail->surname."</td>
-                            <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
-                            <td><strong class='text-success'>".$hdxuat."</strong></td>
-                            <td><strong class='text-orange'>".$guestnew."</strong></td>
-                            <td><strong class='text-info'>".number_format($pkban)."<strong></td>
-                        </tr>";
-                    $tonghd += ($hdky + $hdcho);
-                    $tonghdxuat += $hdxuat;
-                    $tongkh += $guestnew;
-                    $tongpkban += $pkban;
-                }
+                }                
             }
             echo "<tr class='text-center'>
                             <td colspan='2'><strong>TỔNG</strong></td>                            
@@ -562,6 +668,11 @@ class GuestController extends Controller
             $hdxuat = 0;
             $pkban = 0;
             $guestnew = 0;
+            $tenNhom = "";
+            $gr = GroupSale::where('user_id',$u->id)->first();
+                if ($gr) {
+                    $tenNhom = Group::find($gr->group_id)->name;
+                }
             $g = Guest::select("*")->where('id_user_create', $u->id)->get();
             foreach($g as $kh){
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($tu)) 
@@ -616,6 +727,7 @@ class GuestController extends Controller
 
             echo "<tr class='text-center'>
                     <td>".($i++)."</td>
+                    <td>".$tenNhom."</td>
                     <td>".$u->userDetail->surname."</td>
                     <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
                     <td><strong class='text-success'>".$hdxuat."</strong></td>
@@ -656,7 +768,7 @@ class GuestController extends Controller
                         <td>".\HelpFunction::revertCreatedAt($khach->created_at)."</td>
                         <td>".$khach->name."</td>
                         <td><strong class='text-primary'>".$khach->nguon."</strong></td>
-                        <td>".$khach->phone."</td>
+                        <td> ".(Auth::user()->hasRole('truongnhomsale') ? (Auth::user()->id == $khach->id_user_create ? $khach->phone : substr($khach->phone,0,4)."xxxxxx") : $khach->phone)." </td>
                         <td>".$stt."</td>
                         <td>".$khach->xeQuanTam."</td>
                         <td><i>".$khach->cs1."</i></td>

@@ -55,12 +55,17 @@
                                                     \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
                                                     \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
                                                     \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
-                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('truongnhomsale'))
                                                     <option value="0">Tất cả</option>                                                               
-                                                    @foreach($user as $row)
-                                                        @if($row->hasRole('sale') && $row->active)
-                                                            <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
-                                                        @endif
+                                                    @foreach($groupsale as $row)    
+                                                        @if (!\Illuminate\Support\Facades\Auth::user()->hasRole('truongnhomsale'))                                                    
+                                                        <option value="{{$row['id']}}">{{$row['code']}} - {{$row['name']}}</option>
+                                                        @elseif ($row['group'] == $groupid)
+                                                        <option value="{{$row['id']}}">{{$row['code']}} - {{$row['name']}}</option>
+                                                        @else
+                                                        
+                                                        @endif 
                                                     @endforeach   
                                                 @else   
                                                     <option value="{{$iduser}}">{{$nameuser}}</option>
