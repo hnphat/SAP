@@ -6,7 +6,7 @@
 <p>
     Nhóm của bạn nhận được khách hàng cần được chăm sóc từ Hệ thống
     <br/>Họ tên khách: <strong>{{ $hoTen }}</strong><br/>
-    Số điện thoại: <strong>{{ $dienThoai }}</strong><br/>
+    Số điện thoại: <strong>{{ substr($dienThoai,0,4) . "xxxxxxxx" }}</strong><br/>
     Yêu cầu từ khách hàng: <strong>{{ $yeuCau }}</strong><br/>
 </p>
 <i style="color: brown;">
