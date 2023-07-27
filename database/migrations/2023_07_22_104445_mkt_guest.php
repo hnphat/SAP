@@ -24,9 +24,19 @@ class MktGuest extends Migration
             $table->integer('id_guest_temp')->unsigned()->nullable();
             $table->boolean('block')->default(false);
             $table->string('hoTen');
-            $table->string('dienThoai');
+            $table->string('dienThoai')->unique();
             $table->string('nguonKH');
             $table->string('yeuCau');
+            //---- cho sale
+            $table->string('ngayNhan')->nullable();
+            $table->string('danhGia')->nullable();
+            $table->string('xeQuanTam')->nullable();
+            $table->string('cs1')->nullable();
+            $table->string('cs2')->nullable();
+            $table->string('cs3')->nullable();
+            $table->string('cs4')->nullable();
+            $table->boolean('fail')->default(false);
+            //----
             $table->timestamps();
         });
     }

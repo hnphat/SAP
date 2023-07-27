@@ -36,6 +36,19 @@ class MktController extends Controller
         $mkt->block = true;
         $mkt->save();
         if($mkt) {
+            // Xử lý gửi email
+            $gr = GroupSale::where([
+                ['group_id','=',$request->chonNhom],
+                ['leader','=',true]
+            ])->first();
+            if ($gr) {
+                $nhom = Group::find($request->chonNhom)->name;
+                $u = User::find($gr->user_id);
+                $emailDuyet = $u->email;
+                $nguoiDuyet = $u->userDetail->surname;
+                Mail::to($emailDuyet)->send(new GroupGet([$nhom, $nguoiDuyet, $request->ten, $request->dienThoai, $request->yeuCau]));
+            }
+            // --------------------
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
@@ -98,11 +111,11 @@ class MktController extends Controller
         if ($hd) {
             $flag = true; 
         }  
-        // Nếu chưa gán khách cho sale thì recall được
+        // Nếu chưa gán khách cho sale thì rollback được
         if ($flag) {
             return response()->json([
                 'type' => 'warning',
-                'message' => 'Khách hàng này đang được sử dụng trong đề nghị/hợp đồng không thể recall!',
+                'message' => 'Khách hàng này đang được sử dụng trong đề nghị/hợp đồng không thể rollback!',
                 'code' => 200
             ]);
         } else {
@@ -114,6 +127,14 @@ class MktController extends Controller
             $mkt->id_sale_recieve  = null;
             $mkt->id_guest_temp = null;
             $mkt->block = false;
+            $mkt->ngayNhan = null;
+            $mkt->danhGia = null;
+            $mkt->xeQuanTam = null;
+            $mkt->cs1 = null;
+            $mkt->cs2 = null;
+            $mkt->cs3 = null;
+            $mkt->cs4 = null;
+            $mkt->fail = false;
             $mkt->save();
             
             if($mkt) {
@@ -121,11 +142,68 @@ class MktController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
-                $nhatKy->noiDung = "Recall khách hàng mkt; Họ tên: " . $temp->hoTen . "; SĐT: " . $temp->dienThoai;
+                $nhatKy->noiDung = "rollback khách hàng mkt; Họ tên: " . $temp->hoTen . "; SĐT: " . $temp->dienThoai;
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
-                    'message' => 'Đã recall thành công!',
+                    'message' => 'Đã rollback thành công!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
+    public function setFail(Request $request) {
+        $flag = false;
+        $temp = MarketingGuest::find($request->id);
+        $idguest = ($temp->id_guest_temp) ? $temp->id_guest_temp : 0;
+        // Xử lý trạng thái khách hàng
+        $hd = HopDong::where('id_guest',$temp->id_guest_temp)->exists();               
+        if ($hd) {
+            $flag = true; 
+        }  
+        // Nếu chưa gán khách cho sale thì rollback được
+        if ($flag) {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Khách hàng này đang được sử dụng trong đề nghị/hợp đồng không thể chuyển trạng thái!',
+                'code' => 200
+            ]);
+        } else {
+            $temp2 = Guest::find($idguest);
+            $guest = Guest::find($idguest);
+            ($idguest != 0) ? $guest->delete() : "";
+
+            $mkt = MarketingGuest::find($request->id);            
+            if ($temp2) {
+                $mkt->ngayNhan = $temp2->created_at;
+                $mkt->danhGia = $temp2->danhGia;
+                $mkt->xeQuanTam = $temp2->xeQuanTam;
+                $mkt->cs1 = $temp2->cs1;
+                $mkt->cs2 = $temp2->cs1;
+                $mkt->cs3 = $temp2->cs1;
+                $mkt->cs4 = $temp2->cs1;
+            }            
+            $mkt->id_guest_temp = null;
+            $mkt->fail = true;
+            $mkt->save();
+            
+            if($mkt) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
+                $nhatKy->noiDung = "Chuyển trạng thái khách hàng mkt sang dừng theo dõi; Họ tên: " . $temp->hoTen . "; SĐT: " . $temp->dienThoai;
+                $nhatKy->save();
+                return response()->json([
+                    'type' => 'info',
+                    'message' => 'Đã chuyển trạng thái thành công!',
                     'code' => 200
                 ]);
             } else {
@@ -270,6 +348,7 @@ class MktController extends Controller
             $status = "Null";
             $hasPhone = substr($row->dienThoai,0,4) . "xxxxxxxx";
             $idgroup = 0;
+            $hasFail = "";
             
             if (Auth::user()->hasRole('truongnhomsale')) {
                 $gr = GroupSale::where('user_id', Auth::user()->id)->first();
@@ -277,7 +356,7 @@ class MktController extends Controller
             }
 
             if ($idgroup != 0) {
-                // Dành cho quyền khác trưởng nhóm
+                // Dành cho quyền trưởng nhóm
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to)) && $idgroup == $row->id_group_send) {
                     $gr = Group::find($row->id_group_send);
@@ -293,6 +372,10 @@ class MktController extends Controller
 
                     if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
                         $hasPhone = $row->dienThoai;
+                    } elseif (Auth::user()->hasRole('truongnhomsale') && Auth::user()->id == $row->id_sale_recieve) {
+                        $hasPhone = $row->dienThoai;
+                    } else {
+
                     }
                     
                     $sale = User::find($row->id_sale_recieve);
@@ -332,11 +415,26 @@ class MktController extends Controller
                         }    
                     }
                     //-------------------------
+                    // --- xử lý fail
+                    if ($row->fail && $row->id_sale_recieve) {                        
+                        $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
+                    }  
+                    if ($row->id_sale_recieve && !$row->fail)
+                    {
+                        $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Fail</button>";
+                    }    
+                    //---------------------
                     if ($guest) {
                         switch($guest->danhGia) {
                             case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
                             case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
                             case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                        }
+                    } else {
+                        switch($row->danhGia) {
+                            case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
+                            case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
+                            case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
                         }
                     }                
                     echo "<tr>
@@ -353,21 +451,19 @@ class MktController extends Controller
                         <td>
                             ".$hasSale."
                         </td>
-                        <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : "")."</td>
+                        <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : \HelpFunction::getDateRevertCreatedAt($row->ngayNhan))."</td>
                         <td>".$stt."</td>
-                        <td>".($guest ? $guest->xeQuanTam : "")."</td>
-                        <td>".($guest ? $guest->cs1 : "")."</td>
-                        <td>".($guest ? $guest->cs2 : "")."</td>
-                        <td>".($guest ? $guest->cs3 : "")."</td>
-                        <td>".($guest ? $guest->cs4 : "")."</td>
+                        <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
+                        <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
+                        <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
+                        <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
+                        <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
                         <td>".$status."</td>
                         <td>
-                            ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button> <br/><br/>  <button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Recall</button>" : "")."
                         </td>
                     </tr>";
                 }
-            } else {
-                // Dành cho quyền trưởng nhóm
+            } else {                
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                     $gr = Group::find($row->id_group_send);
@@ -421,12 +517,28 @@ class MktController extends Controller
                                 $status = "<strong class='text-success'>Hợp đồng ký</strong>";
                         }    
                     }
+                    
                     //-------------------------
+                    // --- xử lý fail
+                    if ($row->fail && $row->id_sale_recieve) {                        
+                        $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
+                    }  
+                    if ($row->id_sale_recieve && !$row->fail)
+                    {
+                        $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Stop</button>";
+                    }    
+                    //---------------------
                     if ($guest) {
                         switch($guest->danhGia) {
                             case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
                             case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
                             case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                        }
+                    } else {
+                        switch($row->danhGia) {
+                            case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
+                            case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
+                            case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
                         }
                     }                
                     echo "<tr>
@@ -443,16 +555,18 @@ class MktController extends Controller
                         <td>
                             ".$hasSale."
                         </td>
-                        <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : "")."</td>
+                        <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : \HelpFunction::getDateRevertCreatedAt($row->ngayNhan))."</td>
                         <td>".$stt."</td>
-                        <td>".($guest ? $guest->xeQuanTam : "")."</td>
-                        <td>".($guest ? $guest->cs1 : "")."</td>
-                        <td>".($guest ? $guest->cs2 : "")."</td>
-                        <td>".($guest ? $guest->cs3 : "")."</td>
-                        <td>".($guest ? $guest->cs4 : "")."</td>
+                        <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
+                        <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
+                        <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
+                        <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
+                        <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
                         <td>".$status."</td>
                         <td>
-                            ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button> <br/><br/>  <button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Recall</button>" : "")."
+                            ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
+                            <br/><br/><button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Rollback</button>
+                            <br/><br/>" . $hasFail : "")."
                         </td>
                     </tr>";
                 }

@@ -109,7 +109,7 @@ class GuestController extends Controller
         if ($guest)
             echo '{"phone": "'.$num.'", "check":"1", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
         else
-            echo '{"phone": "'.$num.'", "check":"0", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
+            echo '{"phone": "'.$num.'", "check":"0", "user":"'.("NULL").'"}';
     }
 
     public function add(Request $request) {

@@ -19,7 +19,7 @@ class CapHoa extends Migration
             $table->foreign('id_user')->references('id')->on('users');
             $table->string('khachHang');
             $table->string('dongXe');
-            $table->string('num')->unique();;
+            $table->string('num')->unique();
             $table->string('gioGiaoXe');
             $table->string('ngayGiaoXe');
             $table->string('ghiChu')->nullable();

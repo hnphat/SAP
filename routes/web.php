@@ -697,6 +697,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('revertguest','MktController@revertGuest');
         Route::post('getsalelist','MktController@getSaleList');
         Route::post('setsale','MktController@setSale');
+        Route::post('setfail','MktController@setFail');
     });
 
     Route::group(['prefix' => 'dichvu'], function(){

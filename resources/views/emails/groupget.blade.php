@@ -10,7 +10,7 @@
     Yêu cầu từ khách hàng: <strong>{{ $yeuCau }}</strong><br/>
 </p>
 <i style="color: brown;">
-<strong>Ghi chú: Vui lòng truy cập ứng dụng để gán khách này cho sale trong nhóm để tiến hành chăm sóc. Xin cảm ơn!</strong>
+<strong>Ghi chú: Vui lòng truy cập ứng dụng để gán khách này cho sale trong nhóm. Xin cảm ơn!</strong>
 </i>
 
 <p style="text-align: center;">

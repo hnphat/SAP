@@ -365,6 +365,9 @@
                                 type: "POST",
                                 dataType: "json",
                                 data: $("#addForm").serialize(),
+                                beforeSend: function () {
+                                    $("#btnAdd").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
+                                },
                                 success: function(response) {
                                     Toast.fire({
                                         icon: response.type,
@@ -372,12 +375,14 @@
                                     })
                                     $("#addForm")[0].reset();
                                     $("#addModal").modal('hide');
+                                    $("#btnAdd").attr('disabled', false).html("Thêm");
                                     autoload();
                                 },
-                                error: function() {
+                                error: function(e) {
+                                    $("#btnAdd").attr('disabled', false).html("Thêm");
                                     Toast.fire({
-                                        icon: response.type,
-                                        title: response.message
+                                        icon: 'error',
+                                        title: e.responseJSON.message
                                     })
                                 }
                             });
@@ -418,7 +423,7 @@
             });
 
             $(document).on('click','#revert', function(){
-                if(confirm('Xác nhận recall về trạng thái khách chưa gán cho nhóm (cho sale)?')) {
+                if(confirm('Xác nhận rollback về trạng thái khách chưa gán cho nhóm (cho sale)?')) {
                     $.ajax({
                         url: "management/marketing/revertguest",
                         type: "POST",
@@ -552,6 +557,34 @@
                         }
                     });
                 }               
+            });
+
+            $(document).on('click','#setfail', function(){
+                if(confirm('Xác nhận chuyển đổi trạng thái khách từ \"Có nhu cầu\" sang trạng thái \"Không nhu cầu\"?')) {
+                    $.ajax({
+                        url: "management/marketing/setfail",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": '{{csrf_token()}}',
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            if (response.code != 500)
+                                setTimeout(autoload, 3000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
+                    });
+                }
             });
        });
     </script>
