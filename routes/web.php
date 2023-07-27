@@ -150,7 +150,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('update','GuestController@update');
 
         // khách hàng - sale - hợp đồng
-        Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd');
+        Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd')->middleware(['f_mkt']);
         Route::post('loadbaocaokhachhang','GuestController@loadBaoCaoKhachhangSaleHD');  
 
         // -------------- upload

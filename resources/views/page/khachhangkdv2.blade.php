@@ -83,15 +83,15 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Tên khách hàng</label>
+                                                                                <label>Tên khách hàng <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input name="ten" type="text" class="form-control" placeholder="Tên khách hàng">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Số điện thoại</label>
+                                                                                <label>Số điện thoại <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input name="dienThoai" type="number" class="form-control" placeholder="Số điện thoại">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Địa chỉ</label>
+                                                                                <label>Địa chỉ <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input name="diaChi" type="text" class="form-control" placeholder="Địa chỉ">
                                                                             </div>
                                                                         </div>
