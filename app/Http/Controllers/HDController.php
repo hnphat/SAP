@@ -454,7 +454,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->mau .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $kho->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -515,7 +515,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->mau .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $kho->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -607,7 +607,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->color .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -668,7 +668,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->color .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -758,7 +758,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->color .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -817,7 +817,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->color .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -907,7 +907,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->color .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),
@@ -966,7 +966,7 @@ class HDController extends Controller
                     '- ' . $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD<w:br/>' .
                     '- Xe mới 100%, Hộp số: ' . (($car->gear == 'AT') ? 'TỰ ĐỘNG' : 'SÀN') . '<w:br/>' .
                     '- Động cơ ' . $car->machine . 'L, Màu sơn: ' . $sale->color .'<w:br/>' .
-                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất<w:br/>' .
+                    '- Trang bị kèm theo xe gồm: Theo tiêu chuẩn nhà sản xuất và AVN<w:br/>' .
                     '- Năm SX: ' . $sale->year,
                 'donGia' => number_format($sale->giaXe),
                 'thanhTien' => number_format($sale->giaXe),

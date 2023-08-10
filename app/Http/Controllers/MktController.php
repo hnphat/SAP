@@ -186,9 +186,9 @@ class MktController extends Controller
                 $mkt->danhGia = $temp2->danhGia;
                 $mkt->xeQuanTam = $temp2->xeQuanTam;
                 $mkt->cs1 = $temp2->cs1;
-                $mkt->cs2 = $temp2->cs1;
-                $mkt->cs3 = $temp2->cs1;
-                $mkt->cs4 = $temp2->cs1;
+                $mkt->cs2 = $temp2->cs2;
+                $mkt->cs3 = $temp2->cs3;
+                $mkt->cs4 = $temp2->cs4;
             }            
             $mkt->id_guest_temp = null;
             $mkt->fail = true;
@@ -477,9 +477,10 @@ class MktController extends Controller
                         $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
                     }
 
-                    if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
-                        $hasPhone = $row->dienThoai;
-                    }
+                    $hasPhone = $row->dienThoai;
+                    // if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
+                    //     $hasPhone = $row->dienThoai;
+                    // }
                     
                     $sale = User::find($row->id_sale_recieve);
                     $guest = Guest::find($row->id_guest_temp);

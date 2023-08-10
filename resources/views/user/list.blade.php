@@ -66,7 +66,7 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$row->name}}</td>
                                     <td>
-                                        @if($row->userDetail != null)
+                                        @if($row->userDetail)
                                             {{$row->userDetail->surname}}
                                         @endif
                                     </td>

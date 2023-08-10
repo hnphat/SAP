@@ -160,7 +160,8 @@
                                                                                 <select name="danhGia" id="danhGia" class="form-control">
                                                                                     <option value="HOT">HOT</option>
                                                                                     <option value="WARM">WARM</option>
-                                                                                    <option value="COLD" selected>COLD</option>                                                          
+                                                                                    <option value="COLD" selected>COLD</option>
+                                                                                    <option value="FAIL">FAIL</option>                                                      
                                                                                 </select>
                                                                             </div>                                                                                                                                          
                                                                         </div>
@@ -314,7 +315,8 @@
                                                                                 <select name="edanhGia" id="edanhGia" class="form-control">
                                                                                     <option value="HOT">HOT</option>
                                                                                     <option value="WARM">WARM</option>
-                                                                                    <option value="COLD">COLD</option>                                                          
+                                                                                    <option value="COLD">COLD</option> 
+                                                                                    <option value="FAIL">FAIL</option>                                                          
                                                                                 </select>
                                                                             </div>                                                                                                                                          
                                                                         </div>
@@ -479,6 +481,7 @@
                                 case "COLD": stt = "<strong class='text-blue'>" + row.danhGia + "</strong>"; break;
                                 case "WARM": stt = "<strong class='text-orange'>" + row.danhGia + "</strong>"; break;
                                 case "HOT": stt = "<strong class='text-red'>" + row.danhGia + "</strong>"; break;
+                                case "FAIL": stt = "<strong class='text-secondary'>" + row.danhGia + "</strong>"; break;
                             }              
                             return stt;
                         }

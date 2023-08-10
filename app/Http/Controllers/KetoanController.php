@@ -210,6 +210,7 @@ class KetoanController extends Controller
                 $car = $sale->carSale;
                 $giaXe = $sale->giaXe;
                 $tenXe = $car_detail->name;
+               
                 // $tenXe = $car_detail->name . ' ' . $car->machine . $car->gear . ' CKD';
                 $outhd = 'Biên bản bàn giao xe - KH ' . $sale->guest->name;
                 $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
@@ -219,13 +220,27 @@ class KetoanController extends Controller
 
                 $sumpkban = 0;
                 $sumchiphi = 0;
-
+                $phukienall = "";
+                $stt = "";
+                $noidung = "";
+                $sl = "";
+                $k = 1;
+                $tong = "";
+                $tongpkpay = 0;
                 foreach($package as $row) {
                     if ($row->type == 'pay') {
                         $sumpkban += $row->cost;
+                        $phukienall .= $row->name . ", ";
+                        $tongpkpay++;
                     }
                     if ($row->type == 'cost' && $row->cost_tang == false) {
                         $sumchiphi += $row->cost;
+                    }
+                    if ($row->type == 'free' && $row->free_kem == true) {
+                        $stt .= $k . '<w:br/>';
+                        $noidung .=  $row->name . '<w:br/>';                  
+                        $sl .= '1<w:br/>';
+                        $k++;
                     }
                 }
 
@@ -251,7 +266,13 @@ class KetoanController extends Controller
                     'frame' => $kho->frame,
                     'cost' => number_format($sumchiphi),
                     'pay' => number_format($sumpkban),
-                    'tong' => number_format($sumchiphi + $sumpkban + $giaXe)
+                    'tong' => number_format($sumchiphi + $sumpkban + $giaXe),
+                    'phukienall' => $phukienall,
+                    'stt' => $stt,
+                    'noiDung' => $noidung,
+                    'sl' => $sl,
+                    'tongpk' => ($k - 1),
+                    'tongpkpay' => $tongpkpay
                 ]);
 
             $pathToSave = 'template/BIENBANBANGIAODOWN.docx';
