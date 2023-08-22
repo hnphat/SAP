@@ -503,13 +503,15 @@ class GuestController extends Controller
             $stonghd = 0;
             $stonghdxuat = 0;
             $stongpkban = 0;
-            $stongkh = 0;            
+            $stongkh = 0;  
+            $stongmkt = 0;          
             foreach($nhomkd as $rowkd) {
                 $i = 1;
                 $tonghd = 0;
                 $tonghdxuat = 0;
                 $tongpkban = 0;
                 $tongkh = 0;
+                $tongmkt = 0;
                 $nhomsale = GroupSale::where('group_id', $rowkd->id)->get();
                 foreach($nhomsale as $rowsale) {
                     $row = User::find($rowsale->user_id);
@@ -517,6 +519,7 @@ class GuestController extends Controller
                     $hdcho = 0;
                     $hdxuat = 0;
                     $pkban = 0;
+                    $mktguest = 0;
                     $guestnew = 0;
                     $tenNhom = "";
                     if ($row->active && $row->hasRole('sale')) {
@@ -529,6 +532,9 @@ class GuestController extends Controller
                             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($tu)) 
                             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) <= strtotime($den))) {
                                 $guestnew++;
+                                $mkttemp = MarketingGuest::where('id_guest_temp',$kh->id)->exists();
+                                if ($mkttemp)
+                                    $mktguest++;
                             }
                         }
                         
@@ -582,13 +588,14 @@ class GuestController extends Controller
                                 <td>".$row->userDetail->surname."</td>
                                 <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
                                 <td><strong class='text-success'>".$hdxuat."</strong></td>
-                                <td><strong class='text-orange'>".$guestnew."</strong></td>
+                                <td><strong class='text-orange'>".$guestnew."</strong>".($mktguest ? "<i class='text-pink'> (mkt: ".$mktguest.")</i>" : "")."</td>
                                 <td><strong class='text-info'>".number_format($pkban)."<strong></td>
                             </tr>";
                         $tonghd += ($hdky + $hdcho);
                         $tonghdxuat += $hdxuat;
                         $tongkh += $guestnew;
                         $tongpkban += $pkban;
+                        $tongmkt += $mktguest;
                         // ----------------
                     }
                 }   
@@ -596,14 +603,16 @@ class GuestController extends Controller
                             <td colspan='3'><strong>TỔNG NHÓM</strong></td>                            
                             <td><strong class='text-primary'>".$tonghd."</strong></td>
                             <td><strong class='text-success'>".$tonghdxuat."</strong></td>
-                            <td><strong class='text-orange'>".$tongkh."</strong></td>
+                            <td><strong class='text-orange'>".$tongkh."".($tongmkt ? "<i class='text-pink'> (mkt: ".$tongmkt.")</i>" : "")."</strong></td>
                             <td><strong class='text-info'>".number_format($tongpkban)."<strong></td>
                         </tr>";  
                                
                 $stonghd += $tonghd;
                 $stonghdxuat += $tonghdxuat;
                 $stongkh += $tongkh;
-                $stongpkban += $tongpkban;               
+                $stongpkban += $tongpkban;     
+                $stongkh += $tongkh;        
+                $stongmkt += $tongmkt;
             }
             if (Auth::user()->hasRole('truongnhomsale')) {
 
@@ -612,7 +621,7 @@ class GuestController extends Controller
                     <td colspan='3'><strong>TỔNG CỘNG PHÒNG KINH DOANH</strong></td>                            
                     <td><strong class='text-primary'>".$stonghd."</strong></td>
                     <td><strong class='text-success'>".$stonghdxuat."</strong></td>
-                    <td><strong class='text-orange'>".$stongkh."</strong></td>
+                    <td><strong class='text-orange'>".$stongkh."".($stongmkt ? "<i class='text-pink'> (mkt: ".$stongmkt.")</i>" : "")."</strong></td>
                     <td><strong class='text-info'>".number_format($stongpkban)."<strong></td>
                 </tr><tbody>"; 
             }

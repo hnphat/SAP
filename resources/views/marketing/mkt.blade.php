@@ -144,7 +144,7 @@
                                             <label>Nguồn khách <span class="text-red">(*)</span></label>
                                             <select name="nguonKH" class="form-control">
                                                 <option value="Hotline">Hotline</option>
-                                                <option value="Hotline">Zalo</option>
+                                                <option value="Zalo">Zalo</option>
                                                 <option value="Facebook_ads">Facebook_ads</option>
                                                 <option value="Google_ads">Google_ads</option>
                                                 <option value="Website">Website</option>
