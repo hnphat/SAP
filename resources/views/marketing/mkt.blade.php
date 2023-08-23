@@ -89,9 +89,9 @@
                                             <th class="table-success">Ngày nhận</th>
                                             <th class="table-success">Đánh giá</th>
                                             <th class="table-success">Xe quan tâm</th>
-                                            <th class="table-success">CS1</th>
-                                            <th class="table-success">CS2</th>
-                                            <th class="table-success">CS3</th>
+                                            <th class="table-success">CS1 (24h)</th>
+                                            <th class="table-success">CS2 (3-5 ngày)</th>
+                                            <th class="table-success">CS3 (7-10 ngày)</th>
                                             <th class="table-success">CS4</th>
                                             <th class="table-success">Trạng thái</th>
                                             <th class="table-light">Tác vụ</th>
