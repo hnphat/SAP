@@ -49,7 +49,7 @@ class GuestController extends Controller
                 ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                 ->orderBy('guest.id', 'desc')
                 ->get();
-        elseif (Auth::user()->hasRole('sale'))
+        elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
             $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                 ->join('type_guest as t','guest.id_type_guest','=','t.id')
                 ->join('users_detail as d','d.id_user','=','guest.id_user_create')
@@ -189,7 +189,7 @@ class GuestController extends Controller
         $temp = $result;
         // if (Auth::user()->hasRole('system') || Auth::user()->id == $result->id_user_create)
         //     $result->delete();    
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale')) {
+        if (Auth::user()->hasRole('system')) {
             $result->delete();    
             if($result) {
                 $nhatKy = new NhatKy();
@@ -243,7 +243,7 @@ class GuestController extends Controller
         $temp = Guest::find($request->eid);
         $mkt = MarketingGuest::where('id_guest_temp',$request->eid)->exists();
         $hopdong = HopDong::where('id_guest', $temp->id)->first();
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale')) {
+        if (Auth::user()->hasRole('system')) {
             $result = Guest::where('id',$request->eid)->update([
                 'id_type_guest' => $request->eloai,
                 'name' => $request->eten,
@@ -621,7 +621,7 @@ class GuestController extends Controller
                     <td colspan='3'><strong>TỔNG CỘNG PHÒNG KINH DOANH</strong></td>                            
                     <td><strong class='text-primary'>".$stonghd."</strong></td>
                     <td><strong class='text-success'>".$stonghdxuat."</strong></td>
-                    <td><strong class='text-orange'>".$stongkh."".($stongmkt ? "<i class='text-pink'> (mkt: ".$stongmkt.")</i>" : "")."</strong></td>
+                <td><strong class='text-orange'>".$stongkh."".($stongmkt ? "<i class='text-pink'> (mkt: ".$stongmkt.")</i>" : "")."</strong></td>
                     <td><strong class='text-info'>".number_format($stongpkban)."<strong></td>
                 </tr><tbody>"; 
             }

@@ -20,8 +20,29 @@ class MktController extends Controller
 {
     //
     public function index() {
-        $gr = Group::all();
-        return view("marketing.mkt", ['group' => $gr]);
+        $grs = Group::all();
+        $arr = [];
+        $groupid = 0;
+        if (Auth::user()->hasRole('truongnhomsale')) {
+            $gr = GroupSale::where('user_id',Auth::user()->id)->first();
+            $groupid = ($gr) ? $gr->group_id : 0;
+        }
+        $user = User::all();
+        $iduser = Auth::user()->id;
+        $nameuser = Auth::user()->userDetail->surname;
+        $group = GroupSale::all();
+        foreach($user as $row){            
+            if ($row->hasRole('sale') && $row->active) {
+                $gr = GroupSale::where('user_id', $row->id)->first();
+                array_push($arr, [
+                    'id' => $row->id,
+                    'code' => $row->name,
+                    'name' => $row->userDetail->surname,
+                    'group' => ($gr) ? $gr->group_id : 0
+                ]);
+            }
+        }
+        return view("marketing.mkt", ['group' => $grs, 'user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
     }
 
     public function postData(Request $request) {
@@ -331,7 +352,7 @@ class MktController extends Controller
     public function loadBaoCao(Request $request) {
         $_from = \HelpFunction::revertDate($request->tu);
         $_to = \HelpFunction::revertDate($request->den);
-
+        $_sale = $request->sale;
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
@@ -341,235 +362,472 @@ class MktController extends Controller
 
         $mkt = MarketingGuest::select("*")->orderBy('id','desc')->get();
         $i = 1;
-        foreach($mkt as $row) {
-            $hasGroup = "";
-            $hasSale = "";
-            $stt = "";
-            $status = "Null";
-            $hasPhone = substr($row->dienThoai,0,4) . "xxxxxxxx";
-            $idgroup = 0;
-            $hasFail = "";
-            
-            if (Auth::user()->hasRole('truongnhomsale')) {
-                $gr = GroupSale::where('user_id', Auth::user()->id)->first();
-                $idgroup = ($gr) ? $gr->group_id : 0;
-            }
-
-            if ($idgroup != 0) {
-                // Dành cho quyền trưởng nhóm
-                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
-                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to)) && $idgroup == $row->id_group_send) {
-                    $gr = Group::find($row->id_group_send);
-                    if ($gr) {
-                        $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
-                        if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
-                            $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
-                    }
-                    else {
-                        if (Auth::user()->hasRole('mkt') || Auth::user()->hasRole('system') || Auth::user()->hasRole('cskh') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss'))
-                        $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
-                    }
-
-                    if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
-                        $hasPhone = $row->dienThoai;
-                    } elseif (Auth::user()->hasRole('truongnhomsale') && Auth::user()->id == $row->id_sale_recieve) {
-                        $hasPhone = $row->dienThoai;
-                    } else {
-
-                    }
-                    
-                    $sale = User::find($row->id_sale_recieve);
-                    $guest = Guest::find($row->id_guest_temp);
-                    if ($sale)
-                        $hasSale = "<span class='text-bold text-info'>".$sale->userDetail->surname."</span>";
-                    // Xử lý trạng thái khách hàng
-                    $hd = HopDong::select("hop_dong.*")
-                    ->where('id_guest',$row->id_guest_temp)
-                    ->orderBy('id','desc')
-                    ->first();
-                    
-                    if ($hd) {
-                        if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
-                            $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
-                        } elseif ($hd->lead_check_cancel == true) {
-                            $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
-                        } else {
-                            if ($hd->requestCheck == false) 
-                            $status = "<strong class='text-secondary'>Mới tạo</strong>";
-                            elseif ($hd->requestCheck == true && $hd->admin_check == false)
-                                $status = "<strong class='text-info'>Đợi duyệt (Admin)</strong>";
-                            elseif ($hd->requestCheck == true 
-                            && $hd->admin_check == true 
-                            && $hd->lead_check == false)
-                                $status = "<strong class='text-primary'>Đợi duyệt (TPKD)</strong>";
-                            elseif ($hd->requestCheck == true 
-                            && $hd->admin_check == true 
-                            && $hd->lead_check == true 
-                            && $hd->hdWait == true)
-                                $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
-                            elseif ($hd->requestCheck == true 
-                            && $hd->admin_check == true 
-                            && $hd->lead_check == true 
-                            && $hd->hdWait == false)
-                                $status = "<strong class='text-success'>Hợp đồng ký</strong>";
-                        }    
-                    }
-                    //-------------------------
-                    // --- xử lý fail
-                    if ($row->fail && $row->id_sale_recieve) {                        
-                        $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
-                    }  
-                    if ($row->id_sale_recieve && !$row->fail)
-                    {
-                        $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Fail</button>";
-                    }    
-                    //---------------------
-                    if ($guest) {
-                        switch($guest->danhGia) {
-                            case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
-                            case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
-                            case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
-                        }
-                    } else {
-                        switch($row->danhGia) {
-                            case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
-                            case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
-                            case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
-                        }
-                    }                
-                    echo "<tr>
-                        <td>".($i++)."</td>
-                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                        <td>".$row->user->userDetail->surname."</td>
-                        <td>".$row->hoTen."</td>
-                        <td>".$hasPhone."</td>
-                        <td>".$row->nguonKH."</td>
-                        <td>".$row->yeuCau."</td>
-                        <td>
-                            ".$hasGroup."
-                        </td>
-                        <td>
-                            ".$hasSale."
-                        </td>
-                        <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : \HelpFunction::getDateRevertCreatedAt($row->ngayNhan))."</td>
-                        <td>".$stt."</td>
-                        <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
-                        <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
-                        <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
-                        <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
-                        <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
-                        <td>".$status."</td>
-                        <td>
-                        </td>
-                    </tr>";
+        if ($_sale == 0) {
+            foreach($mkt as $row) {
+                $hasGroup = "";
+                $hasSale = "";
+                $stt = "";
+                $status = "Null";
+                $hasPhone = substr($row->dienThoai,0,4) . "xxxxxxxx";
+                $idgroup = 0;
+                $hasFail = "";
+                
+                if (Auth::user()->hasRole('truongnhomsale')) {
+                    $gr = GroupSale::where('user_id', Auth::user()->id)->first();
+                    $idgroup = ($gr) ? $gr->group_id : 0;
                 }
-            } else {                
-                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
-                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
-                    $gr = Group::find($row->id_group_send);
-                    if ($gr) {
-                        $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
-                        if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
-                            $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
-                    }
-                    else {
-                        if (Auth::user()->hasRole('mkt') || Auth::user()->hasRole('system') || Auth::user()->hasRole('cskh') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss'))
-                        $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
-                    }
-
-                    $hasPhone = $row->dienThoai;
-                    // if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
-                    //     $hasPhone = $row->dienThoai;
-                    // }
-                    
-                    $sale = User::find($row->id_sale_recieve);
-                    $guest = Guest::find($row->id_guest_temp);
-                    if ($sale)
-                        $hasSale = "<span class='text-bold text-info'>".$sale->userDetail->surname."</span>";
-                    // Xử lý trạng thái khách hàng
-                    $hd = HopDong::select("hop_dong.*")
-                    ->where('id_guest',$row->id_guest_temp)
-                    ->orderBy('id','desc')
-                    ->first();
-                    
-                    if ($hd) {
-                        if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
-                            $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
-                        } elseif ($hd->lead_check_cancel == true) {
-                            $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+    
+                if ($idgroup != 0) {
+                    // Dành cho quyền trưởng nhóm
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to)) && $idgroup == $row->id_group_send) {
+                        $gr = Group::find($row->id_group_send);
+                        if ($gr) {
+                            $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
+                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
+                                $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
+                        }
+                        else {
+                            if (Auth::user()->hasRole('mkt') || Auth::user()->hasRole('system') || Auth::user()->hasRole('cskh') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss'))
+                            $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
+                        }
+    
+                        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
+                            $hasPhone = $row->dienThoai;
+                        } elseif (Auth::user()->hasRole('truongnhomsale') && Auth::user()->id == $row->id_sale_recieve) {
+                            $hasPhone = $row->dienThoai;
                         } else {
-                            if ($hd->requestCheck == false) 
-                            $status = "<strong class='text-secondary'>Mới tạo</strong>";
-                            elseif ($hd->requestCheck == true && $hd->admin_check == false)
-                                $status = "<strong class='text-info'>Đợi duyệt (Admin)</strong>";
-                            elseif ($hd->requestCheck == true 
-                            && $hd->admin_check == true 
-                            && $hd->lead_check == false)
-                                $status = "<strong class='text-primary'>Đợi duyệt (TPKD)</strong>";
-                            elseif ($hd->requestCheck == true 
-                            && $hd->admin_check == true 
-                            && $hd->lead_check == true 
-                            && $hd->hdWait == true)
-                                $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
-                            elseif ($hd->requestCheck == true 
-                            && $hd->admin_check == true 
-                            && $hd->lead_check == true 
-                            && $hd->hdWait == false)
-                                $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+    
+                        }
+                        
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);
+                        if ($sale)
+                            $hasSale = "<span class='text-bold text-info'>".$sale->userDetail->surname."</span>";
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "<strong class='text-secondary'>Mới tạo</strong>";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "<strong class='text-info'>Đợi duyệt (Admin)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "<strong class='text-primary'>Đợi duyệt (TPKD)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                            }    
+                        }
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
+                        }  
+                        if ($row->id_sale_recieve && !$row->fail)
+                        {
+                            $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Fail</button>";
                         }    
+                        //---------------------
+                        if ($guest) {
+                            switch($guest->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                            }
+                        } else {
+                            switch($row->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
+                            }
+                        }                
+                        echo "<tr>
+                            <td>".($i++)."</td>
+                            <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                            <td>".$row->user->userDetail->surname."</td>
+                            <td>".$row->hoTen."</td>
+                            <td>".$hasPhone."</td>
+                            <td>".$row->nguonKH."</td>
+                            <td>".$row->yeuCau."</td>
+                            <td>
+                                ".$hasGroup."
+                            </td>
+                            <td>
+                                ".$hasSale."
+                            </td>
+                            <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : \HelpFunction::getDateRevertCreatedAt($row->ngayNhan))."</td>
+                            <td>".$stt."</td>
+                            <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
+                            <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
+                            <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
+                            <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
+                            <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
+                            <td>".$status."</td>
+                            <td>
+                            </td>
+                        </tr>";
                     }
-                    
-                    //-------------------------
-                    // --- xử lý fail
-                    if ($row->fail && $row->id_sale_recieve) {                        
-                        $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
-                    }  
-                    if ($row->id_sale_recieve && !$row->fail)
-                    {
-                        $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Stop</button>";
-                    }    
-                    //---------------------
-                    if ($guest) {
-                        switch($guest->danhGia) {
-                            case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
-                            case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
-                            case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                } else {                
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                        $gr = Group::find($row->id_group_send);
+                        if ($gr) {
+                            $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
+                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
+                                $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
                         }
-                    } else {
-                        switch($row->danhGia) {
-                            case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
-                            case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
-                            case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
+                        else {
+                            if (Auth::user()->hasRole('mkt') || Auth::user()->hasRole('system') || Auth::user()->hasRole('cskh') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss'))
+                            $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
                         }
-                    }                
-                    echo "<tr>
-                        <td>".($i++)."</td>
-                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                        <td>".$row->user->userDetail->surname."</td>
-                        <td>".$row->hoTen."</td>
-                        <td>".$hasPhone."</td>
-                        <td>".$row->nguonKH."</td>
-                        <td>".$row->yeuCau."</td>
-                        <td>
-                            ".$hasGroup."
-                        </td>
-                        <td>
-                            ".$hasSale."
-                        </td>
-                        <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : \HelpFunction::getDateRevertCreatedAt($row->ngayNhan))."</td>
-                        <td>".$stt."</td>
-                        <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
-                        <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
-                        <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
-                        <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
-                        <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
-                        <td>".$status."</td>
-                        <td>
-                            ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
-                            <br/><br/><button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Rollback</button>
-                            <br/><br/>" . $hasFail : "")."
-                        </td>
-                    </tr>";
+    
+                        $hasPhone = $row->dienThoai;
+                        // if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
+                        //     $hasPhone = $row->dienThoai;
+                        // }
+                        
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);
+                        if ($sale)
+                            $hasSale = "<span class='text-bold text-info'>".$sale->userDetail->surname."</span>";
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "<strong class='text-secondary'>Mới tạo</strong>";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "<strong class='text-info'>Đợi duyệt (Admin)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "<strong class='text-primary'>Đợi duyệt (TPKD)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                            }    
+                        }
+                        
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
+                        }  
+                        if ($row->id_sale_recieve && !$row->fail)
+                        {
+                            $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Stop</button>";
+                        }    
+                        //---------------------
+                        if ($guest) {
+                            switch($guest->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                            }
+                        } else {
+                            switch($row->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
+                            }
+                        }                
+                        echo "<tr>
+                            <td>".($i++)."</td>
+                            <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
+                            <td>".$row->user->userDetail->surname."</td>
+                            <td>".$row->hoTen."</td>
+                            <td>".$hasPhone."</td>
+                            <td>".$row->nguonKH."</td>
+                            <td>".$row->yeuCau."</td>
+                            <td>
+                                ".$hasGroup."
+                            </td>
+                            <td>
+                                ".$hasSale."
+                            </td>
+                            <td>".($guest ? \HelpFunction::revertCreatedAt($guest->created_at) : \HelpFunction::revertCreatedAt($row->ngayNhan))."</td>
+                            <td>".$stt."</td>
+                            <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
+                            <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
+                            <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
+                            <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
+                            <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
+                            <td>".$status."</td>
+                            <td>
+                                ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
+                                <br/><br/><button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Rollback</button>
+                                <br/><br/>" . $hasFail : "")."
+                            </td>
+                        </tr>";
+                    }
+                }
+            }
+        } else {
+            foreach($mkt as $row) {
+                $hasGroup = "";
+                $hasSale = "";
+                $stt = "";
+                $status = "Null";
+                $hasPhone = substr($row->dienThoai,0,4) . "xxxxxxxx";
+                $idgroup = 0;
+                $hasFail = "";
+                
+                if (Auth::user()->hasRole('truongnhomsale')) {
+                    $gr = GroupSale::where('user_id', Auth::user()->id)->first();
+                    $idgroup = ($gr) ? $gr->group_id : 0;
+                }
+    
+                if ($idgroup != 0) {
+                    // Dành cho quyền trưởng nhóm
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to)) && $idgroup == $row->id_group_send) {
+                        $gr = Group::find($row->id_group_send);
+                        if ($gr) {
+                            $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
+                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
+                                $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
+                        }
+                        else {
+                            if (Auth::user()->hasRole('mkt') || Auth::user()->hasRole('system') || Auth::user()->hasRole('cskh') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss'))
+                            $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
+                        }
+    
+                        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
+                            $hasPhone = $row->dienThoai;
+                        } elseif (Auth::user()->hasRole('truongnhomsale') && Auth::user()->id == $row->id_sale_recieve) {
+                            $hasPhone = $row->dienThoai;
+                        } else {
+    
+                        }
+                        
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);
+                        if ($sale)
+                            $hasSale = "<span class='text-bold text-info'>".$sale->userDetail->surname."</span>";
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "<strong class='text-secondary'>Mới tạo</strong>";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "<strong class='text-info'>Đợi duyệt (Admin)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "<strong class='text-primary'>Đợi duyệt (TPKD)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                            }    
+                        }
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
+                        }  
+                        if ($row->id_sale_recieve && !$row->fail)
+                        {
+                            $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Fail</button>";
+                        }    
+                        //---------------------
+                        if ($guest) {
+                            switch($guest->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                            }
+                        } else {
+                            switch($row->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
+                            }
+                        } 
+                        if ($_sale == $sale->id)               
+                            echo "<tr>
+                                <td>".($i++)."</td>
+                                <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                <td>".$row->user->userDetail->surname."</td>
+                                <td>".$row->hoTen."</td>
+                                <td>".$hasPhone."</td>
+                                <td>".$row->nguonKH."</td>
+                                <td>".$row->yeuCau."</td>
+                                <td>
+                                    ".$hasGroup."
+                                </td>
+                                <td>
+                                    ".$hasSale."
+                                </td>
+                                <td>".($guest ? \HelpFunction::getDateRevertCreatedAt($guest->created_at) : \HelpFunction::getDateRevertCreatedAt($row->ngayNhan))."</td>
+                                <td>".$stt."</td>
+                                <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
+                                <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
+                                <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
+                                <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
+                                <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
+                                <td>".$status."</td>
+                                <td>
+                                </td>
+                            </tr>";
+                    }
+                } else {                
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                        $gr = Group::find($row->id_group_send);
+                        if ($gr) {
+                            $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
+                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
+                                $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
+                        }
+                        else {
+                            if (Auth::user()->hasRole('mkt') || Auth::user()->hasRole('system') || Auth::user()->hasRole('cskh') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss'))
+                            $hasGroup = "<button data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setGroup' data-toggle='modal' data-target='#groupModal' class='btn btn-warning btn-sm'>Gán nhóm</button>";
+                        }
+    
+                        $hasPhone = $row->dienThoai;
+                        // if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('boss') || Auth::user()->id == $row->id_user_create) {
+                        //     $hasPhone = $row->dienThoai;
+                        // }
+                        
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);
+                        if ($sale)
+                            $hasSale = "<span class='text-bold text-info'>".$sale->userDetail->surname."</span>";
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "<strong class='text-secondary'>Mới tạo</strong>";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "<strong class='text-info'>Đợi duyệt (Admin)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "<strong class='text-primary'>Đợi duyệt (TPKD)</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                            }    
+                        }
+                        
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "<strong class='text-danger'>Dừng theo dõi</strong>";
+                        }  
+                        if ($row->id_sale_recieve && !$row->fail)
+                        {
+                            $hasFail = "<button data-id='".$row->id."' id='setfail' class='btn btn-warning btn-sm'>Stop</button>";
+                        }    
+                        //---------------------
+                        if ($guest) {
+                            switch($guest->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$guest->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$guest->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$guest->danhGia."</strong>"; break;
+                            }
+                        } else {
+                            switch($row->danhGia) {
+                                case "COLD": $stt = "<strong class='text-blue'>".$row->danhGia."</strong>"; break;
+                                case "WARM": $stt = "<strong class='text-orange'>".$row->danhGia."</strong>"; break;
+                                case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
+                            }
+                        }     
+                        if ($_sale == $sale->id)           
+                        echo "<tr>
+                            <td>".($i++)."</td>
+                            <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
+                            <td>".$row->user->userDetail->surname."</td>
+                            <td>".$row->hoTen."</td>
+                            <td>".$hasPhone."</td>
+                            <td>".$row->nguonKH."</td>
+                            <td>".$row->yeuCau."</td>
+                            <td>
+                                ".$hasGroup."
+                            </td>
+                            <td>
+                                ".$hasSale."
+                            </td>
+                            <td>".($guest ? \HelpFunction::revertCreatedAt($guest->created_at) : \HelpFunction::revertCreatedAt($row->ngayNhan))."</td>
+                            <td>".$stt."</td>
+                            <td>".($guest ? $guest->xeQuanTam : $row->xeQuanTam)."</td>
+                            <td>".($guest ? $guest->cs1 : $row->cs1)."</td>
+                            <td>".($guest ? $guest->cs2 : $row->cs2)."</td>
+                            <td>".($guest ? $guest->cs3 : $row->cs3)."</td>
+                            <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
+                            <td>".$status."</td>
+                            <td>
+                                ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
+                                <br/><br/><button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Rollback</button>
+                                <br/><br/>" . $hasFail : "")."
+                            </td>
+                        </tr>";
+                    }
                 }
             }
         }

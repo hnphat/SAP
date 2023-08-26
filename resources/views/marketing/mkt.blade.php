@@ -54,6 +54,34 @@
                                 <div class="card-body row">
                                         <div class="col-sm-3">
                                             <div class="form-group">
+                                                <label>Sale nhận khách</label>
+                                                <select name="nhanVien" class="form-control"> 
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('cskh') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('truongnhomsale'))
+                                                    <option value="0">Tất cả</option>                                                               
+                                                    @foreach($groupsale as $row)    
+                                                        @if (!\Illuminate\Support\Facades\Auth::user()->hasRole('truongnhomsale'))                                                    
+                                                        <option value="{{$row['id']}}">{{$row['code']}} - {{$row['name']}}</option>
+                                                        @elseif ($row['group'] == $groupid)
+                                                        <option value="{{$row['id']}}">{{$row['code']}} - {{$row['name']}}</option>
+                                                        @else
+                                                        
+                                                        @endif 
+                                                    @endforeach   
+                                                @else   
+                                                    <option value="{{$iduser}}">{{$nameuser}}</option>
+                                                @endif
+                                                </select> <br/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
                                                 <label>Từ</label>
                                                 <input type="date" name="chonNgayOne" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                             </div>
@@ -311,6 +339,7 @@
                 dataType: "text",
                 data: {
                     "_token": "{{csrf_token()}}",
+                    "sale": $("select[name=nhanVien]").val(),
                     "tu": $("input[name=chonNgayOne]").val(),
                     "den": $("input[name=chonNgayTwo").val()
                 },
