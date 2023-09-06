@@ -659,6 +659,7 @@ class DichVuController extends Controller
             default: abort(403);
         }
         foreach($bg as $row) {
+            $doanhthubaogia = 0;
             $stt = "";
             $flag = true;
             if (!$row->inProcess)
@@ -671,6 +672,7 @@ class DichVuController extends Controller
                 ->where('id_baogia', $row->id)
                 ->get();
                 foreach($ct as $c){
+                    $doanhthubaogia += $c->thanhTien;
                     $bhpk = BHPK::find($c->id_baohiem_phukien);
                     if ($bhpk->loai != "KTV lắp đặt") continue;
                     $check = KTVBHPK::select("*")
@@ -697,11 +699,157 @@ class DichVuController extends Controller
                 <tr id='tes' data-id='".$row->id."' ".$stt.">
                     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                     <td>".$row->bienSo."</td>
-                    <td>".$row->soKhung."</td>
+                    <td>".$row->hoTen."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                    <td>".number_format($doanhthubaogia)."</td>
                 </tr>";
             }
         }      
+    }
+
+    public function counterBadge(Request $request) {
+        $_from = $request->tu;
+        $_to = $request->den;
+        $badge1 = 0;
+        $badge2 = 0;
+        $badge3 = 0;
+        $badge4 = 0;
+        $badge5 = 0;
+        switch($request->baoCao) {
+            case 1: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 2: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 3: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 4: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isDone','=',true],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 5: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isCancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isCancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            default: abort(403);
+        }
+        foreach($bg as $row) {
+            $flag = true;
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                if (!$row->inProcess)
+                    $badge1++;
+                if ($row->inProcess && !$row->isDone && !$row->isCancel)
+                    $badge2++;
+                if ($row->inProcess && $row->isDone && !$row->isCancel) {
+                    // xử lý chưa thêm KTV start
+                    $ct = ChiTietBHPK::select("*")
+                    ->where('id_baogia', $row->id)
+                    ->get();
+                    foreach($ct as $c){
+                        $bhpk = BHPK::find($c->id_baohiem_phukien);
+                        if ($bhpk->loai != "KTV lắp đặt") continue;
+                        $check = KTVBHPK::select("*")
+                        ->where([
+                            ['id_baogia','=',$row->id],
+                            ['id_bhpk','=',$c->id_baohiem_phukien]
+                        ])->exists();
+                        if (!$check) {
+                            $flag = false;
+                            break;
+                        }        
+                    }
+                    // xử lý chưa thêm KTV end
+                    if ($flag)
+                        $badge3++;
+                    else 
+                        $badge4++;
+                }
+                if ($row->isCancel)
+                    $badge5++;
+            }
+        } 
+        return response()->json([
+            'type' => 'info',
+            'code' => 200,
+            'badge1' => $badge1,
+            'badge2' => $badge2,
+            'badge3' => $badge3,
+            'badge4' => $badge4,
+            'badge5' => $badge5,
+        ]);    
     }
 
     public function loadBaoGia(Request $request){
@@ -2018,6 +2166,132 @@ class DichVuController extends Controller
                 }
             } break;     
         }
+    }
+
+    public function counterBaoCaoDoanhThu(Request $request) {
+        $tu = $request->tu;
+        $den = $request->den;        
+        $tongdoanhthu = 0;
+        $kinhdoanh = 0;
+        $khaithac = 0;
+        $kinhdoanhs = 0;
+        $khaithacs = 0;
+        switch($request->baoCao) {
+            case 1: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 2: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 3: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 4: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isDone','=',true],
+                        ['isCancel','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 5: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isCancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isCancel','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            default: abort(403);
+        }
+        foreach($bg as $row) {
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
+                $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                $_doanhthu = 0;
+                $_chiphitang = 0;
+                $_sale = "";
+                foreach($ct as $item) {
+                    $tongdoanhthu += $item->thanhTien;   
+                    ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
+                    ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
+                    ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
+                    ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
+                    ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                }
+            }
+        }
+        return response()->json([
+            "code" => 200,
+            "type" => "info",
+            "tongdoanhthu" => $tongdoanhthu,
+            "kinhdoanh" => $kinhdoanh,
+            "kinhdoanhs" => $kinhdoanhs,
+            "khaithac" => $khaithac,
+            "khaithacs" => $khaithacs,
+        ]);
     }
 
     public function baoCaoTienDoPanel() {

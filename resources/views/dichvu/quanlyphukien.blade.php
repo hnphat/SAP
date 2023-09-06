@@ -67,14 +67,21 @@
                             </div>
                         </div>
                         <div class="col-sm-4">
-                           Mới tạo: <span class="bg-secondary"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
-                           Đang thực hiện: <span class="bg-success"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
-                           Hoàn tất: <span class="bg-info"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
-                           Hoàn tất (KTV chưa có): <span class="bg-orange"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
-                           Huỷ: <span class="bg-danger"> &nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+                           Mới tạo: <span class="bg-secondary"> &nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge badge-secondary" id="badge1"></span><br/>
+                           Đang thực hiện: <span class="bg-success"> &nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge badge-success" id="badge2"></span><br/>
+                           Hoàn tất: <span class="bg-info"> &nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge badge-info" id="badge3"></span><br/>
+                           Hoàn tất (KTV chưa có): <span class="bg-orange"> &nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge badge-warning" id="badge4"></span><br/>
+                           Huỷ: <span class="bg-danger"> &nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge badge-danger" id="badge5"></span><br/>
                         </div>
                 </div>
             </form>
+            <div class="row container">
+                <h5>
+                    Tổng: <strong class="text-success" id="tongDoanhThu"></strong> 
+                    Kinh doanh: <strong class="text-primary" id="tongKinhDoanh"></strong> (Thực thu: <strong class="text-primary" id="tongKinhDoanhs"></strong>) 
+                    Khai thác: <strong class="text-info" id="tongKhaiThac"></strong> (Thực thu: <strong class="text-info" id="tongKhaiThacs"></strong>)
+                </h5>
+            </div>
             <div class="row">               
                <div class="col-md-4">
                 <div style="overflow:auto;">
@@ -82,8 +89,9 @@
                                 <tr class="bg-primary">
                                     <th>Báo giá</th>        
                                     <th>Biển số</th>
-                                    <th>Số khung</th>
+                                    <th>Khách hàng</th>
                                     <th>Ngày vào</th>
+                                    <th>Doanh thu</th>
                                 </tr>
                                 <tbody style="font-size: 10pt;" id="showDataFind">
                                                                                           
@@ -102,6 +110,7 @@
                         <button id="done" class="btn btn-warning btn-sm">Hoàn tất</button>    
                         <button id="cancel" class="btn btn-danger btn-sm">Huỷ BG</button>    
                         <button id="in" class="btn btn-secondary" data-toggle='modal' data-target='#inModal'><span class="fas fa-print"></span> IN</button>
+                        <br/>
                         <hr>                
                         <div class="row">   
                             <div class="col-md-3">
@@ -993,9 +1002,78 @@
                     }
                 });
             }
+
+            function counterDoanhThu() {
+                $.ajax({
+                    type: "post",
+                    url: "{{url('management/dichvu/counterdoanhthu/')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "baoCao": $("select[name=baoCao]").val(),
+                        "tu": $("input[name=tu]").val(),
+                        "den": $("input[name=den]").val(),
+                    },
+                    success: function(response) {
+                        $("#tongDoanhThu").text("");
+                        $("#tongKinhDoanh").text("");
+                        $("#tongKinhDoanhs").text("");
+                        $("#tongKhaiThac").text("");
+                        $("#tongKhaiThacs").text("");
+                        //------------------
+                        $("#tongDoanhThu").text(formatNumber(parseInt(response.tongdoanhthu)));
+                        $("#tongKinhDoanh").text(formatNumber(parseInt(response.kinhdoanh)));
+                        $("#tongKinhDoanhs").text(formatNumber(parseInt(response.kinhdoanhs)));
+                        $("#tongKhaiThac").text(formatNumber(parseInt(response.khaithac)));
+                        $("#tongKhaiThacs").text(formatNumber(parseInt(response.khaithacs)));
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi!"
+                        })
+                    }
+                });
+            }
+
+            function counterBadge() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('counterbadge')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "baoCao": $("select[name=baoCao]").val(),
+                        "tu": $("input[name=tu]").val(),
+                        "den": $("input[name=den]").val(),
+                    },
+                    success: function(response) {
+                        $("#badge1").text("");
+                        $("#badge2").text("");
+                        $("#badge3").text("");
+                        $("#badge4").text("");
+                        $("#badge5").text("");
+                        //-----------------
+                        $("#badge1").text(response.badge1);
+                        $("#badge2").text(response.badge2);
+                        $("#badge3").text(response.badge3);
+                        $("#badge4").text(response.badge4);
+                        $("#badge5").text(response.badge5);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi!"
+                        })
+                    }
+                });
+            }
+
             $("#xemReport").click(function(e){
                 e.preventDefault();
                 reloadData();
+                counterBadge();
+                counterDoanhThu();
             });  
             
             $("#process").click(function(){

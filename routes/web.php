@@ -704,6 +704,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'dichvu'], function(){
         // quản lý phụ kiện
         Route::post('loadtimkiem','DichVuController@timKiem')->name('timkiembaogia'); 
+        Route::post('loadcounterbadge','DichVuController@counterBadge')->name('counterbadge'); 
         Route::post('loadbaogia','DichVuController@loadBaoGia')->name('loadbaogia'); 
         Route::post('loadhanghoa','DichVuController@taiHangHoa')->name('loadhanghoa');    
         Route::post('deletebaogia','DichVuController@deleteBaoGia')->name('deletebaogia');  
@@ -752,7 +753,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // báo cáo doanh thu
         Route::get('baocaodoanhthu','DichVuController@baoCaoDoanhThuPanel')->name('dichvu.baocaodoanhthu.panel')->middleware(['f_bhpk']); 
-        Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu');  
+        Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu'); 
+        Route::post('counterdoanhthu','DichVuController@counterBaoCaoDoanhThu');  
         Route::get('exportexcel/{from}/den/{to}/loaibaocao/{loai}/u/{u}', 'DichVuController@exportExcel');
         
         // báo cáo tiến độ
