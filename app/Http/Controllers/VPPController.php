@@ -868,7 +868,7 @@ class VPPController extends Controller
     }
 
     public function huyDuyetPhieu(Request $request) {
-        if (Auth::user()->hasRole("system")) {
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
             $phieu = PhieuXuat::find($request->phieu);
             $phieu->duyet = false;
             $phieu->nhan = false;

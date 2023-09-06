@@ -107,7 +107,7 @@
     $(document).ready(function() {
         let es = new EventSource("{{route('action')}}");
         es.onmessage = function(e) {
-            console.log(e.data);
+            // console.log(e.data);
             let fullData = JSON.parse(e.data);
             if (fullData.s_duyet_phep == 1 && fullData.s_duyet_tangca == 1)
                 $('#real_duyet').show();

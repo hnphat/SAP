@@ -101,6 +101,12 @@
                                 </div>
                               </form>
                               <hr/>
+                              <h5>
+                                Tổng khách hàng: <strong class="text-success" id="tongGuest"></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Đang chăm sóc: <strong class="text-info" id="processing"></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Dừng theo dõi: <strong class="text-danger" id="stoping"></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                Ký HĐ: <strong class="text-pink" id="signed"></strong> 
+                              </h5>
                               <div style="overflow: auto;">
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -359,8 +365,41 @@
             });
         }
 
+        function setCounter() {            
+            $.ajax({
+                type: "post",
+                url: "{{url('management/marketing/setcounter/')}}",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "sale": $("select[name=nhanVien]").val(),
+                    "tu": $("input[name=chonNgayOne]").val(),
+                    "den": $("input[name=chonNgayTwo").val()
+                },
+                success: function(response) {
+                    console.log(response);
+                    $("#tongGuest").text("");
+                    $("#processing").text("");
+                    $("#stoping").text("");
+                    $("#signed").text("");
+                    // ----------------
+                    $("#tongGuest").text(response.tong);
+                    $("#processing").text(response.processing);
+                    $("#stoping").text(response.stoping);
+                    $("#signed").text(response.signed);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: " Lỗi set counter!"
+                    })
+                }
+            });
+        }
+
         $("#xemReport").click(function(){
             autoload();
+            setCounter();
         });
 
         $("#btnAdd").click(function(e){

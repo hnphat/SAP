@@ -692,6 +692,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('getindex','MktController@index')->name('mkt.index');   
         Route::post('postdata','MktController@postData');
         Route::post('loadbaocao','MktController@loadBaoCao');
+        Route::post('setcounter','MktController@setCounter');
         Route::post('setgroup','MktController@setGroup');
         Route::post('deleteguest','MktController@deleteGuest');
         Route::post('revertguest','MktController@revertGuest');

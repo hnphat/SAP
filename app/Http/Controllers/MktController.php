@@ -692,7 +692,7 @@ class MktController extends Controller
                                 case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
                             }
                         } 
-                        if ($_sale == $sale->id)               
+                        if ($sale && $_sale == $sale->id)               
                             echo "<tr>
                                 <td>".($i++)."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
@@ -798,7 +798,7 @@ class MktController extends Controller
                                 case "HOT": $stt = "<strong class='text-red'>".$row->danhGia."</strong>"; break;
                             }
                         }     
-                        if ($_sale == $sale->id)           
+                        if ($sale && $_sale == $sale->id)           
                         echo "<tr>
                             <td>".($i++)."</td>
                             <td>".\HelpFunction::revertCreatedAt($row->created_at)."</td>
@@ -830,6 +830,257 @@ class MktController extends Controller
                     }
                 }
             }
+        }
+    }
+
+    public function setCounter(Request $request) {
+        $_from = \HelpFunction::revertDate($request->tu);
+        $_to = \HelpFunction::revertDate($request->den);
+        $_sale = $request->sale;
+        $mkt = MarketingGuest::select("*")->orderBy('id','desc')->get();
+        $tong = 0;
+        $processing = 0;
+        $stoping = 0;
+        $signed = 0;
+        if ($_sale == 0) {
+            foreach($mkt as $row) {
+                $status = "Null";
+                $hasFail = "";      
+                $idgroup = 0;          
+                if (Auth::user()->hasRole('truongnhomsale')) {
+                    $gr = GroupSale::where('user_id', Auth::user()->id)->first();
+                    $idgroup = ($gr) ? $gr->group_id : 0;
+                }
+    
+                if ($idgroup != 0) {
+                    // Dành cho quyền trưởng nhóm
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to)) && $idgroup == $row->id_group_send) {
+                        $gr = Group::find($row->id_group_send);                        
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);                        
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "HĐ";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "HUY";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "OTHER";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "HĐ";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "HĐ";
+                            }    
+                        }
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "STOP";
+                        }  
+                        $tong++;
+                        ($status == "STOP") ? $stoping++ : "";
+                        ($status == "Null") ? $processing++ : "";
+                        ($status == "HĐ") ? $signed++ : "";
+                    }
+                } else {                
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                        $gr = Group::find($row->id_group_send);
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);                        
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "HĐ";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "HUY";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "OTHER";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "HĐ";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "HĐ";
+                            }    
+                        }
+                        
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "STOP";
+                        }      
+                        $tong++;
+                        ($status == "STOP") ? $stoping++ : "";
+                        ($status == "Null") ? $processing++ : "";
+                        ($status == "HĐ") ? $signed++ : "";                    
+                    }
+                }
+            }
+            return response()->json([
+                'type' => 'info',
+                'tong' => $tong,
+                'processing' => $processing,
+                'stoping' => $stoping,
+                'signed' => $signed,
+                'code' => 200
+            ]);
+        } else {
+            foreach($mkt as $row) {
+                $status = "Null";
+                $hasFail = "";
+                $idgroup = 0;
+                if (Auth::user()->hasRole('truongnhomsale')) {
+                    $gr = GroupSale::where('user_id', Auth::user()->id)->first();
+                    $idgroup = ($gr) ? $gr->group_id : 0;
+                }    
+                if ($idgroup != 0) {
+                    // Dành cho quyền trưởng nhóm
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to)) && $idgroup == $row->id_group_send) {
+                        $gr = Group::find($row->id_group_send);                       
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);                        
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "HĐ";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "HUY";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "OTHER";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "HĐ";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "HĐ";
+                            }    
+                        }
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "STOP";
+                        }  
+                        //---------------------  
+                        if ($sale && $_sale == $sale->id) {
+                            $tong++;
+                            ($status == "STOP") ? $stoping++ : "";
+                            ($status == "Null") ? $processing++ : "";
+                            ($status == "HĐ") ? $signed++ : "";
+                        }                      
+                    }
+                } else {                
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                        $gr = Group::find($row->id_group_send);   
+                        $sale = User::find($row->id_sale_recieve);
+                        $guest = Guest::find($row->id_guest_temp);
+                        // Xử lý trạng thái khách hàng
+                        $hd = HopDong::select("hop_dong.*")
+                        ->where('id_guest',$row->id_guest_temp)
+                        ->orderBy('id','desc')
+                        ->first();
+                        
+                        if ($hd) {
+                            if ($hd->hdDaiLy == true && $hd->lead_check == true && $hd->lead_check_cancel == false) {
+                                $status = "HĐ";
+                            } elseif ($hd->lead_check_cancel == true) {
+                                $status = "HUY";
+                            } else {
+                                if ($hd->requestCheck == false) 
+                                $status = "OTHER";
+                                elseif ($hd->requestCheck == true && $hd->admin_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == false)
+                                    $status = "OTHER";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == true)
+                                    $status = "HĐ";
+                                elseif ($hd->requestCheck == true 
+                                && $hd->admin_check == true 
+                                && $hd->lead_check == true 
+                                && $hd->hdWait == false)
+                                    $status = "HĐ";
+                            }    
+                        }
+                        
+                        //-------------------------
+                        // --- xử lý fail
+                        if ($row->fail && $row->id_sale_recieve) {                        
+                            $status = "STOP";
+                        }  
+                        if ($sale && $_sale == $sale->id) {
+                            $tong++;
+                            ($status == "STOP") ? $stoping++ : "";
+                            ($status == "Null") ? $processing++ : "";
+                            ($status == "HĐ") ? $signed++ : "";
+                        }      
+                    }
+                }
+            }
+            return response()->json([
+                'type' => 'info',
+                'tong' => $tong,
+                'processing' => $processing,
+                'stoping' => $stoping,
+                'signed' => $signed,
+                'code' => 200
+            ]);
         }
     }
 
