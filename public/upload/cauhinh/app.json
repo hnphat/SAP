@@ -1,6 +1,6 @@
 {
-    "hinhNen": null,
-    "thongBao": null,
+    "hinhNen": "https:\/\/otophucanh.com\/public\/upload\/bieumau\/hyundai-ag-sinh-nhat-t09-2023-png.png",
+    "thongBao": "Ch\u00fac B\u1ea1n ng\u00e0y m\u1edbi t\u1ed1t l\u00e0nh",
     "emailPhep": "phongnhansu@hyundailongxuyen.com",
     "emailNhienLieu": "phonghanhchinh@hyundailongxuyen.com",
     "emailCCDC": "phonghanhchinh@hyundailongxuyen.com",
@@ -8,11 +8,12 @@
     "emailDuyetXe": "phonghanhchinh@hyundailongxuyen.com",
     "emailTraXe": "phonghanhchinh@hyundailongxuyen.com",
     "capNhatThongTin": "0",
-    "mauThongBao": "bg-mute",
+    "mauThongBao": "bg-info",
     "loaiThongBao": "1",
     "maxRecord": "10000",
-    "vaoSang": "07:30",
-    "raSang": "11:30",
+    "maxRecordApply": "200",
+    "vaoSang": "08:00",
+    "raSang": "12:00",
     "vaoChieu": "13:00",
     "raChieu": "17:00"
 }

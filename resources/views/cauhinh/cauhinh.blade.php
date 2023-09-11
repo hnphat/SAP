@@ -117,6 +117,10 @@
                                         <input type="number" name="maxRecord" class="form-control"/>
                                     </div>
                                     <div class="form-group">
+                                        <label>Dữ liệu tối đa trả về <br/>(Duyệt nhiên liệu, duyệt đăng ký xe, duyệt trả xe)</label>
+                                        <input type="number" name="maxRecordApply" class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
                                         <fieldset>
                                             <legend>Cấu hình chấm công</legend>
                                             <label for="vaoSang">Vào sáng:</label>
@@ -186,6 +190,7 @@
                         $("select[name=mauThongBao]").val(response.data.mauThongBao);
                         $("select[name=loaiThongBao]").val(response.data.loaiThongBao);
                         $("input[name=maxRecord]").val(response.data.maxRecord);
+                        $("input[name=maxRecordApply]").val(response.data.maxRecordApply);
                         $("input[name=vaoSang]").val(response.data.vaoSang);
                         $("input[name=raSang]").val(response.data.raSang);
                         $("input[name=vaoChieu]").val(response.data.vaoChieu);

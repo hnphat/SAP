@@ -104,10 +104,12 @@ class DeNghiCapXangController extends Controller
     }
 
     public function showDuyetCapXang() {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns'))
-            $deNghi = DeNghiCapXang::select('*')->orderBy('id', 'DESC')->get();
+            $deNghi = DeNghiCapXang::select('*')->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
         elseif (Auth::user()->hasRole('lead'))   
-            $deNghi = DeNghiCapXang::where('lead_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
+            $deNghi = DeNghiCapXang::where('lead_id', Auth::user()->id)->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
         return view('capxang.duyet', ['deNghi' => $deNghi]);
     }
 

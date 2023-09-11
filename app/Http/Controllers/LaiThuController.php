@@ -406,19 +406,25 @@ class LaiThuController extends Controller
     }
 
     public function showDuyet() {
-        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->get();
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
+        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
+        $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
         return view('laithu.duyet', ['reg' => $reg, 'traXe' => $traXe]);
     }
 
     public function showDuyetTBP() {
-        $reg = DangKySuDung::select('*')->where('id_lead_check', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
+        $reg = DangKySuDung::select('*')->where('id_lead_check', Auth::user()->id)->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
         return view('laithu.duyettbp', ['reg' => $reg]);
     }
 
     public function showDuyetPay() {
-        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
-        $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->get();
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
+        $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
+        $traXe = DangKySuDung::select('*')->where('request_tra', true)->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
         return view('laithu.duyettra', ['reg' => $reg, 'traXe' => $traXe]);
     }
 

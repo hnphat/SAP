@@ -609,7 +609,6 @@ class GuestController extends Controller
                                
                 $stonghd += $tonghd;
                 $stonghdxuat += $tonghdxuat;
-                $stongkh += $tongkh;
                 $stongpkban += $tongpkban;     
                 $stongkh += $tongkh;        
                 $stongmkt += $tongmkt;

@@ -33,7 +33,7 @@ class NhanSuController extends Controller
         $room = NhomUser::select("*")
         ->where('id_user', Auth::user()->id)
         ->first();
-        if ($room->leader == true) {
+        if ($room && $room->leader == true) {
             $nhom = Nhom::find($room->id_nhom)->name;
             $user = User::select("*")->where('active', true)->get();
             foreach($user as $row) {

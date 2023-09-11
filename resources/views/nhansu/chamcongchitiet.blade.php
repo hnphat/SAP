@@ -53,19 +53,28 @@
                     <div class="col-md-3">
                         <label>Nhân viên</label>
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
-                        <select name="nhanVien" class="form-control">
+                        <input list="nhanViens" name="nhanVien" class="form-control" placeholder="Nhập tên nhân viên">
+                        <datalist id="nhanViens">
+                            @foreach($user as $row)
+                                @if($row->active == true)
+                                    <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
+                                @endif
+                            @endforeach
+                        </datalist>                        
+                        <!-- <select name="nhanVien" class="form-control">
                             @foreach($user as $row)
                                 @if($row->active == true)
                                     <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
                                 @endif
                             @endforeach
-                        </select>
+                        </select> -->
                         @else
                         <select name="nhanVien" class="form-control">
                             <option value="{{Auth::user()->id}}">{{Auth::user()->userDetail->surname}}</option>
                         </select>
                         @endif
                     </div>
+                    
                     <div class="col-md-1">
                         <label>&nbsp;</label><br/>
                         <button id="chon" type="button "class="btn btn-xs btn-info">Chọn</button>
@@ -290,7 +299,7 @@
                     type: "get",
                     dataType: "text",
                     data: {
-                        "id": $("select[name=nhanVien]").val(),
+                        "id": $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
                         "thang": $("select[name=thang]").val(),
                         "nam": $("select[name=nam]").val()
                     },
@@ -312,7 +321,7 @@
                     type: "get",
                     dataType: "text",
                     data: {
-                        "id": $("select[name=nhanVien]").val(),
+                        "id":  $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
                         "thang": $("select[name=thang]").val(),
                         "nam": $("select[name=nam]").val()
                     },
@@ -332,14 +341,14 @@
                 $("input[name=ngayXin]").val($(this).data('ngay'));
                 $("input[name=thangXin]").val($(this).data('thang'));
                 $("input[name=namXin]").val($(this).data('nam'));
-                $("input[name=idUserXin]").val($("select[name=nhanVien]").val());
+                $("input[name=idUserXin]").val($("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val());
            });
 
            $(document).on('click','#tangCa', function(){
                 $("input[name=ngayXinTangCa]").val($(this).data('ngay'));
                 $("input[name=thangXinTangCa]").val($(this).data('thang'));
                 $("input[name=namXinTangCa]").val($(this).data('nam'));
-                $("input[name=idUserXinTangCa]").val($("select[name=nhanVien]").val());
+                $("input[name=idUserXinTangCa]").val($("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val());
            });
 
 
@@ -405,7 +414,7 @@
                         type: "post",
                         dataType: "json",
                         data: {
-                            "id": $("select[name=nhanVien]").val(),
+                            "id": $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
                             "_token": "{{csrf_token()}}",
                             "thang": $(this).data('thang'),
                             "nam": $(this).data('nam'),

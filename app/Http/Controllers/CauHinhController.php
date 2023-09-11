@@ -34,6 +34,7 @@ class CauHinhController extends Controller
         $data["mauThongBao"] = $request->mauThongBao;       
         $data["loaiThongBao"] = $request->loaiThongBao;
         $data["maxRecord"] = $request->maxRecord;
+        $data["maxRecordApply"] = $request->maxRecordApply;
         $data["vaoSang"] = $request->vaoSang;       
         $data["raSang"] = $request->raSang;       
         $data["vaoChieu"] = $request->vaoChieu;       
