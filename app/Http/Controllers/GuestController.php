@@ -31,8 +31,22 @@ class GuestController extends Controller
     public function index() {
         $type_guest = TypeGuest::all();
         $sale = Sale::where('id_user_create',Auth::user()->id)->get();
+        //------------------------
+        $arr = [];
+        $user = User::all();
+        $group = GroupSale::all();
+        foreach($user as $row){            
+            if ($row->hasRole('sale') && $row->active) {
+                $gr = GroupSale::where('user_id', $row->id)->first();
+                array_push($arr, [
+                    'id' => $row->id,
+                    'code' => $row->name,
+                    'name' => $row->userDetail->surname
+                ]);
+            }
+        }
         // return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
-        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale]);
+        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale, 'groupsale' => $arr]);
 
     }
 
@@ -106,8 +120,13 @@ class GuestController extends Controller
 
     public function checkPhone($num) {
         $guest = Guest::where('phone',$num)->first();
-        if ($guest)
-            echo '{"phone": "'.$num.'", "check":"1", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
+        if ($guest) {
+            if (Auth::user()->hasRole("system")) {
+                echo '{"phone": "'.$num.'", "check":"2", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
+            } else {
+                echo '{"phone": "'.$num.'", "check":"1", "user":"'.(($guest->user->userDetail) ? $guest->user->userDetail->surname : $guest->user->name).'"}';
+            }
+        }
         else
             echo '{"phone": "'.$num.'", "check":"0", "user":"'.("NULL").'"}';
     }
@@ -446,6 +465,45 @@ class GuestController extends Controller
             ]);
         }
         
+    }
+
+    public function updateMoving(Request $request) { 
+        $temp = Guest::find($request->idguest);
+        $user = User::find($request->idsale);
+        $hopdong = HopDong::where('id_guest', $request->idguest)->first();
+        if (Auth::user()->hasRole('system')) {
+            if ($hopdong->admin_check) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Khách hàng này đang nằm trong kế hoạch lên hợp đồng không thể chuyển',
+                    'code' => 500
+                ]);
+            } else {
+                $result = Guest::where('id',$request->idguest)->update([
+                    'id_user_create' => $request->idsale
+                ]);
+                if($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->noiDung = "Chuyển khách hàng THÔNG TIN: Họ tên: "
+                    .$temp->name." Điện thoại: ".$temp->phone." Địa chỉ: " . $temp->address . " cho sale " . $user->userDetail->surname;
+                    $nhatKy->save();    
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Chuyển khách hàng '.$temp->name.' cho ' . $user->userDetail->surname . ' thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            }
+        } 
     }
 
     public function getKhachHangSaleHD() {

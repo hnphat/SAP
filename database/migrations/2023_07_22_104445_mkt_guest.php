@@ -36,6 +36,7 @@ class MktGuest extends Migration
             $table->string('cs3')->nullable();
             $table->string('cs4')->nullable();
             $table->boolean('fail')->default(false);
+            $table->boolean('duplicate')->default(false);
             //----
             $table->timestamps();
         });

@@ -148,6 +148,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('delete','GuestController@delete');
         Route::post('edit/show','GuestController@editShow');
         Route::post('update','GuestController@update');
+        Route::post('update/moving','GuestController@updateMoving');
 
         // khách hàng - sale - hợp đồng
         Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd')->middleware(['f_mkt']);

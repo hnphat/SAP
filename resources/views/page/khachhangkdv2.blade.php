@@ -353,6 +353,49 @@
                                             <!-- /.modal-dialog -->
                                         </div>
                                         <!-- /.modal -->
+                                        <!-- Medal Add -->
+                                        <div class="modal fade" id="movingModal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- general form elements -->
+                                                        <div class="card card-success">
+                                                            <div class="card-header">
+                                                                <h3 class="card-title">Chuyển khách</h3>
+                                                            </div>
+                                                            <!-- /.card-header -->
+                                                            <!-- form start -->
+                                                            <form id="movingForm" autocomplete="off">
+                                                                {{csrf_field()}}
+                                                                <div class="card-body">
+                                                                    <input type="hidden" name="idguestmove">
+                                                                    <div class="form-group">
+                                                                        <label>Chọn nhân viên nhận khách</label>
+                                                                        <select name="nhanVienRecieve" class="form-control"> 
+                                                                            @foreach($groupsale as $row)                       
+                                                                                <option value="{{$row['id']}}">{{$row['code']}} - {{$row['name']}}</option> 
+                                                                            @endforeach   
+                                                                        </select>
+                                                                    </div>
+                                                                </div>                                                                        
+                                                                <div class="card-footer">
+                                                                    <button id="btnUpdateMove" class="btn btn-success">Xác nhận</button>
+                                                                </div>                                                           
+                                                            </form>
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                        <!-- /.modal -->
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
                                             <tr class="bg-cyan">
@@ -495,8 +538,14 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
+                                "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
+                                "<button id='moving' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#movingModal' class='btn btn-info btn-sm'>Chuyển</button>&nbsp;";
+                            @else
                             return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                            @endif
                         }
                     },
                     { "data": "ngaySinh" },
@@ -552,7 +601,7 @@
                            if (parseInt(obj.check) === 1) {
                                flag = false;
                                alert('Số điện thoại ' + obj.phone + ' đã được tạo bởi ' + obj.user);
-                           }
+                           } 
                        },
                        async: false
                     });
@@ -724,6 +773,39 @@
                 } else {
                     alert('Số điện thoại không đúng định dạng');
                 }
+            });
+            
+            $(document).on('click','#moving', function(){
+                $("input[name=idguestmove]").val($(this).data('id'));
+            });
+
+            $("#btnUpdateMove").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/guest/update/moving')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        '_token': '{{csrf_token()}}',
+                        'idguest': $("input[name=idguestmove]").val(),
+                        'idsale': $("select[name=nhanVienRecieve]").val()
+                    },
+                    success: function(response) {
+                        $("#movingForm")[0].reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        table.ajax.reload();
+                        $("#movingModal").modal('hide');
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
             });
         });
     </script>
