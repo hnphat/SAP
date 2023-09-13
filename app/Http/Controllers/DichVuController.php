@@ -1977,6 +1977,7 @@ class DichVuController extends Controller
             } break;  
             case 3: {
                 $tong_cong = 0;
+                $tong_doanhthu_cong = 0;
                 echo "
                 <table class='table table-striped table-bordered'>
                     <tr>
@@ -2059,6 +2060,7 @@ class DichVuController extends Controller
                                         }
                                         
                                         $tong_cong += $_cong;
+                                        $tong_doanhthu_cong += $_doanhthu;
                                         echo "<tr>
                                                     <td>".($i++)."</td>
                                                     <td>".$ten."</td>
@@ -2080,7 +2082,7 @@ class DichVuController extends Controller
                     }
                     echo "</tbody>
                     </table>";
-                    echo "<h3>TỔNG: <span class='text-bold text-success'>".number_format($tong_cong)."</span></h3>";
+                    echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)."</span><br/>Tổng tiền công: <span class='text-bold text-success'>".number_format($tong_cong)."</span></h3>";
                 } else {    
                     $r = User::find($nv);
                     $i = 1;
@@ -2142,6 +2144,7 @@ class DichVuController extends Controller
                                         
                                     }
                                     $tong_cong += $_cong;
+                                    $tong_doanhthu_cong += $_doanhthu;
                                     echo "<tr>
                                                 <td>".($i++)."</td>
                                                 <td>".$ten."</td>
@@ -2162,7 +2165,7 @@ class DichVuController extends Controller
                     }
                     echo "</tbody>
                     </table>";
-                    echo "<h3>TỔNG: <span class='text-bold text-success'>".number_format($tong_cong)."</span></h3>";
+                    echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)."</span><br/>Tổng tiền công: <span class='text-bold text-success'>".number_format($tong_cong)."</span></h3>";
                 }
             } break;     
         }

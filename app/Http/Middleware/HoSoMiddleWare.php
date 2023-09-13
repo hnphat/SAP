@@ -16,7 +16,7 @@ class HoSoMiddleWare
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->hasRole('system'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('quantri'))
             return $next($request);
         else abort(403);
     }

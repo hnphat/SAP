@@ -133,6 +133,10 @@ class RoleSeed extends Seeder
                 'name' => 'truongnhomsale',
                 'description' => 'Quyền trưởng nhóm kinh doanh'
             ],
+            [
+                'name' => 'quantri',
+                'description' => 'Sử dụng module quản trị'
+            ],
         ]);
 
         DB::table('role_user')->insert([

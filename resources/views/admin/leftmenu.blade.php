@@ -41,7 +41,8 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('quantri'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-cog"></i>
                             <p>
@@ -51,19 +52,25 @@
                         </a>
                     @endif
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('quantri'))
                         <li class="nav-item">
                             <a href="{{route('phong.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý phòng</p>
                             </a>
                         </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                         <li class="nav-item">
                             <a href="{{route('group.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý Nhóm/Sale</p>
                             </a>
                         </li>
+                        @endif
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('quantri'))
                         <li class="nav-item">
                             <a href="{{route('user.list')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -77,7 +84,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route("hoso.list")}}" class="nav-link">
+                            <a href="{{route('hoso.list')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Hồ sơ</p>
                             </a>
@@ -85,7 +92,7 @@
                         @endif
                         @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                 <li class="nav-item">
-                                    <a href="{{route("typecar.list")}}" class="nav-link">
+                                    <a href="{{route('typecar.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Model Xe</p>
                                     </a>

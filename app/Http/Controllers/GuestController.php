@@ -472,7 +472,7 @@ class GuestController extends Controller
         $user = User::find($request->idsale);
         $hopdong = HopDong::where('id_guest', $request->idguest)->first();
         if (Auth::user()->hasRole('system')) {
-            if ($hopdong->admin_check) {
+            if ($hopdong && $hopdong->admin_check) {
                 return response()->json([
                     'type' => 'error',
                     'message' => 'Khách hàng này đang nằm trong kế hoạch lên hợp đồng không thể chuyển',
