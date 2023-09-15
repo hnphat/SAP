@@ -52,6 +52,7 @@
                                 <div class="tab-content" id="custom-tabs-one-tabContent">
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
                                         <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <h5>Tổng KH: <strong class="text-success" id="stong">0</strong> HOT: <strong class="text-danger" id="shot">0</strong> WARM: <strong class="text-warning" id="swarm">0</strong> COLD: <strong class="text-info" id="scold">0</strong> FAIL: <strong class="text-secondary" id="sfail">0</strong></h5>
                                         <div class="row" id="searchguest">
                                             @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                             \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
@@ -601,10 +602,16 @@
                     data: {
                         '_token': '{{csrf_token()}}',
                         'from': $("input[name=chonNgayOne]").val(),
-                        'to': $("input[name=chonNgayTwo]").val()
+                        'to': $("input[name=chonNgayTwo]").val(),
+                        'sale': $("select[name=salePost]").val(),
                     },
                     success: function(response) {
                         console.log(response);
+                        $("#stong").text(response.tong);
+                        $("#shot").text(response.hot);
+                        $("#swarm").text(response.warm);
+                        $("#scold").text(response.cold);
+                        $("#sfail").text(response.fail);
                     },
                     error: function(){
                         Toast.fire({
@@ -614,7 +621,8 @@
                     }
                 });
             }
-
+            
+            counterGuest();
             $("#xemReport").click(function(){
                 let from = $("input[name=chonNgayOne]").val();
                 let to = $("input[name=chonNgayTwo]").val();

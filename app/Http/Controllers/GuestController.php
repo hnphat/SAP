@@ -142,18 +142,28 @@ class GuestController extends Controller
         if ($request->from && $request->to) {
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);
+            $_sale = $request->sale;
             $result = null;
             $tong = 0;
             $hot = 0;
             $cold = 0;
             $warm = 0;
             $fail = 0;
-            if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
-                $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
-                ->join('type_guest as t','guest.id_type_guest','=','t.id')
-                ->join('users_detail as d','d.id_user','=','guest.id_user_create')
-                ->orderBy('guest.id', 'desc')
-                ->get();
+            if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd')) {
+                if ($_sale == 0)
+                    $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+                else 
+                    $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', $_sale)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+            }
             elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
