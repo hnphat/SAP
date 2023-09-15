@@ -52,6 +52,40 @@
                                 <div class="tab-content" id="custom-tabs-one-tabContent">
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
                                         <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <div class="row" id="searchguest">
+                                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Nhân viên</label>
+                                                    <select name="salePost" class="form-control"> 
+                                                        <option value="0">Tất cả</option> 
+                                                        @foreach($groupsale as $row)                       
+                                                            <option value="{{$row['id']}}">{{$row['name']}}</option> 
+                                                        @endforeach   
+                                                    </select>
+                                                </div>                                           
+                                            </div>
+                                            @endif
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Từ</label>
+                                                    <input type="date" name="chonNgayOne" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Đến</label>
+                                                    <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label><br/>
+                                                    <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <!-- Medal Add -->
                                         <div class="modal fade" id="addModal">
                                             <div class="modal-dialog modal-lg">
@@ -483,7 +517,8 @@
 
         // show data
         $(document).ready(function() {
-
+            let from = $("input[name=chonNgayOne]").val();
+            let to = $("input[name=chonNgayTwo]").val();
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,
@@ -493,7 +528,7 @@
                 ],
                 // processing: true,
                 // serverSide: true,
-                ajax: "{{ url('management/guest/get/list') }}",
+                ajax: "{{ url('management/guest/get/list') }}" + '?from=' + from + "&to=" + to,
                 // "columnDefs": [ {
                 //     "searchable": false,
                 //     "orderable": false,
@@ -557,37 +592,38 @@
                     { "data": "chucVu" },
                 ]
             });
-            // table.on( 'order.dt search.dt', function () {
-            //     table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-            //         cell.innerHTML = i+1;
-            //         table.cell(cell).invalidate('dom');
-            //     } );
-            // } ).draw();
 
-            // var table2 = $('#dataTableOut').DataTable({
-            //     // paging: false,    use to show all data
-            //     responsive: true,
-            //     dom: 'Blfrtip',
-            //     buttons: [
-            //         'copy', 'csv', 'excel', 'pdf', 'print'
-            //     ],
-            //     "columnDefs": [ {
-            //         "searchable": false,
-            //         "orderable": false,
-            //         "targets": 0
-            //     } ],
-            //     "order": [
-            //         [ 0, 'desc' ]
-            //     ],
-            //     lengthMenu:  [5, 10, 25, 50, 75, 100 ]
-            // });
-            // table2.on( 'order.dt search.dt', function () {
-            //     table2.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-            //         cell.innerHTML = i+1;
-            //         table2.cell(cell).invalidate('dom');
-            //     } );
-            // } ).draw();
+            function counterGuest() {
+                $.ajax({
+                    url: "{{url('management/guest/getcounter')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        '_token': '{{csrf_token()}}',
+                        'from': $("input[name=chonNgayOne]").val(),
+                        'to': $("input[name=chonNgayTwo]").val()
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            }
 
+            $("#xemReport").click(function(){
+                let from = $("input[name=chonNgayOne]").val();
+                let to = $("input[name=chonNgayTwo]").val();
+                let sale = $("select[name=salePost]").val();
+                let urlpathcurrent = "{{ url('management/guest/get/list') }}";
+                table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to + "&sale=" + sale).load();
+                counterGuest();
+            });
+            
             // Add data
             $("#btnAdd").click(function(e){
                 e.preventDefault();

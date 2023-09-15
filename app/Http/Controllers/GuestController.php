@@ -56,38 +56,140 @@ class GuestController extends Controller
         return view('page.khachhangkdbaocao', ['typeGuest' => $type_guest, 'sale' => $sale]);
     }
 
-    public function getList() {
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
-            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
-                ->join('type_guest as t','guest.id_type_guest','=','t.id')
-                ->join('users_detail as d','d.id_user','=','guest.id_user_create')
-                ->orderBy('guest.id', 'desc')
-                ->get();
-        elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
-            $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
-                ->join('type_guest as t','guest.id_type_guest','=','t.id')
-                ->join('users_detail as d','d.id_user','=','guest.id_user_create')
-                ->where('id_user_create', Auth::user()->id)
-                ->orderBy('guest.id', 'desc')
-                ->get();
-        else
-            return response()->json([
-                'message' => 'Error get Database from server!',
-                'code' => 500
-            ]);
-    
-        if($result) {
-            return response()->json([
-                'message' => 'Get list successfully!',
-                'code' => 200,
-                'data' => $result
-            ]);
+    public function getList(Request $request) {
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $sale = $request->sale;
+            $result = null;
+            $arr = [];
+            if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
+               if ($sale != 0) {
+                    $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', $sale)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+               } else {
+                    $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+               }
+            elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
+                $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', Auth::user()->id)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+            else
+                return response()->json([
+                    'message' => 'Error get Database from server!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            foreach($result as $row) {
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                    array_push($arr, $row);
+                }
+            }
+            if ($result)
+                return response()->json([
+                    'message' => 'Get list successfully!',
+                    'code' => 200,
+                    'data' => $arr
+                ]);
         } else {
-            return response()->json([
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
-        }
+            if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
+                $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+            elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
+                $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', Auth::user()->id)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+            else
+                return response()->json([
+                    'message' => 'Error get Database from server!',
+                    'code' => 500
+                ]);
+        
+            if($result) {
+                return response()->json([
+                    'message' => 'Get list successfully!',
+                    'code' => 200,
+                    'data' => $result
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }        
+    }
+
+    public function getCounter(Request $request) {
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $result = null;
+            $tong = 0;
+            $hot = 0;
+            $cold = 0;
+            $warm = 0;
+            $fail = 0;
+            if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
+                $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                ->orderBy('guest.id', 'desc')
+                ->get();
+            elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
+                $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', Auth::user()->id)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+            else
+                return response()->json([
+                    'message' => 'Error get Database from server!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            foreach($result as $row) {
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                    $tong++;
+                    switch($row->danhGia) {
+                        case "COLD": $cold++; break;
+                        case "WARM": $warm++; break;
+                        case "HOT": $hot++; break;
+                        case "FAIL": $fail++; break;
+                    }       
+                }
+            }
+            if ($result)
+                return response()->json([
+                    'message' => 'Get list successfully!',
+                    'code' => 200,
+                    'tong' => $tong,
+                    'hot' => $hot,
+                    'warm' => $warm,
+                    'cold' => $cold,
+                    'fail' => $fail
+                ]);
+        }         
     }
 
     public function getListReport() {
