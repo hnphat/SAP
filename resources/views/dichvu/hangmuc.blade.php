@@ -79,6 +79,14 @@
                                                                         </select>
                                                                     </div> -->
                                                                     <div class="form-group">
+                                                                        <label>Dòng xe</label>
+                                                                        <select name="typeCar" class="form-control">
+                                                                            @foreach($typecar as $row)
+                                                                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
                                                                         <label>Hình thức</label>
                                                                         <select name="loai" class="form-control">
                                                                             <option value="KTV lắp đặt">KTV lắp đặt</option>
@@ -191,6 +199,7 @@
                                             <thead>
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
+                                                <th>Dòng xe</th>    
                                                 <th>Loại</th>                                                
                                                 <th>Mã</th>
                                                 <th>Nội dung</th>
@@ -240,6 +249,14 @@
                                         <option value="0">Bảo hiểm</option>
                                     </select>
                                 </div> -->
+                                <div class="form-group">
+                                    <label>Loại xe</label>
+                                    <select name="etypeCar" class="form-control">
+                                        @foreach($typecar as $row)
+                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label>Hình thức</label>
                                     <select name="eloai" class="form-control">
@@ -351,6 +368,7 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
+                    { "data": "namecar" },
                     { "data": "loai" },
                     { "data": "ma" },
                     { "data": "noiDung" },
@@ -493,6 +511,7 @@
                         $("input[name=egiaVon]").val(response.data.giaVon);
                         $("input[name=econgKTV]").val(response.data.congKTV);
                         $("select[name=eloai]").val(response.data.loai);
+                        $("select[name=etypeCar]").val(response.data.loaiXe);
                         $('#eshowGia').text("(" + DOCSO.doc(response.data.donGia) + ")");
                         $('#eshowGiaVon').text("(" + DOCSO.doc(response.data.giaVon) + ")");
                         $('#eshowCongKTV').text("(" + DOCSO.doc(response.data.congKTV) + ")");

@@ -142,7 +142,9 @@
                                         <option value="{{$row->id}}">{{$row->tenPhep}}</option>
                                     @elseif($row->maPhep != 'L' && $row->maPhep != 'LKL' && $row->maPhep != 'PCL')
                                         <option value="{{$row->id}}">{{$row->tenPhep}}</option>
-                                    @endif                                    
+                                    @elseif(\Illuminate\Support\Facades\Auth::user()->hasRole('hcns') && $row->maPhep == 'PCL')
+                                        <option value="{{$row->id}}">{{$row->tenPhep}}</option>
+                                    @endif
                                   @endforeach
                                </select>
                             </div>

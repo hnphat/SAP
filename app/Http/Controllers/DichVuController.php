@@ -8,6 +8,7 @@ use App\BHPK;
 use App\User;
 use App\HopDong;
 use App\KhoV2;
+use App\TypeCar;
 use App\ChiTietBHPK;
 use App\BaoGiaBHPK;
 use Illuminate\Support\Facades\Auth;
@@ -203,19 +204,27 @@ class DichVuController extends Controller
     }
 
     public function hangMucPanel(){
-        return view('dichvu.hangmuc');
+        $typecar = TypeCar::all();
+        return view('dichvu.hangmuc', ['typecar' => $typecar]);
     }
 
     public function getHangMuc() {
+        $arr = [];
         if (Auth::user()->hasRole('system'))
             $bhpk = BHPK::select("*")->orderBy('id','desc')->get();
         else
-            $bhpk = BHPK::select("*")->where('id_user_create',Auth::user()->id)->orderBy('id','desc')->get();   
+            $bhpk = BHPK::select("*")->where('id_user_create',Auth::user()->id)->orderBy('id','desc')->get();  
+        foreach($bhpk as $row) {
+            $typecar = TypeCar::find($row->loaiXe);
+            $row->idcar = $typecar ? $typecar->id : null;
+            $row->namecar = $typecar ? $typecar->name : null;
+            array_push($arr, $row);
+        }            
         return response()->json([
             'type' => 'info',
             'code' => 200,
             'message' => 'Đã tải dữ liệu',
-            'data' => $bhpk
+            'data' => $arr
         ]);
     }
 
@@ -229,8 +238,10 @@ class DichVuController extends Controller
         $kh->donGia = $request->donGia;
         $kh->giaVon = $request->giaVon;
         $kh->congKTV = $request->congKTV;
-        $kh->loai = $request->loai;        
+        $kh->loai = $request->loai;
+        $kh->loaiXe = $request->typeCar;        
         $kh->save();
+        $typecar = TypeCar::find($request->typeCar);
         if($kh) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
@@ -242,7 +253,8 @@ class DichVuController extends Controller
             .$request->ma."; Đơn vị tính: "
             .$request->dvt."; Đơn giá: "
             .$request->donGia."; Loại: "
-            .$request->loai.";";
+            .$request->loai."; Loại xe: "
+            .$typecar->name.";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -317,8 +329,10 @@ class DichVuController extends Controller
         $kh->donGia = $request->edonGia;
         $kh->loai = $request->eloai; 
         $kh->giaVon = $request->egiaVon; 
-        $kh->congKTV = $request->econgKTV;        
+        $kh->congKTV = $request->econgKTV;     
+        $kh->loaiXe = $request->etypeCar;        
         $kh->save();
+        $typecar = TypeCar::find($request->etypeCar);
         if($kh) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
@@ -336,7 +350,8 @@ class DichVuController extends Controller
             .$request->ema."; Đơn vị tính: "
             .$request->edvt."; Đơn giá: "
             .$request->edonGia."; Loại: "
-            .$request->etype.";";
+            .$request->eloai."; Loại xe: "
+            .($typecar ? $typecar->name : "").";";
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -2511,16 +2526,17 @@ class DichVuController extends Controller
         $this->validate($request,[
             'fileBase'  => 'required|mimes:xls,xlsx|max:20480',
         ]);
+
         if($request->hasFile('fileBase')){
             $theArray = Excel::toArray([], request()->file('fileBase')); 
 
-            if (strval($theArray[0][0][0]) == "LOAI" && strval($theArray[0][0][1]) == "MA" && 
-            strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
-            strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
-            strval($theArray[0][0][6]) == "GIABAN") {
+        if (strval($theArray[0][0][0]) == "LOAI" && strval($theArray[0][0][1]) == "MA" && 
+        strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
+        strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
+        strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE") {
                 $numlen = count($theArray[0]);                    
                 for($i = 1; $i < $numlen; $i++) {
-                    $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();
+                    $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();                    
                     if (!$check) {
                         $kh = new BHPK();
                         $kh->id_user_create = Auth::user()->id;
@@ -2531,9 +2547,24 @@ class DichVuController extends Controller
                         $kh->donGia = $theArray[0][$i][6];
                         $kh->giaVon = $theArray[0][$i][4];
                         $kh->congKTV = $theArray[0][$i][5];
-                        $kh->loai = $theArray[0][$i][0];        
+                        $kh->loai = $theArray[0][$i][0];    
+                        $kh->loaiXe = $theArray[0][$i][7];    
                         $kh->save();
-                    }                    
+                    } else {
+                        $id_bhpk = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->first()->id;
+                        $kh = BHPK::find($id_bhpk);
+                        $kh->id_user_create = Auth::user()->id;
+                        $kh->isPK = 1;
+                        $kh->ma = strtoupper($theArray[0][$i][1]);
+                        $kh->noiDung = $theArray[0][$i][2];
+                        $kh->dvt = $theArray[0][$i][3];
+                        $kh->donGia = $theArray[0][$i][6];
+                        $kh->giaVon = $theArray[0][$i][4];
+                        $kh->congKTV = $theArray[0][$i][5];
+                        $kh->loai = $theArray[0][$i][0];    
+                        $kh->loaiXe = $theArray[0][$i][7];    
+                        $kh->save();
+                    }            
                 }    
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;

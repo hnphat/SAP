@@ -25,6 +25,8 @@ class BaoHiemPhuKien extends Migration
             $table->integer('giaVon')->default(0);
             $table->integer('congKTV')->default(0);
             $table->string('loai');
+            $table->integer('loaiXe')->nullable();
+            $table->string('hinhAnh')->nullable();
             $table->timestamps();
         });
     }
