@@ -226,6 +226,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         //----- quản lý đề nghị
         Route::get('hd/denghi/quanly','HDController@getHDQuanLyDeNghi')->name('hd.quanly.denghi');
         Route::get('hd/denghi/chondenghi/{id}','HDController@chonDeNghi');
+        Route::post('hd/denghi/loadpkpayfromtypecar','HDController@loadFromTypeCar');
+        Route::post('hd/denghi/chonhanghoa','HDController@chonHangHoa');
         Route::get('hd/danhsach','HDController@getDanhSach');
         Route::get('hd/ketoan/danhsachhopdong','HDController@getDanhSachHopDong');
         Route::post('hd/denghi/guidenghi','HDController@guiDeNghi');

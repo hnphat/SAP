@@ -7,12 +7,14 @@ use App\PackageV2;
 use App\SaleOffV2;
 use App\CarSale;
 use App\Guest;
+use App\BHPK;
 use App\RequestHD;
 use App\Sale;
 use App\KhoV2;
 use App\HopDong;
 use App\SaleOff;
 use App\NhatKy;
+use App\TypeCar;
 use Excel;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
@@ -1200,14 +1202,31 @@ class HDController extends Controller
                     $chiPhiChiTietPKB .=  number_format($row->cost) . '<w:br/>';
                     $j++;
                 }
-                if ($row->type == 'free') {
+                if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
-                    $chiPhiChiTietPK .=  number_format($row->cost) . '<w:br/>';
-                    $dsqt .=  $row->name . ";";
+                    $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>';                    
                     $tongPhuKienFree += $row->cost;
                     $k++;
+                } else if ($row->type == 'free' && ($row->mode != null && $row->mode != "KEMTHEOXE")) {
+                    $sttPK .= $k . '<w:br/>';
+                    $pkfree .=  $row->name . '<w:br/>';
+                    switch($row->mode) {
+                        case "TANGTHEM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>'; break;
+                        case "CTKM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (CTKM)<w:br/>'; break;
+                    }
+                    if ($row->mode == "GIABAN") {
+                        $p = BHPK::find($row->mapk);
+                        $chiPhiChiTietPK .=  number_format($p->donGia) . ' (TTGB)<w:br/>'; 
+                        $tongPhuKienFree += $p->donGia;
+                    } else {
+                        $tongPhuKienFree += $row->cost;
+                    }
+                    $k++;
                 }
+
+                if ($row->type == 'free' && (($row->mode != null && $row->mode == "KEMTHEOXE") || ($row->mode == null && $row->free_kem == true))) 
+                    $dsqt .=  $row->name . ";";
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -1370,14 +1389,31 @@ class HDController extends Controller
                     $chiPhiChiTietPKB .=  number_format($row->cost) . '<w:br/>';
                     $j++;
                 }
-                if ($row->type == 'free') {
+                if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
-                    $chiPhiChiTietPK .=  number_format($row->cost) . '<w:br/>';
-                    $dsqt .=  $row->name . ";";
+                    $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>';                    
                     $tongPhuKienFree += $row->cost;
                     $k++;
+                } else if ($row->type == 'free' && ($row->mode != null && $row->mode != "KEMTHEOXE")) {
+                    $sttPK .= $k . '<w:br/>';
+                    $pkfree .=  $row->name . '<w:br/>';
+                    switch($row->mode) {
+                        case "TANGTHEM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>'; break;
+                        case "CTKM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (CTKM)<w:br/>'; break;
+                    }
+                    if ($row->mode == "GIABAN") {
+                        $p = BHPK::find($row->mapk);
+                        $chiPhiChiTietPK .=  number_format($p->donGia) . ' (TTGB)<w:br/>'; 
+                        $tongPhuKienFree += $p->donGia;
+                    } else {
+                        $tongPhuKienFree += $row->cost;
+                    }
+                    $k++;
                 }
+
+                if ($row->type == 'free' && (($row->mode != null && $row->mode == "KEMTHEOXE") || ($row->mode == null && $row->free_kem == true))) 
+                    $dsqt .=  $row->name . ";";
             }
             $car_detail = $sale->carSale;
             $car = $sale->carSale;
@@ -1494,7 +1530,8 @@ class HDController extends Controller
         $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
         $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
         ->orderby('id','desc')->get();
-        return view('hopdong.quanlydenghi', ['hopdong' => $hopdong, 'xeList' => $xeList]);
+        $typecar = TypeCar::all();
+        return view('hopdong.quanlydenghi', ['hopdong' => $hopdong, 'xeList' => $xeList, 'typecar' => $typecar]);
     }
 
     public function getHDPheDuyetDeNghi() {
@@ -1761,7 +1798,7 @@ class HDController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Đề nghị thực hiện hợp đồng";
-            $nhatKy->noiDung = "Thực hiện khởi tạo hợp đồng mới, danh mục chi phí đăng ký, danh mục quà tặng 05 món theo xe ";
+            $nhatKy->noiDung = "Thực hiện khởi tạo hợp đồng mới, danh mục chi phí đăng ký";
             $nhatKy->save();
 
             return response()->json([
@@ -1779,7 +1816,7 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.free_kem as free_kem','package.name as name','package.cost as cost')
+        $pkban = SaleOffV2::select('saleoffv2.*','package.free_kem as free_kem','package.name as name','package.cost as cost','package.mode as mode', 'package.mapk as mapk')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
         ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')
         ->where([
@@ -2009,13 +2046,25 @@ class HDController extends Controller
     }
 
     public function postEditPKFree(Request $request){
+        // dd($request);
         $check = HopDong::find($request->idSaleHDFree);
         if ($check->admin_check != 1 && $check->requestCheck == false) {
             $temppkpay = PackageV2::find($request->idPkFree);
             $pkpay = PackageV2::find($request->idPkFree);
             $pkpay->name = $request->ndfree;
-            $pkpay->free_kem = $request->freetang;
-            $pkpay->cost = $request->giafree;
+            if ($request->freetang == 1 || $request->freetang == 0)
+                $pkpay->free_kem = $request->freetang;           
+            ($request->emapkfree && $request->emapkfree != "undefined") ? $pkpay->mapk = $request->emapkfree : "";
+            ($request->emapkmode && $request->emapkmode != "undefined") ? $pkpay->mode = $request->emapkmode : "";
+            if ($request->emapkmode == "GIABAN") {
+                $p = BHPK::find($request->emapkfree);
+                $pkpay->cost = $p->donGia;
+            } elseif ($request->emapkfree) {
+                $p = BHPK::find($request->emapkfree);
+                $pkpay->cost = $p->giaVon;
+            } else {
+                $pkpay->cost = $request->giafree;
+            }
             $pkpay->save();
             if($pkpay) {
                 $nhatKy = new NhatKy();
@@ -2098,6 +2147,7 @@ class HDController extends Controller
             $pkpay = new PackageV2;
             $pkpay->name = $request->namePkPay;
             $pkpay->cost = $request->giaPkPay;
+            $pkpay->mapk = $request->mapkcost;
             $pkpay->id_user_create = Auth::user()->id;
             $pkpay->type = 'pay';
             $pkpay->save();
@@ -2143,9 +2193,19 @@ class HDController extends Controller
         if ($check->lead_check != 1) {
             $pkpay = new PackageV2;
             $pkpay->name = $request->namePkFree;
-            $pkpay->cost = $request->giaPkFree;
             $pkpay->free_kem = $request->addfreetang;
             $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->mapk = $request->mapkfree;
+            $pkpay->mode = $request->mapkmode;
+            if ($request->mapkmode == "GIABAN") {
+                $p = BHPK::find($request->mapkfree);
+                $pkpay->cost = $p->donGia;
+            } elseif ($request->mapkfree != null || $request->mapkfree != "undefined") {
+                $p = BHPK::find($request->mapkfree);
+                $pkpay->cost = $p->giaVon;
+            } else {
+                $pkpay->cost = $request->giaPkFree;
+            }            
             $pkpay->type = 'free';
             $pkpay->save();
             if($pkpay) {
@@ -2196,6 +2256,8 @@ class HDController extends Controller
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
+            $pac = PackageV2::find($request->id);
+            $pac->delete();
             if($result) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
@@ -2231,6 +2293,8 @@ class HDController extends Controller
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
+            $pac = PackageV2::find($request->id);
+            $pac->delete();
             if($result) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
@@ -2264,6 +2328,8 @@ class HDController extends Controller
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
+            $pac = PackageV2::find($request->id);
+            $pac->delete();
             if($result) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
@@ -2320,10 +2386,49 @@ class HDController extends Controller
                 'data' => $result,
                 'car' => $car,
                 'waitcar' => $waitCar,
-                'sohd' => $sohd
+                'sohd' => $sohd,
+                'loaiXe' => $waitCar->id_type_car
             ]);
         } else {
             return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function loadFromTypeCar(Request $request) {
+        $idtypecar = $request->idtypecar;
+        $pk = BHPK::where('loaiXe',$idtypecar)->orderBy('id','desc')->get();
+        if ($pk) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Load cơ sỡ dữ liệu phụ kiện theo dòng xe thành công',
+                'code' => 200,
+                'data' => $pk
+            ]);
+        } else {            
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function chonHangHoa(Request $request) {
+        $mahang = $request->mahang;
+        $pk = BHPK::where('ma',strtoupper($mahang))->first();
+        if ($pk) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Load mã phụ kiện ' .$mahang. ' thành công',
+                'code' => 200,
+                'data' => $pk
+            ]);
+        } else {            
+            return response()->json([
+                'type' => 'error',
                 'message' => 'Internal server fail!',
                 'code' => 500
             ]);

@@ -755,14 +755,24 @@
                         txt = "";
                         sum = 0;
                         for(let i = 0; i < response.pkfree.length; i++) {
+                            let mode = "";
+                            switch(response.pkfree[i].mode) {
+                                case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
+                                case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
+                                case "CTKM": mode = "<strong class='text-info'>Chương trình khuyến mãi</strong>"; break;
+                                case "TANGTHEM": mode = "<strong class='text-success'>Tặng thêm</strong>"; break;
+                                default: mode = "";
+                            }
+                            mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + "</td>" +
-                                "<td>" + (response.pkfree[i].free_kem == true ? "Kèm theo xe" : "<strong class='text-success'>Tặng thêm</strong>") + "</td>" +
+                                "<td>" + mode + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>" +
-                                "<td><button id='editPkFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
-                                "</td>" +                                                               
+                               "<td></td>" +                                                               
                                 "</tr>";
+                                // "<td><button id='editPkFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
+                                // "</td>"
                         }
                         $("#showPKFREE").html(txt);
                         // Toast.fire({

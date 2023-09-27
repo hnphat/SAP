@@ -253,7 +253,10 @@
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
                                                 <th>Loại</th>
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                                 <th>Giá</th>
+                                                @endif
                                                 <th>Tác vụ</th>
                                             </tr>
                                             <tbody id="showPKFREE">
@@ -286,7 +289,7 @@
                                                 <select name="mauHD" class="form-control">
                                                     <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option>
-                                                    <option value="3">Đề nghị thực hiện hợp đồng</option>
+                                                    <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
                                                     <option value="4">Yêu cầu PDI xe</option>
                                                     <option value="5">Đề nghị BHBB & 5 món</option>
                                                     <option value="6">Yêu cầu lắp đặt phụ kiện</option>
@@ -309,7 +312,7 @@
     <!-- All Medal all -->
     <!-- Medal Add PK Pay-->
     <div class="modal fade" id="addPkPay">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">PHỤ KIỆN BÁN</h4>
@@ -322,14 +325,33 @@
                         <form id="addPkFormPay" autocomplete="off">
                             {{csrf_field()}}
                             <input type="hidden" name="idHD">
+                            <input type="hidden" name="idLoaiXe">
+                            <input type="hidden" name="mapkcost">
                             <div class="card-body">
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                    \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
+                                <div class="form-group">
+                                    <label>Dòng xe</label>
+                                    <select name="dongXe" class="form-control" readonly="disabled">
+                                        @foreach($typecar as $row)
+                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endif
+                                <div class="form-group">
+                                    <label>Chọn mặt hàng cần bán</label>
+                                    <select name="chonHangHoa" id="chonHangHoa" class="form-control">
+                                       
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label>Nội dung</label>
-                                    <input name="namePkPay" placeholder="Nhập nội dung" type="text" class="form-control">
+                                    <input name="namePkPay" type="text" class="form-control" readonly="readonly">
                                 </div>
                                 <div class="form-group">
                                     <label>Giá</label>
-                                    <input name="giaPkPay" value="0" placeholder="Nhập giá" type="number" class="form-control">
+                                    <input name="giaPkPay" value="0" type="number" class="form-control" readonly="readonly">
                                 </div>
                             </div>
                         </form>
@@ -347,7 +369,7 @@
     <!-- /.modal -->
     <!-- Medal Add PK Free-->
     <div class="modal fade" id="addPkFree">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">PHỤ KIỆN, KHUYẾN MÃI, QUÀ TẶNG</h4>
@@ -360,20 +382,42 @@
                         <form id="addPkFormFree" autocomplete="off">
                             {{csrf_field()}}
                             <input type="hidden" name="idHD2">
+                            <input type="hidden" name="idLoaiXePKFree">
+                            <input type="hidden" name="mapkfree">
+                            <input type="hidden" name="mapkmode">
                             <div class="card-body">
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
                                 <div class="form-group">
-                                    <label>Nội dung</label>
-                                    <input name="namePkFree" placeholder="Nhập nội dung" type="text" class="form-control">
+                                    <label>Dòng xe</label>
+                                    <select name="edongXe" class="form-control" readonly="disabled">
+                                        @foreach($typecar as $row)
+                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endif
+                                <div class="form-group">
+                                    <label>Chọn mặt hàng cần bán</label>
+                                    <select name="echonHangHoa" id="echonHangHoa" class="form-control">
+                                       
+                                    </select>
                                 </div>
                                 <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <input name="namePkFree" placeholder="Nhập nội dung" type="text" class="form-control" readonly="readonly">
+                                </div>                               
+                                <div class="form-group" style="<?php if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('adminsale')) echo "visibility: hidden;"; ?>">
                                     <label>Giá</label>
-                                    <input name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control">
+                                    <input name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control" readonly="readonly">
                                 </div>
                                 <div class="form-group">
                                     <label>Loại</label>
                                     <select name="addfreetang" class="form-control">
+                                        <option value="2">Chương trình khuyến mãi</option>
                                         <option value="1">Kèm theo xe</option>
                                         <option value="0">Tặng thêm</option>
+                                        <option value="3">Tặng trên giá bán</option>
                                     </select>
                                 </div>
                             </div>
@@ -512,20 +556,30 @@
                             {{csrf_field()}}
                             <input type="hidden" name="idSaleHDFree">
                             <input type="hidden" name="idPkFree">
+                            <input type="hidden" name="emapkfree">
+                            <input type="hidden" name="emapkmode">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Nội dung</label>
-                                    <input name="ndfree" placeholder="Nhập nội dung" type="text" class="form-control">
+                                    <label>Chọn mặt hàng cần bán</label>
+                                    <select name="eechonHangHoa" id="eechonHangHoa" class="form-control">
+                                       
+                                    </select>
                                 </div>
                                 <div class="form-group">
+                                    <label>Nội dung</label>
+                                    <input name="ndfree" placeholder="Nhập nội dung" type="text" class="form-control" readonly="readonly">
+                                </div>
+                                <div class="form-group" style="<?php if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('adminsale')) echo "visibility: hidden;"; ?>">
                                     <label>Giá</label>
-                                    <input name="giafree" value="0" placeholder="Nhập giá" type="number" class="form-control">
+                                    <input name="giafree" value="0" placeholder="Nhập giá" type="number" class="form-control" readonly="readonly">
                                 </div>
                                 <div class="form-group">
                                     <label>Loại</label>
                                     <select name="freetang" class="form-control">
+                                        <option value="2">Chương trình khuyến mãi</option>
                                         <option value="1">Kèm theo xe</option>
                                         <option value="0">Tặng thêm</option>
+                                        <option value="3">Tặng trên giá bán</option>
                                     </select>
                                 </div>
                             </div>
@@ -771,13 +825,191 @@
                     }
                 });
             }
+            
+            function autoloadCostFromPK(mahang) {
+                $.ajax({
+                    url: 'management/hd/hd/denghi/chonhanghoa',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "mahang": mahang
+                    },
+                    success: function(response){
+                        $("input[name=namePkPay]").val(response.data.noiDung);
+                        $("input[name=giaPkPay]").val(response.data.donGia);
+                        $("input[name=mapkcost]").val(response.data.id);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi!"
+                        })
+                    }
+                });
+            }
+            function autoloadCostFromPKFree(mahang) {
+                $.ajax({
+                    url: 'management/hd/hd/denghi/chonhanghoa',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "mahang": mahang
+                    },
+                    success: function(response){
+                        $("input[name=namePkFree]").val(response.data.noiDung);
+                        $("input[name=giaPkFree]").val(response.data.giaVon);
+                        $("input[name=mapkfree]").val(response.data.id);
+                        let chosen = $("select[name=addfreetang]").val();
+                        switch(parseInt(chosen)) {
+                            case 0: $("input[name=mapkmode]").val("TANGTHEM"); break;
+                            case 1: $("input[name=mapkmode]").val("KEMTHEOXE"); break;
+                            case 2: $("input[name=mapkmode]").val("CTKM"); break;
+                            case 3: $("input[name=mapkmode]").val("GIABAN"); break;
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi!"
+                        })
+                    }
+                });
+            }
 
+            function autoloadCostFromPKFreeEdit(mahang) {
+                $.ajax({
+                    url: 'management/hd/hd/denghi/chonhanghoa',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "mahang": mahang
+                    },
+                    success: function(response){
+                        $("input[name=ndfree]").val(response.data.noiDung);
+                        $("input[name=giafree]").val(response.data.giaVon);
+                        $("input[name=emapkfree]").val(response.data.id);
+                        let chosen = $("select[name=freetang]").val();
+                        switch(parseInt(chosen)) {
+                            case 0: $("input[name=emapkmode]").val("TANGTHEM"); break;
+                            case 1: $("input[name=emapkmode]").val("KEMTHEOXE"); break;
+                            case 2: $("input[name=emapkmode]").val("CTKM"); break;
+                            case 3: $("input[name=emapkmode]").val("GIABAN"); break;
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi!"
+                        })
+                    }
+                });
+            }
+
+            $("select[name=addfreetang]").change(function(){
+                let chosen = $("select[name=addfreetang]").val();
+                switch(parseInt(chosen)) {
+                    case 0: $("input[name=mapkmode]").val("TANGTHEM"); break;
+                    case 1: $("input[name=mapkmode]").val("KEMTHEOXE"); break;
+                    case 2: $("input[name=mapkmode]").val("CTKM"); break;
+                    case 3: $("input[name=mapkmode]").val("GIABAN"); break;
+                }
+            });
+
+            $("select[name=freetang]").change(function(){
+                let chosen = $("select[name=freetang]").val();
+                switch(parseInt(chosen)) {
+                    case 0: $("input[name=emapkmode]").val("TANGTHEM"); break;
+                    case 1: $("input[name=emapkmode]").val("KEMTHEOXE"); break;
+                    case 2: $("input[name=emapkmode]").val("CTKM"); break;
+                    case 3: $("input[name=emapkmode]").val("GIABAN"); break;
+                }
+            });
+
+            function autoloadPkPay() {
+                idtypecar = $("input[name=idLoaiXe]").val();
+                $.ajax({
+                    url: 'management/hd/hd/denghi/loadpkpayfromtypecar',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idtypecar": idtypecar
+                    },
+                    success: function(response){
+                        txt = "";
+                        result =  response.data;
+                        for(let i = 0; i < result.length; i++) {
+                            txt += `<option value="${result[i].ma}">${result[i].noiDung}</option>`;
+                        }
+                        $("#chonHangHoa").html(txt);
+                        setTimeout(() => {
+                            autoloadCostFromPK($("select[name=chonHangHoa]").val());
+                        }, 500);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải"
+                        })
+                    }
+                });
+            }
+            function autoloadPkFree() {
+                idtypecar = $("input[name=idLoaiXePKFree]").val();
+                $.ajax({
+                    url: 'management/hd/hd/denghi/loadpkpayfromtypecar',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idtypecar": idtypecar
+                    },
+                    success: function(response){
+                        txt = "";
+                        result =  response.data;
+                        txt += `<option value="0">Chọn</option>`;
+                        for(let i = 0; i < result.length; i++) {
+                            txt += `<option value="${result[i].ma}">${result[i].noiDung}</option>`;
+                        }
+                        $("#echonHangHoa").html(txt);
+                        $("#eechonHangHoa").html(txt);
+                        setTimeout(() => {
+                            autoloadCostFromPKFree($("select[name=echonHangHoa]").val());
+                        }, 500);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải"
+                        })
+                    }
+                });
+            }
+            $("#chonHangHoa").change(function(){
+                mahang = $("select[name=chonHangHoa]").val();
+                autoloadCostFromPK(mahang);
+            });
+            $("#echonHangHoa").change(function(){
+                mahang = $("select[name=echonHangHoa]").val();
+                autoloadCostFromPKFree(mahang);
+            });
+            $("#eechonHangHoa").change(function(){
+                mahang = $("select[name=eechonHangHoa]").val();
+                autoloadCostFromPKFreeEdit(mahang);
+            });
             $("#chonDeNghi").change(function(){
                 $.ajax({
                     url: "management/hd/hd/denghi/chondenghi/" + $("select[name=chonDeNghi]").val(),
                     dataType: "json",
                     success: function(response) {
-                        if (response.code != 500) {                            
+                        if (response.code != 500) {           
+                            $("select[name=dongXe]").val(response.loaiXe);    
+                            $("select[name=edongXe]").val(response.loaiXe); 
+                            $("input[name=idLoaiXe]").val(response.loaiXe);     
+                            $("input[name=idLoaiXePKFree]").val(response.loaiXe);
                             $("#sHoTen").text(response.data.guestname);
                             $("#sDienThoai").text(response.data.phone);
                             $("#smst").text(response.data.mst);
@@ -928,17 +1160,31 @@
                     url: 'management/hd/get/pkfree/' + id,
                     dataType: 'json',
                     success: function(response){
-                        // Show package pay
                         txt = "";
                         sum = 0;
                         for(let i = 0; i < response.pkfree.length; i++) {
+                            let mode = "";
+                            switch(response.pkfree[i].mode) {
+                                case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
+                                case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
+                                case "CTKM": mode = "<strong class='text-info'>Chương trình khuyến mãi</strong>"; break;
+                                case "TANGTHEM": mode = "<strong class='text-success'>Tặng thêm</strong>"; break;
+                                default: mode = "";
+                            }
+                            mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + "</td>" +
-                                "<td>" + (response.pkfree[i].free_kem == true ? "Kèm theo xe" : "<strong class='text-success'>Tặng thêm</strong>") + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>" +
+                                "<td>" + mode + "</td>" +
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>"
+                                @else
+                                 ""
+                                @endif 
+                                +
                                 "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
-                                + "<button id='editPkFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
+                                + "<button id='editPkFree' data-sale='"+id+"' data-mapkfree='"+response.pkfree[i].mapk+"' data-mapkmode='"+response.pkfree[i].mode+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
                                 "</td>" +                                
                                 "</tr>";
                         }
@@ -1057,11 +1303,13 @@
             //Add show pk pay
             $("#pkPayAdd").click(function(){
                $('input[name=idHD]').val($("input[name=idHopDong]").val());
+               autoloadPkPay();
             });
 
             //Add show pk pay
             $("#pkFreeAdd").click(function(){
                 $('input[name=idHD2]').val($("input[name=idHopDong]").val());
+                autoloadPkFree();
             });
 
             //Add show pk cost
@@ -1484,8 +1732,11 @@
             });
 
             $(document).on('click','#editPkFree', function(){
+                autoloadPkFree();
                 $("input[name=idSaleHDFree]").val($(this).data('sale'));
                 $("input[name=idPkFree]").val($(this).data('id'));
+                $("input[name=emapkfree]").val($(this).data('mapkfree'));
+                $("input[name=emapkmode]").val($(this).data('mapkmode'));
                 $.ajax({
                         url: "{{url('management/hd/getedit/pkfree/')}}" + '/' + $(this).data('id'),
                         type: "get",
@@ -1497,7 +1748,19 @@
                             })   
                             $("input[name=ndfree]").val(response.pkfree.name);
                             $("input[name=giafree]").val(response.pkfree.cost); 
-                            $("select[name=freetang]").val(response.pkfree.free_kem);                                        
+                            let chose = response.pkfree.mode ? response.pkfree.mode : "";
+                            switch(chose) {
+                                case "GIABAN": $("select[name=freetang]").val(3);  break;
+                                case "KEMTHEOXE": $("select[name=freetang]").val(1);  break;
+                                case "TANGTHEM": $("select[name=freetang]").val(0);  break;
+                                case "CTKM": $("select[name=freetang]").val(2);  break;
+                                default: chose = "";
+                            }
+
+                            if (chose == "") {
+                                (response.pkfree.free_kem == true) ? $("select[name=freetang]").val(1) : $("select[name=freetang]").val(0);
+                            }
+                            // $("select[name=eechonHangHoa]").val(response.pkfree.mapk);                                        
                         },
                         error: function() {
                             Toast.fire({

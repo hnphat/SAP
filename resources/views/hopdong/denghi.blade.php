@@ -106,7 +106,7 @@
                                                 <div class="form-group">
                                                     <label>Màu sắc</label>
                                                     <select name="chonMauXe" id="chonMauXe" class="form-control">
-                                                        <option value="Trắng">Chọn</option>
+                                                        <option value="0">Chọn</option>
                                                         <option value="Đỏ">Đỏ</option>
                                                         <option value="Xanh">Xanh</option>
                                                         <option value="Trắng">Trắng</option>
