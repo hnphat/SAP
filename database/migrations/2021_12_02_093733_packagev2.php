@@ -22,6 +22,8 @@ class Packagev2 extends Migration
             $table->foreign('id_user_create')->references('id')->on('users');
             $table->boolean('cost_tang')->default(false);
             $table->boolean('free_kem')->default(true);
+            $table->integer('mapk')->nullable;
+            $table->boolean('mode')->nullable;
             $table->timestamps();
         });
     }

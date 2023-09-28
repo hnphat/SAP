@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Excel;
 use App\KhoV2;
 use App\NhatKy;
+use App\BHPK;
 use App\HopDong;
 use App\TypeCarDetail;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -286,8 +287,13 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
-                       $tangPK += $row2->cost;
-                       // -----------------------
+                       if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
+                        $p = BHPK::find($row2->mapk);
+                        $tangPK += $p->giaVon;
+                       } else {
+                        $tangPK += $row2->cost;
+                       }
+                       // -----------------------    
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;
@@ -465,8 +471,13 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
-                       $tangPK += $row2->cost;
-                       // -----------------------
+                       if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
+                        $p = BHPK::find($row2->mapk);
+                        $tangPK += $p->giaVon;
+                       } else {
+                        $tangPK += $row2->cost;
+                       }
+                       // -----------------------    
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;

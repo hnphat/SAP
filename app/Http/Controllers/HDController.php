@@ -2052,8 +2052,7 @@ class HDController extends Controller
             $temppkpay = PackageV2::find($request->idPkFree);
             $pkpay = PackageV2::find($request->idPkFree);
             $pkpay->name = $request->ndfree;
-            if ($request->freetang == 1 || $request->freetang == 0)
-                $pkpay->free_kem = $request->freetang;           
+            $pkpay->free_kem = ($request->freetang == 1) ? 1 : 0;  
             ($request->emapkfree && $request->emapkfree != "undefined") ? $pkpay->mapk = $request->emapkfree : "";
             ($request->emapkmode && $request->emapkmode != "undefined") ? $pkpay->mode = $request->emapkmode : "";
             if ($request->emapkmode == "GIABAN") {
@@ -2193,7 +2192,7 @@ class HDController extends Controller
         if ($check->lead_check != 1) {
             $pkpay = new PackageV2;
             $pkpay->name = $request->namePkFree;
-            $pkpay->free_kem = $request->addfreetang;
+            $pkpay->free_kem = ($request->addfreetang == 1) ? 1 : 0;
             $pkpay->id_user_create = Auth::user()->id;
             $pkpay->mapk = $request->mapkfree;
             $pkpay->mode = $request->mapkmode;
@@ -3633,9 +3632,15 @@ class HDController extends Controller
                 $package = $row->package;
                 foreach($package as $row2) {                
                     if ($row2->type == 'free' && $row2->free_kem == false) {
-                       $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
-                       $tangPK += $row2->cost;
+                       if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
+                        $p = BHPK::find($row2->mapk);
+                        $tangPK += $p->giaVon;
+                        $khuyenMai += $p->giaVon;
+                       } else {
+                        $tangPK += $row2->cost;
+                        $khuyenMai += $row2->cost;
+                       }
                        // -----------------------
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
@@ -3829,8 +3834,13 @@ class HDController extends Controller
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
-                       $tangPK += $row2->cost;
-                       // -----------------------                      
+                       if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
+                        $p = BHPK::find($row2->mapk);
+                        $tangPK += $p->giaVon;
+                       } else {
+                        $tangPK += $row2->cost;
+                       }
+                       // -----------------------                    
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;

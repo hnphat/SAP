@@ -371,11 +371,20 @@
                     $('#tongPhuKienBan').text(response.tongPhuKienBan);
                     let phuKienKhuyenMai = "";
                     for(let i = 0; i < response.phuKienKhuyenMai.length; i++) {
+                        let mode = "";
+                        switch(response.phuKienKhuyenMai[i].mode) {
+                            case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
+                            case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
+                            case "CTKM": mode = "<strong class='text-info'>Chương trình khuyến mãi</strong>"; break;
+                            case "TANGTHEM": mode = "<strong class='text-success'>Tặng thêm</strong>"; break;
+                            default: mode = "";
+                        }
+                        mode = (mode != "") ? mode : (response.phuKienKhuyenMai[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                         phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
                                 "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].cost)) + "</td>" +
-                                "<td>" + (response.phuKienKhuyenMai[i].free_kem == false ? "<strong class='text-success'>Tặng thêm</strong>" : "Kèm theo xe") + "</td>" +
+                                "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         }
                     $("#phuKienKhuyenMai").html(phuKienKhuyenMai);
