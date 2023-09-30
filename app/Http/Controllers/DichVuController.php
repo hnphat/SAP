@@ -677,15 +677,23 @@ class DichVuController extends Controller
             $doanhthubaogia = 0;
             $stt = "";
             $flag = true;
-            if (!$row->inProcess)
+            $ct = ChiTietBHPK::select("*")
+            ->where('id_baogia', $row->id)
+            ->get();
+            if (!$row->inProcess) {
                 $stt = "class='bg-secondary'";
-            if ($row->inProcess && !$row->isDone && !$row->isCancel)
+                foreach($ct as $c){
+                    $doanhthubaogia += $c->thanhTien;       
+                }
+            }
+            if ($row->inProcess && !$row->isDone && !$row->isCancel) {
                 $stt = "class='bg-success'";
+                foreach($ct as $c){
+                    $doanhthubaogia += $c->thanhTien;       
+                }
+            }
             if ($row->inProcess && $row->isDone && !$row->isCancel) {
                 // xử lý chưa thêm KTV start
-                $ct = ChiTietBHPK::select("*")
-                ->where('id_baogia', $row->id)
-                ->get();
                 foreach($ct as $c){
                     $doanhthubaogia += $c->thanhTien;
                     $bhpk = BHPK::find($c->id_baohiem_phukien);
@@ -706,8 +714,12 @@ class DichVuController extends Controller
                 else 
                     $stt = "class='bg-orange'";
             }
-            if ($row->isCancel)
+            if ($row->isCancel) {
                 $stt = "class='bg-danger'";
+                foreach($ct as $c){
+                    $doanhthubaogia += $c->thanhTien;       
+                }
+            }
             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                 echo "
@@ -725,6 +737,8 @@ class DichVuController extends Controller
     public function counterBadge(Request $request) {
         $_from = $request->tu;
         $_to = $request->den;
+        // $_from = \HelpFunction::revertDate($request->tu);
+        // $_to = \HelpFunction::revertDate($request->den);   
         $badge1 = 0;
         $badge2 = 0;
         $badge3 = 0;
@@ -2188,7 +2202,9 @@ class DichVuController extends Controller
 
     public function counterBaoCaoDoanhThu(Request $request) {
         $tu = $request->tu;
-        $den = $request->den;        
+        $den = $request->den;  
+        // $tu = \HelpFunction::revertDate($request->tu);
+        // $den = \HelpFunction::revertDate($request->den);      
         $tongdoanhthu = 0;
         $kinhdoanh = 0;
         $khaithac = 0;
@@ -2287,17 +2303,34 @@ class DichVuController extends Controller
         foreach($bg as $row) {
             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
-                $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
-                $_doanhthu = 0;
-                $_chiphitang = 0;
-                $_sale = "";
-                foreach($ct as $item) {
-                    $tongdoanhthu += $item->thanhTien;   
-                    ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
-                    ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
-                    ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
-                    ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
-                    ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                if ((($row->isDone && !$row->isCancel) || (($row->inProcess && !$row->isDone && !$row->isCancel))) && $request->baoCao == 1) {
+                    $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                    $_doanhthu = 0;
+                    $_chiphitang = 0;
+                    $_sale = "";
+                    foreach($ct as $item) {
+                        $tongdoanhthu += $item->thanhTien;
+                        ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
+                        ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
+                        ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
+                        ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
+                        ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                    }
+                }
+
+                if ($request->baoCao != 1) {
+                    $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
+                    $_doanhthu = 0;
+                    $_chiphitang = 0;
+                    $_sale = "";
+                    foreach($ct as $item) {
+                        $tongdoanhthu += $item->thanhTien;
+                        ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
+                        ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
+                        ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
+                        ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
+                        ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                    }
                 }
             }
         }
