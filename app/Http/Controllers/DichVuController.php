@@ -9,11 +9,13 @@ use App\User;
 use App\HopDong;
 use App\KhoV2;
 use App\TypeCar;
+use App\PackageV2;
 use App\ChiTietBHPK;
 use App\BaoGiaBHPK;
 use Illuminate\Support\Facades\Auth;
 use App\NhatKy;
 use App\KTVBHPK;
+use App\SaleOffV2;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Excel;
 
@@ -23,7 +25,8 @@ class DichVuController extends Controller
     public function phuKienPanel() {
         $user = User::all();
         $bhpk = BHPK::all();
-        return view('dichvu.quanlyphukien',['user' => $user, 'bhpk' => $bhpk]);
+        $typecar = TypeCar::all();
+        return view('dichvu.quanlyphukien',['user' => $user, 'bhpk' => $bhpk, 'typecar' => $typecar]);
     }
 
     public function baoHiemPanel() {
@@ -369,7 +372,8 @@ class DichVuController extends Controller
     // quan ly phu kien
     public function timHopDong(Request $request) {
         $hd = HopDong::where('code',$request->findVal)->orderBy('id', 'desc')->first();
-        $hopDong = $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA";
+        // $hopDong = $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA";
+        $hopDong = $hd->code;
         $nhanVien = $hd->user->userDetail->surname;
         $hoTen = $hd->guest->name;
         $diaChi= $hd->guest->address;
@@ -406,6 +410,66 @@ class DichVuController extends Controller
                 'type' => 'warning',
                 'code' => 500,
                 'message' => 'Không tìm thấy dữ liệu khách hàng'
+            ]);
+    }
+
+    public function lienKetPhuKien(Request $request) {
+        $flag = false;
+        $bg = BaoGiaBHPK::find($request->idbg);
+        if (!$bg->saler)
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Báo giá khai thác không thể liên kết phụ kiện!'
+            ]);
+        $hd = HopDong::where('code',$bg->hopDongKD)->orderBy('id','desc')->first();
+        $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+        $check = ChiTietBHPK::where('id_baogia',$request->idbg)->exists();
+        if ($check) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 200,
+                'message' => 'Phụ kiện đã tồn tại, không thể liên kết. Vui lòng xoá tất cả phụ kiện đang có! '
+            ]);
+        } else {
+            foreach($listpk as $row) {
+                $p = PackageV2::find($row->id_bh_pk_package);
+                if ($p->type != "cost" && $p->mapk) {
+                    $ct = new ChiTietBHPK();
+                    $ct->id_baogia = $request->idbg;
+                    $ct->id_baohiem_phukien = $p->mapk;
+                    $ct->soLuong = 1;
+                    $ct->donGia = $p->cost;
+                    $ct->isTang = $p->type == "pay" ? 0 : 1;
+                    $ct->thanhTien = $p->cost;
+                    $ct->save();
+                    $pk = BHPK::find($p->mapk);
+                    if ($ct) {
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                        $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
+                        .$pk->noiDung."; Số lượng: 1; Đơn giá: "
+                        .$p->cost."; Tặng (1: Có; 0: Không): "
+                        .($p->type == "pay" ? 0 : 1).";";
+                        $nhatKy->save();
+                        $flag = true;
+                    }
+                } else continue;            
+            } 
+        }
+        if ($flag) {
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã liên kết phụ kiện!'
+            ]);
+        } else 
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Không thể liên kết phụ kiện '
             ]);
     }
 
@@ -1105,20 +1169,17 @@ class DichVuController extends Controller
     }
 
     public function luuBHPK(Request $request) {
-        $idbhpk = BHPK::where('ma',$request->hangHoa)->first()->id;
+        $bhpk = BHPK::where('ma',$request->hangHoa)->first();
         $ct = new ChiTietBHPK();
         $ct->id_baogia = $request->bgid;
-        $ct->id_baohiem_phukien = $idbhpk;
+        $ct->id_baohiem_phukien = $bhpk->id;
         $ct->soLuong = $request->soLuong;
-        $ct->donGia = $request->donGia;
-        // $ct->chietKhau = 0;
+        $ct->donGia = $bhpk->donGia;
+        $ct->chietKhau = $request->addChietKhau;
         $ct->isTang = $request->tang;
-        // $ct->id_user_work = ($request->kyThuatVien == 0) ? null : $request->kyThuatVien;
-        $ct->thanhTien = ($request->soLuong * $request->donGia);
-        // $ct->id_user_work_two = ($request->kyThuatVienTwo == 0) ? null : $request->kyThuatVienTwo;
-        // $ct->tiLe = ($request->tiLe == 0) ? 10 : $request->tiLe;
+        $ct->thanhTien = ($request->soLuong * $bhpk->donGia);
         $ct->save();
-        $pk = BHPK::find($idbhpk);
+        $pk = BHPK::find($bhpk->id);
         if ($ct) {
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;

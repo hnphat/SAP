@@ -723,14 +723,16 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // hạng mục
         Route::post('loadhangmuc','DichVuController@taiHangMuc')->name('loadhangmuc');     
         Route::post('loadbhpk','DichVuController@taiBHPK')->name('loadbhpk');     
-        Route::post('luubhpk','DichVuController@luuBHPK')->name('luuhangmuc');  
+        Route::post('luubhpk','DichVuController@luuBHPK')->name('luuhangmuc'); 
+        Route::post('lienketphukien','DichVuController@lienKetPhuKien')->name('lienketphukien');   
         Route::post('refreshhangmuc','DichVuController@refreshHM')->name('refreshhangmuc'); 
         Route::post('delhangmuc','DichVuController@delHM')->name('delhangmuc'); 
         Route::post('loadtongcong','DichVuController@getTong')->name('loadtongcong');     
   
         // quản lý phụ kiện
         Route::get('phukienpanel','DichVuController@phuKienPanel')->name('phukien.panel')->middleware(['f_bhpk']);     
-        Route::post('phukien/timhopdong','DichVuController@timHopDong')->name('timhopdong');  
+        Route::post('phukien/timhopdong','DichVuController@timHopDong')->name('timhopdong'); 
+        Route::post('phukien/timhopdongwithdata','DichVuController@timHopDongWithData')->name('timhopdongwithdata');  
         Route::post('phukien/timkhachhang','DichVuController@timKhachHang')->name('timkhachhang');        
         Route::post('phukien/postbaogia','DichVuController@postBaoGia')->name('postbaogia');        
         Route::post('phukien/editbaogia','DichVuController@editBaoGia')->name('editbaogia');  

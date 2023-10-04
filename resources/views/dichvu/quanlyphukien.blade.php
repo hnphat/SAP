@@ -111,7 +111,47 @@
                         <button id="cancel" class="btn btn-danger btn-sm">Huỷ BG</button>    
                         <button id="in" class="btn btn-secondary" data-toggle='modal' data-target='#inModal'><span class="fas fa-print"></span> IN</button>
                         <br/>
-                        <hr>                
+                        <hr>                         
+                        <h4 class="text-bold text-info">TÌM THÔNG TIN</h4>
+                        <div class="row">                            
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Chọn</label>
+                                    <select id="isPKD" name="isPKD" class="form-control">
+                                        <option value="1">Theo số hợp đồng</option>
+                                        <option value="0">Theo số điện thoại</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                        <label>&nbsp;</label><br/>                                      
+                                        <input id="timHopDong" placeholder="Nhập số hợp đồng" type="text" name="timHopDong" class="form-control">                                                                        
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group" style="display:none;">
+                                        <label>Hợp đồng số</label><br/>                                      
+                                        <input disabled id="hopDong" type="text" name="hopDong" class="form-control">                                                                        
+                                </div>                           
+                                <div class="form-group" style="display:none;">
+                                        <label>NV Kinh doanh</label><br/>                                      
+                                        <input disabled id="nhanVien" type="text" name="nhanVien" class="form-control">                                                                        
+                                </div>
+                                <div class="form-group">
+                                        <label>NV Kinh doanh</label><br/>   
+                                        <select disabled name="saler" id="saler" class="form-control">
+                                            <option value="0">Không có</option>
+                                            @foreach($user as $r)
+                                                @if($r->hasRole('sale') && $r->active)
+                                                    <option value="{{$r->id}}">{{$r->userDetail->surname}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>                                   
+                                </div>
+                            </div>
+                        </div>
+                        <hr>               
                         <div class="row">   
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -172,46 +212,6 @@
                                     <input id="ngayRa" type="date" name="ngayRa" class="form-control">                                                                        
                                 </div>        
                             </div> 
-                        </div>
-                        <hr>
-                        <h4 class="text-bold text-info">TÌM THÔNG TIN</h4>
-                        <div class="row">                            
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Loại báo giá</label>
-                                    <select id="isPKD" name="isPKD" class="form-control">
-                                        <option value="1">Báo giá kinh doanh</option>
-                                        <option value="0">Báo giá khai thác</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                        <label>Tìm nhanh khách hàng</label><br/>                                      
-                                        <input id="timHopDong" placeholder="Nhập số hợp đồng" type="text" name="timHopDong" class="form-control">                                                                        
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-group" style="display:none;">
-                                        <label>Hợp đồng số</label><br/>                                      
-                                        <input disabled id="hopDong" type="text" name="hopDong" class="form-control">                                                                        
-                                </div>                           
-                                <div class="form-group" style="display:none;">
-                                        <label>NV Kinh doanh</label><br/>                                      
-                                        <input disabled id="nhanVien" type="text" name="nhanVien" class="form-control">                                                                        
-                                </div>
-                                <div class="form-group">
-                                        <label>NV Kinh doanh</label><br/>   
-                                        <select disabled name="saler" id="saler" class="form-control">
-                                            <option value="0">Không có</option>
-                                            @foreach($user as $r)
-                                                @if($r->hasRole('sale') && $r->active)
-                                                    <option value="{{$r->id}}">{{$r->userDetail->surname}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>                                   
-                                </div>
-                            </div>
                         </div>
                         <hr>
                         <h4 class="text-bold text-info">THÔNG TIN KHÁCH HÀNG</h4>
@@ -308,6 +308,7 @@
                         <h4 class="text-bold text-info">CHI TIẾT HẠNG MỤC</h4>
                         <div id="showChiTietHangMuc">
                             <button id="btnAdd" class="btn btn-success" data-toggle='modal' data-target='#showModal'><span class="fas fa-plus-circle"></span></button>
+                            <button class="btn btn-info" id="loadData">LIÊN KẾT PHỤ KIỆN</button>
                             <div class="row">
                                 <div style="overflow:auto;">
                                     <table class="table table-striped table-bordered" style="font-size:11pt;">
@@ -365,15 +366,30 @@
                         </div>   
                     </div>
                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Chọn dòng xe</label>
+                                <select name="dongXe" id="dongXe" class="form-control">
+                                    @foreach($typecar as $row)
+                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="hangHoa">Mã hàng</label>
-                                <input placeholder="Nhập nội dung gợi ý" list="hangHoas" name="hangHoa" id="hangHoa" class="form-control">
-                                <datalist id="hangHoas">
+                                <label for="hangHoa">Chọn mã hàng</label>
+                                <!-- <input placeholder="Nhập nội dung gợi ý" list="hangHoas" name="hangHoa" id="hangHoa" class="form-control"> -->
+                                <!-- <datalist id="hangHoas">
                                     @foreach($bhpk as $bh)
                                         <option value="{{$bh->ma}}">{{$bh->noiDung}}</option>
                                     @endforeach                                    
-                                </datalist>
+                                </datalist> -->
+                                <select name="hangHoa" id="hangHoa" class="form-control">
+                                    
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -388,21 +404,27 @@
                                 <input type="number" name="soLuong" value="0" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-2">                            
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Chiết khấu</label>
+                                <input type="number" name="addChietKhau" value="0" class="form-control">
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-2" style="display:none;">                            
                             <div class="form-group">
                                 <label>Đơn giá</label>
                                 <input id="donGia" type="number" name="donGia" value="0" class="form-control">
                                 <span id="showDonGias"></span>
                             </div>                            
                         </div>
-                        <div class="col-md-2">       
+                        <div class="col-md-2" style="display:none;">       
                             <div class="form-group">
                                 <label>Thành tiền</label>
                                 <input disabled id="thanhTien" type="number" name="thanhTien" value="0" class="form-control">
                                 <span id="showThanhTien"></span>
                             </div>   
-                        </div>     
-                        <div class="col-md-1">       
+                        </div>      -->
+                        <div class="col-md-2">       
                             <div class="form-group">
                                 <label>Tặng</label>
                                 <select name="tang" class="form-control">                                    
@@ -557,6 +579,7 @@
                 });
             }
             function startUp() {
+                $("#loadData").hide();
                 $("#showChiTietHangMuc").hide();
                 $("#btnAdd").hide();
                 $("#chiTietHangMuc").text('');
@@ -796,6 +819,7 @@
 
             $("#edit").click(function(){
                 $(this).hide();
+                $("#loadData").show();
                 $("#showChiTietHangMuc").show();
                 $("#btnAdd").show();
                 $("#save").show();
@@ -900,7 +924,7 @@
                                 })                       
                             }
                         });                     
-                }
+                    }
                 } else {
                     if (!$("#ngayVao").val() || !$("#gioVao").val())
                     alert("Bạn chưa nhập thời gian xe vào")
@@ -915,66 +939,67 @@
                     else if ($("input[name=dienThoai]").val().match(/\d/g).length !== 10) {
                             alert("Số điện thoại không đúng định dạng 10 số");                    
                     } else {
-                            $.ajax({
-                                type: "post",
-                                url: "{{route('postbaogia')}}",
-                                dataType: "json",
-                                data: {
-                                    "_token": "{{csrf_token()}}",
-                                    "isPKD": $("#isPKD").val(),
-                                    "isBaoHiem": $("#isBaoHiem").val(),
-                                    "hopDong": $("#hopDong").val(),
-                                    "nhanVien": $("#nhanVien").val(),
-                                    "saler": $("#saler").val(),
-                                    "gioVao": $("#gioVao").val(),
-                                    "ngayVao": $("#ngayVao").val(),
-                                    "gioRa": $("#gioRa").val(),
-                                    "ngayRa": $("#ngayRa").val(),
-                                    "hoTen": $("#hoTen").val(),
-                                    "dienThoai": $("#dienThoai").val(),
-                                    "mst": $("#mst").val(),
-                                    "diaChi": $("#diaChi").val(),
-                                    "bienSo": $("#bienSo").val(),
-                                    "soKhung": $("#soKhung").val(),
-                                    "soMay": $("#soMay").val(),
-                                    "thongTinXe": $("#thongTinXe").val(),
-                                    "taiXe": $("#taiXe").val(),
-                                    "dienThoaiTaiXe": $("#dienThoaiTaiXe").val(),
-                                    "yeuCau": $("#yeuCau").val(),
-                                    "tienCoc": $("#tienCoc").val()
-                                },
-                                success: function(response) {
-                                    $("#save").hide();
-                                    $("#notsave").hide();                                   
-                                    Toast.fire({
-                                        icon: response.type,
-                                        title: response.message
-                                    }) 
-                                    if (response.code == 200) {
-                                        setTimeout(() => {
-                                            $("#btnAdd").show();
-                                            $("#showChiTietHangMuc").show();
-                                            disAfterSave();
-                                            $("#save").hide();
-                                            $("#notsave").hide();
-                                            $("#soBaoGia").val(response.soBG);
-                                            $("#isBaoHiem").val(response.isBaoHiem);
-                                            $("#eid").val(response.idBG);  
-                                            reloadData();   
-                                            butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                                                             
-                                        }, 2000);
-                                    }
-                                },
-                                error: function() {
-                                    Toast.fire({
-                                        icon: 'warning',
-                                        title: " Không tìm thấy!"
-                                    })                       
+                        $.ajax({
+                            type: "post",
+                            url: "{{route('postbaogia')}}",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "isPKD": $("#isPKD").val(),
+                                "isBaoHiem": $("#isBaoHiem").val(),
+                                "hopDong": $("#hopDong").val(),
+                                "nhanVien": $("#nhanVien").val(),
+                                "saler": $("#saler").val(),
+                                "gioVao": $("#gioVao").val(),
+                                "ngayVao": $("#ngayVao").val(),
+                                "gioRa": $("#gioRa").val(),
+                                "ngayRa": $("#ngayRa").val(),
+                                "hoTen": $("#hoTen").val(),
+                                "dienThoai": $("#dienThoai").val(),
+                                "mst": $("#mst").val(),
+                                "diaChi": $("#diaChi").val(),
+                                "bienSo": $("#bienSo").val(),
+                                "soKhung": $("#soKhung").val(),
+                                "soMay": $("#soMay").val(),
+                                "thongTinXe": $("#thongTinXe").val(),
+                                "taiXe": $("#taiXe").val(),
+                                "dienThoaiTaiXe": $("#dienThoaiTaiXe").val(),
+                                "yeuCau": $("#yeuCau").val(),
+                                "tienCoc": $("#tienCoc").val()
+                            },
+                            success: function(response) {
+                                $("#save").hide();
+                                $("#notsave").hide();                                   
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                }) 
+                                if (response.code == 200) {
+                                    setTimeout(() => {
+                                        $("#btnAdd").show();
+                                        $("#showChiTietHangMuc").show();
+                                        disAfterSave();
+                                        $("#save").hide();
+                                        $("#notsave").hide();
+                                        $("#soBaoGia").val(response.soBG);
+                                        $("#isBaoHiem").val(response.isBaoHiem);
+                                        $("#eid").val(response.idBG);  
+                                        reloadData();   
+                                        butChonseMain(response.data.inProcess,response.data.isDone,response.data.isCancel);                                                                             
+                                    }, 2000);
                                 }
-                            });                     
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: " Không tìm thấy!"
+                                })                       
+                            }
+                        });                   
                     }
                 }
             });
+
             function reloadData() {
                 $.ajax({
                     type: "post",
@@ -1138,6 +1163,32 @@
                 });
             });
 
+            $("#loadData").click(function(e){
+                $.ajax({
+                    type: "post",
+                    url: "{{route('lienketphukien')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idbg": $("#eid").val()
+                    },
+                    success: function(response) {      
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        refreshHangMuc();
+                        onloadTongCong();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể lưu!"
+                        })                       
+                    }
+                });
+            });
+
             $("#cancel").click(function(){                
                 if (confirm("Xác nhận huỷ báo giá này?")) {
                     let lyDo = prompt("Lý do huỷ báo giá");
@@ -1230,7 +1281,7 @@
                     $('#saler').prop('disabled',false);
                 } else {
                     $('#timHopDong').attr('placeholder','Nhập số điện thoại');
-                    $('#saler').prop('disabled',true);
+                    $('#saler').prop('disabled',false);
                 }                    
             });
 
@@ -1437,6 +1488,8 @@
                 $('input[name=thanhTien]').val(cos * cos_soluong);
                 $('#showThanhTien').text("(" + DOCSO.doc(cos * cos_soluong) + ")");
             });
+            
+
             $('#chietKhaun').keyup(function(){
                 var cos = $(this).val();
                 $('#showChietKhaus').text("(" + DOCSO.doc(cos) + ")");
@@ -1546,7 +1599,7 @@
                                     $('#soMay').val("");
                                     $('#thongTinXe').val("");
                                 }
-                            });  
+                            }); 
                         } break;
                         case 0: {
                             $.ajax({
@@ -1610,6 +1663,84 @@
                     }
                 }
             });
+
+            function autoloadPK() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadhanghoa')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "ma": $("select[name=hangHoa]").val(),                         
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })      
+                        if (response.code == 200) {    
+                            $("input[name=tenHang]").val(response.data.noiDung);     
+                            $("#s_noiDung").text(response.data.noiDung);
+                            $("#s_dvt").text(response.data.dvt);
+                            $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));
+                            $("#s_congktv").text(formatNumber(parseInt(response.data.congKTV)));
+                        }
+                        else {
+                            $("input[name=tenHang]").val("");    
+                            $("#s_noiDung").text("");
+                            $("#s_dvt").text("");
+                            $("#s_gia").text("");
+                            $("#s_congktv").text("");
+                        }                            
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không tìm thấy hàng hóa yêu cầu!"
+                        })                       
+                    }
+                }); 
+            }
+            $('#hangHoa').change(function(){
+                autoloadPK();
+            });  
+
+            function autoloadHangHoa() {
+                idtypecar = $("select[name=dongXe]").val();
+                $.ajax({
+                    url: 'management/hd/hd/denghi/loadpkpayfromtypecar',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idtypecar": idtypecar
+                    },
+                    success: function(response){
+                        txt = "";
+                        result =  response.data;
+                        for(let i = 0; i < result.length; i++) {
+                            txt += `<option value="${result[i].ma}">${result[i].noiDung}</option>`;
+                        }
+                        $("#hangHoa").html(txt);
+                        autoloadPK();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải"
+                        })
+                    }
+                });
+            } 
+
+            $("#dongXe").change(function(){
+                autoloadHangHoa();
+            });
+
+            autoloadHangHoa();
+            setTimeout(() => {
+                autoloadPK();
+            }, 2000);
         });
 
 
@@ -1964,47 +2095,46 @@
             }                   
         })
 
-        $('#hangHoa').keypress(function(event){
-            var keycode = (event.keyCode ? event.keyCode : event.which);
-            if(keycode == '13'){
-                $.ajax({
-                    type: "post",
-                    url: "{{route('loadhanghoa')}}",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "ma": $("input[name=hangHoa]").val(),                         
-                    },
-                    success: function(response) {
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })      
-                        if (response.code == 200) {    
-                            $("input[name=tenHang]").val(response.data.noiDung);     
-                            $("#s_noiDung").text(response.data.noiDung);
-                            $("#s_dvt").text(response.data.dvt);
-                            $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));
-                            $("#s_congktv").text(formatNumber(parseInt(response.data.congKTV)));
-                        }
-                        else {
-                            $("input[name=tenHang]").val("");    
-                            $("#s_noiDung").text("");
-                            $("#s_dvt").text("");
-                            $("#s_gia").text("");
-                            $("#s_congktv").text("");
-                        }                            
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Không tìm thấy hàng hóa yêu cầu!"
-                        })                       
-                    }
-                });  
-            }
-        });   
-        
+        // $('#hangHoa').keypress(function(event){
+        //     var keycode = (event.keyCode ? event.keyCode : event.which);
+        //     if(keycode == '13'){
+        //         $.ajax({
+        //             type: "post",
+        //             url: "{{route('loadhanghoa')}}",
+        //             dataType: "json",
+        //             data: {
+        //                 "_token": "{{csrf_token()}}",
+        //                 "ma": $("input[name=hangHoa]").val(),                         
+        //             },
+        //             success: function(response) {
+        //                 Toast.fire({
+        //                     icon: response.type,
+        //                     title: response.message
+        //                 })      
+        //                 if (response.code == 200) {    
+        //                     $("input[name=tenHang]").val(response.data.noiDung);     
+        //                     $("#s_noiDung").text(response.data.noiDung);
+        //                     $("#s_dvt").text(response.data.dvt);
+        //                     $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));
+        //                     $("#s_congktv").text(formatNumber(parseInt(response.data.congKTV)));
+        //                 }
+        //                 else {
+        //                     $("input[name=tenHang]").val("");    
+        //                     $("#s_noiDung").text("");
+        //                     $("#s_dvt").text("");
+        //                     $("#s_gia").text("");
+        //                     $("#s_congktv").text("");
+        //                 }                            
+        //             },
+        //             error: function() {
+        //                 Toast.fire({
+        //                     icon: 'warning',
+        //                     title: " Không tìm thấy hàng hóa yêu cầu!"
+        //                 })                       
+        //             }
+        //         });  
+        //     }
+        // });  
         $(document).on('click','#btnAddKTV', function(e){
             e.preventDefault();
             function addKTVrefresh(idBG) {
@@ -2056,7 +2186,7 @@
                         title: " Không thể thêm kỹ thuật viên!"
                     })                       
                 }
-            });             
+            });   
         })
     </script>
 @endsection
