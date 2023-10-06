@@ -451,6 +451,7 @@
             <div class="modal-body">         
                     <form id="editHMForm">
                         @csrf
+                        <input type="hidden" name="mainIdEdit">
                         <input type="hidden" name="ebgid"/>
                         <input type="hidden" name="ehangHoa"/>
                         <div class="row">                            
@@ -463,13 +464,13 @@
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label>Số lượng</label>
-                                    <input type="number" name="esoLuong" value="0" class="form-control">
+                                    <input type="number" name="esoLuong" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Chiết khấu</label>
-                                    <input type="number" name="eaddChietKhau" value="0" class="form-control">
+                                    <input type="number" name="eaddChietKhau" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">       
@@ -2030,14 +2031,38 @@
         });
 
         $(document).on('click','#delHangMuc', function(){
-            function refreshHangMucTwo(idBG) {
+            function onloadTongCongTwo() {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('loadtongcong')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": $("#eid").val()                             
+                    },
+                    success: function(response) {
+                        $("#tongBaoGia").text(formatNumber(parseInt(response.tongBaoGia)));
+                        $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
+                        $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tính tổng báo giá!"
+                        })                       
+                    }
+                });  
+            }
+
+            function refreshHangMucTwo(idBG,mainId) {
                     $.ajax({
                         type: "post",
                         url: "{{route('refreshhangmuc')}}",
                         dataType: "text",
                         data: {
                             "_token": "{{csrf_token()}}",
-                            "eid": idBG
+                            "eid": idBG,
+                            "mainId": mainId
                         },
                         success: function(response) {    
                             $("#chiTietHangMuc").html(response);
@@ -2056,7 +2081,8 @@
             } else {
                 if(confirm("Bạn có chắc muốn xoá?")) {
                     let idBG = $(this).data('bgid');
-                    let idHM = $(this).data('hm');                
+                    let idHM = $(this).data('hm');      
+                    let mainId = $(this).data('mainid');          
                     $.ajax({
                         type: "post",
                         url: "{{route('delhangmuc')}}",
@@ -2064,14 +2090,16 @@
                         data: {
                             "_token": "{{csrf_token()}}",
                             "eid": idBG,
-                            "ehm": idHM
+                            "ehm": idHM,
+                            "mainId": mainId
                         },
                         success: function(response) {    
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
                             }) 
-                            refreshHangMucTwo(idBG);
+                            refreshHangMucTwo(idBG,mainId);
+                            onloadTongCongTwo();
                         },
                         error: function() {
                             Toast.fire({
@@ -2088,6 +2116,7 @@
             if($("#edit").is(":visible")){
                 alert("Bạn phải chọn chỉnh sửa báo giá trước khi thực hiện thao tác này!")
             } else {
+                let mainId = $(this).data('mainid');
                 $.ajax({
                     type: "post",
                     url: "{{route('getedithangmuc')}}",
@@ -2095,7 +2124,8 @@
                     data: {
                         "_token": "{{csrf_token()}}",
                         "eid": $(this).data('bgid'),
-                        "ehm": $(this).data('hm')
+                        "ehm": $(this).data('hm'),
+                        "mainid": mainId
                     },
                     success: function(response) {    
                         Toast.fire({
@@ -2129,6 +2159,7 @@
             if($("#edit").is(":visible")){
                 alert("Bạn phải chọn chỉnh sửa báo giá trước khi thực hiện thao tác này!")
             } else {
+                let mainId = $(this).data('mainid');
                 $.ajax({
                     type: "post",
                     url: "{{route('getedithangmuchanghoa')}}",
@@ -2136,7 +2167,8 @@
                     data: {
                         "_token": "{{csrf_token()}}",
                         "eid": $(this).data('bgid'),
-                        "ehm": $(this).data('hm')
+                        "ehm": $(this).data('hm'),
+                        "mainid": mainId
                     },
                     success: function(response) {    
                         Toast.fire({
@@ -2146,6 +2178,7 @@
                         if (response.code != 500) {
                             console.log(response);
                             $("#editHMModal").modal('show');
+                            $("input[name=mainIdEdit]").val(mainId);
                             $("input[name=ehangHoa]").val(response.data.id_baohiem_phukien);
                             $("input[name=etenHang]").val(response.ten);
                             $("input[name=esoLuong]").val(response.data.soLuong);
@@ -2157,8 +2190,7 @@
                         Toast.fire({
                             icon: 'warning',
                             title: " Không thể tải hạng mục!"
-                        })        
-                        $("#showKTVChon").html("<span></span>");               
+                        })                    
                     }
                 });   
             }              

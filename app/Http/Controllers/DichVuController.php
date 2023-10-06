@@ -1207,13 +1207,22 @@ class DichVuController extends Controller
 
     public function updateBHPK(Request $request) {
         $pk = BHPK::find($request->ehangHoa)->first();
-        $temp = ChiTietBHPK::where([
-            ["id_baogia","=",$request->ebgid],
-            ["id_baohiem_phukien","=",$request->ehangHoa],
-        ])->first();
+        // $temp = ChiTietBHPK::where([
+        //     ["id_baogia","=",$request->ebgid],
+        //     ["id_baohiem_phukien","=",$request->ehangHoa],
+        // ])->first();
+        $temp = ChiTietBHPK::find($request->mainIdEdit);
+        // $ct = ChiTietBHPK::where([
+        //     ["id_baogia","=",$request->ebgid],
+        //     ["id_baohiem_phukien","=",$request->ehangHoa],
+        // ])->update([
+        //     "soLuong" => $request->esoLuong,
+        //     "chietKhau" => $request->eaddChietKhau,
+        //     "isTang" => $request->etang,
+        //     "thanhTien" => $temp->donGia * $request->esoLuong
+        // ]);
         $ct = ChiTietBHPK::where([
-            ["id_baogia","=",$request->ebgid],
-            ["id_baohiem_phukien","=",$request->ehangHoa],
+            ["id","=",$request->mainIdEdit]
         ])->update([
             "soLuong" => $request->esoLuong,
             "chietKhau" => $request->eaddChietKhau,
@@ -1253,15 +1262,18 @@ class DichVuController extends Controller
                 'message' => 'Báo giá đã huỷ, đã hoàn tất không thể xoá hạng mục!'
             ]);
         } else {
-            $temp = ChiTietBHPK::where([
-                ['id_baogia','=', $request->eid],
-                ['id_baohiem_phukien','=', $request->ehm],
-            ])->first();
+            // $temp = ChiTietBHPK::where([
+            //     ['id_baogia','=', $request->eid],
+            //     ['id_baohiem_phukien','=', $request->ehm],
+            // ])->first();
+            $temp = ChiTietBHPK::find($request->mainId);
             $bhpk = BHPK::find($request->ehm);
-            $ct = ChiTietBHPK::where([
-                ['id_baogia','=', $request->eid],
-                ['id_baohiem_phukien','=', $request->ehm],
-            ])->delete();      
+            // $ct = ChiTietBHPK::where([
+            //     ['id_baogia','=', $request->eid],
+            //     ['id_baohiem_phukien','=', $request->ehm],
+            // ])->delete();      
+            $ct = ChiTietBHPK::find($request->mainId);
+            $ct->delete();
             $ktv = KTVBHPK::where([
                 ['id_baogia','=',$request->eid],
                 ['id_bhpk','=',$request->ehm]
@@ -1325,9 +1337,9 @@ class DichVuController extends Controller
                 <td>".(($row->isTang == true) ? "Có" : "Không")."</td>    
                 <td>".$n_ktv."</td>                
                 <td>
-                    <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>&nbsp;
-                    <button id='editHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>&nbsp;
-                    <button id='eeditHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-success btn-xs'>Edit</button>
+                    <button id='delHangMuc' data-mainid='".$row->id."' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>&nbsp;
+                    <button id='editHangMuc' data-mainid='".$row->id."' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>&nbsp;
+                    <button id='eeditHangMuc' data-mainid='".$row->id."' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-success btn-xs'>Edit</button>
                 </td>
             </tr>";
         }        
@@ -2536,10 +2548,11 @@ class DichVuController extends Controller
                 'message' => 'Báo giá đã huỷ, đã hoàn tất không thể ĐIỀU CHỈNH!'
             ]);
         }
-        $ct = ChiTietBHPK::where([
-            ['id_baogia','=',$request->eid],
-            ['id_baohiem_phukien','=',$request->ehm]
-        ])->first();
+        // $ct = ChiTietBHPK::where([
+        //     ['id_baogia','=',$request->eid],
+        //     ['id_baohiem_phukien','=',$request->ehm]
+        // ])->first();
+        $ct = ChiTietBHPK::find($request->mainid);
         $ktv = KTVBHPK::select("ktv_bhpk.id","ktv_bhpk.id_baogia","ktv_bhpk.id_bhpk","d.surname","d.id_user")
         ->join("users as u","u.id","=","ktv_bhpk.id_work")
         ->join("users_detail as d","u.id","=","d.id_user")
@@ -2583,10 +2596,11 @@ class DichVuController extends Controller
                 'message' => 'Báo giá đã huỷ, đã hoàn tất không thể ĐIỀU CHỈNH!'
             ]);
         }
-        $ct = ChiTietBHPK::where([
-            ['id_baogia','=',$request->eid],
-            ['id_baohiem_phukien','=',$request->ehm]
-        ])->first();
+        // $ct = ChiTietBHPK::where([
+        //     ['id_baogia','=',$request->eid],
+        //     ['id_baohiem_phukien','=',$request->ehm]
+        // ])->first();
+        $ct = ChiTietBHPK::find($request->mainid);
         $hbpk = BHPK::find($ct->id_baohiem_phukien);
         if ($ct) {
             return response()->json([

@@ -3287,6 +3287,7 @@ class HDController extends Controller
             $package = $sale->package;
 
             $sttpkban = "";
+            $chietKhauBlank = "";
             $pkban = "";
             $pkbansl = "";
             $pkbangia = "";
@@ -3295,6 +3296,7 @@ class HDController extends Controller
             $sttpkfree = "";
             $pkfree = "";
             $pkfreesl = "";
+            $ghiChuFree = "";
             $pkfreegia = "";
             $j = 1;
             $tonggiaban = 0;
@@ -3302,6 +3304,7 @@ class HDController extends Controller
             foreach($package as $row) {
                 if ($row->type == 'pay') {
                     $sttpkban .= $i . '<w:br/>';
+                    $chietKhauBlank .= '........ <w:br/>';                     
                     $pkbansl .= '1 <w:br/>';
                     $pkban .= $row->name . '<w:br/>';
                     $pkbangia .= number_format($row->cost) . '<w:br/>';
@@ -3311,6 +3314,14 @@ class HDController extends Controller
                 if ($row->type == 'free' && $row->free_kem == false) {
                     $sttpkfree .= $j . '<w:br/>';
                     $pkfreesl .= '1 <w:br/>';
+                    if ($row->mode && $row->mode == "GIABAN")
+                        $ghiChuFree .= 'Giá bán <w:br/>';
+                    elseif ($row->mode && $row->mode == "CTKM")
+                        $ghiChuFree .= 'CTKM <w:br/>';
+                    elseif ($row->mode && $row->mode == "TANGTHEM")
+                        $ghiChuFree .= 'Tặng thêm <w:br/>';
+                    else
+                        $ghiChuFree .= 'Tặng thêm <w:br/>';
                     $pkfree .= $row->name . '<w:br/>';
                     $pkfreegia .= number_format($row->cost) . '<w:br/>';
                     $j++;
@@ -3327,6 +3338,7 @@ class HDController extends Controller
                 'thang' => Date('m'),
                 'nam' => Date('Y'),
                 'sale' => $sale->user->userDetail->surname,
+                'salephone' => $sale->user->userDetail->phone,
                 'guest' => $sale->guest->name,
                 'diaChi' => $sale->guest->address,
                 'phone' => $sale->guest->phone,
@@ -3339,6 +3351,7 @@ class HDController extends Controller
                 'frame' => $kho->frame,
                 'sttpkban' => $sttpkban,
                 'pkban' => $pkban,
+                'ghiChuFree' => $ghiChuFree,
                 'pkbansl' => $pkbansl,
                 'pkbangia' => $pkbangia,
                 'sttpkfree' => $sttpkfree,
