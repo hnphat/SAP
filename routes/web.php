@@ -724,6 +724,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('loadhangmuc','DichVuController@taiHangMuc')->name('loadhangmuc');     
         Route::post('loadbhpk','DichVuController@taiBHPK')->name('loadbhpk');     
         Route::post('luubhpk','DichVuController@luuBHPK')->name('luuhangmuc'); 
+        Route::post('updatebhpk','DichVuController@updateBHPK')->name('updatehangmuc'); 
         Route::post('lienketphukien','DichVuController@lienKetPhuKien')->name('lienketphukien');   
         Route::post('refreshhangmuc','DichVuController@refreshHM')->name('refreshhangmuc'); 
         Route::post('delhangmuc','DichVuController@delHM')->name('delhangmuc'); 
@@ -769,6 +770,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // Lấy dữ liệu chỉnh sửa
         Route::post('hangmuc/baohiemphukien/getedit/','DichVuController@getEditHangMuc')->name('getedithangmuc');
+        Route::post('hangmuc/baohiemphukien/getedithangmuc/','DichVuController@getEditHangMucHangHoa')->name('getedithangmuchanghoa');
         Route::post('hangmuc/baohiemphukien/postktv/','DichVuController@postKTV')->name('postktv');
         Route::post('hangmuc/baohiemphukien/xoaktv/','DichVuController@xoaKTV')->name('xoaktv');
         // cập nhật dữ liệu chỉnh sửa 

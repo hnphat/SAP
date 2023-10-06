@@ -226,11 +226,13 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                             $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                             $_doanhthu = 0;
                             $_chiphitang = 0;
+                            $_chietKhau = 0;
                             $_sale = "";
                             $_loaibg = "";
                             foreach($ct as $item) {
                                 $_doanhthu += $item->thanhTien;
                                 $_tongdoanhthu += $item->thanhTien;
+                                $_chietKhau += $item->chietKhau;
                                 if ($item->isTang) {
                                     $_chiphitang += $item->thanhTien;
                                     $_tongdoanhthu -= $item->thanhTien;
@@ -253,8 +255,8 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                 '5' => $_loaibg,
                                 '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
                                 '7' => $_doanhthu,
-                                '8' => $_chiphitang,
-                                '9' => ($_doanhthu-$_chiphitang),
+                                '8' => $_chiphitang."/".$_chietKhau,
+                                '9' => ($_doanhthu-$_chiphitang-$_chietKhau),
                                 '10' => \HelpFunction::revertDate($row->ngayThu),
                             );
                         }
@@ -283,10 +285,12 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                 $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                                 $_doanhthu = 0;
                                 $_chiphitang = 0;
+                                $_chietKhau = 0;
                                 $_sale = "";
                                 foreach($ct as $item) {
                                     $_doanhthu += $item->thanhTien;
                                     $_tongdoanhthu += $item->thanhTien;
+                                    $_chietKhau += $item->chietKhau;
                                     if ($item->isTang) {
                                         $_chiphitang += $item->thanhTien;
                                         $_tongdoanhthu -= $item->thanhTien;
@@ -304,7 +308,7 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                     '5' => "Báo giá kinh doanh",
                                     '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
                                     '7' => $_doanhthu,
-                                    '8' => $_chiphitang,
+                                    '8' => $_chiphitang . "/ " . $_chietKhau,
                                     '9' => ($_doanhthu-$_chiphitang),
                                     '10' => \HelpFunction::revertDate($row->ngayThu)
                                 );
@@ -314,10 +318,12 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                 $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                                 $_doanhthu = 0;
                                 $_chiphitang = 0;
+                                $_chietKhau = 0;
                                 $_sale = "";
                                 foreach($ct as $item) {
                                     $_doanhthu += $item->thanhTien;
                                     $_tongdoanhthu += $item->thanhTien;
+                                    $_chietKhau += $item->chietKhau;
                                     if ($item->isTang) {
                                         $_chiphitang += $item->thanhTien;
                                         $_tongdoanhthu -= $item->thanhTien;
@@ -332,7 +338,7 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                     '5' => "Báo giá khai thác",
                                     '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
                                     '7' => $_doanhthu,
-                                    '8' => $_chiphitang,
+                                    '8' => $_chiphitang . "/" . $_chietKhau,
                                     '9' => ($_doanhthu-$_chiphitang),
                                     '10' => \HelpFunction::revertDate($row->ngayThu)
                                 );
@@ -532,7 +538,7 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
             'Loại báo giá',
             'Số báo giá',
             'Doanh thu',
-            'Chi phí tặng',
+            'Tặng/Chiết khấu',
             'Thực tế',
             'KT xác nhận',
         ];

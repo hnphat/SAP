@@ -95,9 +95,6 @@
                                 <div class="card-body row">
                                     <h5>Nội dung:</h5>
                                     <div id="noiDungChiTiet" class="container">
-                                        <p>Đầu cá hồi: 5.000.000<br/>
-                                        Đầu cá hồi: 5.000.000 (tặng)<br/>
-                                        Đầu cá hồi: 5.000.000</p>
                                     </div>
                                 </div>
                                 <div class="card-body row">
@@ -276,7 +273,7 @@
                         let txt = `<p>`;
                         let chiTiet = response.chiTiet;
                         for (let i = 0; i < chiTiet.length; i++) {
-                            txt += `${chiTiet[i].noiDung} giá: <strong>${formatNumber(chiTiet[i].thanhTien)}</strong>`;
+                            txt += `${chiTiet[i].noiDung} giá: <strong>${formatNumber(chiTiet[i].thanhTien)}</strong> (Chiết khấu: <span class="text-info">${formatNumber(chiTiet[i].chietKhau ? chiTiet[i].chietKhau : 0)}</span>)`;
                             txt += (chiTiet[i].isTang == 1) ? ` (Tặng) <br/>` : ` <br/>`;
                         }
                         txt += `</p>`;

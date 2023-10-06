@@ -318,6 +318,7 @@
                                             <th>Đvt</th>
                                             <th>SL</th>
                                             <th>Đơn giá</th>
+                                            <th>Chiết khấu</th>
                                             <th>Thành tiền</th>
                                             <th>Tặng</th>
                                             <th>KTV</th>
@@ -331,9 +332,9 @@
                             </div>
                         </div>                        
                         <hr>
-                        <h5>Tổng báo giá: <strong class="text-primary" id="tongBaoGia">8,000,000</strong></h5>
-                        <!-- <h5>Chiết khấu: <strong class="text-primary" id="chietKhau">800,000</strong></h5> -->
-                        <!-- <h4>Tổng cần thanh toán: <strong class="text-primary" id="tongThanhToan">7,200,000</strong></h4> -->
+                        <h5>Tổng báo giá: <strong class="text-primary" id="tongBaoGia"></strong></h5>
+                        <h5>Chiết khấu: <strong class="text-info" id="chietKhau"></strong></h5>
+                        <h4>Tổng cần thanh toán: <strong class="text-success" id="tongThanhToan"></strong></h4>
                     </div>
                </div>
             </div>
@@ -341,15 +342,15 @@
         <!-- /.content -->
     </div>    
     <!--  MEDAL -->
-   <!-- The Modal -->
-  <div class="modal fade" id="showModal">
+    <!-- The Modal -->
+    <div class="modal fade" id="showModal">
     <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-      
+        <div class="modal-content">
+        
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title"><strong>THÊM HẠNG MỤC</strong></h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"><strong>THÊM HẠNG MỤC</strong></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         
         <!-- Modal body -->
@@ -410,20 +411,6 @@
                                 <input type="number" name="addChietKhau" value="0" class="form-control">
                             </div>
                         </div>
-                        <!-- <div class="col-md-2" style="display:none;">                            
-                            <div class="form-group">
-                                <label>Đơn giá</label>
-                                <input id="donGia" type="number" name="donGia" value="0" class="form-control">
-                                <span id="showDonGias"></span>
-                            </div>                            
-                        </div>
-                        <div class="col-md-2" style="display:none;">       
-                            <div class="form-group">
-                                <label>Thành tiền</label>
-                                <input disabled id="thanhTien" type="number" name="thanhTien" value="0" class="form-control">
-                                <span id="showThanhTien"></span>
-                            </div>   
-                        </div>      -->
                         <div class="col-md-2">       
                             <div class="form-group">
                                 <label>Tặng</label>
@@ -442,22 +429,83 @@
         
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
         
-      </div>
+        </div>
     </div>
-  </div>
+    </div>
 
-  <!-- Sửa  -->
-  <div class="modal fade" id="inModal">
+    <!-- The Modal -->
+    <div class="modal fade" id="editHMModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+            
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title"><strong>ĐIỀU CHỈNH HẠNG MỤC</strong></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">         
+                    <form id="editHMForm">
+                        @csrf
+                        <input type="hidden" name="ebgid"/>
+                        <input type="hidden" name="ehangHoa"/>
+                        <div class="row">                            
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Tên hàng</label>
+                                    <input type="text" name="etenHang" disabled class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label>Số lượng</label>
+                                    <input type="number" name="esoLuong" value="0" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Chiết khấu</label>
+                                    <input type="number" name="eaddChietKhau" value="0" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">       
+                                <div class="form-group">
+                                    <label>Tặng</label>
+                                    <select name="etang" class="form-control">                                    
+                                        <option value="0" selected>Không</option>
+                                        <option value="1">Có</option>
+                                    </select>
+                                </div>
+                            </div>                                            
+                        </div>                
+                        <div class="container row">
+                            <button id="esaveBtn" type="button" class="btn btn-success">LƯU</button>
+                        </div>
+                    </form>
+            </div>
+            
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            
+            </div>
+        </div>
+    </div>
+
+    <!-- Sửa  -->
+    <div class="modal fade" id="inModal">
     <div class="modal-dialog">
-      <div class="modal-content">
-      
+        <div class="modal-content">
+        
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title"><strong>IN</strong></h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"><strong>IN</strong></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>        
         <!-- Modal body -->
         <div class="modal-body">         
@@ -479,21 +527,21 @@
         </div>        
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>        
-      </div>
+        </div>
     </div>
-  </div>
+    </div>
 
-   <!-- IN -->
-   <div class="modal fade" id="editModal">
+    <!-- IN -->
+    <div class="modal fade" id="editModal">
     <div class="modal-dialog">
-      <div class="modal-content">
-      
+        <div class="modal-content">
+        
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title"><strong>Cập nhật KTV</strong></h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"><strong>Cập nhật KTV</strong></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>        
         <!-- Modal body -->
         <div class="modal-body">         
@@ -527,11 +575,11 @@
         </div>        
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>        
-      </div>
+        </div>
     </div>
-  </div>
+    </div>
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -646,6 +694,7 @@
             function butChonseMain(process,done,cancel) {    
                 if (process == 0) {
                     $("#add").show();  
+                    $("#loadData").hide();
                     $("#edit").show();
                     $("#done").hide();
                     $("#process").show();
@@ -657,6 +706,7 @@
                 } else if(process == 1 && done == 0 && cancel == 0){
                     $("#add").show();  
                     $("#edit").show();
+                    $("#loadData").hide();
                     $("#done").show();
                     $("#cancel").show();
                     $("#delete").hide();
@@ -666,6 +716,7 @@
                     $("#unsave").hide();
                 } else if(process == 1 && done == 1 && cancel == 0) {
                     $("#add").show(); 
+                    $("#loadData").hide();
                     $("#cancel").show();
                     $("#done").hide();
                     $("#process").hide();
@@ -675,6 +726,7 @@
                 } else {
                     $("#add").show();  
                     $("#edit").hide();
+                    $("#loadData").hide();
                     $("#done").hide();
                     $("#process").hide();
                     $("#delete").hide();  
@@ -687,6 +739,7 @@
 
             function disAfterSave() {
                 $("#add").show();  
+                $("#loadData").hide();
                 $("#edit").show();
                 $("#delete").show();
                 $("#process").show();
@@ -722,6 +775,7 @@
                 startUp();
                 $(this).hide();
                 $("#save").show();
+                $("#loadData").hide();
                 $("#delete").hide();
                 $("#notsave").show();
                 $("#soBaoGia").val('');
@@ -1151,6 +1205,32 @@
                             title: response.message
                         }) 
                         $("#showModal").modal('hide');
+                        refreshHangMuc();
+                        onloadTongCong();
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể lưu!"
+                        })                       
+                    }
+                });
+            });
+
+            $("#esaveBtn").click(function(e){
+                $("input[name=ebgid]").val($("#eid").val());
+                $.ajax({
+                    type: "post",
+                    url: "{{route('updatehangmuc')}}",
+                    dataType: "json",
+                    data: $("#editHMForm").serialize(),
+                    success: function(response) {      
+                        $("#editHMForm")[0].reset();               
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        $("#editHMModal").modal('hide');
                         refreshHangMuc();
                         onloadTongCong();
                     },
@@ -1741,6 +1821,10 @@
             setTimeout(() => {
                 autoloadPK();
             }, 2000);
+
+            $("#btnAdd").click(function(){
+                autoloadPK();
+            });
         });
 
 
@@ -1791,6 +1875,7 @@
             function startUpIn() {
                 $("#showChiTietHangMuc").show();
                 $("#btnAdd").hide();
+                $("#loadData").hide();
                 $("#chiTietHangMuc").text('');
                 $("#add").show();
                 $("#save").hide();
@@ -1856,6 +1941,7 @@
             function butChonse(process,done,cancel) {    
                 if (process == 0) {
                     $("#add").show();  
+                    $("#loadData").hide();
                     $("#edit").show();
                     $("#process").show();
                     $("#done").hide();
@@ -1868,6 +1954,7 @@
                     $("#add").show();  
                     $("#edit").show();
                     $("#cancel").show();
+                    $("#loadData").hide();
                     $("#done").show();
                     $("#process").hide();
                     $("#in").show();
@@ -1877,6 +1964,7 @@
                     $("#add").show(); 
                     $("#done").hide();
                     $("#cancel").show();
+                    $("#loadData").hide();
                     $("#process").hide();
                     $("#in").show();
                     $("#save").hide();
@@ -2024,6 +2112,45 @@
                             for(let i = 0; i < l_ktv.length; i++)
                                 txt_ktv += `<span>[ĐÃ THÊM] ${l_ktv[i].surname}</span> <span style="cursor: pointer;" id="xoaKTV" data-bgid="${l_ktv[i].id_baogia}" data-hm="${l_ktv[i].id_bhpk}" data-idktv="${l_ktv[i].id}" class="badge badge-danger">Xóa</span><br/>`;
                             $("#showKTVChon").html(txt_ktv);
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Không thể tải hạng mục!"
+                        })        
+                        $("#showKTVChon").html("<span></span>");               
+                    }
+                });   
+            }              
+        })
+
+        $(document).on('click','#eeditHangMuc', function(){
+            if($("#edit").is(":visible")){
+                alert("Bạn phải chọn chỉnh sửa báo giá trước khi thực hiện thao tác này!")
+            } else {
+                $.ajax({
+                    type: "post",
+                    url: "{{route('getedithangmuchanghoa')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "eid": $(this).data('bgid'),
+                        "ehm": $(this).data('hm')
+                    },
+                    success: function(response) {    
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        }) 
+                        if (response.code != 500) {
+                            console.log(response);
+                            $("#editHMModal").modal('show');
+                            $("input[name=ehangHoa]").val(response.data.id_baohiem_phukien);
+                            $("input[name=etenHang]").val(response.ten);
+                            $("input[name=esoLuong]").val(response.data.soLuong);
+                            $("input[name=eaddChietKhau]").val(response.data.chietKhau ? response.data.chietKhau : 0);
+                            $("select[name=etang]").val(response.data.isTang);
                         }
                     },
                     error: function() {

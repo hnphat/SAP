@@ -1205,6 +1205,45 @@ class DichVuController extends Controller
                 ]);
     }
 
+    public function updateBHPK(Request $request) {
+        $pk = BHPK::find($request->ehangHoa)->first();
+        $temp = ChiTietBHPK::where([
+            ["id_baogia","=",$request->ebgid],
+            ["id_baohiem_phukien","=",$request->ehangHoa],
+        ])->first();
+        $ct = ChiTietBHPK::where([
+            ["id_baogia","=",$request->ebgid],
+            ["id_baohiem_phukien","=",$request->ehangHoa],
+        ])->update([
+            "soLuong" => $request->esoLuong,
+            "chietKhau" => $request->eaddChietKhau,
+            "isTang" => $request->etang,
+            "thanhTien" => $temp->donGia * $request->esoLuong
+        ]);
+        if ($ct) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->ebgid.";"
+                .$pk->noiDung."; Số lượng: "
+                .$request->esoLuong."; Tặng (1: Có; 0: Không): "
+                .$request->etang.";";
+                $nhatKy->save();
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã lưu!'
+                ]);
+            }
+            else
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Lỗi '
+                ]);
+    }
+
     public function delHM(Request $request) {
         $bg = BaoGiaBHPK::find($request->eid);
         if ($bg->isDone || $bg->isCancel) {
@@ -1281,12 +1320,14 @@ class DichVuController extends Controller
                 <td>".$bhpk->dvt."</td>
                 <td>".$row->soLuong."</td>
                 <td>".number_format($row->donGia)."</td>
-                <td>".number_format($row->thanhTien)."</td>
+                <td>".number_format($row->chietKhau)."</td>
+                <td>".number_format($row->thanhTien - $row->chietKhau)."</td>
                 <td>".(($row->isTang == true) ? "Có" : "Không")."</td>    
                 <td>".$n_ktv."</td>                
                 <td>
                     <button id='delHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-danger btn-xs'>Xoá</button>&nbsp;
-                    <button id='editHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>
+                    <button id='editHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-info btn-xs'>KTV</button>&nbsp;
+                    <button id='eeditHangMuc' data-bgid='".$row->id_baogia."' data-hm='".$row->id_baohiem_phukien."' class='btn btn-success btn-xs'>Edit</button>
                 </td>
             </tr>";
         }        
@@ -1913,7 +1954,7 @@ class DichVuController extends Controller
                         <th>Loại BG</th>
                         <th>Số BG</th>
                         <th>Doanh thu</th>                    
-                        <th>Chi phí tặng</th>
+                        <th>Tặng/Chiết khấu</th>
                         <th>Thực tế</th>
                         <th>KT xác nhận</th>
                     </tr>
@@ -1941,16 +1982,19 @@ class DichVuController extends Controller
                             $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                             $_doanhthu = 0;
                             $_chiphitang = 0;
+                            $_chietKhau = 0;
                             $_sale = "";
                             foreach($ct as $item) {
                                 $_doanhthu += $item->thanhTien;
                                 $_tongdoanhthu += $item->thanhTien;
+                                $_chietKhau += $item->chietKhau;
                                 if ($item->isTang) {
                                     $_chiphitang += $item->thanhTien;
                                     $_tongdoanhthu -= $item->thanhTien;
                                     if ($row->saler) 
                                         $baogiakd -= $item->thanhTien;
-                                }       
+                                } 
+
                                 if ($row->saler) {
                                     $_sale = User::find($row->saler)->userDetail->surname;
                                     $baogiakd += $item->thanhTien;
@@ -1965,9 +2009,9 @@ class DichVuController extends Controller
                                         <td>".$row->hoTen."</td>
                                         <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                         <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
-                                        <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
-                                        <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
-                                        <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
+                                        <td><span class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
+                                        <td><span class='text-bold text-warning'>".number_format($_chiphitang)."</span>/<span class='text-bold text-primary'>".number_format($_chietKhau)."</span></td>
+                                        <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang-$_chietKhau)."</td>
                                         <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
                                     </tr>";
                         }
@@ -2484,6 +2528,14 @@ class DichVuController extends Controller
     }
 
     public function getEditHangMuc(Request $request) {
+        $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->isDone || $bg->isCancel) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Báo giá đã huỷ, đã hoàn tất không thể ĐIỀU CHỈNH!'
+            ]);
+        }
         $ct = ChiTietBHPK::where([
             ['id_baogia','=',$request->eid],
             ['id_baohiem_phukien','=',$request->ehm]
@@ -2513,6 +2565,37 @@ class DichVuController extends Controller
                     "message" => "Hạng mục này không thể thêm KTV",
                 ]);
             }      
+        }
+        else
+            return response()->json([
+                "code" => 500,
+                "type" => "info",
+                "message" => "Lỗi tải hạng mục"
+            ]);
+    }
+
+    public function getEditHangMucHangHoa(Request $request) {
+        $bg = BaoGiaBHPK::find($request->eid);
+        if ($bg->isDone || $bg->isCancel) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Báo giá đã huỷ, đã hoàn tất không thể ĐIỀU CHỈNH!'
+            ]);
+        }
+        $ct = ChiTietBHPK::where([
+            ['id_baogia','=',$request->eid],
+            ['id_baohiem_phukien','=',$request->ehm]
+        ])->first();
+        $hbpk = BHPK::find($ct->id_baohiem_phukien);
+        if ($ct) {
+            return response()->json([
+                "code" => 200,
+                "type" => "info",
+                "message" => "Đã load hạng mục chỉnh sửa",
+                "data" => $ct,
+                "ten" => $hbpk->noiDung
+            ]); 
         }
         else
             return response()->json([
@@ -2772,7 +2855,7 @@ class DichVuController extends Controller
 
     public function showEditThu(Request $request) {
         $bg = BaoGiaBHPK::find($request->id);
-        $ct = ChiTietBHPK::select("b.noiDung","chitiet_bhpk.thanhTien","chitiet_bhpk.isTang")
+        $ct = ChiTietBHPK::select("b.noiDung","chitiet_bhpk.thanhTien","chitiet_bhpk.isTang","chitiet_bhpk.chietKhau")
         ->join("baohiem_phukien as b","b.id","=","chitiet_bhpk.id_baohiem_phukien")
         ->where([
             ['chitiet_bhpk.id_baogia','=',$request->id],
