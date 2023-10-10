@@ -87,6 +87,7 @@
                 <div style="overflow:auto;">
                         <table id="tableMain" class="table table-bordered">
                                 <tr class="bg-primary">
+                                    <th>Loại</th>
                                     <th>Báo giá</th>        
                                     <th>Biển số</th>
                                     <th>Khách hàng</th>
@@ -318,7 +319,7 @@
                                             <th>Đvt</th>
                                             <th>SL</th>
                                             <th>Đơn giá</th>
-                                            <th>Chiết khấu</th>
+                                            <th>Chiết khấu (%)</th>
                                             <th>Thành tiền</th>
                                             <th>Tặng</th>
                                             <th>KTV</th>
@@ -333,8 +334,8 @@
                         </div>                        
                         <hr>
                         <h5>Tổng báo giá: <strong class="text-primary" id="tongBaoGia"></strong></h5>
-                        <h5>Chiết khấu: <strong class="text-info" id="chietKhau"></strong></h5>
-                        <h4>Tổng cần thanh toán: <strong class="text-success" id="tongThanhToan"></strong></h4>
+                        <!-- <h5>Chiết khấu: <strong class="text-info" id="chietKhau"></strong><strong>%</strong></h5> -->
+                        <!-- <h4>Tổng cần thanh toán: <strong class="text-success" id="tongThanhToan"></strong></h4> -->
                     </div>
                </div>
             </div>
@@ -402,13 +403,13 @@
                         <div class="col-md-1">
                             <div class="form-group">
                                 <label>Số lượng</label>
-                                <input type="number" name="soLuong" value="0" class="form-control">
+                                <input type="number" name="soLuong" value="1" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Chiết khấu</label>
-                                <input type="number" name="addChietKhau" value="0" class="form-control">
+                                <label>Chiết khấu (%)</label>
+                                <input type="number" name="addChietKhau" value="0" min="0" step="1" max="100" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-2">       
@@ -469,8 +470,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Chiết khấu</label>
-                                    <input type="number" name="eaddChietKhau" class="form-control">
+                                    <label>Chiết khấu (%)</label>
+                                    <input type="number" name="eaddChietKhau" value="0" min="0" step="1" max="100" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">       
@@ -687,8 +688,8 @@
                 $("#tienCoc").val(0);
                 //--------------
                 $("#tongBaoGia").text("");
-                $("#chietKhau").text("");
-                $("#tongThanhToan").text("");
+                // $("#chietKhau").text("");
+                // $("#tongThanhToan").text("");
                 $("#eid").val('');
             }
 
@@ -825,8 +826,8 @@
                 //--------------
                 //--------------
                 $("#tongBaoGia").text("");
-                $("#chietKhau").text("");
-                $("#tongThanhToan").text("");
+                // $("#chietKhau").text("");
+                // $("#tongThanhToan").text("");
             });
 
             $("#delete").click(function(){
@@ -1194,54 +1195,66 @@
 
             $("#saveBtn").click(function(e){
                 $("input[name=bgid]").val($("#eid").val());
-                $.ajax({
-                    type: "post",
-                    url: "{{route('luuhangmuc')}}",
-                    dataType: "json",
-                    data: $("#addForm").serialize(),
-                    success: function(response) {      
-                        $("#addForm")[0].reset();               
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        }) 
-                        $("#showModal").modal('hide');
-                        refreshHangMuc();
-                        onloadTongCong();
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Không thể lưu!"
-                        })                       
-                    }
-                });
+                let ck = $("input[name=addChietKhau]").val();
+                ck = parseInt(ck);
+                if (ck < 0 || ck > 100)  {
+                    alert("Chiết khẩu phải là % nguyên từ 0 đến 100");
+                }  else {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('luuhangmuc')}}",
+                        dataType: "json",
+                        data: $("#addForm").serialize(),
+                        success: function(response) {      
+                            $("#addForm")[0].reset();               
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            }) 
+                            $("#showModal").modal('hide');
+                            refreshHangMuc();
+                            onloadTongCong();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không thể lưu!"
+                            })                       
+                        }
+                    });
+                }
             });
 
             $("#esaveBtn").click(function(e){
                 $("input[name=ebgid]").val($("#eid").val());
-                $.ajax({
-                    type: "post",
-                    url: "{{route('updatehangmuc')}}",
-                    dataType: "json",
-                    data: $("#editHMForm").serialize(),
-                    success: function(response) {      
-                        $("#editHMForm")[0].reset();               
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        }) 
-                        $("#editHMModal").modal('hide');
-                        refreshHangMuc();
-                        onloadTongCong();
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: " Không thể lưu!"
-                        })                       
-                    }
-                });
+                let ck = $("input[name=eaddChietKhau]").val();
+                ck = parseInt(ck);
+                if (ck < 0 || ck > 100)  {
+                    alert("Chiết khẩu phải là % nguyên từ 0 đến 100");
+                }  else {
+                    $.ajax({
+                        type: "post",
+                        url: "{{route('updatehangmuc')}}",
+                        dataType: "json",
+                        data: $("#editHMForm").serialize(),
+                        success: function(response) {      
+                            $("#editHMForm")[0].reset();               
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            }) 
+                            $("#editHMModal").modal('hide');
+                            refreshHangMuc();
+                            onloadTongCong();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: " Không thể lưu!"
+                            })                       
+                        }
+                    });
+                } 
             });
 
             $("#loadData").click(function(e){
@@ -1430,8 +1443,8 @@
                     },
                     success: function(response) {
                         $("#tongBaoGia").text(formatNumber(parseInt(response.tongBaoGia)));
-                        $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
-                        $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
+                        // $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
+                        // $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
                     },
                     error: function() {
                         Toast.fire({
@@ -1841,8 +1854,8 @@
                     },
                     success: function(response) {
                         $("#tongBaoGia").text(formatNumber(parseInt(response.tongBaoGia)));
-                        $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
-                        $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
+                        // $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
+                        // $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
                     },
                     error: function() {
                         Toast.fire({
@@ -1934,8 +1947,8 @@
                 $("#tienCoc").val('');
                 //--------------
                 $("#tongBaoGia").text("");
-                $("#chietKhau").text("");
-                $("#tongThanhToan").text("");
+                // $("#chietKhau").text("");
+                // $("#tongThanhToan").text("");
                 $("#eid").val('');
             }
 
@@ -2042,8 +2055,8 @@
                     },
                     success: function(response) {
                         $("#tongBaoGia").text(formatNumber(parseInt(response.tongBaoGia)));
-                        $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
-                        $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
+                        // $("#chietKhau").text(formatNumber(parseInt(response.chietKhau)));
+                        // $("#tongThanhToan").text(formatNumber(parseInt(response.thanhToan)));            
                     },
                     error: function() {
                         Toast.fire({

@@ -769,7 +769,7 @@ class DichVuController extends Controller
                     ])->exists();
                     if (!$check) {
                         $flag = false;
-                        break;
+                        // break;
                     }        
                 }
                 // xử lý chưa thêm KTV end
@@ -788,6 +788,7 @@ class DichVuController extends Controller
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                 echo "
                 <tr id='tes' data-id='".$row->id."' ".$stt.">
+                    <td>".($row->saler ? "Kinh doanh" : "Khai thác")."</td>
                     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                     <td>".$row->bienSo."</td>
                     <td>".$row->hoTen."</td>
@@ -1177,7 +1178,8 @@ class DichVuController extends Controller
         $ct->donGia = $bhpk->donGia;
         $ct->chietKhau = $request->addChietKhau;
         $ct->isTang = $request->tang;
-        $ct->thanhTien = ($request->soLuong * $bhpk->donGia);
+        $tt = $request->soLuong * $bhpk->donGia;
+        $ct->thanhTien = ($tt) - ($tt * ($request->addChietKhau/100));
         $ct->save();
         $pk = BHPK::find($bhpk->id);
         if ($ct) {
@@ -1227,7 +1229,7 @@ class DichVuController extends Controller
             "soLuong" => $request->esoLuong,
             "chietKhau" => $request->eaddChietKhau,
             "isTang" => $request->etang,
-            "thanhTien" => $temp->donGia * $request->esoLuong
+            "thanhTien" => ($temp->donGia * $request->esoLuong) - ($temp->donGia * $request->esoLuong * $request->eaddChietKhau/100)
         ]);
         if ($ct) {
                 $nhatKy = new NhatKy();
@@ -1332,8 +1334,8 @@ class DichVuController extends Controller
                 <td>".$bhpk->dvt."</td>
                 <td>".$row->soLuong."</td>
                 <td>".number_format($row->donGia)."</td>
-                <td>".number_format($row->chietKhau)."</td>
-                <td>".number_format($row->thanhTien - $row->chietKhau)."</td>
+                <td>".number_format($row->chietKhau)."%</td>
+                <td>".number_format($row->thanhTien)."</td>
                 <td>".(($row->isTang == true) ? "Có" : "Không")."</td>    
                 <td>".$n_ktv."</td>                
                 <td>
@@ -1353,13 +1355,12 @@ class DichVuController extends Controller
         $thanhToan = 0;
         foreach($ct as $row){
             $tongBaoGia += $row->thanhTien;
-            $chietKhau += $row->chietKhau;
         }
-        $thanhToan = $tongBaoGia - $chietKhau;
+        $thanhToan = $tongBaoGia;
         return response()->json([
             'tongBaoGia' => $tongBaoGia,
-            'chietKhau' => $chietKhau,
-            'thanhToan' => $thanhToan
+            // 'chietKhau' => $chietKhau,
+            // 'thanhToan' => $thanhToan
         ]);
     }
     
@@ -1402,14 +1403,15 @@ class DichVuController extends Controller
             $dvt .= $bh->dvt . "<w:br/>";
             $sl .= $row->soLuong . "<w:br/>";
             $donGia .= number_format($row->donGia) . "<w:br/>";
-            $chietKhau .= number_format($row->chietKhau) . "<w:br/>";
+            $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
             if (!$row->isTang) {
                 $noiDung .= $bh->noiDung . "<w:br/>";               
             } else {
                 $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
             }            
-            $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
-            $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+            $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+            // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+            $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
         }
         $tienBangChu = \HelpFunction::convert($tongCong);
         $yeuCau = $bg->yeuCau;
@@ -1711,7 +1713,7 @@ class DichVuController extends Controller
             $dvt .= $bh->dvt . "<w:br/>";
             $sl .= $row->soLuong . "<w:br/>";
             $donGia .= number_format($row->donGia) . "<w:br/>";
-            $chietKhau .= number_format($row->chietKhau) . "<w:br/>";
+            $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
             if (!$row->isTang) {
                 $noiDung .= $bh->noiDung . "<w:br/>";                
             } else {
@@ -1719,8 +1721,10 @@ class DichVuController extends Controller
                 // $tongCong += 0;
                 $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
             }
-            $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
-            $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+            $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+            $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
+            // $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
+            // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
             
         }
         $tienCoc = $bg->tienCoc;

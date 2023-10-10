@@ -21,7 +21,8 @@ class HDMiddleWare
             Auth::user()->hasRole('tpkd') ||
             Auth::user()->hasRole('ketoan') ||
             Auth::user()->hasRole('adminsale') ||
-            Auth::user()->hasRole('boss'))
+            Auth::user()->hasRole('boss') ||
+            Auth::user()->hasRole('nv_phukien'))
             return $next($request);
         else abort(403);
     }
