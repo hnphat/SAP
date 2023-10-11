@@ -214,9 +214,12 @@ class DichVuController extends Controller
     public function getHangMuc() {
         $arr = [];
         if (Auth::user()->hasRole('system'))
-            $bhpk = BHPK::select("*")->orderBy('id','desc')->get();
+            $bhpk = BHPK::select("*")->where('loaiXe','!=',null)->orderBy('id','desc')->get();
         else
-            $bhpk = BHPK::select("*")->where('id_user_create',Auth::user()->id)->orderBy('id','desc')->get();  
+            $bhpk = BHPK::select("*")->where([
+                ['id_user_create','=',Auth::user()->id],
+                ['loaiXe','!=',null],
+            ])->orderBy('id','desc')->get();  
         foreach($bhpk as $row) {
             $typecar = TypeCar::find($row->loaiXe);
             $row->idcar = $typecar ? $typecar->id : null;
@@ -1070,17 +1073,21 @@ class DichVuController extends Controller
     public function doneBaoGia(Request $request){
         $tongCong = 0;
         $tongTang = 0;
+        $tongChietKhau = 0;
         $bg = BaoGiaBHPK::find($request->eid);
         if ($bg->inProcess) {
             $ct = ChiTietBHPK::where('id_baogia', $request->eid)->get();
             foreach($ct as $row){
                 $bh = BHPK::find($row->id_baohiem_phukien);
+                $tongCong += ($row->donGia*$row->soLuong);
                 if ($row->isTang)
-                    $tongTang += ((($row->donGia*$row->soLuong) - $row->chietKhau));
-                $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+                    $tongTang += ($row->donGia*$row->soLuong);
+                else
+                    $tongChietKhau += ($row->donGia * $row->soLuong * ($row->chietKhau ? $row->chietKhau : 0)/100);
             } 
             $bg->doanhThu = $tongCong;
             $bg->tang = $tongTang;
+            $bg->chietKhau = $tongChietKhau;
             $bg->isDone = true;
             $bg->save();
             if ($bg) {
@@ -1970,8 +1977,9 @@ class DichVuController extends Controller
                         <th>Loại BG</th>
                         <th>Số BG</th>
                         <th>Doanh thu</th>                    
-                        <th>Tặng/Chiết khấu</th>
-                        <th>Thực tế</th>
+                        <th>Tặng</th>
+                        <th>Chiết khấu</th>
+                        <th>Thực tế thu</th>
                         <th>KT xác nhận</th>
                     </tr>
                 <tbody>";   
@@ -1984,15 +1992,8 @@ class DichVuController extends Controller
                         ['isDone','=',true],
                         ['isCancel','=',false],
                     ])
-                    // ->where([
-                    //     ['isDone','=',true],
-                    //     ['isCancel','=',false],
-                    //     ['isBaoHiem','=', false]
-                    // ])
                     ->orderBy('isPKD','desc')->get();
                     foreach($bg as $row) {
-                        // if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
-                        // &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($den))) {
                         if ((strtotime($row->ngayThu) >= strtotime($tu)) 
                         &&  (strtotime($row->ngayThu) <= strtotime($den))) {
                             $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
@@ -2000,21 +2001,26 @@ class DichVuController extends Controller
                             $_chiphitang = 0;
                             $_chietKhau = 0;
                             $_sale = "";
+                            $_thucThu = 0;
+                            $_chietKhauCost = 0;
                             foreach($ct as $item) {
-                                $_doanhthu += $item->thanhTien;
-                                $_tongdoanhthu += $item->thanhTien;
-                                $_chietKhau += $item->chietKhau;
+                                $_doanhthu += ($item->soLuong * $item->donGia);
+                                $_tongdoanhthu += ($item->soLuong * $item->donGia);
+                                $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
                                 if ($item->isTang) {
-                                    $_chiphitang += $item->thanhTien;
-                                    $_tongdoanhthu -= $item->thanhTien;
-                                    if ($row->saler) 
-                                        $baogiakd -= $item->thanhTien;
-                                } 
-
-                                if ($row->saler) {
-                                    $_sale = User::find($row->saler)->userDetail->surname;
-                                    $baogiakd += $item->thanhTien;
-                                }      
+                                    $_chiphitang += ($item->soLuong * $item->donGia);
+                                    if ($row->saler) {
+                                        $_sale = User::find($row->saler)->userDetail->surname;
+                                        $baogiakd += ($item->soLuong * $item->donGia);
+                                    }     
+                                } else {
+                                    $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    $_thucThu += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    if ($row->saler) {
+                                        $_sale = User::find($row->saler)->userDetail->surname;
+                                        $baogiakd += ($item->soLuong * $item->donGia);
+                                    }   
+                                }
                                                        
                             }
                             echo "<tr>
@@ -2026,8 +2032,9 @@ class DichVuController extends Controller
                                         <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                         <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                         <td><span class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
-                                        <td><span class='text-bold text-warning'>".number_format($_chiphitang)."</span>/<span class='text-bold text-primary'>".number_format($_chietKhau)."</span></td>
-                                        <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang-$_chietKhau)."</td>
+                                        <td><span class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
+                                        <td><span class='text-bold text-secondary'>".number_format($_chietKhauCost)."</span></td>
+                                        <td class='text-bold text-success'>".number_format($_thucThu)."</td>
                                         <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
                                     </tr>";
                         }
@@ -2035,9 +2042,9 @@ class DichVuController extends Controller
                     echo "</tbody>
                         </table>";
                     echo "
-                    <h3>Tổng: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>
-                    <h4><i>Báo giá kinh doanh: <span class='text-bold text-info'>".number_format($baogiakd)."</span></i></h4>
-                    <h4><i>Báo giá khai thác: <span class='text-bold text-info'>".number_format($_tongdoanhthu - $baogiakd)."</span></i></h4>
+                    <h3>Tổng doanh thu: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>
+                    <h4><i>Doanh thu báo giá kinh doanh: <span class='text-bold text-info'>".number_format($baogiakd)."</span></i></h4>
+                    <h4><i>Doanh thu báo giá khai thác: <span class='text-bold text-info'>".number_format($_tongdoanhthu - $baogiakd)."</span></i></h4>
                     ";
                 } else {    
                     $_tongdoanhthu = 0;
@@ -2873,7 +2880,7 @@ class DichVuController extends Controller
 
     public function showEditThu(Request $request) {
         $bg = BaoGiaBHPK::find($request->id);
-        $ct = ChiTietBHPK::select("b.noiDung","chitiet_bhpk.thanhTien","chitiet_bhpk.isTang","chitiet_bhpk.chietKhau")
+        $ct = ChiTietBHPK::select("b.noiDung","chitiet_bhpk.thanhTien","chitiet_bhpk.donGia","chitiet_bhpk.soLuong","chitiet_bhpk.isTang","chitiet_bhpk.chietKhau")
         ->join("baohiem_phukien as b","b.id","=","chitiet_bhpk.id_baohiem_phukien")
         ->where([
             ['chitiet_bhpk.id_baogia','=',$request->id],

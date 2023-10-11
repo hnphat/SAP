@@ -125,7 +125,13 @@
                             </p>
                         </a>
                     @endif
-                    <ul class="nav nav-treeview">        
+                    <ul class="nav nav-treeview">     
+                            <li class="nav-item">
+                                <a href="{{route('tracuu.phukien')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Tra cứu phụ kiện</p>
+                                </a>
+                            </li>   
                             @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('mkt') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
@@ -191,7 +197,7 @@
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Quản lý khách hàng</p>
                                     </a>
-                                </li>
+                                </li>                                
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))

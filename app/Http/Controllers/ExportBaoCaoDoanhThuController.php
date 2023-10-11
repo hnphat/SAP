@@ -212,15 +212,8 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                         ['isCancel','=',false],
                         ['isDone','=',true],
                     ])
-                    // ->where([
-                    //     ['isDone','=',true],
-                    //     ['isCancel','=',false],
-                    //     ['isBaoHiem','=', false]
-                    // ])
                     ->orderBy('isPKD','desc')->get();
                     foreach($bg as $row) {
-                        // if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
-                        // &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                         if ((strtotime($row->ngayThu) >= strtotime($_from)) 
                         &&  (strtotime($row->ngayThu) <= strtotime($_to))) {
                             $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
@@ -228,15 +221,19 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                             $_chiphitang = 0;
                             $_chietKhau = 0;
                             $_sale = "";
-                            $_loaibg = "";
+                            $_thucThu = 0;
+                            $_chietKhauCost = 0;
                             foreach($ct as $item) {
-                                $_doanhthu += $item->thanhTien;
-                                $_tongdoanhthu += $item->thanhTien;
-                                $_chietKhau += $item->chietKhau;
+                                $_doanhthu += ($item->soLuong * $item->donGia);
+                                $_tongdoanhthu += ($item->soLuong * $item->donGia);
+                                $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
                                 if ($item->isTang) {
-                                    $_chiphitang += $item->thanhTien;
+                                    $_chiphitang += ($item->soLuong * $item->donGia);
                                     $_tongdoanhthu -= $item->thanhTien;
-                                }       
+                                } else {
+                                    $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    $_thucThu += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                }    
                                 if ($row->saler) {
                                     $_sale = User::find($row->saler)->userDetail->surname;
                                     $_loaibg = "Báo giá kinh doanh";
@@ -255,9 +252,10 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                 '5' => $_loaibg,
                                 '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
                                 '7' => $_doanhthu,
-                                '8' => $_chiphitang."/".$_chietKhau,
-                                '9' => ($_doanhthu-$_chiphitang-$_chietKhau),
-                                '10' => \HelpFunction::revertDate($row->ngayThu),
+                                '8' => $_chiphitang,
+                                '9' => $_chietKhauCost,
+                                '10' => $_thucThu,
+                                '11' => \HelpFunction::revertDate($row->ngayThu),
                             );
                         }
                     }
@@ -270,15 +268,8 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                         ['isCancel','=',false],
                         ['isDone','=',true],
                     ])
-                    // ->where([
-                    //     ['isDone','=',true],
-                    //     ['isCancel','=',false],
-                    //     ['isBaoHiem','=', false]
-                    // ])
                     ->orderBy('isPKD','desc')->get();
                     foreach($bg as $row) {
-                        // if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
-                        // &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                         if ((strtotime($row->ngayThu) >= strtotime($_from)) 
                         &&  (strtotime($row->ngayThu) <= strtotime($_to))) {
                             if ($row->saler && $row->saler == $nv) {
@@ -287,14 +278,19 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                 $_chiphitang = 0;
                                 $_chietKhau = 0;
                                 $_sale = "";
+                                $_thucThu = 0;
+                                $_chietKhauCost = 0;
                                 foreach($ct as $item) {
-                                    $_doanhthu += $item->thanhTien;
-                                    $_tongdoanhthu += $item->thanhTien;
-                                    $_chietKhau += $item->chietKhau;
+                                    $_doanhthu += ($item->soLuong * $item->donGia);
+                                    $_tongdoanhthu += ($item->soLuong * $item->donGia);
+                                    $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
                                     if ($item->isTang) {
-                                        $_chiphitang += $item->thanhTien;
+                                        $_chiphitang += ($item->soLuong * $item->donGia);
                                         $_tongdoanhthu -= $item->thanhTien;
-                                    }       
+                                    } else {
+                                        $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        $_thucThu += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    }    
                                     if ($row->saler) {
                                         $_sale = User::find($row->saler)->userDetail->surname;
                                     }                             
@@ -305,12 +301,13 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
                                     '2' => $row->user->userDetail->surname,
                                     '3' => $_sale,
                                     '4' => $row->hoTen,
-                                    '5' => "Báo giá kinh doanh",
+                                    '5' => $_loaibg,
                                     '6' => "BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at),
                                     '7' => $_doanhthu,
-                                    '8' => $_chiphitang . "/ " . $_chietKhau,
-                                    '9' => ($_doanhthu-$_chiphitang),
-                                    '10' => \HelpFunction::revertDate($row->ngayThu)
+                                    '8' => $_chiphitang,
+                                    '9' => $_chietKhauCost,
+                                    '10' => $_thucThu,
+                                    '11' => \HelpFunction::revertDate($row->ngayThu),
                                 );
                             } 
                             
@@ -538,7 +535,8 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
             'Loại báo giá',
             'Số báo giá',
             'Doanh thu',
-            'Tặng/Chiết khấu',
+            'Tặng',
+            'Chiết khấu',
             'Thực tế',
             'KT xác nhận',
         ];

@@ -4151,4 +4151,9 @@ class HDController extends Controller
         ->orderby('id','desc')->get();
         return view('ketoan.quanlyhopdong', ['hopdong' => $hopdong, 'xeList' => $xeList]);
     }
+
+    public function traCuuPanel() {
+        $typecar = TypeCar::all();
+        return view('tracuu.phukien', ['typecar' => $typecar]);
+    }
 }

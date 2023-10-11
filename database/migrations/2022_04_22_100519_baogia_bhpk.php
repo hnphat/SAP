@@ -46,6 +46,7 @@ class BaogiaBhpk extends Migration
             $table->integer('doanhThu')->default(0);
             $table->integer('tienCoc')->default(0);
             $table->integer('tang')->default(0);
+            $table->integer('chietKhau')->default(0);
             $table->timestamps();
         });
     }

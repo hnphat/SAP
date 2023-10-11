@@ -297,6 +297,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('complete/bhbb/{id}','HDController@inBHBB');
         Route::get('complete/phukien/{id}','HDController@inPhuKien');
 
+        //-- Tra cứu phụ kiện
+        Route::get('tracuu/phukien','HDController@traCuuPanel')->name('tracuu.phukien');
     });
     Route::group(['prefix' => 'ketoan', 'middleware' => ['f_hd']], function(){
         Route::get('hopdongxe','KetoanController@getKeToan')->name('ketoan');

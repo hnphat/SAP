@@ -57,6 +57,7 @@
                                         <th>Thông tin xe</th>
                                         <th>Doanh thu</th>
                                         <th>Tặng</th>
+                                        <th>Chiết khấu</th>
                                         <th>Thực thu</th>
                                         <th>Trạng thái</th>
                                         <th>Ngày thu</th>
@@ -212,9 +213,10 @@
                     { "data": "thongTinXe" },
                     { "data": "doanhThu", render: $.fn.dataTable.render.number(',','.',0,'')},
                     { "data": "tang", render: $.fn.dataTable.render.number(',','.',0,'')},
+                    { "data": "chietKhau", render: $.fn.dataTable.render.number(',','.',0,'')},
                     { "data": null,
                         render: function(data, type, row) {
-                            return (row.doanhThu - row.tang).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            return (row.doanhThu - row.tang - row.chietKhau).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                         } 
                     },
                     { "data": null,
@@ -267,17 +269,23 @@
                     success: function(response) {
                         $("#noiDungChiTiet").html("<p></p>");
                         $("input[name=eid]").val(response.data.id);
-                        // $("select[name=trangThaiThu]").val(response.data.trangThaiThu);
-                        $("input[name=canThu]").val( formatNumber(response.data.doanhThu - response.data.tang));
-                        //
+                        let khoanTru = 0;
+                        let tongDoanhThu = 0;
                         let txt = `<p>`;
                         let chiTiet = response.chiTiet;
                         for (let i = 0; i < chiTiet.length; i++) {
-                            txt += `${chiTiet[i].noiDung} giá: <strong>${formatNumber(chiTiet[i].thanhTien)}</strong> (Chiết khấu: <span class="text-info">${formatNumber(chiTiet[i].chietKhau ? chiTiet[i].chietKhau : 0)}</span>)`;
-                            txt += (chiTiet[i].isTang == 1) ? ` (Tặng) <br/>` : ` <br/>`;
+                            tongDoanhThu += (chiTiet[i].soLuong * chiTiet[i].donGia);
+                            if (chiTiet[i].isTang == 1) {
+                                khoanTru += (chiTiet[i].soLuong * chiTiet[i].donGia);
+                            } else {
+                                khoanTru += (chiTiet[i].soLuong * chiTiet[i].donGia * (chiTiet[i].chietKhau ? chiTiet[i].chietKhau : 0)/100);
+                            }
+                            txt += (chiTiet[i].isTang == 1) ? `(Tặng) ` : ``;
+                            txt += `${chiTiet[i].noiDung} giá: <strong>${formatNumber(chiTiet[i].soLuong * chiTiet[i].donGia)}</strong> (Chiết khấu: <span class="text-info">${formatNumber(chiTiet[i].chietKhau ? chiTiet[i].chietKhau : 0)}%</span>): <strong class="text-success">${formatNumber(chiTiet[i].thanhTien)}</strong> <br/>`;
                         }
                         txt += `</p>`;
-                        $("#noiDungChiTiet").html(txt);                    
+                        $("#noiDungChiTiet").html(txt);     
+                        $("input[name=canThu]").val(formatNumber(tongDoanhThu - khoanTru));               
                         Toast.fire({
                             icon: response.type,
                             title: response.message
