@@ -136,6 +136,8 @@
                                                 <option value="Xám_kim_loại">Xám_kim_loại</option>
                                                 <option value="Đen">Đen</option>
                                                 <option value="Vàng_cát">Vàng_cát</option>
+                                                <option value="Xanh_lục_bảo">Xanh_lục_bảo</option>
+                                                <option value="Xanh_bóng_đêm">Xanh_bóng_đêm</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -271,6 +273,8 @@
                                                 <option value="Xám_kim_loại">Xám_kim_loại</option>
                                                 <option value="Đen">Đen</option>
                                                 <option value="Vàng_cát">Vàng_cát</option>
+                                                <option value="Xanh_lục_bảo">Xanh_lục_bảo</option>
+                                                <option value="Xanh_bóng_đêm">Xanh_bóng_đêm</option>
                                             </select>
                                         </div>
                                         <div class="form-group">

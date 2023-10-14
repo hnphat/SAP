@@ -107,6 +107,8 @@
                                                         <option value="Xám_kim_loại">Xám_kim_loại</option>
                                                         <option value="Đen">Đen</option>
                                                         <option value="Vàng_cát">Vàng_cát</option>
+                                                        <option value="Xanh_lục_bảo">Xanh_lục_bảo</option>
+                                                        <option value="Xanh_bóng_đêm">Xanh_bóng_đêm</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -287,8 +289,8 @@
                                             <div class="form-group">
                                                 <label>CHỌN MẪU CẦN IN</label>
                                                 <select name="mauHD" class="form-control">
-                                                    <option value="1">Hợp đồng mua bán</option>
-                                                    <option value="2">Phụ lục hợp đồng</option>
+                                                    <!-- <option value="1">Hợp đồng mua bán</option>
+                                                    <option value="2">Phụ lục hợp đồng</option> -->
                                                     <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
                                                     <option value="4">Yêu cầu PDI xe</option>
                                                     <option value="5">Đề nghị BHBB & 5 món</option>
@@ -848,6 +850,7 @@
                     }
                 });
             }
+            
             function autoloadCostFromPKFree(mahang) {
                 $.ajax({
                     url: 'management/hd/hd/denghi/chonhanghoa',

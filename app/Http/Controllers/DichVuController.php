@@ -2748,7 +2748,7 @@ class DichVuController extends Controller
                         $kh->dvt = $theArray[0][$i][3];
                         $kh->donGia = $theArray[0][$i][6];
                         $kh->giaVon = $theArray[0][$i][4];
-                        $kh->congKTV = $theArray[0][$i][5];
+                        $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
                         $kh->loai = $theArray[0][$i][0];    
                         $kh->loaiXe = $theArray[0][$i][7];    
                         $kh->save();
@@ -2762,7 +2762,7 @@ class DichVuController extends Controller
                         $kh->dvt = $theArray[0][$i][3];
                         $kh->donGia = $theArray[0][$i][6];
                         $kh->giaVon = $theArray[0][$i][4];
-                        $kh->congKTV = $theArray[0][$i][5];
+                        $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
                         $kh->loai = $theArray[0][$i][0];    
                         $kh->loaiXe = $theArray[0][$i][7];    
                         $kh->save();
