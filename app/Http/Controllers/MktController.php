@@ -282,6 +282,16 @@ class MktController extends Controller
         $idlastest = "";
         $us = User::find($request->id_sale);
         $temp = MarketingGuest::find($request->id);
+        // Xử lý trùng số điện thoại
+        $guest = Guest::where('phone',$temp->dienThoai)->first();
+        if ($guest) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi: Số điện thoại khách này đã được sale nhập trước đó, vui lòng kiểm tra lại',
+                'code' => 500
+            ]);
+        }
+        // -----------------------
         $mkt = MarketingGuest::find($request->id);
         $mkt->id_sale_recieve = $request->id_sale;
         $mkt->save();

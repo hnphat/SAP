@@ -1286,6 +1286,7 @@ class HDController extends Controller
                 'cacLoaiPhi' => $pkcost,
                 'dsPhuKien' => $dspk,
                 'dem' => $dem,
+                'mst' => $sale->guest->mst,
                 'quaTang' => $dsqt,
                 'tamUng' => number_format($sale->tienCoc),
                 'moiGioi' => number_format($sale->hoaHongMoiGioi),
@@ -3364,6 +3365,116 @@ class HDController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
         $nhatKy->noiDung = "In yêu cầu lắp phụ kiện số hợp đồng " . $soHopDong;
+        $nhatKy->save();
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+    public function inPhuKienKemTheoXe($id) {
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/YEUCAUPK.docx');
+            $sale = HopDong::find($id);
+            $kho = KhoV2::find($sale->id_car_kho);
+            $year = $kho->year;
+            $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $car_detail = $sale->carSale;
+            $car = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $tenXe = $car_detail->name;
+            $outhd = 'YÊU CẦU TẶNG KÈM ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+
+            // Exe phụ kiện bán và free
+            $package = $sale->package;
+
+            $sttpkban = "";
+            $chietKhauBlank = "";
+            $pkban = "";
+            $pkbansl = "";
+            $pkbangia = "";
+            $i = 1;
+
+            $sttpkfree = "";
+            $loai = "";
+            $pkfree = "";
+            $pkfreesl = "";
+            $ghiChuFree = "";
+            $pkfreegia = "";
+            $j = 1;
+            $tonggiaban = 0;
+            $tongkm = 0;
+            foreach($package as $row) {
+                // if ($row->type == 'pay') {
+                //     $sttpkban .= $i . '<w:br/>';
+                //     $chietKhauBlank .= '........ <w:br/>';                     
+                //     $pkbansl .= '1 <w:br/>';
+                //     $pkban .= $row->name . '<w:br/>';
+                //     $pkbangia .= number_format($row->cost) . '<w:br/>';
+                //     $i++;
+                //     $tonggiaban += $row->cost;
+                // }
+                if ($row->type == 'free' && $row->free_kem == true && $row->mode != "GIABAN" && $row->mode != "TANGTHEM" && $row->mode != "CTKM") {
+                    $sttpkfree .= $j . '<w:br/>';
+                    $loai .= 'Kèm theo xe <w:br/>';
+                    $pkfreesl .= '1 <w:br/>';
+                    // if ($row->mode && $row->mode == "GIABAN")
+                    //     $ghiChuFree .= 'Giá bán <w:br/>';
+                    // elseif ($row->mode && $row->mode == "CTKM")
+                    //     $ghiChuFree .= 'CTKM <w:br/>';
+                    // elseif ($row->mode && $row->mode == "TANGTHEM")
+                    //     $ghiChuFree .= 'Tặng thêm <w:br/>';
+                    // else
+                    //     $ghiChuFree .= 'Tặng thêm <w:br/>';
+                    $pkfree .= $row->name . '<w:br/>';
+                    $pkfreegia .= number_format($row->cost) . '<w:br/>';
+                    $j++;
+                    $tongkm += $row->cost;
+                }
+            }
+
+            $templateProcessor->setValues([
+                'soHopDong' => $soHopDong,
+                'ngayhd' => $arrdate[2],
+                'thanghd' => $arrdate[1],
+                'namhd' => $arrdate[0],
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salephone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'phone' => $sale->guest->phone,
+                'carname' => $tenXe,
+                'cost' => number_format($giaXe),
+                'year' => $year,
+                'seat' => $car->seat,
+                'color' => $sale->mau,
+                'vin' => $kho->vin,
+                'frame' => $kho->frame,
+                'sttpkban' => $sttpkban,
+                'pkban' => $pkban,
+                'ghiChuFree' => $ghiChuFree,
+                'pkbansl' => $pkbansl,
+                'pkbangia' => $pkbangia,
+                'sttpkfree' => $sttpkfree,
+                'pkfree' => $pkfree,
+                'pkfreesl' => $pkfreesl,
+                'pkfreegia' => $pkfreegia,
+                'tonggiaban' => number_format($tonggiaban),
+                'tongkm' => number_format($tongkm),
+                'loai' => $loai
+            ]);
+
+        $pathToSave = 'template/YEUCAUPKDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In yêu cầu phụ kiện kèm theo xe số hd " . $soHopDong;
         $nhatKy->save();
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }

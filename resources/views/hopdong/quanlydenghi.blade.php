@@ -292,9 +292,10 @@
                                                     <!-- <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option> -->
                                                     <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
-                                                    <option value="4">Yêu cầu PDI xe</option>
-                                                    <option value="5">Đề nghị BHBB & 5 món</option>
-                                                    <option value="6">Yêu cầu lắp đặt phụ kiện</option>
+                                                    <option value="4">Yêu cầu PDI</option>
+                                                    <option value="5">Yêu cầu cấp bảo hiểm</option>
+                                                    <option value="6">Yêu cầu lắp phụ kiện</option>
+                                                    <option value="7">Yêu cầu tặng kèm 03 món</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -1698,8 +1699,17 @@
                     })
                  }
 
-                 if ($("select[name=mauHD]").val() == 6 && $("input[name=checkIn]").val() == 1) {
+                if ($("select[name=mauHD]").val() == 6 && $("input[name=checkIn]").val() == 1) {
                     open("{{url('management/hd/complete/phukien')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
+
+                if ($("select[name=mauHD]").val() == 7 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/phukienkemtheoxe')}}/" + $("input[name=idHopDong]").val(),"_blank");
                 } else {
                     Toast.fire({
                         icon: 'warning',
