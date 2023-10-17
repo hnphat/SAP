@@ -46,6 +46,7 @@
                                 <form id="addPkForm">
                                     {{csrf_field()}}
                                     <input type="hidden" name="idHopDong" id="idHopDong">
+                                    <input type="hidden" name="checkIn" id="checkIn">
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="form-group">
@@ -299,6 +300,7 @@
                                                     <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option>
                                                     <option value="3">Đề nghị thực hiện hợp đồng</option>
+                                                    <option value="4">Đề nghị rút hồ sơ và hóa đơn</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -719,6 +721,11 @@
                             } else {
                                 $("input[name=hdDaiLy]").prop('checked', false);
                             }
+
+                            if (response.data.lead_check == true)
+                                $("input[name=checkIn]").val(1);
+                            else
+                                $("input[name=checkIn]").val(0);
 
                             // BUTTON
                             showSoTien();
@@ -1210,6 +1217,15 @@
                         case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
                 }
+
+                if ($("select[name=mauHD]").val() == 4 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/denghiruthosoxe')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
             });
 
 

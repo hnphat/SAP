@@ -19,6 +19,8 @@ use App\TypeCarDetail;
 use App\PhoneHcare;
 use App\GroupSale;
 use App\Group;
+use App\Roles;
+use App\RoleUser;
 use App\MarketingGuest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,8 +62,8 @@ class GuestController extends Controller
         if ($request->from && $request->to) {
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);
-            $sale = $request->sale;
-            $result = null;
+            $sale = $request->sale ? $request->sale : null;
+            $result = null;            
             $arr = [];
             if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
                if ($sale != 0) {
@@ -78,14 +80,33 @@ class GuestController extends Controller
                     ->orderBy('guest.id', 'desc')
                     ->get();
                }
-            elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
+            elseif (Auth::user()->hasRole('sale'))
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                     ->where('id_user_create', Auth::user()->id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
-            else
+            elseif (Auth::user()->hasRole('adminsale')) {
+                $r = Roles::where('name','adminsale')->first();
+                $r_u = RoleUser::where('role_id',$r->id)->get();
+                $arr_temp = [];
+                foreach($r_u as $row) {
+                    $temple = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', $row->user_id)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+                    if ($temple) {                        
+                        foreach($temple as $row2) {
+                            array_push($arr_temp, $row2);
+                        }
+                    }
+                }
+                $result = $arr_temp;
+            }
+            else 
                 return response()->json([
                     'message' => 'Error get Database from server!',
                     'code' => 500,
@@ -110,13 +131,32 @@ class GuestController extends Controller
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                     ->orderBy('guest.id', 'desc')
                     ->get();
-            elseif (Auth::user()->hasRole('sale') || Auth::user()->hasRole('adminsale'))
+            elseif (Auth::user()->hasRole('sale'))
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                     ->where('id_user_create', Auth::user()->id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
+            elseif (Auth::user()->hasRole('adminsale')) {
+                $r = Roles::where('name','adminsale')->first();
+                $r_u = RoleUser::where('role_id',$r->id)->get();
+                $arr_temp = [];
+                foreach($r_u as $row) {
+                    $temple = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', $row->user_id)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+                    if ($temple) {                        
+                        foreach($temple as $row) {
+                            array_push($arr_temp, $row);
+                        }
+                    }
+                }
+                $result = $arr_temp;
+            }
             else
                 return response()->json([
                     'message' => 'Error get Database from server!',

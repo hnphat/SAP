@@ -15,6 +15,9 @@ use App\HopDong;
 use App\SaleOff;
 use App\NhatKy;
 use App\TypeCar;
+use App\Roles;
+use App\RoleUser;
+use App\User;
 use Excel;
 use App\TypeCarDetail;
 use Illuminate\Http\Request;
@@ -162,7 +165,33 @@ class HDController extends Controller
     }
 
     public function getGuestPersonal(){
-        $result = Guest::where('id_type_guest',1)
+        if (Auth::user()->hasRole('system'))
+            $result = Guest::where('id_type_guest',1)
+                ->where([
+                    ['lenHopDong','=', true],
+                ])
+                ->get();
+        elseif (Auth::user()->hasRole('adminsale')) {
+            $r = Roles::where('name','adminsale')->first();
+            $r_u = RoleUser::where('role_id',$r->id)->get();
+            $arr_temp = [];
+            foreach($r_u as $row) {
+                $temple = Guest::where('id_type_guest',1)
+                ->where([
+                    ['id_user_create','=', $row->user_id],
+                    ['lenHopDong','=', true],
+                ])
+                ->get();
+                if ($temple) {                        
+                    foreach($temple as $row2) {
+                        array_push($arr_temp, $row2);
+                    }
+                }
+            }
+            $result = $arr_temp;
+        }
+        else
+            $result = Guest::where('id_type_guest',1)
             ->where([
                 ['id_user_create','=', Auth::user()->id],
                 ['lenHopDong','=', true],
@@ -179,7 +208,33 @@ class HDController extends Controller
     }
 
     public function getGuestCompany(){
-        $result = Guest::where('id_type_guest',2)
+        if (Auth::user()->hasRole('system'))
+            $result = Guest::where('id_type_guest',2)
+                ->where([
+                    ['lenHopDong','=', true],
+                ])
+                ->get();
+        elseif (Auth::user()->hasRole('adminsale')) {
+            $r = Roles::where('name','adminsale')->first();
+            $r_u = RoleUser::where('role_id',$r->id)->get();
+            $arr_temp = [];
+            foreach($r_u as $row) {
+                $temple = Guest::where('id_type_guest',2)
+                ->where([
+                    ['id_user_create','=', $row->user_id],
+                    ['lenHopDong','=', true],
+                ])
+                ->get();
+                if ($temple) {                        
+                    foreach($temple as $row2) {
+                        array_push($arr_temp, $row2);
+                    }
+                }
+            }
+            $result = $arr_temp;
+        }
+        else
+            $result = Guest::where('id_type_guest',2)
             ->where([
                 ['id_user_create','=', Auth::user()->id],
                 ['lenHopDong','=', true],
@@ -3475,6 +3530,60 @@ class HDController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
         $nhatKy->noiDung = "In yêu cầu phụ kiện kèm theo xe số hd " . $soHopDong;
+        $nhatKy->save();
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
+    }
+
+    public function inDeNghiRutHoSoXe($id) {
+        $name = User::find(Auth::user()->id)->userDetail->surname;
+        $outhd = "";
+        $templateProcessor = new TemplateProcessor('template/DENGHIRUTHOSO.docx');
+            $sale = HopDong::find($id);
+            $kho = KhoV2::find($sale->id_car_kho);
+            $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $car_detail = $sale->carSale;
+            $car = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $tenXe = $car_detail->name;
+            $outhd = 'ĐỀ NGHỊ RÚT HS VÀ XUẤT HĐ ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            $templateProcessor->setValues([
+                'soHopDong' => $soHopDong,
+                'ngayhd' => $arrdate[2],
+                'thanghd' => $arrdate[1],
+                'namhd' => $arrdate[0],
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'salephone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'diaChi' => $sale->guest->address,
+                'mst' => $sale->guest->mst,
+                'phone' => $sale->guest->phone,
+                'carname' => $tenXe,
+                'cost' => number_format($giaXe),
+                'seat' => $car->seat,
+                'color' => $sale->mau,
+                'vin' => $kho->vin,
+                'frame' => $kho->frame,
+                'sodonhang' => $kho->soDonHang,
+                'sobaolanh' => $kho->soBaoLanh,
+                'adminsale' => $name,
+                'giaVon' => number_format($car->giaVon),
+                'giaBan' => number_format($sale->giaXe),
+            ]);
+
+        $pathToSave = 'template/DENGHIRUTHOSODOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In yêu cầu rút hồ sơ xe và xuất hoá đơn hợp đồng số " . $soHopDong;
         $nhatKy->save();
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
