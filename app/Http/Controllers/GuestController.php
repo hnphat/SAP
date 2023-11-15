@@ -19,6 +19,8 @@ use App\TypeCarDetail;
 use App\PhoneHcare;
 use App\GroupSale;
 use App\Group;
+use App\BaoGiaBHPK;
+use App\ChiTietBHPK;
 use App\Roles;
 use App\RoleUser;
 use App\MarketingGuest;
@@ -731,7 +733,25 @@ class GuestController extends Controller
                     $pkban = 0;
                     $mktguest = 0;
                     $guestnew = 0;
-                    $tenNhom = "";
+                    $tenNhom = "";                    
+                    //------------------ Xử lý PK bán
+                    $bg = BaoGiaBHPK::where([
+                        ['saler','=',$row->id],
+                        ['isCancel','=',false],
+                        ['isDone','=',true]
+                    ])->get();                               
+                    if ($bg) {
+                        foreach($bg as $rowForPK) {
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) <= strtotime($den))) {
+                                $ct = ChiTietBHPK::where('id_baogia',$rowForPK->id)->get();
+                                foreach($ct as $rowPK)
+                                    if (!$rowPK->isTang)
+                                        $pkban += ($rowPK->donGia * $rowPK->soLuong);             
+                            }
+                        }                        
+                    }
+                    //------------------
                     if ($row->active && $row->hasRole('sale')) {
                         $g = Guest::select("*")->where('id_user_create', $row->id)->get();
                         $gr = GroupSale::where('user_id',$row->id)->first();
@@ -759,23 +779,13 @@ class GuestController extends Controller
                         foreach($hdkyList as $row2){
                             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($tu)) 
                             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($den))) {
-                                $hdky++;
+                                $hdky++;                                
                             }
     
                             $checkDaXuat = KhoV2::find($row2->id_car_kho);
                             if ($checkDaXuat && $checkDaXuat->xuatXe && ((strtotime($checkDaXuat->ngayGiaoXe) >= strtotime($tu)) 
                             &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
                                 $hdxuat++;
-                                // Xử lý pk bán
-                                $phuKien = SaleOffV2::select('package.*')
-                                ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
-                                ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
-                                ->where([
-                                    ['saleoffv2.id_hd','=', $row2->id],
-                                    ['package.type','=','pay']
-                                ])->get();
-                                foreach($phuKien as $rowPK)
-                                    $pkban += $rowPK->cost;
                             }
                         }
             
@@ -856,7 +866,24 @@ class GuestController extends Controller
                     $guestnew++;
                 }
             }
-
+            //------------------ Xử lý PK bán
+            $bg = BaoGiaBHPK::where([
+                ['saler','=',$u->id],
+                ['isCancel','=',false],
+                ['isDone','=',true]
+            ])->get();                               
+            if ($bg) {
+                foreach($bg as $rowForPK) {
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) >= strtotime($tu)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) <= strtotime($den))) {
+                        $ct = ChiTietBHPK::where('id_baogia',$rowForPK->id)->get();
+                        foreach($ct as $rowPK)
+                            if (!$rowPK->isTang)
+                                $pkban += ($rowPK->donGia * $rowPK->soLuong);             
+                    }
+                }                        
+            }
+            //------------------
             $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
             ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
             ->where([
@@ -865,6 +892,8 @@ class GuestController extends Controller
                 ['hop_dong.lead_check_cancel','=',false],
                 ['hop_dong.id_user_create','=',$u->id]
             ])->get();
+            $rphdky = $hdkyList;
+
             foreach($hdkyList as $row2){
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($tu)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($den))) {
@@ -875,25 +904,17 @@ class GuestController extends Controller
                 if ($checkDaXuat && $checkDaXuat->xuatXe && ((strtotime($checkDaXuat->ngayGiaoXe) >= strtotime($tu)) 
                 &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
                     $hdxuat++;
-                        // Xử lý pk bán
-                        $phuKien = SaleOffV2::select('package.*')
-                        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
-                        ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
-                        ->where([
-                            ['saleoffv2.id_hd','=', $row2->id],
-                            ['package.type','=','pay']
-                        ])->get();
-                        foreach($phuKien as $rowPK)
-                            $pkban += $rowPK->cost;
                 }
             }
-
+            
             $hdchoList = HopDong::select('*')->where([
                 ['lead_check','=',true],
                 ['hdWait','=',true],
                 ['lead_check_cancel','=',false],
                 ['id_user_create','=',$u->id]
             ])->get();
+            $rphdkycho = $hdchoList;
+
             foreach($hdchoList as $row3){
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) >= strtotime($tu)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) <= strtotime($den))) {
@@ -910,7 +931,133 @@ class GuestController extends Controller
                     <td><strong class='text-orange'>".$guestnew."</strong></td>
                     <td><strong class='text-info'>".number_format($pkban)."<strong></td>
                 </tr><tbody></table>";
-            
+            // Show chi tiết hợp đồng ký
+            echo "<h5>HỢP ĐỒNG KÝ</h5>
+            <table class='table table-striped table-bordered'>
+            <tr class='text-center'>
+                <th>STT</th>
+                <th>Ngày ký</th>
+                <th>Trạng thái</th>
+                <th>Khách hàng</th>
+                <th>Dòng xe</th>
+                <th>Màu</th>
+                <th>Hình thức mua</th>
+                <th>Tiền cọc</th>
+                <th>Phụ kiện bán (HĐ)</th>
+                <th>Chi tiết</th>
+            </tr>
+            <tbody>";
+            $x = 0;
+            foreach($rphdky as $rphdkyrow){
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)) >= strtotime($tu)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)) <= strtotime($den))) {
+                    $x++;
+                    $pkban = 0;
+                    $soffhdky = SaleOffV2::where('id_hd',$rphdkyrow->id)->get();
+                    foreach ($soffhdky as $soffhdkyrow) {
+                        $p = PackageV2::where([
+                            ['id','=',$soffhdkyrow->id_bh_pk_package],
+                            ['type','=','pay']
+                        ])->first();
+                        if ($p)
+                            $pkban += $p->cost; 
+                    }
+                    echo "<tr class='text-center'>
+                        <td>".$x."</td>
+                        <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>
+                        <td class='text-success text-bold'>Hợp đồng ký</td>
+                        <td>".$rphdkyrow->guest->name."</td>
+                        <td>".$rphdkyrow->carSale->name."</td>
+                        <td>".$rphdkyrow->mau."</td>
+                        <td>".($rphdkyrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
+                        <td>".number_format($rphdkyrow->tienCoc)."</td>
+                        <td>".number_format($pkban)."</td>
+                        <td>
+                        <button data-idhopdong='".$rphdkyrow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                        </td>
+                    </tr>";  
+                }
+            }   
+            foreach($rphdkycho as $rphdkychorow){
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($rphdkychorow->created_at)) >= strtotime($tu)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rphdkychorow->created_at)) <= strtotime($den))) {
+                    $x++;
+                    $pkban = 0;
+                    $soffhdkycho = SaleOffV2::where('id_hd',$rphdkychorow->id)->get();
+                    foreach ($soffhdkycho as $soffhdkychorow) {
+                        $p = PackageV2::where([
+                            ['id','=',$soffhdkychorow->id_bh_pk_package],
+                            ['type','=','pay']
+                        ])->first();
+                        if ($p)
+                            $pkban += $p->cost; 
+                    }
+                    echo "<tr class='text-center'>
+                        <td>".$x."</td>
+                        <td>".\HelpFunction::getDateRevertCreatedAt($rphdkychorow->created_at)."</td>
+                        <td class='text-pink text-bold'>Hợp đồng chờ</td>
+                        <td>".$rphdkychorow->guest->name."</td>
+                        <td>".$rphdkychorow->carSale->name."</td>
+                        <td>".$rphdkychorow->mau."</td>
+                        <td>".($rphdkychorow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
+                        <td>".number_format($rphdkychorow->tienCoc)."</td>
+                        <td>".number_format($pkban)."</td>
+                        <td>
+                        <button data-idhopdong='".$rphdkychorow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                        </td>
+                    </tr>";  
+                }
+            }   
+            echo "</table>";   
+            // Show chi tiết hợp đồng xuất
+            echo "<h5>HỢP ĐỒNG XUẤT</h5>
+            <table class='table table-striped table-bordered'>
+            <tr class='text-center'>
+                <th>STT</th>
+                <th>Ngày ký</th>
+                <th>Trạng thái</th>
+                <th>Khách hàng</th>
+                <th>Dòng xe</th>
+                <th>Màu</th>
+                <th>Hình thức mua</th>
+                <th>Tiền cọc</th>
+                <th>Phụ kiện bán (HĐ)</th>
+                <th>Chi tiết</th>
+            </tr>
+            <tbody>";
+            $y = 0;
+            foreach($rphdky as $rphdkyrow){
+                $checkDaXuat = KhoV2::find($rphdkyrow->id_car_kho);
+                if ($checkDaXuat && $checkDaXuat->xuatXe && ((strtotime($checkDaXuat->ngayGiaoXe) >= strtotime($tu)) 
+                &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
+                    $y++;
+                    $pkban = 0;
+                    $soffhdxuat = SaleOffV2::where('id_hd',$rphdkyrow->id)->get();
+                    foreach ($soffhdxuat as $soffhdxuatrow) {
+                        $p = PackageV2::where([
+                            ['id','=',$soffhdxuatrow->id_bh_pk_package],
+                            ['type','=','pay']
+                        ])->first();
+                        if ($p)
+                            $pkban += $p->cost; 
+                    }
+                    echo "<tr class='text-center'>
+                        <td>".$x."</td>
+                        <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>
+                        <td class='text-primary text-bold'>Hợp đồng xuất</td>
+                        <td>".$rphdkyrow->guest->name."</td>
+                        <td>".$rphdkyrow->carSale->name."</td>
+                        <td>".$rphdkyrow->mau."</td>
+                        <td>".($rphdkyrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
+                        <td>".number_format($rphdkyrow->tienCoc)."</td>
+                        <td>".number_format($pkban)."</td>
+                        <td>
+                        <button data-idhopdong='".$rphdkyrow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                        </td>
+                    </tr>";  
+                }
+            }   
+            echo "</table>";   
             // Show danh sách khách hàng Chăm sóc
             echo "<h5>THÔNG TIN KHÁCH HÀNG CHI TIẾT</h5>
             <table class='table table-striped table-bordered'>

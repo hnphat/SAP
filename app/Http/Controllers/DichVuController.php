@@ -750,19 +750,22 @@ class DichVuController extends Controller
             if (!$row->inProcess) {
                 $stt = "class='bg-secondary'";
                 foreach($ct as $c){
-                    $doanhthubaogia += $c->thanhTien;       
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;       
                 }
             }
             if ($row->inProcess && !$row->isDone && !$row->isCancel) {
                 $stt = "class='bg-success'";
                 foreach($ct as $c){
-                    $doanhthubaogia += $c->thanhTien;       
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;       
                 }
             }
             if ($row->inProcess && $row->isDone && !$row->isCancel) {
                 // xử lý chưa thêm KTV start
                 foreach($ct as $c){
-                    $doanhthubaogia += $c->thanhTien;
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;
                     $bhpk = BHPK::find($c->id_baohiem_phukien);
                     if ($bhpk->loai != "KTV lắp đặt") continue;
                     $check = KTVBHPK::select("*")
@@ -784,7 +787,8 @@ class DichVuController extends Controller
             if ($row->isCancel) {
                 $stt = "class='bg-danger'";
                 foreach($ct as $c){
-                    $doanhthubaogia += $c->thanhTien;       
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;       
                 }
             }
             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
@@ -1361,7 +1365,8 @@ class DichVuController extends Controller
         $chietKhau = 0;
         $thanhToan = 0;
         foreach($ct as $row){
-            $tongBaoGia += $row->thanhTien;
+            if (!$row->isTang)
+                $tongBaoGia += $row->thanhTien;
         }
         $thanhToan = $tongBaoGia;
         return response()->json([
@@ -2437,12 +2442,14 @@ class DichVuController extends Controller
                     $_chiphitang = 0;
                     $_sale = "";
                     foreach($ct as $item) {
-                        $tongdoanhthu += $item->thanhTien;
-                        ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
-                        ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
-                        ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
-                        ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
-                        ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                        if (!$item->isTang) {
+                            $tongdoanhthu += $item->thanhTien;
+                            ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
+                            ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
+                            ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
+                            ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
+                            ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                        }
                     }
                 }
 
@@ -2452,12 +2459,14 @@ class DichVuController extends Controller
                     $_chiphitang = 0;
                     $_sale = "";
                     foreach($ct as $item) {
-                        $tongdoanhthu += $item->thanhTien;
-                        ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
-                        ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
-                        ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
-                        ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
-                        ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                        if (!$item->isTang) {
+                            $tongdoanhthu += $item->thanhTien;
+                            ($row->saler) ? $kinhdoanh += $item->thanhTien : $khaithac += $item->thanhTien;
+                            ($row->trangThaiThu && $row->saler) ? $kinhdoanhs += $item->thanhTien : "";                  
+                            ($row->trangThaiThu && !$row->saler) ? $khaithacs += $item->thanhTien : ""; 
+                            ($row->trangThaiThu && $row->saler && $item->isTang) ? $kinhdoanhs -= $item->thanhTien : ""; 
+                            ($row->trangThaiThu && !$row->saler && $item->isTang) ? $khaithacs -= $item->thanhTien : ""; 
+                        }
                     }
                 }
             }

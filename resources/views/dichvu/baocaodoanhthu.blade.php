@@ -82,7 +82,7 @@
                                                     @foreach($user as $row)
                                                         @if($row->hasRole('to_phu_kien') 
                                                         || $row->hasRole('nv_phukien') 
-                                                        || $row->hasRole('nv_baohiem') || $row->hasRole('sale'))
+                                                        || $row->hasRole('nv_baohiem') || $row->hasRole('sale') && $row->active)
                                                             <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
                                                         @endif
                                                     @endforeach   

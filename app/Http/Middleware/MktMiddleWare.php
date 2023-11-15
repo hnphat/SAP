@@ -22,6 +22,7 @@ class MktMiddleWare
             Auth::user()->hasRole('cskh') ||
             Auth::user()->hasRole('adminsale') ||
             Auth::user()->hasRole('boss') ||
+            Auth::user()->hasRole('sale') ||
             Auth::user()->hasRole('truongnhomsale'))
             return $next($request);
         else abort(403);
