@@ -847,7 +847,7 @@ class GuestController extends Controller
 
             echo "</table></div>";
         } else {
-            $i = 0;
+            $i = 1;
             $u = User::find($nv);
             $hdky = 0;
             $hdcho = 0;
@@ -1042,7 +1042,7 @@ class GuestController extends Controller
                             $pkban += $p->cost; 
                     }
                     echo "<tr class='text-center'>
-                        <td>".$x."</td>
+                        <td>".$y."</td>
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>
                         <td class='text-primary text-bold'>Hợp đồng xuất</td>
                         <td>".$rphdkyrow->guest->name."</td>
