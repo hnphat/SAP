@@ -241,9 +241,9 @@ class DichVuController extends Controller
         $kh->ma = strtoupper($request->ma);
         $kh->noiDung = $request->noiDung;
         $kh->dvt = $request->dvt;
-        $kh->donGia = $request->donGia;
-        $kh->giaVon = $request->giaVon;
-        $kh->congKTV = $request->congKTV;
+        $kh->donGia = $request->donGia ? $request->donGia : 0;
+        $kh->giaVon = $request->giaVon ? $request->giaVon : 0;
+        $kh->congKTV = $request->congKTV ? $request->congKTV : 0;
         $kh->loai = $request->loai;
         $kh->loaiXe = $request->typeCar;        
         $kh->save();
@@ -332,10 +332,10 @@ class DichVuController extends Controller
         $kh->ma = strtoupper($request->ema);
         $kh->noiDung = $request->enoiDung;
         $kh->dvt = $request->edvt;
-        $kh->donGia = $request->edonGia;
+        $kh->donGia = $request->edonGia ? $request->edonGia : 0;
         $kh->loai = $request->eloai; 
-        $kh->giaVon = $request->egiaVon; 
-        $kh->congKTV = $request->econgKTV;     
+        $kh->giaVon = $request->egiaVon ? $request->egiaVon : 0; 
+        $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;     
         $kh->loaiXe = $request->etypeCar;        
         $kh->save();
         $typecar = TypeCar::find($request->etypeCar);

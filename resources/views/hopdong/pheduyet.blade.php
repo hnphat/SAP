@@ -50,7 +50,19 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <label>Chọn đề nghị</label>
+                                                <label>Chọn nhanh</label>
+                                                <input list="chonNhanhs" name="chonNhanh" id="chonNhanh" class="form-control"  datalist-width="1000">
+                                                <datalist id="chonNhanhs">
+                                                    
+                                                </datalist><br>
+                                                <button id="timNhanhHopDong" class="btn btn-info">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TÌM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label>Chọn thủ công</label>
                                                 <select name="chonDeNghi" id="chonDeNghi" class="form-control">
                                                     
                                                 </select>
@@ -485,6 +497,19 @@
                         })
                     }
                 });
+                $.ajax({
+                    url: "management/hd/hd/danhsachforlist/",
+                    dataType: "text",
+                    success: function(response) {
+                        $('#chonNhanhs').html(response);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không lấy được danh sách hợp đồng"
+                        })
+                    }
+                });
             }
             loadList();
             // --- end load list hợp đồng
@@ -657,6 +682,197 @@
             $("#chonDeNghi").change(function(){
                 $.ajax({
                     url: "management/hd/hd/denghi/chondenghi/" + $("select[name=chonDeNghi]").val(),
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code != 500) {
+                            $("#sHoTen").text(response.data.guestname);
+                            $("#sDienThoai").text(response.data.phone);
+                            $("#smst").text(response.data.mst);
+                            $("#scmnd").text(response.data.cmnd);
+                            $("#sNgayCap").text(response.data.ngayCap);
+                            $("#sNoiCap").text(response.data.noiCap);
+                            $("#sNgaySinh").text(response.data.ngaySinh);
+                            $("#sDiaChi").text(response.data.address);
+                            $("#sDaiDien").text(response.data.daiDien);
+                            $("#sChucVu").text(response.data.chucVu);
+                            $("#mauSac").val(response.data.mau);
+                            $("#xeBan").val(response.data.namecar);
+                            $("#xeCheck").text(response.data.namecar);
+                            $("#xeCheckMau").text(response.data.mau);
+                            $("#tamUng").val(response.data.tienCoc);
+                            $("#giaBanXe").val(response.data.giaXe);
+                            $("#giaNiemYet").val(response.data.giaNiemYet);
+                            $("#hinhThucThanhToan").val(response.data.isTienMat);
+                            $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
+                            $("#hoTen").val(response.data.hoTen);
+                            $("#cmnd").val(response.data.CMND2);
+                            $("#dienThoai").val(response.data.dienThoai);
+                            $("input[name=idHopDong]").val(response.data.id);
+                            $("input[name=idRequestEdit]").val(response.data.id);
+                            $("input[name=idRequestHuy]").val(response.data.id);
+                            $("input[name=soHD]").val(response.data.code);
+                            $("input[name=htvSupport]").val(response.data.htvSupport);
+                            $("input[name=phiVanChuyen]").val(response.data.phiVanChuyen);
+                            $("select[name=hinhThucGiaVon]").val(response.data.isGiaVon);
+                            $("#showXeGan").html("");
+                            $("input[name=xeGan]").val("");
+                            
+                            if (response.data.isGiaVon == 0) {
+                                $("#ganGiaVon").show();
+                                let str = " (" + DOCSO.doc(response.data.giaVon) + ")";
+                                $("#giaVonShow").text(response.data.giaVon + " " + str);
+                            } else {
+                                $("#ganGiaVon").hide();
+                                $("#giaVonShow").text("");
+                            }
+                            if (response.data.lyDoEdit != null)
+                                $("#requestSaleEdit").text(response.data.lyDoEdit);
+                            else
+                                $("#requestSaleEdit").text("Không");
+                            
+                            if (response.data.lyDoCancel != null)
+                                $("#requestSaleCancel").text(response.data.lyDoCancel);
+                            else
+                                $("#requestSaleCancel").text("Không");
+
+                            if (response.data.hdWait == 1) {
+                                $("input[name=hdWait]").prop('checked', true);
+                            } else {
+                                $("input[name=hdWait]").prop('checked', false);
+                            }
+
+                            if (response.data.hdDaiLy == 1) {
+                                $("input[name=hdDaiLy]").prop('checked', true);
+                            } else {
+                                $("input[name=hdDaiLy]").prop('checked', false);
+                            }
+
+                            if (response.data.lead_check == true)
+                                $("input[name=checkIn]").val(1);
+                            else
+                                $("input[name=checkIn]").val(0);
+
+                            // BUTTON
+                            showSoTien();
+                            Toast.fire({
+                                icon: 'info',
+                                title: "Đã load dữ liệu"
+                            })
+                            loadPKFree(response.data.id);
+                            loadPKPay(response.data.id);
+                            loadPKCost(response.data.id);
+                            loadTotal(response.data.id);
+                            reloadSS(response.data.requestCheck, response.data.admin_check, response.data.lead_check);
+                            if (response.data.lead_check_cancel == 1) {
+                                $("#deNghiChinhSua").hide();
+                                $("#deNghiHuy").hide();
+                            } 
+
+                            let svin = "";
+                            let sframe = "";
+                            let scolor = "";
+                            let syear = "";
+                            try {
+                                svin = response.car.vin;
+                                sframe = response.car.frame;
+                                scolor = response.car.color;
+                                syear = response.car.year;
+                            } catch(error) {
+                                svin = "<span class='text-danger'>Chưa gán</span>";
+                                sframe = "<span class='text-danger'>Chưa gán</span>";
+                                scolor = "<span class='text-danger'>Chưa gán</span>";
+                                syear = "<span class='text-danger'>Chưa gán</span>";
+                            }
+                            // show xe gán
+                            txt = "<tr>"+
+                            "<td>"+ response.data.namecar +"</td>"+
+                            "<td>"+ svin +"</td>"+
+                            "<td>"+ sframe +"</td>"+
+                            "<td>Màu: "+ scolor +"; Năm SX: "+ syear +"; Hộp số: "+ response.waitcar.gear +"; Chỗ ngồi: "+ response.waitcar.seat +"; Động cơ: "+ response.waitcar.machine +"; Nhiên liệu: "+ response.waitcar.fuel +"</td>"+
+                            "</tr>";
+                            $("#showXeGan").html(txt);
+                        } else {
+                            Toast.fire({
+                                icon: 'info',
+                                title: "Chọn đề nghị để biết thông tin"
+                            })
+                            $("#sHoTen").text("");
+                            $("#sDienThoai").text("");
+                            $("#smst").text("");
+                            $("#scmnd").text("");
+                            $("#sNgayCap").text("");
+                            $("#sNoiCap").text("");
+                            $("#sNgaySinh").text("");
+                            $("#sDiaChi").text("");
+                            $("#sDaiDien").text("");
+                            $("#sChucVu").text("");
+                            $("#mauSac").val("");
+                            $("#xeBan").val("");
+                            $("#tamUng").val("");
+                            $("#giaBanXe").val("");
+                            $("#giaNiemYet").val("");
+                            $("#hinhThucThanhToan").val("");
+                            $("#hoaHongMoiGioi").val("");
+                            $("#hoTen").val("");
+                            $("#cmnd").val("");
+                            $("#dienThoai").val("");
+                            $("#xeCheck").text("");
+                            $("#xeCheckMau").text("");
+                            $("input[name=idHopDong]").val("");
+                            $("#showXeGan").html("");
+                            $("input[name=xeGan]").val("");
+                            $("input[name=soHD]").val("");
+                            $("input[name=htvSupport]").val(0);
+                            $("input[name=phiVanChuyen]").val(0);
+                            loadPKFree(null);
+                            loadPKPay(null);
+                            loadPKCost(null);
+                            $("#deNghiHopDong").hide();
+                            $("#deNghiHuy").hide();
+                            $("#deNghiChinhSua").hide();
+                            $("#xoaDeNghi").hide();
+                            $("#deNghiHopDong").hide();
+                            $("#pkCostAdd").hide();
+                            $("#pkFreeAdd").hide();
+                            $("#pkPayAdd").hide();
+                            $("#tamUng").prop('disabled', true);
+                            $("#giaBanXe").prop('disabled', true);
+                            $("#giaNiemYet").prop('disabled', true);
+                            $("#hinhThucThanhToan").prop('disabled', true);
+                            $("#hoaHongMoiGioi").prop('disabled', true);
+                            $("#hoTen").prop('disabled', true);
+                            $("#cmnd").prop('disabled', true);
+                            $("#dienThoai").prop('disabled', true);
+                            $("input[name=soHD]").prop('disabled', true);
+                            $("input[name=htvSupport]").prop('disabled', true);
+                            $("input[name=phiVanChuyen]").prop('disabled', true);
+                            $("select[name=hinhThucGiaVon]").prop('disabled', true);                            
+                            $("#duyetDeNghi").hide();
+                            $("#capNhatPhiVanChuyen").show();
+                            $("#choPhepSua").hide();
+                            $("#huyDeNghi").hide();
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không lấy được dữ liệu"
+                        })
+                        $("#showXeGan").html("");
+                        $("#duyetDeNghi").hide();
+                        $("#capNhatPhiVanChuyen").show();
+                        $("#choPhepSua").hide();
+                        $("#huyDeNghi").hide();
+                        $("#ganXeHDCho").hide();
+                        $("#inForm").hide();
+                    }
+                });
+            });
+
+            $("#timNhanhHopDong").click(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "management/hd/hd/denghi/chondenghi/" + $("input[name=chonNhanh]").val(),
                     dataType: "json",
                     success: function(response) {
                         if (response.code != 500) {

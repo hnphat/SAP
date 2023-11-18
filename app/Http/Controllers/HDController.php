@@ -1630,6 +1630,43 @@ class HDController extends Controller
         }
     }
 
+    public function getDanhSachForList() {
+        $hdWait = "";
+        $code = "";
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('tpkd') || Auth::user()->hasRole('ketoan'))
+            $result = HopDong::select('*')->orderby('id','desc')->get();
+        else 
+            $result = HopDong::select('*')->where('id_user_create', Auth::user()->id)
+            ->orderby('id','desc')->get();
+        if($result) {
+                echo "<option value='0'>Chọn</option>";
+            foreach($result as $row){ 
+                if($row->hdWait == true) 
+                    $hdWait = "(Hợp đồng chờ)";
+                else
+                    $hdWait = "";
+
+                if($row->code == 0) 
+                    $code = "";
+                else
+                    $code = "[".$row->code.".".$row->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($row->created_at)."]";
+
+                if($row->lead_check_cancel	== true) 
+                    echo "<option class='bg-danger' value='".$row->id."'>".$code."[".$row->guest->name."][".$row->user->userDetail->surname."] (Đã hủy) ".$hdWait."</option>";
+                elseif ($row->requestCheck == false)
+                    echo "<option class='bg-secondary' value='".$row->id."'>".$code."[".$row->guest->name."][".$row->user->userDetail->surname."] (Chưa gửi) ".$hdWait."</option>";
+                elseif($row->requestCheck == true && $row->admin_check == false) 
+                    echo "<option class='bg-success' value='".$row->id."'>".$code."[".$row->guest->name."][".$row->user->userDetail->surname."] (Admin chưa duyệt) ".$hdWait."</option>";
+                elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == false) 
+                    echo "<option class='bg-warning' value='".$row->id."'>".$code."[".$row->guest->name."][".$row->user->userDetail->surname."] (Trưởng phòng chưa duyệt) ".$hdWait."</option>";
+                elseif($row->requestCheck == true && $row->admin_check == true && $row->lead_check == true) 
+                    echo "<option value='".$row->id."'>".$code."[".$row->guest->name."][".$row->user->userDetail->surname."] (Đã duyệt) ".$hdWait."</option>";
+            }
+        } else {
+            echo "<option value='0'>Không tìm thấy</option>";
+        }
+    }
+
     public function taoMau(Request $request) {
         if ($request->chonXe == false || $request->chonMauXe == false)
             return response()->json([

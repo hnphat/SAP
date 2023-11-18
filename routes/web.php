@@ -229,6 +229,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/loadpkpayfromtypecar','HDController@loadFromTypeCar');
         Route::post('hd/denghi/chonhanghoa','HDController@chonHangHoa');
         Route::get('hd/danhsach','HDController@getDanhSach');
+        Route::get('hd/danhsachforlist','HDController@getDanhSachForList');
         Route::get('hd/ketoan/danhsachhopdong','HDController@getDanhSachHopDong');
         Route::post('hd/denghi/guidenghi','HDController@guiDeNghi');
         Route::post('hd/denghi/xoa','HDController@xoaDeNghi');
