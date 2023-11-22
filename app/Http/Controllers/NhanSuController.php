@@ -2283,7 +2283,13 @@ class NhanSuController extends Controller
 
     // Xác nhận công
     public function getChotCong(){
-        return view('nhansu.xacnhancong');
+        $arr = [];
+        $user = User::all();
+        foreach($user as $row) {
+            if ($row->hasRole('chamcong'))
+                array_push($arr, $row);
+        }
+        return view('nhansu.xacnhancong', ['user' => $arr]);
     }
 
     public function chotCong(Request $request) {
@@ -2337,75 +2343,61 @@ class NhanSuController extends Controller
     }
 
     public function chiTietChotCong(Request $request) {
-        $user = User::select("*")->where('active', true)->get();
-        $tong = 0;
-        $chuaXacNhan = 0;
-        $nhom = Nhom::all();
-        foreach($nhom as $n) {
-            $user = $n->user;
-            echo "<tr><td colspan='9' class='text-primary text-bold'>".$n->name."</td></tr>";
-            foreach($user as $row) {
-                if ($row->hasRole('chamcong')) {
-                    $tong++;
-                    $xacNhan = XacNhanCong::where([
-                        ['id_user','=', $row->id],
-                        ['thang','=', $request->thang],
-                        ['nam','=', $request->nam],
-                    ])->first();
-                    $stt = "";
-                    if ($xacNhan !== null && $xacNhan->count() > 0) 
-                        $stt = "<span class='text-info'><strong>Đã xác nhận</strong></span>";
-                    else {
-                        $chuaXacNhan++;
-                        $stt = "<span class='text-danger'><strong>Chưa xác nhận</strong></span>";
-                    }     
-                    if ($xacNhan !== null && $xacNhan->count() > 0) {
-                        echo "
-                            <tr>
-                                <td>".$row->userDetail->surname."</td>
-                                <td class='text-success'>".$xacNhan->ngayCong." (ngày)</td>
-                                <td class='text-success'>".$xacNhan->phepNam." (ngày)</td>
-                                <td class='text-info'>".$xacNhan->tangCa." (ngày)</td>
-                                <td><strong style='color: pink;'>".$xacNhan->tongTre."</strong> (phút)</td>
-                                <td class='text-danger'>".($xacNhan->khongPhep >= 0 ? $xacNhan->khongPhep : 0)."</td>
-                                <td class='text-danger'><strong>".$xacNhan->khongPhepNgay."</strong></td>
-                                <td>$stt</td>
-                                <td>
-                                    <button id='huy' data-id='".$xacNhan->id_user."' data-thang='".$xacNhan->thang."' data-nam='".$xacNhan->nam."' class='btn btn-danger btn-sm'>Hủy</button>
-                                </td>
-                            </tr>
-                        ";
-                    } else {
-                        echo "
-                            <tr>
-                                <td>".$row->userDetail->surname."</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>$stt</td>
-                                <td></td>
-                            </tr>
-                        ";
-                    }    
-                }
+        $arr = [];
+        
+        // $nv = XacNhanCong::where([
+        //     ['thang','=', $request->thang],
+        //     ['nam','=', $request->nam],
+        // ])->distinct()->get(['id_user']);
+
+        $nv = ChamCongChiTiet::where([
+            ['thang','=', $request->thang],
+            ['nam','=', $request->nam],
+        ])->distinct()->get(['id_user']);    
+
+        foreach($nv as $row){
+            $u = User::find($row->id_user);
+            $group = NhomUser::where('id_user',$row->id_user)->first();
+            $nhom = $group ? Nhom::find($group->id_nhom) : null;
+            $tenNhom = $nhom ? $nhom->name : null;
+            $tempnv = XacNhanCong::where([
+                ['id_user','=', $row->id_user],
+                ['thang','=', $request->thang],
+                ['nam','=', $request->nam],
+            ])->first();
+            $temp = $tempnv ? $tempnv : null;
+            if($temp) {
+                $temp->name = $u->userDetail->surname;
+                $temp->phongBan = $tenNhom ? $tenNhom : "Chưa có phòng ban";
+            } else {
+                $obj = ['temple' => 'temple'];
+                $obj = (object) $obj;
+                $obj->name = $u->userDetail->surname;
+                $obj->id_user = $row->id_user;
+                $obj->thang = $request->thang;
+                $obj->nam = $request->nam;
+                $obj->phepNam = null;
+                $obj->ngayCong = null;
+                $obj->tangCa = null;
+                $obj->tongTre = null;
+                $obj->khongPhep = null;
+                $obj->phongBan = $tenNhom;
+                $obj->khongPhepNgay = null;
+
+                $temp = $obj;
             }
+            array_push($arr, $temp);
         }
-        echo "
-            <tr>
-                <td><strong>Tổng nhân viên</strong></td>
-                <td class='text-success'><strong>".$tong."</strong></td>
-                <td><strong>Chưa xác nhận</strong></td>
-                <td class='text-danger'><strong>".$chuaXacNhan."</strong></td>
-                <td><strong>Đã xác nhận</strong></td>
-                <td class='text-info'><strong>".($tong - $chuaXacNhan)."</strong></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        ";
+
+        return response()->json([
+            "type" => "info",
+            "code" => 200,
+            "message" => "Đã tổng hợp chốt công",
+            "data" => $arr
+        ]);
+
+
+        
     }
 
     public function huyChotCong(Request $request) {

@@ -540,7 +540,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
          // Chốt công
         Route::get('chotcong','NhanSuController@getChotCong')->name('chotcong.panel')->middleware(['f_nhansu']);
         Route::post('chotcong/ajax/chot','NhanSuController@chotCong');
-        Route::get('chotcong/ajax/get','NhanSuController@chiTietChotCong');
+        Route::get('chotcong/ajax/get','NhanSuController@chiTietChotCong')->name('getchotcong');
         Route::post('chotcong/ajax/huy','NhanSuController@huyChotCong');
         Route::post('chotcong/ajax/xacnhanall','NhanSuController@xacNhanAll');
         Route::post('chotcong/ajax/huyall','NhanSuController@huyAll');
