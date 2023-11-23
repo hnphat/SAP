@@ -1195,151 +1195,113 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhep(Request $request) {
+
         $check = XinPhep::where('id',$request->id)->first();
         $ngays = $check->ngay . "/" . $check->thang . "/" . $check->nam;
         $nhanvien = $check->user->userDetail->surname;
         $flag = false;
-       
-        $date1 = $check->nam."-".$check->thang."-".$check->ngay;
-        $date2 = Date('d-m-Y');
-        // $date2 = '2022-03-17';
 
-        $date1_ts = strtotime($date1);
-        $date2_ts = strtotime($date2);
-        $diff = $date2_ts - $date1_ts;
-        $dateDiff = round($diff / 86400);
-        // dd($dateDiff);
-        if ($dateDiff <= 2) {
-            $flag = true;
-        }
-        // Xử lý phép năm đang có của nhân viên
-        $user = User::find($check->id_user);
-        $current = "1-1-".Date('Y');            
-        $phepNamThucTe = 0;
-        if ($user->allowPhepNam == true && $user->ngay !== null) {
-            $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
-            if (strtotime($thangPhepNam) >= strtotime($current))
-                $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
-            else 
-                $phepNamThucTe = (int)Date('m');                     
-        }    
-        // ----------------
-        $suDung = 0;
-        switch($check->buoi) {
-            case 'SANG': $suDung = 0.5; break;
-            case 'CHIEU': $suDung = 0.5; break;
-            case 'CANGAY': $suDung = 1; break;
-        }
-        //Xử lý quên chấm công
-        $getIdPhep = LoaiPhep::where('loaiPhep','QCC')->first()->id;
-        $checkQCC = XinPhep::where([
-            ['id_user','=',$check->id_user],
-            ['id_phep','=',$getIdPhep],
-            ['user_duyet','=', true],
+        // Nếu đã xác nhận công rồi thì không được duyệt phép
+        $checkXacNhanCong = XacNhanCong::where([
+            ['id_user','=',$check->user->id],
             ['thang','=',$check->thang],
             ['nam','=',$check->nam]
-        ])->get();
-        //--------------
-
-        // Xử lý Phép năm
-        $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
-        $checkPN = XinPhep::where([
-            ['id_user','=',$check->id_user],
-            ['id_phep','=',$getIdPhepNam],
-            ['user_duyet','=', true],
-            ['nam','=',$check->nam]
-        ])->get();
-        $daSuDung = 0;
-        foreach($checkPN as $row) {
-            if ($row->buoi == "SANG") {
-                $daSuDung += 0.5;
-            }
-            if ($row->buoi == "CHIEU") {
-                $daSuDung += 0.5;
-            }
-            if ($row->buoi == "CANGAY") {
-                $daSuDung += 1;
-            }
-        }
-        //--------------
-        $userDuyetEmail = User::find($check->id_user_duyet);
-        $loaiPhepEmail = LoaiPhep::find($check->id_phep)->tenPhep;
-        $nguoiDuyetEmail = $userDuyetEmail->userDetail->surname;
-        $nhanVien = User::find($check->id_user)->userDetail->surname;
-        $ngayEmail = $check->ngay."-".$check->thang."-".$check->nam;
-        $lyDoEmail = $check->lyDo; 
-
-
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns')) {   
-            if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
-                return response()->json([
-                    "type" => "error",
-                    "code" => 500,
-                    "message" => "Không thể duyệt! Đã quá số lần duyệt Quên chấm công"
-                ]);
-            }
-
-            if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
-                return response()->json([
-                    "type" => "error",
-                    "code" => 500,
-                    "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
-                ]);
-            }
-
-            $xinPhep = XinPhep::where('id',$request->id)->update([
-                'user_duyet' => true
+        ])->exists();
+        if ($checkXacNhanCong) {
+            return response()->json([
+                "type" => "error",
+                "code" => 500,
+                "message" => "Không thể duyệt! Nhân viên này đã xác nhận chấm công!"
             ]);
-            if ($xinPhep) {
-                $nhatKy = new NhatKy();
-                $nhatKy->id_user = Auth::user()->id;
-                $nhatKy->thoiGian = Date("H:m:s");
-                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                $nhatKy->noiDung = "Phê duyệt Quyền HCNS - Phép ngày " . $ngays . " nhân viên yêu cầu: " . $nhanvien;
-                $nhatKy->save();
-                // -------
-                $jsonString = file_get_contents('upload/cauhinh/app.json');
-                $data = json_decode($jsonString, true); 
-                Mail::to($data['emailPhep'])->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
-                // -------
-                return response()->json([
-                    "type" => "info",
-                    "code" => 200,
-                    "message" => "Đã phê duyệt phép"
-                ]);
-            }
-            else
-                return response()->json([
-                    "type" => "info",
-                    "code" => 500,
-                    "message" => "Không thể phê duyệt phép"
-                ]);
         } else {
-            if ($check->id_user_duyet != Auth::user()->id) {
-                return response()->json([
-                    "type" => "error",
-                    "code" => 500,
-                    "message" => "Bạn không có quyền phê duyệt cho phép này"
-                ]);
-            } else {
+                // ----------------------------
+                $date1 = $check->nam."-".$check->thang."-".$check->ngay;
+                $date2 = Date('d-m-Y');
+                // $date2 = '2022-03-17';
 
-                if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
-                    return response()->json([
-                        "type" => "error",
-                        "code" => 500,
-                        "message" => "Không thể duyệt! Đã quá số lần duyệt Quên chấm công"
-                    ]);
+                $date1_ts = strtotime($date1);
+                $date2_ts = strtotime($date2);
+                $diff = $date2_ts - $date1_ts;
+                $dateDiff = round($diff / 86400);
+                // dd($dateDiff);
+                if ($dateDiff <= 2) {
+                    $flag = true;
                 }
+                // Xử lý phép năm đang có của nhân viên
+                $user = User::find($check->id_user);
+                $current = "1-1-".Date('Y');            
+                $phepNamThucTe = 0;
+                if ($user->allowPhepNam == true && $user->ngay !== null) {
+                    $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
+                    if (strtotime($thangPhepNam) >= strtotime($current))
+                        $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
+                    else 
+                        $phepNamThucTe = (int)Date('m');                     
+                }    
+                // ----------------
+                $suDung = 0;
+                switch($check->buoi) {
+                    case 'SANG': $suDung = 0.5; break;
+                    case 'CHIEU': $suDung = 0.5; break;
+                    case 'CANGAY': $suDung = 1; break;
+                }
+                //Xử lý quên chấm công
+                $getIdPhep = LoaiPhep::where('loaiPhep','QCC')->first()->id;
+                $checkQCC = XinPhep::where([
+                    ['id_user','=',$check->id_user],
+                    ['id_phep','=',$getIdPhep],
+                    ['user_duyet','=', true],
+                    ['thang','=',$check->thang],
+                    ['nam','=',$check->nam]
+                ])->get();
+                //--------------
 
-                if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
-                    return response()->json([
-                        "type" => "error",
-                        "code" => 500,
-                        "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
-                    ]);
+                // Xử lý Phép năm
+                $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+                $checkPN = XinPhep::where([
+                    ['id_user','=',$check->id_user],
+                    ['id_phep','=',$getIdPhepNam],
+                    ['user_duyet','=', true],
+                    ['nam','=',$check->nam]
+                ])->get();
+                $daSuDung = 0;
+                foreach($checkPN as $row) {
+                    if ($row->buoi == "SANG") {
+                        $daSuDung += 0.5;
+                    }
+                    if ($row->buoi == "CHIEU") {
+                        $daSuDung += 0.5;
+                    }
+                    if ($row->buoi == "CANGAY") {
+                        $daSuDung += 1;
+                    }
                 }
-                // dd($flag);
-                if ($flag) {
+                //--------------
+                $userDuyetEmail = User::find($check->id_user_duyet);
+                $loaiPhepEmail = LoaiPhep::find($check->id_phep)->tenPhep;
+                $nguoiDuyetEmail = $userDuyetEmail->userDetail->surname;
+                $nhanVien = User::find($check->id_user)->userDetail->surname;
+                $ngayEmail = $check->ngay."-".$check->thang."-".$check->nam;
+                $lyDoEmail = $check->lyDo; 
+
+
+                if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns')) {   
+                    if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
+                        return response()->json([
+                            "type" => "error",
+                            "code" => 500,
+                            "message" => "Không thể duyệt! Đã quá số lần duyệt Quên chấm công"
+                        ]);
+                    }
+
+                    if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
+                        return response()->json([
+                            "type" => "error",
+                            "code" => 500,
+                            "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
+                        ]);
+                    }
+
                     $xinPhep = XinPhep::where('id',$request->id)->update([
                         'user_duyet' => true
                     ]);
@@ -1348,7 +1310,7 @@ class NhanSuController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
-                        $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
+                        $nhatKy->noiDung = "Phê duyệt Quyền HCNS - Phép ngày " . $ngays . " nhân viên yêu cầu: " . $nhanvien;
                         $nhatKy->save();
                         // -------
                         $jsonString = file_get_contents('upload/cauhinh/app.json');
@@ -1368,14 +1330,68 @@ class NhanSuController extends Controller
                             "message" => "Không thể phê duyệt phép"
                         ]);
                 } else {
-                    return response()->json([
-                        "type" => "info",
-                        "code" => 500,
-                        "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 02 ngày!"
-                    ]);
-                }             
-            }    
-        }      
+                    if ($check->id_user_duyet != Auth::user()->id) {
+                        return response()->json([
+                            "type" => "error",
+                            "code" => 500,
+                            "message" => "Bạn không có quyền phê duyệt cho phép này"
+                        ]);
+                    } else {
+
+                        if ($check->id_phep == $getIdPhep && $checkQCC->count() == 1) {
+                            return response()->json([
+                                "type" => "error",
+                                "code" => 500,
+                                "message" => "Không thể duyệt! Đã quá số lần duyệt Quên chấm công"
+                            ]);
+                        }
+
+                        if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > $phepNamThucTe)) {
+                            return response()->json([
+                                "type" => "error",
+                                "code" => 500,
+                                "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
+                            ]);
+                        }
+                        // dd($flag);
+                        if ($flag) {
+                            $xinPhep = XinPhep::where('id',$request->id)->update([
+                                'user_duyet' => true
+                            ]);
+                            if ($xinPhep) {
+                                $nhatKy = new NhatKy();
+                                $nhatKy->id_user = Auth::user()->id;
+                                $nhatKy->thoiGian = Date("H:m:s");
+                                $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
+                                $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
+                                $nhatKy->save();
+                                // -------
+                                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                                $data = json_decode($jsonString, true); 
+                                Mail::to($data['emailPhep'])->send(new EmailXinPhep([$nhanVien . " [".$nguoiDuyetEmail." đã duyệt phép]",$ngayEmail,$loaiPhepEmail,$lyDoEmail,"Phòng nhân sự",$check->buoi]));
+                                // -------
+                                return response()->json([
+                                    "type" => "info",
+                                    "code" => 200,
+                                    "message" => "Đã phê duyệt phép"
+                                ]);
+                            }
+                            else
+                                return response()->json([
+                                    "type" => "info",
+                                    "code" => 500,
+                                    "message" => "Không thể phê duyệt phép"
+                                ]);
+                        } else {
+                            return response()->json([
+                                "type" => "info",
+                                "code" => 500,
+                                "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 02 ngày!"
+                            ]);
+                        }             
+                    }    
+                }      
+        }
     }
 
     // Tổng hợp
