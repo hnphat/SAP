@@ -382,7 +382,7 @@
                         <li class="nav-item">
                             <a href="{{route('get.khohd.v2.report')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Báo cáo nhanh</p>
+                                <p>Báo cáo kho v2</p>
                             </a>
                         </li>                        
                     </ul>

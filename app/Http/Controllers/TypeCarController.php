@@ -132,9 +132,15 @@ class TypeCarController extends Controller
         <th>Số chỗ</th>
         <th>Nhiên liệu</th>
         <th>Giá vốn</th>
+        <th>Hiển thị</th>
         <th>Sửa</th><th>Xóa</th></tr>";
         foreach($result as $row) {
-            echo "<tr><td>".$row->name."</td><td>".$row->machine."</td><td>".$row->gear."</td><td>".$row->seat."</td><td>".$row->fuel."</td><td>".number_format($row->giaVon)."</td><td><button class='btn btn-success btn-sm' data-id='".$row->id."' data-toggle='modal' data-target='#editPlusModal' id='showEditPlus'><span class='far fa-edit'></span></button></td><td><button data-id='".$row->id."' data-idmaster='".$id."' class='btn btn-danger btn-sm' id='deletePlus'><span class='fas fa-times-circle'></span></button></td></tr>";
+            echo "<tr><td>".$row->name
+            ."</td><td>".$row->machine."</td><td>"
+            .$row->gear."</td><td>"
+            .$row->seat."</td><td>"
+            .$row->fuel."</td><td>".number_format($row->giaVon)."</td><td>"
+            .($row->isShow ? "Có" : "<strong class='text-danger'>Không</strong>")."</td><td><button class='btn btn-success btn-sm' data-id='".$row->id."' data-toggle='modal' data-target='#editPlusModal' id='showEditPlus'><span class='far fa-edit'></span></button></td><td><button data-id='".$row->id."' data-idmaster='".$id."' class='btn btn-danger btn-sm' id='deletePlus'><span class='fas fa-times-circle'></span></button></td></tr>";
         }
         echo "</table>";
     }
@@ -164,6 +170,7 @@ class TypeCarController extends Controller
         $typecardetail->machine = $request->machine;
         $typecardetail->gear = $request->gear;
         $typecardetail->giaVon = $request->giaVon;
+        $typecardetail->isShow = $request->hienThi;
         $typecardetail->save();
 
         if($typecardetail) {
@@ -232,6 +239,7 @@ class TypeCarController extends Controller
             'seat' => $request->_seat,
             'machine' => $request->_machine,
             'giaVon' => $request->_giaVon,
+            'isShow' => $request->_hienThi
         ]);
 
         if($result) {

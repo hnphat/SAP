@@ -177,6 +177,13 @@
                                                 <input type="number" name="giaVon" class="form-control"/>
                                             </div>
                                             <div class="form-group">
+                                                <label>Hiển thị</label>
+                                                <select name="hienThi" class="form-control">
+                                                    <option value="1">Có</option>
+                                                    <option value="0">Không</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
                                                 <button id="btnAddPlus" class="btn btn-primary">Thêm</button>
                                             </div>
                                         </div>
@@ -255,6 +262,13 @@
                                             <div class="form-group">
                                                 <label>Giá vốn</label>
                                                 <input type="number" name="_giaVon" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Hiển thị</label>
+                                                <select name="_hienThi" class="form-control">
+                                                    <option value="1">Có</option>
+                                                    <option value="0">Không</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <button id="btnUpdateAddPlus" class="btn btn-primary">Cập nhật</button>
@@ -531,6 +545,7 @@
                         $("input[name=_machine]").val(response.data.machine);
                         $("select[name=_gear]").val(response.data.gear);
                         $("input[name=_giaVon]").val(response.data.giaVon);
+                        $("select[name=_hienThi]").val(response.data.isShow);
                     }
                 });
             });

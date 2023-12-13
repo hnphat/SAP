@@ -1570,7 +1570,7 @@ class HDController extends Controller
     }
     //------------------------- HD V2
     public function getHDDeNghi() {
-        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
+        $xeList = TypeCarDetail::select('*')->where('isShow',true)->orderBy('name','asc')->get();
         return view('hopdong.denghi', ['xeList' => $xeList]);
     }
 

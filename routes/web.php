@@ -186,6 +186,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // report kho
         Route::get('report','KhoController@getReport')->name('get.khohd.v2.report');
+        Route::get('reportloadall','KhoController@getReportAll')->name('get.khohd.v2.report.all');
         Route::get('getreportkho/{chose}/ngayfrom/{ngayfrom}/ngayto/{ngayto}','KhoController@getReportKho');
         
     });
