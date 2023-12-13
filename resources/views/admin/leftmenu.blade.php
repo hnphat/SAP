@@ -214,12 +214,18 @@
                                         <p>Quản lý đề nghị</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="{{route('sale.kho')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Tồn kho</p>
                                     </a>
-                                </li>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a href="{{route('sale.kho.v2')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Tồn kho</p>
+                                    </a>
+                                </li>         
                                 <li class="nav-item">
                                     <a href="{{route('sale.xembanggiaxe')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>

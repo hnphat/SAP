@@ -245,6 +245,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         //----- quản lý đề nghị
         Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');
+        Route::get('kho/tonkho/getv2','KhoController@getPageTonKhoV2ForSale')->name('sale.kho.v2');
+        Route::get('kho/tonkho/getreportv2','KhoController@getReportAllForSale');
         Route::get('kho/tonkho/data','KhoController@getTonKho');
 
         //----- phê duyệt đề nghị

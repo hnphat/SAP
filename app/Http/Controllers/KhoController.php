@@ -526,6 +526,133 @@ class KhoController extends Controller
         return view('hopdong.tonkho');
     }
 
+    public function getPageTonKhoV2ForSale() {
+        $typeCar = TypeCar::all();
+        // Xử lý 
+        $modelGroup = []; 
+        $tongStore = 0;
+        $tongHD = 0;
+        $modelRoot = TypeCar::all();
+        foreach($modelRoot as $rowModel) {
+            $models = TypeCarDetail::select("*")->where([
+                ["isShow","=",true],
+                ["id_type_car","=",$rowModel->id]
+            ])->get();
+            $tongStoreCar = 0;
+            $tongHDCar = 0;
+            foreach($models as $row) {
+                $kho = KhoV2::select('*')->where([
+                    ['id_type_car_detail','=',$row->id],
+                    ['type','=','STORE']
+                ])->get();
+                $hd = KhoV2::select('*')->where([
+                    ['id_type_car_detail','=',$row->id],
+                    ['type','=','HD'],
+                    ['xuatXe','=',false]
+                ])->get();
+                if ($kho) {
+                    foreach($kho as $rowKho) {
+                        $tongStore++;
+                        $tongStoreCar++;
+                    }
+                }
+                if ($hd) {
+                    foreach($hd as $rowHD) {
+                        $hdXe = HopDong::where('id_car_kho',$rowHD->id)->first();
+                        if ($hdXe) {
+                            $tongStore++;
+                            $tongStoreCar++;
+                            $tongHD++;
+                            $tongHDCar++;
+                        } 
+                    }
+                }      
+            }
+            $temp = [];
+            $temp = (object) $temp;
+            $temp->name = $rowModel->name;
+            $temp->tongStore = $tongStoreCar;
+            $temp->tongHD = $tongHDCar;
+            array_push($modelGroup, $temp);
+        }
+        // ---------------------
+        return view('khoxe.reportv2forsale', ['typecar' => $typeCar, 'modelGroup' => $modelGroup, 'tongStore' => $tongStore, 'tongHD' => $tongHD]);
+    }
+
+    public function getReportAllForSale() {
+        $result = []; 
+        $models = TypeCarDetail::select("*")->where("isShow",true)->orderBy('id_type_car','desc')->get();
+        foreach($models as $row) {
+            $kho = KhoV2::select('*')->where([
+                ['id_type_car_detail','=',$row->id],
+                ['type','=','STORE']
+            ])->get();
+            $hd = KhoV2::select('*')->where([
+                ['id_type_car_detail','=',$row->id],
+                ['type','=','HD'],
+                ['xuatXe','=',false]
+            ])->get();
+            $temp = [];
+            $temp = (object) $temp;
+            $temp->name = $row->name;
+            $temp->idTypeCarDetail = $row->id;
+            if ($kho) {
+                $store = [];
+                foreach($kho as $rowKho) {
+                    $tempKho = [];
+                    $tempKho = (object) $tempKho;
+                    $tempKho->mauSac = $rowKho->color;
+                    $tempKho->isHD = false;
+                    $tempKho->soHD = "";
+                    $tempKho->ngayKy = "";
+                    $tempKho->tenKhach = "";
+                    $tempKho->sale = "";
+                    $tempKho->tienMat = "";
+                    array_push($store, $tempKho);
+                }
+                $temp->store = $store;
+            }
+            if ($hd) {
+                $hopdong = [];
+                foreach($hd as $rowHD) {
+                    $tempKho = [];
+                    $tempKho = (object) $tempKho;
+                    $tempKho->mauSac = $rowHD->color;
+                    $hdXe = HopDong::where('id_car_kho',$rowHD->id)->first();
+                    if ($hdXe) {
+                        $tempKho->isHD = true;
+                        $tempKho->soHD = "[".$hdXe->code
+                        ."."
+                        .$hdXe->carSale->typeCar->code
+                        ."/"
+                        .\HelpFunction::getDateCreatedAt($hdXe->created_at)."]";
+                        $tempKho->ngayKy = \HelpFunction::getDateRevertCreatedAt($hdXe->created_at);
+                        $tempKho->tenKhach = $hdXe->guest->name;
+                        $tempKho->sale = $hdXe->user->userDetail->surname;
+                        $tempKho->tienMat = $hdXe->isTienMat ? "Tiền mặt" : "Ngân hàng";
+                        array_push($hopdong, $tempKho);
+                    } 
+                }
+                $temp->hopdong = $hopdong;
+            }   
+            // if ($checkKho || $checkHD)
+            array_push($result, $temp);         
+        }
+        if ($models) {
+            return response()->json([
+                'message' => 'Get list successfull!',
+                'code' => 200,
+                'data' => $result
+            ]);    
+        } else {
+            return response()->json([
+                'message' => 'Get fail',
+                'code' => 500,
+                'data' => null
+            ]);    
+        }
+    }
+
     public function getTonKho() {
         // $result = KhoV2::select('kho_v2.*','t.name as ten')
         // ->join('type_car_detail as t','kho_v2.id_type_car_detail','=','t.id')

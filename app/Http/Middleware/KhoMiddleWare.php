@@ -17,7 +17,7 @@ class KhoMiddleWare
     public function handle($request, Closure $next)
     {
         if (Auth::user()->hasRole('system') ||
-        Auth::user()->hasRole('boss') ||
+            Auth::user()->hasRole('boss') ||
             Auth::user()->hasRole('adminsale') ||
             Auth::user()->hasRole('ketoan'))
             return $next($request);
