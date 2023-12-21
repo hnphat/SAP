@@ -634,7 +634,8 @@ class GuestController extends Controller
                 ]);
             } else {
                 $result = Guest::where('id',$request->idguest)->update([
-                    'id_user_create' => $request->idsale
+                    'id_user_create' => $request->idsale,
+                    'created_at' => now()
                 ]);
                 if($result) {
                     $nhatKy = new NhatKy();

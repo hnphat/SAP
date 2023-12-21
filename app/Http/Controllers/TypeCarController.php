@@ -41,6 +41,7 @@ class TypeCarController extends Controller
 
         $typecar->name = $request->tenXe;
         $typecar->code = $request->code;
+        $typecar->isShow = $request->isShow;
         $typecar->save();
 
         if($typecar) {
@@ -81,7 +82,8 @@ class TypeCarController extends Controller
     public function update(Request $request) {
         $result = TypeCar::where('id', $request->idMasterXe)->update([
             'name' => $request->tenXeE,
-            'code' => $request->codeE
+            'code' => $request->codeE,
+            'isShow' => $request->eisShow
         ]);
         if($result) {
             $nhatKy = new NhatKy();

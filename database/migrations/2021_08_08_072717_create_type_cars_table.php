@@ -17,6 +17,7 @@ class CreateTypeCarsTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('name', 100)->unique();
             $table->string('code', 10)->nullable();
+            $table->boolean('isShow')->default(true);
             $table->timestamps();
         });
     }

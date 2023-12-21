@@ -188,6 +188,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('report','KhoController@getReport')->name('get.khohd.v2.report');
         Route::get('reportloadall','KhoController@getReportAll')->name('get.khohd.v2.report.all');
         Route::get('getreportkho/{chose}/ngayfrom/{ngayfrom}/ngayto/{ngayto}','KhoController@getReportKho');
+        Route::get('getdetailhd/{id}','KhoController@getDetailHD')->name('get.khohd.v2.report.detail');
         
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
@@ -247,6 +248,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');
         Route::get('kho/tonkho/getv2','KhoController@getPageTonKhoV2ForSale')->name('sale.kho.v2');
         Route::get('kho/tonkho/getreportv2','KhoController@getReportAllForSale');
+        Route::get('kho/tonkho/getdetailhdforsale/{id}','KhoController@getDetailHDForSale');
         Route::get('kho/tonkho/data','KhoController@getTonKho');
 
         //----- phê duyệt đề nghị

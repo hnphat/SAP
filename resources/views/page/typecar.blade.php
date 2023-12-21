@@ -44,6 +44,13 @@
                                 <input type="text" class="form-control" placeholder="Mã rút gọn VD: ACC" name="code">
                             </div>
                             <div class="form-group">
+                                <label for="isShow">Hiển thị</label>
+                                <select name="isShow" id="isShow" class="form-control">
+                                    <option value="1">Có</option>
+                                    <option value="0">Không</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <button id="btnAdd" class="btn btn-primary">Thêm mới</button>
                             </div>
                         </div>
@@ -55,6 +62,7 @@
                         <tr class="bg-cyan">
                             <th>Dòng xe</th>
                             <th>Code</th>
+                            <th>Hiển thị</th>
                             <th>Sửa</th>
                             <th>Xóa</th>
                             <th>Mở rộng</th>
@@ -92,6 +100,13 @@
                                             <div class="form-group">
                                                 <label for="codeE">Mã rút gọn</label>
                                                 <input type="text" class="form-control" id="codeE" placeholder="Mã rút gọn" name="codeE">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="eisShow">Hiển thị</label>
+                                                <select name="eisShow" id="eisShow" class="form-control">
+                                                    <option value="1">Có</option>
+                                                    <option value="0">Không</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <button id="btnUpdate" class="btn btn-primary">Cập nhật</button>
@@ -317,6 +332,16 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
+                            if (row.isShow) {
+                                return "<strong class='text-success'>Có</strong>";
+                            } else {
+                                return "<strong>Không</strong>";
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
                             return "<button data-id='"+row.id+"' class='btn btn-success btn-sm' data-toggle='modal' data-target='#edit' id='btnEdit'><span class='far fa-edit'></span></button>&nbsp;";
 
                         }
@@ -377,6 +402,7 @@
                        console.log(response.data);
                        $("input[name=tenXeE]").val(response.data.name);
                        $("input[name=codeE]").val(response.data.code);
+                       $("select[name=eisShow]").val(response.data.isShow);
                        $("input[name=idMasterXe]").val(response.data.id);
                    }
                });

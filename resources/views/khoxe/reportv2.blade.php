@@ -36,7 +36,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Xe đã có hợp đồng: <strong class="text-success">{{$tongHD}}</strong></h5>
             <p>
                 @foreach($modelGroup as $row)
-                    {{$row->name}}: <strong class="text-pink">{{$row->tongStore}}</strong> @if($row->tongHD !== 0) <strong class="text-success">({{$row->tongHD}} HĐ)</strong> @endif<br/>
+                    {{$row->name}}: <strong class="text-pink">{{$row->tongStore}}</strong> @if($row->tongHD !== 0) <strong class="text-success" id="clickToShow" data-id="{{$row->id}}" data-toggle='modal' data-target='#showDetail'>({{$row->tongHD}} HĐ)</strong> @endif<br/>
                 @endforeach
             </p>
             <table id="dataTable" class="display" style="width:100%">
@@ -63,6 +63,48 @@
         </div>
         <!-- /.content -->
     </div>
+    <!--  MEDAL -->
+    <div>
+        <!-- Medal Show -->
+        <div class="modal fade" id="showDetail">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chi tiết</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                           <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Ngày ký</th>
+                                        <th>Khách hàng</th>
+                                        <th>Phiên bản</th>
+                                        <th>Màu</th>
+                                        <th>Sale</th>
+                                        <th>Hình thức mua</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="showDetailHD">
+                                    
+                                </tbody>                                
+                           </table>                          
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -509,6 +551,45 @@
                     table.cell(cell).invalidate('dom');
                 } );
             } ).draw();
+
+            $(document).on('click','#clickToShow', function(){
+                let idModel = $(this).data('id');
+                $.ajax({
+                    url: "{{url('management/kho/getdetailhd/')}}" + "/" + idModel,
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                        })
+                        if (response.code == 200) {
+                            let txt = ``;
+                            let datahd = response.data;
+                            $("#showDetailHD").html(``);
+                            for (let index = 0; index < datahd.length; index++) {
+                                const ele = datahd[index];
+                                console.log(ele);
+                                txt += `<tr>
+                                        <td>${ele.ngayKy}</td>
+                                        <td>${ele.khachHang}</td>
+                                        <td>${ele.phienBan}</td>
+                                        <td>${ele.mau}</td>
+                                        <td>${ele.sale}</td>
+                                        <td>${ele.hinhThucMua}</td>
+                                    </tr>`;
+                            }
+                            $("#showDetailHD").html(txt);
+                        }
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+            });
         });
     </script>
 @endsection

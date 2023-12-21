@@ -527,12 +527,11 @@ class KhoController extends Controller
     }
 
     public function getPageTonKhoV2ForSale() {
-        $typeCar = TypeCar::all();
         // Xử lý 
         $modelGroup = []; 
         $tongStore = 0;
         $tongHD = 0;
-        $modelRoot = TypeCar::all();
+        $modelRoot = TypeCar::select("*")->where('isShow',true)->get();
         foreach($modelRoot as $rowModel) {
             $models = TypeCarDetail::select("*")->where([
                 ["isShow","=",true],
@@ -573,10 +572,11 @@ class KhoController extends Controller
             $temp->name = $rowModel->name;
             $temp->tongStore = $tongStoreCar;
             $temp->tongHD = $tongHDCar;
+            $temp->id = $rowModel->id;
             array_push($modelGroup, $temp);
         }
         // ---------------------
-        return view('khoxe.reportv2forsale', ['typecar' => $typeCar, 'modelGroup' => $modelGroup, 'tongStore' => $tongStore, 'tongHD' => $tongHD]);
+        return view('khoxe.reportv2forsale', ['modelGroup' => $modelGroup, 'tongStore' => $tongStore, 'tongHD' => $tongHD]);
     }
 
     public function getReportAllForSale() {
@@ -691,12 +691,11 @@ class KhoController extends Controller
 
     // get report kho
     public function getReport() {
-        $typeCar = TypeCar::all();
         // Xử lý 
         $modelGroup = []; 
         $tongStore = 0;
         $tongHD = 0;
-        $modelRoot = TypeCar::all();
+        $modelRoot = TypeCar::select("*")->where('isShow',true)->get();
         foreach($modelRoot as $rowModel) {
             $models = TypeCarDetail::select("*")->where([
                 ["isShow","=",true],
@@ -737,10 +736,11 @@ class KhoController extends Controller
             $temp->name = $rowModel->name;
             $temp->tongStore = $tongStoreCar;
             $temp->tongHD = $tongHDCar;
+            $temp->id = $rowModel->id;
             array_push($modelGroup, $temp);
         }
         // ---------------------
-        return view('khoxe.reportv2', ['typecar' => $typeCar, 'modelGroup' => $modelGroup, 'tongStore' => $tongStore, 'tongHD' => $tongHD]);
+        return view('khoxe.reportv2', ['modelGroup' => $modelGroup, 'tongStore' => $tongStore, 'tongHD' => $tongHD]);
     }
 
     public function getReportAll() {
@@ -1131,7 +1131,103 @@ class KhoController extends Controller
     }
 
      // get report hợp đồng
-     public function getReportHopDong() {
+    public function getReportHopDong() {
         return view('khoxe.baocaohopdong');
+    }
+
+    public function getDetailHD($id) {
+        $modelGroup = []; 
+        $modelRoot = TypeCar::select("*")->where('id',$id)->get();
+        foreach($modelRoot as $rowModel) {
+            $models = TypeCarDetail::select("*")->where([
+                ["isShow","=",true],
+                ["id_type_car","=",$rowModel->id]
+            ])->get();
+            foreach($models as $row) {
+                $hd = KhoV2::select('*')->where([
+                    ['id_type_car_detail','=',$row->id],
+                    ['type','=','HD'],
+                    ['xuatXe','=',false]
+                ])->get();
+                if ($hd) {
+                    foreach($hd as $rowHD) {
+                        $hdXe = HopDong::where('id_car_kho',$rowHD->id)->first();
+                        if ($hdXe) {                            
+                            $temp = [];
+                            $temp = (object) $temp;
+                            $temp->ngayKy = \HelpFunction::getDateRevertCreatedAt($hdXe->created_at);
+                            $temp->khachHang = $hdXe->guest->name;
+                            $temp->phienBan = $row->name;
+                            $temp->mau = $hdXe->mau;
+                            $temp->sale = $hdXe->user->userDetail->surname;
+                            $temp->hinhThucMua = $hdXe->isTienMat ? "Tiền mặt" : "Ngân hàng";
+                            array_push($modelGroup, $temp);
+                        }
+                    }
+                }      
+            }
+        }
+        if($modelGroup) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Load detail success!',
+                'code' => 200,
+                'data' => $modelGroup
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Load detail faile!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getDetailHDForSale($id) {
+        $modelGroup = []; 
+        $modelRoot = TypeCar::select("*")->where('id',$id)->get();
+        foreach($modelRoot as $rowModel) {
+            $models = TypeCarDetail::select("*")->where([
+                ["isShow","=",true],
+                ["id_type_car","=",$rowModel->id]
+            ])->get();
+            foreach($models as $row) {
+                $hd = KhoV2::select('*')->where([
+                    ['id_type_car_detail','=',$row->id],
+                    ['type','=','HD'],
+                    ['xuatXe','=',false]
+                ])->get();
+                if ($hd) {
+                    foreach($hd as $rowHD) {
+                        $hdXe = HopDong::where('id_car_kho',$rowHD->id)->first();
+                        if ($hdXe) {                            
+                            $temp = [];
+                            $temp = (object) $temp;
+                            $temp->ngayKy = \HelpFunction::getDateRevertCreatedAt($hdXe->created_at);
+                            $temp->khachHang = $hdXe->guest->name;
+                            $temp->phienBan = $row->name;
+                            $temp->mau = $hdXe->mau;
+                            $temp->sale = $hdXe->user->userDetail->surname;
+                            $temp->hinhThucMua = $hdXe->isTienMat ? "Tiền mặt" : "Ngân hàng";
+                            array_push($modelGroup, $temp);
+                        }
+                    }
+                }      
+            }
+        }
+        if($modelGroup) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Load detail success!',
+                'code' => 200,
+                'data' => $modelGroup
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Load detail faile!',
+                'code' => 500
+            ]);
+        }
     }
 }
