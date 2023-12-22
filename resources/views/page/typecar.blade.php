@@ -332,7 +332,7 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            if (row.isShow) {
+                            if (row.isShow == "1") {
                                 return "<strong class='text-success'>Có</strong>";
                             } else {
                                 return "<strong>Không</strong>";

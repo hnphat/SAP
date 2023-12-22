@@ -4402,7 +4402,7 @@ class HDController extends Controller
     }
 
     public function traCuuPanel() {
-        $typecar = TypeCar::select("*")->where('isShow',true)->get();
+        $typecar = TypeCar::select("*")->get();
         return view('tracuu.phukien', ['typecar' => $typecar]);
     }
 }
