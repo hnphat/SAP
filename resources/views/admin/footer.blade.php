@@ -44,4 +44,4 @@
     <div class="inner">❅</div>
   </div>
 </div>
-<div class="santa"><img src="images/noelpng.gif" alt="" /></div>
+<!-- <div class="santa"><img src="images/noelpng.gif" alt="" /></div> -->

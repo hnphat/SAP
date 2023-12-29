@@ -192,22 +192,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         
     });
     Route::group(['prefix' => 'hd', 'middleware' => ['f_hd']], function(){
-        // Route::get('list','HDController@index')->name('hd.list');
-        // Route::get('get/list','HDController@getList');
-        // Route::get('get/list/code','HDController@getListCode');
-        // Route::get('get/list/wait','HDController@getListWait');
-        // Route::post('add/code','HDController@addCode');
-        // Route::post('delete','HDController@delete');
-        // Route::post('deleteWait','HDController@deleteWait');
         // // ajax get quickly
         Route::get('get/guest/personal/','HDController@getGuestPersonal');
         Route::get('get/guest/company/','HDController@getGuestCompany');
         Route::get('get/guest/{id}','HDController@getGuest');
-        // Route::get('get/car/{id}','HDController@getCar');
-        // Route::get('get/load/hd/','HDController@loadHD');
-        // Route::get('get/detail/hd/{id}','HDController@detailHD');
-        // // --- end ajax quickly
-        // Route::get('exportToWord','HDController@test');
 
         //-------------- HD v2
         Route::get('hd/denghi','HDController@getHDDeNghi')->name('hd.denghi');
@@ -394,7 +382,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('allow','DeNghiCapXangController@allowCapXang')->middleware(['f_capxang']);
         Route::post('cancel','DeNghiCapXangController@cancelCapXang')->middleware(['f_capxang']);
         Route::post('leadallow','DeNghiCapXangController@leadAllowCapXang');
-
     });
 
     Route::group(['prefix' => 'hanhchinh'], function(){
@@ -846,7 +833,3 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('ajax/post','DanhGiaController@postSign');   
     });
 });
-
-// Route::get('mail', function () { 
-//     return new App\Mail\GiaoViec(['Nguyễn Cà Chớn','Trần Dần','Không','Không','']);
-// });
