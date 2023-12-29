@@ -21,9 +21,19 @@ Route::get('/', function () {
     $data = json_decode($jsonString, true);   
     if (Auth::check()) {
         return view('admin.home', ['data' => $data]);
+        // return view('welcome');
     }
     return view('login');
 })->name('trangchu');
+
+// Route::get('/mainboard', function () {
+//     $jsonString = file_get_contents('upload/cauhinh/app.json');
+//     $data = json_decode($jsonString, true);   
+//     if (Auth::check()) {
+//         return view('admin.home', ['data' => $data]);
+//     }
+//     return view('login');
+// })->name('mainboard');
 
 Route::get('/out',function(){
     Auth::logout();

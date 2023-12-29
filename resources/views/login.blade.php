@@ -1,128 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8" />
     <title>Đăng nhập</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <base href="{{asset('')}}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <link rel="stylesheet" href="{{asset('css/app.css')}}" /> -->
     <style>
-        /* Coded with love by Mutiullah Samim */
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            /*background: #60a3bc !important;*/
-            background: white !important;
+        @import url(https://fonts.googleapis.com/css?family=Numans);
+        /* Made with love by Mutiullah Samim*/
+
+        html,body{
+        background-image: url('http://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 100%;
+        font-family: 'Numans', sans-serif;
         }
-        .user_card {
-            height: 400px;
-            width: 350px;
-            margin-top: auto;
-            margin-bottom: auto;
-            /*background: #f39c12;*/
-            background: #002c5f;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            padding: 10px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            border-radius: 5px;
+
+        .container{
+        height: 100%;
+        align-content: center;
+        }
+
+        .card{
+        height: 370px;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 400px;
+        background-color: rgba(0,0,0,0.5) !important;
+        }
+
+        .social_icon span{
+        font-size: 60px;
+        margin-left: 10px;
+        color: #FFC312;
+        }
+
+        .social_icon span:hover{
+        color: white;
+        cursor: pointer;
+        }
+
+        .card-header h3{
+        color: white;
+        }
+
+        .social_icon{
+        position: absolute;
+        right: 20px;
+        top: -45px;
+        }
+
+        .input-group-prepend span{
+        width: 50px;
+        background-color: #FFC312;
+        color: black;
+        border:0 !important;
+        }
+
+        input:focus{
+        outline: 0 0 0 0  !important;
+        box-shadow: 0 0 0 0 !important;
 
         }
-        .brand_logo_container {
-            position: absolute;
-            height: 170px;
-            width: 170px;
-            top: -75px;
-            border-radius: 50%;
-            background: white;
-            padding: 10px;
-            text-align: center;
+
+        .remember{
+        color: white;
         }
-        .brand_logo {
-            height: 150px;
-            width: 150px;
-            border-radius: 50%;
-            border: 2px solid white;
+
+        .remember input
+        {
+        width: 20px;
+        height: 20px;
+        margin-left: 15px;
+        margin-right: 5px;
         }
-        .form_container {
-            margin-top: 100px;
+
+        .login_btn{
+        color: black;
+        background-color: #FFC312;
+        width: 100px;
         }
-        .login_btn {
-            width: 100%;
-            /*background: #c0392b !important;*/
-            background: #a36b4f !important;
-            color: white !important;
+
+        .login_btn:hover{
+        color: black;
+        background-color: white;
         }
-        .login_btn:focus {
-            box-shadow: none !important;
-            outline: 0px !important;
+
+        .links{
+        color: white;
         }
-        .login_container {
-            padding: 0 2rem;
-        }
-        .input-group-text {
-            /*background: #c0392b !important;*/
-            background: #a36b4f !important;
-            color: white !important;
-            border: 0 !important;
-            border-radius: 0.25rem 0 0 0.25rem !important;
-        }
-        .input_user,
-        .input_pass:focus {
-            box-shadow: none !important;
-            outline: 0px !important;
-        }
-        .custom-checkbox .custom-control-input:checked~.custom-control-label::before {
-            /*background-color: #c0392b !important;*/
-            background-color: #a36b4f !important;
+
+        .links a{
+        margin-left: 4px;
         }
     </style>
 </head>
-<!--Coded with love by Mutiullah Samim-->
 <body>
-<div class="container h-100">
-    <div class="d-flex justify-content-center h-100">
-        <div class="user_card">
-            <div class="d-flex justify-content-center">
-                <div class="brand_logo_container">
-                    <img src="{{asset('images/logo/logo.jpg')}}" class="brand_logo" alt="Logo">
-                </div>
-            </div>
-            <div class="d-flex justify-content-center form_container">
-                <form action="{{route('login')}}" method="post" autocomplete="off">
+<div class="container">
+	<div class="d-flex justify-content-center h-100">
+		<div class="card">
+			<div class="card-header">
+				<h3>Đăng nhập hệ thống<br/>Hyundai An Giang</h3>
+				<div class="d-flex justify-content-end social_icon">
+					<span><i class="fab fa-facebook-square"></i></span>
+					<span><i class="fab fa-google-plus-square"></i></span>
+					<span><i class="fab fa-twitter-square"></i></span>
+				</div>
+			</div>
+			<div class="card-body">                
+				<form method="post" action="{{route('login')}}">
                     @csrf
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        </div>
-                        <input autofocus="autofocus" type="text" name="account" class="form-control input_user" value="" placeholder="username" required="required">
-                    </div>
-                    <div class="input-group mb-2">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-key"></i></span>
-                        </div>
-                        <input type="password" name="password" class="form-control input_pass" value="" placeholder="password" required="required">
-                    </div>
-                    <div class="d-flex justify-content-center mt-3 login_container">
-                        <input type="submit" name="submit" class="btn login_btn" value="TRUY CẬP">
-                    </div><br/>
-                    <h5 class="text-white">
-                        <i>
-                            @if(isset($error))
-                                {{$error}}
-                            @endif
-                        </i>
-                    </h5>
-                </form>
-            </div>
-        </div>
-    </div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div>
+						<input type="text" name="account" class="form-control" placeholder="Tên tài khoản" autofocus="autofocus" required>
+						
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+						<input type="password" name="password" class="form-control" placeholder="Tên đăng nhập" required>
+					</div>
+					<!-- <div class="row align-items-center remember">
+						<input type="checkbox">Remember Me
+					</div> -->
+					<div class="form-group">
+						<input type="submit" value="Login" class="btn float-right login_btn">
+					</div>
+				</form>
+			</div>
+			<div class="card-footer">
+				<div class="d-flex justify-content-center links">
+					<span id="showPopUp">
+                        @if(isset($error))
+                          {{$error}}
+                        @endif
+                    </span>
+				</div>
+				<!-- <div class="d-flex justify-content-center">
+					<a href="#">Forgot your password?</a>
+				</div> -->
+			</div>
+		</div>
+	</div>
 </div>
+<script src="script/tet.js"></script>
 </body>
 </html>
