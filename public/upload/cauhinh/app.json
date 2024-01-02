@@ -10,7 +10,7 @@
     "capNhatThongTin": "0",
     "mauThongBao": "bg-info",
     "loaiThongBao": "1",
-    "maxRecord": "1000",
+    "maxRecord": "10000",
     "maxRecordApply": "200",
     "vaoSang": "08:00",
     "raSang": "12:00",

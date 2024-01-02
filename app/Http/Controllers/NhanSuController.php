@@ -1214,7 +1214,7 @@ class NhanSuController extends Controller
                 "message" => "Không thể duyệt! Nhân viên này đã xác nhận chấm công!"
             ]);
         } else {
-                // ----------------------------
+                // ----------------------------                
                 $date1 = $check->nam."-".$check->thang."-".$check->ngay;
                 $date2 = Date('d-m-Y');
                 // $date2 = '2022-03-17';
@@ -1229,7 +1229,7 @@ class NhanSuController extends Controller
                 }
                 // Xử lý phép năm đang có của nhân viên
                 $user = User::find($check->id_user);
-                $current = "1-1-".Date('Y');            
+                $current = "1-1-".Date('Y');
                 $phepNamThucTe = 0;
                 if ($user->allowPhepNam == true && $user->ngay !== null) {
                     $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
@@ -1277,6 +1277,16 @@ class NhanSuController extends Controller
                     }
                 }
                 //--------------
+                // Xử lý tồn phép năm của năm trước unclock nếu cần
+                // $dateUsePNTo = "31-03-".Date('Y');
+                // $dateUsePNTo_ts = strtotime($dateUsePNTo);
+                // $dataCurrentYear = "31-12-".(Date('Y') - 1);
+                // $dataCurrentYear_tes = strtotime($dataCurrentYear);
+                // $phepNamConLai = 0;                
+                // if ($date2_ts <= $dateUsePNTo_ts && $date2_ts >= $dataCurrentYear_tes)  {
+                //     $phepNamConLai = 12;
+                // }    
+                // ----------------------------------------------
                 $userDuyetEmail = User::find($check->id_user_duyet);
                 $loaiPhepEmail = LoaiPhep::find($check->id_phep)->tenPhep;
                 $nguoiDuyetEmail = $userDuyetEmail->userDetail->surname;
@@ -1301,6 +1311,15 @@ class NhanSuController extends Controller
                             "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
                         ]);
                     }
+                    // Sử dụng duyệt phép năm dùng trong năm cũ unclock nếu cần
+                    // if ($check->id_phep == $getIdPhepNam && ($daSuDung + $suDung > ($phepNamThucTe + $phepNamConLai))) {
+                    //     return response()->json([
+                    //         "type" => "error",
+                    //         "code" => 500,
+                    //         "message" => "Không thể duyệt! Phép năm không đủ hoặc nhân viên đã dùng hết"
+                    //     ]);
+                    // }
+                    // ----------------------------
 
                     $xinPhep = XinPhep::where('id',$request->id)->update([
                         'user_duyet' => true

@@ -19,7 +19,7 @@
         /* Made with love by Mutiullah Samim*/
 
         html,body{
-        background-image: url('http://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg');
+        background-image: url('./images/bg/bg2024.jpg');
         background-size: cover;
         background-repeat: no-repeat;
         height: 100%;
