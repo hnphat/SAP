@@ -162,4 +162,8 @@ class User extends Authenticatable
     public function phieuXuatDuyet() {
         return $this->hasMany('App\PhieuXuat','id_user_duyet','id');
     }
+
+    public function drpcheck() {
+        return $this->hasMany('App\DRPCheck','id_user','id');
+    }
 }

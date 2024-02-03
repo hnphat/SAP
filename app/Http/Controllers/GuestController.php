@@ -15,6 +15,7 @@ use App\RequestHD;
 use App\KhoV2;
 use App\HopDong;
 use App\SaleOff;
+use App\TypeCar;
 use App\TypeCarDetail;
 use App\PhoneHcare;
 use App\GroupSale;
@@ -26,6 +27,7 @@ use App\RoleUser;
 use App\MarketingGuest;
 use App\DRPCauHoi;
 use App\DRPCheck;
+use App\DRPCheckQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -693,9 +695,11 @@ class GuestController extends Controller
         $data = DRPCheck::all();
         $arr = [];
         foreach ($data as $row) {
-            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($from)) 
-            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) <= strtotime($to))) {
-                array_push($arr, $row);
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($from)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($to))) {
+                $temp = $row;
+                $temp->id_user = $row->user->userDetail->surname;
+                array_push($arr, $temp);
             }           
         }
         if ($data) {
@@ -715,6 +719,7 @@ class GuestController extends Controller
     }
 
     public function getKhachHangDRP() {
+        $typecar = TypeCar::all();
         $arr = [];
         $groupid = 0;
         if (Auth::user()->hasRole('truongnhomsale')) {
@@ -738,7 +743,68 @@ class GuestController extends Controller
         }
         // dd($arr);
         // return view('page.khachhangsalehd',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
-        return view('page.khachhangdrp',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
+        return view('page.khachhangdrp',['typecar' => $typecar, 'user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
+    }
+
+    public function postKhachHangDRP(Request $request) {
+        $check = DRPCheck::where([
+            ['khachHang','=',$request->khachHang],
+            ['dienThoai','=',$request->dienThoai]
+        ])->exists();
+        if (!$check) {
+            $data = new DRPCheck();
+            $data->id_user = Auth::user()->id;
+            $data->khachHang = $request->khachHang;
+            $data->dienThoai = $request->dienThoai;
+            $data->diaChi = $request->diaChi;
+            $data->xeQuanTam = $request->xeQuanTam;
+            $data->save();
+            if ($data) {
+                $id = $data->id;
+                $question = DRPCauHoi::all();
+                foreach($question as $row) {
+                    $drp = new DRPCheckQuestion();
+                    $drp->drp_check = $id;
+                    $drp->drp_question = $row->noiDung;
+                    $drp->diemToiDa = $row->diemToiDa;
+                    $drp->save();
+                }           
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã thêm mẫu',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }    
+        return response()->json([
+            'type' => 'warning',
+            'message' => 'Duplicate Value',
+            'code' => 500
+        ]);    
+    }
+
+    public function deleteKhachHangDRP(Request $request) {
+        $data = DRPCheck::find($request->id);
+        $data->delete();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã Xóa',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
     }
 
     public function getCauHoiDRP() {

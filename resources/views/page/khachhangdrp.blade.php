@@ -46,7 +46,7 @@
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
-                                <button class="btn btn-info">Tiếp nhận</button>
+                                <button class="btn btn-info" data-toggle="modal" data-target="#addModal">Tiếp nhận</button>
                                 &nbsp;&nbsp;
                                 <a href="{{route('khachhang.question.drp')}}" class="btn btn-primary">Bảng câu hỏi</a>
                               <form>
@@ -126,6 +126,54 @@
         </div>
         <!-- /.content -->
     </div>
+    <!--  MEDAL ADD-->
+    <div>
+        <!-- Medal Add -->
+        <div class="modal fade" id="addModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Thêm mới</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form method="POST" enctype="multipart/form-data" id="addForm" autocomplete="off">
+                            <div class="form-group">
+                               <label>Khách hàng</label> 
+                               <input placeholder="Họ và tên" type="text" name="khachHang" class="form-control" required >
+                            </div>    
+                            <div class="form-group">
+                               <label>Số điện thoại</label> 
+                               <input placeholder="Số điện thoại" type="text" name="dienThoai" class="form-control" required>
+                            </div>    
+                            <div class="form-group">
+                               <label>Địa chỉ</label> 
+                               <input placeholder="Địa chỉ" type="text" name="diaChi" class="form-control" required>
+                            </div>  
+                            <div class="form-group">
+                               <label>Xe quan tâm</label> 
+                               <select name="xeQuanTam" class="form-control" required>
+                                    <option value="" selected disabled>Vui lòng chọn</option>
+                                    @foreach($typecar as $row)
+                                    <option value="{{$row->name}}">{{$row->name}}</option>
+                                    @endforeach
+                               </select>
+                            </div>                           
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button id="btnAdd" class="btn btn-primary" form="addForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -160,6 +208,141 @@
         var DOCSO = function(){ var t=["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" mươi",1==e&&(o+=" mốt")):1==a?(o=" mười",1==e&&(o+=" một")):n&&e>0&&(o=" lẻ"),5==e&&a>=1?o+=" lăm":4==e&&a>=1?o+=" tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" tỷ";while(r>0);return n.trim()}}}();
        
         $(document).ready(function(){
+            let from = $("input[name=chonNgayOne]").val();
+            let to = $("input[name=chonNgayTwo]").val();
+            var table = $('#dataTable').DataTable({
+                // paging: false,    use to show all data
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: "{{ url('management/guest/loadkhachhangdrp/') }}" + "/" + from + "/to/" + to ,
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": null },
+                    { "data": "id_user" },         
+                    { "data": "khachHang" },
+                    { "data": "dienThoai" },
+                    { "data": "diaChi" },
+                    { "data": "xeQuanTam" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                           if (row.danhGia) {
+                            return "<strong class='text-success'>Đã đánh giá</strong>";
+                           } else {
+                            return "<strong class='text-danger'>Chưa đánh giá</strong>";
+                           }
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                           if (row.dinhKem) {
+                            return "<strong class='text-info'>Download</strong>";
+                           } else {
+                            return "<strong class='text-secondary'>Upload</strong>";
+                           }
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            return "<button id='btnDanhGia' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;" +
+                            "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                        }
+                    }
+                ]
+            });
+            table.on( 'order.dt search.dt', function () {
+                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            // Add data
+            $("#btnAdd").click(function(){   
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $('#addForm').submit(function(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ route('danhgia.drp.post') }}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#btnAdd").attr('disabled', true).html("Đang xử lý....");
+                        },
+                        success: (response) => {
+                            this.reset();
+                            Toast.fire({
+                                icon: 'info',
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            $("#addModal").modal('hide');
+                            $("#btnAdd").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: 'Trùng dữ liệu hoặc lỗi'
+                            })
+                            $("#addModal").modal('hide');
+                            $("#btnAdd").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        }
+                    });
+                });
+            });
+
+            //Delete data
+            $(document).on('click','#delete', function(){
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{ route('danhgia.drp.delete') }}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
+
         //  $("#xemReport").click(function(){
         //     $.ajax({
         //         type: "post",

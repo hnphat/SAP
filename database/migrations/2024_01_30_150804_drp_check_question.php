@@ -17,8 +17,8 @@ class DrpCheckQuestion extends Migration
             $table->increments('id');
             $table->integer('drp_check')->unsigned();
             $table->foreign('drp_check')->references('id')->on('drp_check');
-            $table->integer('drp_question')->unsigned();
-            $table->foreign('drp_question')->references('id')->on('drp_question');
+            $table->string('drp_question')->nullable();
+            $table->float('diemToiDa', 8, 2)->default(0);
             $table->float('diemCham', 8, 2)->default(0);
             $table->timestamps();
         });

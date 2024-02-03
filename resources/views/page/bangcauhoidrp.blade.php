@@ -86,7 +86,7 @@
                             </div>    
                             <div class="form-group">
                                <label>Điểm tối đa</label> 
-                               <input type="number" name="diemToiDa" min="0" max="10" step=".01" class="form-control" required>
+                               <input type="number" name="diemToiDa" min="0" max="10" step=".1" class="form-control" required>
                             </div>                            
                         </form>
                     </div>

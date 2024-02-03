@@ -174,7 +174,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('cauhoidrpget/{id}','GuestController@getContentCauHoiDRP')->name('khachhang.question.getcontent.drp');
         Route::post('cauhoidrpupdate','GuestController@postUpdateCauHoiDRP')->name('khachhang.question.postupdate.drp');
         // Bảng đánh giá DRP
-        Route::post('loadkhachhangdrp/{from}/to/{to}','GuestController@loadKhachHangDRP')->name('danhgia.drp.load');
+        Route::get('loadkhachhangdrp/{from}/to/{to}','GuestController@loadKhachHangDRP')->name('danhgia.drp.load');
+        Route::post('postkhachhangdrp','GuestController@postKhachHangDRP')->name('danhgia.drp.post');
+        Route::post('deletekhachhangdrp','GuestController@deleteKhachHangDRP')->name('danhgia.drp.delete');
 
 
         // -------------- upload
