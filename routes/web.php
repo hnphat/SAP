@@ -165,6 +165,18 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd')->middleware(['f_mkt']);
         Route::post('loadbaocaokhachhang','GuestController@loadBaoCaoKhachhangSaleHD');  
 
+        // Khách hàng drp
+        Route::get('khachhangdrp','GuestController@getKhachHangDRP')->name('khachhang.drp')->middleware(['f_mkt']);
+        Route::get('bangcauhoidrp','GuestController@getCauHoiDRP')->name('khachhang.question.drp');
+        Route::get('bangcauhoidrpload','GuestController@loadCauHoiDRP')->name('khachhang.question.load.drp');
+        Route::post('cauhoidrppost','GuestController@postCauHoiDRP')->name('khachhang.question.post.drp');
+        Route::post('deletecauhoidrpload','GuestController@deleteCauHoiDRP')->name('khachhang.question.delete.drp');
+        Route::post('cauhoidrpget/{id}','GuestController@getContentCauHoiDRP')->name('khachhang.question.getcontent.drp');
+        Route::post('cauhoidrpupdate','GuestController@postUpdateCauHoiDRP')->name('khachhang.question.postupdate.drp');
+        // Bảng đánh giá DRP
+        Route::post('loadkhachhangdrp/{from}/to/{to}','GuestController@loadKhachHangDRP')->name('danhgia.drp.load');
+
+
         // -------------- upload
         Route::post('up/file','GuestController@upFile')->name('guest.upload.file');
         Route::get('getallphone','GuestController@getAllPhone');

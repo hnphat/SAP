@@ -574,6 +574,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\Http\\Controllers\\EventRealController' => __DIR__ . '/../..' . '/app/Http/Controllers/EventRealController.php',
         'App\\Http\\Controllers\\ExportBaoCaoDoanhThuController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExportBaoCaoDoanhThuController.php',
         'App\\Http\\Controllers\\ExportBaoCaoHopDongController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExportBaoCaoHopDongController.php',
+        'App\\Http\\Controllers\\ExportChotCongController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExportChotCongController.php',
         'App\\Http\\Controllers\\GroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/GroupController.php',
         'App\\Http\\Controllers\\GuestController' => __DIR__ . '/../..' . '/app/Http/Controllers/GuestController.php',
         'App\\Http\\Controllers\\HDController' => __DIR__ . '/../..' . '/app/Http/Controllers/HDController.php',

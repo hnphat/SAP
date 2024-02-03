@@ -24,6 +24,8 @@ use App\ChiTietBHPK;
 use App\Roles;
 use App\RoleUser;
 use App\MarketingGuest;
+use App\DRPCauHoi;
+use App\DRPCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -687,6 +689,156 @@ class GuestController extends Controller
         return view('page.khachhangsalehd',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
     }
 
+    public function loadKhachHangDRP($from, $to) {
+        $data = DRPCheck::all();
+        $arr = [];
+        foreach ($data as $row) {
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) >= strtotime($from)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($kh->created_at)) <= strtotime($to))) {
+                array_push($arr, $row);
+            }           
+        }
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Load success',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getKhachHangDRP() {
+        $arr = [];
+        $groupid = 0;
+        if (Auth::user()->hasRole('truongnhomsale')) {
+            $gr = GroupSale::where('user_id',Auth::user()->id)->first();
+            $groupid = ($gr) ? $gr->group_id : 0;
+        }
+        $user = User::all();
+        $iduser = Auth::user()->id;
+        $nameuser = Auth::user()->userDetail->surname;
+        $group = GroupSale::all();
+        foreach($user as $row){            
+            if ($row->hasRole('sale') && $row->active) {
+                $gr = GroupSale::where('user_id', $row->id)->first();
+                array_push($arr, [
+                    'id' => $row->id,
+                    'code' => $row->name,
+                    'name' => $row->userDetail->surname,
+                    'group' => ($gr) ? $gr->group_id : 0
+                ]);
+            }
+        }
+        // dd($arr);
+        // return view('page.khachhangsalehd',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
+        return view('page.khachhangdrp',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
+    }
+
+    public function getCauHoiDRP() {
+        return view('page.bangcauhoidrp');
+    }
+
+    public function loadCauHoiDRP() {
+        $data = DRPCauHoi::all();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Load bảng câu hỏi thành công',
+                'code' => 200,
+                'data' => $data
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function postCauHoiDRP(Request $request) {
+        $data = new DRPCauHoi();
+        $data->noiDung = $request->noiDung;
+        $data->diemToiDa = $request->diemToiDa;
+        $data->save();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Thêm câu hỏi thành công',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function deleteCauHoiDRP(Request $request) {
+        $data = DRPCauHoi::find($request->id);
+        $data->delete();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Xoá câu hỏi thành công',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getContentCauHoiDRP($id) {
+        $data = DRPCauHoi::find($id);
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Load câu hỏi thành công',
+                'code' => 200,
+                'data' => $data
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function postUpdateCauHoiDRP(Request $request) {
+        $data = DRPCauHoi::find($request->eid);
+        $data->noiDung = $request->enoiDung;
+        $data->diemToiDa = $request->ediemToiDa;
+        $data->save();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Cập nhật câu hỏi thành công',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function loadBaoCaoKhachhangSaleHD(Request $request) {
         $idgroupmain = 0;
         if (Auth::user()->hasRole('truongnhomsale')) {
@@ -1104,7 +1256,7 @@ class GuestController extends Controller
             }    
             echo "</tbody></table></div>";
         }
-    }
+    }   
 
     public function upFile(Request $request) {
         $this->validate($request,[

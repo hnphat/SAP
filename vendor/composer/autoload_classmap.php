@@ -46,6 +46,7 @@ return array(
     'App\\Http\\Controllers\\EventRealController' => $baseDir . '/app/Http/Controllers/EventRealController.php',
     'App\\Http\\Controllers\\ExportBaoCaoDoanhThuController' => $baseDir . '/app/Http/Controllers/ExportBaoCaoDoanhThuController.php',
     'App\\Http\\Controllers\\ExportBaoCaoHopDongController' => $baseDir . '/app/Http/Controllers/ExportBaoCaoHopDongController.php',
+    'App\\Http\\Controllers\\ExportChotCongController' => $baseDir . '/app/Http/Controllers/ExportChotCongController.php',
     'App\\Http\\Controllers\\GroupController' => $baseDir . '/app/Http/Controllers/GroupController.php',
     'App\\Http\\Controllers\\GuestController' => $baseDir . '/app/Http/Controllers/GuestController.php',
     'App\\Http\\Controllers\\HDController' => $baseDir . '/app/Http/Controllers/HDController.php',

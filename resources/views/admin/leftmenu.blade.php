@@ -188,6 +188,11 @@
                                         <p>Quản lý saler</p>
                                     </a>
                                 </li>
+                                <li class="nav-item"><a href="{{route('khachhang.drp')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Khách hàng DRP</p>
+                                    </a>
+                                </li>
                                 @endif
                                  @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
