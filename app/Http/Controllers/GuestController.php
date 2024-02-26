@@ -741,6 +741,66 @@ class GuestController extends Controller
         }
     }
 
+    public function danhGiaDRP($drpcheck) {
+        $info = DRPCheck::find($drpcheck);
+        $data = DRPCheckQuestion::where("drp_check",$drpcheck)->get();
+        if ($data) {
+            return view("page.danhgiadrp", ['info' => $info, 'data' => $data]);
+        } else {
+            abort(403);
+        }
+    }
+
+    public function postDanhGiaDRP(Request $request) {
+        $data = DRPCheckQuestion::find($request->idCheck);
+        $check = DRPCheck::find($data->drp_check);
+        if (!$check->danhGia) {
+            $drp_check = $data->drp_check;
+            $data->diemCham = $request->diemCham;
+            $data->save();
+            if ($data) {
+                $datanew = DRPCheckQuestion::where('drp_check',$drp_check)->get();
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã đánh giá',
+                    'code' => 200,
+                    'data' => $datanew
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Lỗi',
+                    'code' => 200
+                ]);
+            }
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Đã xác nhận đánh giá không thể cập nhật tiêu chí điểm',
+                'code' => 500
+            ]);
+        }        
+    }
+
+    public function xacNhanDanhGiaDRP(Request $request) {
+        $drpcheck = DRPCheck::find($request->id);
+        $drpcheck->danhGia = true;
+        $drpcheck->save();
+        if ($drpcheck) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã xác nhận đánh giá',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function getKhachHangDRP() {
         $typecar = TypeCar::all();
         $arr = [];
@@ -846,7 +906,10 @@ class GuestController extends Controller
     }
 
     public function getCauHoiDRP() {
-        return view('page.bangcauhoidrp');
+        if (Auth::user()->hasRole("system"))
+            return view('page.bangcauhoidrp');
+        else
+            abort(403);
     }
 
     public function loadCauHoiDRP() {

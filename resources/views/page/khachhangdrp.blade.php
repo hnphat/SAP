@@ -48,7 +48,9 @@
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
                                 <button class="btn btn-info" data-toggle="modal" data-target="#addModal">Tiếp nhận</button>
                                 &nbsp;&nbsp;
-                                <a href="{{route('khachhang.question.drp')}}" class="btn btn-primary">Bảng câu hỏi</a>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    <a href="{{route('khachhang.question.drp')}}" class="btn btn-primary">Bảng câu hỏi</a>
+                                @endif
                               <form>
                                 <div class="card-body row">
                                         <div class="col-sm-3">
@@ -264,10 +266,10 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.mode == "active")
-                                return "<button id='btnDanhGia' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;" 
+                                return "<button id='btnDanhGia' data-id='"+row.id+"' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;" 
                                 + "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;&nbsp;" 
                                 + "<button id='editData' data-id='"+row.id+"' class='btn btn-success btn-sm'><span class='fas fa-edit'></span></button>";
-                            else return "<button id='btnDanhGia' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;"; 
+                            else return "<button id='btnDanhGia' data-id='"+row.id+"' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;"; 
                         }
                     }
                 ]
@@ -360,32 +362,12 @@
             let urlpathcurrent = "{{ url('management/guest/loadkhachhangdrp/') }}";
             table.ajax.url( urlpathcurrent + "/" + from + "/to/" + to + "/mode/" + nhanVien).load();
         });
-        //  $("#xemReport").click(function(){
-        //     $.ajax({
-        //         type: "post",
-        //         url: "{{url('management/guest/loadkhachhangdrp/')}}",
-        //         dataType: "text",
-        //         data: {
-        //             "_token": "{{csrf_token()}}",
-        //             "nhanVien": $("select[name=nhanVien]").val(),
-        //             "tu": $("input[name=chonNgayOne]").val(),
-        //             "den": $("input[name=chonNgayTwo").val()
-        //         },
-        //         success: function(response) {
-        //             Toast.fire({
-        //                 icon: 'info',
-        //                 title: " Đã gửi yêu cầu! "
-        //             })
-        //             $("#all").html(response);
-        //         },
-        //         error: function() {
-        //             Toast.fire({
-        //                 icon: 'warning',
-        //                 title: " Lỗi!"
-        //             })
-        //         }
-        //     });
-        //  }); 
+
+
+        $(document).on('click','#btnDanhGia', function(){
+            let drpcheck = $(this).data('id');
+            open("{{url('management/guest/danhgiadrp/')}}" + "/" + drpcheck,"_self");
+        });       
        });
     </script>
 @endsection

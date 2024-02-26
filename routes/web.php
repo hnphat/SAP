@@ -177,7 +177,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('loadkhachhangdrp/{from}/to/{to}/mode/{nhanvien}','GuestController@loadKhachHangDRP')->name('danhgia.drp.load');
         Route::post('postkhachhangdrp','GuestController@postKhachHangDRP')->name('danhgia.drp.post');
         Route::post('deletekhachhangdrp','GuestController@deleteKhachHangDRP')->name('danhgia.drp.delete');
-
+        Route::get('danhgiadrp/{drpcheck}','GuestController@danhGiaDRP')->name('drp.check');
+        Route::post('postdanhgia','GuestController@postDanhGiaDRP')->name('drp.check.post');
+        Route::post('xacnhandanhgia','GuestController@xacNhanDanhGiaDRP')->name('drp.check.done');
 
         // -------------- upload
         Route::post('up/file','GuestController@upFile')->name('guest.upload.file');
