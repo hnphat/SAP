@@ -691,15 +691,38 @@ class GuestController extends Controller
         return view('page.khachhangsalehd',['user' => $user, 'iduser' => $iduser, 'nameuser' => $nameuser, 'groupsale' => $arr, 'groupid' => $groupid]);
     }
 
-    public function loadKhachHangDRP($from, $to) {
+    public function loadKhachHangDRP($from, $to, $nhanvien) {
         $data = DRPCheck::all();
         $arr = [];
         foreach ($data as $row) {
             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($from)) 
             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($to))) {
                 $temp = $row;
+                $temp->ngay = \HelpFunction::revertCreatedAt($row->created_at);
                 $temp->id_user = $row->user->userDetail->surname;
-                array_push($arr, $temp);
+                $temp->mode = (Auth::user()->hasRole('system')) ? "active" : "none";
+                if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd')) {
+                    if ($nhanvien == 0)
+                        array_push($arr, $temp);
+                    else {
+                        if ($row->user->id == $nhanvien)
+                            array_push($arr, $temp);
+                    }
+                }
+                elseif (Auth::user()->hasRole('truongnhomsale')) {
+                    $gr = GroupSale::where('user_id',Auth::user()->id)->first();
+                    $groupid = ($gr) ? $gr->group_id : 0;
+                    $existGroup = GroupSale::where('user_id',$row->user->id)->exists();
+                    if ($nhanvien == 0) 
+                        ($existGroup) ? array_push($arr, $temp) : 0;
+                    else {
+                        if ($row->user->id == $nhanvien)
+                            ($existGroup) ? array_push($arr, $temp) : 0;
+                    }
+                } else {
+                    if ($row->user->id == Auth::user()->id)
+                        array_push($arr, $temp);
+                }
             }           
         }
         if ($data) {
@@ -747,6 +770,12 @@ class GuestController extends Controller
     }
 
     public function postKhachHangDRP(Request $request) {
+        if (strlen($request->dienThoai) !== 10)
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Số điện thoại không đúng định dạng',
+                'code' => 500
+            ]);
         $check = DRPCheck::where([
             ['khachHang','=',$request->khachHang],
             ['dienThoai','=',$request->dienThoai]
@@ -790,14 +819,23 @@ class GuestController extends Controller
     }
 
     public function deleteKhachHangDRP(Request $request) {
-        $data = DRPCheck::find($request->id);
-        $data->delete();
-        if ($data) {
-            return response()->json([
-                'type' => 'success',
-                'message' => 'Đã Xóa',
-                'code' => 200
-            ]);
+        $drpcheck = DRPCheckQuestion::where("drp_check",$request->id)->delete();
+        if ($drpcheck) {
+            $data = DRPCheck::find($request->id);
+            $data->delete();
+            if ($data) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã Xóa',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
         } else {
             return response()->json([
                 'type' => 'error',

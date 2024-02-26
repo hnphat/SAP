@@ -2541,6 +2541,8 @@ class DichVuController extends Controller
                 $tacVu = "";
                 if ($row->isDone) {
                     $stt = "<span class='text-bold text-success'>Đã hoàn tất</span>";
+                    if (Auth::user()->hasRole('system'))
+                        $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
                 }
                 else {
                     $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
@@ -3042,6 +3044,33 @@ class DichVuController extends Controller
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã hoàn tất công việc!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function hoanTrangCongViec(Request $request) {
+        $ktv = KTVBHPK::find($request->id);
+        $bhpk = BHPK::find($ktv->id_bhpk);
+        $bg = BaoGiaBHPK::find($ktv->id_baogia);
+        $ktv->isDone = false;
+        $ktv->save();
+        if($ktv) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Báo cáo tiến độ";
+            $nhatKy->noiDung = "Đã bỏ hoàn tất công việc: " . $bhpk->noiDung 
+            . "; Số báo giá BG0" . $bg->id;
+            $nhatKy->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã hoàn trạng công việc!',
                 'code' => 200
             ]);
         } else {

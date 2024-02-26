@@ -105,6 +105,7 @@
                                     <thead>
                                         <tr class="bg-gradient-lightblue">
                                             <th>TT</th>
+                                            <th>Ngày</th>
                                             <th>Người tạo</th>
                                             <th>Khách hàng</th>
                                             <th>Điện thoại</th>
@@ -210,6 +211,7 @@
         $(document).ready(function(){
             let from = $("input[name=chonNgayOne]").val();
             let to = $("input[name=chonNgayTwo]").val();
+            let nhanVien = $("select[name=nhanVien]").val();
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,
@@ -217,7 +219,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/guest/loadkhachhangdrp/') }}" + "/" + from + "/to/" + to ,
+                ajax: "{{ url('management/guest/loadkhachhangdrp/') }}" + "/" + from + "/to/" + to + "/mode/" + nhanVien,
                 "columnDefs": [ {
                     "searchable": false,
                     "orderable": false,
@@ -229,6 +231,7 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
+                    { "data": "ngay" },
                     { "data": "id_user" },         
                     { "data": "khachHang" },
                     { "data": "dienThoai" },
@@ -250,15 +253,21 @@
                            if (row.dinhKem) {
                             return "<strong class='text-info'>Download</strong>";
                            } else {
-                            return "<strong class='text-secondary'>Upload</strong>";
+                            if (row.mode == "active")
+                                return "<strong class='text-secondary'>Upload</strong>";
+                            else
+                                return "<strong class='text-pink'>Chưa có</strong>";
                            }
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return "<button id='btnDanhGia' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;" +
-                            "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
+                            if (row.mode == "active")
+                                return "<button id='btnDanhGia' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;" 
+                                + "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;&nbsp;" 
+                                + "<button id='editData' data-id='"+row.id+"' class='btn btn-success btn-sm'><span class='fas fa-edit'></span></button>";
+                            else return "<button id='btnDanhGia' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;"; 
                         }
                     }
                 ]
@@ -271,7 +280,7 @@
             } ).draw();
 
             // Add data
-            $("#btnAdd").click(function(){   
+            $("#btnAdd").click(function(){ 
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -291,13 +300,15 @@
                             $("#btnAdd").attr('disabled', true).html("Đang xử lý....");
                         },
                         success: (response) => {
-                            this.reset();
+                            if (response.code !== 500)
+                                this.reset();
                             Toast.fire({
-                                icon: 'info',
+                                icon: response.type,
                                 title: response.message
                             })
                             table.ajax.reload();
-                            $("#addModal").modal('hide');
+                            if (response.code !== 500)
+                                $("#addModal").modal('hide');
                             $("#btnAdd").attr('disabled', false).html("LƯU");
                             console.log(response);
                         },
@@ -342,7 +353,13 @@
                 }
             });
 
-
+        $("#xemReport").click(function(){
+            let from = $("input[name=chonNgayOne]").val();
+            let to = $("input[name=chonNgayTwo]").val();
+            let nhanVien = $("select[name=nhanVien]").val();
+            let urlpathcurrent = "{{ url('management/guest/loadkhachhangdrp/') }}";
+            table.ajax.url( urlpathcurrent + "/" + from + "/to/" + to + "/mode/" + nhanVien).load();
+        });
         //  $("#xemReport").click(function(){
         //     $.ajax({
         //         type: "post",

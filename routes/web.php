@@ -174,7 +174,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('cauhoidrpget/{id}','GuestController@getContentCauHoiDRP')->name('khachhang.question.getcontent.drp');
         Route::post('cauhoidrpupdate','GuestController@postUpdateCauHoiDRP')->name('khachhang.question.postupdate.drp');
         // Bảng đánh giá DRP
-        Route::get('loadkhachhangdrp/{from}/to/{to}','GuestController@loadKhachHangDRP')->name('danhgia.drp.load');
+        Route::get('loadkhachhangdrp/{from}/to/{to}/mode/{nhanvien}','GuestController@loadKhachHangDRP')->name('danhgia.drp.load');
         Route::post('postkhachhangdrp','GuestController@postKhachHangDRP')->name('danhgia.drp.post');
         Route::post('deletekhachhangdrp','GuestController@deleteKhachHangDRP')->name('danhgia.drp.delete');
 
@@ -787,7 +787,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         
         // báo cáo tiến độ
         Route::get('baocaotiendo','DichVuController@baoCaoTienDoPanel')->name('dichvu.baocaotiendo.panel')->middleware(['f_bhpk']); 
-        Route::post('loadbaocaotiendo','DichVuController@loadTienDo');  
+        Route::post('loadbaocaotiendo','DichVuController@loadTienDo');
 
         // Lấy dữ liệu chỉnh sửa
         Route::post('hangmuc/baohiemphukien/getedit/','DichVuController@getEditHangMuc')->name('getedithangmuc');
@@ -805,6 +805,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hoantrang','DichVuController@hoanTrang');
         Route::post('cancelend','DichVuController@cancelEnd');
         Route::post('hoantatcongviec','DichVuController@hoanTatCongViec');
+        Route::post('hoantrangcongviec','DichVuController@hoanTrangCongViec');
+
 
     });
 

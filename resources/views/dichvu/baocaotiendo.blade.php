@@ -189,6 +189,35 @@
                 });
             }
         });
-       });
+
+        $(document).on('click','#revert',function() {   
+            if (confirm("Xác nhận hoàn trạng công việc?\nLưu ý: Sử dụng quyền hoàn trạng phù hợp!")) {
+                $.ajax({
+                    type: "post",
+                    url: "{{url('management/dichvu/hoantrangcongviec/')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        setTimeout(() => {
+                            autoLoad();
+                        }, 2000);
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: " Lỗi!"
+                        })
+                    }
+                });
+            }
+        });
+    });
     </script>
 @endsection
