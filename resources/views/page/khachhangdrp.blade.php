@@ -177,6 +177,96 @@
         <!-- /.modal -->
     </div>
     <!----------------------->
+
+    <!--  MEDAL EDIT-->
+    <div>
+        <!-- Medal Add -->
+        <div class="modal fade" id="editModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cập nhật</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form method="POST" enctype="multipart/form-data" id="editForm" autocomplete="off">
+                            <input type="hidden" name="idUpdate">
+                            <div class="form-group">
+                               <label>Khách hàng</label> 
+                               <input placeholder="Họ và tên" type="text" name="ekhachHang" class="form-control" required >
+                            </div>    
+                            <div class="form-group">
+                               <label>Số điện thoại</label> 
+                               <input placeholder="Số điện thoại" type="text" name="edienThoai" class="form-control" required>
+                            </div>    
+                            <div class="form-group">
+                               <label>Địa chỉ</label> 
+                               <input placeholder="Địa chỉ" type="text" name="ediaChi" class="form-control" required>
+                            </div>  
+                            <div class="form-group">
+                               <label>Xe quan tâm</label> 
+                               <select name="exeQuanTam" class="form-control" required>
+                                    <option value="" selected disabled>Vui lòng chọn</option>
+                                    @foreach($typecar as $row)
+                                    <option value="{{$row->name}}">{{$row->name}}</option>
+                                    @endforeach
+                               </select>
+                            </div>    
+                            <div class="form-group">
+                               <label>Đánh giá</label>
+                               <select name="edanhGia" class="form-control" required>
+                                    <option value="1">ĐÃ ĐÁNH GIÁ</option>
+                                    <option value="0">CHƯA ĐÁNH GIÁ</option>
+                               </select> 
+                            </div>                       
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button id="btnUpdate" class="btn btn-primary" form="editForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
+
+    <!--  MEDAL UPLOAD-->
+    <div>
+        <!-- Medal Add -->
+        <div class="modal fade" id="uploadModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">UPLOAD</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form method="POST" enctype="multipart/form-data" id="uploadForm" autocomplete="off">
+                            <input type="hidden" name="idUpload">
+                            <div class="form-group">
+                               <label>Chọn file</label> 
+                               <input type="file" name="uploadFile" class="form-control" required >
+                            </div>          
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button id="btnUpload" class="btn btn-info" form="uploadForm">Upload</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -253,12 +343,12 @@
                         "data": null,
                         render: function(data, type, row) {
                            if (row.dinhKem) {
-                            return "<strong class='text-info'>Download</strong>";
-                           } else {
-                            if (row.mode == "active")
-                                return "<strong class='text-secondary'>Upload</strong>";
+                            if(row.mode == "active")
+                                return "<strong class='text-info'><a target='_blank' href='./upload/drp/"+row.dinhKem+"'>Download</a></strong>&nbsp;&nbsp;<button id='xoaFile' data-id='"+row.id+"' data-link='"+row.dinhKem+"' class='btn btn-danger btn-sm'>x</button>";
                             else
-                                return "<strong class='text-pink'>Chưa có</strong>";
+                                return "<strong class='text-info'><a target='_blank' href='./upload/drp/"+row.dinhKem+"'>Download</a></strong>";
+                           } else {
+                            return "<button id='uploadFile' data-id='"+row.id+"' data-toggle='modal' data-target='#uploadModal' class='btn btn-secondary btn-sm'>Upload</button>";
                            }
                         }
                     },
@@ -268,7 +358,7 @@
                             if (row.mode == "active")
                                 return "<button id='btnDanhGia' data-id='"+row.id+"' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;" 
                                 + "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;&nbsp;" 
-                                + "<button id='editData' data-id='"+row.id+"' class='btn btn-success btn-sm'><span class='fas fa-edit'></span></button>";
+                                + "<button id='editData' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='fas fa-edit'></span></button>";
                             else return "<button id='btnDanhGia' data-id='"+row.id+"' class='btn btn-primary btn-sm'><span class='fas fa-binoculars'></span></button>&nbsp;&nbsp;"; 
                         }
                     }
@@ -355,19 +445,176 @@
                 }
             });
 
-        $("#xemReport").click(function(){
-            let from = $("input[name=chonNgayOne]").val();
-            let to = $("input[name=chonNgayTwo]").val();
-            let nhanVien = $("select[name=nhanVien]").val();
-            let urlpathcurrent = "{{ url('management/guest/loadkhachhangdrp/') }}";
-            table.ajax.url( urlpathcurrent + "/" + from + "/to/" + to + "/mode/" + nhanVien).load();
-        });
+            $("#xemReport").click(function(){
+                let from = $("input[name=chonNgayOne]").val();
+                let to = $("input[name=chonNgayTwo]").val();
+                let nhanVien = $("select[name=nhanVien]").val();
+                let urlpathcurrent = "{{ url('management/guest/loadkhachhangdrp/') }}";
+                table.ajax.url( urlpathcurrent + "/" + from + "/to/" + to + "/mode/" + nhanVien).load();
+            });
 
 
-        $(document).on('click','#btnDanhGia', function(){
-            let drpcheck = $(this).data('id');
-            open("{{url('management/guest/danhgiadrp/')}}" + "/" + drpcheck,"_self");
-        });       
+            $(document).on('click','#btnDanhGia', function(){
+                let drpcheck = $(this).data('id');
+                open("{{url('management/guest/danhgiadrp/')}}" + "/" + drpcheck,"_self");
+            });    
+            
+            $(document).on('click','#editData', function(){
+                $.ajax({
+                    url: "{{ route('drp.get.guest') }}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $(this).data('id')
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        if (response.code == 200) {
+                           $("input[name=ekhachHang]").val(response.data.khachHang);
+                           $("input[name=edienThoai]").val(response.data.dienThoai);
+                           $("input[name=ediaChi]").val(response.data.diaChi);
+                           $("select[name=exeQuanTam]").val(response.data.xeQuanTam);
+                           $("input[name=idUpdate]").val(response.data.id);
+                           $("select[name=edanhGia]").val(response.data.danhGia);
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể lấy dữ liệu lúc này!"
+                        })
+                    }
+                });
+            });   
+
+            // Add data
+            $("#btnUpdate").click(function(){ 
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $('#editForm').submit(function(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ route('drp.update.guest') }}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#btnUpdate").attr('disabled', true).html("Đang xử lý....");
+                        },
+                        success: (response) => {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            if (response.code !== 500)
+                                $("#editModal").modal('hide');
+                            $("#btnUpdate").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: 'Trùng dữ liệu hoặc lỗi'
+                            })
+                            $("#editModal").modal('hide');
+                            $("#btnUpdate").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        }
+                    });
+                });
+            });
+            
+            $(document).on('click','#uploadFile', function(){
+                let idUpload = $(this).data('id');
+                $("input[name=idUpload]").val(idUpload);
+            });  
+
+            // Upload file
+            $("#btnUpload").click(function(){                 
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $('#uploadForm').submit(function(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ route('drp.uploadfile') }}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#btnUpload").attr('disabled', true).html("Đang xử lý....");
+                        },
+                        success: (response) => {
+                            if (response.code !== 500)
+                                this.reset();
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            if (response.code !== 500)
+                                $("#uploadModal").modal('hide');
+                            $("#btnUpload").attr('disabled', false).html("Upload");
+                            console.log(response);
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: 'Không thể upload file'
+                            })
+                            $("#uploadModal").modal('hide');
+                            $("#btnUpload").attr('disabled', false).html("Upload");
+                            console.log(response);
+                        }
+                    });
+                });
+            });
+
+
+            $(document).on('click','#xoaFile', function(){
+                let linkXoa = $(this).data('link');
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{ route('drp.xoafile') }}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "link": linkXoa
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });  
        });
     </script>
 @endsection

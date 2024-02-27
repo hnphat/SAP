@@ -180,7 +180,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('danhgiadrp/{drpcheck}','GuestController@danhGiaDRP')->name('drp.check');
         Route::post('postdanhgia','GuestController@postDanhGiaDRP')->name('drp.check.post');
         Route::post('xacnhandanhgia','GuestController@xacNhanDanhGiaDRP')->name('drp.check.done');
-
+        Route::post('khachhangdrp/getdata','GuestController@getGuestDRP')->name('drp.get.guest');
+        Route::post('postupdatekhachhangdrp','GuestController@postUpdateGuestDRP')->name('drp.update.guest');
+        Route::post('khachhangdrp/upload','GuestController@uploadFileGuestDRP')->name('drp.uploadfile');
+        Route::post('khachhangdrp/xoaupload','GuestController@deleteFileGuestDRP')->name('drp.xoafile');
         // -------------- upload
         Route::post('up/file','GuestController@upFile')->name('guest.upload.file');
         Route::get('getallphone','GuestController@getAllPhone');

@@ -848,6 +848,20 @@ class GuestController extends Controller
             $data->diaChi = $request->diaChi;
             $data->xeQuanTam = $request->xeQuanTam;
             $data->save();
+            // Thêm khách này vào trong Quản lý saler
+            $checkExist = Guest::where('phone',$request->dienThoai)->exists();
+            if (!$checkExist) {
+                $guest = new Guest;
+                $guest->id_type_guest = 1;
+                $guest->name = $request->khachHang;
+                $guest->phone = $request->dienThoai;
+                $guest->address = $request->diaChi;
+                $guest->id_user_create = Auth::user()->id;
+                $guest->nguon = "Showroom";
+                $guest->xeQuanTam = $request->xeQuanTam;
+                $guest->save();                
+            } 
+            // -------------------------------------
             if ($data) {
                 $id = $data->id;
                 $question = DRPCauHoi::all();
@@ -880,26 +894,18 @@ class GuestController extends Controller
 
     public function deleteKhachHangDRP(Request $request) {
         $drpcheck = DRPCheckQuestion::where("drp_check",$request->id)->delete();
-        if ($drpcheck) {
-            $data = DRPCheck::find($request->id);
-            $data->delete();
-            if ($data) {
-                return response()->json([
-                    'type' => 'success',
-                    'message' => 'Đã Xóa',
-                    'code' => 200
-                ]);
-            } else {
-                return response()->json([
-                    'type' => 'error',
-                    'message' => 'Internal server fail!',
-                    'code' => 500
-                ]);
-            }
+        $data = DRPCheck::find($request->id);
+        $data->delete();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã Xóa',
+                'code' => 200
+            ]);
         } else {
             return response()->json([
                 'type' => 'error',
-                'message' => 'Internal server fail!',
+                'message' => 'Lỗi xoá thông tin tiếp nhận!',
                 'code' => 500
             ]);
         }
@@ -911,6 +917,114 @@ class GuestController extends Controller
         else
             abort(403);
     }
+
+    public function getGuestDRP(Request $request) {
+        $data = DRPCheck::find($request->id);
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Get data successful!',
+                'code' => 200,
+                'data' => $data
+            ]);    
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi!',
+                'code' => 500
+            ]);    
+        }
+    }
+
+    public function postUpdateGuestDRP(Request $request) {
+        if (strlen($request->edienThoai) !== 10)
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Số điện thoại không đúng định dạng',
+                'code' => 500
+            ]);
+        $data = DRPCheck::find($request->idUpdate);
+        $data->khachHang = $request->ekhachHang;
+        $data->dienThoai = $request->edienThoai;
+        $data->diaChi = $request->ediaChi;
+        $data->xeQuanTam = $request->exeQuanTam;
+        $data->danhGia = $request->edanhGia;
+        $data->save();
+        if ($data) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Update successful!',
+                'code' => 200
+            ]);    
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi!',
+                'code' => 500
+            ]);    
+        }
+    }
+
+    public function uploadFileGuestDRP(Request $request) {
+        $data = DRPCheck::find($request->idUpload);
+        $this->validate($request,[
+            'uploadFile'  => 'required|mimes:jpg,JPG,PNG,png|max:20480',
+        ]);
+        if ($files = $request->file('uploadFile')) {
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = $request->idUpload . "-".\HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            // $name = rand() . "." . $etc;
+            while(file_exists("upload/drp/" . $name)) {
+                // $name = rand() . "-" . $name . "." . $etc;
+                // $name = rand() . "." . $etc;
+                unlink('upload/drp/'.$name);
+            }           
+            $data->dinhKem = $name;
+            $data->save();
+            $files->move('upload/drp/', $name);            
+            if ($data) {
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'File: Đã upload file',
+                    "code" => 200,
+                    "file" => $files
+                ]);
+            } else {
+                return response()->json([
+                    "type" => 'error',
+                    "message" => 'File: lỗi upload',
+                    "code" => 500
+                ]);
+            }           
+        }
+        return response()->json([
+            "type" => 'error',
+            "message" => 'File: không tìm thấy file',
+            "code" => 500
+        ]);
+    }
+
+    public function deleteFileGuestDRP(Request $request) {
+        $data = DRPCheck::find($request->id);
+        if (file_exists('upload/drp/' . $request->link))
+            unlink('upload/drp/'.$request->link);
+        $data->dinhKem = null;
+        $data->save();
+        if ($data) {           
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã xóa file!',
+                'code' => 200
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi xóa file từ máy chủ!',
+                'code' => 500
+            ]);
+    }
+
 
     public function loadCauHoiDRP() {
         $data = DRPCauHoi::all();
