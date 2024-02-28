@@ -16,7 +16,10 @@ class DeNghiCapXangController extends Controller
     //
     public function showCapXang() {
         $lead = User::all();
-        $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('hcns'))
+            $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->get();
+        else    
+            $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
         return view('capxang.denghi', ['lead' => $lead, 'deNghi' => $deNghi]);
     }
 
@@ -171,6 +174,8 @@ class DeNghiCapXangController extends Controller
             $tbp = User::find($deNghi->lead_id)->userDetail->surname;
         else 
             $tbp = "";
+        $deNghi->printed = true;
+        $deNghi->save();
         return view('capxang.in', ['car' => $deNghi, 'tbp' => $tbp]);
     }
 

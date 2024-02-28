@@ -405,7 +405,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('del','DeNghiCapXangController@del');
         // In xăng
         Route::get('xang/{id}', 'DeNghiCapXangController@inXang')->name('xang.in');
-
         // duyet
         Route::get('duyet','DeNghiCapXangController@showDuyetCapXang')->name('capxang.duyet')->middleware(['f_capxang']);
         Route::post('allow','DeNghiCapXangController@allowCapXang')->middleware(['f_capxang']);

@@ -198,10 +198,14 @@
                                             @endif
                                         </td>
                                         <td>
-                                                @if($row->fuel_allow == false)
-                                                <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
-                                                @else
-                                                <a href="{{route('xang.in', ['id' => $row->id])}}" target="_blank" class="btn btn-success btn-xs">IN PHIẾU</a>
+                                                @if($row->fuel_allow == false && 
+                                                (!\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') &&
+                                                !\Illuminate\Support\Facades\Auth::user()->hasRole('hcns')))
+                                                    <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
+                                                @elseif($row->fuel_allow == true && $row->printed == false)
+                                                    <a href="{{route('xang.in', ['id' => $row->id])}}" class="btn btn-success btn-xs">IN PHIẾU</a>
+                                                @elseif($row->printed == true && \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                                    <a href="{{route('xang.in', ['id' => $row->id])}}" class="btn btn-success btn-xs">IN PHIẾU</a>
                                                 @endif
                                         </td>
                                     </tr>

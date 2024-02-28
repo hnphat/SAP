@@ -29,6 +29,7 @@ class DeNghiCapXang extends Migration
             $table->integer('lead_id')->nullable();
             $table->boolean('lead_check')->default(0);
             $table->string('duongDi')->nullable();
+            $table->boolean('printed')->default(0);
             $table->timestamps();
         });
     }
