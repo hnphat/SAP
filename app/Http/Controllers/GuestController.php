@@ -875,7 +875,8 @@ class GuestController extends Controller
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Đã thêm mẫu',
-                    'code' => 200
+                    'code' => 200,
+                    'data' => $data->id
                 ]);
             } else {
                 return response()->json([

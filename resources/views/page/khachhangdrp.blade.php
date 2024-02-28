@@ -399,8 +399,10 @@
                                 title: response.message
                             })
                             table.ajax.reload();
-                            if (response.code !== 500)
+                            if (response.code !== 500) {
                                 $("#addModal").modal('hide');
+                                open("{{url('management/guest/danhgiadrp/')}}" + "/" + response.data,"_self");
+                            }
                             $("#btnAdd").attr('disabled', false).html("LƯU");
                             console.log(response);
                         },
