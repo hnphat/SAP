@@ -701,6 +701,16 @@ class GuestController extends Controller
                 $temp->ngay = \HelpFunction::revertCreatedAt($row->created_at);
                 $temp->id_user = $row->user->userDetail->surname;
                 $temp->mode = (Auth::user()->hasRole('system')) ? "active" : "none";
+                $diem = DRPCheckQuestion::where('drp_check',$row->id)->get();
+                $maxDiem = 0;
+                $diemCham = 0;
+                foreach ($diem as $rowdiem) {
+                    $maxDiem += $rowdiem->diemToiDa;
+                    $diemCham += $rowdiem->diemCham;
+                }
+                $temp->phanTram = round($diemCham*100/$maxDiem,2);
+                $temp->diemCham = $diemCham;
+                $temp->diemToiDa = $maxDiem;
                 if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd')) {
                     if ($nhanvien == 0)
                         array_push($arr, $temp);
@@ -713,11 +723,15 @@ class GuestController extends Controller
                     $gr = GroupSale::where('user_id',Auth::user()->id)->first();
                     $groupid = ($gr) ? $gr->group_id : 0;
                     $existGroup = GroupSale::where('user_id',$row->user->id)->exists();
-                    if ($nhanvien == 0) 
+                    if ($nhanvien == 0) {
+                        $temp->dienThoai = substr($temp->dienThoai,0,4)."xxxxxx";
                         ($existGroup) ? array_push($arr, $temp) : 0;
+                    }
                     else {
-                        if ($row->user->id == $nhanvien)
+                        if ($row->user->id == $nhanvien) {
+                            $temp->dienThoai = substr($temp->dienThoai,0,4)."xxxxxx";
                             ($existGroup) ? array_push($arr, $temp) : 0;
+                        }
                     }
                 } else {
                     if ($row->user->id == Auth::user()->id)

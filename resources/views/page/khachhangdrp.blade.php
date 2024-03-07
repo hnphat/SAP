@@ -115,6 +115,7 @@
                                             <th>Xe quan tâm</th>
                                             <th>Trạng thái</th>
                                             <th>File đính kèm</th>
+                                            <th>Điểm (%)</th>
                                             <th>Tác vụ</th>
                                         </tr>
                                     </thead>
@@ -349,6 +350,16 @@
                                 return "<strong class='text-info'><a target='_blank' href='./upload/drp/"+row.dinhKem+"'>Download</a></strong>";
                            } else {
                             return "<button id='uploadFile' data-id='"+row.id+"' data-toggle='modal' data-target='#uploadModal' class='btn btn-secondary btn-sm'>Upload</button>";
+                           }
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                           if (row.danhGia) {
+                            return `<span class='text-success'>${row.diemCham}</span>/<span class='text-pink'><strong>${row.diemToiDa}</strong></span> <strong class='text-info'>(${row.phanTram}%)</strong>`;
+                           } else {
+                            return "<strong class='text-warning'>wating...</strong>";
                            }
                         }
                     },
