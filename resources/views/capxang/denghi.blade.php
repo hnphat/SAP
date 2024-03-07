@@ -204,7 +204,10 @@
                                                     <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
                                                 @elseif($row->fuel_allow == true && $row->printed == false)
                                                     <a href="{{route('xang.in', ['id' => $row->id])}}" class="btn btn-success btn-xs">IN PHIẾU</a>
-                                                @elseif($row->printed == true && \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                                @elseif($row->fuel_allow == true && $row->printed == true 
+                                                && (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
+                                                    || \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') 
+                                                    || \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale')))
                                                     <a href="{{route('xang.in', ['id' => $row->id])}}" class="btn btn-success btn-xs">IN PHIẾU</a>
                                                 @endif
                                         </td>

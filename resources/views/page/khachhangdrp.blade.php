@@ -359,7 +359,7 @@
                            if (row.danhGia) {
                             return `<span class='text-success'>${row.diemCham}</span>/<span class='text-pink'><strong>${row.diemToiDa}</strong></span> <strong class='text-info'>(${row.phanTram}%)</strong>`;
                            } else {
-                            return "<strong class='text-warning'>wating...</strong>";
+                            return "<strong class='text-warning'>waiting...</strong>";
                            }
                         }
                     },
