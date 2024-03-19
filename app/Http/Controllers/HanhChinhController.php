@@ -210,7 +210,8 @@ class HanhChinhController extends Controller
     public function getXemThongBao() {
         $result = BieuMau::select('*')->where([
             ['allow','=',true],
-            ['type','=','TB']
+            ['type','!=','TBKD'],
+            ['type','!=','GX'],
         ])->orderBy('id', 'desc')->get();
         if ($result) 
             return response()->json([

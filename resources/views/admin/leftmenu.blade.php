@@ -657,12 +657,16 @@
                                     </a>
                                 </li>
                                 @endif
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))  
                                 <li class="nav-item">
                                     <a href="{{route('hanhchinh.xemthongbao')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Thông báo</p>
                                     </a>
                                 </li>
+                                @endif
                                 <li class="nav-item">
                                     <a href="{{route('hanhchinh.xembieumau')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>

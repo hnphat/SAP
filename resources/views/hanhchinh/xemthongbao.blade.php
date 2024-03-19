@@ -51,6 +51,7 @@
                                         <th>TT</th>
                                         <th>Ngày tạo</th>
                                         <th>Tên file</th>
+                                        <th>Loại</th>
                                         <th>Mô tả</th>
                                         <th>Ghi chú</th>
                                     </tr>
@@ -120,6 +121,7 @@
                             return "<a href='upload/bieumau/"+row.url+"' target='_blank'>"+row.tieuDe+"</a>";
                         }
                     },
+                    { "data": "type" },
                     { "data": "moTa" },
                     { "data": "ghiChu" }                    
                 ]
