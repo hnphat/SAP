@@ -272,6 +272,9 @@
                             <button id="xoaDeNghi" class="btn btn-danger">XOÁ ĐỀ NGHỊ</button>
                             <!-- <button id="deNghiHuy" class="btn btn-warning" data-toggle="modal" data-target="#requestHuy">YÊU CẦU HỦY</button>
                             <button id="deNghiChinhSua" class="btn btn-success" data-toggle="modal" data-target="#requestEdit">YÊU CẦU CHỈNH SỬA</button> -->
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                <button id="xuLyLoi" class="btn btn-warning">[XỬ LÝ LỖI - SYSTEM]</button>
+                            @endif
                             <hr>
                             <h5>IN HỢP ĐỒNG</h5>
                             <form id="inForm">
@@ -1552,6 +1555,35 @@
                 if(confirm('Xác nhận gửi đề nghị thực hiện hợp đồng?\nLưu ý: Không thể chỉnh sửa sau khi gửi!')) {
                     $.ajax({
                         url: "{{url('management/hd/hd/denghi/guidenghi/')}}",
+                        type: "post",
+                        dataType: "json",
+                        // data: {
+                        //     "_token": "{{csrf_token()}}",
+                        //     "id": $("input[name=idHopDong]").val(),
+                        // },
+                        data: $("#addPkForm").serialize(),
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            reloadStatus();
+                            loadList();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể gửi đề nghị!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $("#xuLyLoi").click(function(){
+                if(confirm('Xử lý chỉ thực hiện khi xảy ra lỗi bị treo giai đoạn phê duyệt của admin sale!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/xulyloi/')}}",
                         type: "post",
                         dataType: "json",
                         // data: {

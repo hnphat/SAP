@@ -260,6 +260,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('getedit/pkfree/{id}','HDController@getEditPkFree');
         Route::post('postedit/pkcost/','HDController@postEditPKCost');
         Route::post('postedit/pkfree/','HDController@postEditPKFree');
+        // -- Xử lý lỗi khi bị treo ở giai đoạn admin sale không duyệt được
+        Route::post('hd/denghi/xulyloi','HDController@xuLyLoi');
 
         //----- quản lý đề nghị
         Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');

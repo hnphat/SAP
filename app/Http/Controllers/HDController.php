@@ -2558,6 +2558,45 @@ class HDController extends Controller
         }
     }
 
+    public function xuLyLoi(Request $request){
+        $result = HopDong::find($request->idHopDong);
+        
+        if ($result->code != null && $result->code != 0) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Hợp đồng hiện không xảy ra lỗi!',
+                'code' => 500
+            ]);
+        }
+
+        $result->requestCheck = false;
+        $result->admin_check = false;
+        $result->lead_check = false;
+        if (Auth::user()->hasRole("system"))
+            $result->save();
+        if($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị - Xử lý lỗi";
+            $nhatKy->noiDung = "System xử lý lỗi cho đề nghị ĐN/0".$request->idHopDong."(không phải mã hợp đồng)";
+            $nhatKy->save();
+
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã xử lý lỗi hợp đồng!',
+                'code' => 200,
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function xoaDeNghi(Request $request){
         $result = HopDong::find($request->id);
         if($result->admin_check == false && $result->lead_check == false) {
