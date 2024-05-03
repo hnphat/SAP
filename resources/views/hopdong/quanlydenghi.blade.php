@@ -109,6 +109,8 @@
                                                         <option value="Vàng_cát">Vàng_cát</option>
                                                         <option value="Xanh_lục_bảo">Xanh_lục_bảo</option>
                                                         <option value="Xanh_bóng_đêm">Xanh_bóng_đêm</option>
+                                                        <option value="Trắng_mờ">Trắng_mờ</option>
+                                                        <option value="Vàng_mờ">Vàng_mờ</option>
                                                     </select>
                                                 </div>
                                             </div>

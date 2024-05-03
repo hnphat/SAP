@@ -191,7 +191,7 @@
                                                                                 <!-- <input name="quanTam" type="text" class="form-control" placeholder="Xe quan tâm"> -->
                                                                                 <select name="quanTam" id="quanTam" class="form-control">
                                                                                     @foreach($xeList as $row)
-                                                                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                                                                        <option value="{{$row->name}}">{{$row->name}}</option>
                                                                                     @endforeach
                                                                                 </select>
                                                                             </div>
