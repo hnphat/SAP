@@ -53,7 +53,7 @@ class GuestController extends Controller
                 ]);
             }
         }
-        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
+        $xeList = TypeCarDetail::select('*')->where('isShow',1)->orderBy('name','asc')->get();
         // return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
         return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale, 'groupsale' => $arr, 'xeList' => $xeList]);
     }
