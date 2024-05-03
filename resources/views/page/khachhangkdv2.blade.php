@@ -188,7 +188,12 @@
                                                                             </div>
                                                                             <div class="form-group">
                                                                                 <label>Xe quan tâm</label>
-                                                                                <input name="quanTam" type="text" class="form-control" placeholder="Xe quan tâm">
+                                                                                <!-- <input name="quanTam" type="text" class="form-control" placeholder="Xe quan tâm"> -->
+                                                                                <select name="quanTam" id="quanTam" class="form-control">
+                                                                                    @foreach($xeList as $row)
+                                                                                        <option value="{{$row->id}}">{{$row->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
                                                                             </div>
                                                                             <div class="form-group">
                                                                                 <label>Đánh giá</label>
@@ -342,8 +347,13 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Xe quan tâm</label>
-                                                                                <input name="equanTam" type="text" class="form-control" placeholder="Xe quan tâm">
+                                                                                <label>Xe quan tâm:</label>
+                                                                                <select name="equanTam" id="equanTam" class="form-control">
+                                                                                    <option value="Không có" selected>Không có</option>
+                                                                                    @foreach($xeList as $row)
+                                                                                        <option value="{{$row->name}}">{{$row->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>                                                                             
                                                                             </div>
                                                                             <div class="form-group">
                                                                                 <label>Đánh giá</label>
@@ -733,13 +743,21 @@
                         $("input[name=edienThoaiCopy]").val(response.data.phone);
                         $("input[name=ediaChi]").val(response.data.address);
                         //-----------------
-                        $("input[name=equanTam]").val(response.data.xeQuanTam);
+                        $("select[name=equanTam]").val(response.data.xeQuanTam);
+                        if (response.data.xeQuanTam == null) $("select[name=equanTam]").val("Không có").change();
                         $("select[name=edanhGia]").val(response.data.danhGia);
+                        if ($("select[name=equanTam]").val() == null) {
+                            $('select[name=equanTam]').append($('<option>', {
+                                value: response.data.xeQuanTam,
+                                text: response.data.xeQuanTam
+                            }));
+                            $("select[name=equanTam]").val(response.data.xeQuanTam).change();
+                        }                     
                         $("select[name=elenHopDong]").val(response.data.lenHopDong);
                         $("input[name=ecs1]").val(response.data.cs1);
                         $("input[name=ecs2]").val(response.data.cs2);
                         $("input[name=ecs3]").val(response.data.cs3);
-                        $("input[name=ecs4]").val(response.data.cs4);
+                        $("input[name=ecs4]").val(response.data.cs4);                        
                     },
                     error: function(){
                         Toast.fire({
@@ -791,7 +809,7 @@
                                 'enguon': $("select[name=enguon]").val(),
                                 'elenHopDong': $("select[name=elenHopDong]").val(),
                                 'edanhGia': $("select[name=edanhGia]").val(),
-                                'equanTam': $("input[name=equanTam]").val(),
+                                'equanTam': $("select[name=equanTam]").val(),
                                 'ecs1': $("input[name=ecs1]").val(),
                                 'ecs2': $("input[name=ecs2]").val(),
                                 'ecs3': $("input[name=ecs3]").val(),

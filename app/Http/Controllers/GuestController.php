@@ -53,9 +53,9 @@ class GuestController extends Controller
                 ]);
             }
         }
+        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
         // return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
-        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale, 'groupsale' => $arr]);
-
+        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale, 'groupsale' => $arr, 'xeList' => $xeList]);
     }
 
     public function indexBaoCao() {
@@ -436,7 +436,7 @@ class GuestController extends Controller
                 'nguon' => $request->enguon,
                 'lenHopDong' => $request->elenHopDong,
                 'danhGia' => $request->edanhGia,
-                'xeQuanTam' => $request->equanTam,
+                'xeQuanTam' => $request->equanTam ? $request->equanTam : 0,
                 'cs1' => $request->ecs1,
                 'cs2' => $request->ecs2,
                 'cs3' => $request->ecs3,
@@ -490,7 +490,7 @@ class GuestController extends Controller
                             'chucVu' => $request->echucVu,
                             'lenHopDong' => $request->elenHopDong,
                             'danhGia' => $request->edanhGia,
-                            'xeQuanTam' => $request->equanTam,
+                            'xeQuanTam' => $request->equanTam ? $request->equanTam : 0,
                             'cs1' => $request->ecs1,
                             'cs2' => $request->ecs2,
                             'cs3' => $request->ecs3,
@@ -512,7 +512,7 @@ class GuestController extends Controller
                             'nguon' => $request->enguon,
                             'lenHopDong' => $request->elenHopDong,
                             'danhGia' => $request->edanhGia,
-                            'xeQuanTam' => $request->equanTam,
+                            'xeQuanTam' => $request->equanTam ? $request->equanTam : 0,
                             'cs1' => $request->ecs1,
                             'cs2' => $request->ecs2,
                             'cs3' => $request->ecs3,
@@ -560,7 +560,7 @@ class GuestController extends Controller
                         'chucVu' => $request->echucVu,                        
                         'lenHopDong' => $request->elenHopDong,
                         'danhGia' => $request->edanhGia,
-                        'xeQuanTam' => $request->equanTam,
+                        'xeQuanTam' => $request->equanTam ? $request->equanTam : 0,
                         'cs1' => $request->ecs1,
                         'cs2' => $request->ecs2,
                         'cs3' => $request->ecs3,
@@ -582,7 +582,7 @@ class GuestController extends Controller
                         'nguon' => $request->enguon,
                         'lenHopDong' => $request->elenHopDong,
                         'danhGia' => $request->edanhGia,
-                        'xeQuanTam' => $request->equanTam,
+                        'xeQuanTam' => $request->equanTam ? $request->equanTam : 0,
                         'cs1' => $request->ecs1,
                         'cs2' => $request->ecs2,
                         'cs3' => $request->ecs3,
