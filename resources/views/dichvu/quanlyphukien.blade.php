@@ -1211,7 +1211,8 @@
                                 icon: response.type,
                                 title: response.message
                             }) 
-                            $("#showModal").modal('hide');
+                            if (response.code != 500)
+                                $("#showModal").modal('hide');
                             refreshHangMuc();
                             onloadTongCong();
                         },

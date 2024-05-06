@@ -20,6 +20,7 @@ class BaogiaBhpk extends Migration
             $table->boolean('isPKD')->default(false);
             $table->boolean('isBaoHiem')->default(false);
             $table->string('hopDongKD')->nullable();
+            $table->string('soHopDongKD')->nullable();
             $table->string('nvKD')->nullable();
             $table->integer('saler')->nullable();
             $table->string('thoiGianVao');

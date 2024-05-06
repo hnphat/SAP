@@ -525,6 +525,11 @@ class DichVuController extends Controller
         } else {
             $bg->isBaoHiem = $request->isBaoHiem;
         }
+        // Xử lý số hợp đồng
+        $hd = HopDong::where('code',$request->hopDong)->orderBy('id', 'desc')->first();
+        $logSoHd = $hd ? $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA" : null;
+        $bg->soHopDongKD = $logSoHd;
+        //------------------------------------
         $bg->hopDongKD = $request->hopDong;
         $bg->nvKD = $request->nhanVien;
         $bg->thoiGianVao = $request->gioVao;
@@ -602,6 +607,38 @@ class DichVuController extends Controller
     public function editBaoGia(Request $request) {
         $bg = BaoGiaBHPK::find($request->eid);
         $bg->isPKD = $request->isPKD;
+        // Xử lý số hợp đồng
+        $hd = HopDong::where('code',$request->hopDong)->orderBy('id', 'desc')->first();
+        $logSoHd = $hd ? $hd->code.".".$hd->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($hd->created_at)."/HĐMB-PA" :  null;
+        $bg->soHopDongKD = $logSoHd;
+        $tongPKBan = 0;
+        $tongPKBanPhuKien = 0;
+        if ($hd) {
+            $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+            foreach($listpk as $row) {
+                $p = PackageV2::find($row->id_bh_pk_package);
+                if ($p->type != "cost" && $p->mapk) {
+                    if ($p->type == "pay")
+                        $tongPKBan += $p->cost;
+                } 
+            }
+
+            // Kiểm tra số tiền phụ kiện bán hiện có 
+            $ct = ChiTietBHPK::where('id_baogia',$request->eid)->get();
+            foreach($ct as $row) {
+                if (!$row->isTang)
+                    $tongPKBanPhuKien += $row->thanhTien;
+            }
+            // --------------------------
+        }
+        //------------------------------------
+        if ($tongPKBan != $tongPKBanPhuKien)
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Tổng phụ kiện bán: '.number_format($tongPKBanPhuKien).' không khớp với hợp đồng: '.number_format($tongPKBan).'!'
+            ]);
+            
         $bg->hopDongKD = $request->hopDong;
         $bg->nvKD = $request->nhanVien;
         $bg->saler = $request->saler;
@@ -1181,6 +1218,16 @@ class DichVuController extends Controller
     }
 
     public function luuBHPK(Request $request) {
+        // Xử lý nếu là phụ kiện đang liên kết với hợp đồng thì chỉ liên kết phụ kiện
+        $bg = BaoGiaBHPK::find($request->bgid);
+        if ($bg->soHopDongKD != null) {
+            return response()->json([
+                'type' => 'warning',
+                'code' => 500,
+                'message' => 'Báo giá này chỉ có thể liên kết phụ kiện không thể thêm mới!'
+            ]);
+        }
+        // ----------------------------------------------
         $bhpk = BHPK::where('ma',$request->hangHoa)->first();
         $ct = new ChiTietBHPK();
         $ct->id_baogia = $request->bgid;
@@ -1979,6 +2026,7 @@ class DichVuController extends Controller
                         <th>Người tạo</th>
                         <th>Sale</th>
                         <th>KH</th>
+                        <th>Số hợp đồng kinh doanh</th>
                         <th>Loại BG</th>
                         <th>Số BG</th>
                         <th>Doanh thu</th>                    
@@ -2037,6 +2085,7 @@ class DichVuController extends Controller
                                         <td>".$row->user->userDetail->surname."</td>
                                         <td>".$_sale."</td>
                                         <td>".$row->hoTen."</td>
+                                        <td>".$row->soHopDongKD."</td>
                                         <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                         <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                         <td><span class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
@@ -2104,6 +2153,7 @@ class DichVuController extends Controller
                                     <td>".$row->user->userDetail->surname."</td>
                                     <td>".$_sale."</td>
                                     <td>".$row->hoTen."</td>
+                                    <td>".$row->soHopDongKD."</td>
                                     <td><span class='text-bold text-secondary'>Báo giá kinh doanh</span></td>
                                     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>

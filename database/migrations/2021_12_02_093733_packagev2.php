@@ -23,7 +23,7 @@ class Packagev2 extends Migration
             $table->boolean('cost_tang')->default(false);
             $table->boolean('free_kem')->default(true);
             $table->integer('mapk')->nullable;
-            $table->boolean('mode')->nullable;
+            $table->string('mode', 255)->nullable;
             $table->timestamps();
         });
     }
