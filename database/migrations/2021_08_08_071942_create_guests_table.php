@@ -38,6 +38,15 @@ class CreateGuestsTable extends Migration
             $table->string('cs2',255)->nullable();
             $table->string('cs3',255)->nullable();
             $table->string('cs4',255)->nullable();
+            $table->string('cs5',255)->nullable();
+            $table->string('cs6',255)->nullable();
+            $table->string('mauSac',255)->nullable();
+            $table->string('hinhThucMua',255)->nullable();
+            $table->string('duKienMua',255)->nullable();
+            $table->string('callEnd',255)->nullable();
+            $table->string('datHen',255)->nullable();
+            $table->string('lyDoChuaMua',255)->nullable();
+            $table->string('lyDoLostSale',255)->nullable();
             $table->timestamps();
         });
     }
