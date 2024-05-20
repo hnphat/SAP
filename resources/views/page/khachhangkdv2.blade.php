@@ -47,7 +47,7 @@
                                         <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Tất cả khách</a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div>  
                             <div class="card-body">
                                 <div class="tab-content" id="custom-tabs-one-tabContent">
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
@@ -196,6 +196,37 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
+                                                                                <label>Màu sắc</label>
+                                                                                <select name="mauSac" id="mauSac" class="form-control">
+                                                                                    <option value="Đỏ">Đỏ</option>
+                                                                                    <option value="Xanh">Xanh</option>
+                                                                                    <option value="Trắng">Trắng</option>
+                                                                                    <option value="Vàng">Vàng</option>
+                                                                                    <option value="Ghi">Ghi</option>
+                                                                                    <option value="Nâu">Nâu</option>
+                                                                                    <option value="Bạc">Bạc</option>
+                                                                                    <option value="Xám">Xám</option>
+                                                                                    <option value="Xám_kim_loại">Xám_kim_loại</option>
+                                                                                    <option value="Đen">Đen</option>
+                                                                                    <option value="Vàng_cát">Vàng_cát</option>
+                                                                                    <option value="Xanh_lục_bảo">Xanh_lục_bảo</option>
+                                                                                    <option value="Xanh_bóng_đêm">Xanh_bóng_đêm</option>
+                                                                                    <option value="Trắng_mờ">Trắng_mờ</option>
+                                                                                    <option value="Vàng_mờ">Vàng_mờ</option>
+                                                                                </select>
+                                                                            </div>     
+                                                                            <div class="form-group">
+                                                                                <label>Hình thức mua</label>
+                                                                                <select name="hinhThucMua" id="hinhThucMua" class="form-control">
+                                                                                    <option value="Tiền mặt">Tiền mặt</option>
+                                                                                    <option value="Ngân hàng">Ngân hàng</option>                                                   
+                                                                                </select>
+                                                                            </div>     
+                                                                            <div class="form-group">
+                                                                                <label>Dự kiến mua xe</label>
+                                                                                <input type="text" class="form-control" name="duKienMua" id="duKienMua" placeholder="Dự kiến mua">
+                                                                            </div>    
+                                                                            <div class="form-group">
                                                                                 <label>Đánh giá</label>
                                                                                 <select name="danhGia" id="danhGia" class="form-control">
                                                                                     <option value="HOT">HOT</option>
@@ -203,24 +234,48 @@
                                                                                     <option value="COLD" selected>COLD</option>
                                                                                     <option value="FAIL">FAIL</option>                                                      
                                                                                 </select>
-                                                                            </div>                                                                                                                                          
+                                                                            </div>                                                                                                                       
                                                                         </div>
                                                                         <div class="col-sm-8">
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 1</label>
+                                                                                <label>Chăm sóc 01 giờ</label>
                                                                                 <input name="cs1" type="text" class="form-control" placeholder="Chăm sóc lần 1">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 2</label>
+                                                                                <label>Chăm sóc 24 giờ (01 ngày)</label>
                                                                                 <input name="cs2" type="text" class="form-control" placeholder="Chăm sóc lần 2">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 3</label>
+                                                                                <label>Chăm sóc 72 giờ (04 ngày)</label>
                                                                                 <input name="cs3" type="text" class="form-control" placeholder="Chăm sóc lần 3">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 4</label>
+                                                                                <label>Chăm sóc 01 tuần </label>
                                                                                 <input name="cs4" type="text" class="form-control" placeholder="Chăm sóc lần 4">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc 03 tuần </label>
+                                                                                <input name="cs5" type="text" class="form-control" placeholder="Chăm sóc lần 5">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc sau 02 tháng </label>
+                                                                                <input name="cs6" type="text" class="form-control" placeholder="Chăm sóc lần 6">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Lần gọi cuối cùng</label>
+                                                                                <input name="callEnd" type="text" class="form-control" placeholder="Lần gọi cuối">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Ngày hẹn gặp khách và nội dung trau đổi</label>
+                                                                                <input name="henKhach" type="text" class="form-control" placeholder="Hẹn khách">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Lý do chưa mua và đề xuất giải pháp</label>
+                                                                                <input name="lyDoChuaMua" type="text" class="form-control" placeholder="Lý do chưa mua">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>lý do lostsale</label>
+                                                                                <input name="lyDoLostSale" type="text" class="form-control" placeholder="Lý do lost sale">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -356,6 +411,39 @@
                                                                                 </select>                                                                             
                                                                             </div>
                                                                             <div class="form-group">
+                                                                                <label>Màu sắc</label>
+                                                                                <select name="emauSac" id="emauSac" class="form-control">
+                                                                                    <option value="0">Chưa xác định</option>
+                                                                                    <option value="Đỏ">Đỏ</option>
+                                                                                    <option value="Xanh">Xanh</option>
+                                                                                    <option value="Trắng">Trắng</option>
+                                                                                    <option value="Vàng">Vàng</option>
+                                                                                    <option value="Ghi">Ghi</option>
+                                                                                    <option value="Nâu">Nâu</option>
+                                                                                    <option value="Bạc">Bạc</option>
+                                                                                    <option value="Xám">Xám</option>
+                                                                                    <option value="Xám_kim_loại">Xám_kim_loại</option>
+                                                                                    <option value="Đen">Đen</option>
+                                                                                    <option value="Vàng_cát">Vàng_cát</option>
+                                                                                    <option value="Xanh_lục_bảo">Xanh_lục_bảo</option>
+                                                                                    <option value="Xanh_bóng_đêm">Xanh_bóng_đêm</option>
+                                                                                    <option value="Trắng_mờ">Trắng_mờ</option>
+                                                                                    <option value="Vàng_mờ">Vàng_mờ</option>
+                                                                                </select>
+                                                                            </div>     
+                                                                            <div class="form-group">
+                                                                                <label>Hình thức mua</label>
+                                                                                <select name="ehinhThucMua" id="ehinhThucMua" class="form-control">
+                                                                                    <option value="0">Chưa xác định</option>
+                                                                                    <option value="Tiền mặt">Tiền mặt</option>
+                                                                                    <option value="Ngân hàng">Ngân hàng</option>                                                   
+                                                                                </select>
+                                                                            </div>     
+                                                                            <div class="form-group">
+                                                                                <label>Dự kiến mua xe</label>
+                                                                                <input type="text" class="form-control" name="eduKienMua" id="eduKienMua" placeholder="Dự kiến mua">
+                                                                            </div>
+                                                                            <div class="form-group">
                                                                                 <label>Đánh giá</label>
                                                                                 <select name="edanhGia" id="edanhGia" class="form-control">
                                                                                     <option value="HOT">HOT</option>
@@ -367,20 +455,44 @@
                                                                         </div>
                                                                         <div class="col-sm-8">
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 1</label>
+                                                                                <label>Chăm sóc 01 giờ</label>
                                                                                 <input name="ecs1" type="text" class="form-control" placeholder="Chăm sóc lần 1">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 2</label>
+                                                                                <label>Chăm sóc 24 giờ (01 ngày)</label>
                                                                                 <input name="ecs2" type="text" class="form-control" placeholder="Chăm sóc lần 2">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 3</label>
+                                                                                <label>Chăm sóc 72 giờ (04 ngày)</label>
                                                                                 <input name="ecs3" type="text" class="form-control" placeholder="Chăm sóc lần 3">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc lần 4</label>
+                                                                                <label>Chăm sóc 01 tuần</label>
                                                                                 <input name="ecs4" type="text" class="form-control" placeholder="Chăm sóc lần 4">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc 03 tuần </label>
+                                                                                <input name="ecs5" type="text" class="form-control" placeholder="Chăm sóc lần 5">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Chăm sóc sau 02 tháng </label>
+                                                                                <input name="ecs6" type="text" class="form-control" placeholder="Chăm sóc lần 6">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Lần gọi cuối cùng</label>
+                                                                                <input name="ecallEnd" type="text" class="form-control" placeholder="Lần gọi cuối">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Ngày hẹn gặp khách và nội dung trau đổi</label>
+                                                                                <input name="ehenKhach" type="text" class="form-control" placeholder="Hẹn khách">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Lý do chưa mua và đề xuất giải pháp</label>
+                                                                                <input name="elyDoChuaMua" type="text" class="form-control" placeholder="Lý do chưa mua">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>lý do lostsale</label>
+                                                                                <input name="elyDoLostSale" type="text" class="form-control" placeholder="Lý do lost sale">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -454,10 +566,9 @@
                                                 <th>Địa chỉ</th>                                                
                                                 <th>Đánh giá</th>
                                                 <th>Xe quan tâm</th>
-                                                <th>CSL1</th>
-                                                <th>CSL2</th>
-                                                <th>CSL3</th>
-                                                <th>CSL4</th>
+                                                <th>Màu sắc</th>
+                                                <th>Hình thức mua</th>
+                                                <th>Dự kiến mua</th>                                                
                                                 <th>Người nhập</th>
                                                 <th>Tác vụ</th>
                                                 <th>Ngày sinh</th>
@@ -467,6 +578,16 @@
                                                 <th>Nơi cấp</th>
                                                 <th>Đại diện</th>
                                                 <th>Chức vụ</th>
+                                                <th>CS 1h</th>
+                                                <th>CS 24h</th>
+                                                <th>CS 72h</th>
+                                                <th>CS 1 tuần</th>
+                                                <th>CS 3 tuần</th> 
+                                                <th>CS 2 tháng</th> 
+                                                <th>Lần gọi cuối</th>
+                                                <th>Hẹn khách</th>
+                                                <th>Lý do chưa mua</th>
+                                                <th>Lostsale</th>
                                             </tr>
                                             </thead>
                                         </table>
@@ -576,10 +697,9 @@
                         }
                     },
                     { "data": "xeQuanTam" },
-                    { "data": "cs1" },
-                    { "data": "cs2" },
-                    { "data": "cs3" },
-                    { "data": "cs4" },
+                    { "data": "mauSac" },
+                    { "data": "hinhThucMua" },
+                    { "data": "duKienMua" },
                     { "data": "sale" },
                     {
                         "data": null,
@@ -593,14 +713,24 @@
                                 "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
                             @endif
                         }
-                    },
+                    },                 
                     { "data": "ngaySinh" },
                     { "data": "mst" },
                     { "data": "cmnd" },
                     { "data": "ngayCap" },
                     { "data": "noiCap" },
                     { "data": "daiDien" },
-                    { "data": "chucVu" },
+                    { "data": "chucVu" },                    
+                    { "data": "cs1" },
+                    { "data": "cs2" },
+                    { "data": "cs3" },
+                    { "data": "cs4" },
+                    { "data": "cs5" },
+                    { "data": "cs6" },   
+                    { "data": "callEnd" }, 
+                    { "data": "henKhach" }, 
+                    { "data": "lyDoChuaMua" }, 
+                    { "data": "lyDoLostSale" }, 
                 ]
             });
 
@@ -757,7 +887,16 @@
                         $("input[name=ecs1]").val(response.data.cs1);
                         $("input[name=ecs2]").val(response.data.cs2);
                         $("input[name=ecs3]").val(response.data.cs3);
-                        $("input[name=ecs4]").val(response.data.cs4);                        
+                        $("input[name=ecs4]").val(response.data.cs4);        
+                        $("input[name=ecs5]").val(response.data.cs5);
+                        $("input[name=ecs6]").val(response.data.cs6);    
+                        $("select[name=emauSac]").val(response.data.mauSac ? response.data.mauSac : 0);   
+                        $("select[name=ehinhThucMua]").val(response.data.hinhThucMua ? response.data.hinhThucMua : 0);   
+                        $("input[name=eduKienMua]").val(response.data.duKienMua);  
+                        $("input[name=ecallEnd]").val(response.data.callEnd);  
+                        $("input[name=ehenKhach]").val(response.data.henKhach);     
+                        $("input[name=elyDoChuaMua]").val(response.data.lyDoChuaMua);     
+                        $("input[name=elyDoLostSale]").val(response.data.lyDoLostSale);       
                     },
                     error: function(){
                         Toast.fire({

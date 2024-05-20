@@ -302,8 +302,9 @@ class GuestController extends Controller
         //     }
         // }
         $flag = PhoneHcare::select("*")->where('phone',$request->dienThoai)->exists();
-
-        if (!$flag) {
+        $checkPhone = Guest::where('phone',$request->dienThoai)->exists();
+        
+        if (Auth::user()->hasRole('system') || (!$flag && !$checkPhone)) {
             $guest = new Guest;
             $guest->id_type_guest = $request->loai;
             $guest->name = $request->ten;
@@ -325,10 +326,18 @@ class GuestController extends Controller
             $guest->cs2 = $request->cs2;
             $guest->cs3 = $request->cs3;
             $guest->cs4 = $request->cs4;
+            $guest->cs5 = $request->cs5;
+            $guest->cs6 = $request->cs6;
+            $guest->mauSac = $request->mauSac;
+            $guest->hinhThucMua = $request->hinhThucMua;
+            $guest->duKienMua = $request->duKienMua;
+            $guest->callEnd = $request->callEnd;
+            $guest->henKhach = $request->henKhach;
+            $guest->lyDoChuaMua = $request->lyDoChuaMua;
+            $guest->lyDoLostSale = $request->lyDoLostSale;
             $guest->save();
 
-            if($guest) {
-                
+            if($guest) {                
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
@@ -355,7 +364,7 @@ class GuestController extends Controller
         } else {
             return response()->json([
                 'type' => 'error',
-                'message' => ' Đây là khách hàng cũ từ Hcare không thể thêm!',
+                'message' => ' Đây có thể là khách hàng Hcare hoặc của nhân viên khác!',
                 'code' => 500
             ]);
         }
@@ -441,6 +450,15 @@ class GuestController extends Controller
                 'cs2' => $request->ecs2,
                 'cs3' => $request->ecs3,
                 'cs4' => $request->ecs4,
+                'cs5' => $request->ecs5,
+                'cs6' => $request->ecs6,
+                'mauSac' => $request->emauSac,
+                'hinhThucMua' => $request->ehinhThucMua,
+                'duKienMua' => $request->eduKienMua,
+                'callEnd' => $request->ecallEnd,
+                'henKhach' => $request->ehenKhach,
+                'lyDoChuaMua' => $request->elyDoChuaMua,
+                'lyDoLostSale' => $request->elyDoLostSale,
             ]);
             if($result) {
                 $nhatKy = new NhatKy();
@@ -495,6 +513,15 @@ class GuestController extends Controller
                             'cs2' => $request->ecs2,
                             'cs3' => $request->ecs3,
                             'cs4' => $request->ecs4,
+                            'cs5' => $request->ecs5,
+                            'cs6' => $request->ecs6,
+                            'mauSac' => $request->emauSac,
+                            'hinhThucMua' => $request->ehinhThucMua,
+                            'duKienMua' => $request->eduKienMua,
+                            'callEnd' => $request->ecallEnd,
+                            'henKhach' => $request->ehenKhach,
+                            'lyDoChuaMua' => $request->elyDoChuaMua,
+                            'lyDoLostSale' => $request->elyDoLostSale,
                         ]);
                     } else {
                         $result = Guest::where('id',$request->eid)->update([
@@ -517,6 +544,14 @@ class GuestController extends Controller
                             'cs2' => $request->ecs2,
                             'cs3' => $request->ecs3,
                             'cs4' => $request->ecs4,
+                            'cs6' => $request->ecs6,
+                            'mauSac' => $request->emauSac,
+                            'hinhThucMua' => $request->ehinhThucMua,
+                            'duKienMua' => $request->eduKienMua,
+                            'callEnd' => $request->ecallEnd,
+                            'henKhach' => $request->ehenKhach,
+                            'lyDoChuaMua' => $request->elyDoChuaMua,
+                            'lyDoLostSale' => $request->elyDoLostSale,
                         ]);
                     }                    
                     if($result) {
@@ -565,6 +600,14 @@ class GuestController extends Controller
                         'cs2' => $request->ecs2,
                         'cs3' => $request->ecs3,
                         'cs4' => $request->ecs4,
+                        'cs6' => $request->ecs6,
+                        'mauSac' => $request->emauSac,
+                        'hinhThucMua' => $request->ehinhThucMua,
+                        'duKienMua' => $request->eduKienMua,
+                        'callEnd' => $request->ecallEnd,
+                        'henKhach' => $request->ehenKhach,
+                        'lyDoChuaMua' => $request->elyDoChuaMua,
+                        'lyDoLostSale' => $request->elyDoLostSale,
                     ]);
                 } else {
                     $result = Guest::where('id',$request->eid)->update([
@@ -587,6 +630,14 @@ class GuestController extends Controller
                         'cs2' => $request->ecs2,
                         'cs3' => $request->ecs3,
                         'cs4' => $request->ecs4,
+                        'cs6' => $request->ecs6,
+                        'mauSac' => $request->emauSac,
+                        'hinhThucMua' => $request->ehinhThucMua,
+                        'duKienMua' => $request->eduKienMua,
+                        'callEnd' => $request->ecallEnd,
+                        'henKhach' => $request->ehenKhach,
+                        'lyDoChuaMua' => $request->elyDoChuaMua,
+                        'lyDoLostSale' => $request->elyDoLostSale,
                     ]);
                 }                
                 if($result) {
@@ -1518,10 +1569,19 @@ class GuestController extends Controller
                             <th>Điện thoại</th>
                             <th>Đánh giá</th>
                             <th>Xe quan tâm</th>
-                            <th>CS L1</th>
-                            <th>CS L2</th>
-                            <th>CS L3</th>
-                            <th>CS L4</th>
+                            <th>Màu sắc</th>
+                            <th>Hình thức mua</th>
+                            <th>Dự kiến mua</th> 
+                            <th>CS 1h</th>
+                            <th>CS 24h</th>
+                            <th>CS 72h</th>
+                            <th>CS 1 tuần</th>
+                            <th>CS 3 tuần</th> 
+                            <th>CS 2 tháng</th> 
+                            <th>Lần gọi cuối</th>
+                            <th>Hẹn khách</th>
+                            <th>Lý do chưa mua</th>
+                            <th>Lostsale</th>
                         </tr>
                         <tbody>";
             $chamSoc = Guest::select("*")->where('id_user_create', $u->id)->get();
@@ -1543,10 +1603,19 @@ class GuestController extends Controller
                         <td> ".(Auth::user()->hasRole('truongnhomsale') ? (Auth::user()->id == $khach->id_user_create ? $khach->phone : substr($khach->phone,0,4)."xxxxxx") : $khach->phone)." </td>
                         <td>".$stt."</td>
                         <td>".$khach->xeQuanTam."</td>
+                        <td>".$khach->mauSac."</td>
+                        <td>".$khach->hinhThucMua."</td>
+                        <td>".$khach->duKienMua."</td>
                         <td><i>".$khach->cs1."</i></td>
                         <td><i>".$khach->cs2."</i></td>
                         <td><i>".$khach->cs3."</i></td>
                         <td><i>".$khach->cs4."</i></td>
+                        <td><i>".$khach->cs5."</i></td>
+                        <td><i>".$khach->cs6."</i></td>
+                        <td><i>".$khach->callEnd."</i></td>
+                        <td><i>".$khach->henKhach."</i></td>
+                        <td><i>".$khach->lyDoChuaMua."</i></td>
+                        <td><i>".$khach->lyDoLostSale."</i></td>
                     </tr>";
                 }
             }    
