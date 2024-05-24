@@ -42,6 +42,8 @@ class KhoV2 extends Migration
             $table->float('giaTriVay', 8, 2)->nullable();
             // $table->integer('laiSuatVay')->nullable();
             $table->float('laiSuatVay', 8, 2)->nullable();
+            $table->integer('hhcongdk')->nullable();
+            $table->integer('giavonbh')->nullable();
             $table->timestamps();
         });
     }

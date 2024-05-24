@@ -65,8 +65,8 @@
                             <div class="form-group">
                                 <input type="submit" id="xemReport" class="form-control btn btn-info" value="XEM"/>
                                 <br><br>
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                <button type="button" id="exportExcel" class="form-control btn btn-primary export">Xuất dữ liệu</button>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('xuatbaocao'))
+                                    <button type="button" id="exportExcel" class="form-control btn btn-primary export">Xuất dữ liệu</button>
                                 @endif
                                 <!-- <a href ="{{url('exportexcel/') }} " class="form-control btn btn-primary export"> Xuất dữ liệu </a> -->
                             </div>
@@ -95,15 +95,20 @@
                             <th class="table-light">Bán giảm (So với giá niêm yết)</th>
                             <th class="table-light">Cộng tiền mặt</th>
                             <th class="table-light">Hỗ trợ HTV</th>
-
                             <th class="table-secondary">Tặng trước bạ</th>
                             <th class="table-secondary">Tặng Bảo hiểm</th>
                             <th class="table-secondary">Tặng Phụ kiện</th>
                             <th class="table-secondary">Tặng Công ĐK</th>
                             <th class="table-secondary">Tổng khuyến mãi</th>
                             <th class="table-primary">Bảo hiểm bán</th>
+                            <th class="table-primary">Giá vốn BH</th>
+                            <th class="table-primary">Lợi nhuận BH</th>
                             <th class="table-primary">Phụ kiện bán</th>
-                            <th class="table-primary">Công đăng ký</th>
+                            <th class="table-primary">Giá vốn PK</th>
+                            <th class="table-primary">Lợi nhuận PK</th>
+                            <th class="table-primary">Công ĐK</th>
+                            <th class="table-primary">HH Công ĐK</th>
+                            <th class="table-primary">Lợi nhuận ĐK</th>
                             <!-- <th>Hoa hồng MG</th> -->
                             <th class="table-secondary">Phí vận chuyển</th>
                             <th class="table-success">Lợi nhuận xe</th>
@@ -116,7 +121,8 @@
                             <th class="table-secondary">HH sale</th>
                             <th class="table-warning">Lãi gộp</th>
                             <th class="table-warning">Tỉ suất lãi gộp</th>
-
+                            <th class="table-success">Chốt lợi nhuận</th>
+                            <th class="table-success">Tỉ suất</th>
                             <th class="table-light">Tác vụ</th>
                         </tr>
                         </thead>

@@ -3907,8 +3907,15 @@ class HDController extends Controller
                 $hhSale = $row->hoaHongSale;                
                 $pvc = $row->phiVanChuyen;
                 $hasNhanNo = "";
+                $giavonbh = 0;
+                $hhcongdk = 0;
+                $loinhuanbaohiem = 0;
+                $loinhuancongdk = 0;
+                $giavonpkban = 0;
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
+                    $giavonbh = $ktKho->giavonbh;
+                    $hhcongdk = $ktKho->hhcongdk;
                     if ($ktKho->ghiChu != null)
                         $hasNhanNo = ($ktKho->ghiChu == 1) ? "" : " <i style='font-size: 10pt;'>Không nhận nợ</i>";
                     else
@@ -3959,7 +3966,7 @@ class HDController extends Controller
                        // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
-                    && $row2->name == "Bảo hiểm vật chất") {
+                    && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
                         $bhvc += $row2->cost;
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
@@ -3973,8 +3980,16 @@ class HDController extends Controller
 
                     if ($row2->type == 'pay') {
                         $pkban += $row2->cost;
+                        $temp_bhpk = BHPK::find($row2->mapk);
+                        if ($temp_bhpk) {
+                            $giavonpkban += $temp_bhpk->giaVon;
+                        }
                     }
                 }
+
+                $loinhuanbaohiem = $bhvc - $giavonbh;
+                $loinhuancongdk = $dangky - $hhcongdk;
+                $loinhuanpkban = $pkban - $giavonpkban;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -3986,6 +4001,9 @@ class HDController extends Controller
                 $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
                 // -----------------------
+                $loinhuanfinal = $laiGop + (($pkban + $dangky + $bhvc) - ($hhcongdk + $giavonbh + $giavonpkban));
+                $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinal = ($tiSuatFinal < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinal,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinal,2)."%</span>";
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -4018,7 +4036,6 @@ class HDController extends Controller
                         $status = "<strong class='text-success'>Hợp đồng ký</strong>";
                 }                
                 // <td>ĐN/0".$row->id."/".$codeCar."</td>
-               
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
@@ -4042,8 +4059,14 @@ class HDController extends Controller
                     <td>".number_format($tangCongDK)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($bhvc)."</td>
+                    <td>".number_format($giavonbh)."</td>
+                    <td>".number_format($loinhuanbaohiem)."</td>
                     <td>".number_format($pkban)."</td>
+                    <td>".number_format($giavonpkban)."</td>
+                    <td>".number_format($loinhuanpkban)."</td>
                     <td>".number_format($dangky)."</td>
+                    <td>".number_format($hhcongdk)."</td>
+                    <td>".number_format($loinhuancongdk)."</td>
                     <td>".number_format($pvc)."</td>
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
@@ -4054,6 +4077,8 @@ class HDController extends Controller
                     <td>".number_format($hhSale)."</td>
                     <td class='text-bold text-success'>".number_format($laiGop)."</td>
                     <td>".$tiSuatLaiGop."</td>
+                    <td class='text-bold text-pink'>".number_format($loinhuanfinal)."</td>
+                    <td>".$tiSuatFinal."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
@@ -4106,8 +4131,15 @@ class HDController extends Controller
                 $hhSale = $row->hoaHongSale;                
                 $pvc = $row->phiVanChuyen;
                 $hasNhanNo = "";
+                $giavonbh = 0;
+                $hhcongdk = 0;
+                $loinhuanbaohiem = 0;
+                $loinhuancongdk = 0;
+                $giavonpkban = 0;
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
+                    $giavonbh = $ktKho->giavonbh;
+                    $hhcongdk = $ktKho->hhcongdk;
                     if ($ktKho->ghiChu != null)
                         $hasNhanNo = ($ktKho->ghiChu == 1) ? "" : " <i style='font-size: 10pt;'>Không nhận nợ</i>"; 
                     else
@@ -4158,7 +4190,7 @@ class HDController extends Controller
                         // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
-                    && $row2->name == "Bảo hiểm vật chất") {
+                    && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
                         $bhvc += $row2->cost;
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
@@ -4172,8 +4204,15 @@ class HDController extends Controller
 
                     if ($row2->type == 'pay') {
                         $pkban += $row2->cost;
+                        $temp_bhpk = BHPK::find($row2->mapk);
+                        if ($temp_bhpk) {
+                            $giavonpkban += $temp_bhpk->giaVon;
+                        }
                     }
                 }
+                $loinhuanbaohiem = $bhvc - $giavonbh;
+                $loinhuancongdk = $dangky - $hhcongdk;  
+                $loinhuanpkban = $pkban - $giavonpkban; 
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -4184,6 +4223,9 @@ class HDController extends Controller
                 $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
                 // -----------------------
+                $loinhuanfinal = $laiGop + (($pkban + $dangky + $bhvc) - ($hhcongdk + $giavonbh + $giavonpkban));
+                $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinal = ($tiSuatFinal < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinal,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinal,2)."%</span>";
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -4214,7 +4256,7 @@ class HDController extends Controller
                     && $row->lead_check == true 
                     && $row->hdWait == false)
                         $status = "<strong class='text-success'>Hợp đồng ký</strong>";
-                }                
+                }       
                 // <td>ĐN/0".$row->id."/".$codeCar."</td>
                 echo "<tr>
                     <td>".($i++)."</td>
@@ -4239,8 +4281,14 @@ class HDController extends Controller
                     <td>".number_format($tangCongDK)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($bhvc)."</td>
+                    <td>".number_format($giavonbh)."</td>
+                    <td>".number_format($loinhuanbaohiem)."</td>
                     <td>".number_format($pkban)."</td>
+                    <td>".number_format($giavonpkban)."</td>
+                    <td>".number_format($loinhuanpkban)."</td>
                     <td>".number_format($dangky)."</td>
+                    <td>".number_format($hhcongdk)."</td>
+                    <td>".number_format($loinhuancongdk)."</td>
                     <td>".number_format($pvc)."</td>
                     <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
                     <td>".$tiSuat."</td>
@@ -4251,6 +4299,8 @@ class HDController extends Controller
                     <td>".number_format($hhSale)."</td>
                     <td class='text-bold text-success'>".number_format($laiGop)."</td>
                     <td>".$tiSuatLaiGop."</td>
+                    <td class='text-bold text-pink'>".number_format($loinhuanfinal)."</td>
+                    <td>".$tiSuatFinal."</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>

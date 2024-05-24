@@ -65,6 +65,8 @@
                                         <th>Sale</th>
                                         <th>Khách hàng</th>
                                         <th>Hoa hồng xe</th>
+                                        <th>Giá vốn bảo hiểm</th>
+                                        <th>Hoa hồng công đăng ký</th>
                                         <th>Tác vụ</th>                                        
                                     </tr>
                                     </thead>
@@ -144,7 +146,7 @@
                                             <div class="form-group">
                                                 <label>Lãi suất vay (%):</label>
                                                 <input min="1" max="100" name="laiSuatVay" placeholder="VD: 12.5" type="number" class="form-control">
-                                            </div>   
+                                            </div>                                              
                                         </div>
                                     </div>  
                                     <div class="row">
@@ -157,7 +159,17 @@
                                                 <label>Hoa hồng sale (Nếu có):</label>
                                                 <input name="hoaHongSale" id="hoaHongSale" placeholder="Hoa hồng sale" type="number" class="form-control">
                                             </div> 
-                                        </div>                                                                
+                                        </div> 
+                                        <div class="col-sm-5">
+                                            <div class="form-group">
+                                                <label>Hoa hồng công đăng ký:</label>
+                                                <input name="hhcongdk" id="hhcongdk" placeholder="Hoa hồng công đăng ký" type="number" class="form-control">
+                                            </div>   
+                                            <div class="form-group">
+                                                <label>Giá vốn bảo hiểm:</label>
+                                                <input name="giavonbh" id="giavonbh" placeholder="Giá vốn bảo hiểm" type="number" class="form-control">
+                                            </div>   
+                                        </div>                                                               
                                     </div>                                     
                                 </div>                             
                             </form>
@@ -378,6 +390,22 @@
                     },
                     {
                         "data": null,
+                        render: function(data, type, row) {       
+                            if (row.giavonbh)     
+                                return "<strong class='text-pink'>" + formatNumber(row.giavonbh) + "</strong>";   
+                            else return " ";  
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {       
+                            if (row.hhcongdk)     
+                                return "<strong class='text-pink'>" + formatNumber(row.hhcongdk) + "</strong>";   
+                            else return " ";  
+                        }
+                    },
+                    {
+                        "data": null,
                         render: function(data, type, row) {                           
                             return "<button id='btnEdit' data-ten='"+row.ten+"' data-id='"+row.id+"' data-idhd='"+row.idhopdong+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";     
                         }
@@ -412,6 +440,8 @@
                             $("input[name=giaTriVay]").val(response.data.giaTriVay);
                             $("input[name=laiSuatVay]").val(response.data.laiSuatVay);
                             $("input[name=hoaHongSale]").val(response.hoaHongSale); 
+                            $("input[name=giavonbh]").val(response.data.giavonbh); 
+                            $("input[name=hhcongdk]").val(response.data.hhcongdk); 
                             if (response.data.ghiChu)
                                 $("select[name=ghiChu]").val(response.data.ghiChu);
                             else
