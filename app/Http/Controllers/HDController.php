@@ -3677,7 +3677,7 @@ class HDController extends Controller
         $nhatKy->save();
         
         if (Auth::user()->hasRole('system') 
-        || Auth::user()->hasRole('baocaohopdong')) {
+        || Auth::user()->hasRole('baocaohopdong') || Auth::user()->hasRole('xuatbaocao')) {
             switch($request->baoCao) {
                 case 1: {
                     $hd = HopDong::orderBy('id','desc')->get();
@@ -4169,13 +4169,14 @@ class HDController extends Controller
                 $package = $row->package;
                 foreach($package as $row2) {                
                     if ($row2->type == 'free' && $row2->free_kem == false) {
-                       $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
                         $p = BHPK::find($row2->mapk);
                         $tangPK += $p->giaVon;
+                        $khuyenMai += $p->giaVon;
                        } else {
                         $tangPK += $row2->cost;
+                        $khuyenMai += $row2->cost;
                        }
                        // -----------------------                    
                     }
