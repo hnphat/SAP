@@ -66,7 +66,8 @@
                                         <th>Khách hàng</th>
                                         <th>Hoa hồng xe</th>
                                         <th>Giá vốn bảo hiểm</th>
-                                        <th>Hoa hồng công đăng ký</th>
+                                        <th>% Hoa hồng công ĐK</th>
+                                        <th>Giá vốn phụ kiện</th>
                                         <th>Tác vụ</th>                                        
                                     </tr>
                                     </thead>
@@ -162,14 +163,22 @@
                                         </div> 
                                         <div class="col-sm-5">
                                             <div class="form-group">
-                                                <label>Hoa hồng công đăng ký:</label>
-                                                <input name="hhcongdk" id="hhcongdk" placeholder="Hoa hồng công đăng ký" type="number" class="form-control">
+                                                <label>(%) Hoa hồng công đk:</label>
+                                                <input name="hhcongdk" id="hhcongdk" placeholder="VD: 45" type="number" min="0" step="1" max="100" class="form-control">
                                             </div>   
                                             <div class="form-group">
                                                 <label>Giá vốn bảo hiểm:</label>
                                                 <input name="giavonbh" id="giavonbh" placeholder="Giá vốn bảo hiểm" type="number" class="form-control">
                                             </div>   
                                         </div>                                                               
+                                    </div>  
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label>Giá vốn phụ kiện</label>
+                                                <input name="giavonpk" placeholder="Giá vốn phụ kiện" value="0" type="number" class="form-control">
+                                            </div>    
+                                        </div>                                                                
                                     </div>                                     
                                 </div>                             
                             </form>
@@ -406,6 +415,14 @@
                     },
                     {
                         "data": null,
+                        render: function(data, type, row) {       
+                            if (row.giavonpk)     
+                                return "<strong class='text-pink'>" + formatNumber(row.giavonpk) + "</strong>";   
+                            else return " ";  
+                        }
+                    },
+                    {
+                        "data": null,
                         render: function(data, type, row) {                           
                             return "<button id='btnEdit' data-ten='"+row.ten+"' data-id='"+row.id+"' data-idhd='"+row.idhopdong+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";     
                         }
@@ -441,6 +458,7 @@
                             $("input[name=laiSuatVay]").val(response.data.laiSuatVay);
                             $("input[name=hoaHongSale]").val(response.hoaHongSale); 
                             $("input[name=giavonbh]").val(response.data.giavonbh); 
+                            $("input[name=giavonpk]").val(response.data.giavonpk); 
                             $("input[name=hhcongdk]").val(response.data.hhcongdk); 
                             if (response.data.ghiChu)
                                 $("select[name=ghiChu]").val(response.data.ghiChu);

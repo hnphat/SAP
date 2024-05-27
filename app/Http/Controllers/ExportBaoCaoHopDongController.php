@@ -224,6 +224,52 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 default: abort(403);
             }
         }        
+        //-------------------------------
+        $hds[] = array(
+            '0' => "1",
+            '1' => "2",
+            '2' => "3",
+            '3' => "4",
+            '4' => "5",
+            '6' => "6",
+            '7' => "7",
+            '8' => "8",
+            '9' => "9",
+            '10' => "10",
+            '11' => "11",
+            '12' => "12",
+            '13' => "13",
+            '14' => "14",
+            '15' => "15",
+            '16' => "16",
+            '17' => "17",
+            '18' => "18",
+            '19' => "19",
+            '20' => "20",
+            '21' => "21",
+            '22' => "22",
+            '23' => "23",
+            '24' => "24=22-23",
+            '25' => "25",
+            '26' => "26",
+            '27' => "27=25-26",
+            '28' => "28",
+            '29' => "29",
+            '30' => "30=28-29",
+            '31' => "31",
+            '32' => "32=(12+15+16)-(13+21+31)",
+            '33' => "33=(32*100)/13",              
+            '34' => "34",
+            '35' => "35",
+            '36' => "36",
+            '37' => "37",
+            '38' => "38",
+            '39' => "39=32-(36+37+38)",
+            '40' => "40=(39*100)/13",
+            '41' => "41=39+24+27+30",
+            '42' => "42=(41*100/13)",
+        );
+        //-------------------------------
         $i = 1;
         foreach($hd as $row) {
             if ($this->baoCao != 9 && (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
@@ -248,6 +294,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     $giaVon = $row->giaVon;
                 }
                 $htvSupport = $row->htvSupport;
+                $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
                 $bhvc = 0;
                 $pkban = 0;
@@ -263,9 +310,18 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $phiLuuKho = 0;
                 $hhSale = $row->hoaHongSale;                
                 $pvc = $row->phiVanChuyen;
+                //---------------
+                $giavonbh = 0;
+                $hhcongdk = 0;
+                $_giavonpk = 0;
+                $loinhuanbaohiem = 0;
+                $loinhuancongdk = 0;
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
-                    $phiLuuKho = $ktKho->xangLuuKho;                  
+                    $phiLuuKho = $ktKho->xangLuuKho;    
+                    $giavonbh = $ktKho->giavonbh;
+                    $hhcongdk = $ktKho->hhcongdk;    
+                    $_giavonpk = $ktKho->giavonpk;          
                     if ($ktKho->ngayNhanNo != null) {
                         $date_1 = strtotime($ktKho->ngayNhanNo);
                         if ($ktKho->ngayRutHoSo != null)
@@ -310,7 +366,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                        // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
-                    && $row2->name == "Bảo hiểm vật chất") {
+                    && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
                         $bhvc += $row2->cost;
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
@@ -327,7 +383,11 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     }
                 }
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon);
+                $loinhuanbaohiem = $bhvc - $giavonbh;
+                $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
+                $loinhuanpkban = $pkban - $_giavonpk;
+
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "".round($tiSuat,2)."" : "".round($tiSuat,2)."";
@@ -336,6 +396,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? round($tiSuatLaiGop,2) : round($tiSuatLaiGop,2);
                 // -----------------------
+                $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
+                $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinal = ($tiSuatFinal < 3) ? round($tiSuatFinal,2) : round($tiSuatFinal,2);
+
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -390,18 +454,26 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '20' => $tangCongDK,
                     '21' => $khuyenMai,
                     '22' => $bhvc,
-                    '23' => $pkban,
-                    '24' => $dangky,
-                    '25' => $pvc,
-                    '26' => $loiNhuan,
-                    '27' => $tiSuat,                    
-                    '28' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
-                    '29' => $ngayNhanNo,
-                    '30' => $phiLaiVay,
-                    '31' => $phiLuuKho,
-                    '32' => $hhSale,
-                    '33' => $laiGop,
-                    '34' => $tiSuatLaiGop,
+                    '23' => $giavonbh,
+                    '24' => $loinhuanbaohiem,
+                    '25' => $pkban,
+                    '26' => $_giavonpk,
+                    '27' => $loinhuanpkban,
+                    '28' => $dangky,
+                    '29' => ($dangky*$hhcongdk/100),
+                    '30' => $loinhuancongdk,
+                    '31' => $pvc,
+                    '32' => $loiNhuan,
+                    '33' => $tiSuat,                    
+                    '34' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
+                    '35' => $ngayNhanNo,
+                    '36' => $phiLaiVay,
+                    '37' => $phiLuuKho,
+                    '38' => $hhSale,
+                    '39' => $laiGop,
+                    '40' => $tiSuatLaiGop,
+                    '41' => $loinhuanfinal,
+                    '42' => $tiSuatFinal,
                 );
             }    
 
@@ -432,6 +504,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     $giaVon = $row->giaVon;
                 }
                 $htvSupport = $row->htvSupport;
+                $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
                 $bhvc = 0;
                 $pkban = 0;
@@ -447,9 +520,17 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                $phiLuuKho = 0;
                $hhSale = $row->hoaHongSale;                
                $pvc = $row->phiVanChuyen;
+               $giavonbh = 0;
+               $hhcongdk = 0;
+               $_giavonpk = 0;
+               $loinhuanbaohiem = 0;
+               $loinhuancongdk = 0;
                if ($row->id_car_kho != null) {
                    $ktKho = KhoV2::find($row->id_car_kho); 
-                   $phiLuuKho = $ktKho->xangLuuKho;                  
+                   $phiLuuKho = $ktKho->xangLuuKho;      
+                   $giavonbh = $ktKho->giavonbh;
+                   $hhcongdk = $ktKho->hhcongdk;
+                   $_giavonpk = $ktKho->giavonpk;            
                    if ($ktKho->ngayNhanNo != null) {
                        $date_1 = strtotime($ktKho->ngayNhanNo);
                        if ($ktKho->ngayRutHoSo != null)
@@ -494,7 +575,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                        // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
-                    && $row2->name == "Bảo hiểm vật chất") {
+                    && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
                         $bhvc += $row2->cost;
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
@@ -511,7 +592,11 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     }
                 }
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon);
+                $loinhuanbaohiem = $bhvc - $giavonbh;
+                $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
+                $loinhuanpkban = $pkban - $_giavonpk;
+
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "".round($tiSuat,2)."" : "".round($tiSuat,2)."";
@@ -520,6 +605,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? round($tiSuatLaiGop,2) : round($tiSuatLaiGop,2);
                 // -----------------------
+                $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
+                $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinal = ($tiSuatFinal < 3) ? round($tiSuatFinal,2) : round($tiSuatFinal,2);
+
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -574,23 +663,29 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '20' => $tangCongDK,
                     '21' => $khuyenMai,
                     '22' => $bhvc,
-                    '23' => $pkban,
-                    '24' => $dangky,
-                    '25' => $pvc,
-                    '26' => $loiNhuan,
-                    '27' => $tiSuat,                    
-                    '28' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
-                    '29' => $ngayNhanNo,
-                    '30' => $phiLaiVay,
-                    '31' => $phiLuuKho,
-                    '32' => $hhSale,
-                    '33' => $laiGop,
-                    '34' => $tiSuatLaiGop,
+                    '23' => $giavonbh,
+                    '24' => $loinhuanbaohiem,
+                    '25' => $pkban,
+                    '26' => $_giavonpk,
+                    '27' => $loinhuanpkban,
+                    '28' => $dangky,
+                    '29' => ($dangky*$hhcongdk/100),
+                    '30' => $loinhuancongdk,
+                    '31' => $pvc,
+                    '32' => $loiNhuan,
+                    '33' => $tiSuat,                    
+                    '34' => (($ngayXuatXe) ? \HelpFunction::revertDate($ngayXuatXe) : ""),
+                    '35' => $ngayNhanNo,
+                    '36' => $phiLaiVay,
+                    '37' => $phiLuuKho,
+                    '38' => $hhSale,
+                    '39' => $laiGop,
+                    '40' => $tiSuatLaiGop,
+                    '41' => $loinhuanfinal,
+                    '42' => $tiSuatFinal,
                 );
             }  
         }
-
-
         return (collect($hds));
     }
 
@@ -619,8 +714,14 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
             'Tặng công ĐK',
             'Tổng khuyến mãi',
             'Bảo hiểm bán',
+			'Giá vốn BH',
+			'Lợi nhuận BH',
             'Phụ kiện bán',
+			'Giá vốn pk',
+			'Lợi nhuận pk',
             'Công đăng ký',
+			'HH công đk',
+			'Lợi nhuận công đk',
             'Phí vận chuyển',
             'Lợi nhuận xe',
             'Tỉ suất LN xe',
@@ -631,6 +732,8 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
             'HH sale',
             'Lãi gộp',
             'Tỉ suất lãi gộp',
+			'Chốt lợi nhuận',
+            'Tỉ suất',
         ];
     }
     
