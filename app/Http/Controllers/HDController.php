@@ -4318,6 +4318,10 @@ class HDController extends Controller
         return Excel::download(new ExportBaoCaoHopDongController($from,$to,$loai), 'baocaohopdong.xlsx');
     }
 
+    public function exportExcelCustom($from,$to,$loai) {
+        return Excel::download(new ExportForHuyController($from,$to,$loai), 'baocaohopdongcustom.xlsx');
+    }
+
     public function loadChiTietHopDong(Request $request){
         $hd = HopDong::find($request->idhopdong);
         $maDeNghi = "ĐN/".$hd->id."/".$hd->carSale->typeCar->code;

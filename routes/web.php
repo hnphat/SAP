@@ -110,6 +110,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('loadchitiet','HDController@loadChiTietHopDong')->name('chitiethopdong.post');  
         // Route::get('exportexcel', 'ExportController@export')->name('exportexcel');
         Route::get('exportexcel/{from}/den/{to}/loaibaocao/{loai}', 'HDController@exportExcel');
+        Route::get('exportexcelcustom/{from}/den/{to}/loaibaocao/{loai}', 'HDController@exportExcelCustom');
     });
     Route::group(['prefix' => 'typecar', 'middleware' => ['f_typecar']], function(){
         Route::get('list','TypeCarController@index')->name('typecar.list');
