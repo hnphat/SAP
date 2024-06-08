@@ -171,6 +171,7 @@ class VPPController extends Controller
         $dm->tenSanPham = $request->tenSanPham;
         $dm->donViTinh = $request->donViTinh;
         $dm->moTa = $request->moTa;
+        $dm->isCongCu = $request->isCongCu;
         $dm->save();
         if ($dm) {                
             $nhatKy = new NhatKy();
@@ -244,6 +245,7 @@ class VPPController extends Controller
         $dm->donViTinh = $request->edonViTinh;
         $dm->tenSanPham = $request->etenSanPham;
         $dm->moTa = $request->emoTa;
+        $dm->isCongCu = $request->eisCongCu;
         $dm->save();
         if ($dm) {                
             $nhatKy = new NhatKy();
@@ -354,6 +356,7 @@ class VPPController extends Controller
     public function nhapKhoLoadDanhMuc(){
         $dm = DanhMucSP::select("danhmuc_sp.*","nhom.tenNhom as tenNhom")
         ->join('nhom_sp as nhom','danhmuc_sp.id_nhom','=','nhom.id')
+        ->where('danhmuc_sp.isCongCu',false)
         ->orderBy('id', 'desc')
         ->get();
         if ($dm)
@@ -368,6 +371,27 @@ class VPPController extends Controller
                 'code' => 500,        
                 'type' => 'error',
                 'message' => 'Không tìm thấy danh mục hàng hóa'
+            ]);
+    }
+
+    public function nhapKhoLoadCongCu(){
+        $dm = DanhMucSP::select("danhmuc_sp.*","nhom.tenNhom as tenNhom")
+        ->join('nhom_sp as nhom','danhmuc_sp.id_nhom','=','nhom.id')
+        ->where('danhmuc_sp.isCongCu',true)
+        ->orderBy('id', 'desc')
+        ->get();
+        if ($dm)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Tải thành công công cụ",
+                'data' => $dm
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy'
             ]);
     }
 
@@ -509,7 +533,56 @@ class VPPController extends Controller
                 //-----
                 $jsonString = file_get_contents('upload/cauhinh/app.json');
                 $data = json_decode($jsonString, true); 
-                Mail::to($data['emailCCDC'])->send(new DuyetVanPhongPham([$nguoiYeuCau,$codeEmail,$noiDung]));
+                // Mail::to($data['emailCCDC'])->send(new DuyetVanPhongPham([$nguoiYeuCau,$codeEmail,$noiDung]));
+                //-----
+                    return response()->json([
+                        'code' => 200,        
+                        'type' => 'info',
+                        'message' => " Đã tạo đề nghị công cụ " . $code,
+                        'maPhieu' => $code,
+                        'idPX' => $newPN->id
+                    ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể tạo đề nghị'
+                ]);     
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'info',
+                'message' => 'Bạn chưa nhập nội dung đề nghị!'
+            ]);    
+        }        
+    }
+
+    public function yeuCauTaoPhieuCongCu(Request $request){  
+        $nguoiYeuCau = User::find(Auth::user()->id)->userDetail->surname;
+        $noiDung = $request->noiDungCongCu;
+        if ($request->noiDungCongCu != '') {
+            $newPN = new PhieuXuat();
+            $newPN->ngay = Date('d');
+            $newPN->thang = Date('m');
+            $newPN->nam = Date('Y');
+            $newPN->id_user_xuat = Auth::user()->id;
+            $newPN->noiDungXuat = $request->noiDungCongCu;
+            $newPN->isXuatCongCu = true;
+            $newPN->save();
+            $code = "ĐNCC-0" . $newPN->id;
+            $codeEmail = $newPN->id;
+            if ($newPN) {                
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Tạo đề nghị công cụ (phiếu xuất) <strong>".$code."</strong>";
+                $nhatKy->save(); 
+                //-----
+                $jsonString = file_get_contents('upload/cauhinh/app.json');
+                $data = json_decode($jsonString, true); 
+                // Mail::to($data['emailCCDC'])->send(new DuyetVanPhongPham([$nguoiYeuCau,$codeEmail,$noiDung]));
                 //-----
                     return response()->json([
                         'code' => 200,        
@@ -536,12 +609,46 @@ class VPPController extends Controller
 
     public function deNghiLoadPhieu(){
         if (Auth::user()->hasRole('system')) {
-            $phieu = PhieuXuat::select("*")           
+            $phieu = PhieuXuat::select("*")   
+            ->where('isXuatCongCu',false)        
             ->orderBy('id','desc')
             ->get();
         } else {
             $phieu = PhieuXuat::select("*")
-            ->where('id_user_xuat', Auth::user()->id)
+            ->where([
+                ['id_user_xuat','=', Auth::user()->id],
+                ['isXuatCongCu','=', false]
+            ])
+            ->orderBy('id','desc')
+            ->get();
+        }       
+        if ($phieu)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã tải đề nghị công cụ",
+                'data' => $phieu
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy'
+            ]);
+    }
+
+    public function deNghiLoadPhieuCongCu(){
+        if (Auth::user()->hasRole('system')) {
+            $phieu = PhieuXuat::select("*")   
+            ->where('isXuatCongCu',true)                
+            ->orderBy('id','desc')
+            ->get();
+        } else {
+            $phieu = PhieuXuat::select("*")
+            ->where([
+                ['id_user_xuat','=', Auth::user()->id],
+                ['isXuatCongCu','=', true]
+            ])
             ->orderBy('id','desc')
             ->get();
         }       
@@ -561,6 +668,31 @@ class VPPController extends Controller
     }
 
     public function deNghiLoadChiTiet(Request $request){
+        $phieuXuat = PhieuXuat::find($request->idPX);
+        $xuatsp = XuatSP::select('xuat_sp.soLuong','d.tenSanPham','d.id')
+        ->join('danhmuc_sp as d','d.id','=','xuat_sp.id_danhmuc')
+        ->where('xuat_sp.id_xuat',$phieuXuat->id)
+        ->get();
+        if ($xuatsp)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã tải yêu cầu công cụ",
+                'data' => $xuatsp,
+                'noiDung' => $phieuXuat->noiDungXuat,
+                'ngayXuat' => $phieuXuat->ngay . "-" . $phieuXuat->thang . "-" . $phieuXuat->nam,
+                'status' => $phieuXuat->duyet,
+                'statusNhan' => $phieuXuat->nhan
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy'
+            ]);
+    }
+
+    public function deNghiLoadChiTietCongCu(Request $request){
         $phieuXuat = PhieuXuat::find($request->idPX);
         $xuatsp = XuatSP::select('xuat_sp.soLuong','d.tenSanPham','d.id')
         ->join('danhmuc_sp as d','d.id','=','xuat_sp.id_danhmuc')

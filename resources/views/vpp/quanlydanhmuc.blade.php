@@ -57,6 +57,7 @@
                                         <th>Tên danh mục</th>
                                         <th>Đơn vị tính</th>
                                         <th>Mô tả</th>
+                                        <th>Loại</th>
                                         <th>Tác vụ</th>                                     
                                     </tr>
                                     </thead>
@@ -125,7 +126,14 @@
                             <div class="form-group">
                                <label>Mô tả</label> 
                                <input type="text" class="form-control" name="moTa" placeholder="Mô tả về hàng hóa">
-                            </div>                         
+                            </div>   
+                            <div class="form-group">
+                               <label>Loại sản phẩm<br/>Công cụ: Các thiết bị xuất kho sử dụng hao mòn trả lại kho khi không sử dụng<br/>Dụng cụ: Các dụng cụ xuất kho sử dụng 01 lần không trả lại kho</label> 
+                               <select name="isCongCu" id="isCongCu" class="form-control" >
+                                <option value="1">Công cụ  (Máy tính, tablet, điện thoại, sim, bộ đàm, ...)</option>
+                                <option value="0" selected>Dụng cụ (VPP, giấy, bao thư, mực in, viết, kim bấm,...) </option>
+                               </select>
+                            </div>                       
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -196,7 +204,14 @@
                             <div class="form-group">
                                <label>Mô tả</label> 
                                <input type="text" class="form-control" name="emoTa" placeholder="Mô tả về hàng hóa">
-                            </div>                            
+                            </div>            
+                            <div class="form-group">
+                               <label>Loại sản phẩm<br/>Công cụ: Các thiết bị xuất kho sử dụng hao mòn trả lại kho khi không sử dụng<br/>Dụng cụ: Các dụng cụ xuất kho sử dụng 01 lần không trả lại kho</label> 
+                               <select name="eisCongCu" id="eisCongCu" class="form-control" >
+                                <option value="1">Công cụ  (Máy tính, tablet, điện thoại, sim, bộ đàm, ...)</option>
+                                <option value="0" selected>Dụng cụ (VPP, giấy, bao thư, mực in, viết, kim bấm,...) </option>
+                               </select>
+                            </div>                        
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -261,7 +276,13 @@
                     { "data": "tenNhom" },   
                     { "data": "tenSanPham" },  
                     { "data": "donViTinh" }, 
-                    { "data": "moTa" },                    
+                    { "data": "moTa" },           
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                           return (row.isCongCu) ? "<strong class='text-info'>Công cụ</strong>" : "<strong class='text-primary'>Dụng cụ</strong>";
+                        }
+                    },                    
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -347,6 +368,7 @@
                         $("select[name=enhomHang]").val(response.data.id_nhom);
                         $("select[name=edonViTinh]").val(response.data.donViTinh);
                         $("input[name=etenSanPham]").val(response.data.tenSanPham);
+                        $("select[name=eisCongCu]").val(response.data.isCongCu);
                         $("input[name=emoTa]").val(response.data.moTa);
                             Toast.fire({
                                 icon: response.type,

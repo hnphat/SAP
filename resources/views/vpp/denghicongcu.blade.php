@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Đề nghị công cụ</strong></h1>
+                        <h1 class="m-0"><strong>Đề nghị công cụ/dụng cụ</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -37,7 +37,12 @@
                 <div class="card-header p-0 pt-1">
                     <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="false">
+                            <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="true">
+                                <strong>Đề nghị dụng cụ</strong>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-2-tab" data-toggle="pill" href="#tab-2" role="tab" aria-controls="tab-2" aria-selected="false">
                                 <strong>Đề nghị công cụ</strong>
                             </a>
                         </li>
@@ -45,39 +50,75 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-one-tabContent">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#addModal">THÊM YÊU CẦU</button>
+                        <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#addModal">THÊM YÊU CẦU</button>
+                                </div>
+                                <div class="col-md-4">
+                                    <select name="chonPhieu" class="form-control">
+                                        <option value="">Loading....</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button id="xemPhieu" type="button" class="btn btn-info btn-xs">Tải</button>
+                                </div>  
                             </div>
-                            <div class="col-md-4">
-                                <select name="chonPhieu" class="form-control">
-                                    <option value="">Loading....</option>
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <button id="xemPhieu" type="button" class="btn btn-info btn-xs">Tải</button>
-                            </div>  
-                        </div>
-                        <hr>
-                        <div id="phieuTop" style="display:none;">
-                            <h5>NGÀY: <span id="ngayYeuCau" class="text-pink"></span></h5>
-                            <h5>PHIẾU YÊU CẦU CÔNG CỤ: 
-                                <strong class="text-info" id="maPhieu"></strong> 
-                                <button id="xoaPhieu" class="btn btn-danger btn-sm">Xóa yêu cầu</button>
-                                <button id="suaPhieu" class="btn btn-secondary btn-sm">Cập nhật yêu cầu</button>
-                            </h5>
-                            <h5>NỘI DUNG: <i><span id="noiDung"></span></i></h5>                            
-                            <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
-                            <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
                             <hr>
-                            <h5>CÔNG CỤ/DỤNG CỤ YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
-                        </div>
-                        <div class="row container">
-                            <form id="showForm">                               
-                                
-                            </form>                            
-                        </div>
-                    </div>
+                            <div id="phieuTop" style="display:none;">
+                                <h5>NGÀY: <span id="ngayYeuCau" class="text-pink"></span></h5>
+                                <h5>PHIẾU YÊU CẦU DỤNG CỤ: 
+                                    <strong class="text-info" id="maPhieu"></strong> 
+                                    <button id="xoaPhieu" class="btn btn-danger btn-sm">Xóa yêu cầu</button>
+                                    <button id="suaPhieu" class="btn btn-secondary btn-sm">Cập nhật yêu cầu</button>
+                                </h5>
+                                <h5>NỘI DUNG: <i><span id="noiDung"></span></i></h5>                            
+                                <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
+                                <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
+                                <hr>
+                                <h5>DỤNG CỤ YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
+                            </div>
+                            <div class="row container">
+                                <form id="showForm">                               
+                                    
+                                </form>                            
+                            </div>
+                        </div>   
+                        <div class="tab-pane fade" id="tab-2" role="tabpanel" aria-labelledby="tab-2-tab">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#addModalCongCu">THÊM YÊU CẦU</button>
+                                </div>
+                                <div class="col-md-4">
+                                    <select name="chonPhieuCongCu" class="form-control">
+                                        <option value="">Loading....</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button id="xemPhieuCongCu" type="button" class="btn btn-info btn-xs">Tải</button>
+                                </div>  
+                            </div>
+                            <hr>
+                            <div id="phieuTopCongCu" style="display:none;">
+                                <h5>NGÀY: <span id="ngayYeuCauCongCu" class="text-pink"></span></h5>
+                                <h5>PHIẾU YÊU CẦU CÔNG CỤ: 
+                                    <strong class="text-info" id="maPhieuCongCu"></strong> 
+                                    <button id="xoaPhieuCongCu" class="btn btn-danger btn-sm">Xóa yêu cầu</button>
+                                    <button id="suaPhieuCongCu" class="btn btn-secondary btn-sm">Cập nhật yêu cầu</button>
+                                </h5>
+                                <h5>NỘI DUNG: <i><span id="noiDungCongCu"></span></i></h5>                            
+                                <h5>TRẠNG THÁI: <span id="trangThaiCongCu"></span></h5>
+                                <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhanCongCu"></span></h5>
+                                <hr>
+                                <h5>DỤNG CỤ YÊU CẦU <button id="themHangHoaCongCu" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
+                            </div>
+                            <div class="row container">
+                                <form id="showFormCongCu">                               
+                                    
+                                </form>                            
+                            </div>
+                        </div>                     
+                    </div>                    
                 </div>
                 <!-- /.card -->
             </div>
@@ -92,7 +133,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">THÊM YÊU CẦU CÔNG CỤ</h4>
+                    <h4 class="modal-title">THÊM YÊU CẦU DỤNG CỤ</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -102,13 +143,42 @@
                         {{csrf_field()}}
                         <input type="hidden" name="idPX" value="">                       
                         <div class="form-group">
-                            <label>Lý do yêu cầu công cụ:</label> 
-                            <input type="text" name="noiDung" class="form-control" placeholder="Nội dung yêu cầu công cụ">
+                            <label>Lý do yêu cầu dụng cụ:</label> 
+                            <input type="text" name="noiDung" class="form-control" placeholder="Nội dung yêu cầu dụng cụ">
                         </div>                         
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button id="taoPhieu" class="btn btn-warning btn-xs">Tạo phiếu</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+       <!-- Medal Add -->
+    <div class="modal fade" id="addModalCongCu">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">THÊM YÊU CẦU CÔNG CỤ</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> 
+                    <form id="addFormCongCu" autocomplete="off">
+                        {{csrf_field()}}
+                        <input type="hidden" name="idPXCongCu" value="">                       
+                        <div class="form-group">
+                            <label>Lý do yêu cầu công cụ:</label> 
+                            <input type="text" name="noiDungCongCuF" class="form-control" placeholder="Nội dung yêu cầu công cụ">
+                        </div>                         
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button id="taoPhieuCongCu" class="btn btn-warning btn-xs">Tạo phiếu</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -150,11 +220,15 @@
         $(document).ready(function() {
             // Load danh mục hàng hóa
             let danhmuc = ``;     
+            let congcu = ``;
             let phieuxuat = ``;   
+            let phieuxuatcongcu = ``;   
             let showrow = ``;      
             let countrow = 1;
             let arr = 1;
+            let arrCongCu = 1;
             let order = new Map();
+            let orderCongCu = new Map();
             $.ajax({
                     url: "{{url('management/requestvpp/denghicongcu/loaddanhmuc/')}}",
                     type: "get",
@@ -166,6 +240,26 @@
                         })
                         response.data.forEach((x) => {
                             danhmuc += `<option value="${x.id}">${x.tenSanPham} (${x.donViTinh})</option>`;
+                        });                     
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+            });
+            $.ajax({
+                    url: "{{url('management/requestvpp/denghicongcu/loaddanhmuccongcu/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        response.data.forEach((x) => {
+                            congcu += `<option value="${x.id}">${x.tenSanPham} (${x.donViTinh})</option>`;
                         });                     
                     },
                     error: function(){
@@ -189,6 +283,25 @@
                             phieuxuat += `<option value="${x.id}">PXK-0${x.id}; Ngày yêu cầu ${x.ngay}-${x.thang}-${x.nam} (${stt})</option>`;
                         });       
                         $("select[name=chonPhieu]").append(phieuxuat);      
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+                $.ajax({
+                    url: "{{url('management/requestvpp/denghicongcu/loadphieucongcu/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        $("select[name=chonPhieuCongCu]").empty();  
+                        response.data.forEach((x) => {
+                            let stt = (x.duyet == 1 ? "Đã duyệt" : "Chưa duyệt");
+                            phieuxuatcongcu += `<option value="${x.id}">ĐNCC-0${x.id}; Ngày yêu cầu ${x.ngay}-${x.thang}-${x.nam} (${stt})</option>`;
+                        });       
+                        $("select[name=chonPhieuCongCu]").append(phieuxuatcongcu);      
                     },
                     error: function(){
                         Toast.fire({
@@ -280,6 +393,88 @@
                     }
                 });
             }
+            function autoloadCongCu() {
+                $.ajax({
+                    url: "{{url('management/requestvpp/denghicongcu/loadphieuchitietcongcu/')}}",
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                       "idPX": $("select[name=chonPhieuCongCu]").val()
+                    },
+                    success: function(response) {    
+                        arrCongCu = 1;
+                        orderCongCu.clear();
+                        $('#themHangHoaCongCu').hide(); 
+                        $("#phieuTopCongCu").show();
+                        $("#maPhieuCongCu").text("ĐNCC-0" + $("select[name=chonPhieuCongCu]").val()); 
+                        $("#noiDungCongCu").text(response.noiDung);   
+                        $("#ngayYeuCauCongCu").text(response.ngayXuat);    
+                        $("#trangThaiCongCu").html((response.status == 1) ? "<strong class='text-success'>Đã duyệt</strong>" : "<strong class='text-danger'>Chưa duyệt</strong>");           
+                        $("#trangThaiNhanCongCu").html((response.statusNhan == 1) ? "<strong class='text-success'>Đã nhận</strong>" : "<strong class='text-danger'>Chưa nhận</strong>&nbsp;<button id='nhanHang' class='btn btn-success btn-sm'>Xác nhận</button>");           
+                        $("#showFormCongCu").empty();  
+                        showrow = ``;                        
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        showrow += `{{csrf_field()}}`;
+                        response.data.forEach((x) => {  
+                            orderCongCu.set(arrCongCu, x.id);                       
+                            showrow += `<div class="form-group" id="row_sel_${arrCongCu}">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Công cụ/dụng cụ</label> 
+                                            <select name="rhangHoa${arrCongCu}" disabled class="form-control">
+                                                ${congcu}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Số lượng</label> 
+                                            <input type="number" disabled name="rsoLuong${arrCongCu}" value="${x.soLuong}" class="form-control">
+                                        </div>                                       
+                                        <div class="col-md-2">      
+                                            <br/>                                
+                                            <button id="deleteRow" disabled type="button" class="btn btn-danger btn-sm" data-code="${arrCongCu}">Xóa</button>
+                                        </div>
+                                    </div>
+                                </div>                                                                                              
+                                `;
+                            arrCongCu++;
+                        });                        
+                        showrow += `
+                        <input type="hidden" name="idPXUpdateCongCu" value="${$("select[name=chonPhieuCongCu]").val()}"/>
+                        <button id="updateXuatKhoCongCu" type="button" disabled class="btn btn-success">LƯU</button>`;                       
+                        $("#showFormCongCu").append(showrow);    
+                        orderCongCu.forEach((value,key)=>{
+                            $("select[name=rhangHoaCongCu" + key + "]").val(value);
+                        })    
+                        if (response.status == 1) {
+                            $('#showFormCongCu button').hide();
+                            $('#themHangHoaCongCu').hide();
+                            $("#suaPhieuCongCu").hide();
+                            $("#xoaPhieuCongCu").hide();
+                            if (response.statusNhan == 1) {
+                                $('#nhanHangCongCu').hide();
+                            } else {
+                                $('#nhanHangCongCu').show();
+                            }
+                        } else {
+                            $('#showFormCongCu button').show();
+                            $("#suaPhieuCongCu").show();
+                            $("#xoaPhieuCongCu").show();   
+                            $('#nhanHangCongCu').hide();                         
+                        }
+
+                       
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không có yêu cầu nào để xem!"
+                        })
+                    }
+                });
+            }
             reload();
             // -----             
 
@@ -321,15 +516,63 @@
                         })
                     }
                 });
-            });            
+            });    
+            
+            $("#taoPhieuCongCu").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('management/requestvpp/denghicongcu/taophieucongcu/')}}",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "noiDungCongCu": $("input[name=noiDungCongCuF]").val()
+                    },
+                    beforeSend: function () {
+                       $("#taoPhieuCongCu").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
+                    },                  
+                    success: (response) => {                        
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })  
+                        if (response.code == 200) {
+                            $("input[name=idPNCongCu]").val(response.idPN);   
+                            $("input[name=maPhieuCongCu]").val(response.maPhieu);   
+                            $("input[name=maPhieuCongCu]").val(''); 
+                            $("input[name=noiDungNhapCongCu]").val('');
+                            $("input[name=idPNCongCu]").val('');
+                            $("#addModalCongCu").modal('hide');
+                            phieuxuatcongcu = ``;
+                            reload();
+                            $("#taoPhieuCongCu").attr('disabled', false).html("Tạo phiếu");
+                            setTimeout(autoloadCongCu, 1000);
+                        }                            
+                    },
+                    error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: ' Không thể tạo phiếu'
+                        })
+                    }
+                });
+            });    
 
             $("#xemPhieu").click(function(e){
                 e.preventDefault();
                 autoloadPhieu();
             });
 
+            $("#xemPhieuCongCu").click(function(e){
+                e.preventDefault();
+                autoloadCongCu();
+            });
+
             $(document).on("click","#deleteRow", function(){
                 $("#row_sel_" + $(this).data('code')).remove();
+            });
+            $(document).on("click","#deleteRowCongCu", function(){
+                $("#row_sel_congcu_" + $(this).data('code')).remove();
             });
 
             $("#suaPhieu").click(function(){
@@ -337,6 +580,13 @@
                 $('#showForm input').prop('disabled', false);
                 $('#showForm button').prop('disabled', false);
                 $('#themHangHoa').show();
+            });
+
+            $("#suaPhieuCongCu").click(function(){
+                $('#showFormCongCu select').prop('disabled', false);
+                $('#showFormCongCu input').prop('disabled', false);
+                $('#showFormCongCu button').prop('disabled', false);
+                $('#themHangHoaCongCu').show();
             });
 
             $("#xoaPhieu").click(function(){
@@ -371,6 +621,39 @@
                 }
             });
 
+            $("#xoaPhieuCongCu").click(function(){
+                if (confirm('Bạn có chắc muốn xóa?\nLưu ý: Sẽ xóa tất cả hàng hóa có trong yêu cầu đó.\nCác phiếu đã duyệt không thể xóa!')) {                    
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/requestvpp/denghicongcu/deletecongcu/')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "idPX": $("select[name=chonPhieuCongCu]").val()
+                        },
+                        success: (response) => {                        
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            if (response.code == 200) {
+                                phieuxuat = ``;
+                                $("#phieuTopCongCu").hide();            
+                                $("#showFormCongCu").empty();  
+                                reload();
+                            }
+                        },
+                        error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Không thể xóa yêu cầu này'
+                            })
+                        }
+                    });
+                }
+            });
+
+
             $(document).on("click","#updateXuatKho", function(e){
                 e.preventDefault();
                 $.ajax({
@@ -387,6 +670,32 @@
                         $('#showForm input').prop('disabled', true);
                         $('#showForm button').prop('disabled', true);
                         $('#themHangHoa').hide();                       
+                    },
+                    error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: ' Không thể cập nhật phiếu nhập kho'
+                        })
+                    }
+                });                
+            });
+
+            $(document).on("click","#updateXuatKhoCongCu", function(e){
+                e.preventDefault();
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('management/requestvpp/denghicongcu/updatecongcu/')}}",
+                    dataType: "json",
+                    data: $("#showFormCongCu").serialize(),
+                    success: (response) => {                        
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })    
+                        $('#showFormCongCu select').prop('disabled', true);
+                        $('#showFormCongCu input').prop('disabled', true);
+                        $('#showFormCongCu button').prop('disabled', true);
+                        $('#themHangHoaCongCu').hide();                       
                     },
                     error: function(response){
                         Toast.fire({
@@ -422,6 +731,31 @@
                 $("#showForm").prepend(temp);    
             });
 
+            $("#themHangHoaCongCu").click(function(){
+                order.set(arrCongCu, 0);                       
+                temp = `<div class="form-group" id="row_sel_${arrCongCu}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Công cụ/dụng cụ</label> 
+                                <select name="rhangHoa${arrCongCu}" class="form-control">
+                                    ${congcu}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Số lượng</label> 
+                                <input type="number" name="rsoLuong${arrCongCu}" value="0" class="form-control">
+                            </div>
+                            <div class="col-md-2">      
+                                <br/>                                
+                                <button id="deleteRow" type="button" class="btn btn-danger btn-sm" data-code="${arrCongCu}">Xóa</button>
+                            </div>
+                        </div>
+                    </div>                                                                                              
+                    `;
+                arrCongCu++;
+                $("#showFormCongCu").prepend(temp);    
+            });
+
             $(document).on("click","#nhanHang", function(e){
                 e.preventDefault();
                 if (confirm('Xác nhận đã nhận đầy đủ công cụ/dụng cụ?')) {
@@ -440,6 +774,35 @@
                             })    
                             $('#trangThaiNhan').html("<strong class='text-success'>Đã nhận</strong>");     
                             $('#nhanHang').hide();                    
+                        },
+                        error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Không thể nhận hàng lúc này!'
+                            })
+                        }
+                    }); 
+                }               
+            });
+
+            $(document).on("click","#nhanHangCongCu", function(e){
+                e.preventDefault();
+                if (confirm('Xác nhận đã nhận đầy đủ công cụ/dụng cụ?')) {
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/requestvpp/denghicongcu/nhanhangcongcu/')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "idPX": $("select[name=chonPhieuCongCu]").val()
+                        },
+                        success: (response) => {                        
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })    
+                            $('#trangThaiNhanCongCu').html("<strong class='text-success'>Đã nhận</strong>");     
+                            $('#nhanHangCongCu').hide();                    
                         },
                         error: function(response){
                             Toast.fire({

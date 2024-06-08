@@ -494,13 +494,17 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'requestvpp'], function(){
         // Đề nghị công cụ
-        Route::get('denghicongcu','VPPController@deNghiCongCuPanel')->name('vpp.denghicongcu.panel');
+        Route::get('denghidungcu','VPPController@deNghiCongCuPanel')->name('vpp.denghicongcu.panel');
         Route::post('denghicongcu/update','VPPController@deNghiUpdate');
         Route::post('denghicongcu/delete','VPPController@yeuCauDelete');
         Route::get('denghicongcu/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
+        Route::get('denghicongcu/loaddanhmuccongcu','VPPController@nhapKhoLoadCongCu');
         Route::get('denghicongcu/loadphieu','VPPController@deNghiLoadPhieu');
+        Route::get('denghicongcu/loadphieucongcu','VPPController@deNghiLoadPhieuCongCu');
         Route::get('denghicongcu/loadphieuchitiet','VPPController@deNghiLoadChiTiet');
+        Route::get('denghicongcu/loadphieuchitietcongcu','VPPController@deNghiLoadChiTietCongCu');
         Route::post('denghicongcu/taophieu','VPPController@yeuCauTaoPhieu');
+        Route::post('denghicongcu/taophieucongcu','VPPController@yeuCauTaoPhieuCongCu');
         Route::post('denghicongcu/nhanhang','VPPController@nhanHang');
     });
 

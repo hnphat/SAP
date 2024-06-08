@@ -20,6 +20,7 @@ class DanhmucSp extends Migration
             $table->string('tenSanPham');
             $table->enum('donViTinh', ['cái', 'hộp', 'gói', 'bộ', 'bao', 'cây', 'cục', 'thùng', 'viên', 'cặp', 'kg', 'lít', 'chai', 'lọ']);
             $table->string('moTa')->nullable();
+            $table->boolean("isCongCu")->default(false);
             $table->timestamps();
         });
     }

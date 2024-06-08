@@ -231,7 +231,7 @@
                                         <p>Tồn kho</p>
                                     </a>
                                 </li>         
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="{{route('sale.xembanggiaxe')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Bảng giá xe</p>
@@ -242,14 +242,14 @@
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Thông báo nội bộ</p>
                                     </a>
-                                </li>
+                                </li> -->
                                 @endif                                
                                 @endif
                                 @endif
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
                                     \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                     \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
-                                    <li class="nav-item">
+                                    <!-- <li class="nav-item">
                                         <a href="{{route('sale.banggiaxe')}}" class="nav-link">
                                             <i class="fas fa-caret-right nav-icon"></i>
                                             <p>QL Bảng giá xe</p>
@@ -260,7 +260,7 @@
                                             <i class="fas fa-caret-right nav-icon"></i>
                                             <p>QL Thông báo nội bộ</p>
                                         </a>
-                                    </li>
+                                    </li> -->
                                 @endif                            
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
@@ -360,12 +360,12 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan'))
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{route('danhgia.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý đánh giá</p>
                             </a>
-                        </li>        
+                        </li>         -->
                         @endif                        
                     </ul>
                 </li>
@@ -536,24 +536,24 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="{{route('nhansu.baocaoluong')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Lương</p>
                                 </a>
-                            </li> 
+                            </li>  -->
                             <li class="nav-item">
                                 <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Thông tin nhân viên</p>
                                 </a>
                             </li> 
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="{{route('noiquy.xem')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Nội quy - quy chế</p>
                                 </a>
-                            </li> 
+                            </li>  -->
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
@@ -607,7 +607,7 @@
                             @endif
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="{{route('khenthuong.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Quản lý khen thưởng</p>
@@ -618,7 +618,7 @@
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Quản lý biên bản</p>
                                 </a>
-                            </li>
+                            </li> -->
                             @endif
                         @endif
                     </ul>
@@ -650,12 +650,12 @@
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                     \Illuminate\Support\Facades\Auth::user()->hasRole('sale')||
                                     \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))    
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="{{route('caphoa.panel')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Quản lý cấp hoa</p>
                                     </a>
-                                </li>
+                                </li> -->
                                 @endif
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                 \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
@@ -667,12 +667,12 @@
                                     </a>
                                 </li>
                                 @endif
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="{{route('hanhchinh.xembieumau')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
                                         <p>Biểu mẫu</p>
                                     </a>
-                                </li>                                                          
+                                </li>                                                           -->
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))                    
@@ -717,31 +717,31 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhop'))   
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="{{route('cuochop.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Quản lý cuộc họp</p>
                                 </a>
-                            </li>
+                            </li> -->
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('hop') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('quanlyhop')) 
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="{{route('cuochop.tracuu.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Tra cứu cuộc họp</p>
                                 </a>
-                            </li>
+                            </li> -->
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                         \Illuminate\Support\Facades\Auth::user()->hasRole('boss')) 
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="{{route('cuochop.tracuuad.panel')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
                                     <p>Các vấn đề họp</p>
                                 </a>
-                            </li>
+                            </li> -->
                         @endif
                     </ul>
                 </li>
@@ -804,13 +804,13 @@
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('work') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
-                    <a href="#" class="nav-link">
+                    <!-- <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-cannabis"></i>
                         <p>
                             <strong>CÔNG VIỆC</strong>
                             <i class="right fas fa-angle-left"></i>
                         </p>
-                    </a>
+                    </a> -->
                     @endif
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
