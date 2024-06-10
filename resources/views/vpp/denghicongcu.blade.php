@@ -420,21 +420,21 @@
                         showrow += `{{csrf_field()}}`;
                         response.data.forEach((x) => {  
                             orderCongCu.set(arrCongCu, x.id);                       
-                            showrow += `<div class="form-group" id="row_sel_${arrCongCu}">
+                            showrow += `<div class="form-group" id="row_sel_congcu_${arrCongCu}">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label>Công cụ/dụng cụ</label> 
-                                            <select name="rhangHoa${arrCongCu}" disabled class="form-control">
+                                            <select name="rhangHoaCongCu${arrCongCu}" disabled class="form-control">
                                                 ${congcu}
                                             </select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>Số lượng</label> 
-                                            <input type="number" disabled name="rsoLuong${arrCongCu}" value="${x.soLuong}" class="form-control">
+                                            <input type="number" disabled name="rsoLuongCongCu${arrCongCu}" value="${x.soLuong}" class="form-control">
                                         </div>                                       
                                         <div class="col-md-2">      
                                             <br/>                                
-                                            <button id="deleteRow" disabled type="button" class="btn btn-danger btn-sm" data-code="${arrCongCu}">Xóa</button>
+                                            <button id="deleteRowCongCu" disabled type="button" class="btn btn-danger btn-sm" data-code="${arrCongCu}">Xóa</button>
                                         </div>
                                     </div>
                                 </div>                                                                                              
@@ -637,7 +637,7 @@
                                 title: response.message
                             })
                             if (response.code == 200) {
-                                phieuxuat = ``;
+                                phieuxuatcongcu = ``;
                                 $("#phieuTopCongCu").hide();            
                                 $("#showFormCongCu").empty();  
                                 reload();
@@ -700,7 +700,7 @@
                     error: function(response){
                         Toast.fire({
                             icon: 'info',
-                            title: ' Không thể cập nhật phiếu nhập kho'
+                            title: ' Không thể cập nhật phiếu'
                         })
                     }
                 });                
@@ -733,21 +733,21 @@
 
             $("#themHangHoaCongCu").click(function(){
                 order.set(arrCongCu, 0);                       
-                temp = `<div class="form-group" id="row_sel_${arrCongCu}">
+                temp = `<div class="form-group" id="row_sel_congcu_${arrCongCu}">
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Công cụ/dụng cụ</label> 
-                                <select name="rhangHoa${arrCongCu}" class="form-control">
+                                <select name="rhangHoaCongCu${arrCongCu}" class="form-control">
                                     ${congcu}
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label>Số lượng</label> 
-                                <input type="number" name="rsoLuong${arrCongCu}" value="0" class="form-control">
+                                <input type="number" name="rsoLuongCongCu${arrCongCu}" value="0" class="form-control">
                             </div>
                             <div class="col-md-2">      
                                 <br/>                                
-                                <button id="deleteRow" type="button" class="btn btn-danger btn-sm" data-code="${arrCongCu}">Xóa</button>
+                                <button id="deleteRowCongCu" type="button" class="btn btn-danger btn-sm" data-code="${arrCongCu}">Xóa</button>
                             </div>
                         </div>
                     </div>                                                                                              

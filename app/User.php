@@ -166,4 +166,8 @@ class User extends Authenticatable
     public function drpcheck() {
         return $this->hasMany('App\DRPCheck','id_user','id');
     }
+
+    public function lichSuKhoHC() {
+        return $this->hasMany('App\KhoHC','id_user','id');
+    }
 }

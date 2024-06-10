@@ -473,16 +473,22 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('quanlynhapkho/update','VPPController@nhapKhoUpdate');
         Route::post('quanlynhapkho/delete','VPPController@nhapKhoDelete');
         Route::get('quanlynhapkho/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
+        Route::get('quanlynhapkho/loaddanhmucall','VPPController@nhapKhoLoadDanhMucAll');
         Route::get('quanlynhapkho/loadphieunhap','VPPController@nhapKhoLoadPhieuNhap');
         Route::get('quanlynhapkho/loadphieunhapchitiet','VPPController@nhapKhoLoadPhieuNhapChiTiet');
         Route::post('quanlynhapkho/taophieu','VPPController@nhapKhoTaoPhieuNhap');        
         // Quản lý xuất kho
         Route::get('quanlyxuatkho','VPPController@quanLyXuatKhoPanel')->name('vpp.quanlyxuatkho.panel');
         Route::get('quanlyxuatkho/loadphieu','VPPController@xuatKhoLoadPhieu');
+        Route::get('quanlyxuatkho/loadphieucongcu','VPPController@xuatKhoLoadPhieuCongCu');
         Route::get('quanlyxuatkho/loadphieuchitiet','VPPController@xuatKhoLoadChiTiet');
+        Route::get('quanlyxuatkho/loadphieuchitietcongcu','VPPController@xuatKhoLoadChiTietCongCu');
         Route::get('quanlyxuatkho/refresh','VPPController@refreshPage')->name('vpp.refresh');
         Route::post('quanlyxuatkho/duyetphieu','VPPController@duyetPhieu');
+        Route::post('quanlyxuatkho/duyetphieucongcu','VPPController@duyetPhieuCongCu');
         Route::post('quanlyxuatkho/huyduyetphieu','VPPController@huyDuyetPhieu');
+        Route::post('quanlyxuatkho/huyduyetphieucongcu','VPPController@huyDuyetPhieuCongCu');
+        Route::get('quanlyxuatkho/loadnhatky','VPPController@loadNhatKy');
         // Báo cáo kho
         Route::get('baocaokho','VPPController@baoCaoKhoPanel')->name('vpp.baocaokho.panel');
         Route::post('baocaokho/tonkhothucte','VPPController@tonKhoThucTe');
@@ -496,7 +502,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Đề nghị công cụ
         Route::get('denghidungcu','VPPController@deNghiCongCuPanel')->name('vpp.denghicongcu.panel');
         Route::post('denghicongcu/update','VPPController@deNghiUpdate');
+        Route::post('denghicongcu/updatecongcu','VPPController@deNghiUpdateCongCu');
         Route::post('denghicongcu/delete','VPPController@yeuCauDelete');
+        Route::post('denghicongcu/deletecongcu','VPPController@yeuCauDeleteCongCu');
         Route::get('denghicongcu/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
         Route::get('denghicongcu/loaddanhmuccongcu','VPPController@nhapKhoLoadCongCu');
         Route::get('denghicongcu/loadphieu','VPPController@deNghiLoadPhieu');

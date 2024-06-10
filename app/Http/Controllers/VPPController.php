@@ -13,6 +13,7 @@ use App\PhieuXuat;
 use App\XuatSP;
 use App\EventReal;
 use App\RefreshSupport;
+use App\KhoHC;
 use DB;
 use Session;
 use Illuminate\Support\Facades\Auth;
@@ -57,6 +58,13 @@ class VPPController extends Controller
             $nhatKy->noiDung = "Thêm nhóm hàng: " . $request->tenNhom;
             $nhatKy->save(); 
 
+            //------------------
+            $khohc = new KhoHC();
+            $khohc->id_user = Auth::user()->id;
+            $khohc->ngay = Date("H:m:s d-m-Y");
+            $khohc->noiDung = "Thêm nhóm hàng: " . $request->tenNhom;
+            $khohc->save();
+            //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -82,6 +90,13 @@ class VPPController extends Controller
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý nhóm hàng";
             $nhatKy->noiDung = "Xóa nhóm hàng: " . $name ;
             $nhatKy->save(); 
+             //------------------
+             $khohc = new KhoHC();
+             $khohc->id_user = Auth::user()->id;
+             $khohc->ngay = Date("H:m:s d-m-Y");
+             $khohc->noiDung = "Xóa nhóm hàng: " . $name ;
+             $khohc->save();
+             //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -125,6 +140,13 @@ class VPPController extends Controller
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý nhóm hàng";
             $nhatKy->noiDung = "Cập nhật nhóm hàng: Từ <strong>" . $name . "</strong> thành <strong>" . $request->etenNhom . "</strong>";
             $nhatKy->save(); 
+             //------------------
+             $khohc = new KhoHC();
+             $khohc->id_user = Auth::user()->id;
+             $khohc->ngay = Date("H:m:s d-m-Y");
+             $khohc->noiDung = "Cập nhật nhóm hàng: Từ <strong>" . $name . "</strong> thành <strong>" . $request->etenNhom . "</strong>";
+             $khohc->save();
+             //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -180,6 +202,13 @@ class VPPController extends Controller
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý danh mục";
             $nhatKy->noiDung = "Thêm danh mục hàng hóa: <br/>Tên: ".$request->tenSanPham."<br/> Đơn vị tính: ".$request->donViTinh."<br/> Mô tả: ".$request->moTa."<br/>";
             $nhatKy->save();
+             //------------------
+             $khohc = new KhoHC();
+             $khohc->id_user = Auth::user()->id;
+             $khohc->ngay = Date("H:m:s d-m-Y");
+             $khohc->noiDung = "Thêm danh mục hàng hóa: <br/>Tên: ".$request->tenSanPham."<br/> Đơn vị tính: ".$request->donViTinh."<br/> Mô tả: ".$request->moTa."<br/>";
+             $khohc->save();
+             //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -205,6 +234,13 @@ class VPPController extends Controller
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý danh mục";
             $nhatKy->noiDung = "Xóa danh mục: " . $name ;
             $nhatKy->save(); 
+             //------------------
+             $khohc = new KhoHC();
+             $khohc->id_user = Auth::user()->id;
+             $khohc->ngay = Date("H:m:s d-m-Y");
+             $khohc->noiDung =  "Xóa danh mục: " . $name ;
+             $khohc->save();
+             //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -254,6 +290,13 @@ class VPPController extends Controller
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý danh mục";
             $nhatKy->noiDung = "Cập nhật danh mục từ <strong>" . $name . "</strong> thành <strong>" . $request->etenSanPham . "</strong><br/>Nhóm hàng từ <strong>".$nameNhomCu."</strong> sang <strong>".$nameNhom."</strong>";
             $nhatKy->save(); 
+             //------------------
+             $khohc = new KhoHC();
+             $khohc->id_user = Auth::user()->id;
+             $khohc->ngay = Date("H:m:s d-m-Y");
+             $khohc->noiDung = "Cập nhật danh mục từ <strong>" . $name . "</strong> thành <strong>" . $request->etenSanPham . "</strong><br/>Nhóm hàng từ <strong>".$nameNhomCu."</strong> sang <strong>".$nameNhom."</strong>";
+             $khohc->save();
+             //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -301,6 +344,14 @@ class VPPController extends Controller
                 $nhatKy->noiDung = "Xóa danh mục hàng hóa có trong phiếu PNK-0" 
                 . $request->idPNUpdate . "<br/>Nội dung " . $temp;
                 $nhatKy->save(); 
+                //--------------------
+                $khohc = new KhoHC();
+                $khohc->id_user = Auth::user()->id;
+                $khohc->ngay = Date("H:m:s d-m-Y");
+                $khohc->noiDung = "Xóa danh mục hàng hóa có trong phiếu PNK-0" 
+                . $request->idPNUpdate . "\nNội dung " . $temp;
+                $khohc->save();
+                //--------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -344,7 +395,15 @@ class VPPController extends Controller
             . $request->idPNUpdate . ". Nội dung cũ:" . $tempold . "<br/>Thêm danh mục hàng hóa mới vào phiếu PNK-0" 
             . $request->idPNUpdate . ". Nội dung mới: " . $temp;
             $nhatKy->save(); 
-
+            //------------------
+            $khohc = new KhoHC();
+            $khohc->id_user = Auth::user()->id;
+            $khohc->ngay = Date("H:m:s d-m-Y");
+            $khohc->noiDung = "Thực hiện xóa tất cả danh mục trong phiếu PNK-0" 
+            . $request->idPNUpdate . ". \nNội dung cũ:" . $tempold . "\nThêm danh mục hàng hóa mới vào phiếu PNK-0" 
+            . $request->idPNUpdate . ". \nNội dung mới: " . $temp;
+            $khohc->save();
+            //------------------
             return response()->json([
                 'code' => 200,        
                 'type' => 'info',
@@ -353,11 +412,55 @@ class VPPController extends Controller
         }             
     }
 
+    public function loadNhatKy() {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true); 
+        $nhatKy = KhoHC::select("kho_hc.*","d.surname as name")
+        ->join("users_detail as d","kho_hc.id_user","=","d.id_user")
+        ->orderBy('kho_hc.id', 'desc')
+        ->take($data["maxRecord"])
+        ->get();
+        if ($nhatKy) {
+            return response()->json([
+                'code' => 200,        
+                'type' => 'success',
+                'data' => $nhatKy,
+                'message' => 'Đã load nhật ký',
+            ]);  
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Lỗi load nhật ký',
+            ]);
+        }
+    }
+
     public function nhapKhoLoadDanhMuc(){
         $dm = DanhMucSP::select("danhmuc_sp.*","nhom.tenNhom as tenNhom")
         ->join('nhom_sp as nhom','danhmuc_sp.id_nhom','=','nhom.id')
         ->where('danhmuc_sp.isCongCu',false)
         ->orderBy('id', 'desc')
+        ->get();
+        if ($dm)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Tải thành công danh mục hàng hóa",
+                'data' => $dm
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy danh mục hàng hóa'
+            ]);
+    }
+
+    public function nhapKhoLoadDanhMucAll(){
+        $dm = DanhMucSP::select("danhmuc_sp.*","nhom.tenNhom as tenNhom")
+        ->join('nhom_sp as nhom','danhmuc_sp.id_nhom','=','nhom.id')
+        ->orderBy('isCongCu', 'desc')
         ->get();
         if ($dm)
             return response()->json([
@@ -412,6 +515,13 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Quản lý nhập kho";
                 $nhatKy->noiDung = "Tạo phiếu nhập <strong>".$code."</strong>";
                 $nhatKy->save(); 
+                //------------------
+             $khohc = new KhoHC();
+             $khohc->id_user = Auth::user()->id;
+             $khohc->ngay = Date("H:m:s d-m-Y");
+             $khohc->noiDung = "Tạo phiếu nhập <strong>".$code."</strong>";
+             $khohc->save();
+             //------------------
                     return response()->json([
                         'code' => 200,        
                         'type' => 'info',
@@ -491,6 +601,13 @@ class VPPController extends Controller
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho";
             $nhatKy->noiDung = "Xóa phiếu nhập kho PNK-0".$request->idPN." và danh mục hàng hóa có trong phiếu PNK-0".$request->idPN."<br/>Nội dung " . $temp;
             $nhatKy->save(); 
+               //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Xóa phiếu nhập kho PNK-0".$request->idPN." và danh mục hàng hóa có trong phiếu PNK-0".$request->idPN."<br/>Nội dung " . $temp;
+               $khohc->save();
+               //------------------
             return response()->json([
                 'code' => 200,        
                 'type' => 'info',
@@ -530,6 +647,13 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Tạo đề nghị (phiếu xuất) <strong>".$code."</strong>";
                 $nhatKy->save(); 
+                //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Tạo đề nghị (phiếu xuất) <strong>".$code."</strong>";
+               $khohc->save();
+               //------------------
                 //-----
                 $jsonString = file_get_contents('upload/cauhinh/app.json');
                 $data = json_decode($jsonString, true); 
@@ -579,6 +703,13 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Tạo đề nghị công cụ (phiếu xuất) <strong>".$code."</strong>";
                 $nhatKy->save(); 
+                //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung =  "Tạo đề nghị công cụ (phiếu xuất) <strong>".$code."</strong>";
+               $khohc->save();
+               //------------------
                 //-----
                 $jsonString = file_get_contents('upload/cauhinh/app.json');
                 $data = json_decode($jsonString, true); 
@@ -731,6 +862,55 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Xóa phiếu yêu cầu công cụ mã phiếu PXK-0" . $request->idPX;
                 $nhatKy->save(); 
+                 //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Xóa phiếu yêu cầu công cụ mã phiếu PXK-0" . $request->idPX;
+               $khohc->save();
+               //------------------
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => "Đã xóa phiếu yêu cầu công cụ và các hàng hóa trong phiếu"
+                ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể xóa'
+                ]);
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không thể xóa phiếu đã được duyệt'
+            ]);
+        }        
+    }
+
+    public function yeuCauDeleteCongCu(Request $request) {
+        $xoa = PhieuXuat::find($request->idPX);
+        if ($xoa->duyet == false) {
+            $xoa->delete();
+            if ($xoa) {
+                $eventReal = new EventReal;
+                $eventReal->name = "Xoa yeu cau";
+                $eventReal->save();
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Xóa phiếu yêu cầu công cụ mã phiếu ĐNCC-0" . $request->idPX;
+                $nhatKy->save(); 
+                //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Xóa phiếu yêu cầu công cụ mã phiếu ĐNCC-0" . $request->idPX;
+               $khohc->save();
+               //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -765,8 +945,14 @@ class VPPController extends Controller
             }
             $id = $request->idPXUpdate;
             if(empty($arrHangHoa)){
+                $oldpx = XuatSP::where('id_xuat',$request->idPXUpdate)->get();
                 $xuatsp = XuatSP::where('id_xuat', $request->idPXUpdate)->delete();
                 if ($xuatsp) {
+                    $temp = "";
+                    foreach($oldpn as $row) {
+                        $dmSP = DanhMucSP::find($row->id_danhmuc);
+                        $temp .= "SP: ". $dmSP->tenSanPham ." SL: ". $row->soLuong . "\n";
+                    }
                     $eventReal = new EventReal;
                     $eventReal->name = "Update CCDC";
                     $eventReal->save();
@@ -774,8 +960,15 @@ class VPPController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
-                    $nhatKy->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate;
+                    $nhatKy->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n" .$temp;
                     $nhatKy->save(); 
+                     //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n" .$temp;
+               $khohc->save();
+               //------------------
                     return response()->json([
                         'code' => 200,        
                         'type' => 'info',
@@ -789,6 +982,7 @@ class VPPController extends Controller
                         'message' => 'Không thể xóa tất cả danh mục sản phẩm trên phiếu!',
                     ]); 
             } else {
+                $temp = "";
                 $xuatsp = XuatSP::where('id_xuat', $request->idPXUpdate)->delete();
                 for($i = 0; $i < count($arrHangHoa); $i++) {
                     $hangHoa = $request[$arrHangHoa[$i]];
@@ -798,6 +992,8 @@ class VPPController extends Controller
                     $nhap->id_xuat = $request->idPXUpdate;
                     $nhap->soLuong = $soLuong;
                     $nhap->save();                    
+                    $dmSP = DanhMucSP::find($hangHoa);
+                    $temp .= "SP: ". $dmSP->tenSanPham ." SL: ". $soLuong . "\n";
                 }
                 $eventReal = new EventReal;
                 $eventReal->name = "Update CCDC";
@@ -807,8 +1003,112 @@ class VPPController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
-                $nhatKy->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate;
+                $nhatKy->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n".$temp;
                 $nhatKy->save(); 
+
+                 //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate. "\nNội dung: \n".$temp;
+               $khohc->save();
+               //------------------
+
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => 'Đã cập nhật yêu cầu công cụ và danh mục hàng hóa yêu cầu vào phiếu',
+                ]);      
+            }             
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Phiếu đã duyệt không thể chỉnh sửa'
+            ]);   
+        }        
+    }
+
+    public function deNghiUpdateCongCu(Request $request) {    
+        $phieuXuat = PhieuXuat::find($request->idPXUpdateCongCu);
+        if ($phieuXuat->duyet == false) {
+            $arrHangHoa = [];
+            $arrSoLuong = [];
+            for($i = 1; $i <= 30; $i++) {
+                if(array_key_exists('rhangHoaCongCu' . $i,$request->all())) {
+                    array_push($arrHangHoa, 'rhangHoaCongCu' . $i);
+                    array_push($arrSoLuong, 'rsoLuongCongCu' . $i);
+                }
+            }
+            $id = $request->idPXUpdateCongCu;
+            if(empty($arrHangHoa)){
+                $oldpx = XuatSP::where('id_xuat',$request->idPXUpdateCongCu)->get();
+                $xuatsp = XuatSP::where('id_xuat', $request->idPXUpdateCongCu)->delete();
+                if ($xuatsp) {
+                    $temp = "";
+                    foreach($oldpn as $row) {
+                        $dmSP = DanhMucSP::find($row->id_danhmuc);
+                        $temp .= "SP: ". $dmSP->tenSanPham ." SL: ". $row->soLuong . "\n";
+                    }
+                    $eventReal = new EventReal;
+                    $eventReal->name = "Update CCDC";
+                    $eventReal->save();
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                    $nhatKy->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdateCongCu. "\nNội dung: \n" .$temp;
+                    $nhatKy->save(); 
+                     //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung ="Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdateCongCu. "\nNội dung: \n" .$temp;
+               $khohc->save();
+               //------------------
+                    return response()->json([
+                        'code' => 200,        
+                        'type' => 'info',
+                        'message' => 'Đã xóa tất cả danh mục hàng hóa có trong yêu cầu công cụ!',
+                    ]);   
+                }
+                else
+                    return response()->json([
+                        'code' => 500,        
+                        'type' => 'info',
+                        'message' => 'Không thể xóa tất cả danh mục sản phẩm trên phiếu!',
+                    ]); 
+            } else {
+                $xuatsp = XuatSP::where('id_xuat', $request->idPXUpdateCongCu)->delete();
+                for($i = 0; $i < count($arrHangHoa); $i++) {
+                    $hangHoa = $request[$arrHangHoa[$i]];
+                    $soLuong = $request[$arrSoLuong[$i]];
+                    $nhap = new XuatSP();
+                    $nhap->id_danhmuc = $hangHoa;
+                    $nhap->id_xuat = $request->idPXUpdateCongCu;
+                    $nhap->soLuong = $soLuong;
+                    $nhap->save();       
+                    $dmSP = DanhMucSP::find($hangHoa);
+                    $temp .= "SP: ". $dmSP->tenSanPham ." SL: ". $soLuong . "\n";             
+                }
+                $eventReal = new EventReal;
+                $eventReal->name = "Update CCDC";
+                $eventReal->save();
+
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu ĐNCC-0" . $request->idPXUpdateCongCu . "\nNội dung: \n" .$temp;
+                $nhatKy->save(); 
+
+                //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu ĐNCC-0" . $request->idPXUpdateCongCu. "\nNội dung: \n" .$temp;
+               $khohc->save();
+               //------------------
 
                 return response()->json([
                     'code' => 200,        
@@ -867,7 +1167,28 @@ class VPPController extends Controller
     }
 
     public function xuatKhoLoadPhieu(){
-        $phieu = PhieuXuat::select("*")           
+        $phieu = PhieuXuat::select("*")   
+        ->where('isXuatCongCu',false)        
+        ->orderBy('id','desc')
+        ->get();
+        if ($phieu)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã tải đề nghị công cụ",
+                'data' => $phieu
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy'
+            ]);
+    }
+
+    public function xuatKhoLoadPhieuCongCu(){
+        $phieu = PhieuXuat::select("*")   
+        ->where('isXuatCongCu',true)        
         ->orderBy('id','desc')
         ->get();
         if ($phieu)
@@ -886,6 +1207,32 @@ class VPPController extends Controller
     }
 
     public function xuatKhoLoadChiTiet(Request $request){
+        $phieuXuat = PhieuXuat::find($request->idPX);
+        $xuatsp = XuatSP::select('xuat_sp.soLuong','d.tenSanPham','d.id')
+        ->join('danhmuc_sp as d','d.id','=','xuat_sp.id_danhmuc')
+        ->where('xuat_sp.id_xuat',$phieuXuat->id)
+        ->get();
+        if ($xuatsp)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã tải yêu cầu công cụ",
+                'data' => $xuatsp,
+                'noiDung' => $phieuXuat->noiDungXuat,
+                'ngayXuat' => $phieuXuat->ngay . "-" . $phieuXuat->thang . "-" . $phieuXuat->nam,
+                'user' => $phieuXuat->userXuat->userDetail->surname,
+                'status' => $phieuXuat->duyet,
+                'statusNhan' => $phieuXuat->nhan
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy'
+            ]);
+    }
+
+    public function xuatKhoLoadChiTietCongCu(Request $request){
         $phieuXuat = PhieuXuat::find($request->idPX);
         $xuatsp = XuatSP::select('xuat_sp.soLuong','d.tenSanPham','d.id')
         ->join('danhmuc_sp as d','d.id','=','xuat_sp.id_danhmuc')
@@ -978,6 +1325,79 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
                 $nhatKy->save(); 
+
+                //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
+               $khohc->save();
+               //------------------
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => "Đã duyệt yêu cầu. Đang đồng bộ và tải lại danh sách phiếu...."
+                ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể duyệt yêu cầu'
+                ]);
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => "Không đủ số lượng [".$sanPham."] để duyệt"
+            ]);
+        }
+    }
+
+    public function duyetPhieuCongCu(Request $request) {
+        $phieu = PhieuXuat::find($request->phieu);
+        $flag = true;
+        $sanPham = "";
+        $xuatSP = XuatSP::where('id_xuat', $request->phieu)->get();
+        foreach($xuatSP as $xuat) {
+            $newPN = NhapSP::select('id_danhmuc', DB::raw('sum(soLuong) as soLuong'))           
+            ->groupBy('id_danhmuc')
+            ->having('id_danhmuc', $xuat->id_danhmuc)
+            ->first();
+            $soLuongNhap = (isset($newPN) ? $newPN->soLuong : 0);
+            $newPX = XuatSP::where('id_danhmuc',$xuat->id_danhmuc)->get();
+            $soLuongXuat = 0;
+            foreach($newPX as $item) {
+                $px = PhieuXuat::find($item->id_xuat);
+                if ($px->duyet == true && $px->nhan == true) {
+                    $soLuongXuat += $item->soLuong;
+                }
+            }
+            if ($xuat->soLuong > ($soLuongNhap - $soLuongXuat)) {
+                $sanPham .= " ;". DanhMucSP::find($xuat->id_danhmuc)->tenSanPham;
+                $flag = false;
+            }            
+        }
+
+        if ($flag) {
+            $phieu->duyet = true;
+            $phieu->nhan = true;
+            $phieu->save();
+            if ($phieu) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu ĐNCC-0" . $request->phieu;
+                $nhatKy->save(); 
+
+                 //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu ĐNCC-0" . $request->phieu;
+               $khohc->save();
+               //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -1012,6 +1432,14 @@ class VPPController extends Controller
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
                 $nhatKy->save();
+
+                 //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
+               $khohc->save();
+               //------------------
                 return response()->json([
                     'code' => 200,        
                     'type' => 'info',
@@ -1060,6 +1488,48 @@ class VPPController extends Controller
         //             'message' => 'Không thể duyệt yêu cầu'
         //         ]);
         // }        
+    }
+
+    public function huyDuyetPhieuCongCu(Request $request) {
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+            $phieu = PhieuXuat::find($request->phieu);
+            $phieu->duyet = false;
+            $phieu->nhan = false;
+            $phieu->save();
+            if ($phieu) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+                $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu ĐNCC-0" . $request->phieu;
+                $nhatKy->save();
+
+                //------------------
+               $khohc = new KhoHC();
+               $khohc->id_user = Auth::user()->id;
+               $khohc->ngay = Date("H:m:s d-m-Y");
+               $khohc->noiDung =  "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu ĐNCC-0" . $request->phieu;
+               $khohc->save();
+               //------------------
+                return response()->json([
+                    'code' => 200,        
+                    'type' => 'info',
+                    'message' => "Đã HỦY duyệt phiếu. Đang đồng bộ và tải lại danh sách phiếu...."
+                ]);
+            }
+            else
+                return response()->json([
+                    'code' => 500,        
+                    'type' => 'error',
+                    'message' => 'Không thể duyệt yêu cầu'
+                ]);
+        }  else {
+                return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không thể hủy (hoàn trạng) yêu cầu vì đã giao CCDC cho nhân viên'
+            ]);
+        }     
     }
 
     // Báo cáo kho

@@ -280,7 +280,7 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                           return (row.isCongCu) ? "<strong class='text-info'>Công cụ</strong>" : "<strong class='text-primary'>Dụng cụ</strong>";
+                           return (row.isCongCu) ? "<strong class='text-info'>Dụng cụ</strong>" : "<strong class='text-primary'>Công cụ</strong>";
                         }
                     },                    
                     {

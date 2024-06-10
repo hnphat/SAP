@@ -170,7 +170,7 @@
             let arr = 1;
             let order = new Map();
             $.ajax({
-                    url: "{{url('management/vpp/quanlynhapkho/loaddanhmuc/')}}",
+                    url: "{{url('management/vpp/quanlynhapkho/loaddanhmucall/')}}",
                     type: "get",
                     dataType: "json",
                     success: function(response) {

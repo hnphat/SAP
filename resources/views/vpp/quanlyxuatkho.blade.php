@@ -37,46 +37,100 @@
                 <div class="card-header p-0 pt-1">
                     <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="false">
-                                <strong>Quản lý xuất kho</strong>
+                            <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="true">
+                                <strong>Duyệt đề nghị dụng cụ</strong>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-2-tab" data-toggle="pill" href="#tab-2" role="tab" aria-controls="tab-2" aria-selected="false">
+                                <strong>Duyệt đề nghị công cụ</strong>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-3-tab" data-toggle="pill" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false">
+                                <strong>Lịch sử xuất/nhập</strong>
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-one-tabContent">
-                        <div class="row">                           
-                            <div class="col-md-4">
-                                <select name="chonPhieu" class="form-control">
-                                    <option value="">Loading....</option>
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <button id="xemPhieu" type="button" class="btn btn-info btn-xs">Tải</button>
-                            </div>  
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div id="phieuTop" style="display:none;">
-                                    <h5>NGÀY: <span id="ngayYeuCau" class="text-pink"></span></h5>
-                                    <h5>NGƯỜI YÊU CẦU: <span id="nguoiYeuCau" class="text-blue"></span></h5>
-                                    <h5>MÃ PHIẾU: 
-                                        <strong class="text-info" id="maPhieu"></strong>                                 
-                                    </h5>
-                                    <h5>NỘI DUNG YÊU CẦU (XUẤT KHO): <i><span id="noiDung"></span></i></h5>
-                                    <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
-                                    <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
-                                    <hr/>
-                                    <h5>HÀNG HÓA YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
+                        <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
+                            <div class="row">                           
+                                <div class="col-md-8">
+                                    <select name="chonPhieu" class="form-control">
+                                        <option value="">Loading....</option>
+                                    </select>
                                 </div>
-                            </div>                            
-                        </div>
-                        <div class="row container">
-                            <div id="showForm">                               
-                                
-                            </div>                            
-                        </div>
+                                <div class="col-md-1">
+                                    <button id="xemPhieu" type="button" class="btn btn-info btn-xs">Tải</button>
+                                </div>  
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div id="phieuTop" style="display:none;">
+                                        <h5>NGÀY: <span id="ngayYeuCau" class="text-pink"></span></h5>
+                                        <h5>NGƯỜI YÊU CẦU: <span id="nguoiYeuCau" class="text-blue"></span></h5>
+                                        <h5>MÃ PHIẾU: 
+                                            <strong class="text-info" id="maPhieu"></strong>                                 
+                                        </h5>
+                                        <h5>NỘI DUNG YÊU CẦU (XUẤT KHO): <i><span id="noiDung"></span></i></h5>
+                                        <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
+                                        <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
+                                        <hr/>
+                                        <h5>HÀNG HÓA YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
+                                    </div>
+                                </div>                            
+                            </div>
+                            <div class="row container">
+                                <div id="showForm">                               
+                                    
+                                </div>                            
+                            </div>
+                        </div>    
+                        <div class="tab-pane fade" id="tab-2" role="tabpanel" aria-labelledby="tab-2-tab">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <select name="chonPhieuCongCu" class="form-control">
+                                        <option value="">Loading....</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button id="xemPhieuCongCu" type="button" class="btn btn-info btn-xs">Tải</button>
+                                </div>  
+                            </div>
+                            <hr>
+                            <div id="phieuTopCongCu" style="display:none;">
+                                <h5>NGÀY: <span id="ngayYeuCauCongCu" class="text-pink"></span></h5>
+                                <h5>PHIẾU YÊU CẦU CÔNG CỤ: 
+                                    <strong class="text-info" id="maPhieuCongCu"></strong>                                     
+                                </h5>
+                                <h5>NỘI DUNG: <i><span id="noiDungCongCu"></span></i></h5>                            
+                                <h5>TRẠNG THÁI: <span id="trangThaiCongCu"></span></h5>
+                                <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhanCongCu"></span></h5>
+                                <hr>
+                            </div>
+                            <div class="row container">
+                                <form id="showFormCongCu">                               
+                                    
+                                </form>                            
+                            </div>
+                        </div>       
+                        <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3-tab">
+                            <h5>Lịch sử xuất/nhập</h5>
+                            <table id="dataTable" class="display" style="width:100%">
+                                <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>ID</th>
+                                        <th>Thời gian</th>
+                                        <th>Tài khoản</th>
+                                        <th>Nội dung</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>                    
                     </div>
                 </div>
                 <!-- /.card -->
@@ -115,12 +169,41 @@
 
         // Exe
         $(document).ready(function() {
+            // Lịch sử
+            let table = $('#dataTable').DataTable({
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                // processing: true,
+                // serverSide: true,
+                ajax: "{{ url('management/vpp/quanlyxuatkho/loadnhatky') }}",
+                order: [[0, 'desc']],
+                columns: [
+                    { "data": "id"},
+                    { "data": "ngay" },
+                    { "data": "name" },
+                    { "data": "noiDung" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            return "";
+                        }
+                    }
+                ]
+            });
+            // -------------------------------
             // Load danh mục hàng hóa  
             let danhmuc = ``;     
-            let phieuxuat = ``;   
+            let danhmuccongcu = ``;     
+            let phieuxuat = ``; 
+            let phieuxuatcongcu = ``; 
             let showrow = ``;   
             let arr = 1;
-            let order = new Map();          
+            let arrCongCu = 1;
+            let order = new Map();        
+            let orderCongCu = new Map();    
             // -----   
             $.ajax({
                     url: "{{url('management/requestvpp/denghicongcu/loaddanhmuc/')}}",
@@ -142,6 +225,26 @@
                         })
                     }
             });
+            $.ajax({
+                    url: "{{url('management/requestvpp/denghicongcu/loaddanhmuccongcu/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        response.data.forEach((x) => {
+                            danhmuccongcu += `<option value="${x.id}">${x.tenSanPham} (${x.donViTinh})</option>`;
+                        });                     
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+            });
 
             // Load danh sách phiếu nhập
             function reload() {
@@ -151,12 +254,34 @@
                     dataType: "json",
                     success: function(response) {
                         $("select[name=chonPhieu]").empty();  
+                        phieuxuat = ``;
                         response.data.forEach((x) => {
                             let stt = (x.duyet == 1) ? "Đã duyệt" : "Chưa duyệt";
                             phieuxuat += `<option value="${x.id}">PXK-0${x.id}; 
                             Ngày yêu cầu ${x.ngay}-${x.thang}-${x.nam} (${stt})</option>`;
                         });       
                         $("select[name=chonPhieu]").append(phieuxuat);      
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+                });
+                $.ajax({
+                    url: "{{url('management/vpp/quanlyxuatkho/loadphieucongcu/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        $("select[name=chonPhieuCongCu]").empty();  
+                        phieuxuatcongcu = ``;
+                        response.data.forEach((x) => {
+                            let stt = (x.duyet == 1) ? "Đã duyệt" : "Chưa duyệt";
+                            phieuxuatcongcu += `<option value="${x.id}">ĐNCC-0${x.id}; 
+                            Ngày yêu cầu ${x.ngay}-${x.thang}-${x.nam} (${stt})</option>`;
+                        });       
+                        $("select[name=chonPhieuCongCu]").append(phieuxuatcongcu);      
                     },
                     error: function(){
                         Toast.fire({
@@ -232,10 +357,78 @@
                     }
                 });
             }
+            function autoLoadCongCu() {
+                $.ajax({
+                    url: "{{url('management/vpp/quanlyxuatkho/loadphieuchitietcongcu/')}}",
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                       "idPX": $("select[name=chonPhieuCongCu]").val()
+                    },
+                    success: function(response) {    
+                        arrCongCu = 1;
+                        orderCongCu.clear();
+                        $('#themHangHoaCongCu').hide(); 
+                        $("#phieuTopCongCu").show();
+                        $("#doiChieuCongCu").show();
+                        $("#maPhieuCongCu").text("ĐNCC-0" + $("select[name=chonPhieuCongCu]").val()); 
+                        $("#noiDungCongCu").text(response.noiDung);   
+                        $("#ngayYeuCauCongCu").text(response.ngayXuat);   
+                        $("#nguoiYeuCauCongCu").text(response.user);    
+                        $("#trangThaiCongCu").html((response.status == 1) ? "<strong class='text-success'>Đã duyệt</strong>&nbsp;&nbsp;&nbsp;<button id='huyDuyetCongCu' class='btn btn-danger btn-sm'>Hoàn trạng</button>" : "<strong class='text-danger'>Chưa duyệt</strong>");        
+                        $("#trangThaiNhanCongCu").html((response.statusNhan == 1) ? "<strong class='text-success'>Đã nhận</strong>" : "<strong class='text-danger'>Chưa nhận</strong>");           
+                        $("#showFormCongCu").empty();  
+                        showrow = ``;                        
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                      
+                        response.data.forEach((x) => {  
+                            orderCongCu.set(arrCongCu, x.id);                       
+                            showrow += `<div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">                                           
+                                            <select name="rhangHoaCongCu${arrCongCu}" disabled class="form-control">
+                                                ${danhmuccongcu}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">                                           
+                                            <input type="number" disabled name="rsoLuongCongCu${arrCongCu}" value="${x.soLuong}" class="form-control">
+                                        </div>   
+                                    </div>
+                                </div>                                                                                              
+                                `;
+                            arrCongCu++;
+                        });  
+                        if (response.status == 0)
+                            showrow += `<button id="duyetPhieuCongCu" form="showFormCongCu" class="btn btn-success">DUYỆT PHIẾU</button>`;
+                        $("#showFormCongCu").append(showrow);    
+                        orderCongCu.forEach((value,key)=>{
+                            $("select[name=rhangHoaCongCu" + key + "]").val(value);
+                        })    
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không có yêu cầu nào để xem!"
+                        })
+                        $("#showFormCongCu").empty();
+                        reload();
+                        $("#phieuTopCongCu").hide();
+                        $("#doiChieuCongCu").hide();
+                        phieuxuatcongcu = ``;
+                    }
+                });
+            }
             $("#xemPhieu").click(function(e){
                 e.preventDefault();
                 autoLoad();
             });   
+            $("#xemPhieuCongCu").click(function(e){
+                e.preventDefault();
+                autoLoadCongCu();
+            }); 
 
             $(document).on("click","#duyetPhieu", function(){
                 if (confirm('Xác nhận phê duyệt yêu cầu công cụ')) {
@@ -253,7 +446,7 @@
                                 title: response.message
                             })
                             $("select[name=chonPhieu]").empty();
-                            phieunhap = ``;
+                            phieuxuat = ``;
                             setTimeout(autoLoad,3000);
                             setTimeout(reload,3000);
                         },
@@ -266,6 +459,37 @@
                     });
                 }
             });  
+
+            $(document).on("click","#duyetPhieuCongCu", function(e){
+                e.preventDefault();
+                if (confirm('Xác nhận phê duyệt yêu cầu công cụ?')) {
+                    $.ajax({
+                        url: "{{url('management/vpp/quanlyxuatkho/duyetphieucongcu/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "phieu": $("select[name=chonPhieuCongCu]").val()
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            $("select[name=chonPhieuCongCu]").empty();
+                            phieuxuatcongcu = ``;
+                            setTimeout(autoLoadCongCu,3000);
+                            setTimeout(reload,3000);
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt!"
+                            })
+                        }
+                    });
+                }
+            }); 
 
             $(document).on("click","#huyDuyet", function(){
                 if (confirm('Xác nhận hoàn trạng (hủy bỏ phê duyệt) phiếu này!')) {
@@ -283,9 +507,38 @@
                                 title: response.message
                             })
                             $("select[name=chonPhieu]").empty();
-                            phieunhap = ``;
+                            phieuxuat = ``;
                             setTimeout(autoLoad,3000);
-                            phieunhap = ``;
+                            setTimeout(reload,3000);
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on("click","#huyDuyetCongCu", function(){
+                if (confirm('Xác nhận hoàn trạng (hủy bỏ phê duyệt) phiếu này!')) {
+                    $.ajax({
+                        url: "{{url('management/vpp/quanlyxuatkho/huyduyetphieucongcu/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "phieu": $("select[name=chonPhieuCongCu]").val()
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            $("select[name=chonPhieuCongCu]").empty();
+                            phieuxuatcongcu = ``;
+                            setTimeout(autoLoadCongCu,3000);
                             setTimeout(reload,3000);
                         },
                         error: function(){
