@@ -1080,6 +1080,7 @@ class VPPController extends Controller
                     ]); 
             } else {
                 $xuatsp = XuatSP::where('id_xuat', $request->idPXUpdateCongCu)->delete();
+                $temp = "";
                 for($i = 0; $i < count($arrHangHoa); $i++) {
                     $hangHoa = $request[$arrHangHoa[$i]];
                     $soLuong = $request[$arrSoLuong[$i]];
@@ -1546,6 +1547,7 @@ class VPPController extends Controller
                     <tr class='text-center'>
                         <th>TT</th>
                         <th>Công cụ/dụng cụ</th>
+                        <th>Loại</th>
                         <th>Mô tả</th>
                         <th>Số lượng nhập</th>
                         <th>Số lượng xuất</th>
@@ -1572,6 +1574,7 @@ class VPPController extends Controller
                     echo "<tr class='text-center'>
                             <td>".$i++."</td>
                             <td>".$row->tenSanPham."</td>
+                            <td>".($row->isCongCu ? "<strong class='text-info'>Công cụ</strong>" : "<strong class='text-primary'>Dụng cụ</strong>")."</td>
                             <td>".$row->moTa."</td>
                             <td class='text-primary text-bold'>". ($soLuongNhap != 0 ? $soLuongNhap. " " .$row->donViTinh : "") ."</td>
                             <td class='text-danger text-bold'>". ($soLuongXuat != 0 ? $soLuongXuat. " " .$row->donViTinh : "") ."</td>
@@ -1770,5 +1773,184 @@ class VPPController extends Controller
                         </tr>";    
                 }              
         }
+    }
+
+    public function congCuDangSuDung() {
+        $arr = [];
+        $i = 1;
+        $idUser = Auth::user()->id;
+        $name = Auth::user()->userDetail->surname;
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns"))
+            $phieu = PhieuXuat::select("*")   
+            ->where([
+                ['isXuatCongCu','=',true],
+                ['duyet','=',true]
+            ]) 
+            ->orderBy('id','desc')
+            ->get();  
+        else
+            $phieu = PhieuXuat::select("*")   
+            ->where([
+                ['isXuatCongCu','=',true],
+                ['id_user_xuat','=',$idUser],
+                ['duyet','=',true]
+            ])        
+            ->orderBy('id','desc')
+            ->get();
+        foreach ($phieu as $rows) {
+            $noiDung = "";
+            $obj = "";
+            $obj = (object) $obj;
+            $obj->stt = $i;
+            $obj->name = $name;
+            $obj->ngay = \HelpFunction::revertCreatedAt($rows->created_at);
+            $obj->ngayTra = \HelpFunction::revertCreatedAt($rows->updated_at);
+            $px = XuatSP::where('id_xuat',$rows->id)->get();
+            $check = XuatSP::where('id_xuat',$rows->id)->exists();
+            if ($check)
+                $obj->duyetTra = false;
+            else
+                $obj->duyetTra = true;
+            foreach ($px as $val) {
+                $dmSP = DanhMucSP::find($val->id_danhmuc);
+                $noiDung .= "Công cụ: ". $dmSP->tenSanPham ." Số lượng: ". $val->soLuong . "\n";
+            }
+            $obj->noiDung = $noiDung;
+            $obj->idPhieuXuat = $rows->id;
+            $obj->deNghiTra = $rows->deNghiTra;
+            array_push($arr,$obj);
+            $i++;
+        }
+        if ($arr) {
+            return response()->json([
+                'code' => 200,        
+                'type' => 'success',
+                'data' => $arr,
+                'message' => 'Kết xuất thành công'
+            ]); 
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Lỗi kết xuất'
+            ]); 
+        }
+    }
+
+    public function traCongCu(Request $request) {
+        $noiDung = "";
+        $cc = PhieuXuat::find($request->id);
+        $px = XuatSP::where('id_xuat',$request->id)->get();
+        foreach($px as $row) {
+            $dmSP = DanhMucSP::find($row->id_danhmuc);
+            $noiDung .=  $dmSP->tenSanPham ." - số lượng: ". $row->soLuong . "\n";
+        }
+        $cc->deNghiTra = true;
+        $cc->save();
+        if ($cc) {       
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
+            $nhatKy->noiDung = "Đề nghị trả công cụ. Nội dung: \n" . $noiDung;
+            $nhatKy->save(); 
+            //------------------
+            $khohc = new KhoHC();
+            $khohc->id_user = Auth::user()->id;
+            $khohc->ngay = Date("H:m:s d-m-Y");
+            $khohc->noiDung = "Đề nghị trả công cụ. Nội dung: \n" . $noiDung;
+            $khohc->save();
+            //------------------   
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã gửi đề nghị trả công cụ"
+            ]);           
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không thể trả công cụ'
+            ]);
+        }        
+    }
+
+    public function duyetTra(Request $request) {
+        $noiDung = "";
+        $cc = PhieuXuat::find($request->id);
+        $user = User::find($cc->id_user_xuat);
+        $name = $user->userDetail->surname;
+        $oldpx = XuatSP::where('id_xuat',$request->id)->get();
+        foreach($oldpx as $row) {
+            $dmSP = DanhMucSP::find($row->id_danhmuc);
+            $noiDung .=  $dmSP->tenSanPham ." - số lượng: ". $row->soLuong . "\n";
+        }
+        $px = XuatSP::where('id_xuat',$request->id)->delete();
+        if ($px) {       
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Hành chính - Quản lý xuất kho";
+            $nhatKy->noiDung = "Phê duyệt trả công cụ theo yêu cầu của ". $name ." . Nội dung: \n" . $noiDung . "\n công cụ đã quay trở lại kho";
+            $nhatKy->save(); 
+            //------------------
+            $khohc = new KhoHC();
+            $khohc->id_user = Auth::user()->id;
+            $khohc->ngay = Date("H:m:s d-m-Y");
+            $khohc->noiDung =  "Phê duyệt trả công cụ theo yêu cầu của ". $name ." . Nội dung: \n" . $noiDung . "\n công cụ đã quay trở lại kho";
+            $khohc->save();
+            //------------------   
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã duyệt trả công cụ"
+            ]);           
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không thể duyệt trả'
+            ]);
+        }        
+    }
+
+    public function tuChoi(Request $request) {
+        $noiDung = "";
+        $cc = PhieuXuat::find($request->id);
+        $user = User::find($cc->id_user_xuat);
+        $name = $user->userDetail->surname;
+        $px = XuatSP::where('id_xuat',$request->id)->get();
+        foreach($px as $row) {
+            $dmSP = DanhMucSP::find($row->id_danhmuc);
+            $noiDung .=  $dmSP->tenSanPham ." - số lượng: ". $row->soLuong . "\n";
+        }
+        $cc->deNghiTra = false;
+        $cc->save();
+        if ($cc) {       
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Hành chính - Quản lý xuất kho";
+            $nhatKy->noiDung = "Từ chối yêu cầu trả công cụ của " .$name. ". Nội dung: \n" . $noiDung;
+            $nhatKy->save(); 
+            //------------------
+            $khohc = new KhoHC();
+            $khohc->id_user = Auth::user()->id;
+            $khohc->ngay = Date("H:m:s d-m-Y");
+            $khohc->noiDung = "Từ chối yêu cầu trả công cụ của " .$name. ". Nội dung: \n" . $noiDung;
+            $khohc->save();
+            //------------------   
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Đã từ chối đề nghị trả công cụ"
+            ]);           
+        } else {
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không từ chối yêu cầu này'
+            ]);
+        }        
     }
 }

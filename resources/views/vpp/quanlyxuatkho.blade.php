@@ -103,6 +103,7 @@
                             <hr>
                             <div id="phieuTopCongCu" style="display:none;">
                                 <h5>NGÀY: <span id="ngayYeuCauCongCu" class="text-pink"></span></h5>
+                                <h5>NGƯỜI YÊU CẦU: <span id="nguoiYeuCauCongCu" class="text-blue"></span></h5>
                                 <h5>PHIẾU YÊU CẦU CÔNG CỤ: 
                                     <strong class="text-info" id="maPhieuCongCu"></strong>                                     
                                 </h5>
@@ -116,6 +117,20 @@
                                     
                                 </form>                            
                             </div>
+                            <hr>   
+                            <h3>Trạng thái công cụ</h3>
+                            <table id="dataTableDuyetTra" class="display" style="width:100%">
+                                <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>STT</th>
+                                        <th>Họ tên</th>
+                                        <th>Đang sử dụng</th>
+                                        <th>Sử dụng từ</th>
+                                        <th>Trạng thái</th>
+                                        <th>Tác vụ</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>       
                         <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3-tab">
                             <h5>Lịch sử xuất/nhập</h5>
@@ -189,6 +204,53 @@
                         "data": null,
                         render: function(data, type, row) {
                             return "";
+                        }
+                    }
+                ]
+            });
+            let tableDuyetTra = $('#dataTableDuyetTra').DataTable({
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                // processing: true,
+                // serverSide: true,
+                ajax: "{{ url('management/requestvpp/denghicongcu/congcu/dangsudung') }}",
+                order: [[0, 'desc']],
+                columns: [
+                    { "data": "stt"},
+                    { "data": "name" },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.deNghiTra != 0 && row.duyetTra != 0)
+                                return `<strong class="text-warning">Không</strong>`;
+                            else 
+                                return row.noiDung;
+                        } 
+                    },
+                    { "data": "ngay" },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.deNghiTra == 0)
+                                return `<strong class="text-info">Đang sử dụng</strong>`;
+                            else if (row.duyetTra != 0)
+                                return `<strong class="text-warning">Đã trả công cụ</strong><br/> <i class="text-secondary">(${row.ngayTra})</i>`;
+                            else
+                                return `<strong class="text-secondary">Yêu cầu trả</strong>`;
+                        } },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.deNghiTra == 0)
+                                return ``;
+                            else if (row.duyetTra != 0)
+                                return ``;
+                            else
+                                return `<button id="duyetTra" data-id=${row.idPhieuXuat} class="btn btn-warning btn-sm">Duyệt trả</button>
+                            &nbsp;<button id="tuChoi" data-id=${row.idPhieuXuat} class="btn btn-danger btn-sm">Từ chối</button>`;
                         }
                     }
                 ]
@@ -480,6 +542,7 @@
                             phieuxuatcongcu = ``;
                             setTimeout(autoLoadCongCu,3000);
                             setTimeout(reload,3000);
+                            tableDuyetTra.ajax.reload();
                         },
                         error: function(){
                             Toast.fire({
@@ -540,6 +603,7 @@
                             phieuxuatcongcu = ``;
                             setTimeout(autoLoadCongCu,3000);
                             setTimeout(reload,3000);
+                            tableDuyetTra.ajax.reload();
                         },
                         error: function(){
                             Toast.fire({
@@ -548,6 +612,62 @@
                             })
                         }
                     });
+                }
+            });
+
+            $(document).on("click","#duyetTra", function(){
+                if (confirm("Xác nhận duyệt trả công cụ?\nLưu ý: Kiểm tra kỹ chất lượng, số lượng công cụ\nSau khi duyệt công cụ sẽ quay về kho!\nTra cứu qua lịch sử xuất/nhập")) {
+                    let idPhieuXuat = $(this).data('id');
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/requestvpp/denghicongcu/duyettracongcu/')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": idPhieuXuat
+                        },
+                        success: (response) => {                        
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })    
+                            tableDuyetTra.ajax.reload();                
+                        },
+                        error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Không thể trả công cụ!'
+                            })
+                        }
+                    }); 
+                }
+            });
+
+            $(document).on("click","#tuChoi", function(){
+                if (confirm("Xác nhận từ chối phê duyệt yêu cầu trả công cụ?")) {
+                    let idPhieuXuat = $(this).data('id');
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/requestvpp/denghicongcu/tuchoi/')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": idPhieuXuat
+                        },
+                        success: (response) => {                        
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })    
+                            tableDuyetTra.ajax.reload();                
+                        },
+                        error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Không thể trả công cụ!'
+                            })
+                        }
+                    }); 
                 }
             });
 

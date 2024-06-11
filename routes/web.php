@@ -507,6 +507,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('denghicongcu/deletecongcu','VPPController@yeuCauDeleteCongCu');
         Route::get('denghicongcu/loaddanhmuc','VPPController@nhapKhoLoadDanhMuc');
         Route::get('denghicongcu/loaddanhmuccongcu','VPPController@nhapKhoLoadCongCu');
+        Route::get('denghicongcu/congcu/dangsudung','VPPController@congCuDangSuDung');
+        Route::post('denghicongcu/tracongcu','VPPController@traCongCu');
+        Route::post('denghicongcu/duyettracongcu','VPPController@duyetTra');
+        Route::post('denghicongcu/tuchoi','VPPController@tuChoi');
         Route::get('denghicongcu/loadphieu','VPPController@deNghiLoadPhieu');
         Route::get('denghicongcu/loadphieucongcu','VPPController@deNghiLoadPhieuCongCu');
         Route::get('denghicongcu/loadphieuchitiet','VPPController@deNghiLoadChiTiet');

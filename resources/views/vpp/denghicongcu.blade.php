@@ -117,6 +117,19 @@
                                     
                                 </form>                            
                             </div>
+                            <hr>   
+                            <h3>Thống kê công cụ đang sử dụng</h3>
+                            <table id="dataTable" class="display" style="width:100%">
+                                <thead>
+                                    <tr class="bg-gradient-lightblue">
+                                        <th>STT</th>
+                                        <th>Họ tên</th>
+                                        <th>Đang sử dụng</th>
+                                        <th>Thời gian sử dụng/đề nghị</th>
+                                        <th>Tác vụ</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>                     
                     </div>                    
                 </div>
@@ -218,6 +231,44 @@
 
         // Exe
         $(document).ready(function() {
+            // ----------------------------
+            let table = $('#dataTable').DataTable({
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                // processing: true,
+                // serverSide: true,
+                ajax: "{{ url('management/requestvpp/denghicongcu/congcu/dangsudung') }}",
+                order: [[0, 'desc']],
+                columns: [
+                    { "data": "stt"},
+                    { "data": "name" },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.deNghiTra != 0 && row.duyetTra != 0)
+                                return `<strong class="text-warning">Đã trả công cụ</strong><br/><i class="text-secondary">(${row.ngayTra})`;
+                            else 
+                                return row.noiDung;
+                        } 
+                    },
+                    { "data": "ngay" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.deNghiTra == 0)
+                                return `<button id="traCongCu" data-id=${row.idPhieuXuat} class="btn btn-info btn-sm">Đề nghị trả công cụ</button>`;
+                            else if (row.duyetTra == 1)
+                                return ``;
+                            else
+                                return `<strong class="text-primary">Đã gửi đề nghị trả</strong>`;
+                        }
+                    }
+                ]
+            });
+            // ----------------------------
             // Load danh mục hàng hóa
             let danhmuc = ``;     
             let congcu = ``;
@@ -812,6 +863,35 @@
                         }
                     }); 
                 }               
+            });
+
+
+            $(document).on("click","#traCongCu", function(){
+                if (confirm("Xác nhận đề nghị trả công cụ?")) {
+                    let idPhieuXuat = $(this).data('id');
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ url('management/requestvpp/denghicongcu/tracongcu/')}}",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": idPhieuXuat
+                        },
+                        success: (response) => {                        
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })    
+                            table.ajax.reload();                
+                        },
+                        error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Không thể trả công cụ!'
+                            })
+                        }
+                    }); 
+                }
             });
             
         });
