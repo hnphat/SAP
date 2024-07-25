@@ -1245,9 +1245,11 @@ class GuestController extends Controller
                             if ((strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) >= strtotime($tu)) 
                             &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) <= strtotime($den))) {
                                 $ct = ChiTietBHPK::where('id_baogia',$rowForPK->id)->get();
-                                foreach($ct as $rowPK)
+                                foreach($ct as $rowPK) {
+                                    $thanhtien = $rowPK->donGia * $rowPK->soLuong;
                                     if (!$rowPK->isTang)
-                                        $pkban += ($rowPK->donGia * $rowPK->soLuong);             
+                                        $pkban += ($thanhtien - ($thanhtien*$rowPK->chietKhau/100));             
+                                }
                             }
                         }                        
                     }
@@ -1377,9 +1379,11 @@ class GuestController extends Controller
                     if ((strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) >= strtotime($tu)) 
                     &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rowForPK->created_at)) <= strtotime($den))) {
                         $ct = ChiTietBHPK::where('id_baogia',$rowForPK->id)->get();
-                        foreach($ct as $rowPK)
+                        foreach($ct as $rowPK) {
+                            $thanhtien = $rowPK->donGia * $rowPK->soLuong;
                             if (!$rowPK->isTang)
-                                $pkban += ($rowPK->donGia * $rowPK->soLuong);             
+                                $pkban += ($thanhtien - ($thanhtien*$rowPK->chietKhau/100));             
+                        }                
                     }
                 }                        
             }
@@ -1453,15 +1457,18 @@ class GuestController extends Controller
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)) <= strtotime($den))) {
                     $x++;
                     $pkban = 0;
+                    $magiamgia = $rphdkyrow->magiamgia;
                     $soffhdky = SaleOffV2::where('id_hd',$rphdkyrow->id)->get();
                     foreach ($soffhdky as $soffhdkyrow) {
                         $p = PackageV2::where([
                             ['id','=',$soffhdkyrow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p)
+                        if ($p) {                            
                             $pkban += $p->cost; 
+                        }                           
                     }
+                    $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
                     echo "<tr class='text-center'>
                         <td>".$x."</td>
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>
@@ -1471,7 +1478,7 @@ class GuestController extends Controller
                         <td>".$rphdkyrow->mau."</td>
                         <td>".($rphdkyrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
                         <td>".number_format($rphdkyrow->tienCoc)."</td>
-                        <td>".number_format($pkban)."</td>
+                        <td>".number_format($pkban)." ".($magiamgia == 0 ? "" : "(-".$magiamgia."%)")."</td>
                         <td>
                         <button data-idhopdong='".$rphdkyrow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                         </td>
@@ -1483,15 +1490,18 @@ class GuestController extends Controller
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($rphdkychorow->created_at)) <= strtotime($den))) {
                     $x++;
                     $pkban = 0;
+                    $magiamgia = $rphdkychorow->magiamgia;
                     $soffhdkycho = SaleOffV2::where('id_hd',$rphdkychorow->id)->get();
                     foreach ($soffhdkycho as $soffhdkychorow) {
                         $p = PackageV2::where([
                             ['id','=',$soffhdkychorow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p)
+                        if ($p) {                            
                             $pkban += $p->cost; 
+                        }   
                     }
+                    $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
                     echo "<tr class='text-center'>
                         <td>".$x."</td>
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkychorow->created_at)."</td>
@@ -1501,7 +1511,7 @@ class GuestController extends Controller
                         <td>".$rphdkychorow->mau."</td>
                         <td>".($rphdkychorow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
                         <td>".number_format($rphdkychorow->tienCoc)."</td>
-                        <td>".number_format($pkban)."</td>
+                        <td>".number_format($pkban)." ".($magiamgia == 0 ? "" : "(-".$magiamgia."%)")."</td>
                         <td>
                         <button data-idhopdong='".$rphdkychorow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                         </td>
@@ -1532,15 +1542,18 @@ class GuestController extends Controller
                 &&  (strtotime($checkDaXuat->ngayGiaoXe) <= strtotime($den)))) {
                     $y++;
                     $pkban = 0;
+                    $magiamgia = $rphdkyrow->magiamgia;
                     $soffhdxuat = SaleOffV2::where('id_hd',$rphdkyrow->id)->get();
                     foreach ($soffhdxuat as $soffhdxuatrow) {
                         $p = PackageV2::where([
                             ['id','=',$soffhdxuatrow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p)
+                        if ($p) {                            
                             $pkban += $p->cost; 
+                        }   
                     }
+                    $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
                     echo "<tr class='text-center'>
                         <td>".$y."</td>
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>

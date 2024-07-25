@@ -218,7 +218,11 @@
               <tbody id="phuKienBan">
               </tbody>
           </table>
-          <h6><strong>TỔNG CỘNG:</strong> <span id="tongPhuKienBan" class="text-bold text-primary"></span></h6>
+          <h6>
+            <strong>Giá:</strong> <span id="tongPhuKienBan" class="text-bold"></span> <br/>
+            <strong>Áp dụng giảm giá: </strong> <span id="magiamgia" class="text-bold text-pink"></span> <br/>
+            <strong>Tổng cộng: </strong> <span id="tongPhuKienBanGiam" class="text-bold text-primary"></span> <br/>
+            </h6>
           <hr>
           <h5 class="text-bold">PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
           <table class="table table-striped table-bordered">
@@ -392,6 +396,8 @@
                         }
                     $("#phuKienBan").html(phuKienBan);
                     $('#tongPhuKienBan').text(response.tongPhuKienBan);
+                    $('#magiamgia').text(response.magiamgia);
+                    $('#tongPhuKienBanGiam').text(response.tongPhuKienBanGiam);
                     let phuKienKhuyenMai = "";
                     for(let i = 0; i < response.phuKienKhuyenMai.length; i++) {
                         let mode = "";

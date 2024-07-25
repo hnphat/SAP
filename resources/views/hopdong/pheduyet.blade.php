@@ -233,7 +233,13 @@
                                                 </tbody>
                                             </thead>
                                         </table>
-                                        <p>Tổng cộng: <strong id="xtongPay"></strong></p>
+                                        <p>
+                                            Giá: <strong id="xtongPay"></strong><br/>
+                                            <span class="text-pink">Áp dụng giảm giá:</span> 
+                                            <input type="text" name="magiamgia" id="magiamgia">%
+                                        <br/>
+                                        <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong>
+                                        </p>
                                         <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
@@ -575,6 +581,7 @@
                 $("#tamUng").val("");
                 $("#giaBanXe").val("");
                 $("#giaNiemYet").val("");
+                $("#magiamgia").val("");
                 $("#hinhThucThanhToan").val("");
                 $("#hoaHongMoiGioi").val("");
                 $("#hoTen").val("");
@@ -603,6 +610,7 @@
                 $("#tamUng").prop('disabled', true);
                 $("#giaBanXe").prop('disabled', true);
                 $("#giaNiemYet").prop('disabled', true);
+                $("#magiamgia").prop('disabled', true);
                 $("#hinhThucThanhToan").prop('disabled', true);
                 $("#hoaHongMoiGioi").prop('disabled', true);
                 $("#hoTen").prop('disabled', true);
@@ -631,6 +639,7 @@
                     $("input[name=htvSupport]").prop('disabled', true);
                     $("input[name=phiVanChuyen]").prop('disabled', true);
                     $("select[name=hinhThucGiaVon]").prop('disabled', true);
+                    $("input[name=magiamgia]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == true && admin == false) {
                     $("#duyetDeNghi").show();
@@ -645,6 +654,7 @@
                     $("input[name=soHD]").prop('disabled', false);
                     $("input[name=htvSupport]").prop('disabled', false);
                     $("input[name=phiVanChuyen]").prop('disabled', false);
+                    $("input[name=magiamgia]").prop('disabled', true);
                     $("select[name=hinhThucGiaVon]").prop('disabled', false);
                 }else if (request == true && admin == true) {
                     $("#duyetDeNghi").hide();
@@ -659,6 +669,7 @@
                     $("input[name=soHD]").prop('disabled', true);
                     $("input[name=htvSupport]").prop('disabled', true);
                     $("input[name=phiVanChuyen]").prop('disabled', true);
+                    $("input[name=magiamgia]").prop('disabled', true);
                     $("select[name=hinhThucGiaVon]").prop('disabled', true);
                     $("#inForm").show();
                 }else if (request == false) {
@@ -674,6 +685,7 @@
                     $("input[name=soHD]").prop('disabled', false);
                     $("input[name=htvSupport]").prop('disabled', false);
                     $("input[name=phiVanChuyen]").prop('disabled', false);
+                    $("input[name=magiamgia]").prop('disabled', false);
                     $("select[name=hinhThucGiaVon]").prop('disabled', false);
                     $("#inForm").hide();
                 }
@@ -702,6 +714,7 @@
                             $("#tamUng").val(response.data.tienCoc);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
+                            $("#magiamgia").val(response.data.magiamgia);
                             $("#hinhThucThanhToan").val(response.data.isTienMat);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
@@ -811,6 +824,7 @@
                             $("#tamUng").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
+                            $("#magiamgia").val("");
                             $("#hinhThucThanhToan").val("");
                             $("#hoaHongMoiGioi").val("");
                             $("#hoTen").val("");
@@ -838,6 +852,7 @@
                             $("#tamUng").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
+                            $("#magiamgia").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
@@ -893,6 +908,7 @@
                             $("#tamUng").val(response.data.tienCoc);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
+                            $("#magiamgia").val(response.data.magiamgia);
                             $("#hinhThucThanhToan").val(response.data.isTienMat);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
@@ -1002,6 +1018,7 @@
                             $("#tamUng").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
+                            $("#magiamgia").val("");
                             $("#hinhThucThanhToan").val("");
                             $("#hoaHongMoiGioi").val("");
                             $("#hoTen").val("");
@@ -1029,6 +1046,7 @@
                             $("#tamUng").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
+                            $("#magiamgia").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
@@ -1116,6 +1134,8 @@
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
+                        $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
+
                     },
                     error: function() {
                         Toast.fire({

@@ -268,6 +268,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
+                $magiamgia = $row->magiamgia;
 
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
@@ -378,7 +379,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
 
                 $loinhuanbaohiem = $bhvc*15/100;
                 $loinhuancongdk = $dangky*55/100;
-                $loinhuanpkban = $pkban*50/100;
+                $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)))*50/100;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -444,7 +445,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                     '16' => $khuyenMai,
                     '17' => $bhvc,
                     '18' => $loinhuanbaohiem,
-                    '19' => $pkban,
+                    '19' => ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))),
                     '20' => $loinhuanpkban,
                     '21' => $dangky,
                     '22' => $loinhuancongdk,
@@ -471,7 +472,8 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                
+                $magiamgia = $row->magiamgia;
+
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
 
@@ -573,7 +575,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
 
                 $loinhuanbaohiem = $bhvc*15/100;
                 $loinhuancongdk = $dangky*55/100;
-                $loinhuanpkban = $pkban*50/100;
+                $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)))*50/100;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -639,7 +641,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                     '16' => $khuyenMai,
                     '17' => $bhvc,
                     '18' => $loinhuanbaohiem,
-                    '19' => $pkban,
+                    '19' => ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))),
                     '20' => $loinhuanpkban,
                     '21' => $dangky,
                     '22' => $loinhuancongdk,

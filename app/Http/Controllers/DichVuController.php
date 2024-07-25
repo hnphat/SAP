@@ -614,6 +614,7 @@ class DichVuController extends Controller
         $tongPKBan = 0;
         $tongPKBanPhuKien = 0;
         if ($hd) {
+            $magiamgia = $hd->magiamgia;
             $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
             foreach($listpk as $row) {
                 $p = PackageV2::find($row->id_bh_pk_package);
@@ -622,6 +623,8 @@ class DichVuController extends Controller
                         $tongPKBan += $p->cost;
                 } 
             }
+
+            $tongPKBan = $tongPKBan - ($tongPKBan*$magiamgia/100);
 
             // Kiểm tra số tiền phụ kiện bán hiện có 
             $ct = ChiTietBHPK::where('id_baogia',$request->eid)->get();

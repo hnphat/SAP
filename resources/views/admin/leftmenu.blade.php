@@ -490,12 +490,12 @@
                                 <p>Biên bản bàn giao</p>
                             </a>
                         </li> 
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{route('ketoan.quanlyhopdong')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý hợp đồng</p>
                             </a>
-                        </li>    
+                        </li>     -->
                         <li class="nav-item">
                             <a href="{{route('dichvu.doanhthuphukien')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

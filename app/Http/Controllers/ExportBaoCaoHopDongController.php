@@ -283,6 +283,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
+                $magiamgia = $row->magiamgia;
 
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
@@ -393,7 +394,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
 
                 $loinhuanbaohiem = $bhvc - $giavonbh;
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
-                $loinhuanpkban = $pkban - $_giavonpk;
+                $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))) - $_giavonpk;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -464,7 +465,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '22' => $bhvc,
                     '23' => $giavonbh,
                     '24' => $loinhuanbaohiem,
-                    '25' => $pkban,
+                    '25' => ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))),
                     '26' => $_giavonpk,
                     '27' => $loinhuanpkban,
                     '28' => $dangky,
@@ -501,7 +502,8 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                
+                $magiamgia = $row->magiamgia;
+
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
 
@@ -603,7 +605,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
 
                 $loinhuanbaohiem = $bhvc - $giavonbh;
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
-                $loinhuanpkban = $pkban - $_giavonpk;
+                $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))) - $_giavonpk;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -674,7 +676,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '22' => $bhvc,
                     '23' => $giavonbh,
                     '24' => $loinhuanbaohiem,
-                    '25' => $pkban,
+                    '25' => ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))),
                     '26' => $_giavonpk,
                     '27' => $loinhuanpkban,
                     '28' => $dangky,

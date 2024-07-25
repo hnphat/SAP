@@ -249,7 +249,16 @@
                                                 </tbody>
                                             </thead>
                                         </table>
-                                        <p>Tổng cộng: <strong id="xtongPay"></strong></p>
+                                        <p>
+                                            Giá: <strong id="xtongPay"></strong><br/>
+                                            <span class="text-pink">Áp dụng giảm giá:</span> 
+                                            <select name="magiamgia" id="magiamgia" form="addPkForm">
+                                                <option value="0" selected>0</option>
+                                                <option value="5">5%</option>
+                                            </select>
+                                        <br/>
+                                        <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong>
+                                        </p>
                                         <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
                                         <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/>
                                         <table class="table table-bordered table-striped">
@@ -726,6 +735,7 @@
                                 $("#dienThoai").prop('disabled', false);
 
                                 $("select[name=mauSac]").prop('disabled', false);
+                                $("select[name=magiamgia]").prop('disabled', false);
                                 $("select[name=xeBan]").prop('disabled', false);
                                 $("#inForm").hide();
                             } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
@@ -749,6 +759,7 @@
 
 
                                 $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").hide();
                             } else if (response.data.requestCheck == true 
@@ -771,6 +782,7 @@
                                 $("#dienThoai").prop('disabled', true);
 
                                 $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").show();
                             } else if (response.data.requestCheck == true 
@@ -793,6 +805,7 @@
                                 $("#dienThoai").prop('disabled', true);
 
                                 $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").show();
                             } else {
@@ -813,6 +826,7 @@
                                 $("input[name=cmnd]").prop('disabled', true);
                                 $("#dienThoai").prop('disabled', true);
                                 $("select[name=mauSac]").prop('disabled', true);
+                                $("select[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").hide();
                             }
@@ -1042,6 +1056,8 @@
 
                             $('select[name=mauSac] option[selected=selected]').removeAttr('selected');
                             $('select[name=mauSac] option[value='+response.data.mau+']').attr('selected','selected');
+                            $('select[name=magiamgia] option[selected=selected]').removeAttr('selected');
+                            $('select[name=magiamgia] option[value='+response.data.magiamgia+']').attr('selected','selected');
                             $('select[name=xeBan] option[selected=selected]').removeAttr('selected');
                             $('select[name=xeBan] option[value='+response.data.idcar+']').attr('selected','selected');
                             $('select[name=hinhThucThanhToan] option[selected=selected]').removeAttr('selected');
@@ -1113,6 +1129,7 @@
                             $("#sChucVu").text("");
 
                             $("input[name=mauSac]").prop('disabled', true);
+                            $("input[name=magiamgia]").prop('disabled', true);
                             $("input[name=xeBan]").prop('disabled', true);
                             $("input[name=hinhThucThanhToan]").prop('disabled', true);
                             $("input[name=nguonKH]").prop('disabled', true);
@@ -1232,6 +1249,7 @@
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
+                        $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
                         // loadTotal($("select[name=chonHD]").val());
                         // Toast.fire({
                         //     icon: 'info',
@@ -1638,6 +1656,7 @@
                             $("#sDaiDien").text("");
                             $("#sChucVu").text("");
                             $("#mauSac").val("");
+                            $("#magiamgia").val("");
                             $("#xeBan").val("");
                             $("#tamUng").val("");
                             $("#giaBanXe").val("");

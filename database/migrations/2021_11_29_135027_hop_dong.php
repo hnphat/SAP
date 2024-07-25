@@ -50,7 +50,8 @@ class HopDong extends Migration
             $table->string('nguonKH')->nullable();
             $table->integer('phiVanChuyen')->default(0);
             // Bổ sung thêm tính năng cho PKT
-            $table->integer('hoaHongSale')->default(0);            
+            $table->integer('hoaHongSale')->default(0);   
+            $table->integer('magiamgia')->default(0);         
             $table->timestamps();
         });
     }
