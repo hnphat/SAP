@@ -1165,7 +1165,7 @@
                         dataType: "json",
                         data: {
                             "_token": "{{csrf_token()}}",
-                            "eid": $("#eid").val()
+                            "eid": $("#eid").val(),
                         },
                         success: function(response) {
                             $("#process").hide();

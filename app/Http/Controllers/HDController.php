@@ -3408,6 +3408,7 @@ class HDController extends Controller
         $outhd = "";
         $templateProcessor = new TemplateProcessor('template/PHUKIEN.docx');
             $sale = HopDong::find($id);
+            $magiamgia = $sale->magiamgia;
             $kho = KhoV2::find($sale->id_car_kho);
             $year = $kho->year;
             $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
@@ -3426,7 +3427,9 @@ class HDController extends Controller
             $chietKhauBlank = "";
             $pkban = "";
             $pkbansl = "";
+            $chietKhau = "";
             $pkbangia = "";
+            $pkbangiathanhtien = "";
             $i = 1;
 
             $sttpkfree = "";
@@ -3440,12 +3443,14 @@ class HDController extends Controller
             foreach($package as $row) {
                 if ($row->type == 'pay') {
                     $sttpkban .= $i . '<w:br/>';
-                    $chietKhauBlank .= '........ <w:br/>';                     
+                    $chietKhauBlank .= '........ <w:br/>';          
+                    ($magiamgia != 0) ? $chietKhau .= '5% <w:br/>' : " <w:br/>";                                
                     $pkbansl .= '1 <w:br/>';
                     $pkban .= $row->name . '<w:br/>';
                     $pkbangia .= number_format($row->cost) . '<w:br/>';
+                    $pkbangiathanhtien .= ($magiamgia != 0) ? number_format($row->cost - ($row->cost*$magiamgia/100)) . '<w:br/>' : number_format($row->cost) . '<w:br/>';
                     $i++;
-                    $tonggiaban += $row->cost;
+                    $tonggiaban += ($magiamgia != 0) ? ($row->cost - ($row->cost*$magiamgia/100)) : $row->cost;
                 }
                 if ($row->type == 'free' && $row->free_kem == false) {
                     $sttpkfree .= $j . '<w:br/>';
@@ -3489,7 +3494,9 @@ class HDController extends Controller
                 'pkban' => $pkban,
                 'ghiChuFree' => $ghiChuFree,
                 'pkbansl' => $pkbansl,
+                'chietKhau' => $chietKhau,
                 'pkbangia' => $pkbangia,
+                'pkbangias' => $pkbangiathanhtien,
                 'sttpkfree' => $sttpkfree,
                 'pkfree' => $pkfree,
                 'pkfreesl' => $pkfreesl,

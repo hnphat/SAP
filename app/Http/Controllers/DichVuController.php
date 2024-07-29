@@ -1045,6 +1045,41 @@ class DichVuController extends Controller
 
     public function thucHienBaoGia(Request $request){
         $bg = BaoGiaBHPK::find($request->eid);
+        $soHD = $bg->soHopDongKD;
+        $arrSoHD = ($soHD) ? explode(".",$soHD) : "";
+        $num = ($arrSoHD != "") ? $arrSoHD[0] : "";
+        $tongPKBan = 0;
+        $tongPKBanPhuKien = 0;
+        $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
+        if ($soHD && $hd) {
+            $magiamgia = $hd->magiamgia;
+            $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+            foreach($listpk as $row) {
+                $p = PackageV2::find($row->id_bh_pk_package);
+                if ($p->type != "cost" && $p->mapk) {
+                    if ($p->type == "pay")
+                        $tongPKBan += $p->cost;
+                } 
+            }
+
+            $tongPKBan = $tongPKBan - ($tongPKBan*$magiamgia/100);
+
+            // Kiểm tra số tiền phụ kiện bán hiện có 
+            $ct = ChiTietBHPK::where('id_baogia',$request->eid)->get();
+            foreach($ct as $row) {
+                if (!$row->isTang)
+                    $tongPKBanPhuKien += $row->thanhTien;
+            }
+            // --------------------------
+        }
+
+        if ($tongPKBan != $tongPKBanPhuKien)
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Tổng phụ kiện bán: '.number_format($tongPKBanPhuKien).' không khớp với hợp đồng: '.number_format($tongPKBan).' không thể thực hiện báo giá này!'
+            ]);
+
         $bg->inProcess = true;
         $bg->save();
         if ($bg) {
