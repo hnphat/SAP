@@ -141,7 +141,7 @@ class MktController extends Controller
             ]);
         } else {
             $guest = Guest::find($idguest);
-            ($idguest != 0) ? $guest->delete() : "";
+            ($guest) ? $guest->delete() : "";
 
             $mkt = MarketingGuest::find($request->id);
             $mkt->id_group_send = null;
