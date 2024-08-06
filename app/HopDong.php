@@ -36,4 +36,8 @@ class HopDong extends Model
     public function cancelHd() {
         return $this->hasOne('App\CancelHD','sale_id', 'id');
     }
+
+    public function history() {
+        return $this->hasMany('App\HistoryHopDong','idDeNghi','id');
+    }
 }

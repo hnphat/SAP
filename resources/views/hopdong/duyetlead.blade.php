@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <style>
+        .modal-lg {
+            max-width: 100%;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -247,9 +252,11 @@
                                         <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
                                         <h5>Hỗ trợ HTV: <strong class="text-success" id="htvSupport">0</strong></h5>
                                         <h5>Chi phí vận chuyển: <strong class="text-success" id="phiVanChuyen">0</strong></h5>
+                                        <!-- <h5>Tỉ suất lợi nhuận (Dự kiến): <strong class="text-pink" id="tiSuatLoiNhuan">0</strong></h5> -->
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT HỢP ĐỒNG</button>
                                         <button id="choPhepHuy" class="btn btn-warning">CHO PHÉP HỦY</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA HỢP ĐỒNG</button>
+                                        <button id="history" class="btn btn-primary" data-toggle="modal" data-target="#historyUpdate">Lịch sử cập nhật</button>
 
                             </div>
                         </div>
@@ -260,6 +267,37 @@
         </div>
         <!-- /.content -->
     </div>
+    <!-- Medal Add PK Free-->
+    <div class="modal fade" id="historyUpdate">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">LỊCH SỬ CHỈNH SỬA</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <table class="table table-striped table-bordered">
+                            <tr>
+                                <th>STT</th>
+                                <th>Thời gian</th>
+                                <th>Tài khoản</th>
+                                <th>Nội dung</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                            <tbody id="showHistory">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -684,6 +722,46 @@
                     }
                 });
             });
+
+            $("#history").click(function(e) {
+                let id = $("#chonDeNghi").val() != 0 ? $("#chonDeNghi").val() : ($("input[name=chonNhanh]").val() ? $("input[name=chonNhanh]").val() : 0);
+                $.ajax({
+                    url: 'management/hd/hd/history/' + id,
+                    type: "get",
+                    dataType: 'json',
+                    success: function(response){
+                        console.log(response);
+                        if (response.code == 200) {
+                            let txt = ``;
+                            for(let i = 0; i < response.data.length; i++) {
+                                txt += `<tr>
+                                    <td>${i+1}</td>
+                                    <td>${response.data[i].ngay}</td>
+                                    <td>${response.data[i].user}</td>
+                                    <td>${response.data[i].noiDung}</td>
+                                    <td>${response.data[i].ghiChu}</td>
+                                </tr>`
+                            }
+                            $("#showHistory").html(txt);
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        } else {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }                 
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi không thể tải lịch sử cập nhật"
+                        })
+                    }
+                });
+            })
 
             //load quickly PK Free
             function loadPKFree(id) {

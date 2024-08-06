@@ -8,6 +8,7 @@ use App\BHPK;
 use App\User;
 use App\HopDong;
 use App\KhoV2;
+use App\HistoryHopDong;
 use App\TypeCar;
 use App\PackageV2;
 use App\ChiTietBHPK;
@@ -463,6 +464,14 @@ class DichVuController extends Controller
             } 
         }
         if ($flag) {
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $hd->id;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Liên kết phụ kiện";
+            $his->ghiChu = "";
+            $his->save();
+
             return response()->json([
                 'type' => 'info',
                 'code' => 200,
@@ -1502,13 +1511,14 @@ class DichVuController extends Controller
             $donGia .= number_format($row->donGia) . "<w:br/>";
             $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
             if (!$row->isTang) {
-                $noiDung .= $bh->noiDung . "<w:br/>";               
+                $noiDung .= $bh->noiDung . "<w:br/>";     
+                $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+                $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));           
             } else {
-                $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
-            }            
-            $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
-            // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
-            $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
+                $noiDung .= $bh->noiDung . " (tặng)<w:br/>";      
+                $thanhTien .=  "0 <w:br/>";
+                // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));         
+            }
         }
         $tienBangChu = \HelpFunction::convert($tongCong);
         $yeuCau = $bg->yeuCau;
@@ -1812,14 +1822,16 @@ class DichVuController extends Controller
             $donGia .= number_format($row->donGia) . "<w:br/>";
             $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
             if (!$row->isTang) {
-                $noiDung .= $bh->noiDung . "<w:br/>";                
+                $noiDung .= $bh->noiDung . "<w:br/>";  
+                $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+                $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));              
             } else {
                 // $thanhTien .= "0<w:br/>";
                 // $tongCong += 0;
                 $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
-            }
-            $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
-            $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
+                $thanhTien .= "0 <w:br/>";
+                // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
+            }            
             // $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
             // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
             

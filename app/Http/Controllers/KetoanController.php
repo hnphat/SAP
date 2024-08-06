@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\HopDong;
 use App\KhoV2;
 use App\NhatKy;
+use App\HistoryHopDong;
 use App\TypeCarDetail;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -136,6 +137,22 @@ class KetoanController extends Controller
             . "%; Lãi suất vay từ ". $temp->laiSuatVay ."% thành " . $request->laiSuatVay . "%"
             . "; Hoa hồng sale từ ". $hhSaleOld  ." thành ".$request->hoaHongSale;
             $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $request->eidhopdong;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Cập nhật thông tin xe nhận nợ. Xe " . $temp->typeCarDetail->name
+            . "; Số khung: " . $temp->vin . "; Số máy: " . $temp->frame 
+            . "; Ngày nhận nợ từ ". $temp->ngayNhanNo ." thành " . $request->ngayNhanNo
+            . "; Ngày rút hồ sơ từ ". $temp->ngayRutHoSo ." thành " . $request->ngayRutHoSo
+            . "; Xăng lưu kho từ ". $temp->xangLuuKho ." thành " .  $request->xangLuuKho
+            . "; Giá trị vay từ ". $temp->giaTriVay ."% thành " . $request->giaTriVay
+            . "%; Lãi suất vay từ ". $temp->laiSuatVay ."% thành " . $request->laiSuatVay . "%"
+            . "; Hoa hồng sale từ ". $hhSaleOld  ." thành ".$request->hoaHongSale;
+            $his->ghiChu = "";
+            $his->save();
+
             return response()->json([
                 'message' => 'Cập nhật xe nhận nợ: Thành công; Hoa hồng sale: ' . (($isHopDong) ? "Thành công" : "Thất bại"),
                 'code' => 200,
@@ -289,6 +306,15 @@ class KetoanController extends Controller
             $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
             $nhatKy->noiDung = "In biên bản bàn giao xe hợp đồng số " . $hd->code;
             $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $id;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "In biên bản bàn giao xe";
+            $his->ghiChu = "";
+            $his->save();
+
             return response()->download($pathToSave,$outhd . '.docx',$headers);
         } else {
             echo "<script>alert('Chưa xuất xe, chưa thể in biên bản bàn giao xe');</script>";
@@ -366,6 +392,15 @@ class KetoanController extends Controller
             $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
             $nhatKy->noiDung = "In quyết toán xe hợp đồng số " . $hd->code;
             $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $id;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "In quyết toán xe";
+            $his->ghiChu = "";
+            $his->save();
+
             return response()->download($pathToSave,$outhd . '.docx',$headers);
         // } else {
         //     echo "<script>alert('Chưa xuất xe, chưa thể in quyết toán');</script>";

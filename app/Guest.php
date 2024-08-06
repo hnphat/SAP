@@ -8,6 +8,7 @@ class Guest extends Model
 {
     //
     protected $table = "guest";
+    
     public function sale() {
         return $this->hasMany('App\Sale', 'id_guest', 'id');
     }

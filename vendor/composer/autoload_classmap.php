@@ -110,6 +110,7 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Middleware\\WorkMiddleWare' => $baseDir . '/app/Http/Middleware/WorkMiddleWare.php',
     'App\\KTVBHPK' => $baseDir . '/app/KTVBHPK.php',
+    'App\\KhoHC' => $baseDir . '/app/KhoHC.php',
     'App\\KhoV2' => $baseDir . '/app/KhoV2.php',
     'App\\Kpi' => $baseDir . '/app/Kpi.php',
     'App\\LoaiCong' => $baseDir . '/app/LoaiCong.php',

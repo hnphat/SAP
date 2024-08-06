@@ -638,6 +638,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\WorkMiddleWare' => __DIR__ . '/../..' . '/app/Http/Middleware/WorkMiddleWare.php',
         'App\\KTVBHPK' => __DIR__ . '/../..' . '/app/KTVBHPK.php',
+        'App\\KhoHC' => __DIR__ . '/../..' . '/app/KhoHC.php',
         'App\\KhoV2' => __DIR__ . '/../..' . '/app/KhoV2.php',
         'App\\Kpi' => __DIR__ . '/../..' . '/app/Kpi.php',
         'App\\LoaiCong' => __DIR__ . '/../..' . '/app/LoaiCong.php',
