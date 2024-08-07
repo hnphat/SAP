@@ -252,7 +252,7 @@
                                         <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
                                         <h5>Hỗ trợ HTV: <strong class="text-success" id="htvSupport">0</strong></h5>
                                         <h5>Chi phí vận chuyển: <strong class="text-success" id="phiVanChuyen">0</strong></h5>
-                                        <!-- <h5>Tỉ suất lợi nhuận (Dự kiến): <strong class="text-pink" id="tiSuatLoiNhuan">0</strong></h5> -->
+                                        <h5>Tỉ suất lợi nhuận (Dự kiến): <strong class="text-pink" id="tiSuatLoiNhuan">0</strong></h5>
                                         <button id="duyetDeNghi" class="btn btn-info">DUYỆT HỢP ĐỒNG</button>
                                         <button id="choPhepHuy" class="btn btn-warning">CHO PHÉP HỦY</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA HỢP ĐỒNG</button>
@@ -428,6 +428,7 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.code != 500) {
+                            $("#showHistory").empty();
                             $("#sHoTen").text(response.data.guestname);
                             $("#sDienThoai").text(response.data.phone);
                             $("#smst").text(response.data.mst);
@@ -455,6 +456,8 @@
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             $("#htvSupport").text(formatNumber(response.data.htvSupport));
+                            $("#tiSuatLoiNhuan").text(response.tisuat);
+
                             $("#phiVanChuyen").text(formatNumber(response.data.phiVanChuyen));
                             if (response.data.lyDoEdit != null)
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
@@ -555,6 +558,7 @@
                             $("#choPhepSua").hide();
                             $("#huyDeNghi").hide();
                             $("#htvSupport").text("0");
+                            $("#tiSuatLoiNhuan").text("0");
                             $("#phiVanChuyen").text("0");
                         }
                     },
@@ -564,6 +568,7 @@
                             title: "Không lấy được dữ liệu"
                         })
                         $("#htvSupport").text("0");
+                        $("#tiSuatLoiNhuan").text("0");
                         $("#phiVanChuyen").text("0");
                         $("#showXeGan").html("");
                         $("#duyetDeNghi").hide();
@@ -579,6 +584,7 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.code != 500) {
+                            $("#showHistory").empty();
                             $("#sHoTen").text(response.data.guestname);
                             $("#sDienThoai").text(response.data.phone);
                             $("#smst").text(response.data.mst);
@@ -606,6 +612,7 @@
                             $("#showXeGan").html("");
                             $("input[name=xeGan]").val("");
                             $("#htvSupport").text(formatNumber(response.data.htvSupport));
+                            $("#tiSuatLoiNhuan").text(response.tisuat);
                             $("#phiVanChuyen").text(formatNumber(response.data.phiVanChuyen));
                             if (response.data.lyDoEdit != null)
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
@@ -706,6 +713,7 @@
                             $("#choPhepSua").hide();
                             $("#huyDeNghi").hide();
                             $("#htvSupport").text("0");
+                            $("#tiSuatLoiNhuan").text("0");
                             $("#phiVanChuyen").text("0");
                         }
                     },
@@ -715,6 +723,7 @@
                             title: "Không lấy được dữ liệu"
                         })
                         $("#htvSupport").text("0");
+                        $("#tiSuatLoiNhuan").text("0");
                         $("#phiVanChuyen").text("0");
                         $("#showXeGan").html("");
                         $("#duyetDeNghi").hide();

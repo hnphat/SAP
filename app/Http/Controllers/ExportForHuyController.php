@@ -327,13 +327,6 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                 $package = $row->package;
                 foreach($package as $row2) {                
                     if ($row2->type == 'free' && $row2->free_kem == false) {
-                        // if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
-                        //     $p = BHPK::find($row2->mapk);
-                        //     $khuyenMai += $p->giaVon;
-                        // } else {
-                        //     $khuyenMai += $row2->cost;
-                        // }
-            
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
                         $p = BHPK::find($row2->mapk);

@@ -2611,6 +2611,119 @@ class HDController extends Controller
             ->where('hop_dong.id', $id)
             ->orderby('hop_dong.id','desc')
             ->first();
+        // --- Tính tỉ suất dự kiến
+        $giaXe = $result->giaXe;
+        $magiamgia = $result->magiamgia;
+        $giaNiemYet = $result->giaNiemYet;
+        $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
+        $giaVon = 0;
+        if ($result->isGiaVon) {
+            $giaVon = TypeCarDetail::find($result->id_car_sale)->giaVon;
+        } else {
+            $giaVon = $result->giaVon;
+        }
+        $htvSupport = $result->htvSupport;
+        $phiVanChuyen = $result->phiVanChuyen;
+        $khuyenMai = 0;
+        $bhvc = 0;
+        $pkban = 0;
+        $dangky = 0;
+        $cpkhac = 0;
+        //--------- sp ke toan
+        $tangTB = 0;
+        $tangBH = 0;
+        $tangPK = 0;
+        $tangCongDK = 0;
+        $ngayNhanNo = 0;
+        $phiLaiVay = 0;
+        $phiLuuKho = 0;
+        $hhSale = $result->hoaHongSale;                
+        $pvc = $result->phiVanChuyen;
+        //---------
+        $giavonbh = 0;
+        $hhcongdk = 0;
+        $_giavonpk = 0;
+        $loinhuanbaohiem = 0;
+        $loinhuancongdk = 0;
+        if ($result->id_car_kho != null) {
+            $ktKho = KhoV2::find($result->id_car_kho); 
+            $phiLuuKho = $ktKho->xangLuuKho;    
+            $giavonbh = $ktKho->giavonbh;
+            $hhcongdk = $ktKho->hhcongdk;    
+            $_giavonpk = $ktKho->giavonpk;          
+            if ($ktKho->ngayNhanNo != null) {
+                $date_1 = strtotime($ktKho->ngayNhanNo);
+                if ($ktKho->ngayRutHoSo != null)
+                    $date_2 = strtotime($ktKho->ngayRutHoSo);
+                else
+                    $date_2 = time();
+                $datediff = $date_2 - $date_1;
+                $ngayNhanNo = round($datediff / (60 * 60 * 24)) + 1;
+                if (($ktKho->giaTriVay != null && $ktKho->giaTriVay != 0) && ($ktKho->laiSuatVay != null &&  $ktKho->laiSuatVay != 0)) {
+                    $phiLaiVay = round(($giaVon * ($ktKho->giaTriVay / 100) * ($ktKho->laiSuatVay / 100)) / 365) * $ngayNhanNo;
+                }                       
+            }
+        }                
+        $package = $result->package;
+        foreach($package as $row2) {                
+            if ($row2->type == 'free' && $row2->free_kem == false) {
+                // ---- Suport KT --------
+                if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
+                $p = BHPK::find($row2->mapk);
+                $tangPK += $p->giaVon;
+                $khuyenMai += $p->giaVon;
+                } else {
+                $tangPK += $row2->cost;
+                $khuyenMai += $row2->cost;
+                }
+                // -----------------------    
+            }
+            if ($row2->type == 'cost' && $row2->cost_tang == true) {
+                $khuyenMai += $row2->cost;
+                // ---- Suport KT --------
+                if ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS") {
+                $tangBH = $row2->cost;
+                }
+                if ($row2->name == "Phí trước bạ") {
+                $tangTB = $row2->cost;
+                }
+                if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                $tangCongDK = $row2->cost;
+                }
+                // -----------------------
+            } elseif ($row2->type == 'cost' 
+            && $row2->cost_tang == false
+            && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
+                $bhvc += $row2->cost;
+            } elseif ($row2->type == 'cost' 
+            && $row2->cost_tang == false
+            && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                $dangky += $row2->cost;
+            } elseif ($row2->type == 'cost' 
+            && $row2->cost_tang == false
+            && $row2->name == "Chi phí khác") {
+                $cpkhac += $row2->cost;
+            }
+
+            if ($row2->type == 'pay') {
+                $pkban += $row2->cost;
+            }
+        }
+        $loinhuanbaohiem = $bhvc*15/100;
+        $loinhuancongdk = $dangky*55/100;
+        $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)))*50/100;
+        $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
+        $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
+        $tiSuat = ($tiSuat < 3) ? "".round($tiSuat,2)."" : "".round($tiSuat,2)."";
+        // ---- Suport KT --------
+        $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
+        $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
+        $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? round($tiSuatLaiGop,2) : round($tiSuatLaiGop,2);
+        // -----------------------
+        $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
+        $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+        $tiSuatFinal = ($tiSuatFinal < 3) ? round($tiSuatFinal,2) : round($tiSuatFinal,2);
+        // -------------------------
         $sohd = $result->code.".".$result->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($result->created_at)."/HĐMB-PA";
         $car = KhoV2::find($result->id_car_kho);
         $waitCar = TypeCarDetail::find($result->id_car_sale);
@@ -2622,7 +2735,8 @@ class HDController extends Controller
                 'car' => $car,
                 'waitcar' => $waitCar,
                 'sohd' => $sohd,
-                'loaiXe' => $waitCar->id_type_car
+                'loaiXe' => $waitCar->id_type_car,
+                'tisuat' => $tiSuat
             ]);
         } else {
             return response()->json([
