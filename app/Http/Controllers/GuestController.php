@@ -1200,6 +1200,7 @@ class GuestController extends Controller
             <th>STT</th>
             <th>Nhóm</th>
             <th>Saler</th>
+            <th>HĐ tồn (tính đến thời điểm hiện tại)</th>
             <th>HĐ ký/chờ</th>
             <th>HĐ xuất</th>
             <th>Khách hàng mới</th>
@@ -1212,6 +1213,7 @@ class GuestController extends Controller
                 $nhomkd = Group::where('id', $idgroupmain)->get(); 
             else 
                 $nhomkd = Group::all(); 
+            $stongton = 0;
             $stonghd = 0;
             $stonghdxuat = 0;
             $stongpkban = 0;
@@ -1219,6 +1221,7 @@ class GuestController extends Controller
             $stongmkt = 0;          
             foreach($nhomkd as $rowkd) {
                 $i = 1;
+                $tongton = 0;
                 $tonghd = 0;
                 $tonghdxuat = 0;
                 $tongpkban = 0;
@@ -1227,6 +1230,7 @@ class GuestController extends Controller
                 $nhomsale = GroupSale::where('group_id', $rowkd->id)->get();
                 foreach($nhomsale as $rowsale) {
                     $row = User::find($rowsale->user_id);
+                    $hdton = 0;
                     $hdky = 0;
                     $hdcho = 0;
                     $hdxuat = 0;
@@ -1269,6 +1273,24 @@ class GuestController extends Controller
                                     $mktguest++;
                             }
                         }
+
+                        $hdtonList = HopDong::select('hop_dong.*')
+                        ->where([
+                            ['hop_dong.lead_check','=',true],
+                            ['hop_dong.lead_check_cancel','=',false],
+                            ['hop_dong.id_user_create','=',$row->id]
+                        ])->get();
+                        foreach($hdtonList as $row4){
+                            $checkDaXuat = KhoV2::find($row4->id_car_kho);
+                            if (!$checkDaXuat) { 
+                                $hdton++; 
+                                continue;
+                            }
+                            if ($checkDaXuat && !$checkDaXuat->xuatXe) {
+                                $hdton++;
+                            } 
+
+                        }
                         
                         $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
                         ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
@@ -1308,11 +1330,13 @@ class GuestController extends Controller
                                 <td>".($i++)."</td>
                                 <td>".$tenNhom."</td>
                                 <td>".$row->userDetail->surname."</td>
+                                <td><strong class='text-pink'>".$hdton."</strong></td>
                                 <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
                                 <td><strong class='text-success'>".$hdxuat."</strong></td>
                                 <td><strong class='text-orange'>".$guestnew."</strong>".($mktguest ? "<i class='text-pink'> (mkt: ".$mktguest.")</i>" : "")."</td>
                                 <td><strong class='text-info'>".number_format($pkban)."<strong></td>
                             </tr>";
+                        $tongton += $hdton;
                         $tonghd += ($hdky + $hdcho);
                         $tonghdxuat += $hdxuat;
                         $tongkh += $guestnew;
@@ -1322,13 +1346,14 @@ class GuestController extends Controller
                     }
                 }   
                 echo "<tr class='text-center table-info'>
-                            <td colspan='3'><strong>TỔNG NHÓM</strong></td>                            
+                            <td colspan='3'><strong>TỔNG NHÓM</strong></td>       
+                            <td><strong class='text-pink'>".$tongton."</strong></td>                     
                             <td><strong class='text-primary'>".$tonghd."</strong></td>
                             <td><strong class='text-success'>".$tonghdxuat."</strong></td>
                             <td><strong class='text-orange'>".$tongkh."".($tongmkt ? "<i class='text-pink'> (mkt: ".$tongmkt.")</i>" : "")."</strong></td>
                             <td><strong class='text-info'>".number_format($tongpkban)."<strong></td>
                         </tr>";  
-                               
+                $stongton += $tongton;               
                 $stonghd += $tonghd;
                 $stonghdxuat += $tonghdxuat;
                 $stongpkban += $tongpkban;     
@@ -1339,7 +1364,8 @@ class GuestController extends Controller
 
             } else {
                 echo "<tr class='text-center table-success'>
-                    <td colspan='3'><strong>TỔNG CỘNG PHÒNG KINH DOANH</strong></td>                            
+                    <td colspan='3'><strong>TỔNG CỘNG PHÒNG KINH DOANH</strong></td>  
+                    <td><strong class='text-pink'>".$stongton."</strong></td>                          
                     <td><strong class='text-primary'>".$stonghd."</strong></td>
                     <td><strong class='text-success'>".$stonghdxuat."</strong></td>
                 <td><strong class='text-orange'>".$stongkh."".($stongmkt ? "<i class='text-pink'> (mkt: ".$stongmkt.")</i>" : "")."</strong></td>
@@ -1351,6 +1377,7 @@ class GuestController extends Controller
         } else {
             $i = 1;
             $u = User::find($nv);
+            $hdton = 0;
             $hdky = 0;
             $hdcho = 0;
             $hdxuat = 0;
@@ -1388,6 +1415,24 @@ class GuestController extends Controller
                 }                        
             }
             //------------------
+            $hdtonList = HopDong::select('hop_dong.*')
+            ->where([
+                ['hop_dong.lead_check','=',true],
+                ['hop_dong.lead_check_cancel','=',false],
+                ['hop_dong.id_user_create','=',$u->id]
+            ])->get();
+            foreach($hdtonList as $row4){
+                $checkDaXuat = KhoV2::find($row4->id_car_kho);
+                if (!$checkDaXuat) { 
+                    $hdton++; 
+                    continue;
+                }
+                if ($checkDaXuat && !$checkDaXuat->xuatXe) {
+                    $hdton++;
+                } 
+
+            }
+
             $hdkyList = HopDong::select('k.xuatXe','hop_dong.*')
             ->join('kho_v2 as k','k.id','=','hop_dong.id_car_kho')
             ->where([
@@ -1418,6 +1463,7 @@ class GuestController extends Controller
                 ['id_user_create','=',$u->id]
             ])->get();
             $rphdkycho = $hdchoList;
+            $rphdton = $hdtonList;
 
             foreach($hdchoList as $row3){
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row3->created_at)) >= strtotime($tu)) 
@@ -1430,11 +1476,98 @@ class GuestController extends Controller
                     <td>".($i++)."</td>
                     <td>".$tenNhom."</td>
                     <td>".$u->userDetail->surname."</td>
+                    <td><strong class='text-pink'>".$hdton."</strong></td>
                     <td><strong class='text-primary'>".($hdky + $hdcho)."</strong></td>
                     <td><strong class='text-success'>".$hdxuat."</strong></td>
                     <td><strong class='text-orange'>".$guestnew."</strong></td>
                     <td><strong class='text-info'>".number_format($pkban)."<strong></td>
                 </tr><tbody></table>";
+            // Show chi tiết hợp đồng tồn
+            echo "<h5>HỢP ĐỒNG TỒN (TÍNH ĐẾN THỜI ĐIỂM HIỆN TẠI)</h5>
+            <table class='table table-striped table-bordered'>
+            <tr class='text-center'>
+                <th>STT</th>
+                <th>Ngày ký</th>
+                <th>Trạng thái</th>
+                <th>Khách hàng</th>
+                <th>Dòng xe</th>
+                <th>Màu</th>
+                <th>Hình thức mua</th>
+                <th>Tiền cọc</th>
+                <th>Phụ kiện bán (HĐ)</th>
+                <th>Chi tiết</th>
+            </tr>
+            <tbody>";
+            $z = 0;
+            foreach($rphdton as $rphdtonrow){
+                $checkDaXuat = KhoV2::find($rphdtonrow->id_car_kho);
+                if (!$checkDaXuat) { 
+                    // ----------------------- HĐ chờ
+                    $z++;
+                    $pkban = 0;
+                    $magiamgia = $rphdtonrow->magiamgia;
+                    $soffhdkyton = SaleOffV2::where('id_hd',$rphdtonrow->id)->get();
+                    foreach ($soffhdkyton as $soffhdkytonrow) {
+                        $p = PackageV2::where([
+                            ['id','=',$soffhdkytonrow->id_bh_pk_package],
+                            ['type','=','pay']
+                        ])->first();
+                        if ($p) {                            
+                            $pkban += $p->cost;
+                        }                           
+                    }
+                    $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
+                    echo "<tr class='text-center'>
+                        <td>".$z."</td>
+                        <td>".\HelpFunction::getDateRevertCreatedAt($rphdtonrow->created_at)."</td>
+                        <td>".($rphdtonrow->hdWait ? "<strong class='text-pink text-bold'>Hợp đồng chờ</strong>" : "<strong class='text-success text-bold'>Hợp đồng ký</strong>")."</td>
+                        <td>".$rphdtonrow->guest->name."</td>
+                        <td>".$rphdtonrow->carSale->name."</td>
+                        <td>".$rphdtonrow->mau."</td>
+                        <td>".($rphdtonrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
+                        <td>".number_format($rphdtonrow->tienCoc)."</td>
+                        <td>".number_format($pkban)." ".($magiamgia == 0 ? "" : "(-".$magiamgia."%)")."</td>
+                        <td>
+                        <button data-idhopdong='".$rphdtonrow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                        </td>
+                    </tr>";
+                    // -----------------------
+                    continue;
+                }
+                if ($checkDaXuat && !$checkDaXuat->xuatXe) {
+                    // ----------------------- HĐ ký nhưng chưa xuất
+                    $z++;
+                    $pkban = 0;
+                    $magiamgia = $rphdtonrow->magiamgia;
+                    $soffhdkyton = SaleOffV2::where('id_hd',$rphdtonrow->id)->get();
+                    foreach ($soffhdkyton as $soffhdkytonrow) {
+                        $p = PackageV2::where([
+                            ['id','=',$soffhdkytonrow->id_bh_pk_package],
+                            ['type','=','pay']
+                        ])->first();
+                        if ($p) {                            
+                            $pkban += $p->cost;
+                        }                           
+                    }
+                    $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
+                    echo "<tr class='text-center'>
+                        <td>".$z."</td>
+                        <td>".\HelpFunction::getDateRevertCreatedAt($rphdtonrow->created_at)."</td>
+                        <td class='text-success text-bold'>".($rphdtonrow->hdWait ? "Hợp đồng chờ" : "Hợp đồng ký")."</td>
+                        <td>".$rphdtonrow->guest->name."</td>
+                        <td>".$rphdtonrow->carSale->name."</td>
+                        <td>".$rphdtonrow->mau."</td>
+                        <td>".($rphdtonrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
+                        <td>".number_format($rphdtonrow->tienCoc)."</td>
+                        <td>".number_format($pkban)." ".($magiamgia == 0 ? "" : "(-".$magiamgia."%)")."</td>
+                        <td>
+                        <button data-idhopdong='".$rphdtonrow->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
+                        </td>
+                    </tr>";
+                    // -----------------------
+                }                 
+            }   
+            echo "</table>";   
             // Show chi tiết hợp đồng ký
             echo "<h5>HỢP ĐỒNG KÝ</h5>
             <table class='table table-striped table-bordered'>

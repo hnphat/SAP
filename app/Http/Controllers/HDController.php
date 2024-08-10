@@ -2462,6 +2462,7 @@ class HDController extends Controller
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
+            $tempac = PackageV2::find($request->id);
             $pac = PackageV2::find($request->id);
             $pac->delete();
             if($result) {
@@ -2476,7 +2477,7 @@ class HDController extends Controller
                 $his->idDeNghi = $request->sale;
                 $his->id_user = Auth::user()->id;
                 $his->ngay = Date("H:m:s d-m-Y");
-                $his->noiDung = "Xóa phụ kiện bán <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
+                $his->noiDung = "Xóa phụ kiện bán <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
                 $his->ghiChu = "";
                 $his->save();
 
@@ -2507,6 +2508,7 @@ class HDController extends Controller
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
+            $tempac = PackageV2::find($request->id);
             $pac = PackageV2::find($request->id);
             $pac->delete();
             if($result) {
@@ -2521,7 +2523,7 @@ class HDController extends Controller
                 $his->idDeNghi = $request->sale;
                 $his->id_user = Auth::user()->id;
                 $his->ngay = Date("H:m:s d-m-Y");
-                $his->noiDung = "Xóa phụ kiện tặng <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
+                $his->noiDung = "Xóa phụ kiện tặng <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
                 $his->ghiChu = "";
                 $his->save();
 
@@ -2551,6 +2553,7 @@ class HDController extends Controller
                 ['id_hd','=', $request->sale],
                 ['id_bh_pk_package','=', $request->id]
             ])->delete();
+            $tempac = PackageV2::find($request->id);
             $pac = PackageV2::find($request->id);
             $pac->delete();
             if($result) {
@@ -2565,7 +2568,7 @@ class HDController extends Controller
                 $his->idDeNghi = $request->sale;
                 $his->id_user = Auth::user()->id;
                 $his->ngay = Date("H:m:s d-m-Y");
-                $his->noiDung = "Xóa chi phí <br/>Nội dung: " . $temp->name . " <br/>Giá: " . round($temp->cost,2);
+                $his->noiDung = "Xóa chi phí <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
                 $his->ghiChu = "";
                 $his->save();
 
