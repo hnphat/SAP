@@ -417,7 +417,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
 
                 $status = "";
                 if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
-                    $status = "Hợp đồng đại lý";
+                    if ($row->hdWait == true) 
+                        $status = "Hợp đồng chờ";
+                    else 
+                        $status = "Hợp đồng ký";
                 } elseif ($row->lead_check_cancel == true) {
                     $status = "Hợp đồng huỷ";
                 } else {
@@ -437,8 +440,12 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     elseif ($row->requestCheck == true 
                     && $row->admin_check == true 
                     && $row->lead_check == true 
-                    && $row->hdWait == false)
-                        $status = "Hợp đồng ký";
+                    && $row->hdWait == false) {
+                        if ($ngayXuatXe) 
+                            $status = "Đã giao xe";
+                        else
+                            $status = "Hợp đồng ký";
+                    }
                 }                
                 $hds[] = array(
                     '0' => $i++,
@@ -628,7 +635,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
 
                 $status = "";
                 if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
-                    $status = "Hợp đồng đại lý";
+                    if ($row->hdWait == true) 
+                        $status = "Hợp đồng chờ";
+                    else 
+                        $status = "Hợp đồng ký";
                 } elseif ($row->lead_check_cancel == true) {
                     $status = "Hợp đồng huỷ";
                 } else {
@@ -648,8 +658,12 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     elseif ($row->requestCheck == true 
                     && $row->admin_check == true 
                     && $row->lead_check == true 
-                    && $row->hdWait == false)
-                        $status = "Hợp đồng ký";
+                    && $row->hdWait == false) {
+                        if ($ngayXuatXe) 
+                            $status = "Đã giao xe";
+                        else
+                            $status = "Hợp đồng ký";
+                    }
                 }                
                 $hds[] = array(
                     '0' => $i++,

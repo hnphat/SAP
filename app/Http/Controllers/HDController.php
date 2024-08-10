@@ -18,6 +18,7 @@ use App\TypeCar;
 use App\Roles;
 use App\RoleUser;
 use App\User;
+use App\GroupSale;
 use App\HistoryHopDong;
 use Excel;
 use App\TypeCarDetail;
@@ -1662,8 +1663,21 @@ class HDController extends Controller
     }
 
     public function getHDPheDuyetHopDong() {
+        $arr = [];
+        $user = User::all();
+        $group = GroupSale::all();
+        foreach($user as $row){            
+            if ($row->hasRole('sale') && $row->active) {
+                $gr = GroupSale::where('user_id', $row->id)->first();
+                array_push($arr, [
+                    'id' => $row->id,
+                    'code' => $row->name,
+                    'name' => $row->userDetail->surname
+                ]);
+            }
+        }
         $hopdong = HopDong::select('*')->orderby('id','desc')->get();
-        return view('hopdong.duyetlead', ['hopdong' => $hopdong]);
+        return view('hopdong.duyetlead', ['hopdong' => $hopdong, 'groupsale' => $arr]);
     }
 
     public function getDanhSach() {
@@ -4498,7 +4512,10 @@ class HDController extends Controller
 
                 $status = "";
                 if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
-                    $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                    if ($row->hdWait == true) 
+                        $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                    else 
+                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
                 } elseif ($row->lead_check_cancel == true) {
                     $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
                 } else {
@@ -4518,10 +4535,14 @@ class HDController extends Controller
                     elseif ($row->requestCheck == true 
                     && $row->admin_check == true 
                     && $row->lead_check == true 
-                    && $row->hdWait == false)
-                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                    && $row->hdWait == false) {
+                        if ($ngayXuatXe) 
+                            $status = "<strong class='text-warning'>Đã giao xe</strong>";
+                        else
+                            $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                    }
                 }                
-                // <td>ĐN/0".$row->id."/".$codeCar."</td>
+                
                 echo "<tr>
                     <td>".($i++)."</td>
                     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
@@ -4724,7 +4745,10 @@ class HDController extends Controller
 
                 $status = "";
                 if ($row->hdDaiLy == true && $row->lead_check == true && $row->lead_check_cancel == false) {
-                    $status = "<strong class='text-warning'>Hợp đồng đại lý</strong>";
+                    if ($row->hdWait == true) 
+                        $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
+                    else 
+                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
                 } elseif ($row->lead_check_cancel == true) {
                     $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
                 } else {
@@ -4744,8 +4768,12 @@ class HDController extends Controller
                     elseif ($row->requestCheck == true 
                     && $row->admin_check == true 
                     && $row->lead_check == true 
-                    && $row->hdWait == false)
-                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                    && $row->hdWait == false) {
+                        if ($ngayXuatXe) 
+                            $status = "<strong class='text-warning'>Đã giao xe</strong>";
+                        else
+                            $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                    }
                 }       
                 // <td>ĐN/0".$row->id."/".$codeCar."</td>
                 echo "<tr>
@@ -5022,6 +5050,59 @@ class HDController extends Controller
                 'message' => 'Không tìm thấy thông tin hoặc lỗi máy chủ!',
                 'type' => "error",
                 'code' => 500
+            ]);
+        }
+    }
+
+    public function moveHD(Request $request) {
+        $user = User::find($request->sale);
+        $hd = HopDong::find($request->id);
+        $guestId = $hd->id_guest;
+        $olduser = User::find($hd->id_user_create);
+        $guest = Guest::find($guestId);
+        if (Auth::user()->hasRole("system")) {
+            if ($hd->id_car_kho != null && $hd->hdWait != true) {
+                $car = KhoV2::find($hd->id_car_kho);
+                if ($car->xuatXe == true)
+                    return response()->json([
+                        'type' => 'warning',
+                        'message' => 'Xe đã xuất kho không thể thực hiện chuyển thông tin hợp đồng!',
+                        'code' => 200
+                    ]);
+            } 
+
+            if ($olduser->active) {
+                return response()->json([
+                    'type' => 'warning',
+                    'message' => 'Người sở hữu hợp đồng này vẫn còn hoạt động không thể chuyển thông tin hợp đồng!',
+                    'code' => 200
+                ]);
+            }
+
+            $guest->id_user_create = $request->sale;
+            $guest->save();
+
+            $hd->id_user_create = $request->sale;
+            $hd->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $request->id;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Chuyển thông tin hợp đồng cho cho nhân viên: ".$user->userDetail->surname." (Đã bao gồm chuyển khách hàng: ".$guest->name.")";
+            $his->ghiChu = "";
+            $his->save();
+
+            return response()->json([
+                'message' => 'Đã thực hiện chuyển thông tin hợp đồng!',
+                'code' => 200,
+                'type' => "info"
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Bạn không có quyền thực hiện thao tác này!',
+                'code' => 200,
+                'type' => "error"
             ]);
         }
     }

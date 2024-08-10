@@ -286,6 +286,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/pheduyetleadhuy/ok','HDController@duyetDeNghiLeadHuy');
         Route::post('hd/denghi/yeucausualead','HDController@duyetYeuCauSuaLead');
         Route::get('hd/history/{id}','HDController@getHistory');
+        Route::post('hd/movehd','HDController@moveHD');
 
         // --- In ấn hợp đồng
         Route::get('banle/canhan/tienmat/down/{id}','HDController@cntm');

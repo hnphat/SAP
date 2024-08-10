@@ -257,7 +257,9 @@
                                         <button id="choPhepHuy" class="btn btn-warning">CHO PHÉP HỦY</button>
                                         <button id="choPhepSua" class="btn btn-warning">CHO PHÉP CHỈNH SỬA HỢP ĐỒNG</button>
                                         <button id="history" class="btn btn-primary" data-toggle="modal" data-target="#historyUpdate">Lịch sử cập nhật</button>
-
+                                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                            <button id="move" class="btn btn-secondary" data-toggle="modal" data-target="#movingModal">Chuyển hợp đồng</button>
+                                        @endif
                             </div>
                         </div>
                     </div>
@@ -291,6 +293,48 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+     <!-- Medal Moving -->
+     <div class="modal fade" id="movingModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- general form elements -->
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Chuyển hợp đồng (đã bao gồm khách hàng)</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="movingForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Chọn nhân viên nhận hợp đồng</label>
+                                    <select name="nhanVienRecieve" id="nhanVienRecieve" class="form-control"> 
+                                        @foreach($groupsale as $row)                       
+                                            <option value="{{$row['id']}}">{{$row['code']}} - {{$row['name']}}</option> 
+                                        @endforeach   
+                                    </select>
+                                </div>
+                            </div>                                                                        
+                            <div class="card-footer">
+                                <button id="btnUpdateMove" class="btn btn-success">Xác nhận</button>
+                            </div>                                                           
+                        </form>
+                    </div>
+                    <!-- /.card -->
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -978,6 +1022,44 @@
                         }
                     });
                 }
+            });
+
+            $("#btnUpdateMove").click(function(e) {
+                e.preventDefault();
+                let id = $("#chonDeNghi").val() != 0 ? $("#chonDeNghi").val() : ($("input[name=chonNhanh]").val() ? $("input[name=chonNhanh]").val() : 0);
+                let sale = $("select[name=nhanVienRecieve]").val();
+                if (id == 0)
+                    alert("Vui lòng chọn hợp đồng trước khi thực hiện thao tác này!");
+                else {
+                   if (confirm("Bạn có chắc muốn chuyển thông tin hợp đồng và khách hàng cho nhân viên này?\nVui lòng kiểm tra trước khi thực hiện thao tác này!")) {
+                        $.ajax({
+                            url: "{{url('management/hd/hd/movehd/')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                '_token': '{{csrf_token()}}',
+                                "id": id,
+                                "sale": sale,
+                            },
+                            success: function(response){
+                                if (response.code == 200) {
+                                    Toast.fire({
+                                        icon: response.type,
+                                        title: response.message
+                                    })
+                                    $("#movingModal").modal('hide');
+                                    loadList();
+                                }                          
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: "Lỗi không thể thực hiện chuyển thông tin hợp đồng"
+                                })
+                            }
+                        });
+                   }
+                }                
             });
         });
     </script>
