@@ -364,7 +364,7 @@
                                 <label>Mặt hàng: <span class="text-primary" id="s_noiDung"></span></label> ----
                                 <label>Đơn vị tính: <span class="text-primary" id="s_dvt"></span></label> ----
                                 <label>Giá đề nghị: <span class="text-primary" id="s_gia"></span></label> ----
-                                <label>Công KTV (nếu có): <span class="text-primary" id="s_congktv"></span></label>
+                                <!-- <label>Công KTV (nếu có): <span class="text-primary" id="s_congktv"></span></label> -->
                         </div>   
                     </div>
                     <div class="row">
@@ -1778,14 +1778,14 @@
                             $("#s_noiDung").text(response.data.noiDung);
                             $("#s_dvt").text(response.data.dvt);
                             $("#s_gia").text(formatNumber(parseInt(response.data.donGia)));
-                            $("#s_congktv").text(formatNumber(parseInt(response.data.congKTV)));
+                            // $("#s_congktv").text(formatNumber(parseInt(response.data.congKTV)));
                         }
                         else {
                             $("input[name=tenHang]").val("");    
                             $("#s_noiDung").text("");
                             $("#s_dvt").text("");
                             $("#s_gia").text("");
-                            $("#s_congktv").text("");
+                            // $("#s_congktv").text("");
                         }                            
                     },
                     error: function() {
