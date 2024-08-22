@@ -388,7 +388,7 @@
                                     <div class="row">
                                         <div class="col-md-6">                                           
                                             <select name="rhangHoa${arr}" disabled class="form-control">
-                                                ${danhmuc}
+                                                <option value="${x.id}">${x.tenSanPham}</option>
                                             </select>
                                         </div>
                                         <div class="col-md-6">                                           

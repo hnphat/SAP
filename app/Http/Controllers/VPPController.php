@@ -457,6 +457,43 @@ class VPPController extends Controller
             ]);
     }
 
+    public function loadNhomSP(){
+        $dm = NhomSP::select("*")->get();
+        if ($dm)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Tải thành công danh mục hàng hóa",
+                'data' => $dm
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy danh mục hàng hóa'
+            ]);
+    }
+
+    public function loadSP($id) {
+        $dm = DanhMucSP::select("*")
+        ->where("id_nhom",$id)
+        ->orderBy('id', 'desc')
+        ->get();
+        if ($dm)
+            return response()->json([
+                'code' => 200,        
+                'type' => 'info',
+                'message' => "Tải thành công danh mục dụng cụ",
+                'data' => $dm
+            ]);
+        else
+            return response()->json([
+                'code' => 500,        
+                'type' => 'error',
+                'message' => 'Không tìm thấy danh mục dụng cụ'
+            ]);
+    }
+
     public function nhapKhoLoadDanhMucAll(){
         $dm = DanhMucSP::select("danhmuc_sp.*","nhom.tenNhom as tenNhom")
         ->join('nhom_sp as nhom','danhmuc_sp.id_nhom','=','nhom.id')
@@ -963,12 +1000,12 @@ class VPPController extends Controller
                     $nhatKy->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n" .$temp;
                     $nhatKy->save(); 
                      //------------------
-               $khohc = new KhoHC();
-               $khohc->id_user = Auth::user()->id;
-               $khohc->ngay = Date("H:m:s d-m-Y");
-               $khohc->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n" .$temp;
-               $khohc->save();
-               //------------------
+                    $khohc = new KhoHC();
+                    $khohc->id_user = Auth::user()->id;
+                    $khohc->ngay = Date("H:m:s d-m-Y");
+                    $khohc->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n" .$temp;
+                    $khohc->save();
+                    //------------------
                     return response()->json([
                         'code' => 200,        
                         'type' => 'info',
@@ -979,7 +1016,7 @@ class VPPController extends Controller
                     return response()->json([
                         'code' => 500,        
                         'type' => 'info',
-                        'message' => 'Không thể xóa tất cả danh mục sản phẩm trên phiếu!',
+                        'message' => 'Không có dụng cụ để xóa!',
                     ]); 
             } else {
                 $temp = "";

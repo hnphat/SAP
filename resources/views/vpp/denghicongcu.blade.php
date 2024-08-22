@@ -70,13 +70,43 @@
                                 <h5>PHIẾU YÊU CẦU DỤNG CỤ: 
                                     <strong class="text-info" id="maPhieu"></strong> 
                                     <button id="xoaPhieu" class="btn btn-danger btn-sm">Xóa yêu cầu</button>
-                                    <button id="suaPhieu" class="btn btn-secondary btn-sm">Cập nhật yêu cầu</button>
+                                    <button id="suaPhieu" class="btn btn-secondary btn-sm">Sửa phiếu</button>
                                 </h5>
                                 <h5>NỘI DUNG: <i><span id="noiDung"></span></i></h5>                            
                                 <h5>TRẠNG THÁI: <span id="trangThai"></span></h5>
                                 <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhan"></span></h5>
+                                <div class="row" id="suaPhieuDungCu" style="display:none">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="chonDanhMuc">Chọn danh mục</label>
+                                            <select name="chonDanhMuc" id="chonDanhMuc" class="form-control">
+                                              
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="chonDungCu">Chọn dụng cụ</label>
+                                            <select name="chonDungCu" id="chonDungCu" class="form-control">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="soLuong">Số lượng</label>
+                                            <input type="number" value="1" min="1" max="200" step="1" name="soLuong" id="soLuong" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="themMoi"></label>
+                                            <button id="themMoi" class="form-control btn btn-success">THÊM</button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <hr>
-                                <h5>DỤNG CỤ YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
+                                <!-- <h5>DỤNG CỤ YÊU CẦU <button id="themHangHoa" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5> -->
+                                <h5>DỤNG CỤ YÊU CẦU</h5>
                             </div>
                             <div class="row container">
                                 <form id="showForm">                               
@@ -111,6 +141,7 @@
                                 <h5>TRẠNG THÁI NHẬN: <span id="trangThaiNhanCongCu"></span></h5>
                                 <hr>
                                 <h5>DỤNG CỤ YÊU CẦU <button id="themHangHoaCongCu" class="btn btn-success btn-sm" style="display:none;"><strong>Bổ sung</strong></button></h5>
+                                <!-- <h5>DỤNG CỤ YÊU CẦU</h5> -->
                             </div>
                             <div class="row container">
                                 <form id="showFormCongCu">                               
@@ -232,6 +263,7 @@
         // Exe
         $(document).ready(function() {
             // ----------------------------
+            $("#themMoi").prop("disabled",true);
             let table = $('#dataTable').DataTable({
                 responsive: true,
                 dom: 'Blfrtip',
@@ -269,6 +301,66 @@
                 ]
             });
             // ----------------------------
+            // Load danh mục 
+            $.ajax({
+                    url: "{{url('management/requestvpp/denghicongcu/loadnhomsp/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        let tempDM = ``;
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        })
+                        tempDM += `<option value="0">Chọn</option>`;
+                        response.data.forEach((x) => {
+                            tempDM += `<option value="${x.id}">${x.tenNhom}</option>`;
+                        });                    
+                        $("#chonDanhMuc").html(tempDM);
+                    },
+                    error: function(){
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Error 500!"
+                        })
+                    }
+            });
+
+            $("#chonDanhMuc").change(function() {
+                let val = $("#chonDanhMuc").val();     
+                // if (val == 0) {
+                //         if ($('#chonDungCu').has('option').length > 0)
+                //             $("#themMoi").prop("disabled",true);
+                //     } else 
+                //         $("#themMoi").prop("disabled",false);    
+                $.ajax({
+                        url: "{{url('management/requestvpp/denghicongcu/loadsp/')}}" + "/" + val,
+                        type: "get",
+                        dataType: "json",
+                        success: function(response) {
+                            $("#chonDungCu").empty();
+                            let tempDM = ``;
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            response.data.forEach((x) => {
+                                tempDM += `<option value="${x.id}">${x.tenSanPham} (${x.donViTinh})</option>`;
+                            });                    
+                            if (tempDM == ``) 
+                                $("#themMoi").prop("disabled",true); 
+                            else 
+                                $("#themMoi").prop("disabled",false);
+                            $("#chonDungCu").html(tempDM);
+                        },
+                        error: function(){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Error 500!"
+                            })
+                        }
+                });
+            });
             // Load danh mục hàng hóa
             let danhmuc = ``;     
             let congcu = ``;
@@ -394,7 +486,7 @@
                                         <div class="col-md-6">
                                             <label>Công cụ/dụng cụ</label> 
                                             <select name="rhangHoa${arr}" disabled class="form-control">
-                                                ${danhmuc}
+                                                <option value="${x.id}">${x.tenSanPham}</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
@@ -420,6 +512,7 @@
                         if (response.status == 1) {
                             $('#showForm button').hide();
                             $('#themHangHoa').hide();
+                            $("#suaPhieuDungCu").hide();
                             $("#suaPhieu").hide();
                             $("#xoaPhieu").hide();
                             if (response.statusNhan == 1) {
@@ -430,6 +523,7 @@
                         } else {
                             $('#showForm button').show();
                             $("#suaPhieu").show();
+                            $("#suaPhieuDungCu").hide();
                             $("#xoaPhieu").show();   
                             $('#nhanHang').hide();                         
                         }
@@ -630,6 +724,7 @@
                 $('#showForm select').prop('disabled', false);
                 $('#showForm input').prop('disabled', false);
                 $('#showForm button').prop('disabled', false);
+                $("#suaPhieuDungCu").show();
                 $('#themHangHoa').show();
             });
 
@@ -770,6 +865,34 @@
                             <div class="col-md-3">
                                 <label>Số lượng</label> 
                                 <input type="number" name="rsoLuong${arr}" value="0" class="form-control">
+                            </div>
+                            <div class="col-md-2">      
+                                <br/>                                
+                                <button id="deleteRow" type="button" class="btn btn-danger btn-sm" data-code="${arr}">Xóa</button>
+                            </div>
+                        </div>
+                    </div>                                                                                              
+                    `;
+                arr++;
+                $("#showForm").prepend(temp);    
+            });
+
+            $("#themMoi").click(function(){
+                let hhValue = $("#chonDungCu").val();
+                let hhName = $("#chonDungCu option:selected").text();
+                let hhSL = $("#soLuong").val();
+                order.set(arr, 0);                       
+                temp = `<div class="form-group" id="row_sel_${arr}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Công cụ/dụng cụ</label> 
+                                <select name="rhangHoa${arr}" class="form-control" readonly>
+                                    <option value="${hhValue}">${hhName}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Số lượng</label> 
+                                <input type="number" name="rsoLuong${arr}" value="${hhSL}" readonly class="form-control">
                             </div>
                             <div class="col-md-2">      
                                 <br/>                                
