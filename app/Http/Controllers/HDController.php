@@ -1893,75 +1893,75 @@ class HDController extends Controller
 
 
         // --------------- Add 05 phụ kiện theo xe
-        $pkpay = new PackageV2;
-        $pkpay->name = "Áo trùm xe";
-        $pkpay->cost = 0;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'free';
-        $pkpay->save();
+        // $pkpay = new PackageV2;
+        // $pkpay->name = "Áo trùm xe";
+        // $pkpay->cost = 0;
+        // $pkpay->id_user_create = Auth::user()->id;
+        // $pkpay->type = 'free';
+        // $pkpay->save();
 
-        if($pkpay) {
-            $saleOff = new SaleOffV2;
-            $saleOff->id_hd = $idSale;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-        }
+        // if($pkpay) {
+        //     $saleOff = new SaleOffV2;
+        //     $saleOff->id_hd = $idSale;
+        //     $saleOff->id_bh_pk_package = $pkpay->id;
+        //     $saleOff->save();
+        // }
 
-        $pkpay = new PackageV2;
-        $pkpay->name = "Bao tay lái";
-        $pkpay->cost = 0;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'free';
-        $pkpay->save();
+        // $pkpay = new PackageV2;
+        // $pkpay->name = "Bao tay lái";
+        // $pkpay->cost = 0;
+        // $pkpay->id_user_create = Auth::user()->id;
+        // $pkpay->type = 'free';
+        // $pkpay->save();
 
-        if($pkpay) {
-            $saleOff = new SaleOffV2;
-            $saleOff->id_hd = $idSale;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-        }
+        // if($pkpay) {
+        //     $saleOff = new SaleOffV2;
+        //     $saleOff->id_hd = $idSale;
+        //     $saleOff->id_bh_pk_package = $pkpay->id;
+        //     $saleOff->save();
+        // }
 
-        $pkpay = new PackageV2;
-        $pkpay->name = "Tappi sàn";
-        $pkpay->cost = 0;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'free';
-        $pkpay->save();
+        // $pkpay = new PackageV2;
+        // $pkpay->name = "Tappi sàn";
+        // $pkpay->cost = 0;
+        // $pkpay->id_user_create = Auth::user()->id;
+        // $pkpay->type = 'free';
+        // $pkpay->save();
 
-        if($pkpay) {
-            $saleOff = new SaleOffV2;
-            $saleOff->id_hd = $idSale;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-        }
+        // if($pkpay) {
+        //     $saleOff = new SaleOffV2;
+        //     $saleOff->id_hd = $idSale;
+        //     $saleOff->id_bh_pk_package = $pkpay->id;
+        //     $saleOff->save();
+        // }
 
-        $pkpay = new PackageV2;
-        $pkpay->name = "Khăn lau xe";
-        $pkpay->cost = 0;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'free';
-        $pkpay->save();
+        // $pkpay = new PackageV2;
+        // $pkpay->name = "Khăn lau xe";
+        // $pkpay->cost = 0;
+        // $pkpay->id_user_create = Auth::user()->id;
+        // $pkpay->type = 'free';
+        // $pkpay->save();
 
-        if($pkpay) {
-            $saleOff = new SaleOffV2;
-            $saleOff->id_hd = $idSale;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-        }
+        // if($pkpay) {
+        //     $saleOff = new SaleOffV2;
+        //     $saleOff->id_hd = $idSale;
+        //     $saleOff->id_bh_pk_package = $pkpay->id;
+        //     $saleOff->save();
+        // }
 
-        $pkpay = new PackageV2;
-        $pkpay->name = "Bình chữa cháy";
-        $pkpay->cost = 0;
-        $pkpay->id_user_create = Auth::user()->id;
-        $pkpay->type = 'free';
-        $pkpay->save();
+        // $pkpay = new PackageV2;
+        // $pkpay->name = "Bình chữa cháy";
+        // $pkpay->cost = 0;
+        // $pkpay->id_user_create = Auth::user()->id;
+        // $pkpay->type = 'free';
+        // $pkpay->save();
 
-        if($pkpay) {
-            $saleOff = new SaleOffV2;
-            $saleOff->id_hd = $idSale;
-            $saleOff->id_bh_pk_package = $pkpay->id;
-            $saleOff->save();
-        }
+        // if($pkpay) {
+        //     $saleOff = new SaleOffV2;
+        //     $saleOff->id_hd = $idSale;
+        //     $saleOff->id_bh_pk_package = $pkpay->id;
+        //     $saleOff->save();
+        // }
 
         // --------------- End add 05 phụ kiện theo xe
         if($code) {

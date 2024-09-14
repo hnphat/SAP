@@ -175,7 +175,7 @@
                                                                     <div class="row">
                                                                         <div class="col-sm-4">
                                                                             <div class="form-group">
-                                                                                <label>Nguồn khách hàng</label>
+                                                                                <label>Nguồn khách hàng <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="nguon" id="nguon" class="form-control">
                                                                                     <option value="Showroom">Showroom</option>   
                                                                                     <option value="Thị Trường">Thị Trường</option>
@@ -187,7 +187,7 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Xe quan tâm</label>
+                                                                                <label>Xe quan tâm <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <!-- <input name="quanTam" type="text" class="form-control" placeholder="Xe quan tâm"> -->
                                                                                 <select name="quanTam" id="quanTam" class="form-control">
                                                                                     @foreach($xeList as $row)
@@ -196,7 +196,7 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Màu sắc</label>
+                                                                                <label>Màu sắc <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="mauSac" id="mauSac" class="form-control">
                                                                                     <option value="Đỏ">Đỏ</option>
                                                                                     <option value="Xanh">Xanh</option>
@@ -216,18 +216,18 @@
                                                                                 </select>
                                                                             </div>     
                                                                             <div class="form-group">
-                                                                                <label>Hình thức mua</label>
+                                                                                <label>Hình thức mua <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="hinhThucMua" id="hinhThucMua" class="form-control">
                                                                                     <option value="Tiền mặt">Tiền mặt</option>
                                                                                     <option value="Ngân hàng">Ngân hàng</option>                                                   
                                                                                 </select>
                                                                             </div>     
                                                                             <div class="form-group">
-                                                                                <label>Dự kiến mua xe</label>
+                                                                                <label>Dự kiến mua xe <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input type="text" class="form-control" name="duKienMua" id="duKienMua" placeholder="Dự kiến mua">
                                                                             </div>    
                                                                             <div class="form-group">
-                                                                                <label>Đánh giá</label>
+                                                                                <label>Đánh giá <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="danhGia" id="danhGia" class="form-control">
                                                                                     <option value="HOT">HOT</option>
                                                                                     <option value="WARM">WARM</option>
@@ -238,7 +238,7 @@
                                                                         </div>
                                                                         <div class="col-sm-8">
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc 01 giờ</label>
+                                                                                <label>Chăm sóc 01 giờ <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input name="cs1" type="text" class="form-control" placeholder="Chăm sóc lần 1">
                                                                             </div>
                                                                             <div class="form-group">
@@ -390,7 +390,7 @@
                                                                     <div class="row">
                                                                         <div class="col-sm-4">
                                                                             <div class="form-group">
-                                                                                <label>Nguồn khách hàng</label>
+                                                                                <label>Nguồn khách hàng <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="enguon" id="enguon" class="form-control">
                                                                                     <option value="Showroom">Showroom</option>   
                                                                                     <option value="Thị Trường">Thị Trường</option>
@@ -402,7 +402,7 @@
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Xe quan tâm:</label>
+                                                                                <label>Xe quan tâm <span class="text-danger"><strong>(*)</strong></span>:</label>
                                                                                 <select name="equanTam" id="equanTam" class="form-control">
                                                                                     <option value="Không có" selected>Không có</option>
                                                                                     @foreach($xeList as $row)
@@ -411,7 +411,7 @@
                                                                                 </select>                                                                             
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Màu sắc</label>
+                                                                                <label>Màu sắc <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="emauSac" id="emauSac" class="form-control">
                                                                                     <option value="0">Chưa xác định</option>
                                                                                     <option value="Đỏ">Đỏ</option>
@@ -432,7 +432,7 @@
                                                                                 </select>
                                                                             </div>     
                                                                             <div class="form-group">
-                                                                                <label>Hình thức mua</label>
+                                                                                <label>Hình thức mua <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="ehinhThucMua" id="ehinhThucMua" class="form-control">
                                                                                     <option value="0">Chưa xác định</option>
                                                                                     <option value="Tiền mặt">Tiền mặt</option>
@@ -440,11 +440,11 @@
                                                                                 </select>
                                                                             </div>     
                                                                             <div class="form-group">
-                                                                                <label>Dự kiến mua xe</label>
+                                                                                <label>Dự kiến mua xe <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input type="text" class="form-control" name="eduKienMua" id="eduKienMua" placeholder="Dự kiến mua">
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                <label>Đánh giá</label>
+                                                                                <label>Đánh giá <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <select name="edanhGia" id="edanhGia" class="form-control">
                                                                                     <option value="HOT">HOT</option>
                                                                                     <option value="WARM">WARM</option>
@@ -455,7 +455,7 @@
                                                                         </div>
                                                                         <div class="col-sm-8">
                                                                             <div class="form-group">
-                                                                                <label>Chăm sóc 01 giờ</label>
+                                                                                <label>Chăm sóc 01 giờ <span class="text-danger"><strong>(*)</strong></span></label>
                                                                                 <input name="ecs1" type="text" class="form-control" placeholder="Chăm sóc lần 1">
                                                                             </div>
                                                                             <div class="form-group">
@@ -776,20 +776,21 @@
             $("#btnAdd").click(function(e){
                 e.preventDefault();
                 let flag = true;
-                if($("input[name=dienThoai]").val().match(/\d/g).length===10) {
-                    $.ajax({
-                       url: "management/guest/check/" + $("input[name=dienThoai]").val().replace(',','').replace('.',''),
-                       dataType: "text",
-                       success: function(responce) {
+                if($("input[name=dienThoai]").val() && $("input[name=dienThoai]").val().match(/\d/g).length===10) {
+                    if ($("#duKienMua").val() && $("input[name=cs1]").val() && $("input[name=ten]").val() && $("input[name=diaChi]").val()) {
+                        $.ajax({
+                        url: "management/guest/check/" + $("input[name=dienThoai]").val().replace(',','').replace('.',''),
+                        dataType: "text",
+                        success: function(responce) {
                            let obj = JSON.parse(responce);
                            if (parseInt(obj.check) === 1) {
                                flag = false;
                                alert('Số điện thoại ' + obj.phone + ' đã được tạo bởi ' + obj.user);
                            } 
-                       },
-                       async: false
-                    });
-                    if (flag) {
+                        },
+                        async: false
+                      });
+                      if (flag) {
                         $("input[name=dienThoai]").val($("input[name=dienThoai]").val().replace(',','').replace('.',''));
                         $.ajax({
                             url: "{{url('management/guest/add/')}}",
@@ -812,7 +813,10 @@
                                 })
                             }
                         });
-                    }
+                      }
+                    } else {
+                        alert('Các trường dấu * là bắt buộc');
+                    }                    
                 } else {
                     alert('Số điện thoại không đúng định dạng');
                 }

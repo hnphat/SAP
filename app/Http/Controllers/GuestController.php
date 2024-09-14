@@ -69,8 +69,10 @@ class GuestController extends Controller
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);
             $sale = $request->sale ? $request->sale : null;
-            $result = null;            
+            $result = null;      
+            $resultForTruongNhom = [];      
             $arr = [];
+            // ------------- Kết suất dữ liệu
             if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
                if ($sale != 0) {
                     $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
@@ -85,7 +87,28 @@ class GuestController extends Controller
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
                     ->orderBy('guest.id', 'desc')
                     ->get();
-               }
+               }            
+            elseif (Auth::user()->hasRole('truongnhomsale')) {
+                $idgroupmain = GroupSale::where('user_id', Auth::user()->id)->exists() ? GroupSale::where('user_id', Auth::user()->id)->first()->group_id : 0;
+                $nhomkd = Group::where('id', $idgroupmain)->get(); 
+                $nhomsale = GroupSale::where('group_id', $idgroupmain)->get();
+                foreach($nhomsale as $rowsale) {
+                    $row = User::find($rowsale->user_id);
+                    $resultSale = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
+                    ->join('type_guest as t','guest.id_type_guest','=','t.id')
+                    ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where('id_user_create', $row->id)
+                    ->orderBy('guest.id', 'desc')
+                    ->get();
+                    foreach($resultSale as $row2) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($_from)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($_to))) {
+                            $row2->phone = Auth::user()->id != $row->id ? substr($row2->phone,0,4)."xxxxxx" : $row2->phone;
+                            array_push($resultForTruongNhom, $row2);
+                        }
+                    }
+                }
+            }
             elseif (Auth::user()->hasRole('sale'))
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
@@ -111,26 +134,36 @@ class GuestController extends Controller
                     }
                 }
                 $result = $arr_temp;
-            }
+            }            
             else 
                 return response()->json([
                     'message' => 'Error get Database from server!',
                     'code' => 500,
                     'data' => null
                 ]);
-            foreach($result as $row) {
-                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
-                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
-                    array_push($arr, $row);
-                }
-            }
-            if ($result)
+            // ------------- Xử lý dữ liệu
+            if (Auth::user()->hasRole('truongnhomsale')) {
                 return response()->json([
-                    'message' => 'Get list successfully!',
+                    'message' => 'Get list trưởng nhóm!',
                     'code' => 200,
-                    'data' => $arr
+                    'data' => $resultForTruongNhom
                 ]);
+            } else {
+                foreach($result as $row) {
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                        array_push($arr, $row);
+                    }
+                }
+                if ($result)
+                    return response()->json([
+                        'message' => 'Get list successfully!',
+                        'code' => 200,
+                        'data' => $arr
+                    ]);
+            }            
         } else {
+            $result = null;      
             if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd'))
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
@@ -411,6 +444,8 @@ class GuestController extends Controller
 
     public function editShow(Request $request) {
         $result = Guest::where('id', $request->id)->first();
+        if (Auth::user()->hasRole('truongnhomsale') && Auth::user()->id != $result->id_user_create)
+            $result->phone = 1111111111;
         if($result) {
             return response()->json([
                 'message' => 'Show edit data successfully!',
