@@ -253,6 +253,9 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
             '24' => "25",
             '25' => "26",
             '26' => "27",
+            '27' => "28",
+            '28' => "29",
+            '29' => "30",
         );
         //-------------------------------
         $i = 1;
@@ -302,8 +305,10 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                 $_giavonpk = 0;
                 $loinhuanbaohiem = 0;
                 $loinhuancongdk = 0;
+                $sokhung = "";
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
+                    $sokhung = $ktKho->vin;
                     $phiLuuKho = $ktKho->xangLuuKho;    
                     $giavonbh = $ktKho->giavonbh;
                     $hhcongdk = $ktKho->hhcongdk;    
@@ -416,7 +421,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                     && $row->admin_check == true 
                     && $row->lead_check == true 
                     && $row->hdWait == false)
-                        $status = "Hợp đồng ký";
+                        $status = "Hợp đồng xe kho";
                 }                
                 $hds[] = array(
                     '0' => $i++,
@@ -446,6 +451,9 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                     '24' => $loiNhuan,
                     '25' => $tiSuat,             
                     '26' => $loinhuanfinal,
+                    '27' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
+                    '28' => $phone,
+                    '29' => $sokhung,
                 );
             }    
 
@@ -498,8 +506,10 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                $_giavonpk = 0;
                $loinhuanbaohiem = 0;
                $loinhuancongdk = 0;
+               $sokhung = "";
                if ($row->id_car_kho != null) {
-                   $ktKho = KhoV2::find($row->id_car_kho); 
+                   $ktKho = KhoV2::find($row->id_car_kho);
+                   $sokhung = $ktKho->vin; 
                    $phiLuuKho = $ktKho->xangLuuKho;      
                    $giavonbh = $ktKho->giavonbh;
                    $hhcongdk = $ktKho->hhcongdk;
@@ -612,7 +622,7 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                     && $row->admin_check == true 
                     && $row->lead_check == true 
                     && $row->hdWait == false)
-                        $status = "Hợp đồng ký";
+                        $status = "Hợp đồng xe kho";
                 }                
                 $hds[] = array(
                     '0' => $i++,
@@ -642,6 +652,9 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
                     '24' => $loiNhuan,
                     '25' => $tiSuat,             
                     '26' => $loinhuanfinal,
+                    '27' => \HelpFunction::getDateRevertCreatedAt($row->created_at),
+                    '28' => $phone,
+                    '29' => $sokhung,
                 );
             }  
         }
@@ -678,6 +691,9 @@ class ExportForHuyController extends Controller implements FromCollection, WithH
             'Lợi nhuận xe',
             'Tỉ suất LN xe',
 			'Tổng lợi nhuận HĐ',
+            'Ngày tạo',
+            'Số điện thoại',
+            'Số khung',
         ];
     }
     

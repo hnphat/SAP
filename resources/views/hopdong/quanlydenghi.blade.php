@@ -1274,6 +1274,7 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
+                        tru = 0;
                         for(let i = 0; i < response.pkcost.length; i++) {
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
@@ -1285,14 +1286,12 @@
                                 "</td>" +
                                 "</tr>";
                             sum += parseInt(response.pkcost[i].cost);
+                            if (response.pkcost[i].cost_tang == true) 
+                                tru += parseInt(response.pkcost[i].cost);
                         }
+                        let totalTang = sum - tru;
                         $("#showPKCOST").html(txt);
-                        $("#xtongCost").text(formatNumber(sum));
-                        // loadTotal($("select[name=chonHD]").val());
-                        // Toast.fire({
-                        //     icon: 'info',
-                        //     title: "Loaded! Cost Gift!"
-                        // })
+                        $("#xtongCost").text(formatNumber(totalTang) + " (Đã trừ chi phí tặng " +formatNumber(tru)+")");
                     },
                     error: function() {
                         Toast.fire({

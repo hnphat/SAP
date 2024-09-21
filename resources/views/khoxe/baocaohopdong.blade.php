@@ -38,13 +38,13 @@
                                 <label>Chọn loại báo cáo</label>
                                 <select name="baoCao" class="form-control">
                                     <option value="1">Tất cả</option>                           
-                                    <option value="2">Đề nghị đợi duyệt (admin)</option>                                 
-                                    <option value="3">Đề nghị mới tạo</option>  
-                                    <option value="4">Hợp đồng ký</option>    
+                                    <option value="2">Hợp đồng đợi duyệt</option>                                 
+                                    <!-- <option value="3">Đề nghị mới tạo</option>   -->
+                                    <option value="4">Hợp đồng xe kho</option>    
                                     <option value="5">Hợp đồng ký chờ</option>      
                                     <option value="6">Hợp đồng ký đại lý</option> 
                                     <option value="7">Hợp đồng huỷ</option>                               
-                                    <option value="8">Hợp đồng đợi duyệt (trưởng phòng)</option> 
+                                    <!-- <option value="8">Hợp đồng đợi duyệt (trưởng phòng)</option>  -->
                                     <option value="9">Đã giao xe</option>                                                              
                                 </select> <br/>
                             </div>

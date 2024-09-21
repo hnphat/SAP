@@ -2608,12 +2608,11 @@ class HDController extends Controller
         $package = $sale->package;
         foreach($package as $row) {
             if ($row->type == 'free') continue;
-            else if ($row->type == 'cost' && $row->cost_tang == true) 
-                $sum -= $row->cost;
-            else if ($row->type == 'pay') 
+            else if ($row->type == 'pay')
                 $sum += ($magiamgia == 0 ? $row->cost : ($row->cost - ($row->cost*$magiamgia/100)));
-            else 
+            else if ($row->type == 'cost' && $row->cost_tang == false)
                 $sum += $row->cost;
+            
         }
         echo $sum + $sale->giaXe;
     }
@@ -4177,23 +4176,33 @@ class HDController extends Controller
         || Auth::user()->hasRole('baocaohopdong') || Auth::user()->hasRole('xuatbaocao')) {
             switch($request->baoCao) {
                 case 1: {
-                    $hd = HopDong::orderBy('id','desc')->get();
+                    // $hd = HopDong::orderBy('id','desc')->get();
+                    $hd = HopDong::where([
+                        ['requestCheck','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
                 } break;
                 case 2: {
                     $hd = HopDong::where([
                         ['requestCheck','=',true],
                         ['admin_check','=',false]
                     ])
-                    ->orderBy('id','desc')
-                    ->get();
-                } break;
-                case 3: {
-                    $hd = HopDong::where([
-                        ['requestCheck','=',false]
+                    ->orWhere([
+                        ['requestCheck','=',true],
+                        ['admin_check','=',true],
+                        ['lead_check','=',false]
                     ])
                     ->orderBy('id','desc')
                     ->get();
                 } break;
+                // case 3: {
+                //     $hd = HopDong::where([
+                //         ['requestCheck','=',false]
+                //     ])
+                //     ->orderBy('id','desc')
+                //     ->get();
+                // } break;
                 case 4: {
                     $hd = HopDong::where([
                         ['requestCheck','=',true],
@@ -4237,15 +4246,15 @@ class HDController extends Controller
                     ->orderBy('id','desc')
                     ->get();
                 } break;
-                case 8: {
-                    $hd = HopDong::where([
-                        ['requestCheck','=',true],
-                        ['admin_check','=',true],
-                        ['lead_check','=',false]
-                    ])
-                    ->orderBy('id','desc')
-                    ->get();
-                } break;
+                // case 8: {
+                //     $hd = HopDong::where([
+                //         ['requestCheck','=',true],
+                //         ['admin_check','=',true],
+                //         ['lead_check','=',false]
+                //     ])
+                //     ->orderBy('id','desc')
+                //     ->get();
+                // } break;
                 case 9: {
                     $hd = HopDong::select("hop_dong.*")
                     ->join("kho_v2 as k","k.id","=","hop_dong.id_car_kho")
@@ -4515,7 +4524,7 @@ class HDController extends Controller
                     if ($row->hdWait == true) 
                         $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
                     else 
-                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                        $status = "<strong class='text-success'>Hợp đồng xe kho</strong>";
                 } elseif ($row->lead_check_cancel == true) {
                     $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
                 } else {
@@ -4539,7 +4548,7 @@ class HDController extends Controller
                         if ($ngayXuatXe) 
                             $status = "<strong class='text-warning'>Đã giao xe</strong>";
                         else
-                            $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                            $status = "<strong class='text-success'>Hợp đồng xe kho</strong>";
                     }
                 }                
                 
@@ -4748,7 +4757,7 @@ class HDController extends Controller
                     if ($row->hdWait == true) 
                         $status = "<strong class='text-pink'>Hợp đồng chờ</strong>";
                     else 
-                        $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                        $status = "<strong class='text-success'>Hợp đồng xe kho</strong>";
                 } elseif ($row->lead_check_cancel == true) {
                     $status = "<strong class='text-danger'>Hợp đồng huỷ</strong>";
                 } else {
@@ -4772,7 +4781,7 @@ class HDController extends Controller
                         if ($ngayXuatXe) 
                             $status = "<strong class='text-warning'>Đã giao xe</strong>";
                         else
-                            $status = "<strong class='text-success'>Hợp đồng ký</strong>";
+                            $status = "<strong class='text-success'>Hợp đồng xe kho</strong>";
                     }
                 }       
                 // <td>ĐN/0".$row->id."/".$codeCar."</td>
