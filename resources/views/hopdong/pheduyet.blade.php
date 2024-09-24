@@ -1427,32 +1427,47 @@
              // check chosen hd
              $("#in").click(function(e){
                e.preventDefault();
-                if ($("select[name=mauHD]").val() == 1) {
+                if ($("select[name=mauHD]").val() == 1 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
+                 } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
                  }
 
-                if ($("select[name=mauHD]").val() == 2) {
+                if ($("select[name=mauHD]").val() == 2 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
-                }
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
 
-                if ($("select[name=mauHD]").val() == 3) {
+                if ($("select[name=mauHD]").val() == 3 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 3: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
-                }
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                 }
 
                 if ($("select[name=mauHD]").val() == 4 && $("input[name=checkIn]").val() == 1) {
                     open("{{url('management/hd/complete/denghiruthosoxe')}}/" + $("input[name=idHopDong]").val(),"_blank");
