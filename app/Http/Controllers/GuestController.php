@@ -28,6 +28,7 @@ use App\MarketingGuest;
 use App\DRPCauHoi;
 use App\DRPCheck;
 use App\DRPCheckQuestion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -375,6 +376,7 @@ class GuestController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Thêm khách hàng mới <br/>Họ tên: "
                 .$request->ten." <br/>CMND: ".$request->cmnd." <br/>Ngày cấp: ".$request->ngayCap." <br/>Nơi cấp: "
                 .$request->noiCap." <br/>MST: ".$request->mst." <br/>Đại diện: ".$request->daiDien." <br/>Chức vụ: "
@@ -415,6 +417,7 @@ class GuestController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Xóa khách hàng <br/>Họ tên: "
                 .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
                 .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
@@ -500,6 +503,7 @@ class GuestController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng";
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
                 .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
                 .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
@@ -594,6 +598,7 @@ class GuestController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->chucNang = "Kinh doanh - Khách hàng";
                         $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->ghiChu = Carbon::now();
                         $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
                         .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
                         .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
@@ -680,6 +685,7 @@ class GuestController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kinh doanh - Khách hàng";
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng. <br/>THÔNG TIN CŨ: <br/>Họ tên: "
                     .$temp->name." <br/>CMND: ".$temp->cmnd." <br/>Ngày cấp: ".$temp->ngayCap." <br/>Nơi cấp: "
                     .$temp->noiCap." <br/>MST: ".$temp->mst." <br/>Đại diện: ".$temp->daiDien." <br/>Chức vụ: "
@@ -732,6 +738,7 @@ class GuestController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kinh doanh - Khách hàng";
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->noiDung = "Chuyển khách hàng THÔNG TIN: Họ tên: "
                     .$temp->name." Điện thoại: ".$temp->phone." Địa chỉ: " . $temp->address . " cho sale " . $user->userDetail->surname;
                     $nhatKy->save();    

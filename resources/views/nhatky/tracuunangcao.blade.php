@@ -60,7 +60,7 @@
                                             <input type="number"
                                             @if(isset($soLuong))
                                             value="{{$soLuong}}"
-                                            @endif name="num_row" value="50" min="0" max="2000" step="1" placeholder="Từ 1 đến 2000 bản ghi" class="form-control">
+                                            @endif name="num_row" value="50" min="0" max="5000" step="1" placeholder="Từ 1 đến 5000 bản ghi" class="form-control">
                                         </div>
                                         <div class="col-md-1">
                                             <br/>

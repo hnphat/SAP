@@ -8,6 +8,7 @@ use App\KhoV2;
 use App\HopDong;
 use App\TypeCarDetail;
 use App\TypeCar;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -264,7 +265,8 @@ class KhoController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kho xe - Quản lý kho";
-            $nhatKy->noiDung = "Nhập xe ".$chiTietXe->name." vào kho trạng thái xe " . $request->trangThai;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->noiDung = "Nhập xe ".$chiTietXe->name." vào kho; VIN: ".$request->vin." trạng thái xe " . $request->trangThai;
             $nhatKy->save();
             return response()->json([
                 'type' => 'success',
@@ -288,6 +290,7 @@ class KhoController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kho xe - Quản lý kho";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xóa xe trong kho. THÔNG TIN XE XÓA<br/>Xe: "
             .$temp->typeCarDetail->name." VIN: "
             .$temp->vin." Số máy: "
@@ -346,6 +349,7 @@ class KhoController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kho xe - Quản lý kho";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật thông tin xe trong kho. <br/>THÔNG TIN CŨ<br/>Xe: "
             .$check->typeCarDetail->name." VIN: "
             .$check->vin." Số máy: "
@@ -378,6 +382,7 @@ class KhoController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Kho xe - Quản lý kho";
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->noiDung = "Cập nhật thông tin xe trong kho. <br/>THÔNG TIN CŨ<br/>Xe: "
                     .$check->typeCarDetail->name." VIN: "
                     .$check->vin." Số máy: "
@@ -411,6 +416,7 @@ class KhoController extends Controller
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->chucNang = "Kho xe - Quản lý kho";
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->noiDung = "Cập nhật thông tin xe trong kho. <br/>THÔNG TIN CŨ<br/>Xe: "
                     .$check->typeCarDetail->name." VIN: "
                     .$check->vin." Số máy: "
@@ -439,6 +445,7 @@ class KhoController extends Controller
 
     public function updateV2OnlyHD(Request $request) {
         $check = HopDong::where('id_car_kho', $request->eid)->first();
+        $sohd = $check->code;
         if ($request->xuatXe == 1 && $check->lead_check == false) {
             return response()->json([
                 'type' => 'warning',
@@ -471,8 +478,9 @@ class KhoController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
-                $nhatKy->noiDung = "Cập nhật ngày giao xe<br/>THÔNG TIN CŨ<br/>Ngày giao xe: "
-                .$temp->ngayGiaoXe." trạng thái xuất xe(1: Đã xuất; 0:Chưa xuất): ".$temp->xuatXe."<br/>THÔNG TIN MỚI<br/> Ngày giao xe: " . $request->ngayGiaoXe . " và trạng thái xuất xe(1: Đã xuất; 0:Chưa xuất) " . $request->xuatXe;
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->noiDung = "Cập nhật ngày giao xe cho hợp đồng số: ".$sohd." <br/>THÔNG TIN CŨ<br/>Ngày giao xe: "
+                .$temp->ngayGiaoXe." trạng thái xuất xe(1: Đã xuất; 0:Chưa xuất): ".$temp->xuatXe."<br/>THÔNG TIN MỚI<br/> Ngày giao xe: " . $request->ngayGiaoXe . " và trạng thái xuất xe(1: Đã xuất; 0:Chưa xuất): " . $request->xuatXe;
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',
@@ -505,7 +513,8 @@ class KhoController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
-                $nhatKy->noiDung = "Cập nhật lại thông tin xuất xe. Cập nhật từ trạng thái xuất xe sang không xuất xe";
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->noiDung = "Cập nhật lại thông tin xuất xe cho hợp đồng số: ".$sohd." . Cập nhật từ trạng thái xuất xe sang không xuất xe";
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'success',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BieuMau;
 use App\NhatKy;
 use App\UsersDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,6 +84,7 @@ class HanhChinhController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Bổ sung biểu mẫu <br/>Nội dung: "
                 .$request->tieuDe." <br/>Loại: ".$request->loaiFile." <br/>Ghi Chú: "
                 .$request->ghiChu." <br/>Cho phép hiển thị: " . $request->allow;
@@ -127,6 +129,7 @@ class HanhChinhController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật biểu mẫu.<br/>THÔNG TIN CŨ:<br/>Nội dung: "
             .$temp->tieuDe." <br/>Loại: ".$temp->type." <br/>Ghi Chú: "
             .$temp->ghiChu." <br/>Cho phép hiển thị: " . $temp->allow . "<br/>THÔNG TIN MỚI:<br/>Nội dung: "
@@ -160,6 +163,7 @@ class HanhChinhController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xóa biểu mẫu <br/>Nội dung: "
             .$temp->tieuDe." <br/>Loại: ".$temp->type." <br/>Ghi Chú: "
             .$temp->ghiChu." <br/>Cho phép hiển thị: " . $temp->allow;
@@ -314,6 +318,7 @@ class HanhChinhController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý bảng giá xe";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Bổ sung bảng giá <br/>Nội dung: "
                 .$request->tieuDe." <br/>Mô tả: ".$request->moTa." <br/>Ghi Chú: "
                 .$request->ghiChu." <br/>Cho phép hiển thị: " . $request->allow;
@@ -374,6 +379,7 @@ class HanhChinhController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Quản lý bảng giá xe";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật bảng giá<br/>Nội dung: "
             .$request->etieuDe." <br/>Mô tả: ".$request->emoTa." <br/>Ghi Chú: "
             .$request->eghiChu." <br/>Cho phép hiển thị: " . $request->eallow;
@@ -457,6 +463,7 @@ class HanhChinhController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Kinh doanh - Quản lý thông báo nội bộ";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Bổ sung thông báo nội bộ:<br/>Nội dung: "
                 .$request->tieuDe." <br/>Mô tả: ".$request->moTa." <br/>Ghi Chú: "
                 .$request->ghiChu." <br/>Cho phép hiển thị: " . $request->allow;
@@ -513,6 +520,7 @@ class HanhChinhController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kinh doanh - Quản lý thông báo nội bộ";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật thông báo nội bộ:<br/>Nội dung: "
             .$request->etieuDe." <br/>Mô tả: ".$request->emoTa." <br/>Ghi Chú: "
             .$request->eghiChu." <br/>Cho phép hiển thị: " . $request->eallow;

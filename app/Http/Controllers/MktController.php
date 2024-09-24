@@ -11,6 +11,7 @@ use App\HopDong;
 use App\User;
 use App\Mail\GroupGet;
 use App\Mail\SaleGet;
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -73,8 +74,9 @@ class MktController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
-            $nhatKy->noiDung = "Thêm khách hàng MKT; Họ tên: " . $request->ten . "; SĐT: " . $request->dienThoai . " gán vào nhóm " . $gr->name;
+            $nhatKy->noiDung = "Thêm khách hàng MKT; Họ tên: " . $request->ten . "; SĐT: " . $request->dienThoai . " gán vào nhóm " . $nhom;
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -105,6 +107,7 @@ class MktController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
                 $nhatKy->noiDung = "Xoá khách hàng mkt; Họ tên: " . $temp->hoTen . "; SĐT: " . $temp->dienThoai;
                 $nhatKy->save();
@@ -162,6 +165,7 @@ class MktController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
                 $nhatKy->noiDung = "rollback khách hàng mkt; Họ tên: " . $temp->hoTen . "; SĐT: " . $temp->dienThoai;
                 $nhatKy->save();
@@ -219,6 +223,7 @@ class MktController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
                 $nhatKy->noiDung = "Chuyển trạng thái khách hàng mkt sang dừng theo dõi; Họ tên: " . $temp->hoTen . "; SĐT: " . $temp->dienThoai;
                 $nhatKy->save();
@@ -261,6 +266,7 @@ class MktController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
             $nhatKy->noiDung = "Gán khách hàng " . $temp->hoten . "; Số điện thoại: " . $temp->dienThoai . " cho nhóm " . $gr->name;
             $nhatKy->save();
@@ -299,6 +305,7 @@ class MktController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
             $nhatKy->noiDung = "Gán khách hàng " . $temp->hoTen . "; Số điện thoại: " . $temp->dienThoai . " cho sale " . $us->userDetail->surname;
             $nhatKy->save();
@@ -366,6 +373,7 @@ class MktController extends Controller
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->chucNang = "KINH DOANH - Khách hàng MKT";
         $nhatKy->noiDung = "Xem báo cáo khách hàng từ " . $_from . " đến " . $_to;
         $nhatKy->save();

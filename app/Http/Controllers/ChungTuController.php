@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ChungTu;
 use App\NhatKy;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ChungTuController extends Controller
@@ -89,6 +90,7 @@ class ChungTuController extends Controller
                         $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . " <br/>Số lượng: " 
                         . $request->soLuong . " <br/>Người yêu cầu: " . $request->nguoiYeuCau . " <br/>Bộ phận: " 
                         . $request->boPhan . " <br/>Cho phép hiển thị: " . $request->allow . " <br/>Tệp đính kèm: Có";
+                        $nhatKy->ghiChu = Carbon::now();
                         $nhatKy->save();
                         return response()->json([
                             "type" => 'success',
@@ -122,6 +124,7 @@ class ChungTuController extends Controller
                     $nhatKy->noiDung = "Bổ sung chứng từ " . $request->noiDung . "<br/>Số lượng: " 
                     . $request->soLuong . " <br/>Người yêu cầu: " . $request->nguoiYeuCau . " <br/>Bộ phận: " 
                     . $request->boPhan . " <br/>Cho phép hiển thị: " . $request->allow . " <br/>Tệp đính kèm: Không";
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->save();
                     return response()->json([
                         "type" => 'success',
@@ -158,6 +161,7 @@ class ChungTuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kế toán - Chứng từ/mộc";
             $nhatKy->noiDung = "Xóa chứng từ: " . $temp;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([
@@ -212,6 +216,7 @@ class ChungTuController extends Controller
             $nhatKy->noiDung = "Cập nhật lại nội dung chứng từ: " . $request->enoiDung . " <br/>Số lượng: " 
             . $request->esoLuong . " <br/>Người yêu cầu: " . $request->enguoiYeuCau . " <br/>Bộ phận: " 
             . $request->eboPhan . " <br/>Cho phép hiển thị: " . $request->eallow;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([

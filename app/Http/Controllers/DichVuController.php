@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use App\NhatKy;
 use App\KTVBHPK;
 use App\SaleOffV2;
+use Carbon\Carbon;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Excel;
 
@@ -83,6 +84,7 @@ class DichVuController extends Controller
             .$request->thongTinXe."; Liên hệ: "
             .$request->taiXe."; Điện thoại: "
             .$request->dienThoaiTaiXe.";";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -116,6 +118,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý khách hàng: ";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xoá khách hàng: "
             .$temp->hoTen."; điện thoại: "
             .$temp->dienThoai."; MST: "
@@ -171,6 +174,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý khách hàng";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật khách hàng thông tin cũ: <br/>"
             .$temp->hoTen."; điện thoại: "
             .$temp->dienThoai."; MST: "
@@ -254,6 +258,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Thêm hạng mục: "
             .$request->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm): "
             .$request->isPK."; Mã: "
@@ -295,6 +300,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xoá hạng mục: "
             .$temp->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
             .$temp->isPK."; Mã: "
@@ -345,6 +351,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật hạng mục: <br/>Nội dung cũ<br/>"
             .$temp->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
             .$temp->isPK."; Mã: "
@@ -585,6 +592,7 @@ class DichVuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
             $nhatKy->noiDung = "Thêm khách hàng: ".$request->hoTen."; điện thoại: ".$request->dienThoai." tự động từ báo giá bảo hiểm, phụ kiện";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
         }
         //
@@ -594,6 +602,7 @@ class DichVuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
             $nhatKy->noiDung = "Tạo báo giá: BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -677,6 +686,7 @@ class DichVuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
             $nhatKy->noiDung = "Cập nhật báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -1030,6 +1040,7 @@ class DichVuController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
                 $nhatKy->noiDung = "Xoá báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -1097,6 +1108,7 @@ class DichVuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
             $nhatKy->noiDung = "Thực hiện báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -1135,6 +1147,7 @@ class DichVuController extends Controller
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
                 $nhatKy->noiDung = "Huỷ báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."; Lý do hủy: "
                 . $request->lyDo . "";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -1184,6 +1197,7 @@ class DichVuController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
                 $nhatKy->noiDung = "Hoàn tất báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -1292,6 +1306,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->bgid.";"
                 .$pk->noiDung."; Số lượng: "
                 .$request->soLuong."; Đơn giá: "
@@ -1341,6 +1356,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->ebgid.";"
                 .$pk->noiDung."; Số lượng: "
                 .$request->esoLuong."; Tặng (1: Có; 0: Không): "
@@ -1390,6 +1406,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Xoá hạng mục cho báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";"
                 .$bhpk->noiDung."; Số lượng: "
                 .$temp->soLuong."; Đơn giá: "
@@ -1571,6 +1588,7 @@ class DichVuController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
         $nhatKy->noiDung = "In báo giá sửa chữa " . $soBG;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         if ($bg->inProcess)
             return response()->download($pathToSave,$outhd . '.docx',$headers);
@@ -1653,6 +1671,7 @@ class DichVuController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
         $nhatKy->noiDung = "In yêu cầu cấp vật tư " . $soBG;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         if ($bg->inProcess)
             return response()->download($pathToSave,$outhd . '.docx',$headers);
@@ -1774,6 +1793,7 @@ class DichVuController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
         $nhatKy->noiDung = "In lệnh sửa chữa " . $soBG;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         if ($bg->inProcess)
             return response()->download($pathToSave,$outhd . '.docx',$headers);
@@ -1887,6 +1907,7 @@ class DichVuController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
         $nhatKy->noiDung = "In quyết toán sửa chữa " . $soBG;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         if ($bg->inProcess)
             return response()->download($pathToSave,$outhd . '.docx',$headers);
@@ -2792,6 +2813,7 @@ class DichVuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý phụ kiện";
             $nhatKy->noiDung = "Xóa KTV ra khỏi hạng mục công việc";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();    
             return response()->json([
                 "code" => 200,
@@ -2832,6 +2854,7 @@ class DichVuController extends Controller
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý phụ kiện";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->noiDung = "Cập nhật kỹ thuật viên cho BG0" 
                 . $bg->id . "-" .\HelpFunction::getDateCreatedAtRevert($bg->created_at)
                 .";<br/>KTV1: ".(($userOne) ? $userOne->userDetail->surname : "Không")."<br/>Tỉ lệ: ".(($request->etiLe) ? $request->etiLe : 10)."<br/>KTV2: " 
@@ -2901,6 +2924,7 @@ class DichVuController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Danh mục phụ kiện - Import excel";
                 $nhatKy->noiDung = "Import excel file danh mục phụ kiện vào hệ thống";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();                
                 return response()->json([
                     'type' => 'info',
@@ -2944,6 +2968,7 @@ class DichVuController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Dịch vụ - Quản lý phụ kiện";
                 $nhatKy->noiDung = "Gán KTV vào hạng mục công việc";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();    
                 $ktv = KTVBHPK::select("ktv_bhpk.id","ktv_bhpk.id_baogia","ktv_bhpk.id_bhpk","d.surname","d.id_user")
                 ->join("users as u","u.id","=","ktv_bhpk.id_work")
@@ -3046,6 +3071,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Doanh thu phụ kiện";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xác nhận đã thu tiền phụ kiện số báo giá BG0" . $request->eid 
             . "<br/>Ngày thu: " . $request->ngayThu;
             $nhatKy->save();
@@ -3079,6 +3105,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Doanh thu phụ kiện";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Huỷ bỏ xác nhận thu tiền số báo giá BG0" . $request->id;
             $nhatKy->save();
             return response()->json([
@@ -3112,6 +3139,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Doanh thu phụ kiện";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Bỏ kết thúc số báo giá BG0" . $request->id;
             $nhatKy->save();
             return response()->json([
@@ -3165,6 +3193,7 @@ class DichVuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Báo cáo tiến độ";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Đã bỏ hoàn tất công việc: " . $bhpk->noiDung 
             . "; Số báo giá BG0" . $bg->id;
             $nhatKy->save();

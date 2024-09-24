@@ -50,24 +50,22 @@
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
-                                        <th>Thời gian</th>
+                                        <th>Thời gian chi tiết</th>
                                         <th>Ngày</th>
                                         <th>Tài khoản</th>
                                         <th>Chức năng thao tác</th>
                                         <th>Nội dung thực hiện</th>
-                                        <th>Ghi chú</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                        @foreach($nk as $row)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td>{{\HelpFunction::revertCreatedAtGetTime($row->created_at)}}</td>
+                                                <td>{{$row->ghiChu}}</td>
                                                 <td>{{\HelpFunction::getDateRevertCreatedAt($row->created_at)}}</td>
                                                 <td>{{(isset($row->user->userDetail) ? $row->user->userDetail->surname : "Not know user")}}</td>
                                                 <td>{{$row->chucNang}}</td>
                                                 <td>{!! $row->noiDung!!}</td>
-                                                <td>{{$row->ghiChu}}</td>
                                             </tr>
                                        @endforeach
                                     </tbody>

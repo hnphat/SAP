@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\TypeCar;
 use App\TypeCarDetail;
 use App\NhatKy;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -48,8 +49,9 @@ class TypeCarController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Thêm Model xe";
+            $nhatKy->noiDung = "Thêm Model xe ". $request->tenXe;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Inserted Type Car',
@@ -89,8 +91,9 @@ class TypeCarController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Cập nhật model xe";
+            $nhatKy->noiDung = "Cập nhật model xe " . $request->tenXeE;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Data updated',
@@ -105,13 +108,15 @@ class TypeCarController extends Controller
     }
 
     public function delete(Request $request) {
+        $temp = TypeCar::find($request->id);
         $result = TypeCar::where('id', $request->id)->delete();
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Xóa model xe";
+            $nhatKy->noiDung = "Xóa model xe " . $temp->name;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Deleted Type Car',
@@ -179,8 +184,9 @@ class TypeCarController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Thêm chi tiết xe từ model xe";
+            $nhatKy->noiDung = "Thêm chi tiết xe từ model xe. Tên loại " . $request->loaiXe;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Inserted Add Plus Car',
@@ -196,13 +202,15 @@ class TypeCarController extends Controller
     }
 
     public function deleteMore(Request $request) {
+        $temp = TypeCarDetail::find($request->id);
         $result = TypeCarDetail::where('id', $request->id)->delete();
         if($result) {
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Xóa chi tiết xe từ model xe";
+            $nhatKy->noiDung = "Xóa chi tiết xe từ model xe. Chi tiết xe " . $temp->name;
             $nhatKy->save();
             return response()->json([
                 'message' => 'Deleted Type Car Detail',
@@ -248,8 +256,9 @@ class TypeCarController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Cập nhật chi tiết xe từ model xe";
+            $nhatKy->noiDung = "Cập nhật chi tiết xe " . $request->_tenLoaiXe .  " từ model xe";
             $nhatKy->save();
             return response()->json([
                 'message' => 'Data Add Plus updated',

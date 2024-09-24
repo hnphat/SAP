@@ -51,7 +51,7 @@
                                         <tr class="bg-gradient-lightblue">
                                             <th>ID</th>
                                             <th>Thời gian</th>
-                                            <th>Ngày</th>
+                                            <!-- <th>Ngày</th> -->
                                             <th>Tài khoản</th>
                                             <th>Chức năng thao tác</th>
                                             <th>Nội dung thực hiện</th>
@@ -101,14 +101,14 @@
                 order: [[0, 'desc']],
                 columns: [
                     { "data": "id"},
-                    { "data": "thoiGian" },
-                    { 
-                        "data": null,
-                        render: function(data, type, row) {
-                            return row.created_at.split('T')[0];                            
-                        } 
+                    { "data": "ghiChu" },
+                    // { 
+                    //     "data": null,
+                    //     render: function(data, type, row) {
+                    //         return row.created_at.split('T')[0];                            
+                    //     } 
                       
-                    },
+                    // },
                     { "data": "name" },
                     { "data": "chucNang" },
                     { "data": "noiDung" },

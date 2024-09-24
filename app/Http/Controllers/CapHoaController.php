@@ -52,6 +52,7 @@ class CapHoaController extends Controller
                 $nhatKy->noiDung = "Thêm yêu cầu cấp hoa<br/>Khách hàng: ".$request->khachHang."<br/>Dòng xe: "
                 .$request->dongXe."<br/>Biển số/số khung: ". $request->num."<br/>Giờ giao: "
                 .$request->gioGiaoXe."<br/>Ngày giao xe: ". \HelpFunction::revertDate($request->ngayGiaoXe);
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 //-----
                 $jsonString = file_get_contents('upload/cauhinh/app.json');

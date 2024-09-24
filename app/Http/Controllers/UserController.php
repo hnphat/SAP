@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\NhatKy;
 use App\UsersDetail;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -62,6 +63,7 @@ class UserController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
         $nhatKy->noiDung = "Thêm người dùng tài khoản ".$request->name."<br/>Trạng thái phép năm (1: Kích hoạt; 0: Khóa): " . $request->allow . " Ngày ".$request->ngay." tháng ".$request->thang." năm ".$request->nam;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         return response()->json(['success'=>'Đã thêm người dùng']);
     }
@@ -119,6 +121,7 @@ class UserController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
         $nhatKy->noiDung = "Cập nhật người dùng tài khoản ".$request->name."<br/>Trạng thái phép năm (1: Kích hoạt; 0: Khóa): " . $request->allow . " Ngày ".$request->ngay." tháng ".$request->thang." năm ".$request->nam;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         return response()->json(['success'=>'Đã cập nhật người dùng']);
     }
@@ -142,6 +145,7 @@ class UserController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản trị - người dùng";
                 $nhatKy->noiDung = "Xóa người dùng";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 return redirect()->route('user.list');
             }
@@ -164,6 +168,7 @@ class UserController extends Controller
         $nhatKy->thoiGian = Date("H:m:s");
         $nhatKy->chucNang = "Quản trị - người dùng";
         $nhatKy->noiDung = "Thay đổi trạng thái khóa người dùng";
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
         return redirect()->route('user.list');
     }
@@ -177,6 +182,7 @@ class UserController extends Controller
                 $nhatKy->chucNang = "Đăng nhập";
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->noiDung = "Đăng nhập thành công vào vào hệ thống";
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 return redirect()->route('trangchu');
             }
@@ -254,6 +260,7 @@ class UserController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - người dùng";
             $nhatKy->noiDung = "Cập nhật thông tin người dùng";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'success',
@@ -292,6 +299,7 @@ class UserController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - người dùng";
             $nhatKy->noiDung = "Cập nhật hình ảnh đại diện";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'success',

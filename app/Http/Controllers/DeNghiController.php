@@ -8,6 +8,7 @@ use App\CarSale;
 use App\RequestHD;
 use App\Sale;
 use App\SaleOff;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DeNghiController extends Controller

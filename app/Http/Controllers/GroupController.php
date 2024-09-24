@@ -6,6 +6,7 @@ use App\Group;
 use App\GroupSale;
 use App\NhatKy;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,7 @@ class GroupController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Quản lý Nhóm/Saler";
             $nhatKy->noiDung = "Thêm nhóm " . $request->tenPhong;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'type' => 'success',
@@ -64,6 +66,7 @@ class GroupController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Quản lý Nhóm/Saler";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xóa nhóm";
             $nhatKy->save();
             return response()->json([
@@ -106,6 +109,7 @@ class GroupController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Quản lý Nhóm/Saler";
             $nhatKy->noiDung = "Cập nhật tên nhóm. Tên mới: " . $request->etenPhong;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'message' => 'Data updated',
@@ -178,6 +182,7 @@ class GroupController extends Controller
                 $nhatKy->thoiGian = Date("H:m:s");
                 $nhatKy->chucNang = "Quản trị - Quản lý Nhóm/Saler";
                 $nhatKy->noiDung = "Thêm nhân viên ".$user." vào nhóm " . $nhom;
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->save();
                 return response()->json([
                     'type' => 'info',
@@ -208,6 +213,7 @@ class GroupController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Quản trị - Quản lý Nhóm/Saler";
             $nhatKy->noiDung = "Xóa nhân viên ".$user." ra khỏi nhóm " . $nhom;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'message' => 'Deleted Success',

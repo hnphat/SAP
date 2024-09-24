@@ -14,6 +14,7 @@ use App\XuatSP;
 use App\EventReal;
 use App\RefreshSupport;
 use App\KhoHC;
+use Carbon\Carbon;
 use DB;
 use Session;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý nhóm hàng";
             $nhatKy->noiDung = "Thêm nhóm hàng: " . $request->tenNhom;
             $nhatKy->save(); 
@@ -87,6 +89,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý nhóm hàng";
             $nhatKy->noiDung = "Xóa nhóm hàng: " . $name ;
             $nhatKy->save(); 
@@ -137,6 +140,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý nhóm hàng";
             $nhatKy->noiDung = "Cập nhật nhóm hàng: Từ <strong>" . $name . "</strong> thành <strong>" . $request->etenNhom . "</strong>";
             $nhatKy->save(); 
@@ -199,6 +203,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý danh mục";
             $nhatKy->noiDung = "Thêm danh mục hàng hóa: <br/>Tên: ".$request->tenSanPham."<br/> Đơn vị tính: ".$request->donViTinh."<br/> Mô tả: ".$request->moTa."<br/>";
             $nhatKy->save();
@@ -231,6 +236,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý danh mục";
             $nhatKy->noiDung = "Xóa danh mục: " . $name ;
             $nhatKy->save(); 
@@ -287,6 +293,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho - Quản lý danh mục";
             $nhatKy->noiDung = "Cập nhật danh mục từ <strong>" . $name . "</strong> thành <strong>" . $request->etenSanPham . "</strong><br/>Nhóm hàng từ <strong>".$nameNhomCu."</strong> sang <strong>".$nameNhom."</strong>";
             $nhatKy->save(); 
@@ -340,6 +347,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Quản lý nhập kho";
                 $nhatKy->noiDung = "Xóa danh mục hàng hóa có trong phiếu PNK-0" 
                 . $request->idPNUpdate . "<br/>Nội dung " . $temp;
@@ -390,6 +398,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho";
             $nhatKy->noiDung = "Thực hiện xóa tất cả danh mục trong phiếu PNK-0" 
             . $request->idPNUpdate . ". Nội dung cũ:" . $tempold . "<br/>Thêm danh mục hàng hóa mới vào phiếu PNK-0" 
@@ -549,6 +558,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Quản lý nhập kho";
                 $nhatKy->noiDung = "Tạo phiếu nhập <strong>".$code."</strong>";
                 $nhatKy->save(); 
@@ -635,6 +645,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý nhập kho";
             $nhatKy->noiDung = "Xóa phiếu nhập kho PNK-0".$request->idPN." và danh mục hàng hóa có trong phiếu PNK-0".$request->idPN."<br/>Nội dung " . $temp;
             $nhatKy->save(); 
@@ -681,6 +692,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Tạo đề nghị (phiếu xuất) <strong>".$code."</strong>";
                 $nhatKy->save(); 
@@ -737,6 +749,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Tạo đề nghị công cụ (phiếu xuất) <strong>".$code."</strong>";
                 $nhatKy->save(); 
@@ -896,6 +909,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Xóa phiếu yêu cầu công cụ mã phiếu PXK-0" . $request->idPX;
                 $nhatKy->save(); 
@@ -938,6 +952,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Xóa phiếu yêu cầu công cụ mã phiếu ĐNCC-0" . $request->idPX;
                 $nhatKy->save(); 
@@ -996,6 +1011,7 @@ class VPPController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                     $nhatKy->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n" .$temp;
                     $nhatKy->save(); 
@@ -1039,6 +1055,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdate . "\nNội dung: \n".$temp;
                 $nhatKy->save(); 
@@ -1093,6 +1110,7 @@ class VPPController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                     $nhatKy->noiDung = "Xóa tất cả công cụ/dụng cụ trong phiếu yêu cầu PXK-0" . $request->idPXUpdateCongCu. "\nNội dung: \n" .$temp;
                     $nhatKy->save(); 
@@ -1136,6 +1154,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Cập nhật công cụ/dụng cụ trong phiếu yêu cầu ĐNCC-0" . $request->idPXUpdateCongCu . "\nNội dung: \n" .$temp;
                 $nhatKy->save(); 
@@ -1175,6 +1194,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Xác nhận nhận đủ công cụ/dụng cụ mã phiếu PXK-0" . $request->idPX;
                 $nhatKy->save(); 
@@ -1360,6 +1380,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
                 $nhatKy->save(); 
@@ -1425,6 +1446,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Duyệt yêu cầu công cụ/dụng cụ mã phiếu ĐNCC-0" . $request->phieu;
                 $nhatKy->save(); 
@@ -1467,6 +1489,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu PXK-0" . $request->phieu;
                 $nhatKy->save();
@@ -1538,6 +1561,7 @@ class VPPController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
                 $nhatKy->noiDung = "Hủy duyệt(hoàn trạng) yêu cầu công cụ/dụng cụ mã phiếu ĐNCC-0" . $request->phieu;
                 $nhatKy->save();
@@ -1888,6 +1912,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Đề nghị công cụ";
             $nhatKy->noiDung = "Đề nghị trả công cụ. Nội dung: \n" . $noiDung;
             $nhatKy->save(); 
@@ -1927,6 +1952,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý xuất kho";
             $nhatKy->noiDung = "Phê duyệt trả công cụ theo yêu cầu của ". $name ." . Nội dung: \n" . $noiDung . "\n công cụ đã quay trở lại kho";
             $nhatKy->save(); 
@@ -1967,6 +1993,7 @@ class VPPController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Hành chính - Quản lý xuất kho";
             $nhatKy->noiDung = "Từ chối yêu cầu trả công cụ của " .$name. ". Nội dung: \n" . $noiDung;
             $nhatKy->save(); 

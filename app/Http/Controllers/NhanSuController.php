@@ -15,6 +15,7 @@ use App\XacNhanCong;
 use App\NhatKy;
 use App\BienBanKhenThuong;
 use App\ChamCongChiTiet;
+use Carbon\Carbon;
 use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -234,6 +235,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - quản lý loại phép";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Thêm loại phép<br/>Tên phép: ".$request->tenPhep." Mã phép: "
             .$request->maPhep." Loại phép: ". $request->loaiPhep." Mô tả: ".$request->moTa;
             $nhatKy->save();
@@ -261,6 +263,7 @@ class NhanSuController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Nhân sự - quản lý loại phép";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Xóa loại phép<br/>Tên phép: ".$temp->tenPhep." Mã phép: "
             .$temp->maPhep." Loại phép: ". $temp->loaiPhep." Mô tả: ".$temp->moTa;
             $nhatKy->save();
@@ -287,6 +290,7 @@ class NhanSuController extends Controller
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->chucNang = "NHÂN SỰ - CHẤM CÔNG CHI TIẾT";
         $nhatKy->noiDung = "Vào xem chấm công";
         $nhatKy->save();
@@ -807,6 +811,7 @@ class NhanSuController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
                     $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
                     .$request->buoi." Ngày xin: "
@@ -911,6 +916,7 @@ class NhanSuController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
                     $nhatKy->noiDung = "Thêm phép<br/>Lý do: ".$request->lyDo." Loại phép: ".$loai->tenPhep." Buổi: "
                     .$request->buoi." Ngày xin: "
@@ -967,6 +973,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - chấm công chi tiết";
                 $nhatKy->noiDung = "Xin phép tăng ca<br/>Ngày xin: ".$ngay."<br/>Lý do: ". $request->lyDoTangCa;
                 $nhatKy->save();
@@ -1059,6 +1066,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
             $nhatKy->noiDung = "Xóa xin phép ngày " . $ngay;
             $nhatKy->save();
@@ -1087,6 +1095,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép";
                 $nhatKy->noiDung = "Xóa xin phép Quyền HCNS ngày " . $ngay . " của nhân viên " . $user->userDetail->surname;
                 $nhatKy->save();
@@ -1328,6 +1337,7 @@ class NhanSuController extends Controller
                         $nhatKy = new NhatKy();
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->ghiChu = Carbon::now();
                         $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
                         $nhatKy->noiDung = "Phê duyệt Quyền HCNS - Phép ngày " . $ngays . " nhân viên yêu cầu: " . $nhanvien;
                         $nhatKy->save();
@@ -1381,6 +1391,7 @@ class NhanSuController extends Controller
                                 $nhatKy = new NhatKy();
                                 $nhatKy->id_user = Auth::user()->id;
                                 $nhatKy->thoiGian = Date("H:m:s");
+                                $nhatKy->ghiChu = Carbon::now();
                                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt phép";
                                 $nhatKy->noiDung = "Trưởng bộ phận Phê duyệt phép ngày " . $ngays . "<br/>Nhân viên yêu cầu: " . $nhanvien;
                                 $nhatKy->save();
@@ -2026,6 +2037,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý chấm công - Import excel";
                 $nhatKy->noiDung = "Import excel file chấm công vào hệ thống";
                 $nhatKy->save();
@@ -2119,6 +2131,7 @@ class NhanSuController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                     $nhatKy->noiDung = "Phê duyệt tăng ca ngày " . $ngay . " nhân viên yêu cầu: " . $nhanvien;
                     $nhatKy->save();
@@ -2158,6 +2171,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                 $nhatKy->noiDung = "Cập nhật giờ công ".$request->gioVao." ".$request->gioRa." và hệ số tăng ca ".$request->heSo." ngày " . $ngay . " của nhân viên " . $nhanvien;
                 $nhatKy->save();
@@ -2187,6 +2201,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                 $nhatKy->noiDung = "Không duyệt và xóa tăng ca ngày " . $ngay . " của nhân viên " . $nhanvien;
                 $nhatKy->save();
@@ -2218,6 +2233,7 @@ class NhanSuController extends Controller
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
                     $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                     $nhatKy->noiDung = "Không duyệt và xóa tăng ca ngày " . $ngay . " của nhân viên " . $nhanvien;
                     $nhatKy->save();
@@ -2248,6 +2264,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - phê duyệt tăng ca";
                 $nhatKy->noiDung = "Đã xóa tăng ca (đã duyệt) Quyền HCNS ngày " . $ngay . " của nhân viên " . $nhanvien;
                 $nhatKy->save();
@@ -2347,6 +2364,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
                 $nhatKy->noiDung = "Chốt chấm công tháng ".$request->thang." năm " . $request->nam;
                 $nhatKy->save();
@@ -2366,6 +2384,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Chi tiết chấm công";
             $nhatKy->noiDung = "[NGUY HIỂM] Thực hiện tác động kỹ thuật vào kết quả chấm công. Hệ thống đã ngăn chặn!!! Ngày công: $ngaycong Tăng ca: $tangca Phép năm: $phepnam Hacking: " . $request->ngayCong . " " . $request->tangCa . " " . $request->phepNam;
             $nhatKy->save();
@@ -2451,6 +2470,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
             $nhatKy->noiDung = "Hủy chốt chấm công " . $request->thang . "/" . $request->nam . " của nhân viên " . $user->userDetail->surname;
             $nhatKy->save();
@@ -2622,6 +2642,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
             $nhatKy->noiDung = "Chốt tất cả chấm công tháng " . $thang . "/" . $nam;
             $nhatKy->save();
@@ -2659,6 +2680,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý chốt công";
             $nhatKy->noiDung = "Hủy chốt tất cả chấm công tháng " . $thang . "/" . $nam;
             $nhatKy->save();
@@ -2719,6 +2741,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt phép trưởng bộ phận";
             $nhatKy->noiDung = "Admin đã xem và kiểm tra duyệt phép của trưởng bộ phận<br/>Duyệt ngày: ".$ngay."<br/>Cho nhân viên: " . $nhanvien;
             $nhatKy->save();
@@ -2780,6 +2803,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý phê duyệt tăng ca trưởng bộ phận";
             $nhatKy->noiDung = "Admin đã xem và kiểm tra phê duyệt tăng ca của trưởng bộ phận<br/>Ngày phê duyệt: ".$ngay."<br/>Cho nhân viên: " . $nhanvien;
             $nhatKy->save();
@@ -2951,6 +2975,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - Quản lý tăng ca";
                 $nhatKy->noiDung = "Thêm tăng ca và hệ số ".$request->heSo." (ban ngày) ngày tăng ca ".$ngay." cho nhân viên " . $ten;
                 $nhatKy->save();
@@ -2986,6 +3011,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý xin phép - quản lý tăng ca";
             $nhatKy->noiDung = "Xóa tăng ca của nhân viên " . $user . " ngày " . $ngay . "/" . $thang . "/" . $nam;
             $nhatKy->save();
@@ -3073,6 +3099,7 @@ class NhanSuController extends Controller
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
         $nhatKy->noiDung = "Thêm phép hàng loạt ngày " . $ngay . "/" . $thang . "/" . $nam;
         $nhatKy->save();
@@ -3093,6 +3120,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý phép - Quản lý tăng ca";
             $nhatKy->noiDung = "Hủy phép hàng loạt ngày " . $request->ngay . "/" . $request->thang . "/" . $request->nam;
             $nhatKy->save();
@@ -3332,6 +3360,7 @@ class NhanSuController extends Controller
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->chucNang = "Nhân sự - Quản lý phép";
         $nhatKy->noiDung = "Thực thiện đồng bộ phép " . $thang . "/" . $nam;
         $nhatKy->save();
@@ -3557,6 +3586,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý biên bản";
                 $nhatKy->noiDung = "Bổ sung biên bản vi phạm cho nhân viên: " 
                 . $user->userDetail->surname. "<br/>Ngày: "
@@ -3598,6 +3628,7 @@ class NhanSuController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Nhân sự - Quản lý biên bản";
             $nhatKy->noiDung = "Xóa thông tin biên bản, khen thưởng của <br/>Nhân viên: "
             .$user->userDetail->surname."<br/>Ngày: ".$temp->ngay."/".$temp->thang."/".$temp->nam."<br/>Nội dung: "
@@ -3677,6 +3708,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Quản lý biên bản";
                 $nhatKy->noiDung = "Bổ sung khen thưởng cho nhân viên: " 
                 . $user->userDetail->surname. "<br/>Ngày: "
@@ -3767,6 +3799,7 @@ class NhanSuController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Nhân sự - Lương - Quản lý";
                 $nhatKy->noiDung = "Import excel file lương tháng " . $request->thang . " năm " . $request->nam;
                 $nhatKy->save();                

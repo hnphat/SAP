@@ -7,6 +7,7 @@ use App\User;
 use App\NhatKy;
 use App\DeNghiCapXang;
 use App\EventReal;
+use Carbon\Carbon;
 use App\Mail\DuyetCapXangTBP;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +60,7 @@ class DeNghiCapXangController extends Controller
             $nhatKy->chucNang = "Hành chính - Đề nghị cấp nhiên liệu";
             $nhatKy->noiDung = "Thêm đề nghị cấp nhiên liệu loại xe: ".$request->loaiXe." <br/>khách hàng: "
             .$request->khachHang." <br/>biển số: ".$request->bienSo." <br/>lý do cấp: " . $request->lyDoCap;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             //-----
@@ -93,7 +95,8 @@ class DeNghiCapXangController extends Controller
             $nhatKy->chucNang = "Hành chính - Đề nghị cấp nhiên liệu";
             $nhatKy->noiDung = "Xóa đề nghị cấp nhiên liệu loại xe: ".$temp->fuel_car." <br/>khách hàng: "
             .$temp->fuel_guest." <br/>biển số: ".$temp->fuel_frame." <br/>lý do cấp: " . $temp->fuel_lyDo;
-            $nhatKy->save();
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();            
             return response()->json([
                 'message' => 'Delete successfully!',
                 'code' => 200
@@ -130,6 +133,7 @@ class DeNghiCapXangController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
             $nhatKy->noiDung = "Phê duyệt đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([
@@ -155,6 +159,7 @@ class DeNghiCapXangController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
             $nhatKy->noiDung = "Hủy đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'message' => 'Đã hủy đề nghị cấp xăng',
@@ -192,6 +197,7 @@ class DeNghiCapXangController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Hành chính - Phê duyệt đề nghị nhiên liệu";
             $nhatKy->noiDung = "Phê duyệt đề nghị cấp nhiên liệu CODE: HAGI-CX-0" . $request->id;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',

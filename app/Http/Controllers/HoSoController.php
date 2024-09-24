@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\NhatKy;
 use App\UsersDetail;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +67,7 @@ class HoSoController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Quản trị - Hồ sơ";
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Thêm thông tin nhân viên<br/> Họ tên: "
             .$request->hoTen." <br/>Điện thoại: ".$request->phone." <br/>Ngày sinh: "
             .$request->ngaySinh." <br/>Địa chỉ:" .$request->diaChi;
@@ -178,6 +180,7 @@ class HoSoController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Quản trị - Hồ sơ";
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật thông tin nhân viên<br/>THÔNG TIN CŨ<br/>Họ tên: "
             .$temp->surname." <br/>Điện thoại: ".$temp->phone." <br/>Ngày sinh: "
             .$temp->birthday." <br/>Địa chỉ:" .$temp->address."<br/>THÔNG TIN MỚI<br/>Họ tên: "
@@ -279,6 +282,7 @@ class HoSoController extends Controller
         $nhatKy = new NhatKy();
         $nhatKy->id_user = Auth::user()->id;
         $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->chucNang = "Quản lý hồ sơ";
         $nhatKy->noiDung = ($txt == "" ? "Cập nhật nội dung file trống" : $txt);
         $nhatKy->save(); 

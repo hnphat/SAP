@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Nhom;
 use App\NhomUser;
 use App\NhatKy;
+use Carbon\Carbon;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class PhongController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Quản lý phòng";
             $nhatKy->noiDung = "Thêm phòng ban " . $request->tenPhong;
             $nhatKy->save();
@@ -64,6 +66,7 @@ class PhongController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Quản lý phòng";
             $nhatKy->noiDung = "Xóa phòng ban";
             $nhatKy->save();
@@ -105,6 +108,7 @@ class PhongController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Quản lý phòng";
             $nhatKy->noiDung = "Cập nhật tên phòng ban. Tên mới: " . $request->etenPhong;
             $nhatKy->save();
@@ -177,6 +181,7 @@ class PhongController extends Controller
                 $nhatKy = new NhatKy();
                 $nhatKy->id_user = Auth::user()->id;
                 $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
                 $nhatKy->chucNang = "Quản trị - Quản lý phòng";
                 $nhatKy->noiDung = "Thêm nhân viên ".$user." vào phòng ban " . $nhom;
                 $nhatKy->save();
@@ -207,6 +212,7 @@ class PhongController extends Controller
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Quản lý phòng";
             $nhatKy->noiDung = "Xóa nhân viên ".$user." ra khỏi phòng ban " . $nhom;
             $nhatKy->save();

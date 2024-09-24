@@ -8,6 +8,7 @@ use App\KhoV2;
 use App\NhatKy;
 use App\HistoryHopDong;
 use App\TypeCarDetail;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 
@@ -128,6 +129,7 @@ class KetoanController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kế toán - Xe nhận nợ";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "Cập nhật thông tin xe nhận nợ. Xe " . $temp->typeCarDetail->name
             . "; Số khung: " . $temp->vin . "; Số máy: " . $temp->frame 
             . "; Ngày nhận nợ từ ". $temp->ngayNhanNo ." thành " . $request->ngayNhanNo
@@ -304,6 +306,7 @@ class KetoanController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "In biên bản bàn giao xe hợp đồng số " . $hd->code;
             $nhatKy->save();
 
@@ -390,6 +393,7 @@ class KetoanController extends Controller
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Kế toán - Hợp đồng xe";
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->noiDung = "In quyết toán xe hợp đồng số " . $hd->code;
             $nhatKy->save();
 
