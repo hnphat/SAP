@@ -1929,6 +1929,14 @@ class DichVuController extends Controller
         $den = $request->den;
         $baogiakd = 0;
         $i = 1;
+        $checkFromTuOnlyMonth = false; // Kiểm tra chọn thời gian báo cáo có cùng 1 tháng hay không
+        $monthSelect = "";
+        if (\HelpFunction::getOnlyMonth($tu) != \HelpFunction::getOnlyMonth($den)) {
+            $checkFromTuOnlyMonth = false;
+        } else {
+            $checkFromTuOnlyMonth = true;
+            $monthSelect = \HelpFunction::getOnlyMonth($tu);
+        }
         switch($loai) {
             case 1: {
                 echo "
@@ -2292,7 +2300,9 @@ class DichVuController extends Controller
                         <th>Công việc</th>
                         <th>Doanh thu</th>                    
                         <th>Công</th>
+                        <th>Công tính lương</th>
                         <th>Ngày hoàn tất</th>
+                        <th>Ngày thu tiền</th>
                     </tr>
                 <tbody>";   
                 if ($nv == 0) {
@@ -2328,6 +2338,7 @@ class DichVuController extends Controller
                                         $_cong = 0;
                                         $_congviec = "";
                                         $_tile = 0;
+                                        $_ngayThu = $row->ngayThu;
                                         foreach($ct as $item) {
                                             $_doanhthu = $item->thanhTien;
                                             if ($row->saler) {
@@ -2373,7 +2384,9 @@ class DichVuController extends Controller
                                                     <td class='text-bold text-info'>".$_congviec."</span></td>
                                                     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                                     <td class='text-bold text-success'>".number_format($_cong)."</td>
+                                                    <td></td>
                                                     <td>".\HelpFunction::getDateRevertCreatedAt($k->updated_at)."</td>
+                                                    <td>".($_ngayThu ? \HelpFunction::revertDate($_ngayThu) : "")."</td>
                                                 </tr>";
                                     }
                                 }                                
@@ -2386,6 +2399,7 @@ class DichVuController extends Controller
                 } else {    
                     $r = User::find($nv);
                     $i = 1;
+                    $tongCongTinhLuong = 0;
                     if ($r->hasRole('to_phu_kien')) {
                         $ten = $r->userDetail->surname;
                         $ktv = KTVBHPK::where([
@@ -2413,6 +2427,8 @@ class DichVuController extends Controller
                                     $_cong = 0;
                                     $_congviec = "";
                                     $_tile = 0;
+                                    $_ngayThu = $row->ngayThu;
+                                    $_congTinhLuong = 0;
                                     foreach($ct as $item) {
                                         $_doanhthu = $item->thanhTien;
                                         if ($row->saler) {
@@ -2439,10 +2455,25 @@ class DichVuController extends Controller
                                             $_congviec = $bhpk->noiDung;
                                             if ($_tile != 0) {
                                                 $_cong = $bhpk->congKTV / $_tile;
+                                                // Kiểm tra công tính lương
+                                                if ($_ngayThu != null && $checkFromTuOnlyMonth == true) {
+                                                    $dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($ktv2->updated_at);
+                                                    if (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                        $tongCongTinhLuong += $_cong;
+                                                        $_congTinhLuong = $_cong;
+                                                    } elseif (\HelpFunction::getOnlyMonth($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                        $tongCongTinhLuong += $_cong;
+                                                        $_congTinhLuong = $_cong;
+                                                    } elseif (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) < $monthSelect) {
+                                                        $tongCongTinhLuong += $_cong;
+                                                        $_congTinhLuong = $_cong;
+                                                    } 
+                                                }
+                                                // ---------------------------
                                             }
                                         }    
                                         
-                                    }
+                                    }                                    
                                     $tong_cong += $_cong;
                                     $tong_doanhthu_cong += $_doanhthu;
                                     echo "<tr>
@@ -2456,8 +2487,10 @@ class DichVuController extends Controller
                                                 <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                                 <td class='text-bold text-info'>".$_congviec."</span></td>
                                                 <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
-                                                <td class='text-bold text-success'>".number_format($_cong)."</td>
+                                                <td class='text-bold text-primary'>".number_format($_cong)."</td>
+                                                <td class='text-bold text-success'>".number_format($_congTinhLuong)."</td>
                                                 <td>".\HelpFunction::getDateRevertCreatedAt($k->updated_at)."</td>
+                                                <td>".($_ngayThu ? \HelpFunction::revertDate($_ngayThu) : "")."</td>
                                             </tr>";
                                 }
                             }                                
@@ -2465,7 +2498,10 @@ class DichVuController extends Controller
                     }
                     echo "</tbody>
                     </table>";
-                    echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)."</span><br/>Tổng tiền công: <span class='text-bold text-success'>".number_format($tong_cong)."</span></h3>";
+                    echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)
+                    ."</span><br/>Tổng tiền công: <span class='text-bold text-primary'>".number_format($tong_cong)."</span>"
+                    ."<br/>Tổng tiền công tính lương: <span class='text-bold text-success'>".number_format($tongCongTinhLuong)."</span></h3>"
+                    ."<h5>Tiền công chưa tính: <span class='text-bold text-pink'>".number_format($tong_cong-$tongCongTinhLuong)."</span></h5>";
                 }
             } break;     
         }
@@ -2661,7 +2697,7 @@ class DichVuController extends Controller
                 $sttThu = "";
                 $tacVu = "";
                 if ($row->isDone) {
-                    $stt = "<span class='text-bold text-success'>Đã hoàn tất</span>";
+                    $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
                     if (Auth::user()->hasRole('system'))
                         $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
                 }
@@ -2671,7 +2707,7 @@ class DichVuController extends Controller
                 }     
 
                 if ($bg->trangThaiThu) {
-                    $sttThu = "<span class='text-bold text-success'>Đã thu</span>";
+                    $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
                 }
                 else {
                     $sttThu = "<span class='text-bold text-danger'>Chưa</span>";

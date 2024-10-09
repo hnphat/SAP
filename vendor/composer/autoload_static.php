@@ -561,6 +561,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\GroupSale' => __DIR__ . '/../..' . '/app/GroupSale.php',
         'App\\Guest' => __DIR__ . '/../..' . '/app/Guest.php',
         'App\\GuestDv' => __DIR__ . '/../..' . '/app/GuestDv.php',
+        'App\\HistoryHopDong' => __DIR__ . '/../..' . '/app/HistoryHopDong.php',
         'App\\HopDong' => __DIR__ . '/../..' . '/app/HopDong.php',
         'App\\HopTuan' => __DIR__ . '/../..' . '/app/HopTuan.php',
         'App\\HopTuanMem' => __DIR__ . '/../..' . '/app/HopTuanMem.php',

@@ -284,6 +284,31 @@ class HelpFunction {
         return $_time . ' ' . self::revertDate($newDate);
     }
 
+
+    public static function getOnlyDateFromCreatedAt($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $_time = $arr[1];
+        return self::revertDate($newDate);
+    }
+
+    public static function getOnlyDateFromCreatedAtKeepFormat($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $_time = $arr[1];
+        return $newDate;
+    }
+
+    public static function getOnlyMonth($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode(' ', $date);
+        $newDate = $arr[0];
+        $arr2 = explode('-', $newDate);
+        return $arr2[1];
+    }
+
     public static function revertCreatedAtGetTime($date = '2020-01-01') {
         if ($date == null) return "";
         $arr = explode(' ', $date);

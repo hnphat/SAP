@@ -33,6 +33,7 @@ return array(
     'App\\GroupSale' => $baseDir . '/app/GroupSale.php',
     'App\\Guest' => $baseDir . '/app/Guest.php',
     'App\\GuestDv' => $baseDir . '/app/GuestDv.php',
+    'App\\HistoryHopDong' => $baseDir . '/app/HistoryHopDong.php',
     'App\\HopDong' => $baseDir . '/app/HopDong.php',
     'App\\HopTuan' => $baseDir . '/app/HopTuan.php',
     'App\\HopTuanMem' => $baseDir . '/app/HopTuanMem.php',
