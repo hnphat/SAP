@@ -15,10 +15,10 @@ class ChungTu extends Migration
     {
         Schema::create('chung_tu', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('gio');
             $table->string('ngay');
             $table->string('noiDung');
             $table->string('slug');
+            $table->string('nguoiKy')->nullable();
             $table->string('soLuong')->nullable();
             $table->string('nguoiYeuCau')->nullable();
             $table->string('boPhan')->nullable();

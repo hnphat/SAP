@@ -3457,42 +3457,64 @@ class HDController extends Controller
     }
 
     public function yeuCauSua(Request $request){
-        $result = HopDong::find($request->idRequestEdit);
-        $result->requestEditHD = true;
-        $result->lyDoEdit = $request->lyDoChinhSua;
-        $result->lyDoCancel = "";
-        $result->requestCancel = false;
-        $code = $result->code;
-        $result->save();
-        if($result) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->ghiChu = Carbon::now();
-            $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
-            $nhatKy->noiDung = "Gửi yêu cầu chỉnh sửa hợp đồng số " . $code . " (Mã đề nghị ĐN/0".$request->idRequestEdit.") lý do: " . $request->lyDoChinhSua;
-            $nhatKy->save();
+        $this->validate($request,[
+            'importFile'  => 'required|mimes:jpg,JPG,PNG,png,pdf|max:20480',
+        ]);
+        if ($files = $request->file('importFile')) {
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName()) . "." . $etc;
+            while(file_exists("upload/hopdong/" . $name)) {
+                $name = rand() . "-" . $name . "." . $etc;
+            }
+            $result = HopDong::find($request->idRequestEdit);
+            $result->requestEditHD = true;
+            $result->lyDoEdit = $request->lyDoChinhSua;
+            $result->lyDoCancel = "";
+            $result->requestCancel = false;
+            $result->dinhKem = $name;
+            $code = $result->code;
+            $result->save();
+            $files->move('upload/hopdong/', $name);
+            if($result) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                $nhatKy->noiDung = "Gửi yêu cầu chỉnh sửa hợp đồng số " 
+                . $code . " (Mã đề nghị ĐN/0".$request->idRequestEdit.") lý do: " 
+                . $request->lyDoChinhSua . " file đính kèm: " . url('upload/hopdong/'.$name);
+                $nhatKy->save();
 
-            $his = new HistoryHopDong();
-            $his->idDeNghi = $request->idRequestEdit;
-            $his->id_user = Auth::user()->id;
-            $his->ngay = Date("H:m:s d-m-Y");
-            $his->noiDung = "Gửi yêu cầu cho trưởng phòng xin chỉnh sửa hợp đồng với lý do: " . $request->lyDoChinhSua;
-            $his->ghiChu = "";
-            $his->save();
+                $his = new HistoryHopDong();
+                $his->idDeNghi = $request->idRequestEdit;
+                $his->id_user = Auth::user()->id;
+                $his->ngay = Date("H:m:s d-m-Y");
+                $his->noiDung = "Gửi yêu cầu cho trưởng phòng xin chỉnh sửa hợp đồng với lý do: " 
+                . $request->lyDoChinhSua
+                . " file đính kèm: " . url('upload/hopdong/'.$name);
+                $his->ghiChu = "";
+                $his->save();
 
-            return response()->json([
-                'type' => 'success',
-                'message' => 'Đã gửi yêu cầu sửa!',
-                'code' => 200
-            ]);
-        } else {
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Internal server fail!',
-                'code' => 500
-            ]);
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã gửi yêu cầu sửa!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
         }
+
+        return response()->json([
+            'type' => 'error',
+            'message' => 'Internal server fail!',
+            'code' => 500
+        ]);
     }
 
     public function yeuCauHuy(Request $request){

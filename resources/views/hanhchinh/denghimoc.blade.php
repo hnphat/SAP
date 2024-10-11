@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Quản lý dấu/mộc
+    Đề nghị dấu/mộc
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Quản lý chứng từ/mộc</strong></h1>
+                        <h1 class="m-0"><strong>Đề nghị đóng mộc</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Kế toán</li>
-                            <li class="breadcrumb-item active">Quản lý dấu/mộc</li>
+                            <li class="breadcrumb-item active">Hành chính</li>
+                            <li class="breadcrumb-item active">Đề nghị đóng mộc</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -39,7 +39,7 @@
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="tab-1-tab" data-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="false">
-                                    <strong>Quản lý chứng từ/mộc</strong>
+                                    <strong>Đề nghị đóng mộc</strong>
                                 </a>
                             </li>
                         </ul>
@@ -51,14 +51,12 @@
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
-                                        <th>Ngày nhập</th>
-                                        <th>File đính kèm</th>
-                                        <th>Nội dung</th>
-                                        <th>Số lượng</th>
+                                        <th>Thời gian</th>
+                                        <th>Nội dung văn bản</th>
                                         <th>Người ký</th>
+                                        <th>Số lượng</th>
                                         <th>Người yêu cầu</th>
                                         <th>Bộ phận</th>
-                                        <th>Ghi chú</th>
                                         <th>Trạng thái</th>
                                         <th>Tác vụ</th>
                                     </tr>
@@ -73,15 +71,14 @@
         </div>
         <!-- /.content -->
     </div>
-
-<!--  MEDAL -->
-<div>
+    <!--  MEDAL -->
+    <div>
         <!-- Medal Add -->
         <div class="modal fade" id="addModal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Thêm chứng từ mộc/dấu</h4>
+                        <h4 class="modal-title">Đề nghị đóng mộc</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -123,6 +120,7 @@
         <!-- /.modal -->
     </div>
     <!----------------------->
+
     <!--  MEDAL -->
     <div>
         <!-- Medal EDIT -->
@@ -130,7 +128,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Điều chỉnh đề nghị mộc/dấu</h4>
+                        <h4 class="modal-title">Chỉnh sửa biểu mẫu</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -141,7 +139,8 @@
                             <input type="hidden" name="eid">
                             <div class="form-group">
                                <label>Nội dung văn bản</label> <br/>
-                               <input type="text" name="enoiDung" class="form-control" placeholder="Nội dung văn bản" required>
+                               <i><strong class="text-danger">Lưu ý: Nội dung không được trùng tên với các nội dung khác</strong></i>
+                               <input type="text" name="enoiDung" class="form-control" placeholder="Nội dung văn bản">
                             </div>
                             <div class="form-group">
                                <label>Lãnh đạo ký</label> 
@@ -153,58 +152,13 @@
                             </div>
                             <div class="form-group">
                                <label>Số lượng bản đóng dấu</label> 
-                               <input type="text" name="esoLuong" min="1" max="1000" step="1" value="1" class="form-control" placeholder="Số lượng bản đóng dấu" required>
-                            </div>
-                            <div class="form-group">
-                               <label>Ghi chú (nếu có)</label> 
-                               <input type="text" name="eghiChu" class="form-control" placeholder="Ghi chú">
-                            </div>
-                            <div class="form-group">
-                               <label>Trạng thái</label> 
-                               <select name="eallow" class="form-control">
-                                   <option value="1">Đã tiếp nhận</option>   
-                                   <option value="0">Chưa tiếp nhận</option>   
-                               </select>
+                               <input type="text" name="esoLuong" min="1" max="1000" step="1" value="1" class="form-control" placeholder="Số lượng bản đóng dấu">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                         <button id="btnUpdate" class="btn btn-primary" form="editForm">Lưu</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal -->
-    </div>
-    <!----------------------->
-    <!--  MEDAL -->
-    <div>
-        <!-- Medal EDIT -->
-        <div class="modal fade" id="upModal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">CẬP NHẬT FILE SCAN</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> 
-                        <form method="POST" id="upForm" enctype="multipart/form-data" autocomplete="off">
-                            {{csrf_field()}}
-                            <input type="hidden" name="eidUp">                            
-                            <div class="form-group">
-                               <label>File đính kèm</label> 
-                               <input type="file" name="edinhKem" class="form-control" required>
-                            </div>                            
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                        <button id="btnUp" class="btn btn-primary" form="upForm">Lưu</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -250,7 +204,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/hanhchinh/ajax/loadchungtu/') }}",
+                ajax: "{{ url('management/hanhchinh/ajax/loaddenghimoc/') }}",
                 "columnDefs": [ {
                     "searchable": false,
                     "orderable": false,
@@ -263,41 +217,28 @@
                 columns: [
                     { "data": null },
                     { "data": "ngay" },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {
-                            if (row.url !== null)
-                                return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>";
-                            else 
-                                return "<strong class='text-warning'>Chưa có file</strong>&nbsp;<button id='upFileBtn' data-id='"+row.id+"' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#upModal'>Update</button>";
-                        }
-                    },
                     { "data": "noiDung" },
-                    { "data": "soLuong" },
                     { "data": "nguoiKy" },
+                    { "data": "soLuong" },
                     { "data": "nguoiYeuCau" },
                     { "data": "boPhan" },
-                    { "data": "ghiChu" },
                     {
                         "data": null,
                         render: function(data, type, row) {
                             if (row.allow == true)
-                                return "<strong class='text-success'>Đã tiếp nhận</strong>";
+                                return "<strong class='text-success'>Đã hoàn tất</strong>";
                             else
-                                return "<strong class='text-danger'>Chưa tiếp nhận</strong>";
+                                return "<strong class='text-danger'>Chưa hoàn tất</strong>";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {
                             if (row.allow == true) {
-                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>";
+                                return "";
                             } else {
-                                return "<button id='checkBlock' data-id='"+row.id+"' class='btn btn-primary btn-sm'><span class='fas fa-check-circle'></span></button>"
-                                + "&nbsp;<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>"
-                                + "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>"; 
-                                // return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
-                                // "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";       
+                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;" +
+                                "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
                             }
                         }
                     }
@@ -396,10 +337,9 @@
                         $("input[name=eid]").val(response.data.id);
                         $("input[name=enoiDung]").val(response.data.noiDung);
                         $("input[name=esoLuong]").val(response.data.soLuong);
-                        $("input[name=enguoiYeuCau]").val(response.data.nguoiYeuCau); 
-                        $("select[name=elanhDao]").val(response.data.nguoiKy);      
+                        $("select[name=elanhDao]").val(response.data.nguoiKy);  
+                        $("input[name=enguoiYeuCau]").val(response.data.nguoiYeuCau);              
                         $("input[name=eghiChu]").val(response.data.ghiChu);
-                        $("select[name=eallow]").val(response.data.allow);
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
@@ -414,86 +354,10 @@
                 });
             });
 
-            $(document).on('click','#checkBlock', function(){
-                if (confirm("Thực hiện tiếp nhận yêu cầu?\nLưu ý: Sau khi tiếp nhận không thể thực hiện xoá yêu cầu.")) {
-                    $.ajax({
-                        url: "{{route('chungtu.block')}}",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "_token": "{{csrf_token()}}",
-                            "id": $(this).data('id')
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })                            
-                            table.ajax.reload();
-                        },
-                        error: function(){
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Error 500!"
-                            })
-                        }
-                    });
-                }
-            });
-            
-            $(document).on('click','#upFileBtn', function(){
-                $("input[name=eidUp]").val($(this).data('id'));
-            });
-
-            // Up file scan
-            $(document).one('click','#btnUp', function() {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $('#upForm').submit(function(e) {
-                    e.preventDefault();   
-                    var formData = new FormData(this);
-                    $.ajax({
-                        type:'POST',
-                        url: "{{ route('upfile.post')}}",
-                        data: formData,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        beforeSend: function () {
-                            $("#btnUp").attr('disabled', true).html("Đang xử lý....");
-                        },
-                        success: (response) => {
-                            this.reset();
-                            Toast.fire({
-                                icon: 'info',
-                                title: response.message
-                            })
-                            table.ajax.reload();
-                            $("#upModal").modal('hide');
-                            $("#btnUp").attr('disabled', false).html("LƯU");
-                            console.log(response);
-                        },
-                            error: function(response){
-                            Toast.fire({
-                                icon: 'info',
-                                title: ' Thao tác client có vấn đề'
-                            })
-                            $("#upModal").modal('hide');
-                            $("#btnUp").attr('disabled', false).html("LƯU");
-                            console.log(response);
-                        }
-                    });
-                });
-            });
-
-            // Add data
             $("#btnUpdate").click(function(e){
                 e.preventDefault();
                 $.ajax({
-                    url: "{{route('chungtu.post.update')}}",
+                    url: "{{route('chungtu.post.update.client')}}",
                     type: "post",
                     dataType: "json",
                     data: $("#editForm").serialize(),
@@ -514,7 +378,6 @@
                     }
                 });
             });
-
         });
     </script>
 @endsection

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -254,7 +255,8 @@
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
-                                        <h5>Yêu cầu sửa: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu sửa: <strong class="text-danger" id="requestSaleEdit"></strong> 
+                                        <span><a target="_blank" id="fileDinhKem" href="">Đính kèm</a></span></h5>
                                         <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
                                        
                                         <strong class="text-pink">HỖ TRỢ TỪ HTV:</strong> 
@@ -387,7 +389,25 @@
                 </div>
                 <div class="modal-body">
                     <div class="card">
-                        <form id="requestEditForm" autocomplete="off">
+                        <form method="POST" id="requestEditForm" autocomplete="off" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="idRequestEdit">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Lý do chỉnh sửa: </label>
+                                    <input required name="lyDoChinhSua" placeholder="Nhập lý do yêu cầu chỉnh sửa" type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Hình ảnh hoặc file scan duyệt từ Ban lãnh đạo</label> 
+                                    <input required type="file" class="form-control" name="importFile" placeholder="Choose File" id="importFile">
+                                    <span>Tối đa 5MB (Định dạng: pdf, png, jpeg)</span>
+                                </div>                                 
+                                <div class="form-group">
+                                    <label>Mẫu đề nghị chỉnh sửa: <a href="./upload/hopdong/DENGHIDIEUCHINH.docx"> Tải về </a></label>                             
+                                </div>  
+                            </div>                            
+                        </form>
+                        <!-- <form id="requestEditForm" autocomplete="off">
                             {{csrf_field()}}
                             <input type="hidden" name="idRequestEdit">
                             <div class="card-body">
@@ -396,7 +416,7 @@
                                     <input name="lyDoChinhSua" placeholder="Nhập lý do yêu cầu chỉnh sửa" type="text" class="form-control">
                                 </div>
                             </div>
-                        </form>
+                        </form> -->
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
@@ -738,10 +758,21 @@
                                 $("#ganGiaVon").hide();
                                 $("#giaVonShow").text("");
                             }
-                            if (response.data.lyDoEdit != null)
+                            if (response.data.lyDoEdit != null) {
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
-                            else
+                                if (response.data.dinhKem != null) {
+                                    $("#fileDinhKem").show();
+                                    $("#fileDinhKem").attr("href","./upload/hopdong/"+response.data.dinhKem);
+                                } else {
+                                    $("#fileDinhKem").hide();
+                                }
+                            }
+                            else {
                                 $("#requestSaleEdit").text("Không");
+                                $("#fileDinhKem").attr("href","#");
+                                $("#fileDinhKem").hide();
+                            }
+                                
                             
                             if (response.data.lyDoCancel != null)
                                 $("#requestSaleCancel").text(response.data.lyDoCancel);
@@ -932,10 +963,20 @@
                                 $("#ganGiaVon").hide();
                                 $("#giaVonShow").text("");
                             }
-                            if (response.data.lyDoEdit != null)
+                            if (response.data.lyDoEdit != null) {
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
-                            else
+                                if (response.data.dinhKem != null) {
+                                    $("#fileDinhKem").show();
+                                    $("#fileDinhKem").attr("href","./upload/hopdong/"+response.data.dinhKem);
+                                } else {
+                                    $("#fileDinhKem").hide();
+                                }
+                            }
+                            else {
                                 $("#requestSaleEdit").text("Không");
+                                $("#fileDinhKem").attr("href","#");
+                                $("#fileDinhKem").hide();
+                            }
                             
                             if (response.data.lyDoCancel != null)
                                 $("#requestSaleCancel").text(response.data.lyDoCancel);
@@ -1479,30 +1520,49 @@
                  }
             });
 
-
-            $("#requestEditBtn").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/hd/hd/denghi/yeucausua/')}}",
-                    type: "post",
-                    dataType: 'json',
-                    data: $("#requestEditForm").serialize(),
-                    success: function(response) {
-                        $("#requestEditForm")[0].reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        $("#requestEdit").modal('hide');
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Không thể yêu cầu sửa!"
-                        })
+            $("#requestEditBtn").click(function(){   
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
+                $("#requestEditForm").one("submit", submitFormFunction);
+                function submitFormFunction(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{url('management/hd/hd/denghi/yeucausua/')}}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#requestEditBtn").attr('disabled', true).html("Đang kiểm tra và upload vui lòng đợi....");
+                        },
+                        success: (response) => {
+                            if (response.code == 200) {
+                                this.reset();
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#requestEdit").modal('hide');
+                                $("#requestEditBtn").attr('disabled', false).html("GỬI");
+                            }                           
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: 'Lỗi ' + response.responseJSON.message
+                            })
+                            $("#importModal").modal('hide');
+                            $("#requestEditBtn").attr('disabled', false).html("GỬI");
+                        }
+                    });
+                }
             });
+
 
             $("#requestHuyBtn").click(function(e){
                 e.preventDefault();

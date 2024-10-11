@@ -248,7 +248,9 @@
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
-                                        <h5>Yêu cầu sửa hợp đồng: <strong class="text-danger" id="requestSaleEdit"></strong></h5>
+                                        <h5>Yêu cầu sửa hợp đồng: <strong class="text-danger" id="requestSaleEdit"></strong>
+                                        <span><a target="_blank" id="fileDinhKem" href="">Đính kèm</a></span>
+                                        </h5>
                                         <h5>Yêu cầu hủy: <strong class="text-danger" id="requestSaleCancel"></strong></h5>
                                         <h5>Hỗ trợ HTV: <strong class="text-success" id="htvSupport">0</strong></h5>
                                         <h5>Chi phí vận chuyển: <strong class="text-success" id="phiVanChuyen">0</strong></h5>
@@ -503,10 +505,21 @@
                             $("#tiSuatLoiNhuan").text(response.tisuat);
 
                             $("#phiVanChuyen").text(formatNumber(response.data.phiVanChuyen));
-                            if (response.data.lyDoEdit != null)
+
+                            if (response.data.lyDoEdit != null) {
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
-                            else
+                                if (response.data.dinhKem != null) {
+                                    $("#fileDinhKem").show();
+                                    $("#fileDinhKem").attr("href","./upload/hopdong/"+response.data.dinhKem);
+                                } else {
+                                    $("#fileDinhKem").hide();
+                                }
+                            }
+                            else {
                                 $("#requestSaleEdit").text("Không");
+                                $("#fileDinhKem").attr("href","#");
+                                $("#fileDinhKem").hide();
+                            }
 
                             if (response.data.lyDoCancel != null)
                                 $("#requestSaleCancel").text(response.data.lyDoCancel);
@@ -658,10 +671,21 @@
                             $("#htvSupport").text(formatNumber(response.data.htvSupport));
                             $("#tiSuatLoiNhuan").text(response.tisuat);
                             $("#phiVanChuyen").text(formatNumber(response.data.phiVanChuyen));
-                            if (response.data.lyDoEdit != null)
+                            
+                            if (response.data.lyDoEdit != null) {
                                 $("#requestSaleEdit").text(response.data.lyDoEdit);
-                            else
+                                if (response.data.dinhKem != null) {
+                                    $("#fileDinhKem").show();
+                                    $("#fileDinhKem").attr("href","./upload/hopdong/"+response.data.dinhKem);
+                                } else {
+                                    $("#fileDinhKem").hide();
+                                }
+                            }
+                            else {
                                 $("#requestSaleEdit").text("Không");
+                                $("#fileDinhKem").attr("href","#");
+                                $("#fileDinhKem").hide();
+                            }
 
                             if (response.data.lyDoCancel != null)
                                 $("#requestSaleCancel").text(response.data.lyDoCancel);

@@ -441,10 +441,19 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list/chungtumoc','ChungTuController@showChungTuMoc')->name('chungtu.panel');
         Route::get('ajax/loadchungtu','ChungTuController@loadChungTu');
         Route::get('ajax/xemchungtu','ChungTuController@xemChungTu');
-        Route::post('chungtuajax/post','ChungTuController@postBieuMau');
         Route::post('chungtuajax/delete','ChungTuController@deleteChungTu');
         Route::post('chungtuajax/getedit/{id}','ChungTuController@getEditChungTu');
         Route::post('chungtuajax/update','ChungTuController@updateChungTu');
+
+        // Đề nghị đóng mộc
+        Route::get('ajax/loaddenghimoc','ChungTuController@loadDeNghiDongMoc');
+        Route::get('list/chungtumoc/denghi','ChungTuController@getDeNghiMoc')->name('denghidongdau.panel');
+        Route::post('denghichungtu/post','ChungTuController@postChungTu')->name('denghichungtu.post');
+        Route::post('chungtuajax/postclient','ChungTuController@postBieuMauUpdateClient')->name('chungtu.post.update.client');
+        Route::post('chungtuajax/post','ChungTuController@postBieuMauUpdate')->name('chungtu.post.update');
+        Route::post('chungtuajax/upfile','ChungTuController@upFile')->name('upfile.post');
+        Route::post('chungtuajax/block','ChungTuController@checkBlock')->name('chungtu.block');
+
 
          // Xem Chứng từ mộc
          Route::get('list/xemchungtumoc','ChungTuController@showXemChungTu')->name('xemchungtu.panel');
