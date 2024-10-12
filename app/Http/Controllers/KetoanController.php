@@ -219,7 +219,9 @@ class KetoanController extends Controller
     public function inBienBan($id) {
         //----- Đã xuất xe mới in được biên bản bàn giao
         $hd = HopDong::find($id);
+        $magiamgia = $hd->magiamgia;
         $khoXe = KhoV2::find($hd->id_car_kho);
+        $ngayGiaoXe = \HelpFunction::revertDate($khoXe->ngayGiaoXe);
         if($khoXe->xuatXe == true) {
         //-----        
             $outhd = "";
@@ -264,6 +266,11 @@ class KetoanController extends Controller
                         $sl .= '1<w:br/>';
                         $k++;
                     }
+
+                    if ($row->type == 'free' && $row->free_kem == false) {
+                        $tongpkpay++;
+                        $phukienall .= $row->name . ", ";
+                    }
                 }
 
                 $templateProcessor->setValues([
@@ -288,13 +295,15 @@ class KetoanController extends Controller
                     'frame' => $kho->frame,
                     'cost' => number_format($sumchiphi),
                     'pay' => number_format($sumpkban),
-                    'tong' => number_format($sumchiphi + $sumpkban + $giaXe),
+                    'tong' => number_format($sumchiphi + ($magiamgia == 0 ? $sumpkban : ($sumpkban - ($sumpkban*$magiamgia/100))) + $giaXe),
                     'phukienall' => $phukienall,
                     'stt' => $stt,
                     'noiDung' => $noidung,
                     'sl' => $sl,
                     'tongpk' => ($k - 1),
-                    'tongpkpay' => $tongpkpay
+                    'tongpkpay' => $tongpkpay,
+                    'ngaygiaoxe' => $ngayGiaoXe,
+                    'payGiamGia' => number_format(($magiamgia == 0 ? $sumpkban : ($sumpkban - ($sumpkban*$magiamgia/100))))
                 ]);
 
             $pathToSave = 'template/BIENBANBANGIAODOWN.docx';

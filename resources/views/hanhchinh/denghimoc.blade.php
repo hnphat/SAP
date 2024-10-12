@@ -91,10 +91,12 @@
                                <input type="text" name="noiDung" class="form-control" placeholder="Nội dung văn bản" required>
                             </div>
                             <div class="form-group">
-                               <label>Lãnh đạo ký</label> 
+                               <label>Người ký</label> 
                                <select name="lanhDao" class="form-control">
                                     <option value="Huỳnh Tấn Tài">Huỳnh Tấn Tài</option>
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
+                                    <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
+                                    <option value="Triệu Quang Trung">Triệu Quang Trung</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
@@ -143,10 +145,12 @@
                                <input type="text" name="enoiDung" class="form-control" placeholder="Nội dung văn bản">
                             </div>
                             <div class="form-group">
-                               <label>Lãnh đạo ký</label> 
+                               <label>Người ký</label> 
                                <select name="elanhDao" class="form-control">
                                     <option value="Huỳnh Tấn Tài">Huỳnh Tấn Tài</option>
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
+                                    <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
+                                    <option value="Triệu Quang Trung">Triệu Quang Trung</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>

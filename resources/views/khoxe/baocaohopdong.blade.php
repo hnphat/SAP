@@ -39,7 +39,7 @@
                                 <select name="baoCao" class="form-control">
                                     <option value="1">Tất cả</option>                           
                                     <option value="2">Hợp đồng đợi duyệt</option>                                 
-                                    <!-- <option value="3">Đề nghị mới tạo</option>   -->
+                                    <option value="3">Đề nghị mới tạo</option>  
                                     <option value="4">Hợp đồng xe kho</option>    
                                     <option value="5">Hợp đồng ký chờ</option>      
                                     <option value="6">Hợp đồng ký đại lý</option> 

@@ -67,7 +67,7 @@ class ChungTuController extends Controller
         $bm->soLuong = $request->esoLuong;
         $bm->nguoiKy = $request->elanhDao;
         $bm->ghiChu = $request->eghiChu;
-        $bm->allow = $request->eallow;
+        ($request->eallow) ? $bm->allow = $request->eallow : "";
         $bm->save();                                     
         if ($bm) {
             $nhatKy = new NhatKy();

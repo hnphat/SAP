@@ -4272,13 +4272,13 @@ class HDController extends Controller
                     ->orderBy('id','desc')
                     ->get();
                 } break;
-                // case 3: {
-                //     $hd = HopDong::where([
-                //         ['requestCheck','=',false]
-                //     ])
-                //     ->orderBy('id','desc')
-                //     ->get();
-                // } break;
+                case 3: {
+                    $hd = HopDong::where([
+                        ['requestCheck','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                } break;
                 case 4: {
                     $hd = HopDong::where([
                         ['requestCheck','=',true],

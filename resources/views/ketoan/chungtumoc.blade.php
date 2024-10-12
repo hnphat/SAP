@@ -94,10 +94,12 @@
                                <input type="text" name="noiDung" class="form-control" placeholder="Nội dung văn bản" required>
                             </div>
                             <div class="form-group">
-                               <label>Lãnh đạo ký</label> 
+                               <label>Người ký</label> 
                                <select name="lanhDao" class="form-control">
                                     <option value="Huỳnh Tấn Tài">Huỳnh Tấn Tài</option>
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
+                                    <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
+                                    <option value="Triệu Quang Trung">Triệu Quang Trung</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
@@ -144,10 +146,12 @@
                                <input type="text" name="enoiDung" class="form-control" placeholder="Nội dung văn bản" required>
                             </div>
                             <div class="form-group">
-                               <label>Lãnh đạo ký</label> 
+                               <label>Người ký</label> 
                                <select name="elanhDao" class="form-control">
                                     <option value="Huỳnh Tấn Tài">Huỳnh Tấn Tài</option>
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
+                                    <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
+                                    <option value="Triệu Quang Trung">Triệu Quang Trung</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
@@ -159,6 +163,7 @@
                                <label>Ghi chú (nếu có)</label> 
                                <input type="text" name="eghiChu" class="form-control" placeholder="Ghi chú">
                             </div>
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                             <div class="form-group">
                                <label>Trạng thái</label> 
                                <select name="eallow" class="form-control">
@@ -166,6 +171,7 @@
                                    <option value="0">Chưa tiếp nhận</option>   
                                </select>
                             </div>
+                            @endif
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">
