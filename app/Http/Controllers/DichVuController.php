@@ -1931,11 +1931,41 @@ class DichVuController extends Controller
         $i = 1;
         $checkFromTuOnlyMonth = false; // Kiểm tra chọn thời gian báo cáo có cùng 1 tháng hay không
         $monthSelect = "";
+        $date1 = "";
+        $date2 = "";
         if (\HelpFunction::getOnlyMonth($tu) != \HelpFunction::getOnlyMonth($den)) {
             $checkFromTuOnlyMonth = false;
         } else {
             $checkFromTuOnlyMonth = true;
             $monthSelect = \HelpFunction::getOnlyMonth($tu);
+            // Xử lý tìm lương chưa tính tháng trước
+            $yearSelect = \HelpFunction::getOnlyYear($tu);
+            $tempMonth = 0;
+            $tempYear = 0;
+            switch($monthSelect) {
+                case 1: {
+                    $tempMonth = 12; 
+                    $tempYear = $yearSelect - 1;
+                } break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12: {
+                    $tempMonth = $monthSelect - 1; 
+                    $tempYear = $yearSelect;
+                } break;
+                default: $tempMonth = 0;
+            }
+            $date1 = $tempYear."-".$tempMonth."-01";
+            $date2 = $tempYear."-".$tempMonth."-".\HelpFunction::countDayInMonth($tempMonth,$tempYear);
+            // ------------------------------------
         }
         switch($loai) {
             case 1: {
@@ -2398,6 +2428,77 @@ class DichVuController extends Controller
                     echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)."</span><br/>Tổng tiền công: <span class='text-bold text-success'>".number_format($tong_cong)."</span></h3>";
                 } else {    
                     $r = User::find($nv);
+                    // Xử lý phần lương chưa tính của tháng trước
+                    $congChuaTinh = 0;
+                    $tongCongThangTruoc = 0;
+                    $tongCongDaTinh = 0;
+                    $tongCongChuaTinh = 0;
+                    if ($r->hasRole('to_phu_kien') && $date1 != "" && $date2 != "") {
+                        $_ktv = KTVBHPK::where([
+                            ["id_work","=",$r->id],
+                            ["isDone","=",true]
+                        ])->orderBy('id_baogia','desc')->get();
+                        foreach($_ktv as $_k) {
+                            $_bg = BaoGiaBHPK::select("*")
+                            ->where([
+                                ['trangThaiThu','=',true],
+                                ['isDone','=',true],
+                                ['isCancel','=',false],
+                                ['isBaoHiem','=', false],
+                                ['id','=',$_k->id_baogia]
+                            ])->get();
+                            foreach($_bg as $_row) {
+                                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($_k->updated_at)) >= strtotime($date1)) 
+                                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($_k->updated_at)) <= strtotime($date2))) {                        
+                                    $__tile = 0;
+                                    $__cong = 0;
+                                    $__ngayThu = $_row->ngayThu;
+                                    $_ct = ChiTietBHPK::where([
+                                        ['id_baogia','=',$_k->id_baogia],
+                                        ['id_baohiem_phukien','=',$_k->id_bhpk]
+                                    ])->get();
+                                    foreach($_ct as $_item) {  
+                                        $_ktv = KTVBHPK::where([
+                                            ["id_baogia","=",$_row->id],
+                                            ["id_bhpk","=",$_item->id_baohiem_phukien],
+                                        ])->get();
+
+                                        if ($_ktv)
+                                            $__tile = $_ktv->count();
+                                        else
+                                            $__tile = 0;
+                                        $_ktv2 = KTVBHPK::where([
+                                            ["id_baogia","=",$_row->id],
+                                            ["id_bhpk","=",$_item->id_baohiem_phukien],
+                                            ["id_work","=",$r->id],
+                                        ])->first();
+
+                                        if ($_ktv2) {
+                                            $_bhpk = BHPK::find($_ktv2->id_bhpk);
+                                            if ($__tile != 0) {
+                                                $__cong = $_bhpk->congKTV / $__tile;
+                                                // Kiểm tra công tính lương
+                                                if ($__ngayThu != null && $checkFromTuOnlyMonth == true) {
+                                                    $_dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($_ktv2->updated_at);
+                                                    if (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                        $tongCongDaTinh += $__cong;
+                                                    } elseif (\HelpFunction::getOnlyMonth($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                        $tongCongDaTinh += $__cong;
+                                                    } elseif (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) < $tempMonth) {
+                                                        $tongCongDaTinh += $__cong;
+                                                    } 
+                                                }
+                                                // ---------------------------
+                                            }
+                                        }        
+                                    }                                    
+                                    $tongCongThangTruoc += $__cong;
+                                }
+                            }                                
+                        }   
+                    }
+                    $tongCongChuaTinh = $tongCongThangTruoc - $tongCongDaTinh;
+                    // -------------------------------------------------------------------
                     $i = 1;
                     $tongCongTinhLuong = 0;
                     if ($r->hasRole('to_phu_kien')) {
@@ -2498,10 +2599,17 @@ class DichVuController extends Controller
                     }
                     echo "</tbody>
                     </table>";
-                    echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)
-                    ."</span><br/>Tổng tiền công: <span class='text-bold text-primary'>".number_format($tong_cong)."</span>"
-                    ."<br/>Tổng tiền công tính lương: <span class='text-bold text-success'>".number_format($tongCongTinhLuong)."</span></h3>"
-                    ."<h5>Tiền công chưa tính: <span class='text-bold text-pink'>".number_format($tong_cong-$tongCongTinhLuong)."</span></h5>";
+                    if ($checkFromTuOnlyMonth) {
+                        echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)
+                        ."</span><br/>Tổng tiền công: <span class='text-bold text-secondary'>".number_format($tong_cong)."</span>"
+                        ."<br/>Tiền công tháng ".$monthSelect." năm  ".$yearSelect." được xác nhận: <span class='text-bold text-primary'>".number_format($tongCongTinhLuong)."</span></h3>"
+                        ."<h3>Tiền công tháng ".($tempMonth > 9 ? $tempMonth : "0".$tempMonth)." năm ".$tempYear." chưa tính: <span class='text-bold text-warning'>".number_format($tongCongChuaTinh)."</span><br/>"
+                        ."Tổng tiền công tháng ".$monthSelect." năm  ".$yearSelect." để tính lương: <span class='text-bold text-success'>".number_format($tongCongChuaTinh+$tongCongTinhLuong)."</span><br/>"
+                        ."Tiền công tháng ".$monthSelect." năm  ".$yearSelect." chưa tính: <span class='text-bold text-pink'>".number_format($tong_cong-$tongCongTinhLuong)."</span></h3>";
+                    } else {
+                        echo "<h3>Tổng doanh thu: <span class='text-bold text-info'>".number_format($tong_doanhthu_cong)
+                        ."</span><br/>Tổng tiền công: <span class='text-bold text-primary'>".number_format($tong_cong)."</span>";
+                    }                    
                 }
             } break;     
         }
@@ -2698,8 +2806,8 @@ class DichVuController extends Controller
                 $tacVu = "";
                 if ($row->isDone) {
                     $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                    if (Auth::user()->hasRole('system'))
-                        $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
+                    // if (Auth::user()->hasRole('system'))
+                    //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
                 }
                 else {
                     $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
