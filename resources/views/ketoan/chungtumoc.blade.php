@@ -272,8 +272,13 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            if (row.url !== null)
-                                return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>";
+                            if (row.url !== null) {
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                                    return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>&nbsp;<button data-id='"+row.id+"' id='xoaFile' class='btn btn-danger btn-sm'>Xóa</button>";
+                                @else
+                                    return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>";
+                                @endif
+                            }
                             else 
                                 return "<strong class='text-warning'>Chưa có file</strong>&nbsp;<button id='upFileBtn' data-id='"+row.id+"' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#upModal'>Update</button>";
                         }
@@ -365,6 +370,34 @@
                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
                         url: "{{url('management/hanhchinh/chungtuajax/delete/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            //Delete data
+            $(document).on('click','#xoaFile', function(){
+                if(confirm('Xác nhận xoá file scan?')) {
+                    $.ajax({
+                        url: "{{url('management/hanhchinh/chungtuajax/delete/filescan')}}",
                         type: "post",
                         dataType: "json",
                         data: {

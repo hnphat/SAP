@@ -444,6 +444,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chungtuajax/delete','ChungTuController@deleteChungTu');
         Route::post('chungtuajax/getedit/{id}','ChungTuController@getEditChungTu');
         Route::post('chungtuajax/update','ChungTuController@updateChungTu');
+        Route::post('chungtuajax/delete/filescan','ChungTuController@deleteFileScan');
 
         // Đề nghị đóng mộc
         Route::get('ajax/loaddenghimoc','ChungTuController@loadDeNghiDongMoc');

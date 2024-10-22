@@ -354,4 +354,43 @@ class ChungTuController extends Controller
             "code" => 500
         ]);
     }
+
+    public function deleteFileScan(Request $request) {
+        $bm = ChungTu::find($request->id);
+        if (Auth::user()->hasRole("system")) {
+            $temp = $bm->noiDung;
+            $name = $bm->url;
+            // if ($name !== null && file_exists('upload/chungtu/' . $name))
+            //     unlink('upload/chungtu/'.$name);
+            $bm->url = null;
+            $bm->save();        
+            if ($bm) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Hành chính - Quản lý dấu/mộc";
+                $nhatKy->noiDung = "Cập nhật lại file scan. Nội dung ".$temp."; File cũ tạm ẩn " . url('upload/chungtu/' . $name);
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->save();
+
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã cập nhật!',
+                    'code' => 200,
+                    'data' => $bm
+                ]);    
+            }           
+            else
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Lỗi không thể cập nhật từ máy chủ!',
+                    'code' => 500
+                ]);
+        } else
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Chứng từ đã duyệt đóng dấu không thể xoá!',
+                'code' => 500
+            ]);       
+    }
 }
