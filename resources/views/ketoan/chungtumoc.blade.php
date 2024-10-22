@@ -100,6 +100,7 @@
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
                                     <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
                                     <option value="Triệu Quang Trung">Triệu Quang Trung</option>
+                                    <option value="Trương Thị Kim Cúc">Trương Thị Kim Cúc</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
@@ -152,6 +153,7 @@
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
                                     <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
                                     <option value="Triệu Quang Trung">Triệu Quang Trung</option>
+                                    <option value="Trương Thị Kim Cúc">Trương Thị Kim Cúc</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
@@ -273,14 +275,10 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.url !== null) {
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                    return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>&nbsp;<button data-id='"+row.id+"' id='xoaFile' class='btn btn-danger btn-sm'>Xóa</button>";
-                                @else
-                                    return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>";
-                                @endif
+                               return "<a href='upload/chungtu/"+row.url+"' target='_blank'>Tải về</a>&nbsp;<button data-id='"+row.id+"' id='xoaFile' class='btn btn-light btn-sm'>Xóa</button>";
                             }
                             else 
-                                return "<strong class='text-warning'>Chưa có file</strong>&nbsp;<button id='upFileBtn' data-id='"+row.id+"' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#upModal'>Update</button>";
+                               return "<strong class='text-warning'>Chưa có file</strong>&nbsp;<button id='upFileBtn' data-id='"+row.id+"' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#upModal'>Update</button>";
                         }
                     },
                     { "data": "noiDung" },

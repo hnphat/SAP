@@ -359,7 +359,7 @@ class ChungTuController extends Controller
 
     public function deleteFileScan(Request $request) {
         $bm = ChungTu::find($request->id);
-        if (Auth::user()->hasRole("system")) {
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
             $temp = $bm->noiDung;
             $name = $bm->url;
             // if ($name !== null && file_exists('upload/chungtu/' . $name))

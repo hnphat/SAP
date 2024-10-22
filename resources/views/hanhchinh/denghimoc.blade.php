@@ -97,6 +97,7 @@
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
                                     <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
                                     <option value="Triệu Quang Trung">Triệu Quang Trung</option>
+                                    <option value="Trương Thị Kim Cúc">Trương Thị Kim Cúc</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
@@ -151,6 +152,7 @@
                                     <option value="Nguyễn Thị Bích Ngân">Nguyễn Thị Bích Ngân</option>
                                     <option value="Nguyễn Quốc Đạt">Nguyễn Quốc Đạt</option>
                                     <option value="Triệu Quang Trung">Triệu Quang Trung</option>
+                                    <option value="Trương Thị Kim Cúc">Trương Thị Kim Cúc</option>
                                     <option value="Khác">Khác</option>
                                </select>
                             </div>
