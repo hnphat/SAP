@@ -241,8 +241,10 @@
                                             <thead>
                                                 <tr class="bg-cyan">
                                                     <th>TT</th>
-                                                    <th>Nội dung</th>
+                                                    <th>Nội dung</th>                                                    
                                                     <th>Giá</th>
+                                                    <th>Giảm giá (%)</th>
+                                                    <th>Thành tiền</th>
                                                     <th>Tác vụ</th>
                                                 </tr>
                                                 <tbody id="showPKPAY">
@@ -250,14 +252,17 @@
                                             </thead>
                                         </table>
                                         <p>
-                                            Giá: <strong id="xtongPay"></strong><br/>
-                                            <span class="text-pink">Áp dụng giảm giá:</span> 
-                                            <select name="magiamgia" id="magiamgia" form="addPkForm">
+                                            Tổng giá: <strong id="xtongPay"></strong><br/>
+                                            <!-- <span class="text-pink">Áp dụng giảm giá cho tất cả phụ kiện:</span> 
+                                            <input type="number" name="magiamgia" id="magiamgia" form="addPkForm" value="0" min="0" max="100" step="1"/>
+                                            <strong>%</strong> -->
+                                            <!-- <select name="magiamgia" id="magiamgia" form="addPkForm">
                                                 <option value="0" selected>0</option>
                                                 <option value="5">5%</option>
-                                            </select>
+                                            </select>  -->
+                                            <!-- <i class="text-danger">(Nhập 0 để thực hiện giảm giá từng loại phụ kiện)</i> -->
                                         <br/>
-                                        <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong>
+                                        <!-- <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong> -->
                                         </p>
                                         <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
                                         <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/>
@@ -369,6 +374,10 @@
                                 <div class="form-group">
                                     <label>Giá</label>
                                     <input name="giaPkPay" value="0" type="number" class="form-control" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Giảm giá (nếu có):</label>
+                                    <input name="giamGiaPK" value="0" min="0" max="100" step="1" type="number" class="form-control">
                                 </div>
                             </div>
                         </form>
@@ -735,7 +744,7 @@
                                 $("#dienThoai").prop('disabled', false);
 
                                 $("select[name=mauSac]").prop('disabled', false);
-                                $("select[name=magiamgia]").prop('disabled', false);
+                                $("input[name=magiamgia]").prop('disabled', false);
                                 $("select[name=xeBan]").prop('disabled', false);
                                 $("#inForm").hide();
                             } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
@@ -759,7 +768,7 @@
 
 
                                 $("select[name=mauSac]").prop('disabled', true);
-                                $("select[name=magiamgia]").prop('disabled', true);
+                                $("input[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").hide();
                             } else if (response.data.requestCheck == true 
@@ -782,7 +791,7 @@
                                 $("#dienThoai").prop('disabled', true);
 
                                 $("select[name=mauSac]").prop('disabled', true);
-                                $("select[name=magiamgia]").prop('disabled', true);
+                                $("input[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").show();
                             } else if (response.data.requestCheck == true 
@@ -805,7 +814,7 @@
                                 $("#dienThoai").prop('disabled', true);
 
                                 $("select[name=mauSac]").prop('disabled', true);
-                                $("select[name=magiamgia]").prop('disabled', true);
+                                $("input[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").show();
                             } else {
@@ -826,7 +835,7 @@
                                 $("input[name=cmnd]").prop('disabled', true);
                                 $("#dienThoai").prop('disabled', true);
                                 $("select[name=mauSac]").prop('disabled', true);
-                                $("select[name=magiamgia]").prop('disabled', true);
+                                $("input[name=magiamgia]").prop('disabled', true);
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").hide();
                             }
@@ -1056,8 +1065,8 @@
 
                             $('select[name=mauSac] option[selected=selected]').removeAttr('selected');
                             $('select[name=mauSac] option[value='+response.data.mau+']').attr('selected','selected');
-                            $('select[name=magiamgia] option[selected=selected]').removeAttr('selected');
-                            $('select[name=magiamgia] option[value='+response.data.magiamgia+']').attr('selected','selected');
+                            $('input[name=magiamgia] option[selected=selected]').removeAttr('selected');
+                            $('input[name=magiamgia] option[value='+response.data.magiamgia+']').attr('selected','selected');
                             $('select[name=xeBan] option[selected=selected]').removeAttr('selected');
                             $('select[name=xeBan] option[value='+response.data.idcar+']').attr('selected','selected');
                             $('select[name=hinhThucThanhToan] option[selected=selected]').removeAttr('selected');
@@ -1243,13 +1252,15 @@
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
+                                "<td>" + response.pkban[i].giamGia + "%</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100))) + "</td>" +
                                 "<td><button id='delPKPAY' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkban[i].cost);
+                            sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
-                        $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
+                        // $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
                         // loadTotal($("select[name=chonHD]").val());
                         // Toast.fire({
                         //     icon: 'info',

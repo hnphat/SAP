@@ -1263,7 +1263,7 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/DENGHI.docx');
             // Set data from database
             $sale = HopDong::find($id);
-            $magiamgia = $sale->magiamgia;
+            // $magiamgia = $sale->magiamgia;
             // $nguonKH = $sale->nguonKH;
             $nguonKH = $sale->guest->nguon;
             $isTienMat = ($sale->isTienMat) ? "Tiền mặt" : "Ngân hàng";
@@ -1304,12 +1304,17 @@ class HDController extends Controller
                     }
                 }
                 if ($row->type == 'pay') {
-                    $tongPhuKien += $row->cost;
+                    $saleOff = SaleOffV2::select("*")->where([
+                        ['id_hd','=',$id],
+                        ['id_bh_pk_package','=',$row->id]
+                    ])->first();
+                    $tongPhuKien += $row->cost - ($row->cost*$saleOff->giamGia/100);
                     $dspk .=  $row->name . ";";
                     $dem++;
                     $sttPKB .= $j . '<w:br/>';
-                    $pkpay .=  $row->name . '<w:br/>';
-                    $chiPhiChiTietPKB .=  number_format($row->cost) . '<w:br/>';
+
+                    $pkpay .=  $row->name . " " .($saleOff->giamGia != 0 ? "(-".$saleOff->giamGia."%)" : ""). '<w:br/>';
+                    $chiPhiChiTietPKB .=  number_format($row->cost - ($row->cost*$saleOff->giamGia/100)) . '<w:br/>';
                     $j++;
                 }
                 if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
@@ -1400,7 +1405,7 @@ class HDController extends Controller
                 'cpKhac' => $other,
                 'niemYet' => number_format($sale->giaNiemYet),
                 'donGiaPK' => number_format($tongPhuKien),
-                'tongPhiPhuKien' => number_format($giaXe + $tongChiPhi + ($magiamgia == 0 ? $tongPhuKien : ($tongPhuKien - ($tongPhuKien*$magiamgia/100)))),
+                'tongPhiPhuKien' => number_format($giaXe + $tongChiPhi + $tongPhuKien),
                 'cacLoaiPhi' => $pkcost,
                 'dsPhuKien' => $dspk,
                 'dem' => $dem,
@@ -1422,7 +1427,7 @@ class HDController extends Controller
                 'cacLoaiPhiPKB' => $pkpay,
                 'thanhTienPhiPKB' => $chiPhiChiTietPKB,
                 'tongPhuKienFree' => number_format($tongPhuKienFree),
-                'tongPhuKienBan' => number_format(($magiamgia == 0 ? $tongPhuKien : ($tongPhuKien - ($tongPhuKien*$magiamgia/100)))) . " " . ($magiamgia == 0 ? "" : " (-".$magiamgia."%)"),
+                'tongPhuKienBan' => number_format($tongPhuKien),
                 'tisuat' => round($tiSuat,2) . " %",
                 'htvSupport' => number_format($htvSupport),
                 'nguonKH' => $nguonKH,
@@ -1462,7 +1467,7 @@ class HDController extends Controller
         $templateProcessor = new TemplateProcessor('template/DENGHICONGTY.docx');
             // Set data from database
             $sale = HopDong::find($id);
-            $magiamgia = $sale->magiamgia;
+            // $magiamgia = $sale->magiamgia;
             // $nguonKH = $sale->nguonKH;
             $nguonKH = $sale->guest->nguon;
             $isTienMat = ($sale->isTienMat) ? "Tiền mặt" : "Ngân hàng";
@@ -1503,12 +1508,16 @@ class HDController extends Controller
                     }
                 }
                 if ($row->type == 'pay') {
-                    $tongPhuKien += $row->cost;
+                    $saleOff = SaleOffV2::select("*")->where([
+                        ['id_hd','=',$id],
+                        ['id_bh_pk_package','=',$row->id]
+                    ])->first();
+                    $tongPhuKien += $row->cost - ($row->cost*$saleOff->giamGia/100);
                     $dspk .=  $row->name . ";";
                     $dem++;
                     $sttPKB .= $j . '<w:br/>';
-                    $pkpay .=  $row->name . '<w:br/>';
-                    $chiPhiChiTietPKB .=  number_format($row->cost) . '<w:br/>';
+                    $pkpay .=  $row->name . " " .($saleOff->giamGia != 0 ? "(-".$saleOff->giamGia."%)" : ""). '<w:br/>';
+                    $chiPhiChiTietPKB .=  number_format($row->cost - ($row->cost*$saleOff->giamGia/100)) . '<w:br/>';
                     $j++;
                 }
                 if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
@@ -1599,7 +1608,7 @@ class HDController extends Controller
                 'cpKhac' => $other,
                 'niemYet' => number_format($sale->giaNiemYet),
                 'donGiaPK' => number_format($tongPhuKien),
-                'tongPhiPhuKien' => number_format($giaXe + $tongChiPhi + ($magiamgia == 0 ? $tongPhuKien : ($tongPhuKien - ($tongPhuKien*$magiamgia/100)))),
+                'tongPhiPhuKien' => number_format($giaXe + $tongChiPhi + $tongPhuKien),
                 'cacLoaiPhi' => $pkcost,
                 'dsPhuKien' => $dspk,
                 'dem' => $dem,
@@ -1620,7 +1629,7 @@ class HDController extends Controller
                 'cacLoaiPhiPKB' => $pkpay,
                 'thanhTienPhiPKB' => $chiPhiChiTietPKB,
                 'tongPhuKienFree' => number_format($tongPhuKienFree),
-                'tongPhuKienBan' => number_format(($magiamgia == 0 ? $tongPhuKien : ($tongPhuKien - ($tongPhuKien*$magiamgia/100)))) . " " . ($magiamgia == 0 ? "" : " (-".$magiamgia."%)"),
+                'tongPhuKienBan' => number_format($tongPhuKien),
                 'tisuat' => round($tiSuat,2) . " %",
                 'htvSupport' => number_format($htvSupport),
                 'nguonKH' => $nguonKH,
@@ -2028,7 +2037,9 @@ class HDController extends Controller
     }
 
     public function getpkpay($id) {
-        $pkban = SaleOffV2::select('package.*')->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+        $pkban = SaleOffV2::select('package.*','saleoffv2.giamGia')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
             ['saleoffv2.id_hd','=', $id],
             ['package.type','=','pay']
         ])->get();
@@ -2375,22 +2386,25 @@ class HDController extends Controller
                 $saleOff = new SaleOffV2;
                 $saleOff->id_hd = $request->idHD;
                 $saleOff->id_bh_pk_package = $pkpay->id;
+                if ($request->giamGiaPK >= 0 && $request->giamGiaPK <= 100)
+                    $saleOff->giamGia = $request->giamGiaPK;
                 $saleOff->save();
                 if($saleOff) {
-
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
                     $nhatKy->thoiGian = Date("H:m:s");
                     $nhatKy->ghiChu = Carbon::now();
-                    $nhatKy->noiDung = "Thêm phụ kiện bán cho đề nghị ĐN/0".$request->idHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkPay . " <br/>Giá: " . number_format(round($request->giaPkPay,2));
+                    $nhatKy->noiDung = "Thêm phụ kiện bán cho đề nghị ĐN/0".$request->idHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkPay
+                    . " <br/>Giá: " . number_format(round($request->giaPkPay,2)) . " Giảm giá: " . $request->giamGiaPK . "%";
                     $nhatKy->save();
 
                     $his = new HistoryHopDong();
                     $his->idDeNghi = $request->idHD;
                     $his->id_user = Auth::user()->id;
                     $his->ngay = Date("H:m:s d-m-Y");
-                    $his->noiDung = "Thêm phụ kiện bán <br/>Nội dung: " . $request->namePkPay . " <br/>Giá: " . number_format(round($request->giaPkPay,2));
+                    $his->noiDung = "Thêm phụ kiện bán <br/>Nội dung: " . $request->namePkPay . " <br/>Giá: "
+                    . number_format(round($request->giaPkPay,2)). " Giảm giá: " . $request->giamGiaPK . "%";;
                     $his->ghiChu = "";
                     $his->save();
 
@@ -2629,8 +2643,14 @@ class HDController extends Controller
         $package = $sale->package;
         foreach($package as $row) {
             if ($row->type == 'free') continue;
-            else if ($row->type == 'pay')
-                $sum += ($magiamgia == 0 ? $row->cost : ($row->cost - ($row->cost*$magiamgia/100)));
+            else if ($row->type == 'pay') {
+                // $sum += ($magiamgia == 0 ? $row->cost : ($row->cost - ($row->cost*$magiamgia/100)));
+                $saleOff = SaleOffV2::select("*")->where([
+                    ['id_hd','=',$id],
+                    ['id_bh_pk_package','=',$row->id]
+                ])->first();
+                $sum += ($row->cost - ($row->cost*$saleOff->giamGia/100));               
+            }
             else if ($row->type == 'cost' && $row->cost_tang == false)
                 $sum += $row->cost;
             
@@ -2835,7 +2855,7 @@ class HDController extends Controller
         $result->dienThoai = $request->dienThoai;
         $result->id_car_sale = $request->xeBan;
         $result->mau = $request->mauSac;
-        $result->magiamgia = $request->magiamgia;
+        // $result->magiamgia = $request->magiamgia;
         $result->save();
         if($result) {
 
@@ -2925,7 +2945,8 @@ class HDController extends Controller
             $saleoffdel = SaleOffV2::where('id_hd', $request->id)->delete();
             foreach($saleoff as $row) {
                 $package = PackageV2::find($row->id_bh_pk_package)->delete();
-            }            
+            }
+            $delHis = HistoryHopDong::where('idDeNghi',$request->id)->delete();
             $result->delete();
             if($result) {             
                 $nhatKy = new NhatKy();
@@ -3931,7 +3952,7 @@ class HDController extends Controller
         $outhd = "";
         $templateProcessor = new TemplateProcessor('template/PHUKIEN.docx');
             $sale = HopDong::find($id);
-            $magiamgia = $sale->magiamgia;
+            // $magiamgia = $sale->magiamgia;
             $kho = KhoV2::find($sale->id_car_kho);
             $year = $kho->year;
             $soHopDong = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
@@ -3965,15 +3986,20 @@ class HDController extends Controller
             $tongkm = 0;
             foreach($package as $row) {
                 if ($row->type == 'pay') {
+                    $saleOff = SaleOffV2::select("*")->where([
+                        ['id_hd','=',$id],
+                        ['id_bh_pk_package','=',$row->id]
+                    ])->first();
+
                     $sttpkban .= $i . '<w:br/>';
                     $chietKhauBlank .= '........ <w:br/>';          
-                    ($magiamgia != 0) ? $chietKhau .= '5% <w:br/>' : " <w:br/>";                                
+                    ($saleOff->giamGia != 0) ? $chietKhau .= $saleOff->giamGia.'% <w:br/>' : $chietKhau .= " <w:br/>";                                
                     $pkbansl .= '1 <w:br/>';
                     $pkban .= $row->name . '<w:br/>';
                     $pkbangia .= number_format($row->cost) . '<w:br/>';
-                    $pkbangiathanhtien .= ($magiamgia != 0) ? number_format($row->cost - ($row->cost*$magiamgia/100)) . '<w:br/>' : number_format($row->cost) . '<w:br/>';
+                    $pkbangiathanhtien .= number_format($row->cost - ($row->cost*$saleOff->giamGia/100)) . '<w:br/>';
                     $i++;
-                    $tonggiaban += ($magiamgia != 0) ? ($row->cost - ($row->cost*$magiamgia/100)) : $row->cost;
+                    $tonggiaban += ($row->cost - ($row->cost*$saleOff->giamGia/100));
                 }
                 if ($row->type == 'free' && $row->free_kem == false) {
                     $sttpkfree .= $j . '<w:br/>';

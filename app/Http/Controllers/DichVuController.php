@@ -632,17 +632,17 @@ class DichVuController extends Controller
         $tongPKBan = 0;
         $tongPKBanPhuKien = 0;
         if ($hd) {
-            $magiamgia = $hd->magiamgia;
+            // $magiamgia = $hd->magiamgia;
             $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
             foreach($listpk as $row) {
                 $p = PackageV2::find($row->id_bh_pk_package);
                 if ($p->type != "cost" && $p->mapk) {
                     if ($p->type == "pay")
-                        $tongPKBan += $p->cost;
+                        $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
                 } 
             }
 
-            $tongPKBan = $tongPKBan - ($tongPKBan*$magiamgia/100);
+            // $tongPKBan = $tongPKBan - ($tongPKBan*$magiamgia/100);
 
             // Kiểm tra số tiền phụ kiện bán hiện có 
             $ct = ChiTietBHPK::where('id_baogia',$request->eid)->get();
@@ -1072,17 +1072,17 @@ class DichVuController extends Controller
         $tongPKBanPhuKien = 0;
         $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
         if ($soHD && $hd) {
-            $magiamgia = $hd->magiamgia;
+            // $magiamgia = $hd->magiamgia;
             $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
             foreach($listpk as $row) {
                 $p = PackageV2::find($row->id_bh_pk_package);
                 if ($p->type != "cost" && $p->mapk) {
                     if ($p->type == "pay")
-                        $tongPKBan += $p->cost;
+                        $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
                 } 
             }
 
-            $tongPKBan = $tongPKBan - ($tongPKBan*$magiamgia/100);
+            // $tongPKBan = $tongPKBan - ($tongPKBan*$magiamgia/100);
 
             // Kiểm tra số tiền phụ kiện bán hiện có 
             $ct = ChiTietBHPK::where('id_baogia',$request->eid)->get();
@@ -1176,48 +1176,126 @@ class DichVuController extends Controller
         $tongTang = 0;
         $tongChietKhau = 0;
         $bg = BaoGiaBHPK::find($request->eid);
-        if ($bg->inProcess) {
-            $ct = ChiTietBHPK::where('id_baogia', $request->eid)->get();
-            foreach($ct as $row){
-                $bh = BHPK::find($row->id_baohiem_phukien);
-                $tongCong += ($row->donGia*$row->soLuong);
-                if ($row->isTang)
-                    $tongTang += ($row->donGia*$row->soLuong);
-                else
-                    $tongChietKhau += ($row->donGia * $row->soLuong * ($row->chietKhau ? $row->chietKhau : 0)/100);
-            } 
-            $bg->doanhThu = $tongCong;
-            $bg->tang = $tongTang;
-            $bg->chietKhau = $tongChietKhau;
-            $bg->isDone = true;
-            $bg->save();
-            if ($bg) {
-                $nhatKy = new NhatKy();
-                $nhatKy->id_user = Auth::user()->id;
-                $nhatKy->thoiGian = Date("H:m:s");
-                $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                $nhatKy->noiDung = "Hoàn tất báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
-                $nhatKy->ghiChu = Carbon::now();
-                $nhatKy->save();
-                return response()->json([
-                    'type' => 'info',
-                    'code' => 200,
-                    'message' => 'Đã hoàn tất báo giá',
-                    'data' => $bg
-                ]);
+        if ($bg->saler != 0) {
+            // --- Kiểm tra giá tiền giữa hợp đồng với phụ kiện đang khai báo
+            $soHD = $bg->soHopDongKD;
+            $arrSoHD = ($soHD) ? explode(".",$soHD) : "";
+            $num = ($arrSoHD != "") ? $arrSoHD[0] : "";
+            $tongPKBan = 0;
+            $tongPKBanPhuKien = 0;
+            $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
+            if ($soHD && $hd) {
+                $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+                foreach($listpk as $row) {
+                    $p = PackageV2::find($row->id_bh_pk_package);
+                    if ($p->type != "cost" && $p->mapk) {
+                        if ($p->type == "pay")
+                            $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
+                    } 
+                }
+
+                $ct = ChiTietBHPK::where('id_baogia',$request->eid)->get();
+                foreach($ct as $row) {
+                    if (!$row->isTang)
+                        $tongPKBanPhuKien += $row->thanhTien;
+                }
+                // --------------------------
             }
-            else
+
+            if ($tongPKBan != $tongPKBanPhuKien)
+                return response()->json([
+                    'type' => 'error',
+                    'code' => 500,
+                    'message' => "Tổng phụ kiện bán: ".number_format($tongPKBanPhuKien)." không khớp với hợp đồng: ".number_format($tongPKBan)." không thể hoàn tất báo giá này!"
+                ]);
+            // ----------------------------------------------------------------
+            if ($bg->inProcess) {
+                $ct = ChiTietBHPK::where('id_baogia', $request->eid)->get();
+                foreach($ct as $row){
+                    $bh = BHPK::find($row->id_baohiem_phukien);
+                    $tongCong += ($row->donGia*$row->soLuong);
+                    if ($row->isTang)
+                        $tongTang += ($row->donGia*$row->soLuong);
+                    else
+                        $tongChietKhau += ($row->donGia * $row->soLuong * ($row->chietKhau ? $row->chietKhau : 0)/100);
+                } 
+                $bg->doanhThu = $tongCong;
+                $bg->tang = $tongTang;
+                $bg->chietKhau = $tongChietKhau;
+                $bg->isDone = true;
+                $bg->save();
+                if ($bg) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                    $nhatKy->noiDung = "Hoàn tất báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->save();
+                    return response()->json([
+                        'type' => 'info',
+                        'code' => 200,
+                        'message' => 'Đã hoàn tất báo giá',
+                        'data' => $bg
+                    ]);
+                }
+                else
+                    return response()->json([
+                        'type' => 'info',
+                        'code' => 500,
+                        'message' => 'Lỗi'
+                    ]);
+            } else {
                 return response()->json([
                     'type' => 'info',
                     'code' => 500,
-                    'message' => 'Lỗi'
+                    'message' => 'Báo giá chưa tiến hành chưa thể hoàn tất'
                 ]);
+            }
         } else {
-            return response()->json([
-                'type' => 'info',
-                'code' => 500,
-                'message' => 'Báo giá chưa tiến hành chưa thể hoàn tất'
-            ]);
+            if ($bg->inProcess) {
+                $ct = ChiTietBHPK::where('id_baogia', $request->eid)->get();
+                foreach($ct as $row){
+                    $bh = BHPK::find($row->id_baohiem_phukien);
+                    $tongCong += ($row->donGia*$row->soLuong);
+                    if ($row->isTang)
+                        $tongTang += ($row->donGia*$row->soLuong);
+                    else
+                        $tongChietKhau += ($row->donGia * $row->soLuong * ($row->chietKhau ? $row->chietKhau : 0)/100);
+                } 
+                $bg->doanhThu = $tongCong;
+                $bg->tang = $tongTang;
+                $bg->chietKhau = $tongChietKhau;
+                $bg->isDone = true;
+                $bg->save();
+                if ($bg) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                    $nhatKy->noiDung = "Hoàn tất báo giá: BG0".$request->eid."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at).";";
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->save();
+                    return response()->json([
+                        'type' => 'info',
+                        'code' => 200,
+                        'message' => 'Đã hoàn tất báo giá',
+                        'data' => $bg
+                    ]);
+                }
+                else
+                    return response()->json([
+                        'type' => 'info',
+                        'code' => 500,
+                        'message' => 'Lỗi'
+                    ]);
+            } else {
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 500,
+                    'message' => 'Báo giá chưa tiến hành chưa thể hoàn tất'
+                ]);
+            }
         }
     }
 
@@ -1488,431 +1566,967 @@ class DichVuController extends Controller
     }
     
     public function printBaoGia($idbg) {
-        $bg = BaoGiaBHPK::find($idbg);
-        $ngay = Date('d');
-        $thang = Date('m');
-        $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
-        $khachHang = $bg->hoTen;
-        $dienThoai = $bg->dienThoai;
-        $diaChi = $bg->diaChi;
-        $bienSo = $bg->bienSo;
-        $thongTinXe = $bg->thongTinXe;
-        $soKhung = $bg->soKhung;
-        $soMay = $bg->soMay;
-        $loaiBG = ($bg->isPKD) ? "BÁO GIÁ KINH DOANH" : "BÁO GIÁ KHAI THÁC";
-        $nvtv = $bg->user->userDetail->surname . " - " . $bg->user->userDetail->phone;
-        $thoiGianVao = $bg->thoiGianVao;
-        $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
-        $thoiGianRa = $bg->thoiGianHoanThanh;
-        $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
-        $taiXe = $bg->taiXe;
-        $dienThoaiTaiXe = $bg->dienThoaiTaiXe;
+        $bg = BaoGiaBHPK::find($idbg);        
+        if ($bg->saler != 0) {
+            // --- Kiểm tra giá tiền giữa hợp đồng với phụ kiện đang khai báo
+            $soHD = $bg->soHopDongKD;
+            $arrSoHD = ($soHD) ? explode(".",$soHD) : "";
+            $num = ($arrSoHD != "") ? $arrSoHD[0] : "";
+            $tongPKBan = 0;
+            $tongPKBanPhuKien = 0;
+            $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
+            if ($soHD && $hd) {
+                $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+                foreach($listpk as $row) {
+                    $p = PackageV2::find($row->id_bh_pk_package);
+                    if ($p->type != "cost" && $p->mapk) {
+                        if ($p->type == "pay")
+                            $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
+                    } 
+                }
 
-        $tt = "";
-        $noiDung = "";
-        $dvt = "";
-        $sl = "";
-        $donGia = "";
-        $chietKhau = "";
-        $thanhTien = "";
-        $tongCong = 0;
-
-        $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
-        $i = 1;
-        foreach($ct as $row){
-            $bh = BHPK::find($row->id_baohiem_phukien);
-            $tt .= $i++ . "<w:br/>"; 
-            $dvt .= $bh->dvt . "<w:br/>";
-            $sl .= $row->soLuong . "<w:br/>";
-            $donGia .= number_format($row->donGia) . "<w:br/>";
-            $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
-            if (!$row->isTang) {
-                $noiDung .= $bh->noiDung . "<w:br/>";     
-                $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
-                $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));           
-            } else {
-                $noiDung .= $bh->noiDung . " (tặng)<w:br/>";      
-                $thanhTien .=  "0 <w:br/>";
-                // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));         
+                $ct = ChiTietBHPK::where('id_baogia',$idbg)->get();
+                foreach($ct as $row) {
+                    if (!$row->isTang)
+                        $tongPKBanPhuKien += $row->thanhTien;
+                }
+                // --------------------------
             }
-        }
-        $tienBangChu = \HelpFunction::convert($tongCong);
-        $yeuCau = $bg->yeuCau;
-        $tienCoc = $bg->tienCoc;
-        $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
-        $templateProcessor = new TemplateProcessor('template/BHPK/BAOGIA.docx');               
-            $outhd = 'BÁO GIÁ SỬA CHỮA ' . $soBG;
-            // Cá nhân            
-            $templateProcessor->setValues([
-                'ngay' => $ngay,
-                'thang' => $thang,
-                'nam' => $nam,
-                'soBG' => $soBG,
-                'khachHang' => $khachHang,
-                'dienThoai' => $dienThoai,
-                'diaChi' => $diaChi,
-                'bienSo' => $bienSo,
-                'thongTinXe' => $thongTinXe,
-                'soKhung' => $soKhung,
-                'soMay' => $soMay,
-                'loaiBG' => $loaiBG,
-                'nvtv' => $nvtv,
-                'thoiGianVao' => $thoiGianVao,
-                'ngayVao' => $ngayVao,
-                'thoiGianRa' => $thoiGianRa,
-                'ngayRa' => $ngayRa,
-                'taiXe' => $taiXe,
-                'dienThoaiTaiXe' => $dienThoaiTaiXe,
-                'tt' => $tt,
-                'noiDung' => $noiDung,
-                'dvt' => $dvt,
-                'sl' => $sl,
-                'donGia' => $donGia,
-                'chietKhau' => $chietKhau,
-                'thanhTien' => $thanhTien,
-                'tongCong' => number_format($tongCong),
-                'tienBangChu' => $tienBangChu,
-                'yeuCau' => $yeuCau,
-                'tienCoc' => number_format($tienCoc),
-                'ttnhanvien' => $ttnhanvien,               
-            ]);
 
-        $pathToSave = 'template/BHPK/BAOGIADOWN.docx';
-        $templateProcessor->saveAs($pathToSave);
-        $headers = array(
-            'Content-Type: application/docx',
-        );
-        $nhatKy = new NhatKy();
-        $nhatKy->id_user = Auth::user()->id;
-        $nhatKy->thoiGian = Date("H:m:s");
-        $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-        $nhatKy->noiDung = "In báo giá sửa chữa " . $soBG;
-        $nhatKy->ghiChu = Carbon::now();
-        $nhatKy->save();
-        if ($bg->inProcess)
-            return response()->download($pathToSave,$outhd . '.docx',$headers);
-        else
-            return redirect()->back();
+            if ($tongPKBan != $tongPKBanPhuKien)
+                return "Tổng phụ kiện bán: ".number_format($tongPKBanPhuKien)." không khớp với hợp đồng: ".number_format($tongPKBan)." không thể in báo giá này!";
+            // ----------------------------------------------------------------
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
+            $khachHang = $bg->hoTen;
+            $dienThoai = $bg->dienThoai;
+            $diaChi = $bg->diaChi;
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $loaiBG = ($bg->isPKD) ? "BÁO GIÁ KINH DOANH" : "BÁO GIÁ KHAI THÁC";
+            $nvtv = $bg->user->userDetail->surname . " - " . $bg->user->userDetail->phone;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+            $taiXe = $bg->taiXe;
+            $dienThoaiTaiXe = $bg->dienThoaiTaiXe;
+
+            $tt = "";
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+            $donGia = "";
+            $chietKhau = "";
+            $thanhTien = "";
+            $tongCong = 0;
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                $tt .= $i++ . "<w:br/>"; 
+                $dvt .= $bh->dvt . "<w:br/>";
+                $sl .= $row->soLuong . "<w:br/>";
+                $donGia .= number_format($row->donGia) . "<w:br/>";
+                $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
+                if (!$row->isTang) {
+                    $noiDung .= $bh->noiDung . "<w:br/>";     
+                    $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+                    $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));           
+                } else {
+                    $noiDung .= $bh->noiDung . " (tặng)<w:br/>";      
+                    $thanhTien .=  "0 <w:br/>";
+                    // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));         
+                }
+            }
+            $tienBangChu = \HelpFunction::convert($tongCong);
+            $yeuCau = $bg->yeuCau;
+            $tienCoc = $bg->tienCoc;
+            $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
+            $templateProcessor = new TemplateProcessor('template/BHPK/BAOGIA.docx');               
+                $outhd = 'BÁO GIÁ SỬA CHỮA ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'khachHang' => $khachHang,
+                    'dienThoai' => $dienThoai,
+                    'diaChi' => $diaChi,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'loaiBG' => $loaiBG,
+                    'nvtv' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'taiXe' => $taiXe,
+                    'dienThoaiTaiXe' => $dienThoaiTaiXe,
+                    'tt' => $tt,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,
+                    'donGia' => $donGia,
+                    'chietKhau' => $chietKhau,
+                    'thanhTien' => $thanhTien,
+                    'tongCong' => number_format($tongCong),
+                    'tienBangChu' => $tienBangChu,
+                    'yeuCau' => $yeuCau,
+                    'tienCoc' => number_format($tienCoc),
+                    'ttnhanvien' => $ttnhanvien,               
+                ]);
+
+            $pathToSave = 'template/BHPK/BAOGIADOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In báo giá sửa chữa " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();            
+        } else {
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
+            $khachHang = $bg->hoTen;
+            $dienThoai = $bg->dienThoai;
+            $diaChi = $bg->diaChi;
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $loaiBG = ($bg->isPKD) ? "BÁO GIÁ KINH DOANH" : "BÁO GIÁ KHAI THÁC";
+            $nvtv = $bg->user->userDetail->surname . " - " . $bg->user->userDetail->phone;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+            $taiXe = $bg->taiXe;
+            $dienThoaiTaiXe = $bg->dienThoaiTaiXe;
+
+            $tt = "";
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+            $donGia = "";
+            $chietKhau = "";
+            $thanhTien = "";
+            $tongCong = 0;
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                $tt .= $i++ . "<w:br/>"; 
+                $dvt .= $bh->dvt . "<w:br/>";
+                $sl .= $row->soLuong . "<w:br/>";
+                $donGia .= number_format($row->donGia) . "<w:br/>";
+                $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
+                if (!$row->isTang) {
+                    $noiDung .= $bh->noiDung . "<w:br/>";     
+                    $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+                    $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));           
+                } else {
+                    $noiDung .= $bh->noiDung . " (tặng)<w:br/>";      
+                    $thanhTien .=  "0 <w:br/>";
+                    // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));         
+                }
+            }
+            $tienBangChu = \HelpFunction::convert($tongCong);
+            $yeuCau = $bg->yeuCau;
+            $tienCoc = $bg->tienCoc;
+            $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
+            $templateProcessor = new TemplateProcessor('template/BHPK/BAOGIA.docx');               
+                $outhd = 'BÁO GIÁ SỬA CHỮA ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'khachHang' => $khachHang,
+                    'dienThoai' => $dienThoai,
+                    'diaChi' => $diaChi,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'loaiBG' => $loaiBG,
+                    'nvtv' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'taiXe' => $taiXe,
+                    'dienThoaiTaiXe' => $dienThoaiTaiXe,
+                    'tt' => $tt,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,
+                    'donGia' => $donGia,
+                    'chietKhau' => $chietKhau,
+                    'thanhTien' => $thanhTien,
+                    'tongCong' => number_format($tongCong),
+                    'tienBangChu' => $tienBangChu,
+                    'yeuCau' => $yeuCau,
+                    'tienCoc' => number_format($tienCoc),
+                    'ttnhanvien' => $ttnhanvien,               
+                ]);
+
+            $pathToSave = 'template/BHPK/BAOGIADOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In báo giá sửa chữa " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
+        }
     }
 
     public function printYeuCauCapVatTu($idbg) {
         $bg = BaoGiaBHPK::find($idbg);
-        $ngay = Date('d');
-        $thang = Date('m');
-        $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
-        $bienSo = $bg->bienSo;
-        $thongTinXe = $bg->thongTinXe;
-        $soKhung = $bg->soKhung;
-        $soMay = $bg->soMay;
-        $nvtv = $bg->user->userDetail->surname;
-        $thoiGianVao = $bg->thoiGianVao;
-        $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
-        $thoiGianRa = $bg->thoiGianHoanThanh;
-        $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+        if ($bg->saler != 0) {
+            // --- Kiểm tra giá tiền giữa hợp đồng với phụ kiện đang khai báo
+            $soHD = $bg->soHopDongKD;
+            $arrSoHD = ($soHD) ? explode(".",$soHD) : "";
+            $num = ($arrSoHD != "") ? $arrSoHD[0] : "";
+            $tongPKBan = 0;
+            $tongPKBanPhuKien = 0;
+            $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
+            if ($soHD && $hd) {
+                $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+                foreach($listpk as $row) {
+                    $p = PackageV2::find($row->id_bh_pk_package);
+                    if ($p->type != "cost" && $p->mapk) {
+                        if ($p->type == "pay")
+                            $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
+                    } 
+                }
 
-        $tt = "";
-        $ma = "";
-        $noiDung = "";
-        $dvt = "";
-        $sl = "";
+                $ct = ChiTietBHPK::where('id_baogia',$idbg)->get();
+                foreach($ct as $row) {
+                    if (!$row->isTang)
+                        $tongPKBanPhuKien += $row->thanhTien;
+                }
+                // --------------------------
+            }
 
-        $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
-        $i = 1;
-        foreach($ct as $row){
-            $bh = BHPK::find($row->id_baohiem_phukien);
+            if ($tongPKBan != $tongPKBanPhuKien)
+                return "Tổng phụ kiện bán: ".number_format($tongPKBanPhuKien)." không khớp với hợp đồng: ".number_format($tongPKBan)." không thể in báo giá này!";
+            // ----------------------------------------------------------------
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $nvtv = $bg->user->userDetail->surname;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
 
-            if ($bh->loai != "Gia công ngoài") {
-                $tt .= $i++ . "<w:br/>";
-                $ma .= $bh->ma . "<w:br/>"; 
-                if (!$row->isTang) {
-                    $noiDung .= $bh->noiDung . "<w:br/>";               
-                } else {
-                    $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
-                }    
-                // $noiDung .= $bh->noiDung . "<w:br/>";
-                $dvt .= $bh->dvt . "<w:br/>";
-                $sl .= $row->soLuong . "<w:br/>";
-            }    
-        }
+            $tt = "";
+            $ma = "";
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
 
-        $templateProcessor = new TemplateProcessor('template/BHPK/CAPVATTU.docx');                    
-            $outhd = 'YÊU CẦU CẤP VẬT TƯ ' . $soBG;
-            // Cá nhân            
-            $templateProcessor->setValues([
-                'ngay' => $ngay,
-                'thang' => $thang,
-                'nam' => $nam,
-                'soBG' => $soBG,
-                'bienSo' => $bienSo,
-                'thongTinXe' => $thongTinXe,
-                'soKhung' => $soKhung,
-                'soMay' => $soMay,
-                'nhanvien' => $nvtv,
-                'thoiGianVao' => $thoiGianVao,
-                'ngayVao' => $ngayVao,
-                'thoiGianRa' => $thoiGianRa,
-                'ngayRa' => $ngayRa,
-                'tt' => $tt,
-                'maSo' => $ma,
-                'noiDung' => $noiDung,
-                'dvt' => $dvt,
-                'sl' => $sl,                   
-            ]);
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
 
-        $pathToSave = 'template/BHPK/CAPVATTUDOWN.docx';
-        $templateProcessor->saveAs($pathToSave);
-        $headers = array(
-            'Content-Type: application/docx',
-        );
-        $nhatKy = new NhatKy();
-        $nhatKy->id_user = Auth::user()->id;
-        $nhatKy->thoiGian = Date("H:m:s");
-        $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-        $nhatKy->noiDung = "In yêu cầu cấp vật tư " . $soBG;
-        $nhatKy->ghiChu = Carbon::now();
-        $nhatKy->save();
-        if ($bg->inProcess)
-            return response()->download($pathToSave,$outhd . '.docx',$headers);
-        else
-            return redirect()->back();
-    }
-
-    public function printLenhSuaChua($idbg) {
-        $bg = BaoGiaBHPK::find($idbg);
-        $ngay = Date('d');
-        $thang = Date('m');
-        $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
-        $bienSo = $bg->bienSo;
-        $thongTinXe = $bg->thongTinXe;
-        $soKhung = $bg->soKhung;
-        $soMay = $bg->soMay;
-        $nvtv = $bg->user->userDetail->surname;
-        $thoiGianVao = $bg->thoiGianVao;
-        $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
-        $thoiGianRa = $bg->thoiGianHoanThanh;
-        $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
-
-        $tt = "";
-        $loai = "";
-        $ma = "";
-        $ktvn = ""; 
-        $noiDung = "";
-        $dvt = "";
-        $sl = "";
-
-        $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
-        $i = 1;
-        foreach($ct as $row){
-            $bh = BHPK::find($row->id_baohiem_phukien);
-            
-            $checkktv = KTVBHPK::where([
-                ['id_baogia','=',$idbg],
-                ['id_bhpk','=',$row->id_baohiem_phukien],
-            ])->exists(); 
-
-            if ($bh->loai != "Bán thêm" && $bh->loai != "Tặng kèm") {
-                if ($checkktv) {
+                if ($bh->loai != "Gia công ngoài") {
                     $tt .= $i++ . "<w:br/>";
-                    $loai .= $bh->loai . "<w:br/>"; 
                     $ma .= $bh->ma . "<w:br/>"; 
-                    // $noiDung .= $bh->noiDung . "<w:br/>";
-             
                     if (!$row->isTang) {
                         $noiDung .= $bh->noiDung . "<w:br/>";               
                     } else {
                         $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
-                    }
-                    
+                    }    
+                    // $noiDung .= $bh->noiDung . "<w:br/>";
                     $dvt .= $bh->dvt . "<w:br/>";
                     $sl .= $row->soLuong . "<w:br/>";
+                }    
+            }
 
-                    //Xử lý ktv
-                    $n_ktv = "";
-                    $ktv = KTVBHPK::where([
-                        ['id_baogia','=',$idbg],
-                        ['id_bhpk','=',$row->id_baohiem_phukien],
-                    ])->get(); 
-                    foreach($ktv as $k) {
-                        $u = User::find($k->id_work);
-                        $namektv = explode(" ", $u->userDetail->surname);
-                        $n_ktv .= $namektv[count($namektv) - 1] . "; ";
-                    }
-                    if ($n_ktv == "")
-                        $ktvn .= "<w:br/>";
-                    else
-                        $ktvn .= $n_ktv . "<w:br/>";;
-                    //-----         
-                } else if ($bh->loai == "Gia công ngoài") {
+            $templateProcessor = new TemplateProcessor('template/BHPK/CAPVATTU.docx');                    
+                $outhd = 'YÊU CẦU CẤP VẬT TƯ ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'nhanvien' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'tt' => $tt,
+                    'maSo' => $ma,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,                   
+                ]);
+
+            $pathToSave = 'template/BHPK/CAPVATTUDOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In yêu cầu cấp vật tư " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
+        } else {
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $nvtv = $bg->user->userDetail->surname;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+
+            $tt = "";
+            $ma = "";
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+
+                if ($bh->loai != "Gia công ngoài") {
                     $tt .= $i++ . "<w:br/>";
-                    $loai .= $bh->loai . "<w:br/>"; 
                     $ma .= $bh->ma . "<w:br/>"; 
-                    $noiDung .= $bh->noiDung . "<w:br/>";
+                    if (!$row->isTang) {
+                        $noiDung .= $bh->noiDung . "<w:br/>";               
+                    } else {
+                        $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
+                    }    
+                    // $noiDung .= $bh->noiDung . "<w:br/>";
                     $dvt .= $bh->dvt . "<w:br/>";
                     $sl .= $row->soLuong . "<w:br/>";
-                    $ktvn .= "<w:br/>";
-                }                
-            }            
+                }    
+            }
+
+            $templateProcessor = new TemplateProcessor('template/BHPK/CAPVATTU.docx');                    
+                $outhd = 'YÊU CẦU CẤP VẬT TƯ ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'nhanvien' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'tt' => $tt,
+                    'maSo' => $ma,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,                   
+                ]);
+
+            $pathToSave = 'template/BHPK/CAPVATTUDOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In yêu cầu cấp vật tư " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
         }
+    }
 
-        $templateProcessor = new TemplateProcessor('template/BHPK/LENHSUACHUA.docx');                    
-            $outhd = 'LỆNH SỬA CHỮA ' . $soBG;
-            // Cá nhân            
-            $templateProcessor->setValues([
-                'ngay' => $ngay,
-                'thang' => $thang,
-                'nam' => $nam,
-                'soBG' => $soBG,
-                'bienSo' => $bienSo,
-                'thongTinXe' => $thongTinXe,
-                'soKhung' => $soKhung,
-                'soMay' => $soMay,
-                'nhanvien' => $nvtv,
-                'thoiGianVao' => $thoiGianVao,
-                'ngayVao' => $ngayVao,
-                'thoiGianRa' => $thoiGianRa,
-                'ngayRa' => $ngayRa,
-                'tt' => $tt,
-                'maSo' => $ma,
-                'noiDung' => $noiDung,
-                'dvt' => $dvt,
-                'sl' => $sl,        
-                'ktv' => $ktvn,
-                'loai' => $loai,           
-            ]);
+    public function printLenhSuaChua($idbg) {
+        $bg = BaoGiaBHPK::find($idbg);
+        if ($bg->saler != 0) {
+            // --- Kiểm tra giá tiền giữa hợp đồng với phụ kiện đang khai báo
+            $soHD = $bg->soHopDongKD;
+            $arrSoHD = ($soHD) ? explode(".",$soHD) : "";
+            $num = ($arrSoHD != "") ? $arrSoHD[0] : "";
+            $tongPKBan = 0;
+            $tongPKBanPhuKien = 0;
+            $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
+            if ($soHD && $hd) {
+                $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+                foreach($listpk as $row) {
+                    $p = PackageV2::find($row->id_bh_pk_package);
+                    if ($p->type != "cost" && $p->mapk) {
+                        if ($p->type == "pay")
+                            $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
+                    } 
+                }
 
-        $pathToSave = 'template/BHPK/LENHSUACHUADOWN.docx';
-        $templateProcessor->saveAs($pathToSave);
-        $headers = array(
-            'Content-Type: application/docx',
-        );
-        $nhatKy = new NhatKy();
-        $nhatKy->id_user = Auth::user()->id;
-        $nhatKy->thoiGian = Date("H:m:s");
-        $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-        $nhatKy->noiDung = "In lệnh sửa chữa " . $soBG;
-        $nhatKy->ghiChu = Carbon::now();
-        $nhatKy->save();
-        if ($bg->inProcess)
-            return response()->download($pathToSave,$outhd . '.docx',$headers);
-        else
-            return redirect()->back();
+                $ct = ChiTietBHPK::where('id_baogia',$idbg)->get();
+                foreach($ct as $row) {
+                    if (!$row->isTang)
+                        $tongPKBanPhuKien += $row->thanhTien;
+                }
+                // --------------------------
+            }
+
+            if ($tongPKBan != $tongPKBanPhuKien)
+                return "Tổng phụ kiện bán: ".number_format($tongPKBanPhuKien)." không khớp với hợp đồng: ".number_format($tongPKBan)." không thể in báo giá này!";
+            // ----------------------------------------------------------------
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $nvtv = $bg->user->userDetail->surname;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+
+            $tt = "";
+            $loai = "";
+            $ma = "";
+            $ktvn = ""; 
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                
+                $checkktv = KTVBHPK::where([
+                    ['id_baogia','=',$idbg],
+                    ['id_bhpk','=',$row->id_baohiem_phukien],
+                ])->exists(); 
+
+                if ($bh->loai != "Bán thêm" && $bh->loai != "Tặng kèm") {
+                    if ($checkktv) {
+                        $tt .= $i++ . "<w:br/>";
+                        $loai .= $bh->loai . "<w:br/>"; 
+                        $ma .= $bh->ma . "<w:br/>"; 
+                        // $noiDung .= $bh->noiDung . "<w:br/>";
+                
+                        if (!$row->isTang) {
+                            $noiDung .= $bh->noiDung . "<w:br/>";               
+                        } else {
+                            $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
+                        }
+                        
+                        $dvt .= $bh->dvt . "<w:br/>";
+                        $sl .= $row->soLuong . "<w:br/>";
+
+                        //Xử lý ktv
+                        $n_ktv = "";
+                        $ktv = KTVBHPK::where([
+                            ['id_baogia','=',$idbg],
+                            ['id_bhpk','=',$row->id_baohiem_phukien],
+                        ])->get(); 
+                        foreach($ktv as $k) {
+                            $u = User::find($k->id_work);
+                            $namektv = explode(" ", $u->userDetail->surname);
+                            $n_ktv .= $namektv[count($namektv) - 1] . "; ";
+                        }
+                        if ($n_ktv == "")
+                            $ktvn .= "<w:br/>";
+                        else
+                            $ktvn .= $n_ktv . "<w:br/>";;
+                        //-----         
+                    } else if ($bh->loai == "Gia công ngoài") {
+                        $tt .= $i++ . "<w:br/>";
+                        $loai .= $bh->loai . "<w:br/>"; 
+                        $ma .= $bh->ma . "<w:br/>"; 
+                        $noiDung .= $bh->noiDung . "<w:br/>";
+                        $dvt .= $bh->dvt . "<w:br/>";
+                        $sl .= $row->soLuong . "<w:br/>";
+                        $ktvn .= "<w:br/>";
+                    }                
+                }            
+            }
+
+            $templateProcessor = new TemplateProcessor('template/BHPK/LENHSUACHUA.docx');                    
+                $outhd = 'LỆNH SỬA CHỮA ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'nhanvien' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'tt' => $tt,
+                    'maSo' => $ma,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,        
+                    'ktv' => $ktvn,
+                    'loai' => $loai,           
+                ]);
+
+            $pathToSave = 'template/BHPK/LENHSUACHUADOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In lệnh sửa chữa " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
+        } else {
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $nvtv = $bg->user->userDetail->surname;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+
+            $tt = "";
+            $loai = "";
+            $ma = "";
+            $ktvn = ""; 
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                
+                $checkktv = KTVBHPK::where([
+                    ['id_baogia','=',$idbg],
+                    ['id_bhpk','=',$row->id_baohiem_phukien],
+                ])->exists(); 
+
+                if ($bh->loai != "Bán thêm" && $bh->loai != "Tặng kèm") {
+                    if ($checkktv) {
+                        $tt .= $i++ . "<w:br/>";
+                        $loai .= $bh->loai . "<w:br/>"; 
+                        $ma .= $bh->ma . "<w:br/>"; 
+                        // $noiDung .= $bh->noiDung . "<w:br/>";
+                
+                        if (!$row->isTang) {
+                            $noiDung .= $bh->noiDung . "<w:br/>";               
+                        } else {
+                            $noiDung .= $bh->noiDung . " (tặng)<w:br/>";               
+                        }
+                        
+                        $dvt .= $bh->dvt . "<w:br/>";
+                        $sl .= $row->soLuong . "<w:br/>";
+
+                        //Xử lý ktv
+                        $n_ktv = "";
+                        $ktv = KTVBHPK::where([
+                            ['id_baogia','=',$idbg],
+                            ['id_bhpk','=',$row->id_baohiem_phukien],
+                        ])->get(); 
+                        foreach($ktv as $k) {
+                            $u = User::find($k->id_work);
+                            $namektv = explode(" ", $u->userDetail->surname);
+                            $n_ktv .= $namektv[count($namektv) - 1] . "; ";
+                        }
+                        if ($n_ktv == "")
+                            $ktvn .= "<w:br/>";
+                        else
+                            $ktvn .= $n_ktv . "<w:br/>";;
+                        //-----         
+                    } else if ($bh->loai == "Gia công ngoài") {
+                        $tt .= $i++ . "<w:br/>";
+                        $loai .= $bh->loai . "<w:br/>"; 
+                        $ma .= $bh->ma . "<w:br/>"; 
+                        $noiDung .= $bh->noiDung . "<w:br/>";
+                        $dvt .= $bh->dvt . "<w:br/>";
+                        $sl .= $row->soLuong . "<w:br/>";
+                        $ktvn .= "<w:br/>";
+                    }                
+                }            
+            }
+
+            $templateProcessor = new TemplateProcessor('template/BHPK/LENHSUACHUA.docx');                    
+                $outhd = 'LỆNH SỬA CHỮA ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'nhanvien' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'tt' => $tt,
+                    'maSo' => $ma,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,        
+                    'ktv' => $ktvn,
+                    'loai' => $loai,           
+                ]);
+
+            $pathToSave = 'template/BHPK/LENHSUACHUADOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In lệnh sửa chữa " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
+        }
     }
 
     public function printQuyetToan($idbg) {
         $bg = BaoGiaBHPK::find($idbg);
-        $ngay = Date('d');
-        $thang = Date('m');
-        $nam = Date('Y');
-        $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
-        $khachHang = $bg->hoTen;
-        $dienThoai = $bg->dienThoai;
-        $diaChi = $bg->diaChi;
-        $bienSo = $bg->bienSo;
-        $thongTinXe = $bg->thongTinXe;
-        $soKhung = $bg->soKhung;
-        $soMay = $bg->soMay;
-        $loaiBG = ($bg->isPKD) ? "BÁO GIÁ KINH DOANH" : "BÁO GIÁ KHAI THÁC";
-        $nvtv = $bg->user->userDetail->surname . " - " . $bg->user->userDetail->phone;
-        $thoiGianVao = $bg->thoiGianVao;
-        $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
-        $thoiGianRa = $bg->thoiGianHoanThanh;
-        $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
-        $taiXe = $bg->taiXe;
-        $dienThoaiTaiXe = $bg->dienThoaiTaiXe;
+        if ($bg->saler != 0) {
+            // --- Kiểm tra giá tiền giữa hợp đồng với phụ kiện đang khai báo
+            $soHD = $bg->soHopDongKD;
+            $arrSoHD = ($soHD) ? explode(".",$soHD) : "";
+            $num = ($arrSoHD != "") ? $arrSoHD[0] : "";
+            $tongPKBan = 0;
+            $tongPKBanPhuKien = 0;
+            $hd = HopDong::where('code',$num)->orderBy('id', 'desc')->first();
+            if ($soHD && $hd) {
+                $listpk = SaleOffV2::where('id_hd',$hd->id)->get();
+                foreach($listpk as $row) {
+                    $p = PackageV2::find($row->id_bh_pk_package);
+                    if ($p->type != "cost" && $p->mapk) {
+                        if ($p->type == "pay")
+                            $tongPKBan += ($p->cost - ($p->cost*$row->giamGia/100));
+                    } 
+                }
 
-        $tt = "";
-        $noiDung = "";
-        $dvt = "";
-        $sl = "";
-        $donGia = "";
-        $chietKhau = "";
-        $thanhTien = "";
-        $tongCong = 0;
+                $ct = ChiTietBHPK::where('id_baogia',$idbg)->get();
+                foreach($ct as $row) {
+                    if (!$row->isTang)
+                        $tongPKBanPhuKien += $row->thanhTien;
+                }
+                // --------------------------
+            }
 
-        $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
-        $i = 1;
-        foreach($ct as $row){
-            $bh = BHPK::find($row->id_baohiem_phukien);
-            $tt .= $i++ . "<w:br/>";             
-            $dvt .= $bh->dvt . "<w:br/>";
-            $sl .= $row->soLuong . "<w:br/>";
-            $donGia .= number_format($row->donGia) . "<w:br/>";
-            $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
-            if (!$row->isTang) {
-                $noiDung .= $bh->noiDung . "<w:br/>";  
-                $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
-                $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));              
-            } else {
-                // $thanhTien .= "0<w:br/>";
-                // $tongCong += 0;
-                $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
-                $thanhTien .= "0 <w:br/>";
-                // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
-            }            
-            // $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
-            // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
-            
+            if ($tongPKBan != $tongPKBanPhuKien)
+                return "Tổng phụ kiện bán: ".number_format($tongPKBanPhuKien)." không khớp với hợp đồng: ".number_format($tongPKBan)." không thể thực hiện báo giá này!";
+            // ----------------------------------------------------------------
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
+            $khachHang = $bg->hoTen;
+            $dienThoai = $bg->dienThoai;
+            $diaChi = $bg->diaChi;
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $loaiBG = ($bg->isPKD) ? "BÁO GIÁ KINH DOANH" : "BÁO GIÁ KHAI THÁC";
+            $nvtv = $bg->user->userDetail->surname . " - " . $bg->user->userDetail->phone;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+            $taiXe = $bg->taiXe;
+            $dienThoaiTaiXe = $bg->dienThoaiTaiXe;
+
+            $tt = "";
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+            $donGia = "";
+            $chietKhau = "";
+            $thanhTien = "";
+            $tongCong = 0;
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                $tt .= $i++ . "<w:br/>";             
+                $dvt .= $bh->dvt . "<w:br/>";
+                $sl .= $row->soLuong . "<w:br/>";
+                $donGia .= number_format($row->donGia) . "<w:br/>";
+                $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
+                if (!$row->isTang) {
+                    $noiDung .= $bh->noiDung . "<w:br/>";  
+                    $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+                    $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));              
+                } else {
+                    // $thanhTien .= "0<w:br/>";
+                    // $tongCong += 0;
+                    $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
+                    $thanhTien .= "0 <w:br/>";
+                    // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
+                }            
+                // $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
+                // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+                
+            }
+            $tienCoc = $bg->tienCoc;
+            $tienBangChu = \HelpFunction::convert($tongCong-$tienCoc);
+            $yeuCau = $bg->yeuCau;        
+            $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
+            $templateProcessor = new TemplateProcessor('template/BHPK/QUYETTOAN.docx');               
+                $outhd = 'QUYẾT TOÁN SỬA CHỮA ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'khachHang' => $khachHang,
+                    'dienThoai' => $dienThoai,
+                    'diaChi' => $diaChi,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'loaiBG' => $loaiBG,
+                    'nvtv' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'taiXe' => $taiXe,
+                    'dienThoaiTaiXe' => $dienThoaiTaiXe,
+                    'tt' => $tt,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,
+                    'donGia' => $donGia,
+                    'chietKhau' => $chietKhau,
+                    'thanhTien' => $thanhTien,                
+                    'tienBangChu' => $tienBangChu,
+                    'yeuCau' => $yeuCau,
+                    'tienCoc' => number_format($tienCoc),
+                    'tongCong' => number_format($tongCong-$tienCoc),
+                    'ttnhanvien' => $ttnhanvien,               
+                ]);
+
+            $pathToSave = 'template/BHPK/QUYETTOANDOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In quyết toán sửa chữa " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
+        } else {
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $soBG = "BG0" . $bg->id . "-" . \HelpFunction::getDateCreatedAtRevert($bg->created_at);;
+            $khachHang = $bg->hoTen;
+            $dienThoai = $bg->dienThoai;
+            $diaChi = $bg->diaChi;
+            $bienSo = $bg->bienSo;
+            $thongTinXe = $bg->thongTinXe;
+            $soKhung = $bg->soKhung;
+            $soMay = $bg->soMay;
+            $loaiBG = ($bg->isPKD) ? "BÁO GIÁ KINH DOANH" : "BÁO GIÁ KHAI THÁC";
+            $nvtv = $bg->user->userDetail->surname . " - " . $bg->user->userDetail->phone;
+            $thoiGianVao = $bg->thoiGianVao;
+            $ngayVao = \HelpFunction::revertDate($bg->ngayVao);
+            $thoiGianRa = $bg->thoiGianHoanThanh;
+            $ngayRa = \HelpFunction::revertDate($bg->ngayHoanThanh);
+            $taiXe = $bg->taiXe;
+            $dienThoaiTaiXe = $bg->dienThoaiTaiXe;
+
+            $tt = "";
+            $noiDung = "";
+            $dvt = "";
+            $sl = "";
+            $donGia = "";
+            $chietKhau = "";
+            $thanhTien = "";
+            $tongCong = 0;
+
+            $ct = ChiTietBHPK::where('id_baogia', $idbg)->get();
+            $i = 1;
+            foreach($ct as $row){
+                $bh = BHPK::find($row->id_baohiem_phukien);
+                $tt .= $i++ . "<w:br/>";             
+                $dvt .= $bh->dvt . "<w:br/>";
+                $sl .= $row->soLuong . "<w:br/>";
+                $donGia .= number_format($row->donGia) . "<w:br/>";
+                $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
+                if (!$row->isTang) {
+                    $noiDung .= $bh->noiDung . "<w:br/>";  
+                    $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
+                    $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));              
+                } else {
+                    // $thanhTien .= "0<w:br/>";
+                    // $tongCong += 0;
+                    $noiDung .= $bh->noiDung . " (tặng)<w:br/>";
+                    $thanhTien .= "0 <w:br/>";
+                    // $tongCong += (($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100));
+                }            
+                // $thanhTien .= number_format((($row->donGia*$row->soLuong) - $row->chietKhau)) . "<w:br/>";
+                // $tongCong += ((($row->donGia*$row->soLuong) - $row->chietKhau));
+                
+            }
+            $tienCoc = $bg->tienCoc;
+            $tienBangChu = \HelpFunction::convert($tongCong-$tienCoc);
+            $yeuCau = $bg->yeuCau;        
+            $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
+            $templateProcessor = new TemplateProcessor('template/BHPK/QUYETTOAN.docx');               
+                $outhd = 'QUYẾT TOÁN SỬA CHỮA ' . $soBG;
+                // Cá nhân            
+                $templateProcessor->setValues([
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'soBG' => $soBG,
+                    'khachHang' => $khachHang,
+                    'dienThoai' => $dienThoai,
+                    'diaChi' => $diaChi,
+                    'bienSo' => $bienSo,
+                    'thongTinXe' => $thongTinXe,
+                    'soKhung' => $soKhung,
+                    'soMay' => $soMay,
+                    'loaiBG' => $loaiBG,
+                    'nvtv' => $nvtv,
+                    'thoiGianVao' => $thoiGianVao,
+                    'ngayVao' => $ngayVao,
+                    'thoiGianRa' => $thoiGianRa,
+                    'ngayRa' => $ngayRa,
+                    'taiXe' => $taiXe,
+                    'dienThoaiTaiXe' => $dienThoaiTaiXe,
+                    'tt' => $tt,
+                    'noiDung' => $noiDung,
+                    'dvt' => $dvt,
+                    'sl' => $sl,
+                    'donGia' => $donGia,
+                    'chietKhau' => $chietKhau,
+                    'thanhTien' => $thanhTien,                
+                    'tienBangChu' => $tienBangChu,
+                    'yeuCau' => $yeuCau,
+                    'tienCoc' => number_format($tienCoc),
+                    'tongCong' => number_format($tongCong-$tienCoc),
+                    'ttnhanvien' => $ttnhanvien,               
+                ]);
+
+            $pathToSave = 'template/BHPK/QUYETTOANDOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+            $nhatKy->noiDung = "In quyết toán sửa chữa " . $soBG;
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+            if ($bg->inProcess)
+                return response()->download($pathToSave,$outhd . '.docx',$headers);
+            else
+                return redirect()->back();
         }
-        $tienCoc = $bg->tienCoc;
-        $tienBangChu = \HelpFunction::convert($tongCong-$tienCoc);
-        $yeuCau = $bg->yeuCau;        
-        $ttnhanvien = $bg->user->userDetail->surname . "<w:br/>" . $bg->user->userDetail->phone;
-        $templateProcessor = new TemplateProcessor('template/BHPK/QUYETTOAN.docx');               
-            $outhd = 'QUYẾT TOÁN SỬA CHỮA ' . $soBG;
-            // Cá nhân            
-            $templateProcessor->setValues([
-                'ngay' => $ngay,
-                'thang' => $thang,
-                'nam' => $nam,
-                'soBG' => $soBG,
-                'khachHang' => $khachHang,
-                'dienThoai' => $dienThoai,
-                'diaChi' => $diaChi,
-                'bienSo' => $bienSo,
-                'thongTinXe' => $thongTinXe,
-                'soKhung' => $soKhung,
-                'soMay' => $soMay,
-                'loaiBG' => $loaiBG,
-                'nvtv' => $nvtv,
-                'thoiGianVao' => $thoiGianVao,
-                'ngayVao' => $ngayVao,
-                'thoiGianRa' => $thoiGianRa,
-                'ngayRa' => $ngayRa,
-                'taiXe' => $taiXe,
-                'dienThoaiTaiXe' => $dienThoaiTaiXe,
-                'tt' => $tt,
-                'noiDung' => $noiDung,
-                'dvt' => $dvt,
-                'sl' => $sl,
-                'donGia' => $donGia,
-                'chietKhau' => $chietKhau,
-                'thanhTien' => $thanhTien,                
-                'tienBangChu' => $tienBangChu,
-                'yeuCau' => $yeuCau,
-                'tienCoc' => number_format($tienCoc),
-                'tongCong' => number_format($tongCong-$tienCoc),
-                'ttnhanvien' => $ttnhanvien,               
-            ]);
-
-        $pathToSave = 'template/BHPK/QUYETTOANDOWN.docx';
-        $templateProcessor->saveAs($pathToSave);
-        $headers = array(
-            'Content-Type: application/docx',
-        );
-        $nhatKy = new NhatKy();
-        $nhatKy->id_user = Auth::user()->id;
-        $nhatKy->thoiGian = Date("H:m:s");
-        $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-        $nhatKy->noiDung = "In quyết toán sửa chữa " . $soBG;
-        $nhatKy->ghiChu = Carbon::now();
-        $nhatKy->save();
-        if ($bg->inProcess)
-            return response()->download($pathToSave,$outhd . '.docx',$headers);
-        else
-            return redirect()->back();
     }
 
     public function baoCaoDoanhThuPanel() {

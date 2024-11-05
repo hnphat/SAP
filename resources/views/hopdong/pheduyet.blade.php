@@ -229,17 +229,19 @@
                                                     <th>TT</th>
                                                     <th>Nội dung</th>
                                                     <th>Giá</th>
+                                                    <th>Giảm giá</th>
+                                                    <th>Thành tiền</th>
                                                 </tr>
                                                 <tbody id="showPKPAY">
                                                 </tbody>
                                             </thead>
                                         </table>
                                         <p>
-                                            Giá: <strong id="xtongPay"></strong><br/>
-                                            <span class="text-pink">Áp dụng giảm giá:</span> 
-                                            <input type="text" name="magiamgia" id="magiamgia">%
-                                        <br/>
-                                        <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong>
+                                            Tổng giá: <strong id="xtongPay"></strong><br/>
+                                            <!-- <span class="text-pink">Áp dụng giảm giá:</span> 
+                                            <input type="text" name="magiamgia" id="magiamgia">% -->
+                                        <!-- <br/> -->
+                                        <!-- <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong> -->
                                         </p>
                                         <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
                                         <table class="table table-bordered table-striped">
@@ -1170,12 +1172,14 @@
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
+                                "<td>" + response.pkban[i].giamGia + "%</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100))) + "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkban[i].cost);
+                            sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
-                        $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
+                        // $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
 
                     },
                     error: function() {
