@@ -452,7 +452,8 @@ class DichVuController extends Controller
                     $ct->soLuong = 1;
                     $ct->donGia = $p->cost;
                     $ct->isTang = $p->type == "pay" ? 0 : 1;
-                    $ct->thanhTien = $p->cost;
+                    $ct->thanhTien = $p->cost - ($p->cost*$row->giamGia/100);
+                    $ct->chietKhau = $row->giamGia;
                     $ct->save();
                     $pk = BHPK::find($p->mapk);
                     if ($ct) {
@@ -460,10 +461,10 @@ class DichVuController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                        $nhatKy->noiDung = "Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
+                        $nhatKy->noiDung = "Liên kết phụ kiện. Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
                         .$pk->noiDung."; Số lượng: 1; Đơn giá: "
                         .$p->cost."; Tặng (1: Có; 0: Không): "
-                        .($p->type == "pay" ? 0 : 1).";";
+                        .($p->type == "pay" ? 0 : 1)."; Chiết khấu: " . $row->giamGia;
                         $nhatKy->save();
                         $flag = true;
                     }

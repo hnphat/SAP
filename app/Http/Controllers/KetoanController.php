@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\HopDong;
 use App\KhoV2;
+use App\SaleOffV2;
 use App\NhatKy;
 use App\HistoryHopDong;
 use App\TypeCarDetail;
@@ -219,7 +220,7 @@ class KetoanController extends Controller
     public function inBienBan($id) {
         //----- Đã xuất xe mới in được biên bản bàn giao
         $hd = HopDong::find($id);
-        $magiamgia = $hd->magiamgia;
+        // $magiamgia = $hd->magiamgia;
         $khoXe = KhoV2::find($hd->id_car_kho);
         $ngayGiaoXe = \HelpFunction::revertDate($khoXe->ngayGiaoXe);
         if($khoXe->xuatXe == true) {
@@ -253,7 +254,11 @@ class KetoanController extends Controller
                 $tongpkpay = 0;
                 foreach($package as $row) {
                     if ($row->type == 'pay') {
-                        $sumpkban += $row->cost;
+                        $saleOff = SaleOffV2::select("*")->where([
+                            ['id_hd','=',$id],
+                            ['id_bh_pk_package','=',$row->id]
+                        ])->first();
+                        $sumpkban += ($row->cost - ($row->cost*$saleOff->giamGia/100));
                         $phukienall .= $row->name . ", ";
                         $tongpkpay++;
                     }
@@ -295,7 +300,7 @@ class KetoanController extends Controller
                     'frame' => $kho->frame,
                     'cost' => number_format($sumchiphi),
                     'pay' => number_format($sumpkban),
-                    'tong' => number_format($sumchiphi + ($magiamgia == 0 ? $sumpkban : ($sumpkban - ($sumpkban*$magiamgia/100))) + $giaXe),
+                    'tong' => number_format($sumchiphi + $sumpkban + $giaXe),
                     'phukienall' => $phukienall,
                     'stt' => $stt,
                     'noiDung' => $noidung,
@@ -303,7 +308,7 @@ class KetoanController extends Controller
                     'tongpk' => ($k - 1),
                     'tongpkpay' => $tongpkpay,
                     'ngaygiaoxe' => $ngayGiaoXe,
-                    'payGiamGia' => number_format(($magiamgia == 0 ? $sumpkban : ($sumpkban - ($sumpkban*$magiamgia/100))))
+                    'payGiamGia' => number_format($sumpkban)
                 ]);
 
             $pathToSave = 'template/BIENBANBANGIAODOWN.docx';
