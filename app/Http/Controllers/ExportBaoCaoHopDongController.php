@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Excel;
 use App\KhoV2;
 use App\NhatKy;
+use App\SaleOffV2;
 use App\BHPK;
 use App\HopDong;
 use App\TypeCarDetail;
@@ -283,7 +284,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                $magiamgia = $row->magiamgia;
+                // $magiamgia = $row->magiamgia;
 
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
@@ -388,13 +389,17 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     }
 
                     if ($row2->type == 'pay') {
-                        $pkban += $row2->cost;
+                        $saleOff = SaleOffV2::select("*")->where([
+                            ['id_hd','=',$row->id],
+                            ['id_bh_pk_package','=',$row2->id]
+                        ])->first();
+                        $pkban += $row2->cost - ($row2->cost*$saleOff->giamGia/100);
                     }
                 }
 
                 $loinhuanbaohiem = $bhvc - $giavonbh;
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
-                $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))) - $_giavonpk;
+                $loinhuanpkban = $pkban - $_giavonpk;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -472,7 +477,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '22' => $bhvc,
                     '23' => $giavonbh,
                     '24' => $loinhuanbaohiem,
-                    '25' => ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))),
+                    '25' => $pkban,
                     '26' => $_giavonpk,
                     '27' => $loinhuanpkban,
                     '28' => $dangky,
@@ -509,7 +514,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 $dongxe = TypeCarDetail::find($row->id_car_sale)->name;
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
-                $magiamgia = $row->magiamgia;
+                // $magiamgia = $row->magiamgia;
 
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
@@ -606,13 +611,17 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     }
 
                     if ($row2->type == 'pay') {
-                        $pkban += $row2->cost;
+                        $saleOff = SaleOffV2::select("*")->where([
+                            ['id_hd','=',$row->id],
+                            ['id_bh_pk_package','=',$row2->id]
+                        ])->first();
+                        $pkban += $row2->cost - ($row2->cost*$saleOff->giamGia/100);
                     }
                 }
 
                 $loinhuanbaohiem = $bhvc - $giavonbh;
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
-                $loinhuanpkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))) - $_giavonpk;
+                $loinhuanpkban = $pkban - $_giavonpk;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
@@ -690,7 +699,7 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                     '22' => $bhvc,
                     '23' => $giavonbh,
                     '24' => $loinhuanbaohiem,
-                    '25' => ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100))),
+                    '25' => $pkban,
                     '26' => $_giavonpk,
                     '27' => $loinhuanpkban,
                     '28' => $dangky,
