@@ -366,7 +366,7 @@
                                 <p>Quản lý đánh giá</p>
                             </a>
                         </li>         -->
-                        @endif                        
+                        @endif                                                
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||

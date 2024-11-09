@@ -8,6 +8,7 @@ use Excel;
 use App\KhoV2;
 use App\NhatKy;
 use App\BHPK;
+use App\SaleOffV2;
 use App\HopDong;
 use App\TypeCarDetail;
 use Maatwebsite\Excel\Concerns\FromCollection;

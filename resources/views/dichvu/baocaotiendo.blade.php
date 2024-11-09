@@ -44,7 +44,28 @@
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
                               <form>
-                                <div class="card-body row">                                        
+                                <div class="card-body row">     
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>Trạng thái</label>
+                                                <select name="trangThai" id="trangThai" class="form-control"> 
+                                                    <option value="0" selected>Tất cả</option>
+                                                    <option value="1">Đang thực hiện (báo giá)</option>
+                                                    <option value="2">Hoàn tất (báo giá)</option>
+                                                    <option value="3">Đã hủy (báo giá)</option>
+                                                    <option value="4">Chưa thu tiền (báo giá)</option>
+                                                    <option value="5">Đã thu tiền (báo giá)</option>
+                                                    <option value="6">Quá hạn (công việc)</option>
+                                                    <option value="7">Chưa thực hiện (công việc)</option>
+                                                    <option value="8">Đã thực hiện (công việc)</option>
+                                                </select>
+                                            </div>
+                                            <p>
+                                                <strong>Doanh thu tặng:</strong> <span class="text-primary text-bold">Đợi cập nhật</span><br/> 
+                                                <strong>Doanh thu bán:</strong> <span class="text-info text-bold">Đợi cập nhật</span><br/> 
+                                                <strong>Thực thu:</strong> <span class="text-success text-bold">Đợi cập nhật</span><br/> 
+                                            </p>
+                                        </div>                                   
                                         <div class="col-sm-3">
                                             <div class="form-group">
                                                 <label>Chọn nhân viên</label>
@@ -116,7 +137,8 @@
                     "_token": "{{csrf_token()}}",
                     "nhanVien": $("select[name=nhanVien]").val(),
                     "tu": $("input[name=chonNgayOne]").val(),
-                    "den": $("input[name=chonNgayTwo").val()
+                    "den": $("input[name=chonNgayTwo").val(),
+                    "loai": $("select[name=trangThai").val()
                 },
                 success: function(response) {
                     Toast.fire({
