@@ -5,6 +5,9 @@
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <style>
+        thead th { position: sticky; top: 0;}
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -50,12 +53,12 @@
                                                 <label>Trạng thái</label>
                                                 <select name="trangThai" id="trangThai" class="form-control"> 
                                                     <option value="0" selected>Tất cả</option>
-                                                    <option value="1">Đang thực hiện (báo giá)</option>
+                                                    <!-- <option value="1">Đang thực hiện (báo giá)</option>
                                                     <option value="2">Hoàn tất (báo giá)</option>
                                                     <option value="3">Đã hủy (báo giá)</option>
                                                     <option value="4">Chưa thu tiền (báo giá)</option>
-                                                    <option value="5">Đã thu tiền (báo giá)</option>
-                                                    <option value="6">Quá hạn (công việc)</option>
+                                                    <option value="5">Đã thu tiền (báo giá)</option> -->
+                                                    <!-- <option value="6">Quá hạn (công việc)</option> -->
                                                     <option value="7">Chưa thực hiện (công việc)</option>
                                                     <option value="8">Đã thực hiện (công việc)</option>
                                                 </select>
@@ -69,8 +72,9 @@
                                         <div class="col-sm-3">
                                             <div class="form-group">
                                                 <label>Chọn nhân viên</label>
-                                                <select name="nhanVien" class="form-control"> 
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))                                                            
+                                                <select name="nhanVien" class="form-control">                                                     
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))  
+                                                    <option value="0">Tất cả</option>                                                          
                                                     @foreach($user as $row)
                                                         @if($row->hasRole('to_phu_kien'))
                                                             <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
@@ -98,7 +102,35 @@
                                 </div>
                               </form>
                               <hr/>
-                              <div id="all">
+                              <div>
+                                <!-- <div style='overflow:auto;'> -->
+                                    <table class='table table-striped table-bordered'>
+                                        <thead>
+                                            <tr>
+                                                <th class="table-light">STT</th>
+                                                <th class="table-light">Trạng thái</th>   
+                                                <th class="table-light">Thu tiền</th>
+                                                <th class="table-light">Tác vụ</th>            
+                                                <th class="table-light">Loại báo giá</th>
+                                                <th class="table-light">Ngày tạo</th>
+                                                <th class="table-light">Sale</th>
+                                                <th class="table-light">Mã lệnh</th>
+                                                <th class="table-light">Biển số</th>
+                                                <th class="table-light">Số khung</th>
+                                                <th class="table-light">Khách hàng</th>
+                                                <th class="table-light">Thông tin xe</th>
+                                                <th class="table-light">Công việc</th>  
+                                                <th class="table-light">Phân loại</th>      
+                                                <th class="table-light">Tặng</th>  
+                                                <th class="table-light">Giá trị</th>                   
+                                                <th class="table-light">Xe vào</th>
+                                                <th class="table-light">Xe ra (dự kiến)</th>                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody id="all">
+                                        </tbody>
+                                    </table>
+                                <!-- </div> -->
                               </div>
                             </div>
                         </div>

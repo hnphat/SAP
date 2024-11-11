@@ -3391,28 +3391,28 @@ class DichVuController extends Controller
         $tu = $request->tu;
         $den = $request->den;
         $loai = $request->loai;
-        echo "<div style='overflow:auto;'><table class='table table-striped table-bordered'>
-                <tr>
-                    <th>STT</th>
-                    <th>Loại báo giá</th>
-                    <th>Ngày tạo</th>
-                    <th>Sale</th>
-                    <th>Mã lệnh</th>
-                    <th>Biển số</th>
-                    <th>Số khung</th>
-                    <th>Khách hàng</th>
-                    <th>Thông tin xe</th>
-                    <th>Công việc</th>  
-                    <th>Phân loại</th>      
-                    <th>Tặng</th>  
-                    <th>Giá trị</th>                   
-                    <th>Xe vào</th>
-                    <th>Xe ra (dự kiến)</th>
-                    <th>Trạng thái</th>   
-                    <th>Thu tiền</th>
-                    <th>Tác vụ</th>            
-                </tr>
-                <tbody>";
+        // echo "<div style='overflow:auto;'><table class='table table-striped table-bordered' style='position:sticky;top:0;left:0;'>
+        //         <tr>
+        //             <th>STT</th>
+        //             <th>Loại báo giá</th>
+        //             <th>Ngày tạo</th>
+        //             <th>Sale</th>
+        //             <th>Mã lệnh</th>
+        //             <th>Biển số</th>
+        //             <th>Số khung</th>
+        //             <th>Khách hàng</th>
+        //             <th>Thông tin xe</th>
+        //             <th>Công việc</th>  
+        //             <th>Phân loại</th>      
+        //             <th>Tặng</th>  
+        //             <th>Giá trị</th>                   
+        //             <th>Xe vào</th>
+        //             <th>Xe ra (dự kiến)</th>
+        //             <th>Trạng thái</th>   
+        //             <th>Thu tiền</th>
+        //             <th>Tác vụ</th>            
+        //         </tr>
+        //         <tbody>";
                 
         $ct = KTVBHPK::where('id_work','=',$nv)
         ->orderBy('id', 'desc')
@@ -3460,6 +3460,11 @@ class DichVuController extends Controller
 
                         echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3473,12 +3478,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                     };
                         break;
@@ -3513,6 +3513,11 @@ class DichVuController extends Controller
 
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3526,12 +3531,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }
                     };
@@ -3567,6 +3567,11 @@ class DichVuController extends Controller
                             
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3580,12 +3585,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }
                     };
@@ -3621,6 +3621,11 @@ class DichVuController extends Controller
 
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3634,12 +3639,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }
                     };
@@ -3675,6 +3675,11 @@ class DichVuController extends Controller
                             
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3688,12 +3693,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }
                     };
@@ -3729,6 +3729,11 @@ class DichVuController extends Controller
 
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3742,12 +3747,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }
                     };
@@ -3787,6 +3787,11 @@ class DichVuController extends Controller
 
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3800,12 +3805,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }
                     };
@@ -3841,6 +3841,11 @@ class DichVuController extends Controller
 
                             echo "<tr>
                                 <td>".($i++)."</td>
+                                <td>".$stt."</td>
+                                <td>".$sttThu."</td>
+                                <td>
+                                    ".$tacVu."
+                                </td>
                                 <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                 <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
                                 <td>".$_sale."</td>
@@ -3854,12 +3859,7 @@ class DichVuController extends Controller
                                 <td>".$tang."</td>
                                 <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
                                 <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
+                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
                             </tr>"; 
                         }    
                     };
@@ -3867,8 +3867,8 @@ class DichVuController extends Controller
                 }       
             }
         }
-        echo "</tbody>
-                </table></div>";
+        // echo "</tbody>
+        //         </table></div>";
     }
 
     public function getEditHangMuc(Request $request) {
