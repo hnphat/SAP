@@ -620,10 +620,141 @@ class HDController extends Controller
     }
     
     public function worksheetcn($id) {
-        $pdf = PDF::loadView('hopdong.pdf.mypdf');
-        // return $pdf->download('mypdf.pdf'); // Xuất file
-        return $pdf->stream("mypdf.pdf", array("Attachment" => false)); // Xem trực tiếp
+        $outhd = "";
+        $logSoHd = "";
+        $templateProcessor = new TemplateProcessor('template/WORKSHEET.docx');
+        $hasPK = SaleOffV2::select('package.*')
+        ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+        ->join('hop_dong as h','saleoffv2.id_hd','=','h.id')
+        ->where([
+            ['saleoffv2.id_hd','=', $id],
+            ['package.type','=','pay']
+        ])->exists();
+            // --------------------
+            $templateProcessor = new TemplateProcessor('template/WORKSHEET.docx');
+            // Set data from database
+            $sale = HopDong::find($id);
+            $phitruocba = 0;
+            $phidangky = 0;
+            $phidangkiem = 0;
+            $phiduongbo = 0;
+            $baohiem = 0;
+            $baohiemvc = 0;
+            $hotrodangky = 0;
+            $tongphi = 0;
+            $i = 1;
+            $stt1 = "";
+            $noidung1 = "";
+            $j = 1;
+            $stt2 = "";
+            $noidung2 = "";
+            $package = $sale->package;
+            foreach($package as $row) {
+                if ($row->type == 'free') {
+                    $stt1 .= $i . '<w:br/>';
+                    $noidung1 .=  $row->name . '<w:br/>';
+                    $i++;
+                    continue;
+                }
+
+                if ($row->type == 'cost' && $row->cost_tang == 0) {
+                    switch($row->name) {
+                        case "Phí trước bạ": $phitruocba += $row->cost; break;
+                        case "Phí đăng ký xe": $phidangky += $row->cost; break;
+                        case "Phí đăng kiểm xe": $phidangkiem += $row->cost; break;
+                        case "Phí đường bộ": $phiduongbo += $row->cost; break;
+                        case "Bảo hiểm TNDS": $baohiem += $row->cost; break;
+                        case "Bảo hiểm vật chất": $baohiemvc += $row->cost; break;
+                        case "Hỗ trợ đăng ký - đăng kiểm": $hotrodangky += $row->cost; break;
+                    }
+                }
+
+                if ($row->type == 'pay') {
+                    $stt2 .= $j . '<w:br/>';
+                    $noidung2 .=  $row->name . '<w:br/>';
+                    $j++;
+                }
+            }
+
+            $tongphi = $phitruocba + $phidangky + $phidangkiem + $phiduongbo + $baohiem + $baohiemvc + $hotrodangky;
+            $car_detail = $sale->carSale;
+            $car = $sale->carSale;
+            $kho = $sale->carSale;
+            $giaXe = $sale->giaXe;
+            $outhd = 'Worksheet ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            // Cá nhân
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $templateProcessor->setValues([
+                'sohd' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
+                'ngayin' => Date('d')."/".Date('m')."/".Date('Y'),
+                'tvbh' => $sale->user->userDetail->surname,
+                // 'salePhone' => $sale->user->userDetail->phone,
+                'guest' => $sale->guest->name,
+                'guestother' => $sale->guest->cmnd ? $sale->guest->name : "",
+                'diachi' => $sale->guest->address,
+                'sdt' => $sale->guest->phone,
+                'cccd' => $sale->guest->cmnd ? $sale->guest->cmnd : $sale->guest->mst,
+                'ngayCap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noicap' => $sale->guest->noiCap,
+                'ngaysinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                // 'tenDaiDien' => $sale->guest->name,
+                'loaixe' => $car_detail->name,
+                'mauxe' => $sale->mau,
+                'gianiemyet' => $sale->giaNiemYet,
+                'giaban' => number_format($sale->giaXe),
+                'giamgia' => number_format($sale->magiamgia),
+                'chiphixe' => number_format($tongphi),
+                'phitruocba' => number_format($phitruocba),
+                'phidangky' => number_format($phidangky),
+                'phidangkiem' => number_format($phidangkiem),
+                'phiduongbo' => number_format($phiduongbo),
+                'baohiem' => number_format($baohiem),
+                'baohiemvc' => number_format($baohiemvc),
+                'hotrodangky' => number_format($hotrodangky),
+                'tongphi' => number_format($tongphi),
+                'hinhthucmua' => $sale->isTienMat == 1 ? "Tiền mặt" : "Ngân hàng", 
+                'tennganhang' => $sale->tenNganHang,
+                'tonggiatrihopdong' => number_format($tongphi + ($sale->giaXe - $sale->magiamgia)),
+                'stt1' => $stt1,
+                'noidung1' => $noidung1,
+                'stt2' => $stt2,
+                'noidung2' => $noidung2,
+            ]);
+        // -------------------------
+        $pathToSave = 'template/WORKSHEETDOWN.docx';
+        $templateProcessor->saveAs($pathToSave);
+        $headers = array(
+            'Content-Type: application/docx',
+        );
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:m:s");
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+        $nhatKy->noiDung = "In worksheet " . $logSoHd;
+        $nhatKy->save();
+
+        $his = new HistoryHopDong();
+        $his->idDeNghi = $id;
+        $his->id_user = Auth::user()->id;
+        $his->ngay = Date("H:m:s d-m-Y");
+        $his->noiDung = "In worksheet cho khách hàng cá nhân";
+        $his->ghiChu = "";
+        $his->save();
+
+        return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
+
+    // public function worksheetcn($id) {
+    //     $pdf = PDF::loadView('hopdong.pdf.mypdf');
+    //     // return $pdf->download('mypdf.pdf'); // Xuất file
+    //     return $pdf->stream("mypdf.pdf", array("Attachment" => false)); // Xem trực tiếp
+    // }
 
     public function cnnh($id) {
         $outhd = "";
@@ -2879,7 +3010,7 @@ class HDController extends Controller
         $result->dienThoai = $request->dienThoai;
         $result->id_car_sale = $request->xeBan;
         $result->mau = $request->mauSac;
-        // $result->magiamgia = $request->magiamgia;
+        $result->magiamgia = $request->giamGia;
         $result->save();
         if($result) {
 

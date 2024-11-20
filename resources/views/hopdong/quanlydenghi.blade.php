@@ -138,6 +138,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Giảm giá:</label>
+                                                    <input name="giamGia" id="giamGia" value="0" placeholder="Nhập số tiền giảm" type="number" class="form-control"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="text" id="showCostGiamGia" class="form-control" disabled="disabled" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
                                                 <div class="form-group" style="display:none;">
                                                     <label>Nguồn khách hàng</label>
                                                     <select name="nguonKH" id="nguonKH" class="form-control">
@@ -308,10 +320,10 @@
                                             <div class="form-group">
                                                 <label>CHỌN MẪU CẦN IN</label>
                                                 <select name="mauHD" class="form-control">
-                                                    <!-- <option value="1">Hợp đồng mua bán</option>
-                                                    <option value="2">Phụ lục hợp đồng</option> -->
+                                                    <option value="1">Hợp đồng mua bán</option>
+                                                    <option value="2">Phụ lục hợp đồng</option>
                                                     <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
-                                                    <option value="8">Worksheet</option>
+                                                    <option value="8">Worksheet (Cá nhân)</option>
                                                     <option value="4">Yêu cầu PDI</option>
                                                     <option value="5">Yêu cầu cấp bảo hiểm</option>
                                                     <option value="6">Yêu cầu lắp phụ kiện</option>
@@ -696,7 +708,14 @@
                 $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#hoaHongMoiGioi').val();
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#giamGia').val();
+                $('#showCostGiamGia').val("(" + DOCSO.doc(cos) + ")");
             }
+
+            $('#giamGia').keyup(function(){
+                var cos = $('#giamGia').val();
+                $('#showCostGiamGia').val("(" + DOCSO.doc(cos) + ")");
+            });
 
             $('#tamUng').keyup(function(){
                 var cos = $('#tamUng').val();
@@ -735,6 +754,7 @@
                                 $("#pkPayAdd").show();
 
                                 $("#tamUng").prop('disabled', false);
+                                $("#giamGia").prop('disabled', false);
                                 $("#giaBanXe").prop('disabled', false);
                                 $("#giaNiemYet").prop('disabled', false);
                                 $("#hinhThucThanhToan").prop('disabled', false);
@@ -758,6 +778,7 @@
                                 $("#pkPayAdd").hide();
 
                                 $("#tamUng").prop('disabled', true);
+                                $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
@@ -782,6 +803,7 @@
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
+                                $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
@@ -805,6 +827,7 @@
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
+                                $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
@@ -827,6 +850,7 @@
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
+                                $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
@@ -1075,6 +1099,7 @@
 
                             $("#nguonKH").val(response.data.nguonKH);
                             $("#tamUng").val(response.data.tienCoc);
+                            $("#giamGia").val(response.data.magiamgia);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
@@ -1146,6 +1171,7 @@
 
                             
                             $("#tamUng").val("");
+                            $("#giamGia").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
                             $("#hoaHongMoiGioi").val("");
@@ -1165,6 +1191,7 @@
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
+                            $("#giamGia").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);
@@ -1670,6 +1697,7 @@
                             $("#magiamgia").val("");
                             $("#xeBan").val("");
                             $("#tamUng").val("");
+                            $("#giamGia").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
                             $("#hoaHongMoiGioi").val("");
@@ -1687,6 +1715,7 @@
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
+                            $("#giamGia").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
@@ -1785,8 +1814,8 @@
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
                         case 1: open("{{url('management/hd/banle/denghi/canhan/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                         case 2: open("{{url('management/hd/banle/denghi/canhan/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 3: open("{{url('management/hd/banle/denghi/congty/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 4: open("{{url('management/hd/banle/denghi/congty/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/denghi/canhan/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/denghi/canhan/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
                     }
                 }
             });
