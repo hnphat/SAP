@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Log;
+use PDF;
 
 class HDController extends Controller
 {
@@ -617,6 +618,13 @@ class HDController extends Controller
 
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
+    
+    public function worksheetcn($id) {
+        $pdf = PDF::loadView('hopdong.pdf.mypdf');
+        // return $pdf->download('mypdf.pdf'); // Xuất file
+        return $pdf->stream("mypdf.pdf", array("Attachment" => false)); // Xem trực tiếp
+    }
+
     public function cnnh($id) {
         $outhd = "";
         $logSoHd = "";

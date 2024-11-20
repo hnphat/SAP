@@ -302,6 +302,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('banle/denghi/canhan/down/{id}','HDController@inDeNghiCaNhan');
         Route::get('banle/denghi/congty/down/{id}','HDController@inDeNghiCongTy');
 
+         // --- In ấn worksheet
+         Route::get('banle/denghi/canhan/down/worksheet/{id}','HDController@worksheetcn');
+
         // --- BẢng giá xe
         Route::get('listbanggia','HanhChinhController@showBangGiaXe')->name('sale.banggiaxe');
         Route::get('xemlistbanggia','HanhChinhController@showXemBangGiaXe')->name('sale.xembanggiaxe');

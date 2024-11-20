@@ -311,6 +311,7 @@
                                                     <!-- <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option> -->
                                                     <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
+                                                    <option value="8">Worksheet</option>
                                                     <option value="4">Yêu cầu PDI</option>
                                                     <option value="5">Yêu cầu cấp bảo hiểm</option>
                                                     <option value="6">Yêu cầu lắp phụ kiện</option>
@@ -1779,6 +1780,15 @@
                         title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
                     })
                  }
+
+                 if ($("select[name=mauHD]").val() == 8) {
+                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                        case 1: open("{{url('management/hd/banle/denghi/canhan/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 2: open("{{url('management/hd/banle/denghi/canhan/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 3: open("{{url('management/hd/banle/denghi/congty/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                        case 4: open("{{url('management/hd/banle/denghi/congty/down/worksheet/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                    }
+                }
             });
 
 
