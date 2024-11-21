@@ -704,9 +704,9 @@ class HDController extends Controller
                 // 'tenDaiDien' => $sale->guest->name,
                 'loaixe' => $car_detail->name,
                 'mauxe' => $sale->mau,
-                'gianiemyet' => $sale->giaNiemYet,
+                'gianiemyet' => number_format($sale->giaNiemYet),
                 'giaban' => number_format($sale->giaXe),
-                'giamgia' => number_format($sale->magiamgia),
+                'giamgia' => number_format($sale->giaNiemYet - $sale->giaXe),
                 'chiphixe' => number_format($tongphi),
                 'phitruocba' => number_format($phitruocba),
                 'phidangky' => number_format($phidangky),
@@ -1934,20 +1934,23 @@ class HDController extends Controller
                 'message' => 'Lỗi tạo mẫu, chưa chọn xe đề nghị!',
                 'code' => 500
             ]);
+        $typecardetail = TypeCarDetail::find($request->chonXe);
+
         $code = new HopDong();
         $code->id_user_create = Auth::user()->id;
-        $code->id_car_sale = $request->chonXe;
+        $code->id_car_sale = $request->chonXe;        
         $code->isTienMat = $request->hinhThucThanhToan;
         $code->nguonKH = $request->nguonKH;
         $code->mau = $request->chonMauXe;
         $code->tienCoc = $request->tamUng;
         $code->giaXe = $request->giaBanXe;
-        $code->giaNiemYet = $request->giaNiemYet;
+        $code->giaNiemYet = $typecardetail->giaNiemYet;
         $code->id_guest = $request->khachHang;
         $code->hoaHongMoiGioi = $request->hoaHongMoiGioi;
         $code->hoTen = $request->hoTen;
         $code->CMND2 = $request->cmnd;
         $code->dienThoai = $request->dienThoai;
+        $code->tenNganHang = $request->tenNganHang;
         $code->save();
         $idSale = $code->id;
 
@@ -2997,11 +3000,12 @@ class HDController extends Controller
     }
 
     public function guiDeNghi(Request $request){
+        $typecardetail = TypeCarDetail::find($request->chonXe);
         $result = HopDong::find($request->idHopDong);
         $result->requestCheck = true;
         $result->tienCoc = $request->tamUng;
         $result->giaXe = $request->giaBanXe;
-        $result->giaNiemYet = $request->giaNiemYet;
+
         $result->isTienMat = $request->hinhThucThanhToan;
         $result->nguonKH = $request->nguonKH;
         $result->hoaHongMoiGioi = $request->hoaHongMoiGioi;
@@ -3009,8 +3013,11 @@ class HDController extends Controller
         $result->CMND2 = $request->cmnd;
         $result->dienThoai = $request->dienThoai;
         $result->id_car_sale = $request->xeBan;
+        $typecardetail = TypeCarDetail::find($request->xeBan);
+        $result->giaNiemYet = $typecardetail->giaNiemYet;
         $result->mau = $request->mauSac;
         $result->magiamgia = $request->giamGia;
+        $result->tenNganHang = $request->tenNganHang;
         $result->save();
         if($result) {
 

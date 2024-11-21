@@ -148,6 +148,38 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>Ngân hàng hỗ trợ vay (nếu có)</label>
+                                                    <select name="tenNganHang" id="tenNganHang" class="form-control">
+                                                        <option value="Không" selected>Không</option>       
+                                                        <option value="Agribank">Agribank</option>  
+                                                        <option value="VietinBank">VietinBank</option>  
+                                                        <option value="Vietcombank">Vietcombank</option>  
+                                                        <option value="BIDV">BIDV</option>  
+                                                        <option value="Techcombank">Techcombank</option>  
+                                                        <option value="ACB">ACB</option>  
+                                                        <option value="VPBank">VPBank</option>  
+                                                        <option value="Sacombank">Sacombank</option>  
+                                                        <option value="MBBank">MBBank</option>  
+                                                        <option value="MSB">MSB</option>  
+                                                        <option value="TPBank">TPBank</option>  
+                                                        <option value="HDBank">HDBank</option>  
+                                                        <option value="VIB">VIB</option>  
+                                                        <option value="SCB">SCB</option>  
+                                                        <option value="SeABank">SeABank</option>  
+                                                        <option value="LienVietPostBank">LienVietPostBank</option>  
+                                                        <option value="ABBank">ABBank</option>  
+                                                        <option value="PVcomBank">PVcomBank</option>  
+                                                        <option value="SHB">SHB</option>  
+                                                        <option value="NamABank">NamABank</option>  
+                                                        <option value="Eximbank">Eximbank</option>   
+                                                        <option value="HSBC">HSBC</option>  
+                                                        <option value="Citibank">Citibank</option>  
+                                                        <option value="PGBank">PGBank</option>                                          
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group" style="display:none;">
                                                     <label>Nguồn khách hàng</label>
@@ -163,7 +195,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Giá niêm yết:</label>
@@ -176,7 +208,7 @@
                                                     <input type="text" id="showNiemYet" class="form-control" disabled="disabled" />
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
@@ -482,10 +514,10 @@
                 $('#showCostCar').val("(" + DOCSO.doc(cos) + ")");
             });
 
-            $('#giaNiemYet').keyup(function(){
-                var cos = $('#giaNiemYet').val();
-                $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
-            });
+            // $('#giaNiemYet').keyup(function(){
+            //     var cos = $('#giaNiemYet').val();
+            //     $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
+            // });
 
             $('#hoaHongMoiGioi').keyup(function(){
                 var cos = $('#hoaHongMoiGioi').val();

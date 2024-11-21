@@ -192,6 +192,10 @@
                                                 <input type="number" name="giaVon" class="form-control"/>
                                             </div>
                                             <div class="form-group">
+                                                <label>Giá niêm yết</label>
+                                                <input type="number" name="giaNiemYet" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">
                                                 <label>Hiển thị</label>
                                                 <select name="hienThi" class="form-control">
                                                     <option value="1">Có</option>
@@ -277,6 +281,10 @@
                                             <div class="form-group">
                                                 <label>Giá vốn</label>
                                                 <input type="number" name="_giaVon" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Giá niêm yết</label>
+                                                <input type="number" name="_giaNiemYet" class="form-control"/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Hiển thị</label>
@@ -571,6 +579,7 @@
                         $("input[name=_machine]").val(response.data.machine);
                         $("select[name=_gear]").val(response.data.gear);
                         $("input[name=_giaVon]").val(response.data.giaVon);
+                        $("input[name=_giaNiemYet").val(response.data.giaNiemYet);
                         $("select[name=_hienThi]").val(response.data.isShow);
                     }
                 });

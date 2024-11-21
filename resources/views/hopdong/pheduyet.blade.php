@@ -158,6 +158,24 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>Ngân hàng hỗ trợ vay (nếu có):</label>
+                                                    <input disabled name="tenNganHang" id="tenNganHang" type="text" class="form-control"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3" style="display: none;">
+                                                <div class="form-group">
+                                                    <label>Giảm giá:</label>
+                                                    <input name="giamGia" id="giamGia" value="0" placeholder="Nhập số tiền giảm" type="number" class="form-control"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" style="display: none;">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <input type="text" id="showCostGiamGia" class="form-control" disabled="disabled" />
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-3">
@@ -555,6 +573,8 @@
                 $('#htvSupportShow').text("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#phiVanChuyen').val();
                 $('#phiVanChuyenShow').text("(" + DOCSO.doc(cos) + ")");
+                var cos = $('#giamGia').val();
+                $('#showCostGiamGia').val("(" + DOCSO.doc(cos) + ")");
             }
 
             $('#tamUng').keyup(function(){
@@ -601,9 +621,11 @@
                 $("#mauSac").val("");
                 $("#xeBan").val("");
                 $("#tamUng").val("");
+                $("#giamGia").val("");
                 $("#giaBanXe").val("");
+                $("#tenNganHang").val("");
                 $("#giaNiemYet").val("");
-                $("#magiamgia").val("");
+                // $("#magiamgia").val("");
                 $("#hinhThucThanhToan").val("");
                 $("#hoaHongMoiGioi").val("");
                 $("#hoTen").val("");
@@ -630,9 +652,11 @@
                 $("#pkFreeAdd").hide();
                 $("#pkPayAdd").hide();
                 $("#tamUng").prop('disabled', true);
+                $("#giamGia").prop('disabled', true);
                 $("#giaBanXe").prop('disabled', true);
+                $("#tenNganHang").prop('disabled', true);
                 $("#giaNiemYet").prop('disabled', true);
-                $("#magiamgia").prop('disabled', true);
+                // $("#magiamgia").prop('disabled', true);
                 $("#hinhThucThanhToan").prop('disabled', true);
                 $("#hoaHongMoiGioi").prop('disabled', true);
                 $("#hoTen").prop('disabled', true);
@@ -734,7 +758,9 @@
                             $("#xeCheck").text(response.data.namecar);
                             $("#xeCheckMau").text(response.data.mau);
                             $("#tamUng").val(response.data.tienCoc);
+                            $("#giamGia").val(response.data.magiamgia);
                             $("#giaBanXe").val(response.data.giaXe);
+                            $("#tenNganHang").val(response.data.tenNganHang);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
                             $("#magiamgia").val(response.data.magiamgia);
                             $("#hinhThucThanhToan").val(response.data.isTienMat);
@@ -855,7 +881,9 @@
                             $("#mauSac").val("");
                             $("#xeBan").val("");
                             $("#tamUng").val("");
+                            $("#giamGia").val("");
                             $("#giaBanXe").val("");
+                            $("#tenNganHang").val("");
                             $("#giaNiemYet").val("");
                             $("#magiamgia").val("");
                             $("#hinhThucThanhToan").val("");
@@ -883,7 +911,9 @@
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
+                            $("#giamGia").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
+                            $("#tenNganHang").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
                             $("#magiamgia").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);
@@ -939,7 +969,9 @@
                             $("#xeCheck").text(response.data.namecar);
                             $("#xeCheckMau").text(response.data.mau);
                             $("#tamUng").val(response.data.tienCoc);
+                            $("#giamGia").val(response.data.magiamgia);
                             $("#giaBanXe").val(response.data.giaXe);
+                            $("#tenNganHang").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
                             $("#magiamgia").val(response.data.magiamgia);
                             $("#hinhThucThanhToan").val(response.data.isTienMat);
@@ -1059,7 +1091,9 @@
                             $("#mauSac").val("");
                             $("#xeBan").val("");
                             $("#tamUng").val("");
+                            $("#giamGia").val("");
                             $("#giaBanXe").val("");
+                            $("#tenNganHang").val("");
                             $("#giaNiemYet").val("");
                             $("#magiamgia").val("");
                             $("#hinhThucThanhToan").val("");
@@ -1087,7 +1121,9 @@
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
+                            $("#giamGia").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
+                            $("#tenNganHang").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
                             $("#magiamgia").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);

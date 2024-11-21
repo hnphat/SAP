@@ -137,13 +137,13 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3" style="display: none;">
                                                 <div class="form-group">
                                                     <label>Giảm giá:</label>
                                                     <input name="giamGia" id="giamGia" value="0" placeholder="Nhập số tiền giảm" type="number" class="form-control"/>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6" style="display: none;">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
                                                     <input type="text" id="showCostGiamGia" class="form-control" disabled="disabled" />
@@ -165,6 +165,40 @@
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>Tên ngân hàng hỗ trợ vay (nếu có):</label>
+                                                    <select name="tenNganHang" id="tenNganHang" class="form-control">
+                                                        <option value="Không" selected>Không</option>       
+                                                        <option value="Agribank">Agribank</option>  
+                                                        <option value="VietinBank">VietinBank</option>  
+                                                        <option value="Vietcombank">Vietcombank</option>  
+                                                        <option value="BIDV">BIDV</option>  
+                                                        <option value="Techcombank">Techcombank</option>  
+                                                        <option value="ACB">ACB</option>  
+                                                        <option value="VPBank">VPBank</option>  
+                                                        <option value="Sacombank">Sacombank</option>  
+                                                        <option value="MBBank">MBBank</option>  
+                                                        <option value="MSB">MSB</option>  
+                                                        <option value="TPBank">TPBank</option>  
+                                                        <option value="HDBank">HDBank</option>  
+                                                        <option value="VIB">VIB</option>  
+                                                        <option value="SCB">SCB</option>  
+                                                        <option value="SeABank">SeABank</option>  
+                                                        <option value="LienVietPostBank">LienVietPostBank</option>  
+                                                        <option value="ABBank">ABBank</option>  
+                                                        <option value="PVcomBank">PVcomBank</option>  
+                                                        <option value="SHB">SHB</option>  
+                                                        <option value="NamABank">NamABank</option>  
+                                                        <option value="Eximbank">Eximbank</option>   
+                                                        <option value="HSBC">HSBC</option>  
+                                                        <option value="Citibank">Citibank</option>  
+                                                        <option value="PGBank">PGBank</option>                                          
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="display: none;">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Giá niêm yết:</label>
@@ -323,7 +357,7 @@
                                                     <option value="1">Hợp đồng mua bán</option>
                                                     <option value="2">Phụ lục hợp đồng</option>
                                                     <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
-                                                    <option value="8">Worksheet (Cá nhân)</option>
+                                                    <option value="8">Worksheet</option>
                                                     <option value="4">Yêu cầu PDI</option>
                                                     <option value="5">Yêu cầu cấp bảo hiểm</option>
                                                     <option value="6">Yêu cầu lắp phụ kiện</option>
@@ -704,8 +738,8 @@
                 $('#showCost').val("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#giaBanXe').val();
                 $('#showCostCar').val("(" + DOCSO.doc(cos) + ")");
-                var cos = $('#giaNiemYet').val();
-                $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
+                // var cos = $('#giaNiemYet').val();
+                // $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#hoaHongMoiGioi').val();
                 $('#showHoaHongMoiGioi').val("(" + DOCSO.doc(cos) + ")");
                 var cos = $('#giamGia').val();
@@ -727,10 +761,10 @@
                 $('#showCostCar').val("(" + DOCSO.doc(cos) + ")");
             });
 
-            $('#giaNiemYet').keyup(function(){
-                var cos = $('#giaNiemYet').val();
-                $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
-            });
+            // $('#giaNiemYet').keyup(function(){
+            //     var cos = $('#giaNiemYet').val();
+            //     $('#showNiemYet').val("(" + DOCSO.doc(cos) + ")");
+            // });
 
             $('#hoaHongMoiGioi').keyup(function(){
                 var cos = $('#hoaHongMoiGioi').val();
@@ -757,8 +791,10 @@
                                 $("#giamGia").prop('disabled', false);
                                 $("#giaBanXe").prop('disabled', false);
                                 $("#giaNiemYet").prop('disabled', false);
+                                $("#tenNganHang").prop('disabled', false);
                                 $("#hinhThucThanhToan").prop('disabled', false);
                                 $("#nguonKH").prop('disabled',false);
+                                $("#tenNganHang").prop('disabled',false);
                                 $("#hoaHongMoiGioi").prop('disabled', false);
                                 $("#hoTen").prop('disabled', false);
                                 $("input[name=cmnd]").prop('disabled', false);
@@ -781,8 +817,10 @@
                                 $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
+                                $("#tenNganHang").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
                                 $("#nguonKH").prop('disabled',true);
+                                $("#tenNganHang").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -806,8 +844,10 @@
                                 $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
+                                $("#tenNganHang").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
                                 $("#nguonKH").prop('disabled',true);
+                                $("#tenNganHang").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -830,8 +870,10 @@
                                 $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
+                                $("#tenNganHang").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
                                 $("#nguonKH").prop('disabled',true);
+                                $("#tenNganHang").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -853,8 +895,10 @@
                                 $("#giamGia").prop('disabled', true);
                                 $("#giaBanXe").prop('disabled', true);
                                 $("#giaNiemYet").prop('disabled', true);
+                                $("#tenNganHang").prop('disabled', true);
                                 $("#hinhThucThanhToan").prop('disabled', true);
                                 $("#nguonKH").prop('disabled',true);
+                                $("#tenNganHang").prop('disabled',true);
                                 $("#hoaHongMoiGioi").prop('disabled', true);
                                 $("#hoTen").prop('disabled', true);
                                 $("input[name=cmnd]").prop('disabled', true);
@@ -1098,10 +1142,12 @@
                             $('select[name=hinhThucThanhToan] option[value='+response.data.isTienMat+']').attr('selected','selected');
 
                             $("#nguonKH").val(response.data.nguonKH);
+                            $("#tenNganHang").val(response.data.tenNganHang);
                             $("#tamUng").val(response.data.tienCoc);
                             $("#giamGia").val(response.data.magiamgia);
                             $("#giaBanXe").val(response.data.giaXe);
                             $("#giaNiemYet").val(response.data.giaNiemYet);
+                            $("#tenNganHang").val(response.data.tenNganHang);
                             $("#hoaHongMoiGioi").val(response.data.hoaHongMoiGioi);
                             $("#hoTen").val(response.data.hoTen);
                             $("input[name=cmnd]").val(response.data.CMND2);
@@ -1168,12 +1214,14 @@
                             $("input[name=xeBan]").prop('disabled', true);
                             $("input[name=hinhThucThanhToan]").prop('disabled', true);
                             $("input[name=nguonKH]").prop('disabled', true);
+                            $("input[name=tenNganHang]").prop('disabled', true);
 
                             
                             $("#tamUng").val("");
                             $("#giamGia").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
+                            $("#tenNganHang").val("");
                             $("#hoaHongMoiGioi").val("");
                             $("#hoTen").val("");
                             $("input[name=cmnd]").val("");
@@ -1194,8 +1242,10 @@
                             $("#giamGia").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
+                            $("#tenNganHang").prop('disabled', true);
                             $("#hinhThucThanhToan").prop('disabled', true);
                             $("#nguonKH").prop('disabled', true);
+                            $("#tenNganHang").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
                             $("input[name=cmnd]").prop('disabled', true);
@@ -1700,6 +1750,7 @@
                             $("#giamGia").val("");
                             $("#giaBanXe").val("");
                             $("#giaNiemYet").val("");
+                            $("#tenNganHang").val("");
                             $("#hoaHongMoiGioi").val("");
                             $("#hoTen").val("");
                             $("#cmnd").val("");
@@ -1718,6 +1769,7 @@
                             $("#giamGia").prop('disabled', true);
                             $("#giaBanXe").prop('disabled', true);
                             $("#giaNiemYet").prop('disabled', true);
+                            $("#tenNganHang").prop('disabled', true);
                             $("#hoaHongMoiGioi").prop('disabled', true);
                             $("#hoTen").prop('disabled', true);
                             $("#cmnd").prop('disabled', true);
