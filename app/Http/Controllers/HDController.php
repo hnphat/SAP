@@ -723,6 +723,7 @@ class HDController extends Controller
                 'noidung1' => $noidung1,
                 'stt2' => $stt2,
                 'noidung2' => $noidung2,
+                'tiencoc' => $sale->tienCoc,
             ]);
         // -------------------------
         $pathToSave = 'template/WORKSHEETDOWN.docx';
