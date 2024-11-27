@@ -723,7 +723,7 @@ class HDController extends Controller
                 'noidung1' => $noidung1,
                 'stt2' => $stt2,
                 'noidung2' => $noidung2,
-                'tiencoc' => $sale->tienCoc,
+                'tiencoc' => number_format($sale->tienCoc),
             ]);
         // -------------------------
         $pathToSave = 'template/WORKSHEETDOWN.docx';
@@ -1823,7 +1823,7 @@ class HDController extends Controller
     }
 
     public function getHDQuanLyDeNghi() {
-        $xeList = TypeCarDetail::select('*')->orderBy('name','asc')->get();
+        $xeList = TypeCarDetail::select('*')->where('isShow',true)->orderBy('name','asc')->get();
         $hopdong = HopDong::select('*')->where('id_user_create', Auth::user()->id)
         ->orderby('id','desc')->get();
         $typecar = TypeCar::all();
