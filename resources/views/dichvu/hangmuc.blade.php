@@ -82,7 +82,7 @@
                                                                         <label>Dòng xe</label>
                                                                         <select name="typeCar" class="form-control">
                                                                             @foreach($typecar as $row)
-                                                                                <option value="{{$row->id}}">{{$row->name}}</option>
+                                                                                <option value="{{$row->id}}">[CODE: {{$row->id}}] {{$row->name}}</option>
                                                                             @endforeach
                                                                         </select>
                                                                     </div>
@@ -253,7 +253,7 @@
                                     <label>Loại xe</label>
                                     <select name="etypeCar" class="form-control">
                                         @foreach($typecar as $row)
-                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                            <option value="{{$row->id}}">[CODE: {{$row->id}}] {{$row->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
