@@ -2816,7 +2816,7 @@ class DichVuController extends Controller
                                         <td><span class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
                                         <td><span class='text-bold text-secondary'>".number_format($_chietKhauCost)."</span></td>
                                         <td class='text-bold text-success'>".number_format($_thucThu)."</td>
-                                        <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
+                                        <td class='text-bold text-info'><strong>".\HelpFunction::revertDate($row->ngayThu)."</strong></span></td>
                                     </tr>";
                         }
                     }
@@ -3391,99 +3391,24 @@ class DichVuController extends Controller
         $tu = $request->tu;
         $den = $request->den;
         $loai = $request->loai;
-        // echo "<div style='overflow:auto;'><table class='table table-striped table-bordered' style='position:sticky;top:0;left:0;'>
-        //         <tr>
-        //             <th>STT</th>
-        //             <th>Loại báo giá</th>
-        //             <th>Ngày tạo</th>
-        //             <th>Sale</th>
-        //             <th>Mã lệnh</th>
-        //             <th>Biển số</th>
-        //             <th>Số khung</th>
-        //             <th>Khách hàng</th>
-        //             <th>Thông tin xe</th>
-        //             <th>Công việc</th>  
-        //             <th>Phân loại</th>      
-        //             <th>Tặng</th>  
-        //             <th>Giá trị</th>                   
-        //             <th>Xe vào</th>
-        //             <th>Xe ra (dự kiến)</th>
-        //             <th>Trạng thái</th>   
-        //             <th>Thu tiền</th>
-        //             <th>Tác vụ</th>            
-        //         </tr>
-        //         <tbody>";
-                
-        $ct = KTVBHPK::where('id_work','=',$nv)
-        ->orderBy('id', 'desc')
-        ->get();
-        $i = 1;
-        foreach($ct as $row) {           
-            $bg = BaoGiaBHPK::find($row->id_baogia);            
-            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) >= strtotime($tu)) 
-            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
-                $bhpk = BHPK::find($row->id_bhpk);                
-                $stt = "";
-                $sttThu = "";
-                $tacVu = "";
-                $tang = "";
-                $giaTri = 0;
-                $_sale = "";
-                switch($loai) {
-                    case 0: {
-                        if ($bg->saler) {
-                            $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                        } 
-                        $ct = ChiTietBHPK::where([
-                            ['id_baogia','=',$bg->id],
-                            ['id_baohiem_phukien','=',$row->id_bhpk],
-                        ])->first();
-                        $giaTri = $ct->thanhTien;
-                        $tang = $ct->isTang;
-                        $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
-                        if ($row->isDone) {
-                            $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                            // if (Auth::user()->hasRole('system'))
-                            //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                        }
-                        else {
-                            $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                            $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                        }     
-        
-                        if ($bg->trangThaiThu) {
-                            $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                        }
-                        else {
-                            $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                        }     
-
-                        echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                    };
-                        break;
-                    case 1: {
-                        if ($bg->inProcess && !$bg->isDone && !$bg->isCancel) {
+        if ($nv != 0) {
+            $ct = KTVBHPK::where('id_work','=',$nv)
+            ->orderBy('id', 'desc')
+            ->get();
+            $i = 1;
+            foreach($ct as $row) {           
+                $bg = BaoGiaBHPK::find($row->id_baogia);            
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) >= strtotime($tu)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
+                    $bhpk = BHPK::find($row->id_bhpk);                
+                    $stt = "";
+                    $sttThu = "";
+                    $tacVu = "";
+                    $tang = "";
+                    $giaTri = 0;
+                    $_sale = "";
+                    switch($loai) {
+                        case 0: {
                             if ($bg->saler) {
                                 $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
                             } 
@@ -3512,363 +3437,537 @@ class DichVuController extends Controller
                             }     
 
                             echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }
-                    };
+                                    <td>".($i++)."</td>
+                                    <td>".$stt."</td>
+                                    <td>".$sttThu."</td>
+                                    <td>
+                                        ".$tacVu."
+                                    </td>
+                                    <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                    <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                                    <td>".$_sale."</td>
+                                    <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                                    <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                                    <td>".$bg->soKhung."</td>
+                                    <td>".$bg->hoTen."</td>
+                                    <td>".$bg->thongTinXe."</td>
+                                    <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                                    <td>".$bhpk->loai."</td>
+                                    <td>".$tang."</td>
+                                    <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
+                                    <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                                    <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
+                                </tr>"; 
+                        };
                             break;
-                    case 2: {
-                        if ($bg->isDone == 1 && !$bg->isCancel) {
-                            if ($bg->saler) {
-                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                            } 
-                            $ct = ChiTietBHPK::where([
-                                ['id_baogia','=',$row->id_baogia],
-                                ['id_baohiem_phukien','=',$row->id_bhpk],
-                            ])->first();
-                            $giaTri = $ct->thanhTien;
-                            $tang = $ct->isTang;
-                            $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
-                            if ($row->isDone) {
-                                $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                                // if (Auth::user()->hasRole('system'))
-                                //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                            }
-                            else {
-                                $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                                $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                            }     
-            
-                            if ($bg->trangThaiThu) {
-                                $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                            }
-                            else {
-                                $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                            }  
-                            
-                            echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }
-                    };
-                        break;
-                    case 3: {
-                        if ($bg->isCancel) {
-                            if ($bg->saler) {
-                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                            } 
-                            $ct = ChiTietBHPK::where([
-                                ['id_baogia','=',$bg->id],
-                                ['id_baohiem_phukien','=',$row->id_bhpk],
-                            ])->first();
-                            $giaTri = $ct->thanhTien;
-                            $tang = $ct->isTang;
-                            $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
-                            if ($row->isDone) {
-                                $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                                // if (Auth::user()->hasRole('system'))
-                                //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                            }
-                            else {
-                                $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                                $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                            }     
-            
-                            if ($bg->trangThaiThu) {
-                                $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                            }
-                            else {
-                                $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                            }     
+                        case 7: {
+                            if (!$row->isDone) {
+                                if ($bg->saler) {
+                                    $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                } 
+                                $ct = ChiTietBHPK::where([
+                                    ['id_baogia','=',$bg->id],
+                                    ['id_baohiem_phukien','=',$row->id_bhpk],
+                                ])->first();
+                                $giaTri = $ct->thanhTien;
+                                $tang = $ct->isTang;
+                                $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
+                                if ($row->isDone) {
+                                    $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
+                                    // if (Auth::user()->hasRole('system'))
+                                    //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
+                                }
+                                else {
+                                    $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
+                                    $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
+                                }     
+                
+                                if ($bg->trangThaiThu) {
+                                    $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
+                                }
+                                else {
+                                    $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
+                                }
 
-                            echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }
-                    };
-                        break;
-                    case 4: {
-                        if (!$bg->trangThaiThu) {
-                            if ($bg->saler) {
-                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                            } 
-                            $ct = ChiTietBHPK::where([
-                                ['id_baogia','=',$bg->id],
-                                ['id_baohiem_phukien','=',$row->id_bhpk],
-                            ])->first();
-                            $giaTri = $ct->thanhTien;
-                            $tang = $ct->isTang;
-                            $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
+                                echo "<tr>
+                                    <td>".($i++)."</td>
+                                    <td>".$stt."</td>
+                                    <td>".$sttThu."</td>
+                                    <td>
+                                        ".$tacVu."
+                                    </td>
+                                    <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                    <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                                    <td>".$_sale."</td>
+                                    <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                                    <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                                    <td>".$bg->soKhung."</td>
+                                    <td>".$bg->hoTen."</td>
+                                    <td>".$bg->thongTinXe."</td>
+                                    <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                                    <td>".$bhpk->loai."</td>
+                                    <td>".$tang."</td>
+                                    <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
+                                    <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                                    <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
+                                </tr>"; 
+                            }
+                        };
+                            break;
+                        case 8: {
                             if ($row->isDone) {
-                                $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                                // if (Auth::user()->hasRole('system'))
-                                //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                            }
-                            else {
-                                $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                                $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                            }     
-            
-                            if ($bg->trangThaiThu) {
-                                $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                            }
-                            else {
-                                $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                            }
-                            
-                            echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }
-                    };
-                        break;
-                    case 5: {
-                        if ($bg->trangThaiThu) {
-                            if ($bg->saler) {
-                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                            } 
-                            $ct = ChiTietBHPK::where([
-                                ['id_baogia','=',$bg->id],
-                                ['id_baohiem_phukien','=',$row->id_bhpk],
-                            ])->first();
-                            $giaTri = $ct->thanhTien;
-                            $tang = $ct->isTang;
-                            $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
-                            if ($row->isDone) {
-                                $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                                // if (Auth::user()->hasRole('system'))
-                                //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                            }
-                            else {
-                                $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                                $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                            }     
-            
-                            if ($bg->trangThaiThu) {
-                                $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                            }
-                            else {
-                                $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                            }     
+                                if ($bg->saler) {
+                                    $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                } 
+                                $ct = ChiTietBHPK::where([
+                                    ['id_baogia','=',$bg->id],
+                                    ['id_baohiem_phukien','=',$row->id_bhpk],
+                                ])->first();
+                                $giaTri = $ct->thanhTien;
+                                $tang = $ct->isTang;
+                                $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
+                                if ($row->isDone) {
+                                    $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
+                                    // if (Auth::user()->hasRole('system'))
+                                    //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
+                                }
+                                else {
+                                    $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
+                                    $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
+                                }     
+                
+                                if ($bg->trangThaiThu) {
+                                    $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
+                                }
+                                else {
+                                    $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
+                                }
 
-                            echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }
-                    };
-                        break;
-                    case 6: {
-
-                    };
-                        break;
-                    case 7: {
-                        if (!$row->isDone) {
-                            if ($bg->saler) {
-                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                            } 
-                            $ct = ChiTietBHPK::where([
-                                ['id_baogia','=',$bg->id],
-                                ['id_baohiem_phukien','=',$row->id_bhpk],
-                            ])->first();
-                            $giaTri = $ct->thanhTien;
-                            $tang = $ct->isTang;
-                            $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
-                            if ($row->isDone) {
-                                $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                                // if (Auth::user()->hasRole('system'))
-                                //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                            }
-                            else {
-                                $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                                $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                            }     
-            
-                            if ($bg->trangThaiThu) {
-                                $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                            }
-                            else {
-                                $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                            }
-
-                            echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }
-                    };
-                        break;
-                    case 8: {
-                        if ($row->isDone) {
-                            if ($bg->saler) {
-                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
-                            } 
-                            $ct = ChiTietBHPK::where([
-                                ['id_baogia','=',$bg->id],
-                                ['id_baohiem_phukien','=',$row->id_bhpk],
-                            ])->first();
-                            $giaTri = $ct->thanhTien;
-                            $tang = $ct->isTang;
-                            $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
-                            if ($row->isDone) {
-                                $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
-                                // if (Auth::user()->hasRole('system'))
-                                //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
-                            }
-                            else {
-                                $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
-                                $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
-                            }     
-            
-                            if ($bg->trangThaiThu) {
-                                $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
-                            }
-                            else {
-                                $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
-                            }
-
-                            echo "<tr>
-                                <td>".($i++)."</td>
-                                <td>".$stt."</td>
-                                <td>".$sttThu."</td>
-                                <td>
-                                    ".$tacVu."
-                                </td>
-                                <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
-                                <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
-                                <td>".$_sale."</td>
-                                <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
-                                <td class='text-bold text-primary'>".$bg->bienSo."</td>
-                                <td>".$bg->soKhung."</td>
-                                <td>".$bg->hoTen."</td>
-                                <td>".$bg->thongTinXe."</td>
-                                <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
-                                <td>".$bhpk->loai."</td>
-                                <td>".$tang."</td>
-                                <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
-                                <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
-                                <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
-                            </tr>"; 
-                        }    
-                    };
-                        break;
-                }       
+                                echo "<tr>
+                                    <td>".($i++)."</td>
+                                    <td>".$stt."</td>
+                                    <td>".$sttThu."</td>
+                                    <td>
+                                        ".$tacVu."
+                                    </td>
+                                    <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                    <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                                    <td>".$_sale."</td>
+                                    <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                                    <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                                    <td>".$bg->soKhung."</td>
+                                    <td>".$bg->hoTen."</td>
+                                    <td>".$bg->thongTinXe."</td>
+                                    <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                                    <td>".$bhpk->loai."</td>
+                                    <td>".$tang."</td>
+                                    <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
+                                    <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                                    <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
+                                </tr>"; 
+                            }    
+                        };
+                            break;
+                    }       
+                }
             }
+        } else {
+            $ktv = User::all();
+            foreach($ktv as $rowktv){
+                if ($rowktv->hasRole("to_phu_kien")) {
+                    $ct = KTVBHPK::where('id_work','=',$rowktv->id)
+                    ->orderBy('id', 'desc')
+                    ->get();
+                    echo "<tr class='bg-pink'>
+                             <td colspan='5'><strong>".$rowktv->userDetail->surname."</strong></td>                             
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>                              
+                        </tr>";
+                    $i = 1;
+                    foreach($ct as $row) {           
+                        $bg = BaoGiaBHPK::find($row->id_baogia);            
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) >= strtotime($tu)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
+                            $bhpk = BHPK::find($row->id_bhpk);                
+                            $stt = "";
+                            $sttThu = "";
+                            $tacVu = "";
+                            $tang = "";
+                            $giaTri = 0;
+                            $_sale = "";
+                            switch($loai) {
+                                case 0: {
+                                    if ($bg->saler) {
+                                        $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                    } 
+                                    $ct = ChiTietBHPK::where([
+                                        ['id_baogia','=',$bg->id],
+                                        ['id_baohiem_phukien','=',$row->id_bhpk],
+                                    ])->first();
+                                    $giaTri = $ct->thanhTien;
+                                    $tang = $ct->isTang;
+                                    $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
+                                    if ($row->isDone) {
+                                        $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
+                                        // if (Auth::user()->hasRole('system'))
+                                        //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
+                                    }
+                                    else {
+                                        $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
+                                        $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
+                                    }     
+                    
+                                    if ($bg->trangThaiThu) {
+                                        $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
+                                    }
+                                    else {
+                                        $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
+                                    }     
+
+                                    echo "<tr>
+                                            <td>".($i++)."</td>
+                                            <td>".$stt."</td>
+                                            <td>".$sttThu."</td>
+                                            <td>
+                                                ".$tacVu."
+                                            </td>
+                                            <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                            <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                                            <td>".$_sale."</td>
+                                            <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                                            <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                                            <td>".$bg->soKhung."</td>
+                                            <td>".$bg->hoTen."</td>
+                                            <td>".$bg->thongTinXe."</td>
+                                            <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                                            <td>".$bhpk->loai."</td>
+                                            <td>".$tang."</td>
+                                            <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
+                                            <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                                            <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
+                                        </tr>"; 
+                                };
+                                    break;
+                                case 7: {
+                                    if (!$row->isDone) {
+                                        if ($bg->saler) {
+                                            $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                        } 
+                                        $ct = ChiTietBHPK::where([
+                                            ['id_baogia','=',$bg->id],
+                                            ['id_baohiem_phukien','=',$row->id_bhpk],
+                                        ])->first();
+                                        $giaTri = $ct->thanhTien;
+                                        $tang = $ct->isTang;
+                                        $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
+                                        if ($row->isDone) {
+                                            $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
+                                            // if (Auth::user()->hasRole('system'))
+                                            //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
+                                        }
+                                        else {
+                                            $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
+                                            $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
+                                        }     
+                        
+                                        if ($bg->trangThaiThu) {
+                                            $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
+                                        }
+                                        else {
+                                            $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
+                                        }
+
+                                        echo "<tr>
+                                            <td>".($i++)."</td>
+                                            <td>".$stt."</td>
+                                            <td>".$sttThu."</td>
+                                            <td>
+                                                ".$tacVu."
+                                            </td>
+                                            <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                            <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                                            <td>".$_sale."</td>
+                                            <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                                            <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                                            <td>".$bg->soKhung."</td>
+                                            <td>".$bg->hoTen."</td>
+                                            <td>".$bg->thongTinXe."</td>
+                                            <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                                            <td>".$bhpk->loai."</td>
+                                            <td>".$tang."</td>
+                                            <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
+                                            <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                                            <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
+                                        </tr>"; 
+                                    }
+                                };
+                                    break;
+                                case 8: {
+                                    if ($row->isDone) {
+                                        if ($bg->saler) {
+                                            $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                        } 
+                                        $ct = ChiTietBHPK::where([
+                                            ['id_baogia','=',$bg->id],
+                                            ['id_baohiem_phukien','=',$row->id_bhpk],
+                                        ])->first();
+                                        $giaTri = $ct->thanhTien;
+                                        $tang = $ct->isTang;
+                                        $tang = ($tang == 1 ? "<span class='text-success text-bold'>Có</span>" : "<span class='text-secondary'>Không</span>");
+                                        if ($row->isDone) {
+                                            $stt = "<span class='text-bold text-success'>Đã hoàn tất</span> (".\HelpFunction::getOnlyDateFromCreatedAt($row->updated_at).")";
+                                            // if (Auth::user()->hasRole('system'))
+                                            //     $tacVu = "<button id='revert' data-id='".$row->id."' class='btn btn-warning'>Hoàn trạng</button>";
+                                        }
+                                        else {
+                                            $tacVu = "<button id='hoanTat' data-id='".$row->id."' class='btn btn-info'>Hoàn tất</button>";
+                                            $stt = "<span class='text-bold text-danger'>Chưa làm</span>";
+                                        }     
+                        
+                                        if ($bg->trangThaiThu) {
+                                            $sttThu = "<span class='text-bold text-success'>Đã thu</span> (".\HelpFunction::revertDate($bg->ngayThu).")";
+                                        }
+                                        else {
+                                            $sttThu = "<span class='text-bold text-danger'>Chưa</span>";
+                                        }
+
+                                        echo "<tr>
+                                            <td>".($i++)."</td>
+                                            <td>".$stt."</td>
+                                            <td>".$sttThu."</td>
+                                            <td>
+                                                ".$tacVu."
+                                            </td>
+                                            <td>".($bg->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                            <td>".\HelpFunction::getDateRevertCreatedAt($bg->created_at)."</td>
+                                            <td>".$_sale."</td>
+                                            <td class='text-bold text-secondary'>BG0".$bg->id."-".\HelpFunction::getDateCreatedAtRevert($bg->created_at)."</td>
+                                            <td class='text-bold text-primary'>".$bg->bienSo."</td>
+                                            <td>".$bg->soKhung."</td>
+                                            <td>".$bg->hoTen."</td>
+                                            <td>".$bg->thongTinXe."</td>
+                                            <td class='text-bold text-pink'>".$bhpk->noiDung."</td>
+                                            <td>".$bhpk->loai."</td>
+                                            <td>".$tang."</td>
+                                            <td><strong class='text-success'>".number_format($giaTri)."</strong></td>
+                                            <td>".$bg->thoiGianVao." ".\HelpFunction::revertDate($bg->ngayVao)."</td>
+                                            <td>".$bg->thoiGianHoanThanh." ".\HelpFunction::revertDate($bg->ngayHoanThanh)."</td>                                
+                                        </tr>"; 
+                                    }    
+                                };
+                                    break;
+                            }       
+                        }
+                    }
+                } else continue;
+            }            
         }
-        // echo "</tbody>
-        //         </table></div>";
+    }
+
+    public function loadTienDoDoanhThu(Request $request) {
+        $doanhthutang = 0;
+        $doanhthuban = 0;
+        $thucthu = 0;
+        $nv = $request->nhanVien;
+        $tu = $request->tu;
+        $den = $request->den;
+        $loai = $request->loai;
+        if ($nv != 0) {
+            $ct = KTVBHPK::where('id_work','=',$nv)
+            ->orderBy('id', 'desc')
+            ->get();
+            $i = 1;
+            foreach($ct as $row) {           
+                $bg = BaoGiaBHPK::find($row->id_baogia);            
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) >= strtotime($tu)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
+                    $bhpk = BHPK::find($row->id_bhpk);                
+                    $stt = "";
+                    $sttThu = "";
+                    $tacVu = "";
+                    $tang = "";
+                    $giaTri = 0;
+                    $_sale = "";
+                    switch($loai) {
+                        case 0: {
+                            if ($bg->saler) {
+                                $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                            } 
+                            $ct = ChiTietBHPK::where([
+                                ['id_baogia','=',$bg->id],
+                                ['id_baohiem_phukien','=',$row->id_bhpk],
+                            ])->first();
+                            $giaTri = $ct->thanhTien;
+                            $tang = $ct->isTang;
+                            // Xử lý doanh thu -----
+                            if ($ct->isTang)
+                                $doanhthutang += $giaTri;
+                            else 
+                                $doanhthuban += $giaTri;
+                            
+                            if ($bg->trangThaiThu) {
+                                $thucthu += $giaTri;
+                            }                           
+                        };
+                            break;
+                        case 7: {
+                            if (!$row->isDone) {
+                                if ($bg->saler) {
+                                    $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                } 
+                                $ct = ChiTietBHPK::where([
+                                    ['id_baogia','=',$bg->id],
+                                    ['id_baohiem_phukien','=',$row->id_bhpk],
+                                ])->first();
+                                $giaTri = $ct->thanhTien;
+                                $tang = $ct->isTang;
+                                // Xử lý doanh thu -----
+                                if ($ct->isTang)
+                                    $doanhthutang += $giaTri;
+                                else 
+                                    $doanhthuban += $giaTri;
+                                // ---------------------                               
+                                if ($bg->trangThaiThu) {
+                                    $thucthu += $giaTri;
+                                }                                
+                            }
+                        };
+                            break;
+                        case 8: {
+                            if ($row->isDone) {
+                                if ($bg->saler) {
+                                    $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                } 
+                                $ct = ChiTietBHPK::where([
+                                    ['id_baogia','=',$bg->id],
+                                    ['id_baohiem_phukien','=',$row->id_bhpk],
+                                ])->first();
+                                $giaTri = $ct->thanhTien;
+                                $tang = $ct->isTang;
+                                // Xử lý doanh thu -----
+                                if ($ct->isTang)
+                                    $doanhthutang += $giaTri;
+                                else 
+                                    $doanhthuban += $giaTri;
+                                // ---------------------                                              
+                                if ($bg->trangThaiThu) {
+                                    $thucthu += $giaTri;
+                                }         
+                            }    
+                        };
+                            break;
+                    }       
+                }
+            }
+        } else {
+            $ktv = User::all();
+            foreach($ktv as $rowktv){
+                if ($rowktv->hasRole("to_phu_kien")) {
+                    $ct = KTVBHPK::where('id_work','=',$rowktv->id)
+                    ->orderBy('id', 'desc')
+                    ->get();                    
+                    $i = 1;
+                    foreach($ct as $row) {           
+                        $bg = BaoGiaBHPK::find($row->id_baogia);            
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) >= strtotime($tu)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($bg->created_at)) <= strtotime($den))) {
+                            $bhpk = BHPK::find($row->id_bhpk);                
+                            $stt = "";
+                            $sttThu = "";
+                            $tacVu = "";
+                            $tang = "";
+                            $giaTri = 0;
+                            $_sale = "";
+                            switch($loai) {
+                                case 0: {
+                                    if ($bg->saler) {
+                                        $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                    } 
+                                    $ct = ChiTietBHPK::where([
+                                        ['id_baogia','=',$bg->id],
+                                        ['id_baohiem_phukien','=',$row->id_bhpk],
+                                    ])->first();
+                                    $giaTri = $ct->thanhTien;
+                                    $tang = $ct->isTang;
+                                    // Xử lý doanh thu -----
+                                    if ($ct->isTang)
+                                        $doanhthutang += $giaTri;
+                                    else 
+                                        $doanhthuban += $giaTri;
+                                    // ---------------------                                  
+                                    if ($bg->trangThaiThu) {
+                                        $thucthu += $giaTri;
+                                    }  
+                                };
+                                    break;
+                                case 7: {
+                                    if (!$row->isDone) {
+                                        if ($bg->saler) {
+                                            $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                        } 
+                                        $ct = ChiTietBHPK::where([
+                                            ['id_baogia','=',$bg->id],
+                                            ['id_baohiem_phukien','=',$row->id_bhpk],
+                                        ])->first();
+                                        $giaTri = $ct->thanhTien;
+                                        $tang = $ct->isTang;
+                                        // Xử lý doanh thu -----
+                                        if ($ct->isTang)
+                                            $doanhthutang += $giaTri;
+                                        else 
+                                            $doanhthuban += $giaTri;
+                                        // ---------------------                                        
+                                        if ($bg->trangThaiThu) {
+                                            $thucthu += $giaTri;
+                                        }
+                                    }
+                                };
+                                    break;
+                                case 8: {
+                                    if ($row->isDone) {
+                                        if ($bg->saler) {
+                                            $_sale = User::find($bg->saler)->userDetail->surname;                                                                     
+                                        } 
+                                        $ct = ChiTietBHPK::where([
+                                            ['id_baogia','=',$bg->id],
+                                            ['id_baohiem_phukien','=',$row->id_bhpk],
+                                        ])->first();
+                                        $giaTri = $ct->thanhTien;
+                                        $tang = $ct->isTang;
+                                        // Xử lý doanh thu -----
+                                        if ($ct->isTang)
+                                            $doanhthutang += $giaTri;
+                                        else 
+                                            $doanhthuban += $giaTri;
+                                        // ---------------------                                       
+                                        if ($bg->trangThaiThu) {
+                                            $thucthu += $giaTri;
+                                        }
+                                    }    
+                                };
+                                    break;
+                            }       
+                        }
+                    }
+                } else continue;
+            }            
+        }
+        return response()->json([
+            "doanhthutang" => $doanhthutang,
+            "doanhthuban" => $doanhthuban,
+            "thucthu" => $thucthu
+        ]);
     }
 
     public function getEditHangMuc(Request $request) {
@@ -4173,6 +4272,10 @@ class DichVuController extends Controller
 
     public function exportExcel($from,$to,$loai,$u) {
         return Excel::download(new ExportBaoCaoDoanhThuController($from,$to,$loai,$u), 'baocaodoanhthu.xlsx');
+    }
+
+    public function exportExcelToPhuKien($from,$to,$loai,$u) {
+        return Excel::download(new ExportBaoCaoDoanhThuToPhuKienController($from,$to,$loai,$u), 'baocaodoanhthutophukien.xlsx');
     }
 
     public function getDTPK() {

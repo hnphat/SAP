@@ -140,16 +140,28 @@
        $(document).ready(function(){
             $("#taiReport").click(function(){
                 if(confirm('Xác nhận xuất dữ liệu excel')) {
-                    open("{{url('management/dichvu/exportexcel/')}}" 
-                + "/" 
-                + $("input[name=chonNgayOne]").val() 
-                + "/den/" 
-                + $("input[name=chonNgayTwo]").val()
-                + "/loaibaocao/" 
-                +  $("select[name=chonBaoCao]").val()
-                + "/u/" 
-                +  $("select[name=nhanVien]").val()
-                ,'_blank');
+                    if ($("select[name=chonBaoCao]").val() == 2)
+                        open("{{url('management/dichvu/exportexcel/')}}" 
+                        + "/" 
+                        + $("input[name=chonNgayOne]").val() 
+                        + "/den/" 
+                        + $("input[name=chonNgayTwo]").val()
+                        + "/loaibaocao/" 
+                        +  $("select[name=chonBaoCao]").val()
+                        + "/u/" 
+                        +  $("select[name=nhanVien]").val()
+                        ,'_blank');
+                    else
+                        open("{{url('management/dichvu/exportexceltophukien/')}}" 
+                        + "/" 
+                        + $("input[name=chonNgayOne]").val() 
+                        + "/den/" 
+                        + $("input[name=chonNgayTwo]").val()
+                        + "/loaibaocao/" 
+                        +  $("select[name=chonBaoCao]").val()
+                        + "/u/" 
+                        +  $("select[name=nhanVien]").val()
+                        ,'_blank');
                 }
             });
 

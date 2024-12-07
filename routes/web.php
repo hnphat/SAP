@@ -827,10 +827,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('loadbaocaodoanhthu','DichVuController@loadBaoCaoDoanhThu'); 
         Route::post('counterdoanhthu','DichVuController@counterBaoCaoDoanhThu');  
         Route::get('exportexcel/{from}/den/{to}/loaibaocao/{loai}/u/{u}', 'DichVuController@exportExcel');
-        
+        Route::get('exportexceltophukien/{from}/den/{to}/loaibaocao/{loai}/u/{u}', 'DichVuController@exportExcelToPhuKien');
         // báo cáo tiến độ
         Route::get('baocaotiendo','DichVuController@baoCaoTienDoPanel')->name('dichvu.baocaotiendo.panel')->middleware(['f_bhpk']); 
         Route::post('loadbaocaotiendo','DichVuController@loadTienDo');
+        Route::post('loadbaocaotiendo/loaddoanhthu','DichVuController@loadTienDoDoanhThu');
 
         // Lấy dữ liệu chỉnh sửa
         Route::post('hangmuc/baohiemphukien/getedit/','DichVuController@getEditHangMuc')->name('getedithangmuc');

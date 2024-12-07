@@ -84,9 +84,9 @@
             </div>
             <div class="row">               
                <div class="col-md-4">
-                <div style="overflow:auto;">
+                <div style="overflow:auto;height: 800px;">
                         <table id="tableMain" class="table table-bordered">
-                                <tr class="bg-primary">
+                                <tr class="bg-primary" style="position: sticky; top:0;left:0;">
                                     <th>Loại</th>
                                     <th>Báo giá</th>        
                                     <th>Biển số</th>
