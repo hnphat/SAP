@@ -329,6 +329,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('complete/phukien/{id}','HDController@inPhuKien');
         Route::get('complete/phukienkemtheoxe/{id}','HDController@inPhuKienKemTheoXe');
         Route::get('complete/denghiruthosoxe/{id}','HDController@inDeNghiRutHoSoXe');
+        Route::get('complete/thanhlyhopdong/{id}','HDController@inThanhLy');
+        Route::get('complete/giayracong/{id}','HDController@inGiayRaCong');
+
 
         //-- Tra cứu phụ kiện
         Route::get('tracuu/phukien','HDController@traCuuPanel')->name('tracuu.phukien');

@@ -1242,7 +1242,7 @@ class GuestController extends Controller
             <th>STT</th>
             <th>Nhóm</th>
             <th>Saler</th>
-            <th>HĐ tồn (tính đến thời điểm hiện tại)</th>
+            <th>HĐ tồn</th>
             <th>HĐ ký/chờ</th>
             <th>HĐ xuất</th>
             <th>Khách hàng mới</th>

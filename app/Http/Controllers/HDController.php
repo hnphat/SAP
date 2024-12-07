@@ -1330,6 +1330,112 @@ class HDController extends Controller
         return response()->download($pathToSave,$outhd . '.docx',$headers);
     }
 
+
+    public function inThanhLy($id) {
+        $sale = HopDong::find($id);
+        if ($sale->requestCancel && $sale->lead_check_cancel) {
+            $outhd = "";
+            $logSoHd = "";
+            $templateProcessor = new TemplateProcessor('template/THANHLY.docx');
+            // Set data from database
+            $outhd = 'THANH LÝ HĐ ' . $sale->guest->name;
+            $arrdate = \HelpFunction::getArrCreatedAt($sale->created_at);
+            // Cá nhân            
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $templateProcessor->setValues([
+                'sohd' => $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA",
+                'ngay' => $arrdate[2],
+                'thang' => $arrdate[1],
+                'nam' => $arrdate[0],
+                'ngaynow' => Date('d'),
+                'thangnow' => Date('m'),
+                'namnow' => Date('Y'),
+                'sale' => $sale->user->userDetail->surname,
+                'guest' => $sale->guest->name,
+                'diachi' => $sale->guest->address,
+                'cccd' => $sale->guest->cmnd,
+                'ngaycap' => \HelpFunction::setDate($sale->guest->ngayCap),
+                'noicap' => $sale->guest->noiCap,
+                'ngaysinh' => \HelpFunction::setDate($sale->guest->ngaySinh),
+                'lydo' => $sale->lyDoCancel,
+                'tiencoc' => number_format($sale->tienCoc),
+                'bangchu' => \HelpFunction::convert($sale->tienCoc),
+            ]);
+
+            $pathToSave = 'template/THANHLYDOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->chucNang = "Kinh doanh - Phe duyệt đề nghị";
+            $nhatKy->noiDung = "In thanh lý hợp đồng hợp đồng " . $logSoHd;
+            $nhatKy->save();
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $id;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "In thanh lý hợp đồng hợp đồng";
+            $his->ghiChu = "";
+            $his->save();
+            return response()->download($pathToSave,$outhd . '.docx',$headers);
+        } else {
+            return "<strong style='color:red;font-size:20pt;'>Chưa gửi yêu cầu huỷ hợp đồng hoặc trưởng phòng chưa duyệt yêu cầu huỷ không thể in!</strong>";
+        }
+    }
+
+    public function inGiayRaCong($id) {
+        $sale = HopDong::find($id);
+        $car_detail = $sale->carSale;
+        $tenXe = $car_detail->name;
+        
+        $outhd = "";
+        $logSoHd = "";
+        $templateProcessor = new TemplateProcessor('template/GIAYRACONG.docx');
+        // Set data from database
+        $outhd = 'GIẤY RA CỔNG HĐ ' . $sale->guest->name;
+        // Cá nhân            
+        if ($sale->id_car_kho) {
+            $kho = KhoV2::find($sale->id_car_kho);
+            $logSoHd = $sale->code.".".$sale->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($sale->created_at)."/HĐMB-PA";
+            $templateProcessor->setValues([
+                'ngay' => Date('d'),
+                'thang' => Date('m'),
+                'nam' => Date('Y'),
+                'tenxe' => $tenXe,
+                'guest' => $sale->guest->name,
+                'sokhung' => $kho->vin,           
+            ]);
+
+            $pathToSave = 'template/GIAYRACONGDOWN.docx';
+            $templateProcessor->saveAs($pathToSave);
+            $headers = array(
+                'Content-Type: application/docx',
+            );
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->chucNang = "Kinh doanh - Phe duyệt đề nghị";
+            $nhatKy->noiDung = "In giấy ra cổng " . $logSoHd;
+            $nhatKy->save();
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $id;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "In giấy ra cổng";
+            $his->ghiChu = "";
+            $his->save();
+            return response()->download($pathToSave,$outhd . '.docx',$headers);
+        } else {
+            return "<strong style='color:red;font-size:20pt;'>Xe chưa có số khung/số máy không thể in!</strong>";
+        }
+    }
+
+
     public function inPhuLucCongTy($id) {
         $outhd = "";
         $logSoHd = "";

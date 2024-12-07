@@ -341,6 +341,8 @@
                                                     <option value="2">Phụ lục hợp đồng</option>
                                                     <option value="3">Đề nghị thực hiện hợp đồng</option>
                                                     <option value="4">Đề nghị rút hồ sơ và hóa đơn</option>
+                                                    <option value="5">Thanh lý hợp đồng</option>
+                                                    <option value="6">Giấy ra cổng</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -1520,7 +1522,7 @@
                         icon: 'warning',
                         title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
                     })
-                 }
+                }
 
                 if ($("select[name=mauHD]").val() == 2 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
@@ -1534,7 +1536,7 @@
                         icon: 'warning',
                         title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
                     })
-                 }
+                }
 
                 if ($("select[name=mauHD]").val() == 3 && $("input[name=checkIn]").val() == 1) {
                     switch (parseInt($("select[name=chonLoaiHD]").val())) {
@@ -1557,7 +1559,25 @@
                         icon: 'warning',
                         title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
                     })
-                 }
+                }
+
+                if ($("select[name=mauHD]").val() == 5 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/thanhlyhopdong')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                }
+
+                if ($("select[name=mauHD]").val() == 6 && $("input[name=checkIn]").val() == 1) {
+                    open("{{url('management/hd/complete/giayracong')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                } else {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                    })
+                }
             });
 
             $("#requestEditBtn").click(function(){   
