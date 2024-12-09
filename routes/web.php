@@ -554,6 +554,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');
+        Route::post('chitiet/ajax/getnhanvieninfo','NhanSuController@chiTietGetNhanVienInfo');
         Route::get('chitiet/ajax/getnhanvienroom','NhanSuController@chiTietGetNhanVienRoom');
         Route::post('chitiet/ajax/themphep','NhanSuController@chiTietThemPhep');
 

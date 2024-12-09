@@ -53,7 +53,7 @@
                     <div class="col-md-3">
                         <label>Nhân viên</label>
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
-                        <input list="nhanViens" name="nhanVien" class="form-control" placeholder="Nhập tên nhân viên">
+                        <input list="nhanViens" id="nhanVien" name="nhanVien" class="form-control" placeholder="Nhập tên nhân viên">
                         <datalist id="nhanViens">
                             @foreach($user as $row)
                                 @if($row->active == true)
@@ -77,7 +77,14 @@
                     
                     <div class="col-md-1">
                         <label>&nbsp;</label><br/>
-                        <button id="chon" type="button "class="btn btn-xs btn-info">Chọn</button>
+                        <button id="chon" type="button" class="btn btn-xs btn-info">Chọn</button>
+                    </div>
+
+                    <div class="col-md-3">                        
+                        <label>&nbsp;</label><br/>
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
+                        <input type="text" id="nameshow" class="form-control" readonly/>
+                        @endif
                     </div>
                 </div>  
                 <br/>
@@ -336,7 +343,24 @@
                             title: "Lỗi! Không thể chọn"
                         })
                     }
-                });
+                });      
+                
+                $.ajax({
+                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvieninfo')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id":  $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
+                    },
+                    success: function(response){       
+                        console.log(response);                
+                        $("#nameshow").val(response.ten);
+                    },
+                    error: function(){
+                        console.log("Lỗi: Không thể load thông tin nhân viên!");
+                    }
+                });    
            });
 
            $(document).on('click','#xinPhep', function(){

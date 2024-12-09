@@ -584,6 +584,15 @@ class NhanSuController extends Controller
             }
     }
 
+    public function chiTietGetNhanVienInfo(Request $request) {
+        $user = User::find($request->id);
+        return response()->json([
+            "type" => "info",
+            "code" => 200,
+            "ten" => $user->userDetail->surname
+        ]);
+    }
+
     public function chiTietThemPhep(Request $request) {
         $userDuyetEmail = User::find($request->nguoiDuyet);
         $emailDuyet = $userDuyetEmail->email;
