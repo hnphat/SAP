@@ -19,7 +19,7 @@
         /* Made with love by Mutiullah Samim*/
 
         html,body{
-        background-image: url('./images/bg/bg2024.jpg');
+        background-image: url('./images/bg/bg2025.jpg');
         background-size: cover;
         background-repeat: no-repeat;
         height: 100%;
@@ -156,6 +156,6 @@
 		</div>
 	</div>
 </div>
-<script src="script/tet.js"></script>
+<!-- <script src="script/tet.js"></script> -->
 </body>
 </html>
