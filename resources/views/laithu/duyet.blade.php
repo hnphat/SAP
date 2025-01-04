@@ -121,6 +121,8 @@
                                             @if($row->allow == 1)
                                             @else
                                                 <button id="showPay" data-toggle="modal" data-target="#showPayModal" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                &nbsp;
+                                                <button id="khongDuyet" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Từ chối</button>
                                             @endif
                                         </td>
                                     </tr>
@@ -260,6 +262,38 @@
                         })
                     }
                 });
+        });
+
+
+        //Từ chối duyệt
+        $(document).on('click','#khongDuyet', function(e){
+                e.preventDefault();
+                if (confirm("Xác nhận từ chối phê duyệt đề nghị này?\nLưu ý: Từ chối sẽ xoá đề nghị!")) {
+                    $.ajax({
+                        url: "{{url('management/duyet/khongduyet/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'info',
+                                title: response.message
+                            })
+                            setTimeout(function(){
+                                open("{{route('laithu.duyet')}}",'_self');
+                            }, 2000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể từ chối!"
+                            })
+                        }
+                    });
+                }
         });
 
         $(document).on('click','#showPay', function() {

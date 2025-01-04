@@ -407,6 +407,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('list/getpay/{id}','LaiThuController@getPayId');
         Route::post('tbp/duyet','LaiThuController@allowLaiThuTBP');
         Route::post('allow','LaiThuController@allowLaiThu')->name('laithu.pay.post');
+        Route::post('khongduyet','LaiThuController@khongDuyet');
         Route::post('approve','LaiThuController@approve');
     });
 

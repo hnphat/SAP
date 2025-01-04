@@ -422,6 +422,24 @@ class LaiThuController extends Controller
         return view('laithu.duyet', ['reg' => $reg, 'traXe' => $traXe]);
     }
 
+    public function khongDuyet(Request $request) {
+        $reg = DangKySuDung::find($request->id);
+        $reg->delete();
+        if ($reg) {
+            return response()->json([
+                'type' => 'success',
+                'message' => ' Đã từ chối duyệt!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'warning',
+                'message' => 'Lỗi! Máy chủ!',
+                'code' => 500
+            ]);
+        }
+    }
+
     public function showDuyetTBP() {
         $jsonString = file_get_contents('upload/cauhinh/app.json');
         $data = json_decode($jsonString, true);
