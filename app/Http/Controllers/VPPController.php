@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\NhomSP;
+use App\Nhom;
+use App\NhomUser;
 use App\User;
 use App\DanhMucSP;
 use App\NhatKy;
@@ -2015,6 +2017,49 @@ class VPPController extends Controller
                 'type' => 'error',
                 'message' => 'Không từ chối yêu cầu này'
             ]);
+        }        
+    }
+
+    // Báo cáo theo phòng ban sử dụng
+    public function baoCaoPhongBan(Request $request){       
+        $tuNgay = \HelpFunction::revertDate($request->tuNgay);
+        $denNgay = \HelpFunction::revertDate($request->denNgay);   
+        $nhom = Nhom::all();
+        $noiDung = "";
+        foreach($nhom as $n) {
+            echo "<tr class='bg-pink'>
+                <td colspan='2'>".$n->name."</td>                                         
+            </tr>";  
+            $dm = DanhMucSP::all();
+            foreach($dm as $d) {
+                $soluong = 0;
+                $px = PhieuXuat::select("*")->where([
+                    ['duyet','=',true]
+                ])->get();
+                foreach($px as $row) {        
+                    $_day = $row->ngay."-".$row->thang."-".$row->nam;
+                    if ((strtotime($_day) >= strtotime($tuNgay)) 
+                    &&  (strtotime($_day) <= strtotime($denNgay))) {
+                        $checkNhom = NhomUser::where([
+                            ['id_user','=',$row->id_user_xuat],
+                            ['id_nhom','=',$n->id]
+                        ])->first();
+                        if ($checkNhom) {
+                            $xuat = XuatSP::where('id_xuat', $row->id)->get();
+                            foreach($xuat as $item) {
+                                if ($item->id_danhmuc == $d->id)
+                                    $soluong += $item->soLuong;
+                            }
+                        }   
+                    }
+                } 
+                if ($soluong != 0) {
+                    echo "<tr>
+                        <td></td>
+                        <td>".$d->tenSanPham." - Sử dụng: ".$soluong." (".$d->donViTinh.")</td>                                         
+                    </tr>";
+                }                                  
+            }   
         }        
     }
 }

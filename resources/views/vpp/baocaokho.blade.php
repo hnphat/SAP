@@ -54,6 +54,7 @@
                                     <option value="3">Yêu cầu đã duyệt</option>
                                     <option value="4">Yêu cầu đợi duyệt (thiếu CCDC)</option>
                                     <option value="5">Nhập kho chi tiết</option>
+                                    <option value="6">Sử dụng theo phòng ban</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -71,6 +72,11 @@
                         </div>
                         <hr>
                         <div class="row">
+                            <div class="col-md-12">
+                                <p id="loading" style="text-align:center;display:none;">
+                                    <img src="{{asset('images/loading.gif')}}" alt="Loading" style="width: 100px; height:auto;"/>
+                                </p>
+                            </div>                        
                             <div class="col-md-12" id="tonKho" style="display:none;">
                                 <h3>TỒN KHO THỰC TẾ</h3>
                                 <div id="tonKhoShow">
@@ -153,6 +159,20 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="col-md-12" id="baoCaoPhongBan" style="display:none;">
+                                <h3>BÁO CÁO SỬ DỤNG THEO PHÒNG BAN</h3>                                
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Danh mục - Số lượng sử dụng (Đơn vị tính)</th>      
+                                        </tr>
+                                    </thead>
+                                    <tbody id="baoCaoPhongBanShow">
+                                                                       
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,6 +217,7 @@
            $("#yeuCauDaDuyet").hide();
            $("#yeuCauDoiDuyet").hide();
            $("#nhapKhoChiTiet").hide();
+           $("#baoCaoPhongBan").hide();
            $("#xem").click(function(){
                let tuNgay = $("input[name=tuNgay]").val();
                let denNgay = $("input[name=denNgay]").val();
@@ -209,6 +230,7 @@
                         $("#yeuCauDaDuyet").hide();
                         $("#yeuCauDoiDuyet").hide();
                         $("#nhapKhoChiTiet").hide();
+                        $("#baoCaoPhongBan").hide();
                     } break;
                     case 2: {
                         urlPoint = "{{url('management/vpp/baocaokho/biendongkho/')}}";
@@ -216,6 +238,7 @@
                         $("#yeuCauDaDuyet").hide();
                         $("#yeuCauDoiDuyet").hide();
                         $("#nhapKhoChiTiet").hide();
+                        $("#baoCaoPhongBan").hide();
                     } break;
                     case 3: {
                         urlPoint = "{{url('management/vpp/baocaokho/yeucaudaduyet/')}}";
@@ -223,6 +246,7 @@
                         $("#bienDongKho").hide();
                         $("#yeuCauDoiDuyet").hide();
                         $("#nhapKhoChiTiet").hide();
+                        $("#baoCaoPhongBan").hide();
                     } break;
                     case 4: {
                         urlPoint = "{{url('management/vpp/baocaokho/yeucaudoiduyet/')}}";
@@ -230,6 +254,7 @@
                         $("#bienDongKho").hide();
                         $("#yeuCauDaDuyet").hide();
                         $("#nhapKhoChiTiet").hide();
+                        $("#baoCaoPhongBan").hide();
                     } break;
                     case 5: {
                         urlPoint = "{{url('management/vpp/baocaokho/nhapkhochitiet/')}}";
@@ -237,6 +262,15 @@
                         $("#bienDongKho").hide();
                         $("#yeuCauDaDuyet").hide();
                         $("#yeuCauDoiDuyet").hide();
+                        $("#baoCaoPhongBan").hide();
+                    } break;
+                    case 6: {
+                        urlPoint = "{{url('management/vpp/baocaokho/baocaophongban/')}}";
+                        $("#tonKho").hide();
+                        $("#bienDongKho").hide();
+                        $("#yeuCauDaDuyet").hide();
+                        $("#yeuCauDoiDuyet").hide();
+                        $("#nhapKhoChiTiet").hide();
                     } break;
                     default: alert('Không tồn tại lựa chọn này');
                }
@@ -250,6 +284,9 @@
                         "tuNgay": tuNgay,
                         "denNgay": denNgay
                     },                  
+                    beforeSend: function() {
+                        $("#loading").show();
+                    },
                     success: (response) => {  
                         switch(parseInt(chose)) {
                             case 1: {
@@ -258,6 +295,7 @@
                                 $("#yeuCauDoiDuyet").hide();
                                 $("#nhapKhoChiTiet").hide();
                                 $("#tonKho").show();
+                                $("#baoCaoPhongBan").hide();
                                 $("#tonKhoShow").html(response);
                             } break;
                             case 2: {
@@ -266,6 +304,7 @@
                                 $("#yeuCauDoiDuyet").hide();
                                 $("#nhapKhoChiTiet").hide();
                                 $("#bienDongKho").show();
+                                $("#baoCaoPhongBan").hide();
                                 $("#bienDongKhoShow").html(response);
                             } break;
                             case 3: {
@@ -273,6 +312,7 @@
                                 $("#yeuCauDoiDuyet").hide();
                                 $("#nhapKhoChiTiet").hide();
                                 $("#bienDongKho").hide();
+                                $("#baoCaoPhongBan").hide();
                                 $("#yeuCauDaDuyet").show();
                                 $("#yeuCauDaDuyetShow").html(response);
                             } break;
@@ -282,6 +322,7 @@
                                 $("#nhapKhoChiTiet").hide();
                                 $("#bienDongKho").hide();
                                 $("#yeuCauDoiDuyet").show();
+                                $("#baoCaoPhongBan").hide();
                                 $("#yeuCauDoiDuyetShow").html(response);
                             } break;
                             case 5: {
@@ -290,7 +331,17 @@
                                 $("#yeuCauDoiDuyet").hide();
                                 $("#bienDongKho").hide();
                                 $("#nhapKhoChiTiet").show();
+                                $("#baoCaoPhongBan").hide();
                                 $("#nhapKhoChiTietShow").html(response);
+                            } break;
+                            case 6: {
+                                $("#tonkho").hide();                                
+                                $("#yeuCauDuyet").hide();
+                                $("#yeuCauDoiDuyet").hide();
+                                $("#bienDongKho").hide();
+                                $("#nhapKhoChiTiet").hide();
+                                $("#baoCaoPhongBan").show();
+                                $("#baoCaoPhongBanShow").html(response);
                             } break;
                             default: alert('Không tồn tại lựa chọn này');
                         }                
@@ -300,6 +351,9 @@
                             icon: 'info',
                             title: ' Không xem báo cáo lúc này!'
                         })
+                    },
+                    complete: function() {
+                        $("#loading").hide();
                     }
                });
            });
