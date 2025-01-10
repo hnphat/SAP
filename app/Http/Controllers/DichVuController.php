@@ -3149,7 +3149,8 @@ class DichVuController extends Controller
                                         $_doanhthu = $item->thanhTien;
                                         if ($row->saler) {
                                             $_sale = User::find($row->saler)->userDetail->surname;
-                                        }     
+                                        }    
+
                                         $ktv = KTVBHPK::where([
                                             ["id_baogia","=",$row->id],
                                             ["id_bhpk","=",$item->id_baohiem_phukien],
@@ -3173,17 +3174,19 @@ class DichVuController extends Controller
                                                 $_cong = $bhpk->congKTV / $_tile;
                                                 // Kiểm tra công tính lương
                                                 if ($_ngayThu != null && $checkFromTuOnlyMonth == true) {
-                                                    $dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($ktv2->updated_at);
-                                                    if (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
-                                                        $tongCongTinhLuong += $_cong;
-                                                        $_congTinhLuong = $_cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
-                                                        $tongCongTinhLuong += $_cong;
-                                                        $_congTinhLuong = $_cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) < $monthSelect) {
-                                                        $tongCongTinhLuong += $_cong;
-                                                        $_congTinhLuong = $_cong;
-                                                    } 
+                                                    if ($yearSelect == \HelpFunction::getOnlyYear($_ngayThu) && $yearSelect == \HelpFunction::getOnlyYear($tu)) {
+                                                        $dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($ktv2->updated_at);
+                                                        if (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                            $tongCongTinhLuong += $_cong;
+                                                            $_congTinhLuong = $_cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                            $tongCongTinhLuong += $_cong;
+                                                            $_congTinhLuong = $_cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) < $monthSelect) {
+                                                            $tongCongTinhLuong += $_cong; 
+                                                            $_congTinhLuong = $_cong;
+                                                        } 
+                                                    }                                                    
                                                 }
                                                 // ---------------------------
                                             }
@@ -3204,7 +3207,7 @@ class DichVuController extends Controller
                                                 <td class='text-bold text-info'>".$_congviec."</span></td>
                                                 <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
                                                 <td class='text-bold text-primary'>".number_format($_cong)."</td>
-                                                <td class='text-bold text-success'>".number_format($_congTinhLuong)."</td>
+                                                <td class='text-bold text-success'>".number_format($_congTinhLuong)." (^".number_format($tongCongTinhLuong).")</td>
                                                 <td>".\HelpFunction::getDateRevertCreatedAt($k->updated_at)."</td>
                                                 <td>".($_ngayThu ? \HelpFunction::revertDate($_ngayThu) : "")."</td>
                                             </tr>";
