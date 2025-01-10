@@ -515,6 +515,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('baocaokho/yeucaudaduyet','VPPController@yeuCauDaDuyet');
         Route::post('baocaokho/yeucaudoiduyet','VPPController@yeuCauDoiDuyet');
         Route::post('baocaokho/nhapkhochitiet','VPPController@nhapKhoChiTiet');
+        Route::post('baocaokho/baocaophongban','VPPController@baoCaoPhongBan');
     });
 
     Route::group(['prefix' => 'requestvpp'], function(){
