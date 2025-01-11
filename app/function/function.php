@@ -309,12 +309,25 @@ class HelpFunction {
         return $arr2[1];
     }
 
+    public static function getOnlyMonthV2($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode('-', $date);
+        return $arr[1];
+    }
+
+
     public static function getOnlyYear($date = '2020-01-01') {
         if ($date == null) return "";
         $arr = explode(' ', $date);
         $newDate = $arr[0];
         $arr2 = explode('-', $newDate);
         return $arr2[0];
+    }
+
+    public static function getOnlyYearV2($date = '2020-01-01') {
+        if ($date == null) return "";
+        $arr = explode('-', $date);
+        return $arr[0];
     }
 
     public static function revertCreatedAtGetTime($date = '2020-01-01') {

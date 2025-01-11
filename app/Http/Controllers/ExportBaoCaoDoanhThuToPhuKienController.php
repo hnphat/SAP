@@ -50,9 +50,9 @@ class ExportBaoCaoDoanhThuToPhuKienController extends Controller implements From
             $checkFromTuOnlyMonth = false;
         } else {
             $checkFromTuOnlyMonth = true;
-            $monthSelect = \HelpFunction::getOnlyMonth($_from);
+            $monthSelect = \HelpFunction::getOnlyMonth($_from); 
             // Xử lý tìm lương chưa tính tháng trước
-            $yearSelect = \HelpFunction::getOnlyYear($_from);
+            $yearSelect = \HelpFunction::getOnlyYearV2($this->from);
             $tempMonth = 0;
             $tempYear = 0;
             switch($monthSelect) {
@@ -199,7 +199,12 @@ class ExportBaoCaoDoanhThuToPhuKienController extends Controller implements From
                                         ['id_baogia','=',$_k->id_baogia],
                                         ['id_baohiem_phukien','=',$_k->id_bhpk]
                                     ])->get();
+                                    $__congcongdon = 0;
+                                    $__flag = false;
                                     foreach($_ct as $_item) {  
+                                        if ($__congcongdon != 0)
+                                            $__flag = true;
+
                                         $_ktv = KTVBHPK::where([
                                             ["id_baogia","=",$_row->id],
                                             ["id_bhpk","=",$_item->id_baohiem_phukien],
@@ -221,20 +226,26 @@ class ExportBaoCaoDoanhThuToPhuKienController extends Controller implements From
                                                 $__cong = $_bhpk->congKTV / $__tile;
                                                 // Kiểm tra công tính lương
                                                 if ($__ngayThu != null && $checkFromTuOnlyMonth == true) {
-                                                    $_dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($_ktv2->updated_at);
-                                                    if (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
-                                                        $tongCongDaTinh += $__cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
-                                                        $tongCongDaTinh += $__cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) < $tempMonth) {
-                                                        $tongCongDaTinh += $__cong;
-                                                    } 
+                                                    if ($tempYear == \HelpFunction::getOnlyYearV2($__ngayThu) && $tempYear == \HelpFunction::getOnlyYearV2($date1)) {
+                                                        $_dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($_ktv2->updated_at);
+                                                        if (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                            $tongCongDaTinh += $__cong;
+                                                            $__congcongdon += $__cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                            $$tongCongDaTinh += $__cong;
+                                                            $__congcongdon += $__cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) < $tempMonth) {
+                                                            $tongCongDaTinh += $__cong;
+                                                            $__congcongdon += $__cong;
+                                                        }       
+                                                    }                                                                                         
                                                 }
                                                 // ---------------------------
                                             }
                                         }        
                                     }                                    
-                                    $tongCongThangTruoc += $__cong;
+                                    $tongCongThangTruoc += ($__flag == true ? $__congcongdon : $__cong);
+                                    $__flag = false;
                                 }
                             }                                
                         }   
@@ -272,7 +283,11 @@ class ExportBaoCaoDoanhThuToPhuKienController extends Controller implements From
                                     $_tile = 0;
                                     $_ngayThu = $row->ngayThu;
                                     $_congTinhLuong = 0;
+                                    $flag = false;
                                     foreach($ct as $item) {
+                                        if ($_congTinhLuong != 0)
+                                            $flag = true;
+
                                         $_doanhthu = $item->thanhTien;
                                         if ($row->saler) {
                                             $_sale = User::find($row->saler)->userDetail->surname;
@@ -300,24 +315,26 @@ class ExportBaoCaoDoanhThuToPhuKienController extends Controller implements From
                                                 $_cong = $bhpk->congKTV / $_tile;
                                                 // Kiểm tra công tính lương
                                                 if ($_ngayThu != null && $checkFromTuOnlyMonth == true) {
-                                                    $dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($ktv2->updated_at);
-                                                    if (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
-                                                        $tongCongTinhLuong += $_cong;
-                                                        $_congTinhLuong = $_cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
-                                                        $tongCongTinhLuong += $_cong;
-                                                        $_congTinhLuong = $_cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) < $monthSelect) {
-                                                        $tongCongTinhLuong += $_cong;
-                                                        $_congTinhLuong = $_cong;
-                                                    } 
+                                                    if ($yearSelect == \HelpFunction::getOnlyYearV2($_ngayThu) && $yearSelect == \HelpFunction::getOnlyYearV2($this->from)) {
+                                                        $dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($ktv2->updated_at);
+                                                        if (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                            $tongCongTinhLuong += $_cong;
+                                                            $_congTinhLuong += $_cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                            $tongCongTinhLuong += $_cong;
+                                                            $_congTinhLuong += $_cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) < $monthSelect) {
+                                                            $tongCongTinhLuong += $_cong;
+                                                            $_congTinhLuong += $_cong;
+                                                        }             
+                                                    }                                                                                        
                                                 }
                                                 // ---------------------------
                                             }
                                         }    
                                         
                                     }                                    
-                                    $tong_cong += $_cong;
+                                    $tong_cong += ($flag == true ? $_congTinhLuong : $_cong);
                                     $tong_doanhthu_cong += $_doanhthu;
                                     $hds[] = array(
                                         '0' => $i++,
@@ -330,65 +347,67 @@ class ExportBaoCaoDoanhThuToPhuKienController extends Controller implements From
                                         '7' => ($row->saler ? "Báo giá kinh doanh" : "Báo giá khai thác"),
                                         '8' => $_congviec,
                                         '9' => $_doanhthu,
-                                        '10' => $_cong,
+                                        '10' => ($flag == true ? $_congTinhLuong : $_cong),
                                         '11' => $_congTinhLuong,
                                         '12' => \HelpFunction::getDateRevertCreatedAt($k->updated_at),
                                         '13' => ($_ngayThu ? \HelpFunction::revertDate($_ngayThu) : ""),
                                     );
+
+                                    $flag = false;
                                 }
                             }                                
                         }   
                     }
-                    // if ($checkFromTuOnlyMonth) {
-                    //     $hds[] = array(
-                    //         '0' => "",
-                    //         '1' => "",
-                    //         '2' => "",
-                    //         '3' => "",
-                    //         '4' => "",
-                    //         '5' => "",
-                    //         '6' => "",
-                    //         '7' => "",
-                    //         '8' => "",
-                    //         '9' => "",
-                    //         '10' => "",
-                    //         '11' => "",
-                    //         '12' => "",
-                    //         '13' => "",
-                    //     );
-                    //     $hds[] = array(
-                    //         '0' => "Tổng doanh thu",
-                    //         '1' => "",
-                    //         '2' => "Tổng tiền công",
-                    //         '3' => "",
-                    //         '4' => "Tiền công tháng ".$monthSelect." năm  ".$yearSelect." được xác nhận",
-                    //         '5' => "",
-                    //         '6' => "Tiền công tháng ".($tempMonth > 9 ? $tempMonth : "0".$tempMonth)." năm ".$tempYear." chưa tính",
-                    //         '7' => "",
-                    //         '8' => "Tổng tiền công tháng ".$monthSelect." năm  ".$yearSelect." để tính lương",
-                    //         '9' => "",
-                    //         '10' => "Tiền công tháng ".$monthSelect." năm  ".$yearSelect." chưa tính",
-                    //         '11' => "",
-                    //         '12' => "",
-                    //         '13' => "",
-                    //     );
-                    //     $hds[] = array(
-                    //         '0' => $tong_doanhthu_cong,
-                    //         '1' => "",
-                    //         '2' => $tong_cong,
-                    //         '3' => "",
-                    //         '4' => $tongCongTinhLuong,
-                    //         '5' => "",
-                    //         '6' => $tongCongChuaTinh,
-                    //         '7' => "",
-                    //         '8' => $tongCongChuaTinh+$tongCongTinhLuong,
-                    //         '9' => "",
-                    //         '10' => $tong_cong-$tongCongTinhLuong,
-                    //         '11' => "",
-                    //         '12' => "",
-                    //         '13' => "",
-                    //     );                        
-                    // }                   
+                    if ($checkFromTuOnlyMonth) {
+                        $hds[] = array(
+                            '0' => "",
+                            '1' => "",
+                            '2' => "",
+                            '3' => "",
+                            '4' => "",
+                            '5' => "",
+                            '6' => "",
+                            '7' => "",
+                            '8' => "",
+                            '9' => "",
+                            '10' => "",
+                            '11' => "",
+                            '12' => "",
+                            '13' => "",
+                        );
+                        $hds[] = array(
+                            '0' => "Tổng doanh thu",
+                            '1' => "",
+                            '2' => "Tổng tiền công",
+                            '3' => "",
+                            '4' => "Tiền công tháng ".$monthSelect." năm  ".$yearSelect." được xác nhận",
+                            '5' => "",
+                            '6' => "Tiền công tháng ".($tempMonth > 9 ? $tempMonth : "0".$tempMonth)." năm ".$tempYear." chưa tính",
+                            '7' => "",
+                            '8' => "Tổng tiền công tháng ".$monthSelect." năm  ".$yearSelect." để tính lương",
+                            '9' => "",
+                            '10' => "Tiền công tháng ".$monthSelect." năm  ".$yearSelect." chưa tính",
+                            '11' => "",
+                            '12' => "",
+                            '13' => "",
+                        );
+                        $hds[] = array(
+                            '0' => $tong_doanhthu_cong,
+                            '1' => "",
+                            '2' => $tong_cong,
+                            '3' => "",
+                            '4' => $tongCongTinhLuong,
+                            '5' => "",
+                            '6' => $tongCongChuaTinh,
+                            '7' => "",
+                            '8' => $tongCongChuaTinh+$tongCongTinhLuong,
+                            '9' => "",
+                            '10' => $tong_cong-$tongCongTinhLuong,
+                            '11' => "",
+                            '12' => "",
+                            '13' => "",
+                        );                        
+                    }                   
                 }
             } break;     
         }

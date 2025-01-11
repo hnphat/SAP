@@ -2931,6 +2931,7 @@ class DichVuController extends Controller
             case 3: {
                 $tong_cong = 0;
                 $tong_doanhthu_cong = 0;
+                $cong_thieu = 0;
                 echo "
                 <table class='table table-striped table-bordered'>
                     <tr>
@@ -3072,7 +3073,12 @@ class DichVuController extends Controller
                                         ['id_baogia','=',$_k->id_baogia],
                                         ['id_baohiem_phukien','=',$_k->id_bhpk]
                                     ])->get();
+                                    $__congcongdon = 0;
+                                    $__flag = false;
                                     foreach($_ct as $_item) {  
+                                        if ($__congcongdon != 0)
+                                            $__flag = true;
+
                                         $_ktv = KTVBHPK::where([
                                             ["id_baogia","=",$_row->id],
                                             ["id_bhpk","=",$_item->id_baohiem_phukien],
@@ -3082,6 +3088,7 @@ class DichVuController extends Controller
                                             $__tile = $_ktv->count();
                                         else
                                             $__tile = 0;
+
                                         $_ktv2 = KTVBHPK::where([
                                             ["id_baogia","=",$_row->id],
                                             ["id_bhpk","=",$_item->id_baohiem_phukien],
@@ -3094,24 +3101,26 @@ class DichVuController extends Controller
                                                 $__cong = $_bhpk->congKTV / $__tile;
                                                 // Kiểm tra công tính lương
                                                 if ($__ngayThu != null && $checkFromTuOnlyMonth == true) {
-                                                    if ($tempYear == \HelpFunction::getOnlyYear($__ngayThu) && $tempYear == \HelpFunction::getOnlyYear($date1)) {
+                                                    if ($tempYear == \HelpFunction::getOnlyYearV2($__ngayThu) && $tempYear == \HelpFunction::getOnlyYearV2($date1)) {
                                                         $_dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($_ktv2->updated_at);
-                                                        if (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                        if (\HelpFunction::getOnlyMonthV2($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonthV2($__ngayThu) == $tempMonth) {
                                                             $tongCongDaTinh += $__cong;
-                                                        } elseif (\HelpFunction::getOnlyMonth($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                            $__congcongdon += $__cong;
+                                                        } elseif (\HelpFunction::getOnlyMonthV2($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonthV2($__ngayThu) == $tempMonth) {
                                                             $tongCongDaTinh += $__cong;
-                                                        } elseif (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) < $tempMonth) {
+                                                            $__congcongdon += $__cong;
+                                                        } elseif (\HelpFunction::getOnlyMonthV2($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonthV2($__ngayThu) < $tempMonth) {
                                                             $tongCongDaTinh += $__cong;
+                                                            $__congcongdon += $__cong;
                                                         }          
-                                                    } else {
-
-                                                    }                                                                                     
+                                                    }                                                                                  
                                                 }
                                                 // ---------------------------
                                             }
                                         }        
                                     }                                    
-                                    $tongCongThangTruoc += $__cong;
+                                    $tongCongThangTruoc += ($__flag == true ? $__congcongdon : $__cong);
+                                    $__flag = false;
                                 }
                             }                                
                         }   
@@ -3149,7 +3158,10 @@ class DichVuController extends Controller
                                     $_tile = 0;
                                     $_ngayThu = $row->ngayThu;
                                     $_congTinhLuong = 0;
+                                    $flag = false;
                                     foreach($ct as $item) {
+                                        if ($_congTinhLuong != 0)
+                                            $flag = true;
                                         $_doanhthu = $item->thanhTien;
                                         if ($row->saler) {
                                             $_sale = User::find($row->saler)->userDetail->surname;
@@ -3178,17 +3190,17 @@ class DichVuController extends Controller
                                                 $_cong = $bhpk->congKTV / $_tile;
                                                 // Kiểm tra công tính lương
                                                 if ($_ngayThu != null && $checkFromTuOnlyMonth == true) {
-                                                    if ($yearSelect == \HelpFunction::getOnlyYear($_ngayThu) && $yearSelect == \HelpFunction::getOnlyYear($tu)) {
+                                                    if ($yearSelect == \HelpFunction::getOnlyYearV2($_ngayThu)) {
                                                         $dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($ktv2->updated_at);
-                                                        if (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                        if (\HelpFunction::getOnlyMonthV2($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonthV2($_ngayThu) == $monthSelect) {
                                                             $tongCongTinhLuong += $_cong;
-                                                            $_congTinhLuong = $_cong;
-                                                        } elseif (\HelpFunction::getOnlyMonth($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) == $monthSelect) {
+                                                            $_congTinhLuong += $_cong;
+                                                        } elseif (\HelpFunction::getOnlyMonthV2($dateKeep) < $monthSelect && \HelpFunction::getOnlyMonthV2($_ngayThu) == $monthSelect) {
                                                             $tongCongTinhLuong += $_cong;
-                                                            $_congTinhLuong = $_cong;
-                                                        } elseif (\HelpFunction::getOnlyMonth($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonth($_ngayThu) < $monthSelect) {
+                                                            $_congTinhLuong += $_cong;
+                                                        } elseif (\HelpFunction::getOnlyMonthV2($dateKeep) == $monthSelect && \HelpFunction::getOnlyMonthV2($_ngayThu) < $monthSelect) {
                                                             $tongCongTinhLuong += $_cong; 
-                                                            $_congTinhLuong = $_cong;
+                                                            $_congTinhLuong += $_cong;
                                                         } 
                                                     }                                                    
                                                 }
@@ -3197,7 +3209,7 @@ class DichVuController extends Controller
                                         }    
                                         
                                     }                                    
-                                    $tong_cong += $_cong;
+                                    $tong_cong += ($flag == true ? $_congTinhLuong : $_cong);
                                     $tong_doanhthu_cong += $_doanhthu;
                                     echo "<tr>
                                                 <td>".($i++)."</td>
@@ -3210,11 +3222,12 @@ class DichVuController extends Controller
                                                 <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
                                                 <td class='text-bold text-info'>".$_congviec."</span></td>
                                                 <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
-                                                <td class='text-bold text-primary'>".number_format($_cong)."</td>
-                                                <td class='text-bold text-success'>".number_format($_congTinhLuong)." (^".number_format($tongCongTinhLuong).")</td>
+                                                <td class='text-bold text-primary'>".(($flag == true ? "<span class='text-danger'>(*)</span>" : ""))."".number_format(($flag == true ? $_congTinhLuong : $_cong))."</td>
+                                                <td class='text-bold text-success'>".(($flag == true ? "<span class='text-danger'>(*)</span>" : ""))."".number_format($_congTinhLuong)."</td>
                                                 <td>".\HelpFunction::getDateRevertCreatedAt($k->updated_at)."</td>
                                                 <td>".($_ngayThu ? \HelpFunction::revertDate($_ngayThu) : "")."</td>
                                             </tr>";
+                                    $flag = false;
                                 }
                             }                                
                         }   
