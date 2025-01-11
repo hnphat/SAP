@@ -3094,14 +3094,18 @@ class DichVuController extends Controller
                                                 $__cong = $_bhpk->congKTV / $__tile;
                                                 // Kiểm tra công tính lương
                                                 if ($__ngayThu != null && $checkFromTuOnlyMonth == true) {
-                                                    $_dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($_ktv2->updated_at);
-                                                    if (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
-                                                        $tongCongDaTinh += $__cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
-                                                        $tongCongDaTinh += $__cong;
-                                                    } elseif (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) < $tempMonth) {
-                                                        $tongCongDaTinh += $__cong;
-                                                    } 
+                                                    if ($tempYear == \HelpFunction::getOnlyYear($__ngayThu) && $tempYear == \HelpFunction::getOnlyYear($date1)) {
+                                                        $_dateKeep = \HelpFunction::getOnlyDateFromCreatedAtKeepFormat($_ktv2->updated_at);
+                                                        if (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                            $tongCongDaTinh += $__cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($_dateKeep) < $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) == $tempMonth) {
+                                                            $tongCongDaTinh += $__cong;
+                                                        } elseif (\HelpFunction::getOnlyMonth($_dateKeep) == $tempMonth && \HelpFunction::getOnlyMonth($__ngayThu) < $tempMonth) {
+                                                            $tongCongDaTinh += $__cong;
+                                                        }          
+                                                    } else {
+
+                                                    }                                                                                     
                                                 }
                                                 // ---------------------------
                                             }
