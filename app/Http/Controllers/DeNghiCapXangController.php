@@ -21,7 +21,7 @@ class DeNghiCapXangController extends Controller
             $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->get();
         else    
             $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
-        return view('capxang.denghi', ['lead' => $lead, 'deNghi' => $deNghi]);
+        return view('capxang.denghiv2', ['lead' => $lead, 'deNghi' => $deNghi]);
     }
 
     public function postDeNghi(Request $request) {

@@ -30,6 +30,8 @@ class DeNghiCapXang extends Migration
             $table->boolean('lead_check')->default(0);
             $table->string('duongDi')->nullable();
             $table->boolean('printed')->default(0);
+            // V2
+            $table->string('hinhAnhTaplo')->nullable();
             $table->timestamps();
         });
     }
