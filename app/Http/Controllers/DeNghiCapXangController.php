@@ -7,6 +7,8 @@ use App\User;
 use App\NhatKy;
 use App\DeNghiCapXang;
 use App\EventReal;
+use App\HopDong;
+use App\KhoV2;
 use Carbon\Carbon;
 use App\Mail\DuyetCapXangTBP;
 use Illuminate\Support\Facades\Mail;
@@ -17,11 +19,12 @@ class DeNghiCapXangController extends Controller
     //
     public function showCapXang() {
         $lead = User::all();
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('hcns'))
-            $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->get();
-        else    
-            $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
-        return view('capxang.denghiv2', ['lead' => $lead, 'deNghi' => $deNghi]);
+        // if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('hcns'))
+        //     $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->take(10)->get();
+        // else    
+        //     $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        // return view('capxang.denghiv2', ['lead' => $lead, 'deNghi' => $deNghi]);      
+        return view('capxang.denghiv2', ['lead' => $lead]);
     }
 
     public function postDeNghi(Request $request) {
@@ -66,9 +69,9 @@ class DeNghiCapXangController extends Controller
             //-----
             $jsonString = file_get_contents('upload/cauhinh/app.json');
             $data = json_decode($jsonString, true); 
-                if ($userDuyetEmail)
-                    Mail::to($emailDuyet)->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
-                Mail::to($data['emailNhienLieu'])->send(new DuyetCapXangTBP(['Phòng hành chính',$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
+                // if ($userDuyetEmail)
+                //     Mail::to($emailDuyet)->send(new DuyetCapXangTBP([$nguoiDuyet,$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
+                // Mail::to($data['emailNhienLieu'])->send(new DuyetCapXangTBP(['Phòng hành chính',$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
             //-----
 
             return redirect()
@@ -209,5 +212,114 @@ class DeNghiCapXangController extends Controller
                 'code' => 500
             ]);
         }
+    }
+
+    public function getXeHopDong(Request $request) {
+        $arr = [];
+        $result = HopDong::select('*')->where([
+            ['id_user_create','=', Auth::user()->id],
+            ['requestCheck','=',true],
+            ['admin_check','=',true],
+            ['lead_check','=',true],
+            ['id_car_kho','!=',null],
+        ])->orderby('id','desc')->get();
+        foreach ($result as $row) {
+            if($row->code == 0) 
+                $code = "";
+            else
+                $code = "[HĐ: ".$row->code.".".$row->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($row->created_at)."/HĐMB-PA]";
+           $temp = (object)[];
+           $temp->id = $row->id;
+           $temp->thongTinKhachHang = $code . "; KH: ".$row->guest->name;
+           array_push($arr,$temp);
+        }
+        if($result) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã lấy danh sách hợp đồng xe',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getXeHopDongChiTiet(Request $request) {
+        $arr = [];
+        $row = HopDong::find($request->id);
+        if($row) {        
+            if($row->code == 0) 
+                $code = "";
+            else
+                $code = "[HĐ: ".$row->code.".".$row->carSale->typeCar->code."/".\HelpFunction::getDateCreatedAt($row->created_at)."/HĐMB-PA]";    
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã lấy thông tin hợp đồng',
+                'code' => 200,
+                'thongtinxe' => $row->carSale->typeCar->name,
+                'sokhung' => KhoV2::find($row->id_car_kho)->vin,
+                'thongtinkhachhang' => $code . "; KH: ".$row->guest->name."; Điện thoại: ".$row->guest->phone."; Địa chỉ: " .$row->guest->address
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function loadDeNghiNhienLieu() {
+        $arr = [];
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('hcns'))
+            $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->take(10)->get();
+        else    
+            $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        foreach ($deNghi as $row) {
+            $temp = (object)[];
+            $temp->ngay = \HelpFunction::revertCreatedAt($row->created_at);
+            $temp->username = $row->user->userDetail->surname;
+            $temp->xe_bienso = $row->fuel_car . " - " .$row->fuel_frame;
+            $temp->nhienlieu = $row->fuel_type == 'X' ? "Xăng" : "Dầu";
+            $temp->solit = $row->fuel_num;
+            $temp->khachhang = $row->fuel_guest;
+            $temp->lydo = $row->fuel_lyDo;
+            $temp->ghichu = $row->fuel_ghiChu;
+            if ($row->lead_id !== null) {
+                $temp->nguoiduyet = $row->userLead->userDetail->surname . " " . ($row->lead_check ? "<span class='badge badge-success'>Đã duyệt</span>" : "<span class='badge badge-secondary'>Chưa duyệt</span>"); 
+            } else {
+                $temp->nguoiduyet = "";
+            }
+            $temp->hanhchinh = $row->fuel_allow ? "<span class='badge badge-success'>Đã duyệt</span>" : "<span class='badge badge-secondary'>Chưa duyệt</span>";
+            if ($row->fuel_allow == false 
+            && (!\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') 
+            && !\Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))) {
+                $temp->action = "<button id='del' data-id='{{$row->id}}' class='btn btn-danger btn-xs'>Xóa</button>";
+            } else if ($row->fuel_allow == true && $row->printed == false) {
+                $temp->action = "<a href='".route('xang.in', ['id' => $row->id])."' class='btn btn-success btn-xs'>IN PHIẾU</a>";
+            } else if ($row->fuel_allow == true && $row->printed == true 
+            && (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
+                || \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') 
+                || \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))) {
+                $temp->action = "<a href='".route('xang.in', ['id' => $row->id])."' class='btn btn-success btn-xs'>IN PHIẾU</a>";
+            } else {
+                $temp->action = "";
+            }
+            array_push($arr,$temp);
+        }        
+        if ($deNghi) 
+            return response()->json([
+                'message' => 'Đã tải dữ liệu!',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        else
+            return response()->json([
+                'message' => 'Lỗi tải dữ liệu!',
+                'code' => 500
+            ]);
     }
 }

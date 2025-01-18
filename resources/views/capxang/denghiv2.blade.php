@@ -4,10 +4,11 @@
     Đề nghị cấp xăng
 @endsection
 @section('script_head')
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-    <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -71,23 +72,27 @@
                                                 </div>
                                                 <!-- /.card-header -->
                                                 <!-- form start -->
-                                                <form id="addForm" action="{{route('capxang.post')}}" method="post" autocomplete="off">
-                                                    {{csrf_field()}}
+                                                <form id="addForm" method="post" enctype="multipart/form-data" autocomplete="off">
+                                                    <!-- {{csrf_field()}} -->
                                                     <div class="card-body">
                                                         <div class="row">
                                                             <div class="form-group col-sm-5">
                                                                 <label>Cấp cho xe:</label>                                                        
                                                                 <select name="capChoXe" id="capChoXe" class="form-control">
+                                                                    <option value="0" disabled selected>Chọn</option>
                                                                     <option value="1">Xe theo hợp đồng</option>
                                                                     <option value="2">Xe lưu kho</option>
                                                                     <option value="3">Xe lái thử/cứu hộ</option>
                                                                     <option value="4">Xe khác</option>
                                                                 </select>                                                            
-                                                            </div>
-                                                            <div class="form-group col-sm-5">
-                                                                <select name="chonXe" id="chonXe" class="form-control">
-                                                                    <option value="">Chọn xe</option>
-                                                                </select>
+                                                            </div>                                                            
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group col-sm-12">
+                                                                <label for="chonCapChoXe" id="tieuDeChonCapChoXe">Cấp cho xe:</label>                                                        
+                                                                <select name="chonCapChoXe" id="chonCapChoXe" class="form-control">
+                                                                    
+                                                                </select>                                                            
                                                             </div>
                                                         </div>
                                                         <div class="row">
@@ -173,57 +178,6 @@
                                     <th>Tác vụ</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                @foreach($deNghi as $row)
-                                    <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td>{{\HelpFunction::revertCreatedAt($row->created_at)}}</td>
-                                        <td> @if($row->user !== null)
-                                                    {{$row->user->userDetail->surname}}
-                                                @else
-                                                    Không
-                                                @endif</td>
-                                        <td>{{$row->fuel_car}}; {{$row->fuel_frame}}</td>
-                                        <td>
-                                            {{$row->fuel_type == 'X' ? "Xăng" : "Dầu"}}
-                                        </td>
-                                        <td>{{$row->fuel_num}}</td>
-                                        <td>{{$row->fuel_guest}}</td>
-                                        <td>{{$row->fuel_lyDo}}</td>
-                                        <td>{{$row->fuel_ghiChu}}</td>
-                                        <td>@if($row->lead_id !== null)
-                                                {{$row->userLead->userDetail->surname}}
-                                                @if($row->lead_check == true)
-                                                    <span class="badge badge-success">Đã duyệt</span>
-                                                    @else
-                                                    <span class="badge badge-secondary">Chưa duyệt</span>
-                                                    @endif  
-                                            @endif           
-                                        </td>
-                                        <td>
-                                            @if($row->fuel_allow == true)
-                                            <span class="badge badge-success">Đã duyệt</span>
-                                            @else
-                                            <span class="badge badge-secondary">Chưa duyệt</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                                @if($row->fuel_allow == false && 
-                                                (!\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') &&
-                                                !\Illuminate\Support\Facades\Auth::user()->hasRole('hcns')))
-                                                    <button id="del" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Xóa</button>
-                                                @elseif($row->fuel_allow == true && $row->printed == false)
-                                                    <a href="{{route('xang.in', ['id' => $row->id])}}" class="btn btn-success btn-xs">IN PHIẾU</a>
-                                                @elseif($row->fuel_allow == true && $row->printed == true 
-                                                && (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
-                                                    || \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') 
-                                                    || \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale')))
-                                                    <a href="{{route('xang.in', ['id' => $row->id])}}" class="btn btn-success btn-xs">IN PHIẾU</a>
-                                                @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -236,28 +190,22 @@
 @endsection
 @section('script')
     <!-- jQuery -->
-    <script src="plugins/jquery/jquery.min.js"></script>
-    <!-- Bootstrap 4 -->
-    <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables  & Plugins -->
-    <script src="plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="plugins/jszip/jszip.min.js"></script>
-    <script src="plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/adminlte.min.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <!-- Page specific script -->
+    <!-- Below is plugin for datatables -->
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -265,43 +213,90 @@
             showConfirmButton: false,
             timer: 3000
         });
-
         $(document).ready(function() {
-            $("#dataTable").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
-        });
+            var table = $('#dataTable').DataTable({
+                // paging: false,    use to show all data
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: "{{ url('management/capxang/loaddenghinhienlieu/') }}",
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": null },
+                    { "data": "ngay" },
+                    { "data": "username"},
+                    { "data": "xe_bienso"},
+                    { "data": "nhienlieu"},
+                    { "data": "solit" },
+                    { "data": "khachhang"},
+                    { "data": "lydo" },
+                    { "data": "ghichu" },
+                    { "data": "nguoiduyet"},
+                    { "data": "hanhchinh"},
+                    { "data": "action"}      
+                ]
+            });
+            table.on( 'order.dt search.dt', function () {
+                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
 
-      //Delete data
-      $(document).on('click','#del', function(){
-            if(confirm('Bạn có chắc muốn xóa?')) {
-                $.ajax({
-                    url: "{{url('management/capxang/del/')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "id": $(this).data('id')
-                    },
-                    success: function(response) {
-                        Toast.fire({
-                            icon: 'info',
-                            title: response.message
-                        })
-                        setTimeout(function(){
-                            open('{{route('capxang.denghi')}}','_self');
-                        }, 1000);
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Không thể xóa lúc này!"
-                        })
+            $("#btnAdd").click(function(){   
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-            }          
+                $('#addForm').submit(function(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{route('capxang.post')}}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#btnAdd").attr('disabled', true).html("Đang xử lý....");
+                        },
+                        success: (response) => {
+                            this.reset();
+                            Toast.fire({
+                                icon: 'info',
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            $("#addModal").modal('hide');
+                            $("#btnAdd").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'info',
+                                title: ' Thao tác client có vấn đề'
+                            })
+                            $("#addModal").modal('hide');
+                            $("#btnAdd").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        }
+                    });
+                });
+            });
         });
+
         // -- event realtime
         let es = new EventSource("{{route('action.reg')}}");
         es.onmessage = function(e) {
@@ -310,15 +305,111 @@
             if (fullData.flag == true) {
                open('{{route('capxang.denghi')}}','_self');
             }
-
-
-            $('#btnAdd').click(function(event) {               
-                let form = $("#addForm");   
-                $("#btnAdd").attr('disabled', true).html("Đang xử lý vui lòng đợi....");            
-                event.preventDefault();
-                form.submit();
-            }); 
         }
         // -- event realtime
+
+        //Delete data
+        $(document).on('click','#del', function() {
+                if(confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: "{{url('management/capxang/del/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'info',
+                                title: response.message
+                            })
+                            setTimeout(function(){
+                                open('{{route('capxang.denghi')}}','_self');
+                            }, 1000);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }          
+        });       
+        $(document).on('change','#capChoXe', function() {
+            let giaTri = parseInt($("#capChoXe").val());          
+            switch (giaTri) {
+                case 1: {
+                    $("#tieuDeChonCapChoXe").text("Chọn hợp đồng:");
+                    $.ajax({
+                        url: "{{route('capxang.getxehopdong')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            $("#chonCapChoXe").empty();
+                            let data = response.data;
+                            let txt = `<option value="0" disabled selected>Chọn</option>`;
+                            for (let i = 0; i < data.length; i++) {
+                                const ele = data[i];
+                                txt += `<option value="${ele.id}">${ele.thongTinKhachHang}</option>`;
+                            }
+                            $("#chonCapChoXe").html(txt);
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                } break;
+                case 2: {
+
+                } break;
+                case 3: {
+
+                } break;
+                case 4: {
+
+                } break;
+                default: break;
+            }            
+        });
+
+        $(document).on('change','#chonCapChoXe', function() {
+            let giaTri = $("#chonCapChoXe").val();
+            $.ajax({
+                url: "{{route('capxang.getxehopdongchitiet')}}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "id": giaTri
+                },
+                success: function(response) {
+                    Toast.fire({
+                        icon: response.type,
+                        title: response.message
+                    })
+                    $("input[name=loaiXe]").val(response.thongtinxe);
+                    $("input[name=bienSo]").val(response.sokhung);
+                    $("input[name=khachHang]").val(response.thongtinkhachhang);
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Lỗi!"
+                    })
+                }
+            });
+        });
     </script>
 @endsection

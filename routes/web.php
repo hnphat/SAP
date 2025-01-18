@@ -422,6 +422,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('allow','DeNghiCapXangController@allowCapXang')->middleware(['f_capxang']);
         Route::post('cancel','DeNghiCapXangController@cancelCapXang')->middleware(['f_capxang']);
         Route::post('leadallow','DeNghiCapXangController@leadAllowCapXang');
+        // Đề nghị v2
+        Route::get('loaddenghinhienlieu','DeNghiCapXangController@loadDeNghiNhienLieu')->name('capxang.loaddenghinhienlieu');
+        Route::post('getxehopdong','DeNghiCapXangController@getXeHopDong')->name('capxang.getxehopdong');
+        Route::post('getxehopdongchitiet','DeNghiCapXangController@getXeHopDongChiTiet')->name('capxang.getxehopdongchitiet');
     });
 
     Route::group(['prefix' => 'hanhchinh'], function(){
