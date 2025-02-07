@@ -133,7 +133,7 @@
                                                         <div class="row">
                                                             <div class="form-group col-sm-12">
                                                                 <label>Lý do cấp:</label>                                                        
-                                                                <input placeholder="Phi ghi chi tiết lý do cần cấp nhiên liệu" type="text" name="ghiChu" class="form-control">
+                                                                <input placeholder="Phải ghi chi tiết lý do cần cấp nhiên liệu" type="text" name="ghiChu" class="form-control">
                                                             </div>
                                                             <div class="form-group col-sm-12">
                                                                 <select name="leadCheck" class="form-control">
