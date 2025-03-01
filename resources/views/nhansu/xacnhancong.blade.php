@@ -127,7 +127,10 @@
                             <th>Phòng ban</th>
                             <th>Ngày công</th>
                             <th>Phép năm</th>
-                            <th>Tăng ca</th>
+                            <th>Tăng ca x1</th>
+                            <th>Tăng ca x1.5</th>
+                            <th>Tăng ca x2</th>
+                            <th>Tăng ca x3</th>
                             <th>Tổng trể/sớm</th>
                             <th>Không phép (Trể/sớm/QCC/Nữa ngày)</th>
                             <th>Không phép (Cả ngày)</th>
@@ -209,7 +212,34 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (row.tangCa)
-                                return "<span class='text-primary'>"+row.tangCa+" (ngày)</span>";
+                                return "<span class='text-primary'>"+row.tangCa100+" (giờ)</span>";
+                            else
+                                return "";
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.tangCa)
+                                return "<span class='text-primary'>"+row.tangCa150+" (giờ)</span>";
+                            else
+                                return "";
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.tangCa)
+                                return "<span class='text-primary'>"+row.tangCa200+" (giờ)</span>";
+                            else
+                                return "";
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.tangCa)
+                                return "<span class='text-primary'>"+row.tangCa300+" (giờ)</span>";
                             else
                                 return "";
                         }

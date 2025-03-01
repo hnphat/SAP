@@ -21,7 +21,13 @@ class XacNhanCong extends Migration
             $table->integer('nam');
             $table->float('phepNam', 8, 2)->nullable();
             $table->float('ngayCong', 8, 2)->nullable();
-            $table->float('tangCa', 8, 2)->nullable();
+            $table->float('tangCa', 8, 2)->nullable(); // default
+            // Add for detail
+            $table->float('tangCa100', 8, 2)->nullable();
+            $table->float('tangCa150', 8, 2)->nullable();
+            $table->float('tangCa200', 8, 2)->nullable();
+            $table->float('tangCa300', 8, 2)->nullable();
+            // --------------
             $table->integer('tongTre')->nullable();
             $table->integer('khongPhep')->nullable();
             $table->integer('khongPhepNgay')->nullable();

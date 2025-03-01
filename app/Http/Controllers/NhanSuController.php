@@ -308,6 +308,12 @@ class NhanSuController extends Controller
         $coPhep = 0;
         $khongPhep = $day;
         $lamThem = 0;
+        // add tangca
+        $tangCa100 = 0;
+        $tangCa150 = 0;
+        $tangCa200 = 0;
+        $tangCa300 = 0;
+        // ----------
         $phepNam = 0;  
         $khongPhepCaNgay = 0;    
         // ----
@@ -447,6 +453,18 @@ class NhanSuController extends Controller
                     $to_time = strtotime($tangCa->time2);
                     $from_time = strtotime($tangCa->time1);
                     $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
+
+                    // add tang ca
+                    $diff_in_minutes = ($to_time - $from_time) / 60;  
+                    switch($tangCa->heSo) {
+                        case 1: $tangCa100 += $diff_in_minutes; break;
+                        case 1.5: $tangCa150 += $diff_in_minutes; break;
+                        case 2: $tangCa200 += $diff_in_minutes; break;
+                        case 3: $tangCa300 += $diff_in_minutes; break;
+                    }
+                    //-----------
+
+
                     $btnTangCa = "<span class='text-info'><strong>".$gioTangCa."h</strong> (Đêm)</span>";
                     $lamThem += $gioTangCa;
                 }                   
@@ -460,10 +478,29 @@ class NhanSuController extends Controller
             if($chiTiet !== null && $chiTiet->ngay == $i && $chiTiet->thang == $thang && $chiTiet->nam == $nam) {
                 
                 if ($quanLy !== null) {
-                    if ($xinPhep !== null && $xinPhep->user_duyet == true)
+                    if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                         $tangCaGioHanhChinh = (($xinPhep->gioSang + $xinPhep->gioChieu) * $quanLy->heSo);
+                        $gioCongTangCa = ($xinPhep->gioSang + $xinPhep->gioChieu);
+                        // add tang ca gio hanh chinh
+                        switch($quanLy->heSo) {
+                            case 1: $tangCa100 += ($gioCongTangCa * 60); break;
+                            case 1.5: $tangCa150 += ($gioCongTangCa * 60); break;
+                            case 2: $tangCa200 += ($gioCongTangCa * 60); break;
+                            case 3: $tangCa300 += ($gioCongTangCa * 60); break;
+                        }
+                        // ------
+                    }
                     else {
                         $tangCaGioHanhChinh = (($chiTiet->gioSang + $chiTiet->gioChieu)* $quanLy->heSo);
+                        $gioCongTangCa = ($chiTiet->gioSang + $chiTiet->gioChieu);
+                        // add tang ca gio hanh chinh
+                        switch($quanLy->heSo) {
+                            case 1: $tangCa100 += ($gioCongTangCa * 60); break;
+                            case 1.5: $tangCa150 += ($gioCongTangCa * 60); break;
+                            case 2: $tangCa200 += ($gioCongTangCa * 60); break;
+                            case 3: $tangCa300 += ($gioCongTangCa * 60); break;
+                        }
+                        // ------
                     }             
                     $lamThem += $tangCaGioHanhChinh;   
                 } 
@@ -542,7 +579,13 @@ class NhanSuController extends Controller
                 <td style='text-align:left;' colspan='10'>
                 <strong style='font-size:80%;'>Công ngày làm việc: <span class='text-success'>".round((($tongCong/8) - $phepNam),2)." (ngày)</span>
                 <br/><span>Phép năm: <span class='text-primary'>".round($phepNam,2)." (ngày)</span></span>
-                <br/><span>Tăng ca: <span class='text-info'><strong>".$lamThem." (giờ) => ".round($lamThem/8,2)." (ngày)</strong></span>
+                <br/>------------------------------------------
+                <br/><span>Tăng ca x1: <span class='text-primary'>".round($tangCa100/60,2)." (giờ)</span></span>
+                <br/><span>Tăng ca x1.5: <span class='text-primary'>".round($tangCa150/60,2)." (giờ)</span></span>
+                <br/><span>Tăng ca x2: <span class='text-primary'>".round($tangCa200/60,2)." (giờ)</span></span>
+                <br/><span>Tăng ca x3: <span class='text-primary'>".round($tangCa300/60,2)." (giờ)</span></span>
+                <br/><span>Tổng tăng ca: <span class='text-info'><strong>".$lamThem." (giờ) => ".round($lamThem/8,2)." (ngày)</strong></span>
+                <br/>------------------------------------------
                 <br/><span>Trể/Sớm: <span class='text-danger'>".$tongTre."  (phút)</span></span>
                 <br/><span>Phép được duyệt: <span class='text-success'>".$coPhep."</span></span>
                 <br/><span>Phép chưa duyệt: <span class='text-danger'>".($tongPhep - $coPhep)."</span></span>
@@ -2457,10 +2500,7 @@ class NhanSuController extends Controller
             "code" => 200,
             "message" => "Đã tổng hợp chốt công",
             "data" => $arr
-        ]);
-
-
-        
+        ]);       
     }
 
     public function huyChotCong(Request $request) {
@@ -2518,6 +2558,10 @@ class NhanSuController extends Controller
                     $khongPhep = $day;
                     $khongPhepCaNgay = 0;
                     $lamThem = 0;
+                    $tangCa100 = 0;
+                    $tangCa150 = 0;
+                    $tangCa200 = 0;
+                    $tangCa300 = 0;
                     $phepNam = 0;  
                     for($i = 1; $i <= $day; $i++) {
                         $tangCaGioHanhChinh = 0; 
@@ -2589,7 +2633,16 @@ class NhanSuController extends Controller
                             if ($tangCa->user_duyet == true) {
                                 $to_time = strtotime($tangCa->time2);
                                 $from_time = strtotime($tangCa->time1);
-                                $gioTangCa = round(round(($to_time - $from_time)/60,2)/60,2) * $tangCa->heSo;
+                                $diff_in_minutes = ($to_time - $from_time) / 60;                               
+                                $gioTangCa = round($diff_in_minutes / 60, 2) * $tangCa->heSo;
+                                // ---- add tangCa150 ngoai gio hanh chinh
+                                switch($tangCa->heSo) {
+                                    case 1: $tangCa100 += $diff_in_minutes; break;
+                                    case 1.5: $tangCa150 += $diff_in_minutes; break;
+                                    case 2: $tangCa200 += $diff_in_minutes; break;
+                                    case 3: $tangCa300 += $diff_in_minutes; break;
+                                }
+                                // ----
                                 $lamThem += $gioTangCa;
                             } 
                         }             
@@ -2611,10 +2664,29 @@ class NhanSuController extends Controller
                             }        
                             
                             if ($quanLy !== null) {
-                                if ($xinPhep !== null && $xinPhep->user_duyet == true)
+                                if ($xinPhep !== null && $xinPhep->user_duyet == true) {
                                     $tangCaGioHanhChinh = (($xinPhep->gioSang + $xinPhep->gioChieu) * $quanLy->heSo);
+                                    $gioCongTangCa = ($xinPhep->gioSang + $xinPhep->gioChieu);
+                                    // add tang ca gio hanh chinh
+                                    switch($quanLy->heSo) {
+                                        case 1: $tangCa100 += ($gioCongTangCa * 60); break;
+                                        case 1.5: $tangCa150 += ($gioCongTangCa * 60); break;
+                                        case 2: $tangCa200 += ($gioCongTangCa * 60); break;
+                                        case 3: $tangCa300 += ($gioCongTangCa * 60); break;
+                                    }
+                                    // ------
+                                }
                                 else {
                                     $tangCaGioHanhChinh = (($chiTiet->gioSang + $chiTiet->gioChieu)* $quanLy->heSo);
+                                    $gioCongTangCa = ($chiTiet->gioSang + $chiTiet->gioChieu);
+                                    // add tang ca gio hanh chinh
+                                    switch($quanLy->heSo) {
+                                        case 1: $tangCa100 += ($gioCongTangCa * 60); break;
+                                        case 1.5: $tangCa150 += ($gioCongTangCa * 60); break;
+                                        case 2: $tangCa200 += ($gioCongTangCa * 60); break;
+                                        case 3: $tangCa300 += ($gioCongTangCa * 60); break;
+                                    }
+                                    // ------
                                 }             
                                 $lamThem += $tangCaGioHanhChinh;   
                             } 
@@ -2638,6 +2710,10 @@ class NhanSuController extends Controller
                     $xacNhan->phepNam = $phepNam;
                     $xacNhan->ngayCong = round(($tongCong/8),2) - $phepNam;
                     $xacNhan->tangCa = round(($lamThem/8),2);
+                    $xacNhan->tangCa100 = round($tangCa100 / 60, 2);
+                    $xacNhan->tangCa150 = round($tangCa150 / 60, 2);
+                    $xacNhan->tangCa200 = round($tangCa200 / 60, 2);
+                    $xacNhan->tangCa300 = round($tangCa300 / 60, 2);
                     $xacNhan->tongTre = $tongTre;
                     $xacNhan->khongPhep = $khongPhep - $khongPhepCaNgay;
                     $xacNhan->khongPhepNgay = $khongPhepCaNgay;
