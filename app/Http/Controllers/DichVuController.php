@@ -322,6 +322,39 @@ class DichVuController extends Controller
                 'message' => 'Lỗi xoá'
             ]);
     }
+
+    public function khoaHangMuc(Request $request) {
+        $kh = BHPK::find($request->id);
+        $temp = $kh;
+        if (Auth::user()->hasRole('system')) {
+            $kh->isShow = !$kh->isShow;
+            $kh->save();
+        }
+        elseif(Auth::user()->id == $kh->id_user_create) {
+            $kh->isShow = !$kh->isShow;
+            $kh->delete();
+        } else return response()->json([
+            'type' => 'error',
+            'code' => 500,
+            'message' => 'Bạn không có quyền xoá nội dung này'
+        ]);
+
+        if ($kh) {
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'isShow' => $kh->isShow,
+                'message' => 'Đã ẩn/khóa'
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi không thể ẩn/khóa'
+            ]);
+    }
+
     public function getHangMucEdit(Request $request) {
         $kh = BHPK::find($request->id);
         return response()->json([

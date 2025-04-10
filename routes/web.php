@@ -824,7 +824,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('hangmuc','DichVuController@hangMucPanel')->name('dichvu.hangmuc')->middleware(['f_bhpk']);   
         Route::get('hangmuc/get/list','DichVuController@getHangMuc');    
         Route::post('hangmuc/guest/add','DichVuController@addHangMuc');  
-        Route::post('hangmuc/guest/delete','DichVuController@delHangMuc');      
+        Route::post('hangmuc/guest/delete','DichVuController@delHangMuc'); 
+        Route::post('hangmuc/khoa','DichVuController@khoaHangMuc');     
         Route::post('hangmuc/guest/edit/show/','DichVuController@getHangMucEdit'); 
         Route::post('hangmuc/guest/update/','DichVuController@updateHangMuc'); 
         Route::post('hangmuc/ajax/importfile/','DichVuController@importDanhMuc'); 

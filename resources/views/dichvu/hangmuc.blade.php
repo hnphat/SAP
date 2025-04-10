@@ -395,7 +395,8 @@
                         "data": null,
                         render: function(data, type, row) {
                             return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
-                                "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                                "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
+                                "<button id='khoa' data-id='"+row.id+"' class='btn btn-warning btn-sm'>"+(row.isShow ? "off" : "on")+"</button>";
                         }
                     }
                 ]
@@ -485,6 +486,42 @@
                             Toast.fire({
                                 icon: 'warning',
                                 title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            //Off data
+            $(document).on('click','#khoa', function(){
+                if(confirm('Xác nhận ẩn/khóa?')) {
+                    $.ajax({
+                        url: "{{url('management/dichvu/hangmuc/khoa/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: "Đã ẩn/khóa"
+                            })
+                            if (response.code == 200) {
+                                console.log(response);
+                                if ($('#khoa').text() === 'on') {
+                                    $('#khoa').text('off');
+                                } else {
+                                    $('#khoa').text('on');
+                                }
+                            } 
+                            // table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể ẩn/khóa lúc này!"
                             })
                         }
                     });

@@ -27,6 +27,7 @@ class BaoHiemPhuKien extends Migration
             $table->string('loai');
             $table->integer('loaiXe')->nullable();
             $table->string('hinhAnh')->nullable();
+            $table->boolean('isShow')->default(true);
             $table->timestamps();
         });
     }
