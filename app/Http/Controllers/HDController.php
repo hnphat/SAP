@@ -3070,7 +3070,10 @@ class HDController extends Controller
 
     public function loadFromTypeCar(Request $request) {
         $idtypecar = $request->idtypecar;
-        $pk = BHPK::where('loaiXe',$idtypecar)->orderBy('id','desc')->get();
+        $pk = BHPK::where([
+            ['loaiXe',"=",$idtypecar],
+            ['isShow',"=",true]
+        ])->orderBy('id','desc')->get();
         if ($pk) {
             return response()->json([
                 'type' => 'info',

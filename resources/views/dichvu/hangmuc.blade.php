@@ -396,7 +396,7 @@
                         render: function(data, type, row) {
                             return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
-                                "<button id='khoa' data-id='"+row.id+"' class='btn btn-warning btn-sm'>"+(row.isShow ? "off" : "on")+"</button>";
+                                "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow ? "off" : "on")+"</button>";
                         }
                     }
                 ]
@@ -494,6 +494,7 @@
 
             //Off data
             $(document).on('click','#khoa', function(){
+                let idKhoa = $(this).data('id');
                 if(confirm('Xác nhận ẩn/khóa?')) {
                     $.ajax({
                         url: "{{url('management/dichvu/hangmuc/khoa/')}}",
@@ -509,11 +510,14 @@
                                 title: "Đã ẩn/khóa"
                             })
                             if (response.code == 200) {
-                                console.log(response);
-                                if ($('#khoa').text() === 'on') {
-                                    $('#khoa').text('off');
+                                console.log(response.isShow);
+                                if (response.isShow == true) {
+                                    $("#khoa[data-id='"+idKhoa+"']").text("off");
+                                    $("#khoa[data-id='"+idKhoa+"']").removeClass("btn btn-success btn-sm").addClass("btn btn-warning btn-sm");
+
                                 } else {
-                                    $('#khoa').text('on');
+                                    $("#khoa[data-id='"+idKhoa+"']").text("on");
+                                    $("#khoa[data-id='"+idKhoa+"']").removeClass("btn btn-warning btn-sm").addClass("btn btn-success btn-sm");
                                 }
                             } 
                             // table.ajax.reload();
