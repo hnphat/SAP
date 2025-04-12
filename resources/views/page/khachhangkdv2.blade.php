@@ -68,6 +68,17 @@
                                                 </div>                                           
                                             </div>
                                             @endif
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <label>Dòng xe</label>
+                                                    <select name="dongXe" id="dongXe" class="form-control">
+                                                            <option value="0" selected>Tất cả</option>
+                                                        @foreach($typecar as $row)
+                                                            <option value="{{$row->id}}">{{$row->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Từ</label>
@@ -80,7 +91,7 @@
                                                     <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-1">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label><br/>
                                                     <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
@@ -176,14 +187,25 @@
                                                                         <div class="col-sm-4">
                                                                             <div class="form-group">
                                                                                 <label>Nguồn khách hàng <span class="text-danger"><strong>(*)</strong></span></label>
-                                                                                <select name="nguon" id="nguon" class="form-control">
+                                                                                <select name="nguon" id="nguon" class="form-control">                                    
+                                                                                    <option value="BLĐ Công ty">BLĐ Công ty</option>  
+                                                                                    <option value="Vãng lai (walk - in)">Vãng lai (walk - in)</option>   
+                                                                                    <option value="Facebook- Page">Facebook- Page</option>   
+                                                                                    <option value="Website">Website</option>   
+                                                                                    <option value="Zalo">Zalo</option>   
+                                                                                    <option value="Tiktok">Tiktok</option>   
+                                                                                    <option value="Giới thiệu từ KH cũ">Giới thiệu từ KH cũ</option>   
+                                                                                    <option value="Giới thiệu từ Ngân hàng">Giới thiệu từ Ngân hàng</option>
+                                                                                    <option value="Giới thiệu từ Bảo hiểm">Giới thiệu từ Bảo hiểm</option>
+                                                                                    <option value="Giới thiệu từ Bạn bè/người thân">Giới thiệu từ Bạn bè/người thân</option>                                                       
+                                                                                    <option value="Cộng tác viên">Cộng tác viên</option>  
                                                                                     <option value="Showroom">Showroom</option>   
                                                                                     <option value="Thị Trường">Thị Trường</option>
                                                                                     <option value="Online">Online</option>
                                                                                     <option value="Giới thiệu">Giới thiệu</option>
                                                                                     <option value="Marketing">Marketing</option>
                                                                                     <option value="Sự kiện">Sự kiện</option>
-                                                                                    <option value="Công ty">Công ty</option>                                                          
+                                                                                    <option value="Công ty">Công ty</option>
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
@@ -391,14 +413,25 @@
                                                                         <div class="col-sm-4">
                                                                             <div class="form-group">
                                                                                 <label>Nguồn khách hàng <span class="text-danger"><strong>(*)</strong></span></label>
-                                                                                <select name="enguon" id="enguon" class="form-control">
+                                                                                <select name="enguon" id="enguon" class="form-control">                                                                                    
+                                                                                    <option value="BLĐ Công ty">BLĐ Công ty</option>  
+                                                                                    <option value="Vãng lai (walk - in)">Vãng lai (walk - in)</option>   
+                                                                                    <option value="Facebook- Page">Facebook- Page</option>   
+                                                                                    <option value="Website">Website</option>   
+                                                                                    <option value="Zalo">Zalo</option>   
+                                                                                    <option value="Tiktok">Tiktok</option>   
+                                                                                    <option value="Giới thiệu từ KH cũ">Giới thiệu từ KH cũ</option>   
+                                                                                    <option value="Giới thiệu từ Ngân hàng">Giới thiệu từ Ngân hàng</option>
+                                                                                    <option value="Giới thiệu từ Bảo hiểm">Giới thiệu từ Bảo hiểm</option>
+                                                                                    <option value="Giới thiệu từ Bạn bè/người thân">Giới thiệu từ Bạn bè/người thân</option>                                                       
+                                                                                    <option value="Cộng tác viên">Cộng tác viên</option>                                                          
                                                                                     <option value="Showroom">Showroom</option>   
                                                                                     <option value="Thị Trường">Thị Trường</option>
                                                                                     <option value="Online">Online</option>
                                                                                     <option value="Giới thiệu">Giới thiệu</option>
                                                                                     <option value="Marketing">Marketing</option>
                                                                                     <option value="Sự kiện">Sự kiện</option>
-                                                                                    <option value="Công ty">Công ty</option>                                                          
+                                                                                    <option value="Công ty">Công ty</option>
                                                                                 </select>
                                                                             </div>
                                                                             <div class="form-group">
@@ -571,13 +604,13 @@
                                                 <th>Dự kiến mua</th>                                                
                                                 <th>Người nhập</th>
                                                 <th>Tác vụ</th>
-                                                <th>Ngày sinh</th>
+                                                <!-- <th>Ngày sinh</th>
                                                 <th>MST</th>
                                                 <th>CMND</th>
                                                 <th>Ngày cấp</th>
                                                 <th>Nơi cấp</th>
                                                 <th>Đại diện</th>
-                                                <th>Chức vụ</th>
+                                                <th>Chức vụ</th> -->
                                                 <th>CS 1h</th>
                                                 <th>CS 24h</th>
                                                 <th>CS 72h</th>
@@ -714,13 +747,13 @@
                             @endif
                         }
                     },                 
-                    { "data": "ngaySinh" },
-                    { "data": "mst" },
-                    { "data": "cmnd" },
-                    { "data": "ngayCap" },
-                    { "data": "noiCap" },
-                    { "data": "daiDien" },
-                    { "data": "chucVu" },                    
+                    // { "data": "ngaySinh" },
+                    // { "data": "mst" },
+                    // { "data": "cmnd" },
+                    // { "data": "ngayCap" },
+                    // { "data": "noiCap" },
+                    // { "data": "daiDien" },
+                    // { "data": "chucVu" },                    
                     { "data": "cs1" },
                     { "data": "cs2" },
                     { "data": "cs3" },
@@ -744,6 +777,7 @@
                         'from': $("input[name=chonNgayOne]").val(),
                         'to': $("input[name=chonNgayTwo]").val(),
                         'sale': $("select[name=salePost]").val(),
+                        'typecar': $("select[name=dongXe]").val(),
                     },
                     success: function(response) {
                         console.log(response);
@@ -767,8 +801,9 @@
                 let from = $("input[name=chonNgayOne]").val();
                 let to = $("input[name=chonNgayTwo]").val();
                 let sale = $("select[name=salePost]").val();
+                let typecar = $("select[name=dongXe]").val();
                 let urlpathcurrent = "{{ url('management/guest/get/list') }}";
-                table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to + "&sale=" + sale).load();
+                table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to + "&sale=" + sale + "&typecar=" + typecar).load();
                 counterGuest();
             });
             

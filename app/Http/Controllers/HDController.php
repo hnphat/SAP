@@ -5417,7 +5417,7 @@ class HDController extends Controller
     }
 
     public function traCuuPanel() {
-        $typecar = TypeCar::select("*")->get();
+        $typecar = TypeCar::select("*")->where("isShow",true)->get();
         return view('tracuu.phukien', ['typecar' => $typecar]);
     }
 

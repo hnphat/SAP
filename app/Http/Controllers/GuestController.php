@@ -38,6 +38,7 @@ class GuestController extends Controller
 {
     //
     public function index() {
+        $typecar = TypeCar::select("*")->where("isShow",true)->get();
         $type_guest = TypeGuest::all();
         $sale = Sale::where('id_user_create',Auth::user()->id)->get();
         //------------------------
@@ -56,7 +57,7 @@ class GuestController extends Controller
         }
         $xeList = TypeCarDetail::select('*')->where('isShow',1)->orderBy('name','asc')->get();
         // return view('page.khachhangkd', ['typeGuest' => $type_guest, 'sale' => $sale]);
-        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale, 'groupsale' => $arr, 'xeList' => $xeList]);
+        return view('page.khachhangkdv2', ['typeGuest' => $type_guest, 'sale' => $sale, 'groupsale' => $arr, 'xeList' => $xeList, 'typecar' => $typecar]);
     }
 
     public function indexBaoCao() {
@@ -70,6 +71,7 @@ class GuestController extends Controller
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);
             $sale = $request->sale ? $request->sale : null;
+            $typecar = $request->typecar ? $request->typecar : null;
             $result = null;      
             $resultForTruongNhom = [];      
             $arr = [];
@@ -104,8 +106,16 @@ class GuestController extends Controller
                     foreach($resultSale as $row2) {
                         if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($_from)) 
                         &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($_to))) {
-                            $row2->phone = Auth::user()->id != $row->id ? substr($row2->phone,0,4)."xxxxxx" : $row2->phone;
-                            array_push($resultForTruongNhom, $row2);
+                            if ($typecar == null) {                                
+                                $row2->phone = Auth::user()->id != $row->id ? substr($row2->phone,0,4)."xxxxxx" : $row2->phone;
+                                array_push($resultForTruongNhom, $row2);
+                            } else {
+                                $existOf = TypeCarDetail::where([['id_type_car','=',$typecar],['name','=',$row2->xeQuanTam]])->exists();
+                                if ($existOf) {
+                                    $row2->phone = Auth::user()->id != $row->id ? substr($row2->phone,0,4)."xxxxxx" : $row2->phone;
+                                    array_push($resultForTruongNhom, $row2);
+                                }
+                            }
                         }
                     }
                 }
@@ -153,7 +163,14 @@ class GuestController extends Controller
                 foreach($result as $row) {
                     if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
                     &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
-                        array_push($arr, $row);
+                        if ($typecar == null) {
+                            array_push($arr, $row);
+                        } else {
+                            $existOf = TypeCarDetail::where([['id_type_car','=',$typecar],['name','=',$row->xeQuanTam]])->exists();
+                            if ($existOf) {                            
+                                array_push($arr, $row);
+                            }
+                        }
                     }
                 }
                 if ($result)
@@ -223,6 +240,7 @@ class GuestController extends Controller
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);
             $_sale = $request->sale;
+            $typecar = $request->typecar ? $request->typecar : null;
             $result = null;
             $tong = 0;
             $hot = 0;
@@ -260,13 +278,27 @@ class GuestController extends Controller
             foreach($result as $row) {
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
-                    $tong++;
-                    switch($row->danhGia) {
-                        case "COLD": $cold++; break;
-                        case "WARM": $warm++; break;
-                        case "HOT": $hot++; break;
-                        case "FAIL": $fail++; break;
-                    }       
+                    if ($typecar == null) {
+                        $tong++;
+                        switch($row->danhGia) {
+                            case "COLD": $cold++; break;
+                            case "WARM": $warm++; break;
+                            case "HOT": $hot++; break;
+                            case "FAIL": $fail++; break;
+                        }     
+                    } else {
+                        $existOf = TypeCarDetail::where([['id_type_car','=',$typecar],['name','=',$row->xeQuanTam]])->exists();
+                        if ($existOf) {                            
+                            $tong++;
+                            switch($row->danhGia) {
+                                case "COLD": $cold++; break;
+                                case "WARM": $warm++; break;
+                                case "HOT": $hot++; break;
+                                case "FAIL": $fail++; break;
+                            }
+                        }
+                    }
+                      
                 }
             }
             if ($result)
@@ -369,6 +401,13 @@ class GuestController extends Controller
             $guest->henKhach = $request->henKhach;
             $guest->lyDoChuaMua = $request->lyDoChuaMua;
             $guest->lyDoLostSale = $request->lyDoLostSale;
+            if ($request->lenHopDong && $request->danhGia != "HOT") {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Khách lên hợp đồng phải chuyển trạng thái đánh giá sang HOT!',
+                    'code' => 500
+                ]);
+            }
             $guest->save();
 
             if($guest) {                
@@ -467,6 +506,13 @@ class GuestController extends Controller
         $temp = Guest::find($request->eid);
         $mkt = MarketingGuest::where('id_guest_temp',$request->eid)->exists();
         $hopdong = HopDong::where('id_guest', $temp->id)->first();
+        if ($request->elenHopDong && $request->edanhGia != "HOT") {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Khách lên hợp đồng phải chuyển trạng thái đánh giá sang HOT!',
+                'code' => 500
+            ]);
+        }
         if (Auth::user()->hasRole('system')) {
             $result = Guest::where('id',$request->eid)->update([
                 'id_type_guest' => $request->eloai,
