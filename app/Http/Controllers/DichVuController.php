@@ -34,7 +34,8 @@ class DichVuController extends Controller
     public function baoHiemPanel() {
         $user = User::all();
         $bhpk = BHPK::all();
-        return view('dichvu.quanlybaohiem',['user' => $user, 'bhpk' => $bhpk]);
+        $typecar = TypeCar::all();
+        return view('dichvu.quanlybaohiem',['user' => $user, 'bhpk' => $bhpk, 'typecar' => $typecar]);
     }
 
     public function khachHangPanel() {
@@ -740,19 +741,21 @@ class DichVuController extends Controller
             ]);
     }
 
-    public function timKiem(Request $request) {
+    public function timKiemBaoHiem(Request $request) {
         $_from = $request->tu;
         $_to = $request->den;
         switch($request->baoCao) {
             case 1: {
                 if (Auth::user()->hasRole('system'))
                     $bg = BaoGiaBHPK::select("*")
+                    ->where("isBaoHiem", true)
                     ->orderBy('id','desc')
                     ->get();
                 else
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
-                        ['id_user_create','=',Auth::user()->id]
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -761,7 +764,8 @@ class DichVuController extends Controller
                 if (Auth::user()->hasRole('system'))
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
-                        ['inProcess','=',false]
+                        ['inProcess','=',false],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -769,7 +773,8 @@ class DichVuController extends Controller
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
                         ['id_user_create','=',Auth::user()->id],
-                        ['inProcess','=',false]
+                        ['inProcess','=',false],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -780,7 +785,8 @@ class DichVuController extends Controller
                     ->where([
                         ['inProcess','=',true],
                         ['isDone','=',false],
-                        ['isCancel','=',false]
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -790,7 +796,8 @@ class DichVuController extends Controller
                         ['id_user_create','=',Auth::user()->id],
                         ['inProcess','=',true],
                         ['isDone','=',false],
-                        ['isCancel','=',false]
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -800,7 +807,8 @@ class DichVuController extends Controller
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
                         ['isDone','=',true],
-                        ['isCancel','=',false]
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -809,7 +817,8 @@ class DichVuController extends Controller
                     ->where([
                         ['id_user_create','=',Auth::user()->id],
                         ['isDone','=',true],
-                        ['isCancel','=',false]
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -818,7 +827,8 @@ class DichVuController extends Controller
                 if (Auth::user()->hasRole('system'))
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
-                        ['isCancel','=',true]
+                        ['isCancel','=',true],
+                        ['isBaoHiem','=',true]
                     ])
                     ->orderBy('id','desc')
                     ->get();
@@ -826,7 +836,177 @@ class DichVuController extends Controller
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
                         ['id_user_create','=',Auth::user()->id],
-                        ['isCancel','=',true]
+                        ['isCancel','=',true],
+                        ['isBaoHiem','=',true]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            default: abort(403);
+        }
+        foreach($bg as $row) {
+            $doanhthubaogia = 0;
+            $stt = "";
+            $flag = true;
+            $ct = ChiTietBHPK::select("*")
+            ->where('id_baogia', $row->id)
+            ->get();
+            if (!$row->inProcess) {
+                $stt = "class='bg-secondary'";
+                foreach($ct as $c){
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;       
+                }
+            }
+            if ($row->inProcess && !$row->isDone && !$row->isCancel) {
+                $stt = "class='bg-success'";
+                foreach($ct as $c){
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;       
+                }
+            }
+            if ($row->inProcess && $row->isDone && !$row->isCancel) {
+                // xử lý chưa thêm KTV start
+                foreach($ct as $c){
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;
+                    $bhpk = BHPK::find($c->id_baohiem_phukien);
+                    if ($bhpk->loai != "KTV lắp đặt") continue;
+                    $check = KTVBHPK::select("*")
+                    ->where([
+                        ['id_baogia','=',$row->id],
+                        ['id_bhpk','=',$c->id_baohiem_phukien]
+                    ])->exists();
+                    if (!$check) {
+                        $flag = false;
+                        // break;
+                    }        
+                }
+                // xử lý chưa thêm KTV end
+                if ($flag)
+                    $stt = "class='bg-info'";
+                else 
+                    $stt = "class='bg-orange'";
+            }
+            if ($row->isCancel) {
+                $stt = "class='bg-danger'";
+                foreach($ct as $c){
+                    if (!$c->isTang)
+                        $doanhthubaogia += $c->thanhTien;       
+                }
+            }
+            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                echo "
+                <tr id='tes' data-id='".$row->id."' ".$stt.">
+                    <td>".($row->saler ? "Kinh doanh" : "Khai thác")."</td>
+                    <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                    <td>".$row->bienSo."</td>
+                    <td>".$row->hoTen."</td>
+                    <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                    <td>".number_format($doanhthubaogia)."</td>
+                </tr>";
+            }
+        }
+    }
+
+    public function timKiem(Request $request) {
+        $_from = $request->tu;
+        $_to = $request->den;
+        switch($request->baoCao) {
+            case 1: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where('isBaoHiem',false)
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 2: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',false],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',false],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 3: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['inProcess','=',true],
+                        ['isDone','=',false],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 4: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isDone','=',true],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isDone','=',true],
+                        ['isCancel','=',false],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+            } break;
+            case 5: {
+                if (Auth::user()->hasRole('system'))
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['isCancel','=',true],
+                        ['isBaoHiem','=',false]
+                    ])
+                    ->orderBy('id','desc')
+                    ->get();
+                else
+                    $bg = BaoGiaBHPK::select("*")
+                    ->where([
+                        ['id_user_create','=',Auth::user()->id],
+                        ['isCancel','=',true],
+                        ['isBaoHiem','=',false]
                     ])
                     ->orderBy('id','desc')
                     ->get();

@@ -777,6 +777,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     });
 
     Route::group(['prefix' => 'dichvu'], function(){
+        // quản lý bảo hiểm
+        Route::post('loadtimkiembaohiem','DichVuController@timKiemBaoHiem')->name('timkiembaogiabaohiem'); 
         // quản lý phụ kiện
         Route::post('loadtimkiem','DichVuController@timKiem')->name('timkiembaogia'); 
         Route::post('loadcounterbadge','DichVuController@counterBadge')->name('counterbadge'); 
