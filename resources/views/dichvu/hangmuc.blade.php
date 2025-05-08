@@ -477,8 +477,8 @@
                         },
                         success: function(response) {
                             Toast.fire({
-                                icon: 'success',
-                                title: "Đã xóa"
+                                icon: response.type,
+                                title: response.message
                             })
                             table.ajax.reload();
                         },
@@ -506,8 +506,8 @@
                         },
                         success: function(response) {
                             Toast.fire({
-                                icon: 'success',
-                                title: "Đã ẩn/khóa"
+                                icon: response.type,
+                                title:  response.message,
                             })
                             if (response.code == 200) {
                                 console.log(response.isShow);

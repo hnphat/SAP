@@ -219,7 +219,7 @@ class DichVuController extends Controller
 
     public function getHangMuc() {
         $arr = [];
-        if (Auth::user()->hasRole('system'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan'))
             $bhpk = BHPK::select("*")->where('loaiXe','!=',null)->orderBy('id','desc')->get();
         else
             $bhpk = BHPK::select("*")->where([
@@ -251,8 +251,15 @@ class DichVuController extends Controller
         $kh->giaVon = $request->giaVon ? $request->giaVon : 0;
         $kh->congKTV = $request->congKTV ? $request->congKTV : 0;
         $kh->loai = $request->loai;
-        $kh->loaiXe = $request->typeCar;        
-        $kh->save();
+        $kh->loaiXe = $request->typeCar;   
+        if (Auth::user()->hasRole('system'))     
+            $kh->save();
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Bạn không có quyền thêm nội dung này'
+            ]);
         $typecar = TypeCar::find($request->typeCar);
         if($kh) {
             $nhatKy = new NhatKy();
@@ -333,11 +340,11 @@ class DichVuController extends Controller
         }
         elseif(Auth::user()->id == $kh->id_user_create) {
             $kh->isShow = !$kh->isShow;
-            $kh->delete();
+            $kh->save();
         } else return response()->json([
             'type' => 'error',
             'code' => 500,
-            'message' => 'Bạn không có quyền xoá nội dung này'
+            'message' => 'Bạn không có quyền khoá nội dung này'
         ]);
 
         if ($kh) {
@@ -377,8 +384,15 @@ class DichVuController extends Controller
         $kh->loai = $request->eloai; 
         $kh->giaVon = $request->egiaVon ? $request->egiaVon : 0; 
         $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;     
-        $kh->loaiXe = $request->etypeCar;        
-        $kh->save();
+        $kh->loaiXe = $request->etypeCar;       
+        if (Auth::user()->hasRole('system'))     
+            $kh->save();
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Bạn không có quyền cập nhật nội dung này'
+            ]);
         $typecar = TypeCar::find($request->etypeCar);
         if($kh) {
             $nhatKy = new NhatKy();
@@ -4384,65 +4398,73 @@ class DichVuController extends Controller
             'fileBase'  => 'required|mimes:xls,xlsx|max:20480',
         ]);
 
-        if($request->hasFile('fileBase')){
-            $theArray = Excel::toArray([], request()->file('fileBase')); 
-
-        if (strval($theArray[0][0][0]) == "LOAI" && strval($theArray[0][0][1]) == "MA" && 
-        strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
-        strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
-        strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE") {
-                $numlen = count($theArray[0]);                    
-                for($i = 1; $i < $numlen; $i++) {
-                    $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();                    
-                    if (!$check) {
-                        $kh = new BHPK();
-                        $kh->id_user_create = Auth::user()->id;
-                        $kh->isPK = 1;
-                        $kh->ma = strtoupper($theArray[0][$i][1]);
-                        $kh->noiDung = $theArray[0][$i][2];
-                        $kh->dvt = $theArray[0][$i][3];
-                        $kh->donGia = $theArray[0][$i][6];
-                        $kh->giaVon = $theArray[0][$i][4];
-                        $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
-                        $kh->loai = $theArray[0][$i][0];    
-                        $kh->loaiXe = $theArray[0][$i][7];    
-                        $kh->save();
-                    } else {
-                        $id_bhpk = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->first()->id;
-                        $kh = BHPK::find($id_bhpk);
-                        $kh->id_user_create = Auth::user()->id;
-                        $kh->isPK = 1;
-                        $kh->ma = strtoupper($theArray[0][$i][1]);
-                        $kh->noiDung = $theArray[0][$i][2];
-                        $kh->dvt = $theArray[0][$i][3];
-                        $kh->donGia = $theArray[0][$i][6];
-                        $kh->giaVon = $theArray[0][$i][4];
-                        $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
-                        $kh->loai = $theArray[0][$i][0];    
-                        $kh->loaiXe = $theArray[0][$i][7];    
-                        $kh->save();
-                    }            
-                }    
-                $nhatKy = new NhatKy();
-                $nhatKy->id_user = Auth::user()->id;
-                $nhatKy->thoiGian = Date("H:m:s");
-                $nhatKy->chucNang = "Dịch vụ - Danh mục phụ kiện - Import excel";
-                $nhatKy->noiDung = "Import excel file danh mục phụ kiện vào hệ thống";
-                $nhatKy->ghiChu = Carbon::now();
-                $nhatKy->save();                
+        if (Auth::user()->hasRole('system')) {
+            if($request->hasFile('fileBase')) {
+                $theArray = Excel::toArray([], request()->file('fileBase')); 
+            
+                if (strval($theArray[0][0][0]) == "LOAI" && strval($theArray[0][0][1]) == "MA" && 
+                strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
+                strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
+                strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE") {
+                        $numlen = count($theArray[0]);                    
+                        for($i = 1; $i < $numlen; $i++) {
+                            $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();                    
+                            if (!$check) {
+                                $kh = new BHPK();
+                                $kh->id_user_create = Auth::user()->id;
+                                $kh->isPK = 1;
+                                $kh->ma = strtoupper($theArray[0][$i][1]);
+                                $kh->noiDung = $theArray[0][$i][2];
+                                $kh->dvt = $theArray[0][$i][3];
+                                $kh->donGia = $theArray[0][$i][6];
+                                $kh->giaVon = $theArray[0][$i][4];
+                                $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
+                                $kh->loai = $theArray[0][$i][0];    
+                                $kh->loaiXe = $theArray[0][$i][7];    
+                                $kh->save();
+                            } else {
+                                $id_bhpk = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->first()->id;
+                                $kh = BHPK::find($id_bhpk);
+                                $kh->id_user_create = Auth::user()->id;
+                                $kh->isPK = 1;
+                                $kh->ma = strtoupper($theArray[0][$i][1]);
+                                $kh->noiDung = $theArray[0][$i][2];
+                                $kh->dvt = $theArray[0][$i][3];
+                                $kh->donGia = $theArray[0][$i][6];
+                                $kh->giaVon = $theArray[0][$i][4];
+                                $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
+                                $kh->loai = $theArray[0][$i][0];    
+                                $kh->loaiXe = $theArray[0][$i][7];    
+                                $kh->save();
+                            }            
+                        }    
+                        $nhatKy = new NhatKy();
+                        $nhatKy->id_user = Auth::user()->id;
+                        $nhatKy->thoiGian = Date("H:m:s");
+                        $nhatKy->chucNang = "Dịch vụ - Danh mục phụ kiện - Import excel";
+                        $nhatKy->noiDung = "Import excel file danh mục phụ kiện vào hệ thống";
+                        $nhatKy->ghiChu = Carbon::now();
+                        $nhatKy->save();                
+                        return response()->json([
+                            'type' => 'info',
+                            'message' => 'Đã thực hiện import excel danh mục phụ kiện',
+                            'code' => 200
+                        ]);                  
+                }
+            } else {
                 return response()->json([
                     'type' => 'info',
-                    'message' => 'Đã thực hiện import excel danh mục phụ kiện',
+                    'message' => 'Không tìm thấy file import danh mục',
                     'code' => 200
-                ]);                  
-            }
-		} else {
+                ]);    
+            }    
+        } else {
             return response()->json([
-                'type' => 'info',
-                'message' => 'Không tìm thấy file import danh mục',
-                'code' => 200
+                'type' => 'error',
+                'message' => 'Bạn không có quyền import danh mục phụ kiện',
+                'code' => 500
             ]);    
-        }           
+        }       
     } 
 
     public function postKTV(Request $request){

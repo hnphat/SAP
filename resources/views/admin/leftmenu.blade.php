@@ -289,6 +289,7 @@
                     \Illuminate\Support\Facades\Auth::user()->hasRole('to_phu_kien') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan') ||
+                    \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan') ||
                     \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))
                     <a href="#" class="nav-link">
                         <i class="nav-icon fab fa-servicestack"></i>
@@ -327,7 +328,8 @@
                             </a>
                         </li>      
                         @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('ketoan'))
                         <li class="nav-item">
                             <a href="{{route('dichvu.hangmuc')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
