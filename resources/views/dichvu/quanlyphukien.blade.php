@@ -380,26 +380,22 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-8">
                             <div class="form-group">
                                 <label for="hangHoa">Chọn mã hàng</label>
-                                <!-- <input placeholder="Nhập nội dung gợi ý" list="hangHoas" name="hangHoa" id="hangHoa" class="form-control"> -->
-                                <!-- <datalist id="hangHoas">
-                                    @foreach($bhpk as $bh)
-                                        <option value="{{$bh->ma}}">{{$bh->noiDung}}</option>
-                                    @endforeach                                    
-                                </datalist> -->
                                 <select name="hangHoa" id="hangHoa" class="form-control">
                                     
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Tên hàng</label>
                                 <input type="text" name="tenHang" disabled class="form-control">
                             </div>
-                        </div>
+                        </div>                                                            
+                    </div>         
+                    <div class="row">
                         <div class="col-md-1">
                             <div class="form-group">
                                 <label>Số lượng</label>
@@ -420,8 +416,8 @@
                                     <option value="1">Có</option>
                                 </select>
                             </div>
-                        </div>                                            
-                    </div>                
+                        </div>        
+                    </div>       
                     <div class="container row">
                         <button id="saveBtn" type="button" class="btn btn-success">LƯU</button>
                     </div>
@@ -1814,7 +1810,7 @@
                         txt = "";
                         result =  response.data;
                         for(let i = 0; i < result.length; i++) {
-                            txt += `<option value="${result[i].ma}">${result[i].noiDung}</option>`;
+                            txt += `<option value="${result[i].ma}">${result[i].noiDung} [${result[i].ma}]</option>`;
                         }
                         $("#hangHoa").html(txt);
                         autoloadPK();
