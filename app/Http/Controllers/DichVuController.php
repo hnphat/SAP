@@ -1846,6 +1846,7 @@ class DichVuController extends Controller
 
             $tt = "";
             $noiDung = "";
+            $macode = "";
             $dvt = "";
             $sl = "";
             $donGia = "";
@@ -1862,6 +1863,7 @@ class DichVuController extends Controller
                 $sl .= $row->soLuong . "<w:br/>";
                 $donGia .= number_format($row->donGia) . "<w:br/>";
                 $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
+                $macode .= $bh->ma . "<w:br/>";   
                 if (!$row->isTang) {
                     $noiDung .= $bh->noiDung . "<w:br/>";     
                     $thanhTien .= number_format((($row->donGia*$row->soLuong) - (($row->donGia*$row->soLuong) * $row->chietKhau/100))) . "<w:br/>";
@@ -1901,6 +1903,7 @@ class DichVuController extends Controller
                     'dienThoaiTaiXe' => $dienThoaiTaiXe,
                     'tt' => $tt,
                     'noiDung' => $noiDung,
+                    'macode' => $macode,
                     'dvt' => $dvt,
                     'sl' => $sl,
                     'donGia' => $donGia,
@@ -1952,6 +1955,7 @@ class DichVuController extends Controller
 
             $tt = "";
             $noiDung = "";
+            $macode = "";
             $dvt = "";
             $sl = "";
             $donGia = "";
@@ -1966,6 +1970,7 @@ class DichVuController extends Controller
                 $tt .= $i++ . "<w:br/>"; 
                 $dvt .= $bh->dvt . "<w:br/>";
                 $sl .= $row->soLuong . "<w:br/>";
+                $macode .= $bh->ma . "<w:br/>";
                 $donGia .= number_format($row->donGia) . "<w:br/>";
                 $chietKhau .= number_format($row->chietKhau) . "%<w:br/>";
                 if (!$row->isTang) {
@@ -2007,6 +2012,7 @@ class DichVuController extends Controller
                     'dienThoaiTaiXe' => $dienThoaiTaiXe,
                     'tt' => $tt,
                     'noiDung' => $noiDung,
+                    'macode' => $macode,
                     'dvt' => $dvt,
                     'sl' => $sl,
                     'donGia' => $donGia,
