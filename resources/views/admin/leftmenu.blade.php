@@ -312,12 +312,12 @@
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{route('baohiem.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý bảo hiểm</p>
                             </a>
-                        </li>     
+                        </li>      -->
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
@@ -646,6 +646,12 @@
                                         <p>Đề nghị dấu/mộc</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('hanhchinh.xemthongbao')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Thông báo/Biểu mẫu</p>
+                                    </a>
+                                </li>
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                     \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))    
                                     <li class="nav-item">
@@ -664,12 +670,12 @@
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                 \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') ||
                                 \Illuminate\Support\Facades\Auth::user()->hasRole('lead'))  
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="{{route('hanhchinh.xemthongbao')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
-                                        <p>Thông báo</p>
+                                        <p>Thông báo TBP</p>
                                     </a>
-                                </li>
+                                </li> -->
                                 @endif
                                 <!-- <li class="nav-item">
                                     <a href="{{route('hanhchinh.xembieumau')}}" class="nav-link">

@@ -57,6 +57,7 @@
                                         <th>Ghi chú</th>
                                         <th>Loại file</th>
                                         <th>Hiển thị</th>
+                                        <th>Xem bởi</th>
                                         <th>Tác vụ</th>
                                     </tr>
                                     </thead>
@@ -124,6 +125,21 @@
                                    <option value="1">Có</option>   
                                </select>
                             </div>
+                            <div class="form-group">
+                               <label>Chọn phòng ban xem thông báo</label> 
+                               <select name="chonNhom" id="chonNhom" class="form-control">                                    
+                                    @foreach($nhom as $item)
+                                        <option value="{{$item->id}}">{{$item->name}}</option>   
+                                    @endforeach
+                               </select>
+                               <p><br>
+                                <button type="button" id="chon" name="chon" class="btn btn-info btn-sm">Chọn</button>
+                                &nbsp;
+                                <button type="button" id="xoaAll" name="xoaAll" class="btn btn-danger btn-sm">Xóa</button>
+                               </p>
+                               <label>Đã chọn:</label> 
+                               <input type="text" name="phanquyen" class="form-control" readonly>
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -189,6 +205,21 @@
                                    <option value="0" selected>Không</option>   
                                    <option value="1">Có</option>   
                                </select>
+                            </div>
+                            <div class="form-group">
+                               <label>Chọn phòng ban xem thông báo</label> 
+                               <select name="echonNhom" id="echonNhom" class="form-control">                                    
+                                    @foreach($nhom as $item)
+                                        <option value="{{$item->id}}">{{$item->name}}</option>   
+                                    @endforeach
+                               </select>
+                               <p><br>
+                                <button type="button" id="echon" name="echon" class="btn btn-info btn-sm">Chọn</button>
+                                &nbsp;
+                                <button type="button" id="exoaAll" name="exoaAll" class="btn btn-danger btn-sm">Xóa</button>
+                               </p>
+                               <label>Đã chọn:</label> 
+                               <input type="text" name="ephanquyen" class="form-control" readonly>
                             </div>
                         </form>
                     </div>
@@ -271,6 +302,7 @@
                                 return "<strong class='text-danger'>Không</strong>";
                         }
                     },
+                    { "data": "phanquyen" },
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -376,6 +408,7 @@
                         $("input[name=emoTa]").val(response.data.moTa);
                         $("input[name=eghiChu]").val(response.data.ghiChu);
                         $("select[name=eallow]").val(response.data.allow);
+                        $("input[name=ephanquyen]").val(response.data.phanquyen);
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
@@ -413,6 +446,52 @@
                         })
                     }
                 });
+            });
+
+            $("#xoaAll").click(function(e){
+                e.preventDefault();
+                $("input[name=phanquyen]").val("");
+            });
+
+            $("#exoaAll").click(function(e){
+                e.preventDefault();
+                $("input[name=ephanquyen]").val("");
+            });
+
+            $("#chon").click(function(e){
+                e.preventDefault();
+                var name = $("#chonNhom option:selected").text().trim();
+                var current = $("input[name=phanquyen]").val().trim();
+
+                // Tách các tên đã chọn thành mảng, loại bỏ khoảng trắng thừa
+                var arr = current ? current.split(";").map(function(item){ return item.trim(); }) : [];
+
+                // Nếu chưa có thì mới thêm
+                if(arr.indexOf(name) === -1) {
+                    if(current) {
+                        $("input[name=phanquyen]").val(current + "; " + name);
+                    } else {
+                        $("input[name=phanquyen]").val(name);
+                    }
+                }             
+            });
+
+            $("#echon").click(function(e){
+                e.preventDefault();
+                var name = $("#echonNhom option:selected").text().trim();
+                var current = $("input[name=ephanquyen]").val().trim();
+
+                // Tách các tên đã chọn thành mảng, loại bỏ khoảng trắng thừa
+                var arr = current ? current.split(";").map(function(item){ return item.trim(); }) : [];
+
+                // Nếu chưa có thì mới thêm
+                if(arr.indexOf(name) === -1) {
+                    if(current) {
+                        $("input[name=ephanquyen]").val(current + "; " + name);
+                    } else {
+                        $("input[name=ephanquyen]").val(name);
+                    }
+                }             
             });
         });
     </script>

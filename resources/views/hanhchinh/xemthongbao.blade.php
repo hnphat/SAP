@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    THÔNG TIN THÔNG BÁO
+    THÔNG BÁO/BIỂU MẪU
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Thông tin thông báo</strong></h1>
+                        <h1 class="m-0"><strong>Thông báo/biểu mẫu</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Hành chính</li>
-                            <li class="breadcrumb-item active">Thông tin thông báo</li>
+                            <li class="breadcrumb-item active">Thông báo/biểu mẫu</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->

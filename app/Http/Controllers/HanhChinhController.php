@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\BieuMau;
 use App\NhatKy;
+use App\Nhom;
+use App\NhomUser;
 use App\UsersDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,7 +16,8 @@ class HanhChinhController extends Controller
     //
 
     public function showBieuMau() {
-        return view('hanhchinh.bieumau');
+        $nhom = Nhom::all();
+        return view('hanhchinh.bieumau', ['nhom' => $nhom]);
     }
 
     public function getBieuMau() {
@@ -73,6 +76,7 @@ class HanhChinhController extends Controller
             $bm->type = $request->loaiFile;
             $bm->ghiChu = $request->ghiChu;
             $bm->allow = $request->allow;
+            $bm->phanquyen = $request->phanquyen;
             $bm->ngayTao = Date('d-m-Y');
             $bm->user_create = Auth::user()->id;
             $bm->save();
@@ -121,10 +125,10 @@ class HanhChinhController extends Controller
         $bm->type = $request->eloaiFile;
         $bm->ghiChu = $request->eghiChu;
         $bm->allow = $request->eallow;
+        $bm->phanquyen = $request->ephanquyen;
         $bm->user_create = Auth::user()->id;
         $bm->save();
         if ($bm) {
-
             $nhatKy = new NhatKy();
             $nhatKy->id_user = Auth::user()->id;
             $nhatKy->chucNang = "Hành chính - Quản lý biểu mẫu";
@@ -212,11 +216,22 @@ class HanhChinhController extends Controller
     }
 
     public function getXemThongBao() {
-        $result = BieuMau::select('*')->where([
-            ['allow','=',true],
-            ['type','!=','TBKD'],
-            ['type','!=','GX'],
-        ])->orderBy('id', 'desc')->get();
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns') || Auth::user()->hasRole('lead')) {
+             $result = BieuMau::select('*')->where([
+                ['allow','=',true],
+                ['type','!=','TBKD'],
+                ['type','!=','GX'],
+            ])->orderBy('id', 'desc')->get();
+        } else {
+            $id_nhom = NhomUser::where('id_user', Auth::user()->id)->first();
+            $ten_nhom = Nhom::where('id', $id_nhom->id_nhom)->first();
+            $result = BieuMau::select('*')->where([
+                ['allow','=',true],
+                ['type','!=','TBKD'],
+                ['type','!=','GX'],
+                ['phanquyen', 'like', '%'.$ten_nhom->name.'%']
+            ])->orderBy('id', 'desc')->get();
+        }
         if ($result) 
             return response()->json([
                 'message' => 'Đã tải dữ liệu!',
