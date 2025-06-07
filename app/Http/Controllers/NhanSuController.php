@@ -1285,7 +1285,7 @@ class NhanSuController extends Controller
                 $diff = $date2_ts - $date1_ts;
                 $dateDiff = round($diff / 86400);
                 // dd($dateDiff);
-                if ($dateDiff <= 2) {
+                if ($dateDiff <= 10) {
                     $flag = true;
                 }
                 // Xử lý phép năm đang có của nhân viên
@@ -1468,7 +1468,7 @@ class NhanSuController extends Controller
                             return response()->json([
                                 "type" => "info",
                                 "code" => 500,
-                                "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 02 ngày!"
+                                "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 10 ngày!"
                             ]);
                         }             
                     }    
