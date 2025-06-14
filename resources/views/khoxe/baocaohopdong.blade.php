@@ -413,13 +413,37 @@
                             default: mode = "";
                         }
                         mode = (mode != "") ? mode : (response.phuKienKhuyenMai[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
-                        phuKienKhuyenMai += "<tr>" +
+                        
+                        if (response.phuKienKhuyenMai[i].mode == "GIABAN") {
+                            phuKienKhuyenMai += "<tr>" +
+                                "<td>" + (i+1) + "</td>" +
+                                "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon + response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + mode + "</td>" +
+                                "</tr>";                            
+                        } else if (response.phuKienKhuyenMai[i].mode == "CTKM") {
+                            phuKienKhuyenMai += "<tr>" +
+                                "<td>" + (i+1) + "</td>" +
+                                "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon + response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + mode + "</td>" +
+                                "</tr>";                            
+                        } else if (response.phuKienKhuyenMai[i].mode == "TANGTHEM") {
+                            phuKienKhuyenMai += "<tr>" +
+                                "<td>" + (i+1) + "</td>" +
+                                "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon + response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + mode + "</td>" +
+                                "</tr>";                            
+                        } else {
+                            phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
                                 "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].cost)) + "</td>" +
                                 "<td>" + mode + "</td>" +
-                                "</tr>";                            
-                        }
+                                "</tr>";       
+                        }                                              
+                    }
                     $("#phuKienKhuyenMai").html(phuKienKhuyenMai);
                     $('#tongPhuKienKhuyenMai').text(response.tongPhuKienKhuyenMai);
                     $('#phiVanChuyen').text(formatNumber(response.phiVanChuyen));

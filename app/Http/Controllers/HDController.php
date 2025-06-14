@@ -1582,26 +1582,36 @@ class HDController extends Controller
                 if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
-                    $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>';                    
-                    $tongPhuKienFree += $row->cost;
+                    $bhpk = BHPK::find($row->mapk);
+                    $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (TT)<w:br/>';     
+                    //$chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>';     
+                    // Bổ sung công vào giá tặng thêm
+                    
+                    // ------------------------------               
+                    $tongPhuKienFree += (($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost);
                     $k++;
                 } else if ($row->type == 'free' && ($row->mode != null && $row->mode != "KEMTHEOXE")) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
+                    $bhpk = BHPK::find($row->mapk);
                     switch($row->mode) {
-                        case "TANGTHEM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>'; break;
-                        case "CTKM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (CTKM)<w:br/>'; break;
+                        case "TANGTHEM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (TT)<w:br/>'; break;
+                        case "CTKM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (CTKM)<w:br/>'; break;
                     }
                     if ($row->mode == "GIABAN") {
                         $p = BHPK::find($row->mapk);
-                        $chiPhiChiTietPK .=  number_format($p->donGia) . ' (TTGB)<w:br/>'; 
-                        $tongPhuKienFree += $p->donGia;
+                        $chiPhiChiTietPK .=  number_format($p->donGia + $p->congKTV) . ' (TTGB)<w:br/>'; 
+                        $tongPhuKienFree += ($p->donGia + $p->congKTV);
                     } else {
-                        $tongPhuKienFree += $row->cost;
+                        $p = BHPK::find($row->mapk);
+                        if ($row->mode == "TANGTHEM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
+                        else if ($row->mode == "CTKM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
+                        else $tongPhuKienFree += $row->cost;                    
                     }
                     $k++;
                 }
 
+                // Nếu là kèm theo xe thì liệt kê ở đây
                 if ($row->type == 'free' && (($row->mode != null && $row->mode == "KEMTHEOXE") || ($row->mode == null && $row->free_kem == true))) 
                     $dsqt .=  $row->name . ";";
             }
@@ -4827,11 +4837,22 @@ class HDController extends Controller
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
                         $p = BHPK::find($row2->mapk);
-                        $tangPK += $p->giaVon;
-                        $khuyenMai += $p->giaVon;
+                        $tangPK += ($p->giaVon + $p->congKTV);
+                        $khuyenMai += ($p->giaVon + $p->congKTV);
                        } else {
-                        $tangPK += $row2->cost;
-                        $khuyenMai += $row2->cost;
+                            $p = BHPK::find($row2->mapk);
+                            if ($row2->mapk && $row2->mode && $row2->mode == "TANGTHEM") {
+                                $tangPK += ($p->giaVon + $p->congKTV);
+                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                            }
+                            elseif ($row2->mapk && $row2->mode && $row2->mode == "CTKM") {
+                                $tangPK += ($p->giaVon + $p->congKTV);
+                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                            }
+                            else {
+                                $tangPK += $row2->cost;
+                                $khuyenMai += $row2->cost;
+                            }
                        }
                        // -----------------------
                     }
@@ -5326,8 +5347,28 @@ class HDController extends Controller
             ['package.type','=','free']
         ])->get();
         $tongPhuKienKhuyenMai = 0;
-        foreach($phuKienKM as $row)
-            $tongPhuKienKhuyenMai += $row->cost;
+        // Xử lý phụ kiện khuyến mãi cộng thêm công kỹ thuật viên
+        foreach ($phuKienKM as $item) {
+            $bhpk = BHPK::find($item->mapk);
+            if ($bhpk) {
+                $item->giaVon = $bhpk->giaVon;
+                $item->congKTV = $bhpk->congKTV;
+            } else {
+                $item->giaVon = null;
+                $item->congKTV = null;
+            }            
+        }
+        // ----------------------
+        foreach($phuKienKM as $row) {
+            if ($row->mode == "GIABAN") {                
+                $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
+            } elseif ($row->mode == "TANGTHEM") {
+                $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
+            } elseif ($row->mode == "CTKM") {
+                 $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
+            } else 
+               $tongPhuKienKhuyenMai += $row->cost;
+        }
         $phuKienKhuyenMai = $phuKienKM;
         $tongGiaTriHopDong = ($hd->giaXe + $tongCongPhi + $tongPhuKienBan) - $truPhi;
         return response()->json([
