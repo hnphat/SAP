@@ -586,13 +586,24 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
                         $p = BHPK::find($row2->mapk);
-                        $tangPK += $p->giaVon;
-                        $khuyenMai += $p->giaVon;
+                        $tangPK += ($p->giaVon + $p->congKTV);
+                        $khuyenMai += ($p->giaVon + $p->congKTV);
                        } else {
-                        $tangPK += $row2->cost;
-                        $khuyenMai += $row2->cost;
+                            $p = BHPK::find($row2->mapk);
+                            if ($row2->mapk && $row2->mode && $row2->mode == "TANGTHEM") {
+                                $tangPK += ($p->giaVon + $p->congKTV);
+                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                            }
+                            elseif ($row2->mapk && $row2->mode && $row2->mode == "CTKM") {
+                                $tangPK += ($p->giaVon + $p->congKTV);
+                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                            }
+                            else {
+                                $tangPK += $row2->cost;
+                                $khuyenMai += $row2->cost;
+                            }
                        }
-                       // -----------------------    
+                       // -----------------------   
                     }
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;

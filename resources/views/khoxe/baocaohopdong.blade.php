@@ -418,21 +418,21 @@
                             phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
-                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon + response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon) + parseInt(response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         } else if (response.phuKienKhuyenMai[i].mode == "CTKM") {
                             phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
-                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon + response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon) + parseInt(response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         } else if (response.phuKienKhuyenMai[i].mode == "TANGTHEM") {
                             phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
-                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon + response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon) + parseInt(response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         } else {
