@@ -73,6 +73,13 @@ class NhanSuController extends Controller
 
     public function quanLyChamCongPostNhanVien(Request $request) {
 
+        if (!Auth::user()->hasRole('system') || !Auth::user()->hasRole('lead_chamcong')) {
+            return response()->json([
+                    "type" => "error",
+                    "code" => 400,
+                    "message" => "Bạn không có quyền thực hiện chức năng này"
+                ]);
+        } 
         // $time_1 = "07:30";
         // $time_2 = "11:30";
         // $time_3 = "13:00";

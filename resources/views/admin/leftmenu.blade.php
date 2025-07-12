@@ -549,21 +549,26 @@
                             </li>  -->
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('upcong'))
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
-                            <li class="nav-item">
-                                <a href="{{route('nhansu.panel')}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Quản lý chấm công</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('chotcong.panel')}}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Quản lý chốt công</p>
-                                </a>
-                            </li>
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong') ||
+                             \Illuminate\Support\Facades\Auth::user()->hasRole('upcong'))
+                                <li class="nav-item">
+                                    <a href="{{route('nhansu.panel')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Quản lý chấm công</p>
+                                    </a>
+                                </li>
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
+                                <li class="nav-item">
+                                    <a href="{{route('chotcong.panel')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Quản lý chốt công</p>
+                                    </a>
+                                </li>
+                                @endif
                             @endif
                             <li class="nav-item">
                                 <a href="{{route('tonghop.panel')}}" class="nav-link">
