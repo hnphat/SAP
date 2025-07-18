@@ -818,13 +818,13 @@
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('work') ||
                      \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
-                    <!-- <a href="#" class="nav-link">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-cannabis"></i>
                         <p>
                             <strong>CÔNG VIỆC</strong>
                             <i class="right fas fa-angle-left"></i>
                         </p>
-                    </a> -->
+                    </a>
                     @endif
                     <ul class="nav nav-treeview">
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
