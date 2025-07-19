@@ -126,7 +126,19 @@
                                                                         <label>Công KTV:</label>
                                                                         <input id="congKTV" name="congKTV" value="0" type="number" class="form-control" placeholder="Giá">
                                                                         <i id="showCongKTV"></i>
-                                                                    </div>  
+                                                                    </div> 
+                                                                    <div class="form-group">
+                                                                        <label>Thời gian lắp đặt:</label>
+                                                                        <input id="thoigian" name="thoigian" type="text" class="form-control" placeholder="Thời gian lắp đặt">
+                                                                    </div> 
+                                                                    <div class="form-group">
+                                                                        <label>Bảo hành:</label>
+                                                                        <input id="baohanh" name="baohanh" type="text" class="form-control" placeholder="Bảo hành">
+                                                                    </div> 
+                                                                    <div class="form-group">
+                                                                        <label>Nhà cung cấp:</label>
+                                                                        <input id="nhacungcap" name="nhacungcap" type="text" class="form-control" placeholder="Nhà cung cấp">
+                                                                    </div>
                                                                 </div>
                                                                 <!-- /.card-body -->
                                                                 <div class="card-footer">
@@ -182,6 +194,7 @@
                                                                 </div>
                                                                 <!-- /.card-body -->
                                                                 <div class="card-footer">
+                                                                    <strong class="text-danger"><i>Lưu ý: Dữ liệu với mã khớp với file đã nhập sẽ tiến hành cập nhật dữ liệu đang có. Dữ liệu mã mới sẽ được thêm mới vào cơ sở dữ liệu</i></strong><br/>
                                                                     <button id="btnImport" class="btn btn-primary">Import</button>
                                                                 </div>
                                                             </form>
@@ -206,7 +219,10 @@
                                                 <th>Đơn vị tính</th>
                                                 <th>Giá vốn</th>
                                                 <th>Giá bán</th>
-                                                <th>Công KTV</th>                                               
+                                                <th>Công KTV</th>   
+                                                <th>Thời gian thực hiện</th>  
+                                                <th>Bảo hành</th>  
+                                                <th>Nhà cung cấp</th>                                              
                                                 <th>Tác vụ</th>
                                             </tr>
                                             </thead>
@@ -297,7 +313,19 @@
                                     <label>Công KTV:</label>
                                     <input id="econgKTV" name="econgKTV" type="number" class="form-control" placeholder="Giá">
                                     <i id="eshowCongKTV"></i>
-                                </div>                               
+                                </div>          
+                                <div class="form-group">
+                                    <label>Thời gian lắp đặt:</label>
+                                    <input id="ethoigian" name="ethoigian" type="text" class="form-control" placeholder="Thời gian lắp đặt">
+                                </div> 
+                                <div class="form-group">
+                                    <label>Bảo hành:</label>
+                                    <input id="ebaohanh" name="ebaohanh" type="text" class="form-control" placeholder="Bảo hành">
+                                </div> 
+                                <div class="form-group">
+                                    <label>Nhà cung cấp:</label>
+                                    <input id="enhacungcap" name="enhacungcap" type="text" class="form-control" placeholder="Nhà cung cấp">
+                                </div>                     
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
@@ -357,11 +385,11 @@
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 ajax: "{{ url('management/dichvu/hangmuc/get/list') }}",
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
+                // "columnDefs": [ {
+                //     "searchable": false,
+                //     "orderable": false,
+                //     "targets": 0
+                // } ],
                 "order": [
                     [ 0, 'desc' ]
                 ],
@@ -390,7 +418,10 @@
                         render: function(data, type, row) {
                           return formatNumber(row.congKTV);
                         } 
-                    },                 
+                    },             
+                    { "data": "thoigian" },
+                    { "data": "baohanh" },
+                    { "data": "nhacungcap" },    
                     {
                         "data": null,
                         render: function(data, type, row) {
@@ -551,6 +582,9 @@
                         $("input[name=edonGia]").val(response.data.donGia);
                         $("input[name=egiaVon]").val(response.data.giaVon);
                         $("input[name=econgKTV]").val(response.data.congKTV);
+                        $("input[name=ethoigian]").val(response.data.thoigian);
+                        $("input[name=ebaohanh]").val(response.data.baohanh);
+                        $("input[name=enhacungcap]").val(response.data.nhacungcap);
                         $("select[name=eloai]").val(response.data.loai);
                         $("select[name=etypeCar]").val(response.data.loaiXe);
                         $('#eshowGia').text("(" + DOCSO.doc(response.data.donGia) + ")");
@@ -576,7 +610,7 @@
                     success: function(response) {
                         $("#editForm")[0].reset();
                         Toast.fire({
-                            icon: 'info',
+                            icon: response.type,
                             title: response.message
                         })
                         table.ajax.reload();

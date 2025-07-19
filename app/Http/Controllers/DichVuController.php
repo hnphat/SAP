@@ -252,6 +252,16 @@ class DichVuController extends Controller
         $kh->congKTV = $request->congKTV ? $request->congKTV : 0;
         $kh->loai = $request->loai;
         $kh->loaiXe = $request->typeCar;   
+        $kh->thoigian = $request->thoigian ? $request->thoigian : null;
+        $kh->baohanh = $request->baohanh ? $request->baohanh : null;
+        $kh->nhacungcap = $request->nhacungcap ? $request->nhacungcap : null;
+        if ($request->donGia < $request->giaVon || $request->congKTV >= $request->donGia || $request->congKTV >= $request->giaVon) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Giá vốn, giá bán, công KTV không hợp lệ!'
+            ]);
+        }
         if (Auth::user()->hasRole('system'))     
             $kh->save();
         else
@@ -383,8 +393,18 @@ class DichVuController extends Controller
         $kh->donGia = $request->edonGia ? $request->edonGia : 0;
         $kh->loai = $request->eloai; 
         $kh->giaVon = $request->egiaVon ? $request->egiaVon : 0; 
-        $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;     
+        $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;   
+        $kh->thoigian = $request->ethoigian ? $request->ethoigian : 0;   
+        $kh->baohanh = $request->ebaohanh ? $request->ebaohanh : 0; 
+        $kh->nhacungcap = $request->enhacungcap ? $request->enhacungcap : 0;   
         $kh->loaiXe = $request->etypeCar;       
+        if ($request->edonGia < $request->egiaVon || $request->econgKTV >= $request->edonGia || $request->econgKTV >= $request->egiaVon) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Giá vốn, giá bán, công KTV không hợp lệ!'
+            ]);
+        }
         if (Auth::user()->hasRole('system'))     
             $kh->save();
         else
@@ -4411,9 +4431,33 @@ class DichVuController extends Controller
                 if (strval($theArray[0][0][0]) == "LOAI" && strval($theArray[0][0][1]) == "MA" && 
                 strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
                 strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
-                strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE") {
+                strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE" && 
+                strval($theArray[0][0][8]) == "THOIGIANLAPDAT" && strval($theArray[0][0][9]) == "BAOHANH" && strval($theArray[0][0][10]) == "NHACUNGCAP") {
                         $numlen = count($theArray[0]);                    
                         for($i = 1; $i < $numlen; $i++) {
+                            if (preg_match('/^[A-Z0-9_]+$/', $theArray[0][$i][1])) {
+                                // Hợp lệ: chỉ chứa ký tự in hoa và dấu gạch dưới
+                            } else {
+                                return response()->json([
+                                    'type' => 'error',
+                                    'message' => 'Mã phụ kiện không hợp lệ: '.$theArray[0][$i][1],
+                                    'code' => 400
+                                ]);
+                            }
+                            if ($theArray[0][$i][5] > $theArray[0][$i][6])
+                                return response()->json([
+                                    'type' => 'error',
+                                    'message' => 'Mã: '.$theArray[0][$i][1]. ' dữ liệu không hợp lệ. Xem giá vốn, giá bán, công KTV!',
+                                    'code' => 400
+                                ]);    
+
+                            if ($theArray[0][$i][4] > $theArray[0][$i][6])
+                                return response()->json([
+                                    'type' => 'error',
+                                    'message' => 'Mã: '.$theArray[0][$i][1]. ' dữ liệu không hợp lệ. Xem giá vốn, giá bán, công KTV!',
+                                    'code' => 400
+                                ]);
+
                             $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();                    
                             if (!$check) {
                                 $kh = new BHPK();
@@ -4426,7 +4470,10 @@ class DichVuController extends Controller
                                 $kh->giaVon = $theArray[0][$i][4];
                                 $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
                                 $kh->loai = $theArray[0][$i][0];    
-                                $kh->loaiXe = $theArray[0][$i][7];    
+                                $kh->loaiXe = $theArray[0][$i][7];  
+                                $kh->thoigian = $theArray[0][$i][8];    
+                                $kh->baohanh = $theArray[0][$i][9];    
+                                $kh->nhacungcap = $theArray[0][$i][10];      
                                 $kh->save();
                             } else {
                                 $id_bhpk = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->first()->id;
@@ -4440,7 +4487,10 @@ class DichVuController extends Controller
                                 $kh->giaVon = $theArray[0][$i][4];
                                 $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
                                 $kh->loai = $theArray[0][$i][0];    
-                                $kh->loaiXe = $theArray[0][$i][7];    
+                                $kh->loaiXe = $theArray[0][$i][7];   
+                                $kh->thoigian = $theArray[0][$i][8];    
+                                $kh->baohanh = $theArray[0][$i][9];    
+                                $kh->nhacungcap = $theArray[0][$i][10];       
                                 $kh->save();
                             }            
                         }    
@@ -4456,6 +4506,12 @@ class DichVuController extends Controller
                             'message' => 'Đã thực hiện import excel danh mục phụ kiện',
                             'code' => 200
                         ]);                  
+                } else {
+                  return response()->json([
+                    'type' => 'error',
+                    'message' => 'Tệp tin không đúng mẫu',
+                    'code' => 400
+                    ]);  
                 }
             } else {
                 return response()->json([
