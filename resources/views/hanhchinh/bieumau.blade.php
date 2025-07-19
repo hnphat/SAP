@@ -135,6 +135,8 @@
                                <p><br>
                                 <button type="button" id="chon" name="chon" class="btn btn-info btn-sm">Chọn</button>
                                 &nbsp;
+                                <button type="button" id="chonAll" name="chonAll" class="btn btn-primary btn-sm">Chọn Tất cả</button>
+                                &nbsp;
                                 <button type="button" id="xoaAll" name="xoaAll" class="btn btn-danger btn-sm">Xóa</button>
                                </p>
                                <label>Đã chọn:</label> 
@@ -215,6 +217,8 @@
                                </select>
                                <p><br>
                                 <button type="button" id="echon" name="echon" class="btn btn-info btn-sm">Chọn</button>
+                                &nbsp;
+                                <button type="button" id="echonAll" name="echonAll" class="btn btn-primary btn-sm">Chọn Tất cả</button>
                                 &nbsp;
                                 <button type="button" id="exoaAll" name="exoaAll" class="btn btn-danger btn-sm">Xóa</button>
                                </p>
@@ -492,6 +496,24 @@
                         $("input[name=ephanquyen]").val(name);
                     }
                 }             
+            });
+
+            $("#chonAll").click(function(e){
+                e.preventDefault();
+                var allNames = [];
+                $("#chonNhom option").each(function(){
+                    allNames.push($(this).text().trim());
+                });
+                $("input[name=phanquyen]").val(allNames.join(", "));
+            });
+
+            $("#echonAll").click(function(e){
+                e.preventDefault();
+                var allNames = [];
+                $("#echonNhom option").each(function(){
+                    allNames.push($(this).text().trim());
+                });
+                $("input[name=ephanquyen]").val(allNames.join(", "));
             });
         });
     </script>
