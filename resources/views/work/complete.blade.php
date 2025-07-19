@@ -54,6 +54,7 @@
                             <th>Báo cáo</th>
                             <th>Ngày</th>
                             <th>Tên công việc</th>
+                            <th>Yêu cầu</th>
                             <th>Tiến độ</th>
                             <th>Deadline</th>
                             <th>Kết quả</th>
@@ -192,6 +193,7 @@
                     },
                     { "data": "ngayTao"},
                     { "data": "tenCongViec"},
+                    { "data": "requestWork"},
                     {
                         "data": null,
                         render: function(data, type, row) {
