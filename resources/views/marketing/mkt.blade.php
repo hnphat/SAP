@@ -177,6 +177,7 @@
                                         <div class="form-group">
                                             <label>Nguồn khách <span class="text-red">(*)</span></label>
                                             <select name="nguonKH" class="form-control">
+                                                <option value="BGD">Ban giám đốc</option>
                                                 <option value="Hotline">Hotline</option>
                                                 <option value="Zalo">Zalo</option>
                                                 <option value="Facebook_ads">Facebook_ads</option>

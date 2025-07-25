@@ -605,7 +605,7 @@ class MktController extends Controller
                             <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
                             <td>".$status."</td>
                             <td>
-                                ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
+                                ".((Auth::user()->hasRole('system') || Auth::user()->hasRole('mkt_sale')) ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
                                 <br/><br/><button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Rollback</button>
                                 <br/><br/>" . $hasFail : "")."
                             </td>
