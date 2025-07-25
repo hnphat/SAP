@@ -509,7 +509,7 @@ class MktController extends Controller
                         $gr = Group::find($row->id_group_send);
                         if ($gr) {
                             $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
-                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
+                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system') || Auth::user()->hasRole('mkt_sale'))
                                 $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
                         }
                         else {
@@ -743,7 +743,7 @@ class MktController extends Controller
                         $gr = Group::find($row->id_group_send);
                         if ($gr) {
                             $hasGroup = "<span class='text-bold text-primary'>".$gr->name."</span>";
-                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system'))
+                            if (Auth::user()->hasRole('truongnhomsale') || Auth::user()->hasRole('system') || Auth::user()->hasRole('mkt_sale'))
                                 $hasSale = "<button data-groupid='".$row->id_group_send."' data-phone='".$row->dienThoai."' data-hoten='".$row->hoTen."' data-id='".$row->id."' id='setSale' data-toggle='modal' data-target='#saleModal' id='setSale' class='btn btn-info btn-sm'>Gán Sale</button>";    
                         }
                         else {
@@ -840,7 +840,7 @@ class MktController extends Controller
                             <td>".($guest ? $guest->cs4 : $row->cs4)."</td>
                             <td>".$status."</td>
                             <td>
-                                ".(Auth::user()->hasRole('system') ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
+                                ".((Auth::user()->hasRole('system') || Auth::user()->hasRole('mkt_sale')) ? "<button data-id='".$row->id."' id='delete' class='btn btn-danger btn-sm'>Xoá</button>
                                 <br/><br/><button data-id='".$row->id."' id='revert' class='btn btn-primary btn-sm'>Rollback</button>
                                 <br/><br/>" . $hasFail : "")."
                             </td>
