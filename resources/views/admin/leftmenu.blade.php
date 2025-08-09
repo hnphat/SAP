@@ -407,18 +407,26 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-car-side"></i>
                         <p>
-                            <strong>QL XE DEMO</strong>
+                            <strong>QUẢN LÝ XE</strong>
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        <li class="nav-item">
+                            <a href="{{route('quanlyxecuuho')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Quản lý xe cứu hộ</p>
+                            </a>
+                        </li>
+                        @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                              \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                         <li class="nav-item">
                             <a href="{{route('laithu.list')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Quản lý xe</p>
+                                <p>Quản lý xe demo</p>
                             </a>
                         </li>
                         @endif

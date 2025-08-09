@@ -170,4 +170,8 @@ class User extends Authenticatable
     public function lichSuKhoHC() {
         return $this->hasMany('App\KhoHC','id_user','id');
     }
+
+    public function xeCuuHo() {
+        return $this->hasMany('App\XeCuuHo','id_user','id');
+    }
 }

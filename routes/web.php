@@ -860,8 +860,6 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('cancelend','DichVuController@cancelEnd');
         Route::post('hoantatcongviec','DichVuController@hoanTatCongViec');
         Route::post('hoantrangcongviec','DichVuController@hoanTrangCongViec');
-
-
     });
 
 
@@ -911,5 +909,13 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('them','DanhGiaController@post');   
         Route::post('delete','DanhGiaController@delete');   
         Route::post('ajax/post','DanhGiaController@postSign');   
+    });
+
+    Route::group(['prefix' => 'xecuuho'], function(){
+        Route::get('index','XeCuuHoController@index')->name('quanlyxecuuho');   
+        Route::get('danhsach','XeCuuHoController@danhsach');   
+        // Route::post('them','DanhGiaController@post');   
+        // Route::post('delete','DanhGiaController@delete');   
+        // Route::post('ajax/post','DanhGiaController@postSign');   
     });
 });
