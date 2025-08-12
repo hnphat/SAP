@@ -914,7 +914,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'xecuuho'], function(){
         Route::get('index','XeCuuHoController@index')->name('quanlyxecuuho');   
         Route::get('danhsach','XeCuuHoController@danhsach');   
-        // Route::post('them','DanhGiaController@post');   
+        Route::post('them','XeCuuHoController@post')->name('xecuuho.them');   
         // Route::post('delete','DanhGiaController@delete');   
         // Route::post('ajax/post','DanhGiaController@postSign');   
     });
