@@ -245,8 +245,11 @@
                                                 <th>Loại</th>
                                             </tr>
                                             <tbody id="showPKFREE">
-                                            </tbody>
+                                            </tbody>                                            
                                         </table>
+                                        <p>
+                                            Tổng giá: <strong id="xtongPKFREE"></strong><br/>
+                                        </p>
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
@@ -867,8 +870,10 @@
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";
+                            sum += parseInt(response.pkfree[i].cost);
                         }
                         $("#showPKFREE").html(txt);
+                        $("#xtongPKFREE").text(formatNumber(sum));
                     },
                     error: function() {
                         Toast.fire({
@@ -912,7 +917,7 @@
             }
 
              //load quickly PK Cost
-             function loadPKCost(id) {
+            function loadPKCost(id) {
                 $.ajax({
                     url: 'management/hd/get/pkcost/' + id,
                     dataType: 'json',
@@ -944,7 +949,7 @@
                     }
                 });
             }
-
+            
             //Load total
             function loadTotal(id) {
                 $.ajax({
