@@ -20,7 +20,8 @@ class BHPKMiddleware
         Auth::user()->hasRole('nv_baohiem') ||
         Auth::user()->hasRole('nv_phukien') ||
         Auth::user()->hasRole('to_phu_kien') ||
-        Auth::user()->hasRole('baocaophukienbaohiem'))
+        Auth::user()->hasRole('baocaophukienbaohiem') ||
+        Auth::user()->hasRole('dm_phukien'))
         return $next($request);
     else abort(403);
     }

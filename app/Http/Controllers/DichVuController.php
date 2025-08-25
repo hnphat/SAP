@@ -219,7 +219,7 @@ class DichVuController extends Controller
 
     public function getHangMuc() {
         $arr = [];
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien'))
             $bhpk = BHPK::select("*")->where('loaiXe','!=',null)->orderBy('id','desc')->get();
         else
             $bhpk = BHPK::select("*")->where([
@@ -255,14 +255,14 @@ class DichVuController extends Controller
         $kh->thoigian = $request->thoigian ? $request->thoigian : null;
         $kh->baohanh = $request->baohanh ? $request->baohanh : null;
         $kh->nhacungcap = $request->nhacungcap ? $request->nhacungcap : null;
-        if ($request->donGia < $request->giaVon || $request->congKTV >= $request->donGia || $request->congKTV >= $request->giaVon) {
+        if ($request->congKTV > 500000) {
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
-                'message' => 'Giá vốn, giá bán, công KTV không hợp lệ!'
+                'message' => 'Công KTV không hợp lệ!'
             ]);
         }
-        if (Auth::user()->hasRole('system'))     
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien'))     
             $kh->save();
         else
             return response()->json([
@@ -344,7 +344,7 @@ class DichVuController extends Controller
     public function khoaHangMuc(Request $request) {
         $kh = BHPK::find($request->id);
         $temp = $kh;
-        if (Auth::user()->hasRole('system')) {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien')) {
             $kh->isShow = !$kh->isShow;
             $kh->save();
         }
@@ -398,14 +398,14 @@ class DichVuController extends Controller
         $kh->baohanh = $request->ebaohanh ? $request->ebaohanh : 0; 
         $kh->nhacungcap = $request->enhacungcap ? $request->enhacungcap : 0;   
         $kh->loaiXe = $request->etypeCar;       
-        if ($request->edonGia < $request->egiaVon || $request->econgKTV >= $request->edonGia || $request->econgKTV >= $request->egiaVon) {
+        if ($request->econgKTV > 500000) {
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
-                'message' => 'Giá vốn, giá bán, công KTV không hợp lệ!'
+                'message' => 'Công KTV không hợp lệ!'
             ]);
         }
-        if (Auth::user()->hasRole('system'))     
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien'))     
             $kh->save();
         else
             return response()->json([
