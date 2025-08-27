@@ -915,6 +915,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('index','XeCuuHoController@index')->name('quanlyxecuuho');   
         Route::get('danhsach','XeCuuHoController@danhsach');   
         Route::post('them','XeCuuHoController@post')->name('xecuuho.them');   
+        Route::post('upfile','XeCuuHoController@upFile')->name('xecuuho.upfile');
         // Route::post('delete','DanhGiaController@delete');   
         // Route::post('ajax/post','DanhGiaController@postSign');   
     });

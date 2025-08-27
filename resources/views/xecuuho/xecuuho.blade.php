@@ -110,10 +110,10 @@
                                     <option value="Kết hợp">Kết hợp</option>                                    
                                </select>
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                <label>Báo giá <span class="text-danger"><i>(.pdf, .docx, .jpg, .png không quá 5MB)</i></span></label> 
                                <input type="file" name="baoGia" class="form-control" required>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                <label>Địa điểm đi:</label> <br/>
                                <input type="text" name="diaDiemDi" class="form-control" placeholder="Địa điểm đi" required>
@@ -213,7 +213,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">CẬP NHẬT FILE SCAN</h4>
+                        <h4 class="modal-title">CẬP NHẬT BÁO GIÁ</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -295,29 +295,47 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
-                    { "data": "created_at" },
-                    { "data": "id_user" },
+                    { "data": "newday" },
+                    { "data": "nguoinhap" },
                     { "data": "khachHang" },
                     // { "data": "sdt" },
                     { "data": "yeuCau" },
                     { "data": "hinhThuc" },
-                    { "data": "baoGia" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.baoGia) {
+                                return "<a href='{{ asset('upload/xecuuho/')}}/"+row.baoGia+"' target='_blank' title='Xem file đính kèm'>Xem</a>"
+                                + "&nbsp;<button id='xoaFile' data-id='"+row.id+"' class='btn btn-danger btn-sm' title='Xoá file đính kèm'><span class='fas fa-times-circle'></span></button>"
+                                + "&nbsp;<button id='upFileBtn' data-id='"+row.id+"' data-toggle='modal' data-target='#upModal' class='btn btn-info btn-sm' title='Cập nhật file đính kèm'><span class='fas fa-upload'></span></button>";
+                            } else {
+                                return "<button id='upFileBtn' data-id='"+row.id+"' data-toggle='modal' data-target='#upModal' class='btn btn-info btn-sm' title='Cập nhật file đính kèm'><span class='fas fa-upload'></span></button>";
+                            }
+                        }
+                    },
                     { "data": "diaDiemDi" },
-                    { "data": "thoiGianDi" },
-                    { "data": "thoiGianVe" },
-                    { "data": "doanhThu" },
+                    { "data": "newtimedi" },
+                    { "data": "newtimeve" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.doanhThu) {
+                                return row.doanhThu;
+                            } else {
+                                return "<strong class='text-danger'>Chưa có</strong>";
+                            }
+                        }
+                    },
                     { "data": "ghiChu" },
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            // if (row.allow == true) {
-                            //     return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>";
-                            // } else {
-                            //     return "<button id='checkBlock' data-id='"+row.id+"' class='btn btn-primary btn-sm'><span class='fas fa-check-circle'></span></button>"
-                            //     + "&nbsp;<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>"
-                            //     + "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>"; 
-                            // }
-                            return "";
+                            if (row.allow == true) {
+                                return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>";
+                            } else {
+                                return "&nbsp;<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>"
+                                + "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>"; 
+                            }
                         }
                     }
                 ]
@@ -341,7 +359,7 @@
                     var formData = new FormData(this);
                     $.ajax({
                         type:'POST',
-                        url: "{{ route('denghichungtu.post')}}",
+                        url: "{{ route('xecuuho.them')}}",
                         data: formData,
                         cache: false,
                         contentType: false,
@@ -504,7 +522,7 @@
                     var formData = new FormData(this);
                     $.ajax({
                         type:'POST',
-                        url: "{{ route('upfile.post')}}",
+                        url: "{{ route('xecuuho.upfile')}}",
                         data: formData,
                         cache: false,
                         contentType: false,
