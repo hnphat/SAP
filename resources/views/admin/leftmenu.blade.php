@@ -415,7 +415,9 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
+                        || \Illuminate\Support\Facades\Auth::user()->hasRole('hcns')
+                        || \Illuminate\Support\Facades\Auth::user()->hasRole('xecuuho'))
                         <li class="nav-item">
                             <a href="{{route('quanlyxecuuho')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>

@@ -27,6 +27,7 @@ class XeCuuHo extends Migration
             $table->string('thoiGianVe');
             $table->string('doanhThu')->nullable();
             $table->string('ghiChu')->nullable();
+            $table->boolean('allow')->default(false);
             $table->timestamps();
         });
     }

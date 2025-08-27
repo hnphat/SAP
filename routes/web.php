@@ -916,7 +916,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('danhsach','XeCuuHoController@danhsach');   
         Route::post('them','XeCuuHoController@post')->name('xecuuho.them');   
         Route::post('upfile','XeCuuHoController@upFile')->name('xecuuho.upfile');
-        // Route::post('delete','DanhGiaController@delete');   
-        // Route::post('ajax/post','DanhGiaController@postSign');   
+        Route::post('delete/filescan','XeCuuHoController@deleteFileScan');
+        Route::post('/getedit/{id}','XeCuuHoController@getEdit');
+        Route::post('update','XeCuuHoController@postUpdate')->name('xecuuho.post.update');
+        Route::post('ghiso','XeCuuHoController@ghiSo')->name('xecuuho.ghiso');
+        Route::post('delete','XeCuuHoController@delete');
     });
 });
