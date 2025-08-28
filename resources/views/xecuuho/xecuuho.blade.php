@@ -59,6 +59,7 @@
                                         <th>Hình thức</th>
                                         <th>Báo giá</th>
                                         <th>Địa điểm đi</th>
+                                        <th>Map</th>
                                         <th>Thời gian đi (dự kiến)</th>
                                         <th>Thời gian về (dự kiến)</th>
                                         <th>Doanh thu (nếu có)</th>
@@ -234,7 +235,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">CẬP NHẬT</h4>
+                        <h4 class="modal-title">ĐÍNH KÈM BÁO GIÁ</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -244,7 +245,7 @@
                             {{csrf_field()}}
                             <input type="hidden" name="eidUp">                            
                             <div class="form-group">
-                               <label>File đính kèm</label> 
+                               <label>File báo giá đính kèm</label> 
                                <input type="file" name="edinhKem" class="form-control" required>
                             </div>                            
                         </form>
@@ -252,6 +253,41 @@
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
                         <button id="btnUp" class="btn btn-primary" form="upForm">Lưu</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!----------------------->
+
+    <!--  MEDAL -->
+    <div>
+        <!-- Medal EDIT -->
+        <div class="modal fade" id="upModalMap">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">ĐÍNH KÈM FILE MAP (BẢN ĐỒ)</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <form method="POST" id="upFormMap" enctype="multipart/form-data" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="eidUpMap">                            
+                            <div class="form-group">
+                               <label>File Map (bản đồ)</label> 
+                               <input type="file" name="edinhKemMap" class="form-control" required>
+                            </div>                            
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        <button id="btnUpMap" class="btn btn-primary" form="upFormMap">Lưu</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -345,6 +381,17 @@
                         }
                     },
                     { "data": "diaDiemDi" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            if (row.map) {
+                                return "<a href='{{ asset('upload/xecuuho/')}}/"+row.map+"' target='_blank' title='Xem map'>Xem</a>"
+                                + "&nbsp;<button id='xoaFileMap' data-id='"+row.id+"' class='btn btn-danger btn-sm' title='Xoá map'><span class='fas fa-times-circle'></span></button>";
+                            } else {
+                                return "<button id='upFileMapBtn' data-id='"+row.id+"' data-toggle='modal' data-target='#upModalMap' class='btn btn-info btn-sm' title='Cập nhật file map'><span class='fas fa-upload'></span></button>";
+                            }
+                        }
+                    },
                     { "data": "newtimedi" },
                     { "data": "newtimeve" },
                     {
@@ -488,6 +535,34 @@
                 }
             });
 
+            //Delete map
+            $(document).on('click','#xoaFileMap', function(){
+                if(confirm('Xác nhận xoá map (bản đồ) đính kèm?')) {
+                    $.ajax({
+                        url: "{{url('management/xecuuho/delete/map')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }
+            });
+
             // edit data
             $(document).on('click','#btnEdit', function(){
                 $.ajax({
@@ -555,6 +630,10 @@
                 $("input[name=eidUp]").val($(this).data('id'));
             });
 
+            $(document).on('click','#upFileMapBtn', function(){
+                $("input[name=eidUpMap]").val($(this).data('id'));
+            });
+
             // Up file scan
             $(document).one('click','#btnUp', function() {
                 $.ajaxSetup({
@@ -589,10 +668,54 @@
                             error: function(response){
                             Toast.fire({
                                 icon: 'error',
-                                title: ' Thao tác client có vấn đề'
+                                 title: ' Lỗi: ' + response.responseJSON.message
                             })
                             $("#upModal").modal('hide');
                             $("#btnUp").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        }
+                    });
+                });
+            });
+
+            // Up file map
+            $(document).one('click','#btnUpMap', function() {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $('#upFormMap').submit(function(e) {
+                    e.preventDefault();   
+                    var formData = new FormData(this);
+                    $.ajax({
+                        type:'POST',
+                        url: "{{ route('xecuuho.upfile.map')}}",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function () {
+                            $("#btnUpMap").attr('disabled', true).html("Đang xử lý....");
+                        },
+                        success: (response) => {
+                            this.reset();
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            $("#upModalMap").modal('hide');
+                            $("#btnUpMap").attr('disabled', false).html("LƯU");
+                            console.log(response);
+                        },
+                            error: function(response){
+                            Toast.fire({
+                                icon: 'error',
+                                title: ' Lỗi: ' + response.responseJSON.message
+                            })
+                            $("#upModalMap").modal('hide');
+                            $("#btnUpMap").attr('disabled', false).html("LƯU");
                             console.log(response);
                         }
                     });

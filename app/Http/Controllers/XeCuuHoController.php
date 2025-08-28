@@ -125,6 +125,53 @@ class XeCuuHoController extends Controller
             }
     }
 
+    public function upFileMap(Request $request) {
+        $obj = XeCuuHo::find($request->eidUpMap);
+        if ($obj->allow) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lệnh này đã khóa không thể cập nhật tập tin đính kèm!',
+                'code' => 500
+            ]);
+        }
+        $this->validate($request,[
+            'edinhKemMap'  => 'required|mimes:png,jpg,PNG,JPG|max:5024',
+        ]);      
+
+        if ($files = $request->file('edinhKemMap')) {
+            $etc = strtolower($files->getClientOriginalExtension());
+            $name = \HelpFunction::changeTitle($files->getClientOriginalName());
+            if ($name !== null && file_exists('upload/xecuuho/' . $name . "." . $etc))
+                unlink('upload/xecuuho/'.$name);
+
+            $name = rand() . "-" . $name . "." . $etc;    
+
+            $obj->map = $name;
+            $obj->save();                                     
+            if ($obj) {
+                $files->move('upload/xecuuho/', $name);    
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Quản lý xe - Quản lý xe cứu hộ";
+                $nhatKy->noiDung = "Bổ sung file map: " . url("upload/xecuuho/" . $name);
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->save();
+                return response()->json([
+                    "type" => 'success',
+                    "message" => 'Đã upload file thành công',
+                    "code" => 200
+                ]);
+            }                       
+            else
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Lỗi upload!',
+                    'code' => 500
+                ]);      
+            }
+    }
+
     public function deleteFileScan(Request $request) {
         $obj = XeCuuHo::find($request->id);
         if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
@@ -145,7 +192,7 @@ class XeCuuHoController extends Controller
 
                 return response()->json([
                     'type' => 'success',
-                    'message' => 'Đã cập nhật!',
+                    'message' => 'Đã xóa báo giá đính kèm!',
                     'code' => 200,
                     'data' => $obj
                 ]);    
@@ -160,6 +207,45 @@ class XeCuuHoController extends Controller
             return response()->json([
                 'type' => 'error',
                 'message' => 'File đính kèm đã được tải lên hệ thống không thể xóa!',
+                'code' => 500
+            ]);       
+    }
+
+    public function deleteMap(Request $request) {
+        $obj = XeCuuHo::find($request->id);
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+            $temp = $obj->khachHang;
+            $name = $obj->map;
+            if ($name !== null && file_exists('upload/xecuuho/' . $name))
+                unlink('upload/xecuuho/'.$name);
+            $obj->map = null;
+            $obj->save();        
+            if ($obj) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Quản lý xe - Quản lý xe cứu hộ";
+                $nhatKy->noiDung = "Xóa map (bản đồ) đính kèm trên client. Khách hàng ".$temp;
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->save();
+
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã xóa!',
+                    'code' => 200,
+                    'data' => $obj
+                ]);    
+            }           
+            else
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Lỗi không thể cập nhật từ máy chủ!',
+                    'code' => 500
+                ]);
+        } else
+            return response()->json([
+                'type' => 'error',
+                'message' => 'File map đã được tải lên hệ thống không thể xóa!',
                 'code' => 500
             ]);       
     }

@@ -22,6 +22,7 @@ class XeCuuHo extends Migration
             $table->string('yeuCau');
             $table->string('hinhThuc');
             $table->string('baoGia')->nullable();
+            $table->string('map')->nullable();
             $table->string('diaDiemDi');
             $table->string('thoiGianDi');
             $table->string('thoiGianVe');
