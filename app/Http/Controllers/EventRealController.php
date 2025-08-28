@@ -8,6 +8,7 @@ use App\XinPhep;
 use App\TangCa;
 use App\ReportWork;
 use App\EventReal;
+use App\XeCuuHo;
 use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ class EventRealController extends Controller
 {
 
     public function realTime() {
+        $s_xecuuho = 0;
         $s_work = 0;
         $s_xedemo = 0;
         $s_xang = 0;
@@ -26,6 +28,10 @@ class EventRealController extends Controller
         // Xử lý duyệt phép và tăng ca
         $s_duyetphep = 0;
         $s_duyettangca = 0;
+
+        $xecuuho = XeCuuHo::where([
+            ['allow','=', false]
+        ])->orderBy('id', 'DESC')->get()->count();
 
         $duyettbp = DangKySuDung::where([
             ['id_lead_check','=', Auth::user()->id],
@@ -90,8 +96,10 @@ class EventRealController extends Controller
         if (Auth::user()->hasRole('car'))
             $total_full += $reg + $traXe;
 
-        if (Auth::user()->hasRole('hcns'))
+        if (Auth::user()->hasRole('hcns')) {
             $total_full += $duyetXang;
+            $total_full += $xecuuho;
+        }
 
         if (Auth::user()->hasRole('lead')) {
             $total_full += $duyettbp;
@@ -107,6 +115,7 @@ class EventRealController extends Controller
             // Xử lý tăng ca và phép
             $s_duyetphep = 1;
             $s_duyettangca = 1;
+            $s_xecuuho = 1;
 
             $total_full += ($duyetPhep + $duyetTangCa);
         }
@@ -121,14 +130,17 @@ class EventRealController extends Controller
             $s_work = 1;
         if (Auth::user()->hasRole('car'))
             $s_xedemo = 1;
-        if (Auth::user()->hasRole('hcns'))
+        if (Auth::user()->hasRole('hcns')) {
+            $s_xecuuho = 1;
             $s_xang = 1;
+        }
         if (Auth::user()->hasRole('lead')) {
             $s_duyet_tbp = 1;
             $s_xang_lead = 1;
         }
 
         $data = [
+            's_xecuuho' => $s_xecuuho,
             's_work' => $s_work,
             's_xedemo' => $s_xedemo,
             's_xang' => $s_xang,
@@ -146,6 +158,7 @@ class EventRealController extends Controller
             'duyetXangLead' => $duyetXangLead,
             'phep' => $duyetPhep,
             'tangCa' => $duyetTangCa,
+            'xecuuho' => $xecuuho,
             'total_full' => $total_full
         ];
         $response = new StreamedResponse();

@@ -1,6 +1,15 @@
 <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
     <div class="p-3">
+        <div id="real_xecuuho" style="display: none;">
+        <h5>XE CỨU HỘ</h5>
+            <p>
+                <a style="text-decoration: none;" href="{{route('quanlyxecuuho')}}" class="left">
+                    Lệnh chờ ghi sổ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="badge badge-danger" id="r_newXeCuuHo"></span>
+                </a>
+            </p>
+        </div>
         <div id="real_work" style="display: none;">
         <h5>CÔNG VIỆC</h5>
             <p>
@@ -137,6 +146,11 @@
             else
                 $('#real_xedemo_tbp').hide();
 
+            if (fullData.s_xecuuho == 1)
+                $('#real_xecuuho').show();
+            else
+                $('#real_xecuuho').hide();
+
             if (fullData.phep != 0)
                 $('#r_duyet_phep').text(fullData.phep);
             else
@@ -177,6 +191,12 @@
                 $('#r_capXang_lead').text(fullData.duyetXangLead);
             else
                 $('#r_capXang_lead').text("");
+
+            if (fullData.xecuuho != 0)
+                $('#r_newXeCuuHo').text(fullData.xecuuho);
+            else
+                $('#r_newXeCuuHo').text("");
+
             if (fullData.total_full != 0)
                 $('#r_total_full').text(fullData.total_full);
             else

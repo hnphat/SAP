@@ -318,7 +318,7 @@ class XeCuuHoController extends Controller
      public function ghiSo(Request $request) {
         $temp = XeCuuHo::find($request->id);
         $obj = XeCuuHo::find($request->id);
-        $obj->allow = true;
+        $obj->allow = 1;
         if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
            $obj->save();      
         } else {

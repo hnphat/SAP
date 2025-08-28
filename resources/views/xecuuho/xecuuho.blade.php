@@ -408,7 +408,7 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            if (row.allow) {
+                            if (row.allow == 1) {
                                 return "<span class='text-success'><strong>Đã ghi sổ</strong></span>";
                             } else {
                                 return "<span class='text-danger'><strong>Chưa ghi sổ</strong></span>";
@@ -418,7 +418,7 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            if (row.allow) {
+                            if (row.allow == 1) {
                                 return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>";
                             } else {
                                 return "&nbsp;<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>"
