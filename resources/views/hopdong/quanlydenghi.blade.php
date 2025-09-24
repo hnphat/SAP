@@ -488,7 +488,7 @@
                                     <label>Loại</label>
                                     <select name="addfreetang" class="form-control">
                                         <option value="2">Chương trình khuyến mãi</option>
-                                        <option value="1">Kèm theo xe</option>
+                                        <!-- <option value="1">Kèm theo xe</option> -->
                                         <option value="0">Tặng thêm</option>
                                         <option value="3">Tặng trên giá bán</option>
                                     </select>
