@@ -384,29 +384,63 @@ class DichVuController extends Controller
                 ['noiDung', '=', $kh->noiDung],
                 ['loaiXe', '=', $row->id]
             ])->exists();
-            if ($check) continue;
-            $newkh = new BHPK();
-            $newkh->id_user_create = Auth::user()->id;
-            $newkh->isPK = $kh->isPK;
-            $newkh->ma = $kh->ma . "_" . $row->id;
-            $newkh->noiDung = $kh->noiDung;
-            $newkh->dvt = $kh->dvt;
-            $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
-            $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
-            $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
-            $newkh->loai = $kh->loai;
-            $newkh->loaiXe = $row->id;
-            $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
-            $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
-            $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
-            $newkh->save();        
-            if ($newkh) 
-                $flag = true;
-            else 
-                $flag = false;
-                
+            if ($check) {
+                $newkh = BHPK::where([
+                    ['noiDung', '=', $kh->noiDung],
+                    ['loaiXe', '=', $row->id]
+                ])->update([
+                    'id_user_create' => Auth::user()->id,
+                    'dvt' => $kh->dvt,
+                    'donGia' => $kh->donGia ? $kh->donGia : 0,
+                    'giaVon' => $kh->giaVon ? $kh->giaVon : 0,
+                    'congKTV' => $kh->congKTV ? $kh->congKTV : 0,
+                    'loai' => $kh->loai,
+                    'thoigian' => $kh->thoigian ? $kh->thoigian : "",
+                    'baohanh' => $kh->baohanh ? $kh->baohanh : "",
+                    'nhacungcap' => $kh->nhacungcap ? $kh->nhacungcap : ""
+                ]);
+                if ($newkh) 
+                    $flag = true;
+                else 
+                    $flag = false;
+            } else {
+                $newkh = new BHPK();
+                $newkh->id_user_create = Auth::user()->id;
+                $newkh->isPK = $kh->isPK;
+                $newkh->ma = $kh->ma . "_" . $row->id;
+                $newkh->noiDung = $kh->noiDung;
+                $newkh->dvt = $kh->dvt;
+                $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
+                $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
+                $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
+                $newkh->loai = $kh->loai;
+                $newkh->loaiXe = $row->id;
+                $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
+                $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
+                $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
+                $newkh->save();        
+                if ($newkh) 
+                    $flag = true;
+                else 
+                    $flag = false;
+            }
         }
         if ($flag) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->noiDung = "Thực hiện Map All: <br/>Nội dung<br/>"
+            .$kh->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
+            .$kh->isPK."; Mã: "
+            .$kh->ma."; Đơn vị tính: "
+            .$kh->dvt."; Đơn giá: "
+            .$kh->donGia."; Loại: "
+            .$kh->type."; Giá vốn: "
+            .$kh->giaVon."; Công KTV: "
+            .$kh->congKTV;
+            $nhatKy->save();
             return response()->json([
                 'type' => 'info',
                 'code' => 200,
