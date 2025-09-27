@@ -828,9 +828,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hangmuc/guest/add','DichVuController@addHangMuc');  
         Route::post('hangmuc/guest/delete','DichVuController@delHangMuc'); 
         Route::post('hangmuc/khoa','DichVuController@khoaHangMuc');     
+        Route::post('hangmuc/mapall','DichVuController@mapAllHangMuc'); 
         Route::post('hangmuc/guest/edit/show/','DichVuController@getHangMucEdit'); 
         Route::post('hangmuc/guest/update/','DichVuController@updateHangMuc'); 
         Route::post('hangmuc/ajax/importfile/','DichVuController@importDanhMuc'); 
+        Route::post('hangmuc/ajax/hiddendanhmuc/','DichVuController@hiddenDanhMuc');
 
         // báo cáo doanh thu
         Route::get('baocaodoanhthu','DichVuController@baoCaoDoanhThuPanel')->name('dichvu.baocaodoanhthu.panel')->middleware(['f_bhpk']); 

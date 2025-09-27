@@ -48,7 +48,8 @@
                                 <div class="tab-content" id="custom-tabs-one-tabContent">
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
                                         <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button> 
-                                        <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>
+                                        <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>&nbsp;
+                                        <button id="hiddenAll" class="btn btn-warning" data-toggle="modal" data-target="#hiddenModal">Ẩn/Hiện Danh Mục</button>
                                         <br/><br/>
 
                                         <!-- Medal Add -->
@@ -206,7 +207,55 @@
                                             </div>
                                             <!-- /.modal-dialog -->
                                         </div>
-                                        <!-- /.modal -->        
+                                        <!-- /.modal -->  
+                                         
+                                        <!-- Medal Hidden -->
+                                        <div class="modal fade" id="hiddenModal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- general form elements -->
+                                                        <div class="card card-primary">
+                                                            <div class="card-header">
+                                                                <h3 class="card-title">Ẩn/Hiện Danh Mục</h3>
+                                                            </div>
+                                                            <!-- /.card-header -->
+                                                            <!-- form start -->
+                                                            <form id="hiddenForm" autocomplete="off" enctype>
+                                                                {{csrf_field()}}
+                                                                <div class="card-body">          
+                                                                    <div class="form-group">
+                                                                        <label>Nhập mã, nội dung danh mục gợi ý</label>
+                                                                        <input type="text" name="magoiy" class="form-control" placeholder="Nhập mã, nội dung danh mục gợi ý" required="required">
+                                                                    </div>  
+                                                                    <div class="form-group">
+                                                                        <label>Thực hiện</label>
+                                                                        <select name="action" class="form-control">
+                                                                            <option value="1">Hiển thị</option>
+                                                                            <option value="0">Ẩn</option>
+                                                                        </select>
+                                                                    </div>                                                                  
+                                                                </div>
+                                                                <!-- /.card-body -->
+                                                                <div class="card-footer">
+                                                                    <strong class="text-danger"><i>Lưu ý: Hệ thống sẽ tìm các mã có nội dung chứa mã danh mục gợi ý như trên để thực hiện hành động Hiển thị/Ẩn. Vui lòng nhập đúng thông tin mã danh mục!</i></strong><br/>
+                                                                    <button id="btnHidden" class="btn btn-primary">Thực hiện</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                        <!-- /.modal -->  
 
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
@@ -427,7 +476,8 @@
                         render: function(data, type, row) {
                             return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
-                                "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow ? "off" : "on")+"</button>";
+                                "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow ? "off" : "on")+"</button>" +
+                                "&nbsp;<button id='dup' data-id='"+row.id+"' class='btn btn-info btn-sm'>Map ALL</button>";
                         }
                     }
                 ]
@@ -563,6 +613,35 @@
                 }
             });
 
+            // Map All
+            $(document).on('click','#dup', function(){
+                let idKhoa = $(this).data('id');
+                if(confirm('Xác nhận nhân bản danh mục này đến tất cả các dòng xe?')) {
+                    $.ajax({
+                        url: "{{url('management/dichvu/hangmuc/mapall/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title:  response.message,
+                            })
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể Map All!"
+                            })
+                        }
+                    });
+                }
+            });
+
             // edit data
             $(document).on('click','#btnEdit', function(){
                 $.ajax({
@@ -626,8 +705,8 @@
             });
         });
 
-         //upload
-         $(document).one('click','#btnImport',function(e){
+        //upload
+        $(document).one('click','#btnImport',function(e){
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -664,6 +743,50 @@
                             title: ' Có lỗi: ' + response.responseJSON.errors.fileBase
                         })
                         $("#btnImport").attr('disabled', false).html("IMPORT");  
+                        console.log(response);
+                    }
+                });
+            });                
+        });
+
+        // hidden
+        $(document).one('click','#btnHidden',function(e){
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('#hiddenForm').submit(function(e) {
+                e.preventDefault();   
+                var formData = new FormData(this);
+                $.ajax({
+                    type:'POST',
+                    url: "{{ url('management/dichvu/hangmuc/ajax/hiddendanhmuc/')}}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $("#btnHidden").attr('disabled', true).html("Đang xử lý....");
+                    },
+                    success: (response) => {
+                        this.reset();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message + " - Đã cập nhật: " + response.soluong
+                        });
+                        $("#btnHidden").attr('disabled', false).html("THỰC HIỆN");                      
+                        $("#hiddenModal").modal('hide');
+                        setTimeout(() => {
+                            open("{{route('dichvu.hangmuc')}}","_self");
+                        }, 3000);
+                    },
+                    error: function(response){
+                        Toast.fire({
+                            icon: 'info',
+                            title: 'Có lỗi'
+                        })
+                        $("#btnHidden").attr('disabled', false).html("Thực hiện");  
                         console.log(response);
                     }
                 });

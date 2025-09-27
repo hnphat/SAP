@@ -373,6 +373,54 @@ class DichVuController extends Controller
             ]);
     }
 
+    public function mapAllHangMuc(Request $request) {
+        $kh = BHPK::find($request->id);
+        $idcar = $kh->loaiXe;
+        $typecar = TypeCar::all();
+        $flag = false;
+        foreach($typecar as $row) {
+            if ($row->id == $idcar) continue;
+            $check = BHPK::where([
+                ['noiDung', '=', $kh->noiDung],
+                ['loaiXe', '=', $row->id]
+            ])->exists();
+            if ($check) continue;
+            $newkh = new BHPK();
+            $newkh->id_user_create = Auth::user()->id;
+            $newkh->isPK = $kh->isPK;
+            $newkh->ma = $kh->ma . "_" . $row->id;
+            $newkh->noiDung = $kh->noiDung;
+            $newkh->dvt = $kh->dvt;
+            $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
+            $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
+            $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
+            $newkh->loai = $kh->loai;
+            $newkh->loaiXe = $row->id;
+            $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
+            $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
+            $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
+            $newkh->save();        
+            if ($newkh) 
+                $flag = true;
+            else 
+                $flag = false;
+                
+        }
+        if ($flag) {
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã Map All danh mục'
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi không thể Map All'
+            ]);
+    }
+
     public function getHangMucEdit(Request $request) {
         $kh = BHPK::find($request->id);
         return response()->json([
@@ -4527,6 +4575,31 @@ class DichVuController extends Controller
                 'code' => 500
             ]);    
         }       
+    } 
+
+    public function hiddenDanhMuc(Request $request) { 
+        $hm = BHPK::where([
+            ['ma', 'like', '%' . $request->magoiy . '%']
+        ])
+        ->OrWhere([
+            ['noiDung', 'like', '%' . $request->magoiy . '%']
+        ])
+        ->update(['isShow' => $request->action]);
+
+        if ($hm) {
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã ẩn/khóa danh mục',
+                'soluong' => $hm
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi không thể ẩn/khóa'
+            ]); 
     } 
 
     public function postKTV(Request $request){
