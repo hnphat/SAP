@@ -18,6 +18,7 @@ use App\RefreshSupport;
 use App\KhoHC;
 use Carbon\Carbon;
 use DB;
+use Excel;
 use Session;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -2061,5 +2062,10 @@ class VPPController extends Controller
                 }                                  
             }   
         }        
+    }
+
+    // Export Excel
+    public function exportTonKho($from,$to) {
+        return Excel::download(new ExportTonKhoController($from,$to), 'tonkho_'.Date("d-m-Y").'.xlsx');
     }
 }

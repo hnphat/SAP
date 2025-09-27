@@ -385,24 +385,25 @@ class DichVuController extends Controller
                 ['loaiXe', '=', $row->id]
             ])->exists();
             if ($check) {
-                $newkh = BHPK::where([
-                    ['noiDung', '=', $kh->noiDung],
-                    ['loaiXe', '=', $row->id]
-                ])->update([
-                    'id_user_create' => Auth::user()->id,
-                    'dvt' => $kh->dvt,
-                    'donGia' => $kh->donGia ? $kh->donGia : 0,
-                    'giaVon' => $kh->giaVon ? $kh->giaVon : 0,
-                    'congKTV' => $kh->congKTV ? $kh->congKTV : 0,
-                    'loai' => $kh->loai,
-                    'thoigian' => $kh->thoigian ? $kh->thoigian : "",
-                    'baohanh' => $kh->baohanh ? $kh->baohanh : "",
-                    'nhacungcap' => $kh->nhacungcap ? $kh->nhacungcap : ""
-                ]);
-                if ($newkh) 
-                    $flag = true;
-                else 
-                    $flag = false;
+                continue;
+                // $newkh = BHPK::where([
+                //     ['noiDung', '=', $kh->noiDung],
+                //     ['loaiXe', '=', $row->id]
+                // ])->update([
+                //     'id_user_create' => Auth::user()->id,
+                //     'dvt' => $kh->dvt,
+                //     'donGia' => $kh->donGia ? $kh->donGia : 0,
+                //     'giaVon' => $kh->giaVon ? $kh->giaVon : 0,
+                //     'congKTV' => $kh->congKTV ? $kh->congKTV : 0,
+                //     'loai' => $kh->loai,
+                //     'thoigian' => $kh->thoigian ? $kh->thoigian : "",
+                //     'baohanh' => $kh->baohanh ? $kh->baohanh : "",
+                //     'nhacungcap' => $kh->nhacungcap ? $kh->nhacungcap : ""
+                // ]);
+                // if ($newkh) 
+                //     $flag = true;
+                // else 
+                //     $flag = false;
             } else {
                 $newkh = new BHPK();
                 $newkh->id_user_create = Auth::user()->id;

@@ -65,9 +65,10 @@
                                 <label>Đến ngày</label>
                                 <input type="date" name="denNgay" value="<?php echo Date('Y-m-d');?>" class="form-control">
                             </div>
-                            <div class="col-md-1">
-                                <label>&nbsp;</label>
-                                <input type="button" class="form-control btn btn-success" id="xem" value="Xem">
+                            <div class="col-md-2">
+                                <br>
+                                <input type="button" class="btn btn-success" id="xem" value="Xem">
+                                <input type="button" class="btn btn-info" id="exportExcel" value="Xuất">
                             </div>
                         </div>
                         <hr>
@@ -218,6 +219,7 @@
            $("#yeuCauDoiDuyet").hide();
            $("#nhapKhoChiTiet").hide();
            $("#baoCaoPhongBan").hide();
+
            $("#xem").click(function(){
                let tuNgay = $("input[name=tuNgay]").val();
                let denNgay = $("input[name=denNgay]").val();
@@ -356,6 +358,43 @@
                         $("#loading").hide();
                     }
                });
+           });
+
+           $("#exportExcel").click(function(){
+                let tuNgay = $("input[name=tuNgay]").val();
+                let denNgay = $("input[name=denNgay]").val();
+                if(confirm('Xác nhận xuất dữ liệu excel báo cáo tồn kho thực tế!')) {
+                    open("{{url('management/vpp/baocaokho/exporttonkho/')}}" 
+                    + "/" 
+                    + tuNgay 
+                    + "/den/" 
+                    + denNgay                
+                    ,'_blank');
+                }
+            //    let chose = $("select[name=chonBaoCao]").val();
+            //    let urlPoint = "";
+            //    switch(parseInt(chose)) {
+            //         case 1: {
+            //             urlPoint = "{{url('management/vpp/baocaokho/exporttonkhothucte/')}}";
+            //         } break;
+            //         case 2: {
+            //             urlPoint = "{{url('management/vpp/baocaokho/exportbiendongkho/')}}";
+            //         } break;
+            //         case 3: {
+            //             urlPoint = "{{url('management/vpp/baocaokho/exportyeucaudaduyet/')}}";
+            //         } break;
+            //         case 4: {
+            //             urlPoint = "{{url('management/vpp/baocaokho/exportyeucaudoiduyet/')}}";
+            //         } break;
+            //         case 5: {
+            //             urlPoint = "{{url('management/vpp/baocaokho/exportnhapkhochitiet/')}}";
+            //         } break;
+            //         case 6: {
+            //             urlPoint = "{{url('management/vpp/baocaokho/exportbaocaophongban/')}}";
+            //         } break;
+            //         default: alert('Không tồn tại lựa chọn này');
+            //    }
+            //    window.location.href = urlPoint + '?chose=' + chose + '&tuNgay=' + tuNgay + '&denNgay=' + denNgay;               
            });
         });
     </script>

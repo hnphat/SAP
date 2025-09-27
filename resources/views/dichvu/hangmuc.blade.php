@@ -476,7 +476,7 @@
                         render: function(data, type, row) {
                             return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
-                                "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow ? "off" : "on")+"</button>" +
+                                "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow == 1 ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow == 1 ? "off" : "on")+"</button>" +
                                 "&nbsp;<button id='dup' data-id='"+row.id+"' class='btn btn-info btn-sm'>Map ALL</button>";
                         }
                     }

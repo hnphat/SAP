@@ -520,6 +520,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('baocaokho/yeucaudoiduyet','VPPController@yeuCauDoiDuyet');
         Route::post('baocaokho/nhapkhochitiet','VPPController@nhapKhoChiTiet');
         Route::post('baocaokho/baocaophongban','VPPController@baoCaoPhongBan');
+        // Route::post('baocaokho/exporttonkho','VPPController@exportTonKho');
+        Route::get('baocaokho/exporttonkho/{from}/den/{to}', 'VPPController@exportTonKho');
     });
 
     Route::group(['prefix' => 'requestvpp'], function(){
