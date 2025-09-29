@@ -24,6 +24,8 @@ class Packagev2 extends Migration
             $table->boolean('free_kem')->default(true);
             $table->integer('mapk')->nullable;
             $table->string('mode', 255)->nullable;
+            $table->boolean('isLanDau')->default(true);
+            $table->boolean('isDuyetLanSau')->default(false);
             $table->timestamps();
         });
     }

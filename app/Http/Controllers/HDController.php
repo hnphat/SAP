@@ -2398,7 +2398,7 @@ class HDController extends Controller
             $pkpay->name = $request->namePkCost;
             $pkpay->cost = $request->giaPkCost;
             $pkpay->cost_tang = $request->tang;
-            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->id_user_create = Auth::user()->id;            
             $pkpay->type = 'cost';
             $pkpay->save();
             if($pkpay) {

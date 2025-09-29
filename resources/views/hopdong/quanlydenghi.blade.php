@@ -268,7 +268,8 @@
                                 </form>
             
                                 <h5>CÁC LOẠI PHÍ</h5>                                     
-                                        <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <button id="pkCostAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkCost"><span class="fas fa-plus-circle"></span></button> &nbsp;
+                                        <button id="themChiPhi" class="btn btn-primary" data-toggle="modal" data-target="#addPkCost">THÊM CHI PHÍ</button><br/><br/>
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
@@ -522,6 +523,7 @@
                         <form id="addPkFormCost" autocomplete="off">
                             {{csrf_field()}}
                             <input type="hidden" name="idHD3">
+                            <input type="hidden" name="isThemChiPhi" value="0">
                             <div class="card-body">
                                 <!-- <div class="form-group">
                                     <label>Nội dung</label>
@@ -711,6 +713,7 @@
             $("#deNghiHuy").hide();
             $("#deNghiChinhSua").hide();
             $("#pkCostAdd").hide();
+            $("#themChiPhi").hide();
             $("#pkFreeAdd").hide();
             $("#pkPayAdd").hide();
             $("#inForm").hide();
@@ -784,6 +787,7 @@
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").hide();
                                 $("#pkCostAdd").show();
+                                $("#themChiPhi").hide();
                                 $("#pkFreeAdd").show();
                                 $("#pkPayAdd").show();
 
@@ -804,12 +808,15 @@
                                 $("input[name=magiamgia]").prop('disabled', false);
                                 $("select[name=xeBan]").prop('disabled', false);
                                 $("#inForm").hide();
-                            } else if (response.data.requestCheck == true && response.data.admin_check == false && response.data.lead_check == false) {
+                            } else if (response.data.requestCheck == true 
+                            && response.data.admin_check == false 
+                            && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
                                 $("#xoaDeNghi").hide();
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").hide();
                                 $("#pkCostAdd").hide();
+                                $("#themChiPhi").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
 
@@ -832,12 +839,14 @@
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").hide();
                             } else if (response.data.requestCheck == true 
-                            && response.data.admin_check == true && response.data.lead_check == false) {
+                            && response.data.admin_check == true 
+                            && response.data.lead_check == false) {
                                 $("#deNghiHopDong").hide();
                                 $("#xoaDeNghi").hide();
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").show();
                                 $("#pkCostAdd").hide();
+                                $("#themChiPhi").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
@@ -858,12 +867,17 @@
                                 $("select[name=xeBan]").prop('disabled', true);
                                 $("#inForm").show();
                             } else if (response.data.requestCheck == true 
-                            && response.data.admin_check == true && response.data.lead_check == true) {
+                            && response.data.admin_check == true 
+                            && response.data.lead_check == true) {
                                 $("#deNghiHopDong").hide();
                                 $("#xoaDeNghi").hide();
                                 if (response.data.lead_check_cancel == false)
                                     $("#deNghiHuy").show();
                                 $("#pkCostAdd").hide();
+                                 if (response.data.lead_check_cancel == false)
+                                    $("#themChiPhi").show();
+                                 else
+                                    $("#themChiPhi").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
@@ -889,6 +903,7 @@
                                 $("#deNghiHuy").hide();
                                 $("#deNghiChinhSua").hide();
                                 $("#pkCostAdd").hide();
+                                $("#themChiPhi").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
@@ -920,6 +935,7 @@
                         $("#deNghiHuy").hide();
                         $("#deNghiChinhSua").hide();
                         $("#pkCostAdd").hide();
+                        $("#themChiPhi").hide();
                         $("#pkFreeAdd").hide();
                         $("#pkPayAdd").hide();
                     }
@@ -1101,6 +1117,7 @@
                 mahang = $("select[name=eechonHangHoa]").val();
                 autoloadCostFromPKFreeEdit(mahang);
             });
+
             $("#chonDeNghi").change(function(){
                 $.ajax({
                     url: "management/hd/hd/denghi/chondenghi/" + $("select[name=chonDeNghi]").val(),
@@ -1236,6 +1253,7 @@
                             $("#deNghiHuy").hide();
                             $("#deNghiChinhSua").hide();
                             $("#pkCostAdd").hide();
+                            $("#themChiPhi").hide();
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
@@ -1364,19 +1382,31 @@
                         txt = "";
                         sum = 0;
                         tru = 0;
+                        statusLanSau = "";
                         for(let i = 0; i < response.pkcost.length; i++) {
+                            if (response.pkcost[i].isLanDau == false 
+                            && response.pkcost[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='txt-danger'><b>Chưa duyệt</b></span>"
+                            } else if (response.pkcost[i].isLanDau == false 
+                            && response.pkcost[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='txt-success'>Đã duyệt</span>"
+                            } else {
+                                statusLanSau = "";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
                                 "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + " " + statusLanSau + "</td>" +
                                 "<td><button id='delPKCOST' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
                                 +"<button id='editPkCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"'  data-toggle='modal' data-target='#editPkCostMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>"+
                                 "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkcost[i].cost);
-                            if (response.pkcost[i].cost_tang == true) 
-                                tru += parseInt(response.pkcost[i].cost);
+                            if (response.pkcost[i].isLanDau == true || (response.pkcost[i].isDuyetLanSau == true && response.pkcost[i].isLanDau == false)) {
+                               sum += parseInt(response.pkcost[i].cost);
+                               if (response.pkcost[i].cost_tang == true) 
+                                    tru += parseInt(response.pkcost[i].cost);
+                            }                           
                         }
                         let totalTang = sum - tru;
                         $("#showPKCOST").html(txt);
@@ -1430,6 +1460,12 @@
             //Add show pk cost
             $("#pkCostAdd").click(function(){
                 $('input[name=idHD3]').val($("input[name=idHopDong]").val());
+                $('input[name=isThemChiPhi]').val(0);
+            });
+
+            $("#themChiPhi").click(function(){
+                $('input[name=idHD3]').val($("input[name=idHopDong]").val());
+                $('input[name=isThemChiPhi]').val(1);
             });
 
             //Add show pk cost
@@ -1764,6 +1800,7 @@
                             $("#xoaDeNghi").hide();
                             $("#pkCostAdd").hide();
                             $("#pkFreeAdd").hide();
+                            $("#themChiPhi").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
                             $("#giamGia").prop('disabled', true);
