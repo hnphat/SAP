@@ -854,8 +854,20 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
+                        statusLanSau = "";
+                        approveBtn = "";
                         for(let i = 0; i < response.pkfree.length; i++) {
                             let mode = "";
+                            if (response.pkfree[i].isLanDau == false 
+                            && response.pkfree[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                                approveBtn = " <button id='approveAddFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-success btn-sm'><span class='fas fa-check-circle'></span></button>";
+                            } else if (response.pkfree[i].isLanDau == false 
+                            && response.pkfree[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            }
                             switch(response.pkfree[i].mode) {
                                 case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
                                 case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
@@ -867,10 +879,13 @@
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + " " + statusLanSau 
+                                + approveBtn + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkfree[i].cost);
+                            if (response.pkfree[i].isLanDau == true || (response.pkfree[i].isDuyetLanSau == true && response.pkfree[i].isLanDau == false)) {
+                                sum += parseInt(response.pkfree[i].cost);
+                            } 
                         }
                         $("#showPKFREE").html(txt);
                         $("#xtongPKFREE").text(formatNumber(sum));
@@ -893,15 +908,30 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
+                        statusLanSau = "";
+                        approveBtn = "";
                         for(i = 0; i < response.pkban.length; i++) {
+                            if (response.pkban[i].isLanDau == false 
+                            && response.pkban[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                                approveBtn = " <button id='approveAddPay' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-success btn-sm'><span class='fas fa-check-circle'></span></button>";
+                            } else if (response.pkban[i].isLanDau == false 
+                            && response.pkban[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + " " + statusLanSau 
+                                + approveBtn + "</td>" +
                                 "<td>" + response.pkban[i].giamGia + "%</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100))) + "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
+                            if (response.pkban[i].isLanDau == true || (response.pkban[i].isDuyetLanSau == true && response.pkban[i].isLanDau == false)) {
+                                sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
+                            }                           
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
@@ -926,19 +956,35 @@
                         txt = "";
                         sum = 0;
                         tru = 0;
+                        statusLanSau = "";
+                        approveBtn = "";
                         for(let i = 0; i < response.pkcost.length; i++) {
+                            if (response.pkcost[i].isLanDau == false 
+                            && response.pkcost[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                                approveBtn = " <button id='approveAddCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-success btn-sm'><span class='fas fa-check-circle'></span></button>";
+                            } else if (response.pkcost[i].isLanDau == false 
+                            && response.pkcost[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + " " + statusLanSau 
+                                + approveBtn + "</td>" +     
                                 "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
+                                "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkcost[i].cost);
-                            if (response.pkcost[i].cost_tang == true) 
-                                tru += parseInt(response.pkcost[i].cost);
+                            if (response.pkcost[i].isLanDau == true || (response.pkcost[i].isDuyetLanSau == true && response.pkcost[i].isLanDau == false)) {
+                               sum += parseInt(response.pkcost[i].cost);
+                               if (response.pkcost[i].cost_tang == true) 
+                                    tru += parseInt(response.pkcost[i].cost);
+                            }                           
                         }
-                        $("#showPKCOST").html(txt);
                         let totalTang = sum - tru;
+                        $("#showPKCOST").html(txt);
                         $("#xtongCost").text(formatNumber(totalTang) + " (Đã trừ chi phí tặng " +formatNumber(tru)+")");
                     },
                     error: function() {
@@ -1093,6 +1139,93 @@
                         });
                    }
                 }                
+            });
+
+            $(document).on('click','#approveAddCost', function(){
+                if(confirm('Xác nhận duyệt bổ sung hạng mục chi phí?\nLưu ý: Phê duyệt rồi sẽ không thể thu hồi được, vui lòng kiểm tra kỹ!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/approve/pkcost/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKCost($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#approveAddPay', function(){
+                if(confirm('Xác nhận duyệt bổ sung hạng mục phụ kiện bán?\nLưu ý: Phê duyệt rồi sẽ không thể thu hồi được, vui lòng kiểm tra kỹ!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/approve/pkpay/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKPay($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#approveAddFree', function(){
+                if(confirm('Xác nhận duyệt bổ sung hạng mục phụ kiện khuyến mãi?\nLưu ý: Phê duyệt rồi sẽ không thể thu hồi được, vui lòng kiểm tra kỹ!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/approve/pkfree/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKFree($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
             });
         });
     </script>

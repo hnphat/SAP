@@ -283,7 +283,8 @@
                                         </table>
                                         <p>Tổng cộng: <strong id="xtongCost"></strong></p>
                                         <h5>PHỤ KIỆN BÁN</h5>
-                                        <button id="pkPayAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkPay"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <button id="pkPayAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkPay"><span class="fas fa-plus-circle"></span></button>&nbsp;
+                                        <button id="themPhuKienBan" class="btn btn-primary" data-toggle="modal" data-target="#addPkPay">THÊM PHỤ KIỆN KIỆN BÁN</button><br/><br/>
                                         <table class="table table-striped table-bordered">
                                             <thead>
                                                 <tr class="bg-cyan">
@@ -312,7 +313,8 @@
                                         <!-- <strong>Tổng cộng:</strong>  <strong id="xtongPayGiam"></strong> -->
                                         </p>
                                         <h5>PHỤ KIỆN KHUYẾN MÃI, QUÀ TẶNG</h5>
-                                        <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button><br/><br/>
+                                        <button id="pkFreeAdd" class="btn btn-success" data-toggle="modal" data-target="#addPkFree"><span class="fas fa-plus-circle"></span></button>&nbsp;
+                                        <button id="themPhuKienKM" class="btn btn-primary" data-toggle="modal" data-target="#addPkFree">THÊM PHỤ KHUYẾN MÃI</button><br/><br/>
                                         <table class="table table-bordered table-striped">
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
@@ -397,6 +399,7 @@
                             <input type="hidden" name="idHD">
                             <input type="hidden" name="idLoaiXe">
                             <input type="hidden" name="mapkcost">
+                            <input type="hidden" name="isThemPhuKienBan" value="0">
                             <div class="card-body">
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                     \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
@@ -459,6 +462,7 @@
                             <input type="hidden" name="idLoaiXePKFree">
                             <input type="hidden" name="mapkfree">
                             <input type="hidden" name="mapkmode">
+                            <input type="hidden" name="isThemPhuKienKM" value="0">
                             <div class="card-body">
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
@@ -714,6 +718,8 @@
             $("#deNghiChinhSua").hide();
             $("#pkCostAdd").hide();
             $("#themChiPhi").hide();
+            $("#themPhuKienBan").hide();
+            $("#themPhuKienKM").hide();
             $("#pkFreeAdd").hide();
             $("#pkPayAdd").hide();
             $("#inForm").hide();
@@ -788,6 +794,8 @@
                                 $("#deNghiChinhSua").hide();
                                 $("#pkCostAdd").show();
                                 $("#themChiPhi").hide();
+                                $("#themPhuKienBan").hide();
+                                $("#themPhuKienKM").hide();
                                 $("#pkFreeAdd").show();
                                 $("#pkPayAdd").show();
 
@@ -817,6 +825,8 @@
                                 $("#deNghiChinhSua").hide();
                                 $("#pkCostAdd").hide();
                                 $("#themChiPhi").hide();
+                                $("#themPhuKienBan").hide();
+                                $("#themPhuKienKM").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
 
@@ -847,6 +857,8 @@
                                 $("#deNghiChinhSua").show();
                                 $("#pkCostAdd").hide();
                                 $("#themChiPhi").hide();
+                                $("#themPhuKienBan").hide();
+                                $("#themPhuKienKM").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
@@ -874,10 +886,16 @@
                                 if (response.data.lead_check_cancel == false)
                                     $("#deNghiHuy").show();
                                 $("#pkCostAdd").hide();
-                                 if (response.data.lead_check_cancel == false)
+                                 if (response.data.lead_check_cancel == false) {
                                     $("#themChiPhi").show();
-                                 else
+                                    $("#themPhuKienBan").show();
+                                    $("#themPhuKienKM").show();
+                                 }
+                                 else {
                                     $("#themChiPhi").hide();
+                                    $("#themPhuKienBan").hide();
+                                    $("#themPhuKienKM").hide();
+                                 }
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
@@ -904,6 +922,8 @@
                                 $("#deNghiChinhSua").hide();
                                 $("#pkCostAdd").hide();
                                 $("#themChiPhi").hide();
+                                $("#themPhuKienBan").hide();
+                                $("#themPhuKienKM").hide();
                                 $("#pkFreeAdd").hide();
                                 $("#pkPayAdd").hide();
                                 $("#tamUng").prop('disabled', true);
@@ -936,6 +956,8 @@
                         $("#deNghiChinhSua").hide();
                         $("#pkCostAdd").hide();
                         $("#themChiPhi").hide();
+                        $("#themPhuKienKM").hide();
+                        $("#themPhuKienBan").hide();
                         $("#pkFreeAdd").hide();
                         $("#pkPayAdd").hide();
                     }
@@ -1254,6 +1276,8 @@
                             $("#deNghiChinhSua").hide();
                             $("#pkCostAdd").hide();
                             $("#themChiPhi").hide();
+                            $("#themPhuKienKM").hide();
+                            $("#themPhuKienBan").hide();
                             $("#pkFreeAdd").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
@@ -1293,8 +1317,18 @@
                     success: function(response){
                         txt = "";
                         sum = 0;
+                        statusLanSau = "";
                         for(let i = 0; i < response.pkfree.length; i++) {
-                            let mode = "";
+                            let mode = "";                                   
+                            if (response.pkfree[i].isLanDau == false 
+                            && response.pkfree[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                            } else if (response.pkfree[i].isLanDau == false     
+                            && response.pkfree[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            } 
                             switch(response.pkfree[i].mode) {
                                 case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
                                 case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
@@ -1303,9 +1337,10 @@
                                 default: mode = "";
                             }
                             mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
+                            
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td>" + response.pkfree[i].name + " " + statusLanSau + " </td>" +
                                 "<td>" + mode + "</td>" +
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                 \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
@@ -1320,10 +1355,6 @@
                                 "</tr>";
                         }
                         $("#showPKFREE").html(txt);
-                        // Toast.fire({
-                        //     icon: 'info',
-                        //     title: "Loaded! Free Gift!"
-                        // })
                     },
                     error: function() {
                         Toast.fire({
@@ -1343,25 +1374,31 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
+                        statusLanSau = "";
                         for(i = 0; i < response.pkban.length; i++) {
+                            if (response.pkban[i].isLanDau == false 
+                            && response.pkban[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                            } else if (response.pkban[i].isLanDau == false 
+                            && response.pkban[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + " " + statusLanSau + "</td>" +
                                 "<td>" + response.pkban[i].giamGia + "%</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100))) + "</td>" +
                                 "<td><button id='delPKPAY' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
+                            if (response.pkban[i].isLanDau == true || (response.pkban[i].isDuyetLanSau == true && response.pkban[i].isLanDau == false)) {
+                                sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
+                            }
                         }
                         $("#showPKPAY").html(txt);
-                        $("#xtongPay").text(formatNumber(sum));
-                        // $("#xtongPayGiam").text(formatNumber(sum - (sum*parseInt($("#magiamgia").val())/100)));
-                        // loadTotal($("select[name=chonHD]").val());
-                        // Toast.fire({
-                        //     icon: 'info',
-                        //     title: "Loaded! Pay Gift!"
-                        // })
+                        $("#xtongPay").text(formatNumber(sum));                        
                     },
                     error: function() {
                         Toast.fire({
@@ -1386,10 +1423,10 @@
                         for(let i = 0; i < response.pkcost.length; i++) {
                             if (response.pkcost[i].isLanDau == false 
                             && response.pkcost[i].isDuyetLanSau == false) {
-                                statusLanSau = " <span class='txt-danger'><b>Chưa duyệt</b></span>"
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
                             } else if (response.pkcost[i].isLanDau == false 
                             && response.pkcost[i].isDuyetLanSau == true) {
-                                statusLanSau = " <span class='txt-success'>Đã duyệt</span>"
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
                             } else {
                                 statusLanSau = "";
                             }
@@ -1448,12 +1485,26 @@
             //Add show pk pay
             $("#pkPayAdd").click(function(){
                $('input[name=idHD]').val($("input[name=idHopDong]").val());
+               $('input[name=isThemPhuKienBan]').val(0);
+               autoloadPkPay();
+            });
+
+            $("#themPhuKienBan").click(function(){
+               $('input[name=idHD]').val($("input[name=idHopDong]").val());
+               $('input[name=isThemPhuKienBan]').val(1);
                autoloadPkPay();
             });
 
             //Add show pk pay
             $("#pkFreeAdd").click(function(){
                 $('input[name=idHD2]').val($("input[name=idHopDong]").val());
+                $('input[name=isThemPhuKienKM]').val(0);
+                autoloadPkFree();
+            });
+
+             $("#themPhuKienKM").click(function(){
+                $('input[name=idHD2]').val($("input[name=idHopDong]").val());
+                $('input[name=isThemPhuKienKM]').val(1);
                 autoloadPkFree();
             });
 
@@ -1535,13 +1586,15 @@
                     data: $("#addPkFormCost").serialize(),
                     success: function(response) {
                         $("#addPkFormCost")[0].reset();
-                        Toast.fire({
-                            icon: 'success',
-                            title: " Đã thêm chi phí "
-                        })
-                        loadPKCost($("input[name=idHopDong]").val());
-                        loadTotal($("input[name=idHopDong]").val());
-                        $("#addPkCost").modal('hide');
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKCost($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                            $("#addPkCost").modal('hide');
+                        }                        
                     },
                     error: function() {
                         Toast.fire({
@@ -1562,13 +1615,15 @@
                     data: $("#addPkFormPay").serialize(),
                     success: function(response) {
                         $("#addPkFormPay")[0].reset();
-                        Toast.fire({
-                            icon: 'success',
-                            title: " Đã thêm phụ kiện bán "
-                        })
-                        loadPKPay($("input[name=idHopDong]").val());
-                        loadTotal($("input[name=idHopDong]").val());
-                        $("#addPkPay").modal('hide');
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKPay($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                            $("#addPkPay").modal('hide');
+                        }                        
                     },
                     error: function() {
                         Toast.fire({
@@ -1589,13 +1644,15 @@
                     data: $("#addPkFormFree").serialize(),
                     success: function(response) {
                         $("#addPkFormFree")[0].reset();
-                        Toast.fire({
-                            icon: 'success',
-                            title: " Đã thêm phụ kiện quà tặng miễn phí "
-                        })
-                        loadPKFree($("input[name=idHopDong]").val());
-                        loadTotal($("input[name=idHopDong]").val());
-                        $("#addPkFree").modal('hide');
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKFree($("input[name=idHopDong]").val());
+                            loadTotal($("input[name=idHopDong]").val());
+                            $("#addPkFree").modal('hide');
+                        }
                     },
                     error: function() {
                         Toast.fire({
@@ -1620,12 +1677,14 @@
                             "sale": $(this).data('sale')
                         },
                         success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            loadPKPay($("input[name=idHopDong]").val());
-                            loadTotal($("input[name=idHopDong]").val());
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                loadPKPay($("input[name=idHopDong]").val());
+                                loadTotal($("input[name=idHopDong]").val());
+                            }                           
                         },
                         error: function() {
                             Toast.fire({
@@ -1649,12 +1708,14 @@
                             "sale": $(this).data('sale')
                         },
                         success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            loadPKFree($("input[name=idHopDong]").val());
-                            loadTotal($("input[name=idHopDong]").val());
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                loadPKFree($("input[name=idHopDong]").val());
+                                loadTotal($("input[name=idHopDong]").val());
+                            }                            
                         },
                         error: function() {
                             Toast.fire({
@@ -1678,12 +1739,14 @@
                             "sale": $(this).data('sale')
                         },
                         success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            loadPKCost($("input[name=idHopDong]").val());
-                            loadTotal($("input[name=idHopDong]").val());
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                loadPKCost($("input[name=idHopDong]").val());
+                                loadTotal($("input[name=idHopDong]").val());
+                            }                            
                         },
                         error: function() {
                             Toast.fire({
@@ -1801,6 +1864,7 @@
                             $("#pkCostAdd").hide();
                             $("#pkFreeAdd").hide();
                             $("#themChiPhi").hide();
+                            $("#themPhuKienBan").hide();
                             $("#pkPayAdd").hide();
                             $("#tamUng").prop('disabled', true);
                             $("#giamGia").prop('disabled', true);

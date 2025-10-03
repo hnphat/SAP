@@ -2290,7 +2290,7 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.free_kem as free_kem','package.name as name','package.cost as cost','package.mode as mode', 'package.mapk as mapk')
+        $pkban = SaleOffV2::select('saleoffv2.*','package.isLanDau as isLanDau','package.isDuyetLanSau as isDuyetLanSau','package.free_kem as free_kem','package.name as name','package.cost as cost','package.mode as mode', 'package.mapk as mapk')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
         ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')
         ->where([
@@ -2393,7 +2393,7 @@ class HDController extends Controller
 
     public function addPkCost(Request $request){
         $check = HopDong::find($request->idHD3);
-        if ($check->lead_check != 1) {
+        if ($check->lead_check != 1 && $request->isThemChiPhi == 0) {
             $pkpay = new PackageV2;
             $pkpay->name = $request->namePkCost;
             $pkpay->cost = $request->giaPkCost;
@@ -2407,7 +2407,6 @@ class HDController extends Controller
                 $saleOff->id_bh_pk_package = $pkpay->id;
                 $saleOff->save();
                 if($saleOff) {
-
                     $nhatKy = new NhatKy();
                     $nhatKy->id_user = Auth::user()->id;
                     $nhatKy->thoiGian = Date("H:m:s");
@@ -2425,23 +2424,80 @@ class HDController extends Controller
                     $his->save();
 
                     return response()->json([
-                        'message' => 'Tạo các chi phí thành công!',
+                        'type' => 'success',
+                        'message' => 'Thêm chi phí thành công!',
                         'code' => 200
                     ]);
                 } else {
                     return response()->json([
+                        'type' => 'error',
                         'message' => 'Internal server fail!',
                         'code' => 500
                     ]);
                 }
             } else {
                 return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        if ($check->lead_check == 1 && $request->isThemChiPhi == 1) {
+            $pkpay = new PackageV2;
+            $pkpay->name = $request->namePkCost;
+            $pkpay->cost = $request->giaPkCost;
+            $pkpay->cost_tang = $request->tang;
+            $pkpay->id_user_create = Auth::user()->id;            
+            $pkpay->type = 'cost';
+            $pkpay->isLanDau = false;
+            $pkpay->isDuyetLanSau = false;
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOffV2;
+                $saleOff->id_hd = $request->idHD3;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Đề nghị bổ sung phí (Hợp đồng đã duyệt, đã xuất xe) cho đề nghị thực hiện hợp đồng ĐN/0".$request->idHD3."(không phải mã hợp đồng chính thức) <br/>Nội dung: " . $request->namePkCost . " <br/>Giá: " . round($request->giaPkCost,2);
+                    $nhatKy->save();
+
+                    $his = new HistoryHopDong();
+                    $his->idDeNghi = $request->idHD3;
+                    $his->id_user = Auth::user()->id;
+                    $his->ngay = Date("H:m:s d-m-Y");
+                    $his->noiDung = "Đề nghị bổ sung phí (Hợp đồng đã duyệt, đã xuất xe):  <br/>Nội dung: " . $request->namePkCost . " <br/>Giá: " . round($request->giaPkCost,2) . " <br/>Tặng: " . ($request->tang ? "Có" : "Không");
+                    $his->ghiChu = "";
+                    $his->save();
+
+                    return response()->json([                        
+                        'type' => 'success',
+                        'message' => 'Thêm chi phí thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([                        
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else {
+                return response()->json([                    
+                    'type' => 'error',
                     'message' => 'Internal server fail!',
                     'code' => 500
                 ]);
             }
         }
         return response()->json([
+            'type' => 'error',
             'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
             'code' => 200
         ]);
@@ -2684,11 +2740,13 @@ class HDController extends Controller
                     $his->save();
 
                     return response()->json([
+                        'type' => 'success',
                         'message' => 'Tạo phụ kiện bán thành công!',
                         'code' => 200
                     ]);
                 } else {
                     return response()->json([
+                        'type' => 'error',
                         'message' => 'Internal server fail!',
                         'code' => 500
                     ]);
@@ -2700,7 +2758,64 @@ class HDController extends Controller
                 ]);
             }
         }
+        if ($check->lead_check == 1 && $request->isThemPhuKienBan == 1) {
+            $pkpay = new PackageV2;
+            $pkpay->name = $request->namePkPay;
+            $pkpay->cost = $request->giaPkPay;
+            $pkpay->mapk = $request->mapkcost;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->isLanDau = false;
+            $pkpay->isDuyetLanSau = false;
+            $pkpay->type = 'pay';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOffV2;
+                $saleOff->id_hd = $request->idHD;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                if ($request->giamGiaPK >= 0 && $request->giamGiaPK <= 100 && $check->magiamgia == 0)
+                    $saleOff->giamGia = $request->giamGiaPK;
+                $saleOff->save();
+                if($saleOff) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->noiDung = "Đề nghị bán thêm phụ kiện cho hợp đồng có mã đề nghị ĐN/0".$request->idHD."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkPay
+                    . " <br/>Giá: " . number_format(round($request->giaPkPay,2)) . " Giảm giá: " . $request->giamGiaPK . "%";
+                    $nhatKy->save();
+
+                    $his = new HistoryHopDong();
+                    $his->idDeNghi = $request->idHD;
+                    $his->id_user = Auth::user()->id;
+                    $his->ngay = Date("H:m:s d-m-Y");
+                    $his->noiDung = "Đề nghị bán thêm phụ kiện <br/>Nội dung: " . $request->namePkPay . " <br/>Giá: "
+                    . number_format(round($request->giaPkPay,2)). " Giảm giá: " . $request->giamGiaPK . "%";;
+                    $his->ghiChu = "";
+                    $his->save();
+
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Đề nghị bán thêm phụ kiện thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
         return response()->json([
+            'type' => 'error',
             'message' => 'Quản lý đã phê duyệt không thể thêm nội dung!',
             'code' => 200
         ]);
@@ -2750,17 +2865,84 @@ class HDController extends Controller
                     $his->save();
 
                     return response()->json([
+                        'type' => 'success',
                         'message' => 'Tạo phụ kiện tặng thành công!',
                         'code' => 200
                     ]);
                 } else {
                     return response()->json([
+                        'type' => 'error',
                         'message' => 'Internal server fail!',
                         'code' => 500
                     ]);
                 }
             } else {
                 return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+
+        if ($check->lead_check == 1 && $request->isThemPhuKienKM == 1) {
+            $pkpay = new PackageV2;
+            $pkpay->name = $request->namePkFree;
+            $pkpay->free_kem = ($request->addfreetang == 1) ? 1 : 0;
+            $pkpay->id_user_create = Auth::user()->id;
+            $pkpay->isLanDau = false;
+            $pkpay->isDuyetLanSau = false;
+            $pkpay->mapk = $request->mapkfree;
+            $pkpay->mode = $request->mapkmode;
+            if ($request->mapkmode == "GIABAN") {
+                $p = BHPK::find($request->mapkfree);
+                $pkpay->cost = $p->donGia;
+            } elseif ($request->mapkfree != null || $request->mapkfree != "undefined") {
+                $p = BHPK::find($request->mapkfree);
+                $pkpay->cost = $p->giaVon;
+            } else {
+                $pkpay->cost = $request->giaPkFree;
+            }            
+            $pkpay->type = 'free';
+            $pkpay->save();
+            if($pkpay) {
+                $saleOff = new SaleOffV2;
+                $saleOff->id_hd = $request->idHD2;
+                $saleOff->id_bh_pk_package = $pkpay->id;
+                $saleOff->save();
+                if($saleOff) {
+                    
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Đề nghị bổ sung phụ kiện khuyến mãi cho hợp động có đề nghị ĐN/0".$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " . $request->namePkFree . " <br/>Giá: " . round($request->giaPkFree,2);
+                    $nhatKy->save();
+
+                    $his = new HistoryHopDong();
+                    $his->idDeNghi = $request->idHD2;
+                    $his->id_user = Auth::user()->id;
+                    $his->ngay = Date("H:m:s d-m-Y");
+                    $his->noiDung = "Đề nghị bổ sung phụ kiện khuyến mãi <br/>Nội dung: " . $request->namePkFree . " <br/>Giá: " . round($request->giaPkFree,2) . " Mode: " . $request->mapkmode;
+                    $his->ghiChu = "";
+                    $his->save();
+
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Đề nghị bổ sung phụ kiện khuyến mãi thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'type' => 'error',
                     'message' => 'Internal server fail!',
                     'code' => 500
                 ]);
@@ -2815,7 +2997,158 @@ class HDController extends Controller
                     'code' => 500
                 ]);
             }
-        }   
+        }  
+
+        if ($check->lead_check == 1 && $check->lead_check_cancel != 1) {
+            $kiemTra = PackageV2::find($request->id);
+            if ($kiemTra->isDuyetLanSau == false && $kiemTra->isLanDau == false) {
+                $temp = SaleOffV2::where([
+                    ['id_hd','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->first();
+                $result = SaleOffV2::where([
+                    ['id_hd','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->delete();
+                $tempac = PackageV2::find($request->id);
+                $pac = PackageV2::find($request->id);
+                $pac->delete();
+                if($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Xóa phụ kiện bán (chưa phê duyệt) cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . number_format(round($tempac->cost,2));
+                    $nhatKy->save();
+
+                    $his = new HistoryHopDong();
+                    $his->idDeNghi = $request->sale;
+                    $his->id_user = Auth::user()->id;
+                    $his->ngay = Date("H:m:s d-m-Y");
+                    $his->noiDung = "Xóa phụ kiện bán (chưa phê duyệt) <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . number_format(round($tempac->cost,2));
+                    $his->ghiChu = "";
+                    $his->save();
+
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Xóa đề nghị bán thêm phụ kiện thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } 
+        }
+    }
+
+    public function approvePkCost(Request $request) {
+        $pkpay = PackageV2::find($request->id);
+        $pkpay->isDuyetLanSau = true;
+        $pkpay->save();
+        if($pkpay) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+            $nhatKy->noiDung = "Phê duyệt Bổ sung chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $request->sale;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Phê duyệt Bổ sung chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $his->ghiChu = "";
+            $his->save();
+
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Duyệt bổ sung chi phí thành công!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function approvePkPay(Request $request) {
+        $pkpay = PackageV2::find($request->id);
+        $pkpay->isDuyetLanSau = true;
+        $pkpay->save();
+        if($pkpay) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+            $nhatKy->noiDung = "Phê duyệt Bổ sung phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $request->sale;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Phê duyệt Bổ sung phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $his->ghiChu = "";
+            $his->save();
+
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Duyệt bổ sung phụ kiện bán thành công!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function approvePkFree(Request $request) {
+        $pkpay = PackageV2::find($request->id);
+        $pkpay->isDuyetLanSau = true;
+        $pkpay->save();
+        if($pkpay) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+            $nhatKy->noiDung = "Phê duyệt Bổ sung phụ kiện khuyến mãi cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $request->sale;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Phê duyệt Bổ sung phụ kiện khuyến mãi cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $his->ghiChu = "";
+            $his->save();
+
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Duyệt bổ sung phụ kiện khuyến mãi thành công!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi!',
+                'code' => 500
+            ]);
+        }
     }
 
   
@@ -2852,7 +3185,7 @@ class HDController extends Controller
 
                 return response()->json([
                     'type' => 'success',
-                    'message' => 'Delete PK Free successfully!',
+                    'message' => 'Xóa phụ kiện khuyến mãi thành công!',
                     'code' => 200
                 ]);
             } else {
@@ -2861,6 +3194,52 @@ class HDController extends Controller
                     'message' => 'Internal server fail!',
                     'code' => 500
                 ]);
+            }
+        }
+
+        if ($check->lead_check == 1 && $check->lead_check_cancel != 1) {
+            $kiemTra = PackageV2::find($request->id);
+            if ($kiemTra->isDuyetLanSau == false && $kiemTra->isLanDau == false) {
+                $temp = SaleOffV2::where([
+                    ['id_hd','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->first();
+                $result = SaleOffV2::where([
+                    ['id_hd','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->delete();
+                $tempac = PackageV2::find($request->id);
+                $pac = PackageV2::find($request->id);
+                $pac->delete();
+                if($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Xóa đề nghị bổ sung phụ kiện khuyến mãi (chưa duyệt) cho hợp đồng có đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
+                    $nhatKy->save();
+
+                    $his = new HistoryHopDong();
+                    $his->idDeNghi = $request->sale;
+                    $his->id_user = Auth::user()->id;
+                    $his->ngay = Date("H:m:s d-m-Y");
+                    $his->noiDung = "Xóa đề nghị bổ sung phụ kiện khuyến mãi (chưa duyệt) <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
+                    $his->ghiChu = "";
+                    $his->save();
+
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Xóa đề nghị bổ sung phụ kiện khuyến mãi thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
             }
         }
     }
@@ -2898,7 +3277,7 @@ class HDController extends Controller
 
                 return response()->json([
                     'type' => 'success',
-                    'message' => 'Delete PK Cost successfully!',
+                    'message' => 'Đã xóa chi phí thành công!',
                     'code' => 200
                 ]);
             } else {
@@ -2909,6 +3288,58 @@ class HDController extends Controller
                 ]);
             }
         }      
+
+        if ($check->lead_check == 1 && $check->lead_check_cancel != 1) {
+            $kiemTra = PackageV2::find($request->id);
+            if ($kiemTra->isDuyetLanSau == false && $kiemTra->isLanDau == false) {
+                $temp = SaleOffV2::where([
+                    ['id_hd','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->first();
+                $result = SaleOffV2::where([
+                    ['id_hd','=', $request->sale],
+                    ['id_bh_pk_package','=', $request->id]
+                ])->delete();
+                $tempac = PackageV2::find($request->id);
+                $pac = PackageV2::find($request->id);
+                $pac->delete();
+                if($result) {
+                    $nhatKy = new NhatKy();
+                    $nhatKy->id_user = Auth::user()->id;
+                    $nhatKy->thoiGian = Date("H:m:s");
+                    $nhatKy->ghiChu = Carbon::now();
+                    $nhatKy->chucNang = "Kinh doanh - Quản lý đề nghị";
+                    $nhatKy->noiDung = "Xóa chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
+                    $nhatKy->save();
+
+                    $his = new HistoryHopDong();
+                    $his->idDeNghi = $request->sale;
+                    $his->id_user = Auth::user()->id;
+                    $his->ngay = Date("H:m:s d-m-Y");
+                    $his->noiDung = "Xóa chi phí <br/>Nội dung: " . $tempac->name . " <br/>Giá: " . round($tempac->cost,2);
+                    $his->ghiChu = "";
+                    $his->save();
+
+                    return response()->json([
+                        'type' => 'success',
+                        'message' => 'Đã xóa chi phí thành công!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Internal server fail!',
+                        'code' => 500
+                    ]);
+                }
+            } 
+        }
+
+        return response()->json([
+            'type' => 'error',
+            'message' => 'Không thể xóa!',
+            'code' => 200
+        ]);
     }
 
     public function getTotal($id){

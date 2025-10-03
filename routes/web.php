@@ -243,6 +243,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('delete/pkfree/','HDController@deletePkFree');
         Route::post('delete/pkcost/','HDController@deletePkCost');
 
+        Route::post('approve/pkcost/','HDController@approvePkCost');
+        Route::post('approve/pkpay/','HDController@approvePkPay');
+        Route::post('approve/pkfree/','HDController@approvePkFree');
+
         //----- quản lý đề nghị
         Route::get('hd/denghi/quanly','HDController@getHDQuanLyDeNghi')->name('hd.quanly.denghi');
         Route::get('hd/denghi/chondenghi/{id}','HDController@chonDeNghi');
