@@ -2290,7 +2290,7 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.isLanDau as isLanDau','package.isDuyetLanSau as isDuyetLanSau','package.free_kem as free_kem','package.name as name','package.cost as cost','package.mode as mode', 'package.mapk as mapk')
+        $pkban = SaleOffV2::select('saleoffv2.*','package.id as id','package.lyDoHuy as lyDoHuy','package.isHuy as isHuy','package.isLanDau as isLanDau','package.isDuyetLanSau as isDuyetLanSau','package.free_kem as free_kem','package.name as name','package.cost as cost','package.mode as mode', 'package.mapk as mapk')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
         ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')
         ->where([
@@ -2954,6 +2954,156 @@ class HDController extends Controller
         ]);
     }
 
+    public function deNghiHuyPackage(Request $request){
+        $check = HopDong::find($request->idOfHD);
+        if (!$request->lyDoHuyPackage) {
+           return response()->json([
+                'type' => 'warning',
+                'message' => ' Vui lòng nhập đầy đủ lý do huỷ!',
+                'code' => 500
+            ]); 
+        }
+        if ($check->lead_check == 1) {
+            $pkpay = PackageV2::find($request->idOfPackage);
+            $pkpay->lyDoHuy = $request->lyDoHuyPackage;
+            $pkpay->isHuy = true;
+            $pkpay->save();
+            if($pkpay) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+                $nhatKy->noiDung = "Đề nghị huỷ danh mục cho hợp đồng có đề nghị ĐN/0"
+                .$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " 
+                . $pkpay->name . " <br/>Giá: " . round($request->cost,2)
+                . "<br/>Lý do huỷ: " . $request->lyDoHuyPackage;
+                $nhatKy->save();
+
+                $his = new HistoryHopDong();
+                $his->idDeNghi = $request->idOfHD;
+                $his->id_user = Auth::user()->id;
+                $his->ngay = Date("H:m:s d-m-Y");
+                $his->noiDung = "Đề nghị huỷ danh mục cho hợp đồng có đề nghị ĐN/0"
+                .$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " 
+                . $pkpay->name . " <br/>Giá: " . round($request->cost,2)
+                . "<br/>Lý do huỷ: " . $request->lyDoHuyPackage;
+                $his->ghiChu = "";
+                $his->save();
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đề nghị huỷ danh mục thành công!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+        return response()->json([
+            'type' => 'error',
+            'message' => ' Không thể đề nghị huỷ đối với danh mục trong hợp đồng này!',
+            'code' => 500
+        ]);
+    }
+
+    public function boHuy(Request $request){
+        $pkpay = PackageV2::find($request->idOfPackage);
+        $pkpay->lyDoHuy = null;
+        $pkpay->isHuy = false;
+        $pkpay->save();
+        if($pkpay) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:m:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->chucNang = "Kinh doanh - Phê duyệt đề nghị";
+            $nhatKy->noiDung = "Bỏ yêu cầu huỷ danh mục cho hợp đồng có đề nghị ĐN/0"
+            .$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " 
+            . $pkpay->name . " <br/>Giá: " . round($request->cost,2);
+            $nhatKy->save();
+
+            $his = new HistoryHopDong();
+            $his->idDeNghi = $request->idOfHD;
+            $his->id_user = Auth::user()->id;
+            $his->ngay = Date("H:m:s d-m-Y");
+            $his->noiDung = "Bỏ yêu cầu huỷ danh mục cho hợp đồng có đề nghị ĐN/0"
+            .$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " 
+            . $pkpay->name . " <br/>Giá: " . round($request->cost,2);
+            $his->ghiChu = "";
+            $his->save();
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Bỏ yêu cầu huỷ danh mục thành công!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function duyetHuyPackage(Request $request) {
+        if (Auth::user()->hasRole('system') == false && Auth::user()->hasRole('boss') == false) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền thực hiện thao tác này!',
+                'code' => 500
+            ]);
+        }
+
+        $check = HopDong::find($request->sale);
+        if ($check->lead_check == 1 && $check->lead_check_cancel != 1) {
+            $result = SaleOffV2::where([
+                ['id_hd','=', $request->sale],
+                ['id_bh_pk_package','=', $request->id]
+            ])->delete();
+            $pkpay = PackageV2::find($request->id);
+            $tempname = $pkpay->name;
+            $tempcost = $pkpay->cost;
+            $templydo = $pkpay->lyDoHuy;
+            $pkpay->delete();
+            if($pkpay) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->ghiChu = Carbon::now();
+                $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
+                $nhatKy->noiDung = "Phê duyệt huỷ/bỏ danh mục cho hợp đồng có đề nghị ĐN/0"
+                .$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " 
+                . $tempname . " <br/>Giá: " . round($tempcost,2) . " <br/>Lý do huỷ: " . $templydo;
+                $nhatKy->save();
+
+                $his = new HistoryHopDong();
+                $his->idDeNghi = $request->sale;
+                $his->id_user = Auth::user()->id;
+                $his->ngay = Date("H:m:s d-m-Y");
+                $his->noiDung = "Phê duyệt huỷ/bỏ danh mục cho hợp đồng có đề nghị ĐN/0"
+                .$request->idHD2."(không phải mã hợp đồng) <br/>Nội dung: " 
+                . $tempname . " <br/>Giá: " . round($tempcost,2) . " <br/>Lý do huỷ: " . $templydo;
+                $his->ghiChu = "";
+                $his->save();
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Phê duyệt huỷ/bỏ danh mục thành công!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Internal server fail!',
+                    'code' => 500
+                ]);
+            }
+        }
+    }
+
     public function deletePkPay(Request $request) {
         $check = HopDong::find($request->sale);
         if ($check->lead_check != 1 && $check->requestCheck != 1) {
@@ -3056,14 +3206,14 @@ class HDController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
-            $nhatKy->noiDung = "Phê duyệt Bổ sung chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $nhatKy->noiDung = "Phê duyệt Bổ sung chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->name . " <br/>Giá: " . round($pkpay->cost,2);
             $nhatKy->save();
 
             $his = new HistoryHopDong();
             $his->idDeNghi = $request->sale;
             $his->id_user = Auth::user()->id;
             $his->ngay = Date("H:m:s d-m-Y");
-            $his->noiDung = "Phê duyệt Bổ sung chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $his->noiDung = "Phê duyệt Bổ sung chi phí cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->name . " <br/>Giá: " . round($pkpay->cost,2);
             $his->ghiChu = "";
             $his->save();
 
@@ -3091,14 +3241,14 @@ class HDController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
-            $nhatKy->noiDung = "Phê duyệt Bổ sung phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $nhatKy->noiDung = "Phê duyệt Bổ sung phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->name . " <br/>Giá: " . round($pkpay->cost,2);
             $nhatKy->save();
 
             $his = new HistoryHopDong();
             $his->idDeNghi = $request->sale;
             $his->id_user = Auth::user()->id;
             $his->ngay = Date("H:m:s d-m-Y");
-            $his->noiDung = "Phê duyệt Bổ sung phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $his->noiDung = "Phê duyệt Bổ sung phụ kiện bán cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->name . " <br/>Giá: " . round($pkpay->cost,2);
             $his->ghiChu = "";
             $his->save();
 
@@ -3126,14 +3276,14 @@ class HDController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Phê duyệt hợp đồng";
-            $nhatKy->noiDung = "Phê duyệt Bổ sung phụ kiện khuyến mãi cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $nhatKy->noiDung = "Phê duyệt Bổ sung phụ kiện khuyến mãi cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->name . " <br/>Giá: " . round($pkpay->cost,2);
             $nhatKy->save();
 
             $his = new HistoryHopDong();
             $his->idDeNghi = $request->sale;
             $his->id_user = Auth::user()->id;
             $his->ngay = Date("H:m:s d-m-Y");
-            $his->noiDung = "Phê duyệt Bổ sung phụ kiện khuyến mãi cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->namePkCost . " <br/>Giá: " . round($pkpay->giaPkCost,2);
+            $his->noiDung = "Phê duyệt Bổ sung phụ kiện khuyến mãi cho đề nghị ĐN/0".$request->sale."(không phải mã hợp đồng) <br/>Nội dung: " . $pkpay->name . " <br/>Giá: " . round($pkpay->cost,2);
             $his->ghiChu = "";
             $his->save();
 
@@ -3355,13 +3505,43 @@ class HDController extends Controller
                     ['id_hd','=',$id],
                     ['id_bh_pk_package','=',$row->id]
                 ])->first();
-                $sum += ($row->cost - ($row->cost*$saleOff->giamGia/100));               
+                if ($row->isLanDau == true || ($row->isDuyetLanSau == true && $row->isLanDau == false)) {
+                    $sum += ($row->cost - ($row->cost*$saleOff->giamGia/100)); 
+                }
+                              
             }
-            else if ($row->type == 'cost' && $row->cost_tang == false)
-                $sum += $row->cost;
-            
+            else if ($row->type == 'cost' && $row->cost_tang == false) {
+                if ($row->isLanDau == true || ($row->isDuyetLanSau == true && $row->isLanDau == false)) {
+                    $sum += $row->cost;
+                }
+            }  
         }
         echo $sum + $sale->giaXe;
+    }
+
+    public function checkBeforePrint(Request $request) {
+        $sale = HopDong::find($request->id);
+        $flag = true;
+        $package = $sale->package;
+        foreach($package as $row) {
+            if ($row->isDuyetLanSau == false && $row->isLanDau == false) {
+                $flag = false;
+                break;
+            }  
+        }
+        if ($flag) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Hợp đồng đã được phê duyệt đầy đủ!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Hợp đồng chưa được phê duyệt đầy đủ!',
+                'code' => 500
+            ]);
+        }
     }
 
     public function chonDeNghi($id){
@@ -5263,7 +5443,10 @@ class HDController extends Controller
                 }                  
                 // ---------------------               
                 $package = $row->package;
-                foreach($package as $row2) {                
+                foreach($package as $row2) {
+                    if ($row2->isLanDau == false && $row2->isDuyetLanSau == false)
+                        continue;
+                    
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
@@ -5287,6 +5470,7 @@ class HDController extends Controller
                        }
                        // -----------------------
                     }
+
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
                        $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
@@ -5513,7 +5697,10 @@ class HDController extends Controller
                 // ---------------------      
                
                 $package = $row->package;
-                foreach($package as $row2) {                
+                foreach($package as $row2) {               
+                    if ($row2->isLanDau == false && $row2->isDuyetLanSau == false)
+                        continue;
+
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
@@ -5759,6 +5946,8 @@ class HDController extends Controller
         $tongCongPhi = 0;
         $truPhi = 0;
         foreach($phi as $row) {
+            if ($row->isLanDau == false && $row->isDuyetLanSau == false)
+                continue;
             $tongCongPhi += $row->cost;
             if ($row->cost_tang)
                 $truPhi += $row->cost;
@@ -5776,6 +5965,8 @@ class HDController extends Controller
         $tongPhuKienBan = 0;
         // $tongPhuKienBanGiam = 0;
         foreach($phuKien as $row) {
+            if ($row->isLanDau == false && $row->isDuyetLanSau == false)
+                continue;
             $tongPhuKienBan += $row->cost - ($row->cost*$row->giamGia/100); 
             // $tongPhuKienBanGiam += ($magiamgia == 0 ? $row->cost : ($row->cost - ($row->cost*$magiamgia/100)));
         }
@@ -5791,6 +5982,8 @@ class HDController extends Controller
         $tongPhuKienKhuyenMai = 0;
         // Xử lý phụ kiện khuyến mãi cộng thêm công kỹ thuật viên
         foreach ($phuKienKM as $item) {
+            if ($item->isLanDau == false && $item->isDuyetLanSau == false)
+                continue;
             $bhpk = BHPK::find($item->mapk);
             if ($bhpk) {
                 $item->giaVon = $bhpk->giaVon;
@@ -5802,6 +5995,9 @@ class HDController extends Controller
         }
         // ----------------------
         foreach($phuKienKM as $row) {
+            if ($row->isLanDau == false && $row->isDuyetLanSau == false)
+                continue;
+             // ---- Suport KT --------
             if ($row->mode == "GIABAN") {                
                 $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
             } elseif ($row->mode == "TANGTHEM") {

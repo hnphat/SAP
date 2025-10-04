@@ -26,6 +26,8 @@ class Packagev2 extends Migration
             $table->string('mode', 255)->nullable;
             $table->boolean('isLanDau')->default(true);
             $table->boolean('isDuyetLanSau')->default(false);
+            $table->boolean('isHuy')->default(true);
+            $table->string('lyDoHuy', 255)->nullable;
             $table->timestamps();
         });
     }

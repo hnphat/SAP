@@ -1601,10 +1601,16 @@ class GuestController extends Controller
                             ['id','=',$soffhdkytonrow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p) {                            
-                            $pkban += $p->cost - ($p->cost * $soffhdkytonrow->giamGia/100);
-                            if ($soffhdkytonrow->giamGia != 0)
-                                $checkGiamGia = "(giảm)";
+                        if ($p) {  
+                            if ($p->isLanDau) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkytonrow->giamGia/100);
+                                if ($soffhdkytonrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            } else if ($p->isLanDau == false && $p->isDuyetLanSau == true) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkytonrow->giamGia/100);
+                                if ($soffhdkytonrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            }  
                         }                           
                     }
                     // $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
@@ -1637,10 +1643,16 @@ class GuestController extends Controller
                             ['id','=',$soffhdkytonrow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p) {                            
-                            $pkban += $p->cost - ($p->cost * $soffhdkytonrow->giamGia/100);
-                            if ($soffhdkytonrow->giamGia != 0)
-                                $checkGiamGia = "(giảm)";
+                        if ($p) {    
+                            if ($p->isLanDau) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkytonrow->giamGia/100);
+                                if ($soffhdkytonrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            } else if ($p->isLanDau == false && $p->isDuyetLanSau == true) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkytonrow->giamGia/100);
+                                if ($soffhdkytonrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            }                            
                         }                           
                     }
                     // $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
@@ -1692,10 +1704,16 @@ class GuestController extends Controller
                             ['id','=',$soffhdkyrow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p) {                            
-                            $pkban += $p->cost - ($p->cost * $soffhdkyrow->giamGia/100);
-                            if ($soffhdkyrow->giamGia != 0)
-                                $checkGiamGia = "(giảm)";
+                        if ($p) {
+                            if ($p->isLanDau) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkyrow->giamGia/100);
+                                if ($soffhdkyrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            } else if ($p->isLanDau == false && $p->isDuyetLanSau == true) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkyrow->giamGia/100);
+                                if ($soffhdkyrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            } 
                         }                           
                     }
                     // $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
@@ -1728,10 +1746,16 @@ class GuestController extends Controller
                             ['id','=',$soffhdkychorow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p) {                            
-                            $pkban += $p->cost - ($p->cost * $soffhdkychorow->giamGia/100);
-                            if ($soffhdkychorow->giamGia != 0)
-                                $checkGiamGia = "(giảm)";
+                        if ($p) {     
+                            if ($p->isLanDau) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkychorow->giamGia/100);
+                                if ($soffhdkychorow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            } else if ($p->isLanDau == false && $p->isDuyetLanSau == true) {
+                                $pkban += $p->cost - ($p->cost * $soffhdkychorow->giamGia/100);
+                                if ($soffhdkychorow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)";
+                            }                                                
                         }   
                     }
                     // $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));
@@ -1783,10 +1807,16 @@ class GuestController extends Controller
                             ['id','=',$soffhdxuatrow->id_bh_pk_package],
                             ['type','=','pay']
                         ])->first();
-                        if ($p) {                            
-                            $pkban += $p->cost - ($p->cost * $soffhdxuatrow->giamGia/100);
-                            if ($soffhdxuatrow->giamGia != 0)
-                                $checkGiamGia = "(giảm)"; 
+                        if ($p) {            
+                            if ($p->isLanDau) {
+                                $pkban += $p->cost - ($p->cost * $soffhdxuatrow->giamGia/100);
+                                if ($soffhdxuatrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)"; 
+                            } else if ($p->isLanDau == false && $p->isDuyetLanSau == true) {
+                                $pkban += $p->cost - ($p->cost * $soffhdxuatrow->giamGia/100);
+                                if ($soffhdxuatrow->giamGia != 0)
+                                    $checkGiamGia = "(giảm)"; 
+                            }                                         
                         }   
                     }
                     // $pkban = ($magiamgia == 0 ? $pkban : ($pkban - ($pkban*$magiamgia/100)));

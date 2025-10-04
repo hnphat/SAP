@@ -485,6 +485,41 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+    <!-- Medal Yêu cầu hủy các loại phụ kiện, chi phí, ...-->
+    <div class="modal fade" id="yeuCauHuy">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Yêu cầu hủy</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <form id="yeuCauHuyForm" autocomplete="off">
+                            {{csrf_field()}}
+                            <input type="hidden" name="idOfHD">
+                            <input type="hidden" name="idOfPackage">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Lý do hủy: </label>
+                                    <input name="lyDoHuyPackage" placeholder="Nhập lý do yêu cầu hủy" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    <button id="xacNhanYeuCauHuy" class="btn btn-primary" form="requestEditForm">Gửi</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -1169,7 +1204,25 @@
                         txt = "";
                         sum = 0;
                         for(let i = 0; i < response.pkfree.length; i++) {
-                            let mode = "";
+                            let mode = "";                            
+                            statusLanSau = "";
+                            requestHuyPackage = "";
+                            if (response.pkfree[i].isLanDau == false 
+                            && response.pkfree[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                            } else if (response.pkfree[i].isLanDau == false     
+                            && response.pkfree[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            } 
+                            if (response.pkfree[i].isHuy == 0 || response.pkfree[i].isDuyetLanSau == true) {
+                                requestHuyPackage = " <button id='requestHuyPackage' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-warning btn-sm'>Đề nghị hủy</button>";
+                            }
+                            if (response.pkfree[i].isHuy == 1 ) {
+                                requestHuyPackage = "<br/><b class='text-danger'>[ĐÃ ĐỀ NGHỊ HUỶ] </b><i class='text-danger'>Lý do: " + response.pkfree[i].lyDoHuy + "</i><br/>"
+                                + "<button id='boHuy' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-danger btn-sm'>X</button>";
+                            }
                             switch(response.pkfree[i].mode) {
                                 case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
                                 case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
@@ -1180,7 +1233,7 @@
                             mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td>" + response.pkfree[i].name + " " + statusLanSau +  " " + requestHuyPackage + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + "</td>" +
                                 "<td>" + mode +
                                 "</tr>";
@@ -1205,15 +1258,36 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
+                        statusLanSau = "";
                         for(i = 0; i < response.pkban.length; i++) {
+                            requestHuyPackage = "";
+                            if (response.pkban[i].isLanDau == false 
+                            && response.pkban[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                            } else if (response.pkban[i].isLanDau == false 
+                            && response.pkban[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            }
+                            if (response.pkban[i].isHuy == 0 || response.pkban[i].isDuyetLanSau == true) {
+                                requestHuyPackage = " <button id='requestHuyPackage' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-warning btn-sm'>Đề nghị hủy</button>";
+                            }
+                            if (response.pkban[i].isHuy == 1 ) {
+                                requestHuyPackage = "<br/><b class='text-danger'>[ĐÃ ĐỀ NGHỊ HUỶ] </b><i class='text-danger'>Lý do: " + response.pkban[i].lyDoHuy + "</i><br/>"
+                                + "<button id='boHuy' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-danger btn-sm'>X</button>";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkban[i].name + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + " " + statusLanSau +  " " + requestHuyPackage + "</td>" +
                                 "<td>" + response.pkban[i].giamGia + "%</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100))) + "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
+                            if (response.pkban[i].isLanDau == true || (response.pkban[i].isDuyetLanSau == true && response.pkban[i].isLanDau == false)) {
+                                sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
+                            }
+                            // sum += parseInt(response.pkban[i].cost - (response.pkban[i].cost*response.pkban[i].giamGia/100));
                         }
                         $("#showPKPAY").html(txt);
                         $("#xtongPay").text(formatNumber(sum));
@@ -1239,16 +1313,39 @@
                         txt = "";
                         sum = 0;
                         tru = 0;
+                        statusLanSau = "";
                         for(let i = 0; i < response.pkcost.length; i++) {
+                            requestHuyPackage = "";
+                            if (response.pkcost[i].isLanDau == false 
+                            && response.pkcost[i].isDuyetLanSau == false) {
+                                statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
+                            } else if (response.pkcost[i].isLanDau == false 
+                            && response.pkcost[i].isDuyetLanSau == true) {
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
+                            } else {
+                                statusLanSau = "";
+                            }
+                            if (response.pkcost[i].isHuy == 0 || response.pkcost[i].isDuyetLanSau == true) {
+                                requestHuyPackage = " <button id='requestHuyPackage' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-warning btn-sm'>Đề nghị hủy</button>";
+                            }
+                            if (response.pkcost[i].isHuy == 1 ) {
+                                requestHuyPackage = "<br/><b class='text-danger'>[ĐÃ ĐỀ NGHỊ HUỶ] </b><i class='text-danger'>Lý do: " + response.pkcost[i].lyDoHuy + "</i><br/>"
+                                + "<button id='boHuy' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-danger btn-sm'>X</button>";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkcost[i].name + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkcost[i].cost))  + " " + statusLanSau  +  " " + requestHuyPackage +  "</td>" +
                                 "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
                                 "</tr>";
-                            sum += parseInt(response.pkcost[i].cost);
-                            if (response.pkcost[i].cost_tang == true) 
-                                tru += parseInt(response.pkcost[i].cost);
+                            if (response.pkcost[i].isLanDau == true || (response.pkcost[i].isDuyetLanSau == true && response.pkcost[i].isLanDau == false)) {
+                               sum += parseInt(response.pkcost[i].cost);
+                               if (response.pkcost[i].cost_tang == true) 
+                                    tru += parseInt(response.pkcost[i].cost);
+                            } 
+                            // sum += parseInt(response.pkcost[i].cost);
+                            // if (response.pkcost[i].cost_tang == true) 
+                            //     tru += parseInt(response.pkcost[i].cost);
                         }
                         let totalTang = sum - tru;
                         $("#showPKCOST").html(txt);
@@ -1509,75 +1606,99 @@
 
              // check chosen hd
              $("#in").click(function(e){
-               e.preventDefault();
-                if ($("select[name=mauHD]").val() == 1 && $("input[name=checkIn]").val() == 1) {
-                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
-                        case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                e.preventDefault();
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/checkbeforeprint/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "id": $("input[name=idHopDong]").val(),
+                    },
+                    success: function(response) {
+                        if (response.code == 200) {
+                            if ($("select[name=mauHD]").val() == 1 && $("input[name=checkIn]").val() == 1) {
+                            switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                                case 1: open("{{url('management/hd/banle/canhan/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 2: open("{{url('management/hd/banle/canhan/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 3: open("{{url('management/hd/banle/congty/tienmat/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 4: open("{{url('management/hd/banle/congty/nganhang/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                            }
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                            })
+                        }
+
+                        if ($("select[name=mauHD]").val() == 2 && $("input[name=checkIn]").val() == 1) {
+                            switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                                case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                            }
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                            })
+                        }
+
+                        if ($("select[name=mauHD]").val() == 3 && $("input[name=checkIn]").val() == 1) {
+                            switch (parseInt($("select[name=chonLoaiHD]").val())) {
+                                case 1: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 2: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 3: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                                case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
+                            }
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                            })
+                        }
+
+                        if ($("select[name=mauHD]").val() == 4 && $("input[name=checkIn]").val() == 1) {
+                            open("{{url('management/hd/complete/denghiruthosoxe')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                            })
+                        }
+
+                        if ($("select[name=mauHD]").val() == 5 && $("input[name=checkIn]").val() == 1) {
+                            open("{{url('management/hd/complete/thanhlyhopdong')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                            })
+                        }
+
+                        if ($("select[name=mauHD]").val() == 6 && $("input[name=checkIn]").val() == 1) {
+                            open("{{url('management/hd/complete/giayracong')}}/" + $("input[name=idHopDong]").val(),"_blank");
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
+                            })
+                        }
+                        } else {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Hợp đồng này tồn tại các hạng mục chưa được phê duyệt! Không thể in"
+                            })
+                        }                        
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Lỗi"
+                        })
                     }
-                 } else {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
-                    })
-                }
-
-                if ($("select[name=mauHD]").val() == 2 && $("input[name=checkIn]").val() == 1) {
-                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
-                        case 1: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 2: open("{{url('management/hd/banle/phuluc/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 3: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 4: open("{{url('management/hd/banle/phuluc/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                    }
-                } else {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
-                    })
-                }
-
-                if ($("select[name=mauHD]").val() == 3 && $("input[name=checkIn]").val() == 1) {
-                    switch (parseInt($("select[name=chonLoaiHD]").val())) {
-                        case 1: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 2: open("{{url('management/hd/banle/denghi/canhan/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 3: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                        case 4: open("{{url('management/hd/banle/denghi/congty/down/')}}/" + $("input[name=idHopDong]").val(),"_blank"); break;
-                    }
-                } else {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
-                    })
-                 }
-
-                if ($("select[name=mauHD]").val() == 4 && $("input[name=checkIn]").val() == 1) {
-                    open("{{url('management/hd/complete/denghiruthosoxe')}}/" + $("input[name=idHopDong]").val(),"_blank");
-                } else {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
-                    })
-                }
-
-                if ($("select[name=mauHD]").val() == 5 && $("input[name=checkIn]").val() == 1) {
-                    open("{{url('management/hd/complete/thanhlyhopdong')}}/" + $("input[name=idHopDong]").val(),"_blank");
-                } else {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
-                    })
-                }
-
-                if ($("select[name=mauHD]").val() == 6 && $("input[name=checkIn]").val() == 1) {
-                    open("{{url('management/hd/complete/giayracong')}}/" + $("input[name=idHopDong]").val(),"_blank");
-                } else {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Hợp đồng hủy hoặc trưởng phòng chưa duyệt không thể in!"
-                    })
-                }
+                });                 
             });
 
             $("#requestEditBtn").click(function(){   
@@ -1711,6 +1832,98 @@
                         }
                     });
                 }
+            });
+
+            $(document).on('click','#requestHuyPackage', function(){
+                let idOfPackage = $(this).data('id');
+                let idOfHD = $(this).data('sale');
+                $("input[name=idOfHD]").val(idOfHD);
+                $("input[name=idOfPackage]").val(idOfPackage);
+                $("#yeuCauHuy").modal('show');
+                setTimeout(() => {
+                    $("input[name=lyDoHuyPackage]").focus();
+                }, 1000);
+            });
+
+            $("#xacNhanYeuCauHuy").click(function(e){
+                e.preventDefault();
+                if (confirm("Xác nhận gửi đề nghị huỷ?")) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/denghihuypackage/')}}",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "idOfHD":  $("input[name=idOfHD]").val(),
+                            "idOfPackage": $("input[name=idOfPackage]").val(),
+                            "lyDoHuyPackage": $("input[name=lyDoHuyPackage]").val()
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#yeuCauHuy").modal('hide');
+                                loadPKFree($("input[name=idOfHD]").val());
+                                loadPKCost($("input[name=idOfHD]").val());
+                                loadPKPay($("input[name=idOfHD]").val());
+                                $("input[name=lyDoHuyPackage]").val("");
+                            } else {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })                                
+                            }
+                            
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Lỗi!"
+                            })
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#boHuy', function(e){                
+                e.preventDefault();
+                let idOfPackage = $(this).data('id');
+                let idOfHD = $(this).data('sale');
+                $.ajax({
+                    url: "{{url('management/hd/hd/denghi/bohuy/')}}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "idOfHD":  idOfHD,
+                        "idOfPackage": idOfPackage
+                    },
+                    success: function(response) {
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            loadPKFree(idOfHD);
+                            loadPKCost(idOfHD);
+                            loadPKPay(idOfHD);
+                        } else {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })                                
+                        }
+                        
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Lỗi!"
+                        })
+                    }
+                });
             });
         });
     </script>

@@ -261,12 +261,17 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hd/denghi/yeucauhuy','HDController@yeuCauHuy');
         Route::post('hd/denghi/gangiavon','HDController@ganGiaVon');
         Route::post('hd/denghi/capnhatphivanchuyen','HDController@capNhatPhiVanChuyen');
+        Route::post('hd/denghi/denghihuypackage','HDController@deNghiHuyPackage');
+        Route::post('hd/denghi/bohuy','HDController@boHuy');
+        Route::post('hd/denghi/duyethuypackage','HDController@duyetHuyPackage');
         Route::get('getedit/pkcost/{id}','HDController@getEditPkCost');
         Route::get('getedit/pkfree/{id}','HDController@getEditPkFree');
         Route::post('postedit/pkcost/','HDController@postEditPKCost');
         Route::post('postedit/pkfree/','HDController@postEditPKFree');
         // -- Xử lý lỗi khi bị treo ở giai đoạn admin sale không duyệt được
         Route::post('hd/denghi/xulyloi','HDController@xuLyLoi');
+        // Kiểm tra trước in
+        Route::post('hd/denghi/checkbeforeprint','HDController@checkBeforePrint');
 
         //----- quản lý đề nghị
         Route::get('kho/tonkho/get','KhoController@getPageTonKho')->name('sale.kho');

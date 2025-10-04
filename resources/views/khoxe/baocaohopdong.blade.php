@@ -375,6 +375,9 @@
                     let cacLoaiPhi = "";
                     let tangChiPhi = 0;
                     for(let i = 0; i < response.cacLoaiPhi.length; i++) {
+                        if (response.cacLoaiPhi[i].isLanDau == false && response.cacLoaiPhi[i].isDuyetLanSau == false)
+                            continue;
+
                         cacLoaiPhi += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.cacLoaiPhi[i].name + "</td>" +                                
@@ -390,6 +393,8 @@
                     $('#chiPhiTang').text(" (Đã trừ chi phí tặng: " + tangChiPhi.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,').replaceAll('.0', '') + ")");
                     let phuKienBan = "";
                     for(let i = 0; i < response.phuKienBan.length; i++) {
+                        if (response.phuKienBan[i].isLanDau == false && response.phuKienBan[i].isDuyetLanSau == false)
+                            continue;
                         phuKienBan += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.phuKienBan[i].name + "</td>" +                                
@@ -405,6 +410,8 @@
                     let phuKienKhuyenMai = "";
                     for(let i = 0; i < response.phuKienKhuyenMai.length; i++) {
                         let mode = "";
+                        if (response.phuKienKhuyenMai[i].isLanDau == false && response.phuKienKhuyenMai[i].isDuyetLanSau == false)
+                            continue;
                         switch(response.phuKienKhuyenMai[i].mode) {
                             case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
                             case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;

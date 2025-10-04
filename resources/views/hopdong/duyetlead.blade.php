@@ -854,19 +854,22 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
-                        statusLanSau = "";
-                        approveBtn = "";
                         for(let i = 0; i < response.pkfree.length; i++) {
-                            let mode = "";
+                            let mode = "";                            
+                            statusLanSau = "";
+                            approveBtn = "";
+                            choPhepHuy = "";
                             if (response.pkfree[i].isLanDau == false 
                             && response.pkfree[i].isDuyetLanSau == false) {
                                 statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
                                 approveBtn = " <button id='approveAddFree' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-success btn-sm'><span class='fas fa-check-circle'></span></button>";
                             } else if (response.pkfree[i].isLanDau == false 
                             && response.pkfree[i].isDuyetLanSau == true) {
-                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
-                            } else {
-                                statusLanSau = "";
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"  
+                            } 
+                            if (response.pkfree[i].isHuy) {
+                                choPhepHuy = "<br/><b class='text-danger'>[YÊU CẦU HUỶ] </b><i class='text-danger'>Lý do: " + response.pkfree[i].lyDoHuy + "</i><br/>"
+                                + " <button id='approveHuyPackage' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-info btn-sm'>Duyệt Hủy</button>";
                             }
                             switch(response.pkfree[i].mode) {
                                 case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
@@ -878,7 +881,7 @@
                             mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkfree[i].name + "</td>" +
+                                "<td>" + response.pkfree[i].name + " " + choPhepHuy + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + " " + statusLanSau 
                                 + approveBtn + "</td>" +
                                 "<td>" + mode + "</td>" +
@@ -908,9 +911,10 @@
                         // Show package pay
                         txt = "";
                         sum = 0;
-                        statusLanSau = "";
-                        approveBtn = "";
                         for(i = 0; i < response.pkban.length; i++) {
+                            statusLanSau = "";
+                            approveBtn = "";
+                            choPhepHuy = "";
                             if (response.pkban[i].isLanDau == false 
                             && response.pkban[i].isDuyetLanSau == false) {
                                 statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
@@ -918,12 +922,14 @@
                             } else if (response.pkban[i].isLanDau == false 
                             && response.pkban[i].isDuyetLanSau == true) {
                                 statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
-                            } else {
-                                statusLanSau = "";
+                            } 
+                            if (response.pkban[i].isHuy) {
+                                choPhepHuy = "<br/><b class='text-danger'>[YÊU CẦU HUỶ] </b><i class='text-danger'>Lý do: " + response.pkban[i].lyDoHuy + "</i><br/>"
+                                + " <button id='approveHuyPackage' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-info btn-sm'>Duyệt Hủy</button>";
                             }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkban[i].name + "</td>" +
+                                "<td>" + response.pkban[i].name + " " + choPhepHuy + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkban[i].cost)) + " " + statusLanSau 
                                 + approveBtn + "</td>" +
                                 "<td>" + response.pkban[i].giamGia + "%</td>" +
@@ -956,22 +962,25 @@
                         txt = "";
                         sum = 0;
                         tru = 0;
-                        statusLanSau = "";
-                        approveBtn = "";
-                        for(let i = 0; i < response.pkcost.length; i++) {
+                        for(let i = 0; i < response.pkcost.length; i++) {    
+                            statusLanSau = "";
+                            approveBtn = "";
+                            choPhepHuy = "";
                             if (response.pkcost[i].isLanDau == false 
                             && response.pkcost[i].isDuyetLanSau == false) {
                                 statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
                                 approveBtn = " <button id='approveAddCost' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-success btn-sm'><span class='fas fa-check-circle'></span></button>";
                             } else if (response.pkcost[i].isLanDau == false 
                             && response.pkcost[i].isDuyetLanSau == true) {
-                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
-                            } else {
-                                statusLanSau = "";
+                                statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"                               
+                            } 
+                            if (response.pkcost[i].isHuy) {
+                                choPhepHuy = "<br/><b class='text-danger'>[YÊU CẦU HUỶ] </b><i class='text-danger'>Lý do: " + response.pkcost[i].lyDoHuy + "</i><br/>"
+                                + " <button id='approveHuyPackage' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-info btn-sm'>Duyệt Hủy</button>";
                             }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkcost[i].name + "</td>" +
+                                "<td>" + response.pkcost[i].name + " " + choPhepHuy +  "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkcost[i].cost)) + " " + statusLanSau 
                                 + approveBtn + "</td>" +     
                                 "<td>" + (response.pkcost[i].cost_tang == true ? "<strong class='text-success'>Có</strong>" : "Không") + "</td>" +
@@ -1211,12 +1220,47 @@
                             "sale": $(this).data('sale')
                         },
                         success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                loadPKFree($("input[name=idHopDong]").val());
+                                loadTotal($("input[name=idHopDong]").val());
+                            }                            
+                        },
+                        error: function() {
                             Toast.fire({
-                                icon: response.type,
-                                title: response.message
+                                icon: 'warning',
+                                title: "Lỗi!"
                             })
-                            loadPKFree($("input[name=idHopDong]").val());
-                            loadTotal($("input[name=idHopDong]").val());
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click','#approveHuyPackage', function(){
+                if(confirm('Xác nhận duyệt huỷ/xoá hạng mục này ra khỏi hợp đồng?\nLưu ý: Phê duyệt rồi sẽ không thể thu hồi mục đã huỷ, vui lòng kiểm tra thật kỹ!')) {
+                    $.ajax({
+                        url: "{{url('management/hd/hd/denghi/duyethuypackage/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": $(this).data('id'),
+                            "sale": $(this).data('sale')
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                loadPKFree($("input[name=idHopDong]").val());
+                                loadPKCost($("input[name=idHopDong]").val());
+                                loadPKPay($("input[name=idHopDong]").val());
+                                loadTotal($("input[name=idHopDong]").val());
+                            }                            
                         },
                         error: function() {
                             Toast.fire({

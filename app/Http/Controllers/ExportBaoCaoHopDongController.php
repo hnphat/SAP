@@ -341,7 +341,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                 }                  
                 // ---------------------    
                 $package = $row->package;
-                foreach($package as $row2) {                
+                foreach($package as $row2) {    
+                    if ($row2->isLanDau == false && $row2->isDuyetLanSau == false)
+                        continue;
+                    
                     if ($row2->type == 'free' && $row2->free_kem == false) {
                         // if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
                         //     $p = BHPK::find($row2->mapk);
@@ -581,7 +584,10 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                }                  
                // ---------------------   
                 $package = $row->package;
-                foreach($package as $row2) {                
+                foreach($package as $row2) { 
+                    if ($row2->isLanDau == false && $row2->isDuyetLanSau == false)
+                        continue;
+
                     if ($row2->type == 'free' && $row2->free_kem == false) {                      
                        // ---- Suport KT --------
                        if ($row2->mapk && $row2->mode && $row2->mode == "GIABAN") {
