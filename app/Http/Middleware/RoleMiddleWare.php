@@ -16,7 +16,7 @@ class RoleMiddleWare
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('quantri'))
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('quantri') || Auth::user()->hasRole('tpkd'))
             return $next($request);
         else abort(403);
     }

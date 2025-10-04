@@ -42,7 +42,8 @@
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
                     @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                        \Illuminate\Support\Facades\Auth::user()->hasRole('quantri'))
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('quantri') ||
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-cog"></i>
                             <p>
@@ -61,7 +62,8 @@
                             </a>
                         </li>
                         @endif
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                         <li class="nav-item">
                             <a href="{{route('group.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
@@ -90,7 +92,8 @@
                             </a>
                         </li>
                         @endif
-                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
                                 <li class="nav-item">
                                     <a href="{{route('typecar.list')}}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -98,12 +101,15 @@
                                     </a>
                                 </li>
                         @endif
+                        @if(\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                            \Illuminate\Support\Facades\Auth::user()->hasRole('quantri'))
                         <li class="nav-item">
                             <a href="{{route('cauhinh.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Cấu hình hệ thống</p>
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </li>
                 <li class="nav-item">

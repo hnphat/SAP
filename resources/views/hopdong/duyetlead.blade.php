@@ -1260,6 +1260,11 @@
                                 loadPKCost($("input[name=idHopDong]").val());
                                 loadPKPay($("input[name=idHopDong]").val());
                                 loadTotal($("input[name=idHopDong]").val());
+                            } else {
+                               Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
                             }                            
                         },
                         error: function() {

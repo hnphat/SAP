@@ -767,7 +767,7 @@ class GuestController extends Controller
         $temp = Guest::find($request->idguest);
         $user = User::find($request->idsale);
         $hopdong = HopDong::where('id_guest', $request->idguest)->first();
-        if (Auth::user()->hasRole('system')) {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('tpkd')) {
             if ($hopdong && $hopdong->admin_check) {
                 return response()->json([
                     'type' => 'error',

@@ -19,7 +19,8 @@ class BaoCaoHopDongMiddleware
         if (Auth::user()->hasRole('system') ||
          Auth::user()->hasRole('baocaohopdong') ||
          Auth::user()->hasRole('sale') ||
-         Auth::user()->hasRole('truongnhomsale'))
+         Auth::user()->hasRole('truongnhomsale') ||
+         Auth::user()->hasRole('tpkd'))
             return $next($request);
         else abort(403);
     }

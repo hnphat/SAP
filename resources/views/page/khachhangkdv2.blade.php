@@ -741,6 +741,10 @@
                             return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
                                 "<button id='moving' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#movingModal' class='btn btn-info btn-sm'>Chuyển</button>&nbsp;";
+                            @elseif (\Illuminate\Support\Facades\Auth::user()->hasRole('tpkd'))
+                             return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
+                                "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
+                                "<button id='moving' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#movingModal' class='btn btn-info btn-sm'>Chuyển</button>&nbsp;";
                             @else
                             return "<button id='btnEdit' data-id='"+row.idmaster+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.idmaster+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
