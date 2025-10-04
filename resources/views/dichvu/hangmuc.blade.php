@@ -124,6 +124,11 @@
                                                                         <i id="showGiaVon"></i>
                                                                     </div>
                                                                     <div class="form-group">
+                                                                        <label>Giá tặng:</label>
+                                                                        <input id="giaTang" name="giaTang" value="0" type="number" class="form-control" placeholder="Giá">
+                                                                        <i id="showGiaTang"></i>
+                                                                    </div>
+                                                                    <div class="form-group">
                                                                         <label>Công KTV:</label>
                                                                         <input id="congKTV" name="congKTV" value="0" type="number" class="form-control" placeholder="Giá">
                                                                         <i id="showCongKTV"></i>
@@ -268,6 +273,7 @@
                                                 <th>Đơn vị tính</th>
                                                 <th>Giá vốn</th>
                                                 <th>Giá bán</th>
+                                                <th>Giá tặng</th>
                                                 <th>Công KTV</th>   
                                                 <th>Thời gian thực hiện</th>  
                                                 <th>Bảo hành</th>  
@@ -357,6 +363,11 @@
                                     <label>Giá vốn:</label>
                                     <input id="egiaVon" name="egiaVon" type="number" class="form-control" placeholder="Giá">
                                     <i id="eshowGiaVon"></i>
+                                </div>  
+                                <div class="form-group">
+                                    <label>Giá tặng:</label>
+                                    <input id="egiaTang" name="egiaTang" type="number" class="form-control" placeholder="Giá">
+                                    <i id="eshowGiaTang"></i>
                                 </div>  
                                 <div class="form-group">
                                     <label>Công KTV:</label>
@@ -499,6 +510,11 @@
                 $('#showGiaVon').text("(" + DOCSO.doc(cos) + ")");
             });
 
+            $('#giaTang').keyup(function(){
+                var cos = $(this).val();
+                $('#showGiaTang').text("(" + DOCSO.doc(cos) + ")");
+            });
+
             $('#congKTV').keyup(function(){
                 var cos = $(this).val();
                 $('#showCongKTV').text("(" + DOCSO.doc(cos) + ")");
@@ -512,6 +528,11 @@
             $('#egiaVon').keyup(function(){
                 var cos = $(this).val();
                 $('#eshowGiaVon').text("(" + DOCSO.doc(cos) + ")");
+            });
+
+            $('#egiaTang').keyup(function(){
+                var cos = $(this).val();
+                $('#eshowGiaTang').text("(" + DOCSO.doc(cos) + ")");
             });
 
             $('#econgKTV').keyup(function(){
@@ -660,6 +681,7 @@
                         $("select[name=edvt]").val(response.data.dvt);
                         $("input[name=edonGia]").val(response.data.donGia);
                         $("input[name=egiaVon]").val(response.data.giaVon);
+                        $("input[name=egiaTang]").val(response.data.giaTang);
                         $("input[name=econgKTV]").val(response.data.congKTV);
                         $("input[name=ethoigian]").val(response.data.thoigian);
                         $("input[name=ebaohanh]").val(response.data.baohanh);
@@ -668,6 +690,7 @@
                         $("select[name=etypeCar]").val(response.data.loaiXe);
                         $('#eshowGia').text("(" + DOCSO.doc(response.data.donGia) + ")");
                         $('#eshowGiaVon').text("(" + DOCSO.doc(response.data.giaVon) + ")");
+                        $('#eshowGiaTang').text("(" + DOCSO.doc(response.data.giaTang) + ")");
                         $('#eshowCongKTV').text("(" + DOCSO.doc(response.data.congKTV) + ")");
                     },
                     error: function(){

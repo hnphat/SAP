@@ -188,7 +188,9 @@ class TypeCarController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Thêm chi tiết xe từ model xe. Tên loại " . $request->loaiXe;
+            $nhatKy->noiDung = "Thêm chi tiết xe từ model xe. Tên loại " 
+            . $request->loaiXe . " <br/> giá vốn: " . number_format($request->giaVon)
+            . " <br/> giá niêm yết: " . number_format($request->giaNiemYet);
             $nhatKy->save();
             return response()->json([
                 'message' => 'Inserted Add Plus Car',
@@ -212,7 +214,9 @@ class TypeCarController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Xóa chi tiết xe từ model xe. Chi tiết xe " . $temp->name;
+            $nhatKy->noiDung = "Xóa chi tiết xe từ model xe. Chi tiết xe " 
+            . $temp->name. " giá vốn: " . number_format($temp->giaVon)
+            . " giá niêm yết: " . number_format($temp->giaNiemYet);
             $nhatKy->save();
             return response()->json([
                 'message' => 'Deleted Type Car Detail',
@@ -244,6 +248,7 @@ class TypeCarController extends Controller
     }
 
     public function editAddPlus(Request $request) {
+        $temp = TypeCarDetail::where('id', $request->idEditAddPlus)->first();
         $result = TypeCarDetail::where('id', $request->idEditAddPlus)->update([
             'name' => $request->_tenLoaiXe,
             'fuel' => $request->_fuel,
@@ -261,7 +266,13 @@ class TypeCarController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Quản trị - Model xe";
-            $nhatKy->noiDung = "Cập nhật chi tiết xe " . $request->_tenLoaiXe .  " từ model xe";
+            $nhatKy->noiDung = "Cập nhật chi tiết xe. <br/> Nội dung cũ: Tên loại xe"
+            . $temp->name . "<br/> giá vốn " . number_format($temp->giaVon)
+            . "<br/> giá niêm yết " . number_format($temp->giaNiemYet)
+            . "<br/> Nội dung mới: Tên loại xe "
+            . $request->_tenLoaiXe 
+            . " <br/> giá vốn: " . number_format($request->_giaVon)
+            . " <br/> giá niêm yết: " . number_format($request->_giaNiemYet);
             $nhatKy->save();
             return response()->json([
                 'message' => 'Data Add Plus updated',

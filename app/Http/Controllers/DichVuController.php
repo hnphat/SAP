@@ -220,11 +220,15 @@ class DichVuController extends Controller
     public function getHangMuc() {
         $arr = [];
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien'))
-            $bhpk = BHPK::select("*")->where('loaiXe','!=',null)->orderBy('id','desc')->get();
+            $bhpk = BHPK::select("*")->where([
+                ['loaiXe','!=',null],
+                ['isShow','=',true]
+            ])->orderBy('id','desc')->get();
         else
             $bhpk = BHPK::select("*")->where([
                 ['id_user_create','=',Auth::user()->id],
                 ['loaiXe','!=',null],
+                ['isShow','=',true]
             ])->orderBy('id','desc')->get();  
         foreach($bhpk as $row) {
             $typecar = TypeCar::find($row->loaiXe);
@@ -249,6 +253,7 @@ class DichVuController extends Controller
         $kh->dvt = $request->dvt;
         $kh->donGia = $request->donGia ? $request->donGia : 0;
         $kh->giaVon = $request->giaVon ? $request->giaVon : 0;
+        $kh->giaTang = $request->giaTang ? $request->giaTang : 0;
         $kh->congKTV = $request->congKTV ? $request->congKTV : 0;
         $kh->loai = $request->loai;
         $kh->loaiXe = $request->typeCar;   
@@ -282,7 +287,9 @@ class DichVuController extends Controller
             .$request->isPK."; Mã: "
             .$request->ma."; Đơn vị tính: "
             .$request->dvt."; Đơn giá: "
-            .$request->donGia."; Loại: "
+            .$request->donGia."; Giá vốn: "
+            .$request->giaVon."; Giá tặng: "
+            .$request->giaTang."; Loại: "
             .$request->loai."; Loại xe: "
             .$typecar->name.";";
             $nhatKy->save();
@@ -413,6 +420,7 @@ class DichVuController extends Controller
                 $newkh->dvt = $kh->dvt;
                 $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
                 $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
+                $newkh->giaTang = $kh->giaTang ? $kh->giaTang : 0;
                 $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
                 $newkh->loai = $kh->loai;
                 $newkh->loaiXe = $row->id;
@@ -439,7 +447,8 @@ class DichVuController extends Controller
             .$kh->dvt."; Đơn giá: "
             .$kh->donGia."; Loại: "
             .$kh->type."; Giá vốn: "
-            .$kh->giaVon."; Công KTV: "
+            .$kh->giaVon."; Giá tặng: "
+            .$kh->giaTang."; Công KTV: "
             .$kh->congKTV;
             $nhatKy->save();
             return response()->json([
@@ -476,6 +485,7 @@ class DichVuController extends Controller
         $kh->donGia = $request->edonGia ? $request->edonGia : 0;
         $kh->loai = $request->eloai; 
         $kh->giaVon = $request->egiaVon ? $request->egiaVon : 0; 
+        $kh->giaTang = $request->egiaTang ? $request->egiaTang : 0; 
         $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;   
         $kh->thoigian = $request->ethoigian ? $request->ethoigian : 0;   
         $kh->baohanh = $request->ebaohanh ? $request->ebaohanh : 0; 
@@ -508,13 +518,17 @@ class DichVuController extends Controller
             .$temp->isPK."; Mã: "
             .$temp->ma."; Đơn vị tính: "
             .$temp->dvt."; Đơn giá: "
-            .$temp->donGia."; Loại: "
+            .$temp->donGia."; Giá vốn: "
+            .$temp->giaVon."; Giá tặng: "
+            .$temp->giaTang."; Loại: "
             .$temp->type.";<br/>Nội dung mới<br/>"
             .$request->enoiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
             .$request->eisPK."; Mã: "
             .$request->ema."; Đơn vị tính: "
             .$request->edvt."; Đơn giá: "
-            .$request->edonGia."; Loại: "
+            .$request->edonGia."; Giá vốn: "
+            .$request->egiaVon."; Giá tặng: "
+            .$request->egiaTang."; Loại: "
             .$request->eloai."; Loại xe: "
             .($typecar ? $typecar->name : "").";";
             $nhatKy->save();
@@ -596,6 +610,8 @@ class DichVuController extends Controller
         } else {
             foreach($listpk as $row) {
                 $p = PackageV2::find($row->id_bh_pk_package);
+                if ($p->isLanDau == false && $p->isDuyetLanSau == false) 
+                    continue;
                 if ($p->type != "cost" && $p->mapk) {
                     $ct = new ChiTietBHPK();
                     $ct->id_baogia = $request->idbg;
@@ -612,7 +628,7 @@ class DichVuController extends Controller
                         $nhatKy->id_user = Auth::user()->id;
                         $nhatKy->thoiGian = Date("H:m:s");
                         $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                        $nhatKy->noiDung = "Liên kết phụ kiện. Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
+                        $nhatKy->noiDung = "Liên kết phụ kiện từ đề nghị hợp đồng có id là ĐN/0".$hd->id. " (không phải mã hợp đồng). Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
                         .$pk->noiDung."; Số lượng: 1; Đơn giá: "
                         .$p->cost."; Tặng (1: Có; 0: Không): "
                         .($p->type == "pay" ? 0 : 1)."; Chiết khấu: " . $row->giamGia;
@@ -627,7 +643,7 @@ class DichVuController extends Controller
             $his->idDeNghi = $hd->id;
             $his->id_user = Auth::user()->id;
             $his->ngay = Date("H:m:s d-m-Y");
-            $his->noiDung = "Liên kết phụ kiện";
+            $his->noiDung = "Liên kết phụ kiện từ đề nghị hợp đồng có id là ĐN/0".$hd->id. " (không phải mã hợp đồng)";
             $his->ghiChu = "";
             $his->save();
 
@@ -4515,7 +4531,8 @@ class DichVuController extends Controller
                 strval($theArray[0][0][2]) == "NOIDUNG" && strval($theArray[0][0][3]) == "DVT" && 
                 strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
                 strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE" && 
-                strval($theArray[0][0][8]) == "THOIGIANLAPDAT" && strval($theArray[0][0][9]) == "BAOHANH" && strval($theArray[0][0][10]) == "NHACUNGCAP") {
+                strval($theArray[0][0][8]) == "THOIGIANLAPDAT" && strval($theArray[0][0][9]) == "BAOHANH" 
+                && strval($theArray[0][0][10]) == "NHACUNGCAP" && strval($theArray[0][0][11]) == "GIATANG") {
                         $numlen = count($theArray[0]);                    
                         for($i = 1; $i < $numlen; $i++) {
                             if (preg_match('/^[A-Z0-9_]+$/', $theArray[0][$i][1])) {
@@ -4556,7 +4573,8 @@ class DichVuController extends Controller
                                 $kh->loaiXe = $theArray[0][$i][7];  
                                 $kh->thoigian = $theArray[0][$i][8];    
                                 $kh->baohanh = $theArray[0][$i][9];    
-                                $kh->nhacungcap = $theArray[0][$i][10];      
+                                $kh->nhacungcap = $theArray[0][$i][10];   
+                                $kh->giaTang = $theArray[0][$i][11];   
                                 $kh->save();
                             } else {
                                 $id_bhpk = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->first()->id;
@@ -4573,7 +4591,8 @@ class DichVuController extends Controller
                                 $kh->loaiXe = $theArray[0][$i][7];   
                                 $kh->thoigian = $theArray[0][$i][8];    
                                 $kh->baohanh = $theArray[0][$i][9];    
-                                $kh->nhacungcap = $theArray[0][$i][10];       
+                                $kh->nhacungcap = $theArray[0][$i][10];   
+                                $kh->giaTang = $theArray[0][$i][11];     
                                 $kh->save();
                             }            
                         }    
