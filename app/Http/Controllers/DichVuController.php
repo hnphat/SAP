@@ -213,6 +213,7 @@ class DichVuController extends Controller
     }
 
     public function hangMucPanel(){
+        // $typecar = TypeCar::select("*")->where("isShow",true)->get();
         $typecar = TypeCar::all();
         return view('dichvu.hangmuc', ['typecar' => $typecar]);
     }
