@@ -867,7 +867,7 @@
                             && response.pkfree[i].isDuyetLanSau == true) {
                                 statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"  
                             } 
-                            if (response.pkfree[i].isHuy) {
+                            if (response.pkfree[i].isHuy == true) {
                                 choPhepHuy = "<br/><b class='text-danger'>[YÊU CẦU HUỶ] </b><i class='text-danger'>Lý do: " + response.pkfree[i].lyDoHuy + "</i><br/>"
                                 + " <button id='approveHuyPackage' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-info btn-sm'>Duyệt Hủy</button>";
                             }
@@ -923,7 +923,7 @@
                             && response.pkban[i].isDuyetLanSau == true) {
                                 statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"
                             } 
-                            if (response.pkban[i].isHuy) {
+                            if (response.pkban[i].isHuy == true) {
                                 choPhepHuy = "<br/><b class='text-danger'>[YÊU CẦU HUỶ] </b><i class='text-danger'>Lý do: " + response.pkban[i].lyDoHuy + "</i><br/>"
                                 + " <button id='approveHuyPackage' data-sale='"+id+"' data-id='"+response.pkban[i].id+"' class='btn btn-info btn-sm'>Duyệt Hủy</button>";
                             }
@@ -974,7 +974,7 @@
                             && response.pkcost[i].isDuyetLanSau == true) {
                                 statusLanSau = " <span class='text-success'><b>(Đã duyệt)</b></span>"                               
                             } 
-                            if (response.pkcost[i].isHuy) {
+                            if (response.pkcost[i].isHuy == true) {
                                 choPhepHuy = "<br/><b class='text-danger'>[YÊU CẦU HUỶ] </b><i class='text-danger'>Lý do: " + response.pkcost[i].lyDoHuy + "</i><br/>"
                                 + " <button id='approveHuyPackage' data-sale='"+id+"' data-id='"+response.pkcost[i].id+"' class='btn btn-info btn-sm'>Duyệt Hủy</button>";
                             }
