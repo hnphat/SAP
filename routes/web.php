@@ -835,7 +835,9 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
         // quản lý hạng mục
         Route::get('hangmuc','DichVuController@hangMucPanel')->name('dichvu.hangmuc')->middleware(['f_bhpk']);   
-        Route::get('hangmuc/get/list','DichVuController@getHangMuc');    
+        Route::get('hangmucmorong','DichVuController@hangMucMoRongPanel')->name('dichvu.hangmucmorong')->middleware(['f_bhpk']);   
+        Route::get('hangmuc/get/list','DichVuController@getHangMuc');   
+        Route::get('hangmucmorong/get/list','DichVuController@getHangMucFull');  
         Route::post('hangmuc/guest/add','DichVuController@addHangMuc');  
         Route::post('hangmuc/guest/delete','DichVuController@delHangMuc'); 
         Route::post('hangmuc/khoa','DichVuController@khoaHangMuc');     

@@ -218,18 +218,20 @@ class DichVuController extends Controller
         return view('dichvu.hangmuc', ['typecar' => $typecar]);
     }
 
-    public function getHangMuc() {
+    public function hangMucMoRongPanel(){
+        return view('dichvu.hangmucmorong');
+    }
+
+    public function getHangMucFull() {
         $arr = [];
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien'))
             $bhpk = BHPK::select("*")->where([
-                ['loaiXe','!=',null],
-                ['isShow','=',true]
+                ['loaiXe','!=',null]
             ])->orderBy('id','desc')->get();
         else
             $bhpk = BHPK::select("*")->where([
                 ['id_user_create','=',Auth::user()->id],
-                ['loaiXe','!=',null],
-                ['isShow','=',true]
+                ['loaiXe','!=',null]
             ])->orderBy('id','desc')->get();  
         foreach($bhpk as $row) {
             $typecar = TypeCar::find($row->loaiXe);
@@ -243,6 +245,47 @@ class DichVuController extends Controller
             'message' => 'Đã tải dữ liệu',
             'data' => $arr
         ]);
+    }
+
+    public function getHangMuc() {
+        $arr = [];
+        // Lấy id nhỏ nhất cho mỗi noiDung
+        $minIds = BHPK::selectRaw('MIN(id) as id')
+            ->where('loaiXe', '!=', null)
+            ->where('isShow', true)
+            ->groupBy('noiDung')
+            ->pluck('id')
+            ->toArray();
+
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien')) {
+            $bhpk = BHPK::whereIn('id', $minIds)
+                ->orderBy('id', 'asc')
+                ->get();
+        } else {
+            $minIds = BHPK::selectRaw('MIN(id) as id')
+                ->where('id_user_create', Auth::user()->id)
+                ->where('loaiXe', '!=', null)
+                ->where('isShow', true)
+                ->groupBy('noiDung')
+                ->pluck('id')
+                ->toArray();
+            $bhpk = BHPK::whereIn('id', $minIds)
+                ->orderBy('id', 'asc')
+                ->get();
+        }
+
+        foreach($bhpk as $row) {
+            $typecar = TypeCar::find($row->loaiXe);
+            $row->idcar = $typecar ? $typecar->id : null;
+            $row->namecar = $typecar ? $typecar->name : null;
+            array_push($arr, $row);
+        }
+        return response()->json([
+            'type' => 'info',
+            'code' => 200,
+            'message' => 'Đã tải dữ liệu',
+            'data' => $arr
+        ]);        
     }
 
     public function addHangMuc(Request $request) {
@@ -381,42 +424,108 @@ class DichVuController extends Controller
             ]);
     }
 
+    // public function mapAllHangMuc(Request $request) {
+    //     $kh = BHPK::find($request->id);
+    //     $idcar = $kh->loaiXe;
+    //     $typecar = TypeCar::all();
+    //     $flag = false;
+    //     foreach($typecar as $row) {
+    //         if ($row->id == $idcar) continue;
+    //         $check = BHPK::where([
+    //             ['noiDung', '=', $kh->noiDung],
+    //             ['loaiXe', '=', $row->id]
+    //         ])->exists();
+    //         if ($check) {
+    //             continue;
+    //             // $newkh = BHPK::where([
+    //             //     ['noiDung', '=', $kh->noiDung],
+    //             //     ['loaiXe', '=', $row->id]
+    //             // ])->update([
+    //             //     'id_user_create' => Auth::user()->id,
+    //             //     'dvt' => $kh->dvt,
+    //             //     'donGia' => $kh->donGia ? $kh->donGia : 0,
+    //             //     'giaVon' => $kh->giaVon ? $kh->giaVon : 0,
+    //             //     'congKTV' => $kh->congKTV ? $kh->congKTV : 0,
+    //             //     'loai' => $kh->loai,
+    //             //     'thoigian' => $kh->thoigian ? $kh->thoigian : "",
+    //             //     'baohanh' => $kh->baohanh ? $kh->baohanh : "",
+    //             //     'nhacungcap' => $kh->nhacungcap ? $kh->nhacungcap : ""
+    //             // ]);
+    //             // if ($newkh) 
+    //             //     $flag = true;
+    //             // else 
+    //             //     $flag = false;
+    //         } else {
+    //             $newkh = new BHPK();
+    //             $newkh->id_user_create = Auth::user()->id;
+    //             $newkh->isPK = $kh->isPK;
+    //             $newkh->ma = $kh->ma . "_" . $row->id;
+    //             $newkh->noiDung = $kh->noiDung;
+    //             $newkh->dvt = $kh->dvt;
+    //             $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
+    //             $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
+    //             $newkh->giaTang = $kh->giaTang ? $kh->giaTang : 0;
+    //             $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
+    //             $newkh->loai = $kh->loai;
+    //             $newkh->loaiXe = $row->id;
+    //             $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
+    //             $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
+    //             $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
+    //             $newkh->save();        
+    //             if ($newkh) 
+    //                 $flag = true;
+    //             else 
+    //                 $flag = false;
+    //         }
+    //     }
+    //     if ($flag) {
+    //         $nhatKy = new NhatKy();
+    //         $nhatKy->id_user = Auth::user()->id;
+    //         $nhatKy->thoiGian = Date("H:m:s");
+    //         $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+    //         $nhatKy->ghiChu = Carbon::now();
+    //         $nhatKy->noiDung = "Thực hiện Map All: <br/>Nội dung<br/>"
+    //         .$kh->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
+    //         .$kh->isPK."; Mã: "
+    //         .$kh->ma."; Đơn vị tính: "
+    //         .$kh->dvt."; Đơn giá: "
+    //         .$kh->donGia."; Loại: "
+    //         .$kh->type."; Giá vốn: "
+    //         .$kh->giaVon."; Giá tặng: "
+    //         .$kh->giaTang."; Công KTV: "
+    //         .$kh->congKTV;
+    //         $nhatKy->save();
+    //         return response()->json([
+    //             'type' => 'info',
+    //             'code' => 200,
+    //             'message' => 'Đã Map All danh mục'
+    //         ]);
+    //     }
+    //     else
+    //         return response()->json([
+    //             'type' => 'error',
+    //             'code' => 500,
+    //             'message' => 'Lỗi không thể Map All'
+    //         ]);
+    // }
+
     public function mapAllHangMuc(Request $request) {
         $kh = BHPK::find($request->id);
-        $idcar = $kh->loaiXe;
-        $typecar = TypeCar::all();
+        $typeCarArr = $request->typeCar; // Mảng id dòng xe từ checkbox
         $flag = false;
-        foreach($typecar as $row) {
-            if ($row->id == $idcar) continue;
+        foreach($typeCarArr as $idTypeCar) {
+            if ($idTypeCar == $kh->loaiXe) continue;
             $check = BHPK::where([
                 ['noiDung', '=', $kh->noiDung],
-                ['loaiXe', '=', $row->id]
+                ['loaiXe', '=', $idTypeCar]
             ])->exists();
             if ($check) {
                 continue;
-                // $newkh = BHPK::where([
-                //     ['noiDung', '=', $kh->noiDung],
-                //     ['loaiXe', '=', $row->id]
-                // ])->update([
-                //     'id_user_create' => Auth::user()->id,
-                //     'dvt' => $kh->dvt,
-                //     'donGia' => $kh->donGia ? $kh->donGia : 0,
-                //     'giaVon' => $kh->giaVon ? $kh->giaVon : 0,
-                //     'congKTV' => $kh->congKTV ? $kh->congKTV : 0,
-                //     'loai' => $kh->loai,
-                //     'thoigian' => $kh->thoigian ? $kh->thoigian : "",
-                //     'baohanh' => $kh->baohanh ? $kh->baohanh : "",
-                //     'nhacungcap' => $kh->nhacungcap ? $kh->nhacungcap : ""
-                // ]);
-                // if ($newkh) 
-                //     $flag = true;
-                // else 
-                //     $flag = false;
             } else {
                 $newkh = new BHPK();
                 $newkh->id_user_create = Auth::user()->id;
                 $newkh->isPK = $kh->isPK;
-                $newkh->ma = $kh->ma . "_" . $row->id;
+                $newkh->ma = $kh->ma . "_" . $idTypeCar;
                 $newkh->noiDung = $kh->noiDung;
                 $newkh->dvt = $kh->dvt;
                 $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
@@ -424,24 +533,24 @@ class DichVuController extends Controller
                 $newkh->giaTang = $kh->giaTang ? $kh->giaTang : 0;
                 $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
                 $newkh->loai = $kh->loai;
-                $newkh->loaiXe = $row->id;
+                $newkh->loaiXe = $idTypeCar;
                 $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
                 $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
                 $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
+                $newkh->isShow = $kh->isShow;
                 $newkh->save();        
                 if ($newkh) 
                     $flag = true;
-                else 
-                    $flag = false;
             }
         }
         if ($flag) {
             $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->id_user = \Auth::user()->id;
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
-            $nhatKy->ghiChu = Carbon::now();
-            $nhatKy->noiDung = "Thực hiện Map All: <br/>Nội dung<br/>"
+            $nhatKy->ghiChu = \Carbon\Carbon::now();
+            $nhatKy->noiDung = "Thực hiện Map danh mục cho các dòng xe có id lần lượt là: " 
+            . implode(',', $typeCarArr) . "<br/>Nội dung<br/>"
             .$kh->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
             .$kh->isPK."; Mã: "
             .$kh->ma."; Đơn vị tính: "
@@ -455,14 +564,14 @@ class DichVuController extends Controller
             return response()->json([
                 'type' => 'info',
                 'code' => 200,
-                'message' => 'Đã Map All danh mục'
+                'message' => 'Đã Map danh mục cho các dòng xe đã chọn'
             ]);
         }
         else
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
-                'message' => 'Lỗi không thể Map All'
+                'message' => 'Lỗi: Danh mục đã được Map trước đó!'
             ]);
     }
 
@@ -476,22 +585,78 @@ class DichVuController extends Controller
         ]);
     }
 
+    // public function updateHangMuc(Request $request) {
+    //     $kh = BHPK::find($request->eid);
+    //     $temp = $kh;
+    //     // $kh->isPK = $request->eisPK;
+    //     $kh->ma = strtoupper($request->ema);
+    //     $kh->noiDung = $request->enoiDung;
+    //     $kh->dvt = $request->edvt;
+    //     $kh->donGia = $request->edonGia ? $request->edonGia : 0;
+    //     $kh->loai = $request->eloai; 
+    //     $kh->giaVon = $request->egiaVon ? $request->egiaVon : 0; 
+    //     $kh->giaTang = $request->egiaTang ? $request->egiaTang : 0; 
+    //     $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;   
+    //     $kh->thoigian = $request->ethoigian ? $request->ethoigian : 0;   
+    //     $kh->baohanh = $request->ebaohanh ? $request->ebaohanh : 0; 
+    //     $kh->nhacungcap = $request->enhacungcap ? $request->enhacungcap : 0;   
+    //     $kh->loaiXe = $request->etypeCar;       
+    //     if ($request->econgKTV > 500000) {
+    //         return response()->json([
+    //             'type' => 'error',
+    //             'code' => 500,
+    //             'message' => 'Công KTV không hợp lệ!'
+    //         ]);
+    //     }
+    //     if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien'))     
+    //         $kh->save();
+    //     else
+    //         return response()->json([
+    //             'type' => 'error',
+    //             'code' => 500,
+    //             'message' => 'Bạn không có quyền cập nhật nội dung này'
+    //         ]);
+    //     $typecar = TypeCar::find($request->etypeCar);
+    //     if($kh) {
+    //         $nhatKy = new NhatKy();
+    //         $nhatKy->id_user = Auth::user()->id;
+    //         $nhatKy->thoiGian = Date("H:m:s");
+    //         $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+    //         $nhatKy->ghiChu = Carbon::now();
+    //         $nhatKy->noiDung = "Cập nhật hạng mục: <br/>Nội dung cũ<br/>"
+    //         .$temp->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
+    //         .$temp->isPK."; Mã: "
+    //         .$temp->ma."; Đơn vị tính: "
+    //         .$temp->dvt."; Đơn giá: "
+    //         .$temp->donGia."; Giá vốn: "
+    //         .$temp->giaVon."; Giá tặng: "
+    //         .$temp->giaTang."; Loại: "
+    //         .$temp->type.";<br/>Nội dung mới<br/>"
+    //         .$request->enoiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
+    //         .$request->eisPK."; Mã: "
+    //         .$request->ema."; Đơn vị tính: "
+    //         .$request->edvt."; Đơn giá: "
+    //         .$request->edonGia."; Giá vốn: "
+    //         .$request->egiaVon."; Giá tặng: "
+    //         .$request->egiaTang."; Loại: "
+    //         .$request->eloai."; Loại xe: "
+    //         .($typecar ? $typecar->name : "").";";
+    //         $nhatKy->save();
+    //         return response()->json([
+    //             'type' => 'info',
+    //             'code' => 200,
+    //             'message' => 'Đã cập nhật hạng mục'
+    //         ]);
+    //     }
+    //     else
+    //         return response()->json([
+    //             'type' => 'error',
+    //             'code' => 500,
+    //             'message' => 'Lỗi'
+    //         ]);
+    // }
+
     public function updateHangMuc(Request $request) {
-        $kh = BHPK::find($request->eid);
-        $temp = $kh;
-        // $kh->isPK = $request->eisPK;
-        $kh->ma = strtoupper($request->ema);
-        $kh->noiDung = $request->enoiDung;
-        $kh->dvt = $request->edvt;
-        $kh->donGia = $request->edonGia ? $request->edonGia : 0;
-        $kh->loai = $request->eloai; 
-        $kh->giaVon = $request->egiaVon ? $request->egiaVon : 0; 
-        $kh->giaTang = $request->egiaTang ? $request->egiaTang : 0; 
-        $kh->congKTV = $request->econgKTV ? $request->econgKTV : 0;   
-        $kh->thoigian = $request->ethoigian ? $request->ethoigian : 0;   
-        $kh->baohanh = $request->ebaohanh ? $request->ebaohanh : 0; 
-        $kh->nhacungcap = $request->enhacungcap ? $request->enhacungcap : 0;   
-        $kh->loaiXe = $request->etypeCar;       
         if ($request->econgKTV > 500000) {
             return response()->json([
                 'type' => 'error',
@@ -499,6 +664,8 @@ class DichVuController extends Controller
                 'message' => 'Công KTV không hợp lệ!'
             ]);
         }
+        $kh = BHPK::find($request->eid);
+        $temp = $kh;
         if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien'))     
             $kh->save();
         else
@@ -507,6 +674,22 @@ class DichVuController extends Controller
                 'code' => 500,
                 'message' => 'Bạn không có quyền cập nhật nội dung này'
             ]);
+        $kh = BHPK::where([
+            ['noiDung','=', $temp->noiDung],
+            ['ma','like', '%'. $temp->ma . '%']
+        ])->update([
+            'noiDung' => $request->enoiDung,
+            'dvt' => $request->edvt,
+            'donGia' => $request->edonGia ? $request->edonGia : 0,
+            'loai' => $request->eloai, 
+            'giaVon' => $request->egiaVon ? $request->egiaVon : 0, 
+            'giaTang' => $request->egiaTang ? $request->egiaTang : 0, 
+            'congKTV' => $request->econgKTV ? $request->econgKTV : 0,   
+            'thoigian' => $request->ethoigian ? $request->ethoigian : 0,   
+            'baohanh' => $request->ebaohanh ? $request->ebaohanh : 0, 
+            'nhacungcap' => $request->enhacungcap ? $request->enhacungcap : 0
+        ]);
+
         $typecar = TypeCar::find($request->etypeCar);
         if($kh) {
             $nhatKy = new NhatKy();
@@ -514,7 +697,7 @@ class DichVuController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
             $nhatKy->ghiChu = Carbon::now();
-            $nhatKy->noiDung = "Cập nhật hạng mục: <br/>Nội dung cũ<br/>"
+            $nhatKy->noiDung = "Cập nhật hạng mục (có cập nhật hàng loạt): <br/>Nội dung cũ<br/>"
             .$temp->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
             .$temp->isPK."; Mã: "
             .$temp->ma."; Đơn vị tính: "
@@ -4533,7 +4716,8 @@ class DichVuController extends Controller
                 strval($theArray[0][0][4]) == "GV" && strval($theArray[0][0][5]) == "CONG" && 
                 strval($theArray[0][0][6]) == "GIABAN" && strval($theArray[0][0][7]) == "DONGXE" && 
                 strval($theArray[0][0][8]) == "THOIGIANLAPDAT" && strval($theArray[0][0][9]) == "BAOHANH" 
-                && strval($theArray[0][0][10]) == "NHACUNGCAP" && strval($theArray[0][0][11]) == "GIATANG") {
+                && strval($theArray[0][0][10]) == "NHACUNGCAP" && strval($theArray[0][0][11]) == "GIATANG"
+                && strval($theArray[0][0][12]) == "HIDDEN") {
                         $numlen = count($theArray[0]);                    
                         for($i = 1; $i < $numlen; $i++) {
                             if (preg_match('/^[A-Z0-9_]+$/', $theArray[0][$i][1])) {
@@ -4574,8 +4758,9 @@ class DichVuController extends Controller
                                 $kh->loaiXe = $theArray[0][$i][7];  
                                 $kh->thoigian = $theArray[0][$i][8];    
                                 $kh->baohanh = $theArray[0][$i][9];    
-                                $kh->nhacungcap = $theArray[0][$i][10];   
-                                $kh->giaTang = $theArray[0][$i][11];   
+                                $kh->nhacungcap = $theArray[0][$i][10];
+                                $kh->giaTang = $theArray[0][$i][11];
+                                $kh->isShow = $theArray[0][$i][12] == "X" ? false : true; // Ẩn = 1, Hiện = 0   
                                 $kh->save();
                             } else {
                                 $id_bhpk = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->first()->id;
@@ -4594,6 +4779,7 @@ class DichVuController extends Controller
                                 $kh->baohanh = $theArray[0][$i][9];    
                                 $kh->nhacungcap = $theArray[0][$i][10];   
                                 $kh->giaTang = $theArray[0][$i][11];     
+                                $kh->isShow = $theArray[0][$i][12] == "X" ? false : true; // Ẩn = 1, Hiện = 0   
                                 $kh->save();
                             }            
                         }    

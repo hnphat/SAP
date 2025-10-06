@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+      input[type="checkbox"] {
+            width: 30px;
+            height: 30px;
+      }
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -16,13 +22,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Danh mục phụ kiện</strong></h1>
+                        <h1 class="m-0"><strong>Danh mục phụ kiện (Rút gọn)</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Dịch vụ</li>
-                            <li class="breadcrumb-item active">Danh mục phụ kiện</li>
+                            <li class="breadcrumb-item active">Danh mục phụ kiện (rút gọn)</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -50,6 +56,8 @@
                                         <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button> 
                                         <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>&nbsp;
                                         <button id="hiddenAll" class="btn btn-warning" data-toggle="modal" data-target="#hiddenModal">Ẩn/Hiện Danh Mục</button>
+                                        &nbsp;
+                                        <button id="danhMucMoRong" class="btn btn-info">Danh mục phụ kiện (mở rộng)</button>
                                         <br/><br/>
 
                                         <!-- Medal Add -->
@@ -248,7 +256,7 @@
                                                                 </div>
                                                                 <!-- /.card-body -->
                                                                 <div class="card-footer">
-                                                                    <strong class="text-danger"><i>Lưu ý: Hệ thống sẽ tìm các mã có nội dung chứa mã danh mục gợi ý như trên để thực hiện hành động Hiển thị/Ẩn. Vui lòng nhập đúng thông tin mã danh mục!</i></strong><br/>
+                                                                    <strong class="text-danger"><i>Lưu ý: Hệ thống sẽ tìm các mã có nội dung chứa mã danh mục gợi ý như trên để thực hiện hành động Ẩn (loại khỏi hệ thống quản lý). Vui lòng nhập đúng thông tin mã danh mục và kiểm tra thật kỹ trước khi thực hiện!</i></strong><br/>
                                                                     <button id="btnHidden" class="btn btn-primary">Thực hiện</button>
                                                                 </div>
                                                             </form>
@@ -339,7 +347,7 @@
                                 </div>  
                                 <div class="form-group">
                                     <label>Mã</label>
-                                    <input name="ema" type="text" class="form-control" placeholder="Mã">
+                                    <input readonly name="ema" type="text" class="form-control" placeholder="Mã">
                                 </div>   
                                 <div class="form-group">
                                     <label>Tên hạng mục</label>
@@ -401,6 +409,64 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->    
+     <!-- Medal Hidden -->
+    <div class="modal fade" id="dupMoreModal">
+        <div class="modal-dialog modal-xs">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Map/Nhân bản danh mục</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="dupMoreForm" autocomplete="off" enctype>
+                            {{csrf_field()}}
+                            <div class="card-body">
+                                <input type="hidden" name="idHangMuc">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" name="checkAll" value="0">    
+                                            </th>
+                                            <th>Dòng xe</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($typecar as $row)
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="typeCar[]" value="{{$row->id}}">    
+                                            </td>
+                                            <td>
+                                                {{$row->name}}
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>                                                             
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button id="dupMoreBtn" type="button" class="btn btn-primary">Thực hiện</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal --> 
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -476,6 +542,12 @@
                     { 
                         "data": null,
                         render: function(data, type, row) {
+                          return formatNumber(row.giaTang);
+                        } 
+                    },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
                           return formatNumber(row.congKTV);
                         } 
                     },             
@@ -485,10 +557,13 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
+                            // return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
+                            //     "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
+                            //     "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow == 1 ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow == 1 ? "off" : "on")+"</button>" +
+                            //     "&nbsp;<button id='dup' data-id='"+row.id+"' class='btn btn-info btn-sm'>Map ALL</button>";
                             return "<button id='btnEdit' data-id='"+row.id+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button> &nbsp; " +
                                 "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;" +
-                                "<button id='khoa' data-id='"+row.id+"' class='"+(row.isShow == 1 ? "btn btn-warning btn-sm" : "btn btn-success btn-sm")+"'>"+(row.isShow == 1 ? "off" : "on")+"</button>" +
-                                "&nbsp;<button id='dup' data-id='"+row.id+"' class='btn btn-info btn-sm'>Map ALL</button>";
+                                "&nbsp;<button id='dupMore' data-id='"+row.id+"' data-toggle='modal' data-target='#dupMoreModal' class='btn btn-info btn-sm'>Map ALL</button>";
                         }
                     }
                 ]
@@ -635,33 +710,83 @@
             });
 
             // Map All
-            $(document).on('click','#dup', function(){
-                let idKhoa = $(this).data('id');
-                if(confirm('Xác nhận nhân bản danh mục này đến tất cả các dòng xe?')) {
+             $(document).on('click','#dupMoreBtn', function(){
+                let idHangMuc = $('input[name="idHangMuc"]').val();
+                let typeCarArr = [];
+                $('input[name="typeCar[]"]:checked').each(function(){
+                    typeCarArr.push($(this).val());
+                });
+                if(typeCarArr.length === 0) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Vui lòng chọn ít nhất một dòng xe!"
+                    });
+                    return;
+                }
+                if(confirm('Xác nhận nhân bản danh mục này đến các dòng xe đã chọn?')) {
                     $.ajax({
                         url: "{{url('management/dichvu/hangmuc/mapall/')}}",
                         type: "post",
                         dataType: "json",
                         data: {
                             "_token": "{{csrf_token()}}",
-                            "id": $(this).data('id')
+                            "id": idHangMuc,
+                            "typeCar": typeCarArr
                         },
                         success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title:  response.message,
-                            })
-                            table.ajax.reload();
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title:  response.message,
+                                });
+                                $('input[name="typeCar[]"]').prop('checked', false);
+                                $("#dupMoreModal").modal('hide');
+                                table.ajax.reload();
+                            } else {
+                                $('input[name="typeCar[]"]').prop('checked', false);
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: response.message
+                                });
+                            }
                         },
                         error: function() {
+                            $('input[name="typeCar[]"]').prop('checked', false);
                             Toast.fire({
                                 icon: 'warning',
                                 title: "Không thể Map All!"
-                            })
+                            });
                         }
                     });
                 }
             });
+            // $(document).on('click','#dup', function(){
+            //     let idKhoa = $(this).data('id');
+            //     if(confirm('Xác nhận nhân bản danh mục này đến tất cả các dòng xe?')) {
+            //         $.ajax({
+            //             url: "{{url('management/dichvu/hangmuc/mapall/')}}",
+            //             type: "post",
+            //             dataType: "json",
+            //             data: {
+            //                 "_token": "{{csrf_token()}}",
+            //                 "id": $(this).data('id')
+            //             },
+            //             success: function(response) {
+            //                 Toast.fire({
+            //                     icon: response.type,
+            //                     title:  response.message,
+            //                 })
+            //                 table.ajax.reload();
+            //             },
+            //             error: function() {
+            //                 Toast.fire({
+            //                     icon: 'warning',
+            //                     title: "Không thể Map All!"
+            //                 })
+            //             }
+            //         });
+            //     }
+            // });
 
             // edit data
             $(document).on('click','#btnEdit', function(){
@@ -814,6 +939,24 @@
                     }
                 });
             });                
+        });
+
+        $(document).one('click','#dupMore',function(e){
+            let idHangMuc = $(this).data('id');
+            $('input[name="idHangMuc"]').val(idHangMuc);      
+        });
+
+        // $("input[name='checkAll']").click(function(){
+        //     var checked = $(this).prop('checked');
+        //     $("input[name='typeCar[]']").prop('checked', checked);
+        // });
+        $(document).on('change', 'input[name="checkAll"]', function() {
+            var checked = $(this).prop('checked');
+            $('input[name="typeCar[]"]').prop('checked', checked);
+        });
+
+        $("#danhMucMoRong").click(function(){
+            open("{{route('dichvu.hangmucmorong')}}","_blank");
         });
     </script>
 @endsection
