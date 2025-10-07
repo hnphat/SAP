@@ -247,45 +247,72 @@ class DichVuController extends Controller
         ]);
     }
 
+    // public function getHangMuc() {
+    //     $arr = [];
+    //     // Lấy id nhỏ nhất cho mỗi noiDung
+    //     $minIds = BHPK::selectRaw('MIN(id) as id')
+    //         ->where('loaiXe', '!=', null)
+    //         ->where('isShow', true)
+    //         ->groupBy('noiDung')
+    //         ->pluck('id')
+    //         ->toArray();
+
+    //     if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien')) {
+    //         $bhpk = BHPK::whereIn('id', $minIds)
+    //             ->orderBy('id', 'asc')
+    //             ->get();
+    //     } else {
+    //         $minIds = BHPK::selectRaw('MIN(id) as id')
+    //             ->where('id_user_create', Auth::user()->id)
+    //             ->where('loaiXe', '!=', null)
+    //             ->where('isShow', true)
+    //             ->groupBy('noiDung')
+    //             ->pluck('id')
+    //             ->toArray();
+    //         $bhpk = BHPK::whereIn('id', $minIds)
+    //             ->orderBy('id', 'asc')
+    //             ->get();
+    //     }
+
+    //     foreach($bhpk as $row) {
+    //         $typecar = TypeCar::find($row->loaiXe);
+    //         $row->idcar = $typecar ? $typecar->id : null;
+    //         $row->namecar = $typecar ? $typecar->name : null;
+    //         array_push($arr, $row);
+    //     }
+    //     return response()->json([
+    //         'type' => 'info',
+    //         'code' => 200,
+    //         'message' => 'Đã tải dữ liệu',
+    //         'data' => $arr
+    //     ]);        
+    // }
+
     public function getHangMuc() {
         $arr = [];
-        // Lấy id nhỏ nhất cho mỗi noiDung
-        $minIds = BHPK::selectRaw('MIN(id) as id')
-            ->where('loaiXe', '!=', null)
-            ->where('isShow', true)
-            ->groupBy('noiDung')
-            ->pluck('id')
-            ->toArray();
-
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien')) {
-            $bhpk = BHPK::whereIn('id', $minIds)
-                ->orderBy('id', 'asc')
-                ->get();
-        } else {
-            $minIds = BHPK::selectRaw('MIN(id) as id')
-                ->where('id_user_create', Auth::user()->id)
-                ->where('loaiXe', '!=', null)
-                ->where('isShow', true)
-                ->groupBy('noiDung')
-                ->pluck('id')
-                ->toArray();
-            $bhpk = BHPK::whereIn('id', $minIds)
-                ->orderBy('id', 'asc')
-                ->get();
-        }
-
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('ketoan') || Auth::user()->hasRole('dm_phukien'))
+            $bhpk = BHPK::select("*")->where([
+                ['loaiXe','!=',null],
+                ['isShow','=',true]
+            ])->orderBy('id','desc')->get();
+        else
+            $bhpk = BHPK::select("*")->where([
+                ['id_user_create','=',Auth::user()->id],
+                ['loaiXe','!=',null],
+                ['isShow','=',true]
+            ])->orderBy('id','desc')->get();  
         foreach($bhpk as $row) {
             $typecar = TypeCar::find($row->loaiXe);
             $row->idcar = $typecar ? $typecar->id : null;
             $row->namecar = $typecar ? $typecar->name : null;
             array_push($arr, $row);
-        }
+        }            
         return response()->json([
             'type' => 'info',
             'code' => 200,
             'message' => 'Đã tải dữ liệu',
             'data' => $arr
-        ]);        
+        ]);
     }
 
     public function addHangMuc(Request $request) {
@@ -354,7 +381,7 @@ class DichVuController extends Controller
     public function delHangMuc(Request $request) {
         $kh = BHPK::find($request->id);
         $temp = $kh;
-        if (Auth::user()->hasRole('system'))
+        if (Auth::user()->hasRole('system') && Auth::user()->hasRole('dm_phukien'))
             $kh->delete();
         elseif(Auth::user()->id == $kh->id_user_create) {
             $kh->delete();
@@ -510,69 +537,77 @@ class DichVuController extends Controller
     // }
 
     public function mapAllHangMuc(Request $request) {
-        $kh = BHPK::find($request->id);
-        $typeCarArr = $request->typeCar; // Mảng id dòng xe từ checkbox
-        $flag = false;
-        foreach($typeCarArr as $idTypeCar) {
-            if ($idTypeCar == $kh->loaiXe) continue;
-            $check = BHPK::where([
-                ['noiDung', '=', $kh->noiDung],
-                ['loaiXe', '=', $idTypeCar]
-            ])->exists();
-            if ($check) {
-                continue;
-            } else {
-                $newkh = new BHPK();
-                $newkh->id_user_create = Auth::user()->id;
-                $newkh->isPK = $kh->isPK;
-                $newkh->ma = $kh->ma . "_" . $idTypeCar;
-                $newkh->noiDung = $kh->noiDung;
-                $newkh->dvt = $kh->dvt;
-                $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
-                $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
-                $newkh->giaTang = $kh->giaTang ? $kh->giaTang : 0;
-                $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
-                $newkh->loai = $kh->loai;
-                $newkh->loaiXe = $idTypeCar;
-                $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
-                $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
-                $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
-                $newkh->isShow = $kh->isShow;
-                $newkh->save();        
-                if ($newkh) 
-                    $flag = true;
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien')) {
+            $kh = BHPK::find($request->id);
+            $typeCarArr = $request->typeCar; // Mảng id dòng xe từ checkbox
+            $flag = false;
+            foreach($typeCarArr as $idTypeCar) {
+                if ($idTypeCar == $kh->loaiXe) continue;
+                $check = BHPK::where([
+                    ['noiDung', '=', $kh->noiDung],
+                    ['loaiXe', '=', $idTypeCar]
+                ])->exists();
+                if ($check) {
+                    continue;
+                } else {
+                    $newkh = new BHPK();
+                    $newkh->id_user_create = Auth::user()->id;
+                    $newkh->isPK = $kh->isPK;
+                    $newkh->ma = $kh->ma . "_" . $idTypeCar;
+                    $newkh->noiDung = $kh->noiDung;
+                    $newkh->dvt = $kh->dvt;
+                    $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
+                    $newkh->giaVon = $kh->giaVon ? $kh->giaVon : 0;
+                    $newkh->giaTang = $kh->giaTang ? $kh->giaTang : 0;
+                    $newkh->congKTV = $kh->congKTV ? $kh->congKTV : 0;
+                    $newkh->loai = $kh->loai;
+                    $newkh->loaiXe = $idTypeCar;
+                    $newkh->thoigian = $kh->thoigian ? $kh->thoigian : null;
+                    $newkh->baohanh = $kh->baohanh ? $kh->baohanh : null;
+                    $newkh->nhacungcap = $kh->nhacungcap ? $kh->nhacungcap : null;
+                    $newkh->isShow = $kh->isShow;
+                    $newkh->save();        
+                    if ($newkh) 
+                        $flag = true;
+                }
             }
-        }
-        if ($flag) {
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = \Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:m:s");
-            $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
-            $nhatKy->ghiChu = \Carbon\Carbon::now();
-            $nhatKy->noiDung = "Thực hiện Map danh mục cho các dòng xe có id lần lượt là: " 
-            . implode(',', $typeCarArr) . "<br/>Nội dung<br/>"
-            .$kh->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
-            .$kh->isPK."; Mã: "
-            .$kh->ma."; Đơn vị tính: "
-            .$kh->dvt."; Đơn giá: "
-            .$kh->donGia."; Loại: "
-            .$kh->type."; Giá vốn: "
-            .$kh->giaVon."; Giá tặng: "
-            .$kh->giaTang."; Công KTV: "
-            .$kh->congKTV;
-            $nhatKy->save();
-            return response()->json([
-                'type' => 'info',
-                'code' => 200,
-                'message' => 'Đã Map danh mục cho các dòng xe đã chọn'
-            ]);
-        }
-        else
+            if ($flag) {
+                $nhatKy = new NhatKy();
+                $nhatKy->id_user = \Auth::user()->id;
+                $nhatKy->thoiGian = Date("H:m:s");
+                $nhatKy->chucNang = "Dịch vụ - Quản lý hạng mục";
+                $nhatKy->ghiChu = \Carbon\Carbon::now();
+                $nhatKy->noiDung = "Thực hiện Map danh mục cho các dòng xe có id lần lượt là: " 
+                . implode(',', $typeCarArr) . "<br/>Nội dung<br/>"
+                .$kh->noiDung."; Phần (1: Phụ kiện, 2: Bảo hiểm)"
+                .$kh->isPK."; Mã: "
+                .$kh->ma."; Đơn vị tính: "
+                .$kh->dvt."; Đơn giá: "
+                .$kh->donGia."; Loại: "
+                .$kh->type."; Giá vốn: "
+                .$kh->giaVon."; Giá tặng: "
+                .$kh->giaTang."; Công KTV: "
+                .$kh->congKTV;
+                $nhatKy->save();
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã Map danh mục cho các dòng xe đã chọn'
+                ]);
+            }
+            else
+                return response()->json([
+                    'type' => 'error',
+                    'code' => 500,
+                    'message' => 'Lỗi: Danh mục đã được Map trước đó!'
+                ]);
+        } else {
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
-                'message' => 'Lỗi: Danh mục đã được Map trước đó!'
+                'message' => 'Bạn không có quyền thực hiện chức năng này'
             ]);
+        }  
     }
 
     public function getHangMucEdit(Request $request) {
@@ -4819,28 +4854,36 @@ class DichVuController extends Controller
     } 
 
     public function hiddenDanhMuc(Request $request) { 
-        $hm = BHPK::where([
-            ['ma', 'like', '%' . $request->magoiy . '%']
-        ])
-        ->OrWhere([
-            ['noiDung', 'like', '%' . $request->magoiy . '%']
-        ])
-        ->update(['isShow' => $request->action]);
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien')) {
+            $hm = BHPK::where([
+                ['ma', 'like', '%' . $request->magoiy . '%']
+            ])
+            ->OrWhere([
+                ['noiDung', 'like', '%' . $request->magoiy . '%']
+            ])
+            ->update(['isShow' => $request->action]);
 
-        if ($hm) {
-            return response()->json([
-                'type' => 'info',
-                'code' => 200,
-                'message' => 'Đã ẩn/khóa danh mục',
-                'soluong' => $hm
-            ]);
-        }
-        else
+            if ($hm) {
+                return response()->json([
+                    'type' => 'info',
+                    'code' => 200,
+                    'message' => 'Đã ẩn/khóa danh mục',
+                    'soluong' => $hm
+                ]);
+            }
+            else
+                return response()->json([
+                    'type' => 'error',
+                    'code' => 500,
+                    'message' => 'Lỗi không thể ẩn/khóa'
+                ]); 
+        } else {
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
-                'message' => 'Lỗi không thể ẩn/khóa'
-            ]); 
+                'message' => 'Bạn không có quyền ẩn/khóa danh mục phụ kiện'
+            ]);    
+        }        
     } 
 
     public function postKTV(Request $request){

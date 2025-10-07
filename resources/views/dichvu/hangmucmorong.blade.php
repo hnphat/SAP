@@ -57,6 +57,7 @@
                                             <thead>
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
+                                                <th>Trạng thái</th>
                                                 <th>Dòng xe</th>    
                                                 <th>Loại</th>                                                
                                                 <th>Mã</th>
@@ -137,6 +138,16 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                          if (row.isShow == true) {
+                            return "<span class='text-success'>Đang hoạt động</span>";
+                          } else {
+                            return "<span class='text-danger'>Ngừng hoạt động</span>";
+                          }
+                        } 
+                    },
                     { "data": "namecar" },
                     { "data": "loai" },
                     { "data": "ma" },
