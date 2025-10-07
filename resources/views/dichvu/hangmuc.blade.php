@@ -57,9 +57,11 @@
                                         <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>&nbsp;
                                         <button id="hiddenAll" class="btn btn-warning" data-toggle="modal" data-target="#hiddenModal">Ẩn/Hiện Danh Mục</button>
                                         &nbsp;
+                                        <button id="raSoat" class="btn btn-secondary">Rà soát chênh lệch giá, công KTV</button>
+                                        &nbsp;
                                         <button id="danhMucMoRong" class="btn btn-info">Danh mục phụ kiện (mở rộng)</button>
                                         <br/><br/>
-
+                                        <p><strong id="loiImport" class="text-danger"></strong></p>
                                         <!-- Medal Add -->
                                         <div class="modal fade" id="addModal">
                                             <div class="modal-dialog modal-lg">
@@ -625,13 +627,20 @@
                     dataType: 'json',
                     data: $("#addForm").serialize(),
                     success: function(response) {
-                        $("#addForm")[0].reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        table.ajax.reload();
-                        $("#addModal").modal('hide');
+                        if (response.code == 200) {                            
+                            $("#addForm")[0].reset();
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                            table.ajax.reload();
+                            $("#addModal").modal('hide');
+                        } else {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            })
+                        }
                     },
                     error: function() {
                         Toast.fire({
@@ -876,15 +885,38 @@
                     },
                     success: (response) => {
                         this.reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        });
-                        $("#btnImport").attr('disabled', false).html("IMPORT");                      
-                        $("#importModal").modal('hide');
-                        setTimeout(() => {
-                            open("{{route('dichvu.hangmuc')}}","_self");
-                        }, 3000);
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            });
+                            $("#btnImport").attr('disabled', false).html("IMPORT");                      
+                            $("#importModal").modal('hide');
+                            if (response.loi && Array.isArray(response.loi)) {
+                                let loiHtml = "<b>Import đã bỏ qua các mã này do xảy ra lỗi:</b><br>";
+                                response.loi.forEach(function(item, idx) {
+                                    loiHtml += (idx+1) + ". " + item + "<br>";
+                                });
+                                $("#loiImport").html(loiHtml);
+                            } else if (typeof response.loi === 'object') {
+                                let loiHtml = "<b>Import đã bỏ qua các mã này do xảy ra lỗi:</b><br>";
+                                Object.values(response.loi).forEach(function(item, idx) {
+                                    loiHtml += (idx+1) + ". " + item + "<br>";
+                                });
+                                $("#loiImport").html(loiHtml);
+                            } else {
+                                $("#loiImport").text("Import đã bỏ qua các mã này do xảy ra lỗi: " + response.loi);
+                            }
+                            table.ajax.reload();
+                            // setTimeout(() => {
+                            //     open("{{route('dichvu.hangmuc')}}","_self");
+                            // }, 3000);
+                        } else {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            });                            
+                        }                        
                     },
                         error: function(response){
                         Toast.fire({
@@ -958,6 +990,46 @@
 
         $("#danhMucMoRong").click(function(){
             open("{{route('dichvu.hangmucmorong')}}","_blank");
+        });
+
+        $("#raSoat").click(function(){
+            if(confirm('Xác nhận rà soát lại toàn bộ danh mục?')) {
+               $.ajax({
+                    url: "{{url('management/dichvu/hangmuc/rasoat/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}"
+                    },
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title:  response.message,
+                        })
+                        if (response.loi && Array.isArray(response.loi)) {
+                            let loiHtml = "<b>Kết quả rà soát:</b><br>";
+                            response.loi.forEach(function(item, idx) {
+                                loiHtml += (idx+1) + ". " + item + "<br>";
+                            });
+                            $("#loiImport").html(loiHtml);
+                        } else if (typeof response.loi === 'object') {
+                            let loiHtml = "<b>Kết quả rà soát:</b><br>";
+                            Object.values(response.loi).forEach(function(item, idx) {
+                                loiHtml += (idx+1) + ". " + item + "<br>";
+                            });
+                            $("#loiImport").html(loiHtml);
+                        } else {
+                            $("#loiImport").text("Kết quả rà soát: " + response.loi);
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: "Không thể rà soát lúc này!"
+                        })
+                    }
+                });
+            }
         });
     </script>
 @endsection

@@ -331,6 +331,15 @@ class DichVuController extends Controller
         $kh->thoigian = $request->thoigian ? $request->thoigian : null;
         $kh->baohanh = $request->baohanh ? $request->baohanh : null;
         $kh->nhacungcap = $request->nhacungcap ? $request->nhacungcap : null;
+        if (preg_match('/^[A-Z0-9_]+$/', strtoupper($request->ma))) {
+            // Hợp lệ: chỉ chứa ký tự in hoa và dấu gạch dưới
+        } else {            
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Mã phụ kiện không hợp lệ: '.$request->ma. ' Vui lòng chỉ sử dụng chữ in hoa, số và dấu gạch dưới (_)!',
+                'code' => 400
+            ]);            
+        }
         if ($request->congKTV > 500000) {
             return response()->json([
                 'type' => 'error',
@@ -449,6 +458,31 @@ class DichVuController extends Controller
                 'code' => 500,
                 'message' => 'Lỗi không thể ẩn/khóa'
             ]);
+    }
+
+    public function raSoat(Request $request) {
+        $arrKhongHopLe = [];
+        $data = BHPK::select("*")
+        ->where([
+            ['loaiXe','!=',null],
+            ['isShow','=',true]
+        ])
+        ->get();
+        foreach($data as $row) {
+            if ($row->congKTV > $row->donGia) {
+                array_push($arrKhongHopLe,"Mã: " . $row->ma. " - ". $row->noiDung." có Công KTV ".number_format($row->congKTV)." lớn hơn giá bán " . number_format($row->donGia));
+            }
+
+            if ($row->giaVon > $row->donGia ) {
+                array_push($arrKhongHopLe,"Mã: " .  $row->ma. " - ". $row->noiDung." có Giá vốn ".number_format($row->giaVon)." lớn hơn giá bán " . number_format($row->donGia));
+            }
+        }
+        return response()->json([
+            'type' => 'info',
+            'message' => 'Đã thực hiện rà soát danh mục phụ kiện',
+            'code' => 200,
+            'loi' => $arrKhongHopLe
+        ]);  
     }
 
     // public function mapAllHangMuc(Request $request) {
@@ -4738,6 +4772,7 @@ class DichVuController extends Controller
     }
 
     public function importDanhMuc(Request $request) {
+        $arrKhongHopLe = [];
         $this->validate($request,[
             'fileBase'  => 'required|mimes:xls,xlsx|max:20480',
         ]);
@@ -4758,25 +4793,34 @@ class DichVuController extends Controller
                             if (preg_match('/^[A-Z0-9_]+$/', $theArray[0][$i][1])) {
                                 // Hợp lệ: chỉ chứa ký tự in hoa và dấu gạch dưới
                             } else {
-                                return response()->json([
-                                    'type' => 'error',
-                                    'message' => 'Mã phụ kiện không hợp lệ: '.$theArray[0][$i][1],
-                                    'code' => 400
-                                ]);
+                                // return response()->json([
+                                //     'type' => 'error',
+                                //     'message' => 'Mã phụ kiện không hợp lệ: '.$theArray[0][$i][1],
+                                //     'code' => 400
+                                // ]);
+                                array_push($arrKhongHopLe, $theArray[0][$i][1]. ": LỖI MÃ CHỨA KÝ TỰ KHÔNG HỢP LỆ");
+                                continue;
                             }
-                            if ($theArray[0][$i][5] > $theArray[0][$i][6])
-                                return response()->json([
-                                    'type' => 'error',
-                                    'message' => 'Mã: '.$theArray[0][$i][1]. ' dữ liệu không hợp lệ. Xem giá vốn, giá bán, công KTV!',
-                                    'code' => 400
-                                ]);    
 
-                            if ($theArray[0][$i][4] > $theArray[0][$i][6])
-                                return response()->json([
-                                    'type' => 'error',
-                                    'message' => 'Mã: '.$theArray[0][$i][1]. ' dữ liệu không hợp lệ. Xem giá vốn, giá bán, công KTV!',
-                                    'code' => 400
-                                ]);
+                            if ($theArray[0][$i][5] > $theArray[0][$i][6]) {
+                                array_push($arrKhongHopLe, $theArray[0][$i][1] . ": LỖI CÔNG LỚN HƠN GIÁ BÁN");
+                                continue;
+                                // return response()->json([
+                                //     'type' => 'error',
+                                //     'message' => 'Mã: '.$theArray[0][$i][1]. ' dữ liệu không hợp lệ. Xem giá vốn, giá bán, công KTV!',
+                                //     'code' => 400
+                                // ]);    
+                            }
+
+                            if ($theArray[0][$i][4] > $theArray[0][$i][6]) {
+                                array_push($arrKhongHopLe, $theArray[0][$i][1] . ": LỖI GIÁ VỐN LỚN HƠN GIÁ BÁN");
+                                continue;
+                                // return response()->json([
+                                //     'type' => 'error',
+                                //     'message' => 'Mã: '.$theArray[0][$i][1]. ' dữ liệu không hợp lệ. Xem giá vốn, giá bán, công KTV!',
+                                //     'code' => 400
+                                // ]);
+                            }
 
                             $check = BHPK::where('ma',strtoupper($theArray[0][$i][1]))->exists();                    
                             if (!$check) {
@@ -4789,8 +4833,9 @@ class DichVuController extends Controller
                                 $kh->donGia = $theArray[0][$i][6];
                                 $kh->giaVon = $theArray[0][$i][4];
                                 $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
-                                $kh->loai = $theArray[0][$i][0];    
-                                $kh->loaiXe = $theArray[0][$i][7];  
+                                $kh->loai = $theArray[0][$i][0]; 
+                                if ($theArray[0][$i][7] == true)   
+                                    $kh->loaiXe = $theArray[0][$i][7];  
                                 $kh->thoigian = $theArray[0][$i][8];    
                                 $kh->baohanh = $theArray[0][$i][9];    
                                 $kh->nhacungcap = $theArray[0][$i][10];
@@ -4809,7 +4854,8 @@ class DichVuController extends Controller
                                 $kh->giaVon = $theArray[0][$i][4];
                                 $kh->congKTV = $theArray[0][$i][5] ? $theArray[0][$i][5] : 0;
                                 $kh->loai = $theArray[0][$i][0];    
-                                $kh->loaiXe = $theArray[0][$i][7];   
+                                if ($theArray[0][$i][7] == true)   
+                                    $kh->loaiXe = $theArray[0][$i][7];  
                                 $kh->thoigian = $theArray[0][$i][8];    
                                 $kh->baohanh = $theArray[0][$i][9];    
                                 $kh->nhacungcap = $theArray[0][$i][10];   
@@ -4828,7 +4874,8 @@ class DichVuController extends Controller
                         return response()->json([
                             'type' => 'info',
                             'message' => 'Đã thực hiện import excel danh mục phụ kiện',
-                            'code' => 200
+                            'code' => 200,
+                            'loi' => $arrKhongHopLe
                         ]);                  
                 } else {
                   return response()->json([
