@@ -1565,6 +1565,7 @@ class HDController extends Controller
                         $tang .= '<w:br/>';
                     }
                 }
+
                 if ($row->type == 'pay') {
                     $saleOff = SaleOffV2::select("*")->where([
                         ['id_hd','=',$id],
@@ -1579,7 +1580,10 @@ class HDController extends Controller
                     $chiPhiChiTietPKB .=  number_format($row->cost - ($row->cost*$saleOff->giamGia/100)) . '<w:br/>';
                     $j++;
                 }
-                if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
+
+                if ($row->type == 'free' 
+                && ($row->mode == null 
+                && $row->free_kem != 1)) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
                     $bhpk = BHPK::find($row->mapk);
@@ -1590,13 +1594,22 @@ class HDController extends Controller
                     // ------------------------------               
                     $tongPhuKienFree += (($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost);
                     $k++;
-                } else if ($row->type == 'free' && ($row->mode != null && $row->mode != "KEMTHEOXE")) {
+                } else if ($row->type == 'free' 
+                && ($row->mode != null 
+                && $row->mode != "KEMTHEOXE")) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
                     $bhpk = BHPK::find($row->mapk);
-                    switch($row->mode) {
-                        case "TANGTHEM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (TT)<w:br/>'; break;
-                        case "CTKM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (CTKM)<w:br/>'; break;
+                    if ($row->giaTang != 0) {
+                        switch($row->mode) {
+                            case "TANGTHEM":  $chiPhiChiTietPK .=  number_format($row->giaTang) . ' (TT)<w:br/>'; break;
+                            case "CTKM":  $chiPhiChiTietPK .=  number_format($row->giaTang) . ' (CTKM)<w:br/>'; break;
+                        }
+                    } else {
+                        switch($row->mode) {
+                            case "TANGTHEM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (TT)<w:br/>'; break;
+                            case "CTKM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (CTKM)<w:br/>'; break;
+                        }
                     }
                     if ($row->mode == "GIABAN") {
                         $p = BHPK::find($row->mapk);
@@ -1604,9 +1617,15 @@ class HDController extends Controller
                         $tongPhuKienFree += ($p->donGia + $p->congKTV);
                     } else {
                         $p = BHPK::find($row->mapk);
-                        if ($row->mode == "TANGTHEM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
-                        else if ($row->mode == "CTKM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
-                        else $tongPhuKienFree += $row->cost;                    
+                        if ($row->giaTang != 0) {
+                            if ($row->mode == "TANGTHEM") $tongPhuKienFree += $row->giaTang;   
+                            else if ($row->mode == "CTKM") $tongPhuKienFree += $row->giaTang;   
+                            else $tongPhuKienFree += $row->cost;    
+                        } else {
+                            if ($row->mode == "TANGTHEM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
+                            else if ($row->mode == "CTKM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
+                            else $tongPhuKienFree += $row->cost;    
+                        }                                        
                     }
                     $k++;
                 }
@@ -1792,25 +1811,51 @@ class HDController extends Controller
                     $chiPhiChiTietPKB .=  number_format($row->cost - ($row->cost*$saleOff->giamGia/100)) . '<w:br/>';
                     $j++;
                 }
-                if ($row->type == 'free' && ($row->mode == null && $row->free_kem != 1)) {
+                if ($row->type == 'free' 
+                && ($row->mode == null 
+                && $row->free_kem != 1)) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
-                    $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>';                    
-                    $tongPhuKienFree += $row->cost;
+                    $bhpk = BHPK::find($row->mapk);
+                    $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (TT)<w:br/>';     
+                    //$chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>';     
+                    // Bổ sung công vào giá tặng thêm
+                    
+                    // ------------------------------               
+                    $tongPhuKienFree += (($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost);
                     $k++;
-                } else if ($row->type == 'free' && ($row->mode != null && $row->mode != "KEMTHEOXE")) {
+                } else if ($row->type == 'free' 
+                && ($row->mode != null 
+                && $row->mode != "KEMTHEOXE")) {
                     $sttPK .= $k . '<w:br/>';
                     $pkfree .=  $row->name . '<w:br/>';
-                    switch($row->mode) {
-                        case "TANGTHEM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (TT)<w:br/>'; break;
-                        case "CTKM":  $chiPhiChiTietPK .=  number_format($row->cost) . ' (CTKM)<w:br/>'; break;
+                    $bhpk = BHPK::find($row->mapk);
+                    if ($row->giaTang != 0) {
+                        switch($row->mode) {
+                            case "TANGTHEM":  $chiPhiChiTietPK .=  number_format($row->giaTang) . ' (TT)<w:br/>'; break;
+                            case "CTKM":  $chiPhiChiTietPK .=  number_format($row->giaTang) . ' (CTKM)<w:br/>'; break;
+                        }
+                    } else {
+                        switch($row->mode) {
+                            case "TANGTHEM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (TT)<w:br/>'; break;
+                            case "CTKM":  $chiPhiChiTietPK .=  number_format(($bhpk) ? $row->cost + $bhpk->congKTV : $row->cost) . ' (CTKM)<w:br/>'; break;
+                        }
                     }
                     if ($row->mode == "GIABAN") {
                         $p = BHPK::find($row->mapk);
-                        $chiPhiChiTietPK .=  number_format($p->donGia) . ' (TTGB)<w:br/>'; 
-                        $tongPhuKienFree += $p->donGia;
+                        $chiPhiChiTietPK .=  number_format($p->donGia + $p->congKTV) . ' (TTGB)<w:br/>'; 
+                        $tongPhuKienFree += ($p->donGia + $p->congKTV);
                     } else {
-                        $tongPhuKienFree += $row->cost;
+                        $p = BHPK::find($row->mapk);
+                        if ($row->giaTang != 0) {
+                            if ($row->mode == "TANGTHEM") $tongPhuKienFree += $row->giaTang;   
+                            else if ($row->mode == "CTKM") $tongPhuKienFree += $row->giaTang;   
+                            else $tongPhuKienFree += $row->cost;    
+                        } else {
+                            if ($row->mode == "TANGTHEM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
+                            else if ($row->mode == "CTKM") $tongPhuKienFree += ($p) ? $row->cost + $p->congKTV : $row->cost;   
+                            else $tongPhuKienFree += $row->cost;    
+                        }                                        
                     }
                     $k++;
                 }
