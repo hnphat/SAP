@@ -408,10 +408,16 @@
                     // $('#magiamgia').text(response.magiamgia);
                     // $('#tongPhuKienBanGiam').text(response.tongPhuKienBanGiam);
                     let phuKienKhuyenMai = "";
+                    let isGiaTang = "";
                     for(let i = 0; i < response.phuKienKhuyenMai.length; i++) {
                         let mode = "";
                         if (response.phuKienKhuyenMai[i].isLanDau == false && response.phuKienKhuyenMai[i].isDuyetLanSau == false)
                             continue;
+                        if (response.phuKienKhuyenMai[i].giaTang == 0) {
+                            isGiaTang = "<br/><span class='text-warning'>(Chưa cập nhật giá tặng lấy giá theo mặc định)</span>";
+                        } else {
+                            isGiaTang = "";
+                        }
                         switch(response.phuKienKhuyenMai[i].mode) {
                             case "KEMTHEOXE": mode = "<strong class='text-secondary'>Kèm theo xe</strong>"; break;
                             case "GIABAN": mode = "<strong class='text-pink'>Tặng trên giá bán</strong>"; break;
@@ -420,26 +426,25 @@
                             default: mode = "";
                         }
                         mode = (mode != "") ? mode : (response.phuKienKhuyenMai[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
-                        
                         if (response.phuKienKhuyenMai[i].mode == "GIABAN") {
                             phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
-                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon) + parseInt(response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + response.phuKienKhuyenMai[i].name + isGiaTang + "</td>" +                                
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].cost)) + " (Công KTV: "+formatNumber(parseInt(response.phuKienKhuyenMai[i].congKTV))+")" + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         } else if (response.phuKienKhuyenMai[i].mode == "CTKM") {
                             phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
-                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon) + parseInt(response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + response.phuKienKhuyenMai[i].name + isGiaTang + "</td>" +                                
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaTang == 0 ? response.phuKienKhuyenMai[i].cost : response.phuKienKhuyenMai[i].giaTang)) + " (Công KTV: "+formatNumber(parseInt(response.phuKienKhuyenMai[i].congKTV))+")" + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         } else if (response.phuKienKhuyenMai[i].mode == "TANGTHEM") {
                             phuKienKhuyenMai += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.phuKienKhuyenMai[i].name + "</td>" +                                
-                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaVon) + parseInt(response.phuKienKhuyenMai[i].congKTV)) + "</td>" +
+                                "<td>" + response.phuKienKhuyenMai[i].name + isGiaTang + "</td>" +                                
+                                "<td>" + formatNumber(parseInt(response.phuKienKhuyenMai[i].giaTang == 0 ? response.phuKienKhuyenMai[i].cost : response.phuKienKhuyenMai[i].giaTang)) + " (Công KTV: "+formatNumber(parseInt(response.phuKienKhuyenMai[i].congKTV))+")" + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "</tr>";                            
                         } else {

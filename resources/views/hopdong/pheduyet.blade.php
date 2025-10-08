@@ -1207,6 +1207,7 @@
                             let mode = "";                            
                             statusLanSau = "";
                             requestHuyPackage = "";
+                            isGiaTang = "";
                             if (response.pkfree[i].isLanDau == false 
                             && response.pkfree[i].isDuyetLanSau == false) {
                                 statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
@@ -1230,11 +1231,16 @@
                                 case "TANGTHEM": mode = "<strong class='text-success'>Tặng thêm</strong>"; break;
                                 default: mode = "";
                             }
+                            if (response.pkfree[i].giaTang == 0) {
+                                isGiaTang = "<br/><span class='text-warning'>(Chưa cập nhật giá tặng lấy giá theo mặc định)</span>";
+                            } else {
+                                isGiaTang = "";
+                            }
                             mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkfree[i].name + " " + statusLanSau +  " " + requestHuyPackage + "</td>" +
-                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) + "</td>" +
+                                "<td>" + response.pkfree[i].name + " " + statusLanSau +  " " + requestHuyPackage + " " + isGiaTang + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].giaTang == 0 ? response.pkfree[i].cost : response.pkfree[i].giaTang)) + "</td>" +
                                 "<td>" + mode +
                                 "</tr>";
                         }

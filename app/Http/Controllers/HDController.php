@@ -2290,7 +2290,7 @@ class HDController extends Controller
     }
 
     public function getpkfree($id) {
-        $pkban = SaleOffV2::select('saleoffv2.*','package.id as id','package.lyDoHuy as lyDoHuy','package.isHuy as isHuy','package.isLanDau as isLanDau','package.isDuyetLanSau as isDuyetLanSau','package.free_kem as free_kem','package.name as name','package.cost as cost','package.mode as mode', 'package.mapk as mapk')
+        $pkban = SaleOffV2::select('saleoffv2.*','package.id as id','package.lyDoHuy as lyDoHuy','package.isHuy as isHuy','package.isLanDau as isLanDau','package.isDuyetLanSau as isDuyetLanSau','package.free_kem as free_kem','package.name as name','package.cost as cost','package.giaTang as giaTang','package.mode as mode', 'package.mapk as mapk')
         ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
         ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')
         ->where([
@@ -2609,11 +2609,14 @@ class HDController extends Controller
             if ($request->emapkmode == "GIABAN") {
                 $p = BHPK::find($request->emapkfree);
                 $pkpay->cost = $p->donGia;
+                $pkpay->giaTang = 0;
             } elseif ($request->emapkfree) {
                 $p = BHPK::find($request->emapkfree);
                 $pkpay->cost = $p->giaVon;
+                $pkpay->giaTang = $p->giaTang != 0 ? $p->giaTang : 0;
             } else {
                 $pkpay->cost = $request->giafree;
+                $pkpay->giaTang = 0;
             }
             $pkpay->save();
             if($pkpay) {
@@ -2650,52 +2653,52 @@ class HDController extends Controller
             }
         }
         // Dành cho kế toán
-        if (Auth::user()->hasRole('ketoan')) {
-            if ($check->id_car_kho != null && $check->hdWait != true) {
-                $car = KhoV2::find($check->id_car_kho);
-                if ($car->xuatXe == true)
-                    return response()->json([
-                        'type' => 'warning',
-                        'message' => 'Xe đã xuất kho không thể chỉnh sửa nội dung này!',
-                        'code' => 200
-                    ]);
-                else {
-                    $temppkpay = PackageV2::find($request->idPkFree);
-                    $pkpay = PackageV2::find($request->idPkFree);
-                    $pkpay->name = $request->ndfree;
-                    $pkpay->free_kem = $request->freetang;
-                    $pkpay->cost = $request->giafree;
-                    $pkpay->save();
-                    if($pkpay) {
-                        $nhatKy = new NhatKy();
-                        $nhatKy->id_user = Auth::user()->id;
-                        $nhatKy->thoiGian = Date("H:m:s");
-                        $nhatKy->ghiChu = Carbon::now();
-                        $nhatKy->chucNang = "Kế toán - Quản lý hợp đồng";
-                        $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho đề nghị ĐN/0".$request->idSaleHDFree."(không phải mã hợp đồng) <br/>Nội dung: " . $request->ndfree 
-                        . "Từ giá: "
-                        . round($temppkpay->cost,2) . " thành giá: " . round($request->giafree,2);
-                        $nhatKy->save();
+        // if (Auth::user()->hasRole('ketoan')) {
+        //     if ($check->id_car_kho != null && $check->hdWait != true) {
+        //         $car = KhoV2::find($check->id_car_kho);
+        //         if ($car->xuatXe == true)
+        //             return response()->json([
+        //                 'type' => 'warning',
+        //                 'message' => 'Xe đã xuất kho không thể chỉnh sửa nội dung này!',
+        //                 'code' => 200
+        //             ]);
+        //         else {
+        //             $temppkpay = PackageV2::find($request->idPkFree);
+        //             $pkpay = PackageV2::find($request->idPkFree);
+        //             $pkpay->name = $request->ndfree;
+        //             $pkpay->free_kem = $request->freetang;
+        //             $pkpay->cost = $request->giafree;
+        //             $pkpay->save();
+        //             if($pkpay) {
+        //                 $nhatKy = new NhatKy();
+        //                 $nhatKy->id_user = Auth::user()->id;
+        //                 $nhatKy->thoiGian = Date("H:m:s");
+        //                 $nhatKy->ghiChu = Carbon::now();
+        //                 $nhatKy->chucNang = "Kế toán - Quản lý hợp đồng";
+        //                 $nhatKy->noiDung = "Điều chỉnh nội dung khuyến mãi, quà tặng cho đề nghị ĐN/0".$request->idSaleHDFree."(không phải mã hợp đồng) <br/>Nội dung: " . $request->ndfree 
+        //                 . "Từ giá: "
+        //                 . round($temppkpay->cost,2) . " thành giá: " . round($request->giafree,2);
+        //                 $nhatKy->save();
 
-                        return response()->json([
-                            'type' => 'info',
-                            'message' => 'Đã chỉnh sửa!',
-                            'code' => 200
-                        ]);
-                    } else {
-                        return response()->json([
-                            'message' => 'Internal server fail!',
-                            'code' => 500
-                        ]);
-                    }
-                }
-            } else 
-            return response()->json([
-                'type' => 'warning',
-                'message' => 'Xe chưa được gán vào hợp đồng, không thể chỉnh sửa nội dung này!',
-                'code' => 200
-            ]);
-        }   
+        //                 return response()->json([
+        //                     'type' => 'info',
+        //                     'message' => 'Đã chỉnh sửa!',
+        //                     'code' => 200
+        //                 ]);
+        //             } else {
+        //                 return response()->json([
+        //                     'message' => 'Internal server fail!',
+        //                     'code' => 500
+        //                 ]);
+        //             }
+        //         }
+        //     } else 
+        //     return response()->json([
+        //         'type' => 'warning',
+        //         'message' => 'Xe chưa được gán vào hợp đồng, không thể chỉnh sửa nội dung này!',
+        //         'code' => 200
+        //     ]);
+        // }   
         return response()->json([
             'type' => 'warning',
             'message' => 'Bạn đã gửi đề nghị hoặc quản lý đã phê duyệt không thể chỉnh sửa nội dung!',
@@ -2833,11 +2836,14 @@ class HDController extends Controller
             if ($request->mapkmode == "GIABAN") {
                 $p = BHPK::find($request->mapkfree);
                 $pkpay->cost = $p->donGia;
+                $pkpay->giaTang = 0;
             } elseif ($request->mapkfree != null || $request->mapkfree != "undefined") {
                 $p = BHPK::find($request->mapkfree);
                 $pkpay->cost = $p->giaVon;
+                $pkpay->giaTang = $p->giaTang != 0 ? $p->giaTang : 0;
             } else {
                 $pkpay->cost = $request->giaPkFree;
+                $pkpay->giaTang = 0;
             }            
             $pkpay->type = 'free';
             $pkpay->save();
@@ -2897,12 +2903,15 @@ class HDController extends Controller
             if ($request->mapkmode == "GIABAN") {
                 $p = BHPK::find($request->mapkfree);
                 $pkpay->cost = $p->donGia;
+                $pkpay->giaTang = 0;
             } elseif ($request->mapkfree != null || $request->mapkfree != "undefined") {
                 $p = BHPK::find($request->mapkfree);
                 $pkpay->cost = $p->giaVon;
+                $pkpay->giaTang = $p->giaTang != 0 ? $p->giaTang : 0;
             } else {
                 $pkpay->cost = $request->giaPkFree;
-            }            
+                $pkpay->giaTang = 0;
+            }           
             $pkpay->type = 'free';
             $pkpay->save();
             if($pkpay) {
@@ -5456,12 +5465,22 @@ class HDController extends Controller
                        } else {
                             $p = BHPK::find($row2->mapk);
                             if ($row2->mapk && $row2->mode && $row2->mode == "TANGTHEM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             elseif ($row2->mapk && $row2->mode && $row2->mode == "CTKM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             else {
                                 $tangPK += $row2->cost;
@@ -5710,12 +5729,22 @@ class HDController extends Controller
                        } else {
                             $p = BHPK::find($row2->mapk);
                             if ($row2->mapk && $row2->mode && $row2->mode == "TANGTHEM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             elseif ($row2->mapk && $row2->mode && $row2->mode == "CTKM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             else {
                                 $tangPK += $row2->cost;
@@ -5986,11 +6015,18 @@ class HDController extends Controller
                 continue;
             $bhpk = BHPK::find($item->mapk);
             if ($bhpk) {
-                $item->giaVon = $bhpk->giaVon;
-                $item->congKTV = $bhpk->congKTV;
+                // $item->giaVon = $bhpk->giaVon;
+                // $item->cost = $bhpk->donGia;
+                // $item->giaTang = $bhpk->giaTang;
+                if ($item->giaTang == 0)
+                    $item->congKTV = $bhpk->congKTV;
+                else 
+                    $item->congKTV = 0;
             } else {
-                $item->giaVon = null;
-                $item->congKTV = null;
+                // $item->giaVon = null;
+                // $item->giaTang = null;
+                // $item->cost = null;                
+                $item->congKTV = 0;
             }            
         }
         // ----------------------
@@ -5999,11 +6035,11 @@ class HDController extends Controller
                 continue;
              // ---- Suport KT --------
             if ($row->mode == "GIABAN") {                
-                $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
+                $tongPhuKienKhuyenMai += ($row->cost);
             } elseif ($row->mode == "TANGTHEM") {
-                $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
+                $tongPhuKienKhuyenMai += $row->giaTang == 0 ? ($row->cost) : $row->giaTang;
             } elseif ($row->mode == "CTKM") {
-                 $tongPhuKienKhuyenMai += ($row->giaVon + $row->congKTV);
+                 $tongPhuKienKhuyenMai += $row->giaTang == 0 ? ($row->cost) : $row->giaTang;
             } else 
                $tongPhuKienKhuyenMai += $row->cost;
         }

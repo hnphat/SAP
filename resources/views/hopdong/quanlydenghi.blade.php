@@ -485,8 +485,8 @@
                                     <label>Nội dung</label>
                                     <input name="namePkFree" placeholder="Nhập nội dung" type="text" class="form-control" readonly="readonly">
                                 </div>                               
-                                <div class="form-group" style="<?php if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('adminsale')) echo "visibility: hidden;"; ?>">
-                                    <label>Giá</label>
+                                <div class="form-group" style="<?php if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('adminsale') && !Auth::user()->hasRole('boss')) echo "visibility: hidden;"; ?>">
+                                    <label>Giá tặng</label>
                                     <input name="giaPkFree" value="0" placeholder="Nhập giá" type="number" class="form-control" readonly="readonly">
                                 </div>
                                 <div class="form-group">
@@ -656,7 +656,7 @@
                                     <label>Loại</label>
                                     <select name="freetang" class="form-control">
                                         <option value="2">Chương trình khuyến mãi</option>
-                                        <option value="1">Kèm theo xe</option>
+                                        <!-- <option value="1">Kèm theo xe</option> -->
                                         <option value="0">Tặng thêm</option>
                                         <option value="3">Tặng trên giá bán</option>
                                     </select>
@@ -998,7 +998,7 @@
                     },
                     success: function(response){
                         $("input[name=namePkFree]").val(response.data.noiDung);
-                        $("input[name=giaPkFree]").val(response.data.giaVon);
+                        $("input[name=giaPkFree]").val(response.data.giaTang == 0 ? response.data.giaVon : response.data.giaTang);
                         $("input[name=mapkfree]").val(response.data.id);
                         let chosen = $("select[name=addfreetang]").val();
                         switch(parseInt(chosen)) {
@@ -1028,7 +1028,7 @@
                     },
                     success: function(response){
                         $("input[name=ndfree]").val(response.data.noiDung);
-                        $("input[name=giafree]").val(response.data.giaVon);
+                        $("input[name=giafree]").val(response.data.giaTang == 0 ? response.data.giaVon : response.data.giaTang);
                         $("input[name=emapkfree]").val(response.data.id);
                         let chosen = $("select[name=freetang]").val();
                         switch(parseInt(chosen)) {
@@ -1319,7 +1319,8 @@
                         sum = 0;
                         statusLanSau = "";
                         for(let i = 0; i < response.pkfree.length; i++) {
-                            let mode = "";                                   
+                            let mode = ""; 
+                            let isGiaTang = "";                                  
                             if (response.pkfree[i].isLanDau == false 
                             && response.pkfree[i].isDuyetLanSau == false) {
                                 statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
@@ -1337,14 +1338,19 @@
                                 default: mode = "";
                             }
                             mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
-                            
+                            if (response.pkfree[i].giaTang == 0) {
+                                isGiaTang = "<br/><span class='text-warning'>(Chưa cập nhật giá tặng lấy giá theo mặc định)</span>";
+                            } else {
+                                isGiaTang = "";
+                            }
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
                                 "<td>" + response.pkfree[i].name + " " + statusLanSau + " </td>" +
-                                "<td>" + mode + "</td>" +
+                                "<td>" + mode + " " + isGiaTang + "</td>" +
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
-                                "<td>" + formatNumber(parseInt(response.pkfree[i].cost)) +  "</td>"
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].giaTang == 0 ? response.pkfree[i].cost : response.pkfree[i].giaTang)) +  "</td>"
                                 @else
                                  ""
                                 @endif 
