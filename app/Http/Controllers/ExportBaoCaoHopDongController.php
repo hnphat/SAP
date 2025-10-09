@@ -361,12 +361,22 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                        } else {
                             $p = BHPK::find($row2->mapk);
                             if ($row2->mapk && $row2->mode && $row2->mode == "TANGTHEM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             elseif ($row2->mapk && $row2->mode && $row2->mode == "CTKM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             else {
                                 $tangPK += $row2->cost;
@@ -595,14 +605,24 @@ class ExportBaoCaoHopDongController extends Controller implements FromCollection
                         $tangPK += ($p->giaVon + $p->congKTV);
                         $khuyenMai += ($p->giaVon + $p->congKTV);
                        } else {
-                            $p = BHPK::find($row2->mapk);
+                             $p = BHPK::find($row2->mapk);
                             if ($row2->mapk && $row2->mode && $row2->mode == "TANGTHEM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             elseif ($row2->mapk && $row2->mode && $row2->mode == "CTKM") {
-                                $tangPK += ($p->giaVon + $p->congKTV);
-                                $khuyenMai += ($p->giaVon + $p->congKTV);
+                                if ($row2->giaTang != 0) {
+                                    $tangPK += $row2->giaTang;
+                                    $khuyenMai += $row2->giaTang;
+                                } else {
+                                    $tangPK += ($p->giaVon + $p->congKTV);
+                                    $khuyenMai += ($p->giaVon + $p->congKTV);
+                                }
                             }
                             else {
                                 $tangPK += $row2->cost;

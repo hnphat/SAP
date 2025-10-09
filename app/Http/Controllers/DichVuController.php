@@ -866,34 +866,63 @@ class DichVuController extends Controller
                 if ($p->isLanDau == false && $p->isDuyetLanSau == false) 
                     continue;
                 if ($p->type != "cost" && $p->mapk) {
-                    $ct = new ChiTietBHPK();
-                    $ct->id_baogia = $request->idbg;
-                    $ct->id_baohiem_phukien = $p->mapk;
-                    $ct->soLuong = 1;
-                    $ct->isTang = $p->type == "pay" ? 0 : 1;
-                    if ($p->giaTang != 0) {           
-                        $ct->donGia = $p->giaTang;
-                        $ct->thanhTien = $p->giaTang - ($p->giaTang*$row->giamGia/100);
-                    } else {                       
+                    if ($p->type == "free") {
+                        // Xử lý nếu là PK tặng
+                        $ct = new ChiTietBHPK();
+                        $ct->id_baogia = $request->idbg;
+                        $ct->id_baohiem_phukien = $p->mapk;
+                        $ct->soLuong = 1;
+                        $ct->isTang = 1;
+                        $pk = BHPK::find($p->mapk);
+                        $ct->donGia = $pk->donGia;
+                        $ct->thanhTien = $pk->donGia;
+                        // if ($p->giaTang != 0) {           
+                        //     $ct->donGia = $p->giaTang;
+                        //     $ct->thanhTien = $p->giaTang - ($p->giaTang*$row->giamGia/100);
+                        // } else {                       
+                        //     $ct->donGia = $p->cost;
+                        //     $ct->thanhTien = $p->cost - ($p->cost*$row->giamGia/100);
+                        // }                    
+                        $ct->chietKhau = 0;
+                        $ct->save();
+                        if ($ct) {
+                            $nhatKy = new NhatKy();
+                            $nhatKy->id_user = Auth::user()->id;
+                            $nhatKy->thoiGian = Date("H:m:s");
+                            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                            $nhatKy->noiDung = "Liên kết phụ kiện từ đề nghị hợp đồng có id là ĐN/0".$hd->id. " (không phải mã hợp đồng). Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
+                            .$pk->noiDung."; Số lượng: 1; Đơn giá: "
+                            .$p->cost." Giá tặng (nếu có): "
+                            .$p->giaTang."; Tặng (1: Có; 0: Không): "
+                            .($p->type == "pay" ? 0 : 1)."; Chiết khấu: " . $row->giamGia;
+                            $nhatKy->save();
+                            $flag = true;
+                        }
+                    } else {
+                        $ct = new ChiTietBHPK();
+                        $ct->id_baogia = $request->idbg;
+                        $ct->id_baohiem_phukien = $p->mapk;
+                        $ct->soLuong = 1;
+                        $ct->isTang = $p->type == "pay" ? 0 : 1;
                         $ct->donGia = $p->cost;
-                        $ct->thanhTien = $p->cost - ($p->cost*$row->giamGia/100);
+                        $ct->thanhTien = $p->cost - ($p->cost*$row->giamGia/100);                
+                        $ct->chietKhau = $row->giamGia;
+                        $ct->save();
+                        $pk = BHPK::find($p->mapk);
+                        if ($ct) {
+                            $nhatKy = new NhatKy();
+                            $nhatKy->id_user = Auth::user()->id;
+                            $nhatKy->thoiGian = Date("H:m:s");
+                            $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
+                            $nhatKy->noiDung = "Liên kết phụ kiện từ đề nghị hợp đồng có id là ĐN/0".$hd->id. " (không phải mã hợp đồng). Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
+                            .$pk->noiDung."; Số lượng: 1; Đơn giá: "
+                            .$p->cost." Giá tặng (nếu có): "
+                            .$p->giaTang."; Tặng (1: Có; 0: Không): "
+                            .($p->type == "pay" ? 0 : 1)."; Chiết khấu: " . $row->giamGia;
+                            $nhatKy->save();
+                            $flag = true;
+                        }
                     }                    
-                    $ct->chietKhau = $row->giamGia;
-                    $ct->save();
-                    $pk = BHPK::find($p->mapk);
-                    if ($ct) {
-                        $nhatKy = new NhatKy();
-                        $nhatKy->id_user = Auth::user()->id;
-                        $nhatKy->thoiGian = Date("H:m:s");
-                        $nhatKy->chucNang = "Dịch vụ - Quản lý bảo hiểm, phụ kiện";
-                        $nhatKy->noiDung = "Liên kết phụ kiện từ đề nghị hợp đồng có id là ĐN/0".$hd->id. " (không phải mã hợp đồng). Lưu hạng mục cho báo giá: BG0".$request->idbg.";"
-                        .$pk->noiDung."; Số lượng: 1; Đơn giá: "
-                        .$p->cost." Giá tặng (nếu có): "
-                        .$p->giaTang."; Tặng (1: Có; 0: Không): "
-                        .($p->type == "pay" ? 0 : 1)."; Chiết khấu: " . $row->giamGia;
-                        $nhatKy->save();
-                        $flag = true;
-                    }
                 } else continue;            
             } 
         }

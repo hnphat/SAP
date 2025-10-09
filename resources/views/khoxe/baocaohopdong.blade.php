@@ -67,7 +67,7 @@
                                 <br><br>
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                                     <button type="button" id="exportExcel" class="form-control btn btn-primary export">Xuất dữ liệu</button>
-                                    <button type="button" id="exportExcelCustom" class="form-control btn btn-warning export">Export Dummy</button>
+                                    <!-- <button type="button" id="exportExcelCustom" class="form-control btn btn-warning export">Export Dummy</button> -->
                                 @elseif (\Illuminate\Support\Facades\Auth::user()->hasRole('xuatbaocao'))
                                     <button type="button" id="exportExcel" class="form-control btn btn-primary export">Xuất dữ liệu</button>
                                 @elseif (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
