@@ -5434,17 +5434,31 @@ class HDController extends Controller
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
                 // $magiamgia = $row->magiamgia;
-
+                // Cập nhật dự báo
+                $phanTramDuBao = 60; // Mặc định 60%
+                $giaVonXeTax = 0;
+                $giaBanXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaXe / 1.05 : $giaXe / 1.1;
+                $congDKTax = 0;
+                $phuKienBanTax = 0;
+                $baoHiemBanTax = 0;
+                $baoHiemTangTiLe = 85; // Mặc định 80%
+                $baoHiemTangTax = 0;
+                $hoTroHTVTax = 0;
+                $dangKyDangKiemTax = 0;
+                // ---------------------
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
 
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                    $giaVonXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1;
                 } else {
                     $giaVon = $row->giaVon;
+                    $giaVonXeTax = $giaVon / 1.1;
                 }
                 $htvSupport = $row->htvSupport;
+                $hoTroHTVTax = $htvSupport / 1.1;
                 $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
                 $bhvc = 0;
@@ -5469,7 +5483,7 @@ class HDController extends Controller
                 $loinhuanbaohiem = 0;
                 $loinhuancongdk = 0;
                 $checkCoGiam = "";                
-                // $giavonpkban = 0;
+                // $giavonpkban = 0;                
                 if ($row->id_car_kho != null) {
                     $ktKho = KhoV2::find($row->id_car_kho); 
                     $giavonbh = $ktKho->giavonbh;
@@ -5536,26 +5550,31 @@ class HDController extends Controller
                     }
 
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
-                       $khuyenMai += $row2->cost;
                        // ---- Suport KT --------
                        if ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS") {
-                        $tangBH = $row2->cost;
-                       }
-                       if ($row2->name == "Phí trước bạ") {
-                        $tangTB = $row2->cost;
-                       }
-                       if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
-                        $tangCongDK = $row2->cost;
+                        $tangBH += $row2->cost;
+                        $baoHiemTangTax += ($row2->cost * ($baoHiemTangTiLe / 100));
+                        $khuyenMai += ($row2->cost * ($baoHiemTangTiLe / 100));
+                       } else if ($row2->name == "Phí trước bạ") {
+                        $tangTB += $row2->cost;
+                        $khuyenMai += $row2->cost;
+                       } else if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                        $tangCongDK += $row2->cost;
+                        $khuyenMai += $row2->cost;
+                       } else {
+                        $khuyenMai += $row2->cost;
                        }
                        // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
                         $bhvc += $row2->cost;
+                        $baoHiemBanTax += ($row2->cost*0.15/1.1);
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
                         $dangky += $row2->cost;
+                        $congDKTax += ($row2->cost * 0.6);
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Chi phí khác") {
@@ -5568,6 +5587,7 @@ class HDController extends Controller
                             ['id_bh_pk_package','=',$row2->id]
                         ])->first();
                         $pkban += $row2->cost - ($row2->cost*$saleOff->giamGia/100);
+                        $phuKienBanTax += ($row2->cost - ($row2->cost*$saleOff->giamGia/100)) * $phanTramDuBao/100; 
                         if ($saleOff->giamGia != 0) {
                             $checkCoGiam = "<span class='text-danger'>(Giảm)</span>";
                         }
@@ -5578,18 +5598,21 @@ class HDController extends Controller
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
                 $loinhuanpkban = $pkban - $_giavonpk;
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport + $dangky + $bhvc + $pkban) - ($khuyenMai + $giaVon + $phiVanChuyen);
+                $loiNhuanTamTinh = ($giaBanXeTax + $cpkhac + $hoTroHTVTax + $congDKTax + $phuKienBanTax + $baoHiemBanTax) - ($khuyenMai + $giaVonXeTax + $phiVanChuyen);;
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $tiSuatTamTinh = ($giaVonXeTax) ? ($loiNhuanTamTinh*100/$giaVonXeTax) : 0;
+                $tiSuatTamTinh = ($tiSuatTamTinh < 3) ? "<span class='text-bold text-danger'>".round($tiSuatTamTinh,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatTamTinh,2)."%</span>";
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
 
                 // ---- Suport KT --------
-                $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
-                $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
+                $laiGop = $loiNhuanTamTinh - ($phiLuuKho + $phiLaiVay + $hhSale);
+                $tiSuatLaiGop = ($giaVonXeTax) ? ($laiGop*100/$giaVonXeTax) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
                 // -----------------------
                 $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
-                $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinal = ($giaVonXeTax) ? ($loinhuanfinal*100/$giaVonXeTax) : 0;
                 $tiSuatFinal = ($tiSuatFinal < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinal,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinal,2)."%</span>";
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
@@ -5642,28 +5665,29 @@ class HDController extends Controller
                     <td>".$mau."</td>
                     <td>".$isTienMat."</td>
                     <td>".number_format($giaNiemYet)."</td>
-                    <td class='text-bold'>".number_format($giaXe)."</td>                    
-                    <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
+                    <td class='text-bold'>".number_format($giaXe)." <span class='text-success'>(".number_format($giaBanXeTax).")</span></td>                    
+                    <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")." <span class='text-success'>(".number_format($giaVonXeTax).")</span></td>
                     <td class='text-bold' style='color: brown;'>".number_format($truTienMat)."</td>
                     <td class='text-bold'>".number_format($cpkhac)."</td>
-                    <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
+                    <td class='text-bold text-warning'>".number_format($htvSupport)." <span class='text-success'>(".number_format($hoTroHTVTax).")</span></td>
                     <td>".number_format($tangTB)."</td>
-                    <td>".number_format($tangBH)."</td>
+                    <td>".number_format($tangBH)." <span class='text-success'>(".number_format($baoHiemTangTax).")</span></td>
                     <td>".number_format($tangPK)."</td>
                     <td>".number_format($tangCongDK)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($bhvc)."</td>
                     <td>".number_format($giavonbh)."</td>
-                    <td>".number_format($loinhuanbaohiem)."</td>
+                    <td>".number_format($loinhuanbaohiem)." <span class='text-success'>(".number_format($baoHiemBanTax).")</span></td>
                     <td>".number_format($pkban)." ".$checkCoGiam."</td>
                     <td>".number_format($_giavonpk)."</td>
-                    <td>".number_format($loinhuanpkban)."</td>
+                    <td>".number_format($loinhuanpkban)." <span class='text-success'>(".number_format($phuKienBanTax).")</span></td>
                     <td>".number_format($dangky)."</td>
                     <td>".number_format($dangky*$hhcongdk/100)."</td>
-                    <td>".number_format($loinhuancongdk)."</td>
+                    <td>".number_format($loinhuancongdk)." <span class='text-success'>(".number_format($congDKTax).")</span></td>
                     <td>".number_format($pvc)."</td>
-                    <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
-                    <td>".$tiSuat."</td>
+                    <td class='text-bold text-secondary'>".number_format($loiNhuan)."</td>
+                    <td class='text-bold text-success'>".number_format($loiNhuanTamTinh)."</td>
+                    <td>".$tiSuatTamTinh."</td>
                     <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
                     <td class='text-bold text-warning'>".($ngayNhanNo == 0 ? "" : $ngayNhanNo)."".$hasNhanNo."</td>
                     <td>".number_format($phiLaiVay)."</td>
@@ -5697,17 +5721,31 @@ class HDController extends Controller
                 $mau = $row->mau;
                 $giaXe = $row->giaXe;
                 $magiamgia = $row->magiamgia;
-
+                // Cập nhật dự báo
+                $phanTramDuBao = 60; // Mặc định 60%
+                $giaVonXeTax = 0;
+                $giaBanXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaXe / 1.05 : $giaXe / 1.1;
+                $congDKTax = 0;
+                $phuKienBanTax = 0;
+                $baoHiemBanTax = 0;
+                $baoHiemTangTiLe = 85; // Mặc định 80%
+                $baoHiemTangTax = 0;
+                $hoTroHTVTax = 0;
+                $dangKyDangKiemTax = 0;
+                // ---------------------
                 $giaNiemYet = $row->giaNiemYet;
                 $truTienMat = ($giaNiemYet > $giaXe) ? ($giaNiemYet - $giaXe) : 0;
 
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
+                    $giaVonXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1;
                 } else {
                     $giaVon = $row->giaVon;
+                    $giaVonXeTax = $giaVon / 1.1;
                 }
                 $htvSupport = $row->htvSupport;
+                $hoTroHTVTax = $htvSupport / 1.1;
                 $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
                 $bhvc = 0;
@@ -5798,27 +5836,33 @@ class HDController extends Controller
                        }
                        // -----------------------                    
                     }
+
                     if ($row2->type == 'cost' && $row2->cost_tang == true) {
-                       $khuyenMai += $row2->cost;
-                        // ---- Suport KT --------
-                        if ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS") {
-                            $tangBH = $row2->cost;
-                        }
-                        if ($row2->name == "Phí trước bạ") {
-                        $tangTB = $row2->cost;
-                        }
-                        if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
-                        $tangCongDK = $row2->cost;
-                        }
-                        // -----------------------
+                       // ---- Suport KT --------
+                       if ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS") {
+                        $tangBH += $row2->cost;
+                        $baoHiemTangTax += ($row2->cost * ($baoHiemTangTiLe / 100));
+                        $khuyenMai += ($row2->cost * ($baoHiemTangTiLe / 100));
+                       } else if ($row2->name == "Phí trước bạ") {
+                        $tangTB += $row2->cost;
+                        $khuyenMai += $row2->cost;
+                       } else if ($row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
+                        $tangCongDK += $row2->cost;
+                        $khuyenMai += $row2->cost;
+                       } else {
+                        $khuyenMai += $row2->cost;
+                       }
+                       // -----------------------
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && ($row2->name == "Bảo hiểm vật chất" || $row2->name == "Bảo hiểm TNDS")) {
                         $bhvc += $row2->cost;
+                        $baoHiemBanTax += ($row2->cost*0.15/1.1);
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Hỗ trợ đăng ký - đăng kiểm") {
                         $dangky += $row2->cost;
+                        $congDKTax += ($row2->cost * 0.6);
                     } elseif ($row2->type == 'cost' 
                     && $row2->cost_tang == false
                     && $row2->name == "Chi phí khác") {
@@ -5831,6 +5875,7 @@ class HDController extends Controller
                             ['id_bh_pk_package','=',$row2->id]
                         ])->first();
                         $pkban += $row2->cost - ($row2->cost*$saleOff->giamGia/100);
+                        $phuKienBanTax += ($row2->cost - ($row2->cost*$saleOff->giamGia/100)) * $phanTramDuBao/100; 
                         if ($saleOff->giamGia != 0) {
                             $checkCoGiam = "<span class='text-danger'>(Giảm)</span>";
                         }
@@ -5840,17 +5885,21 @@ class HDController extends Controller
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
                 $loinhuanpkban = $pkban - $_giavonpk;
 
-                $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
+                $loiNhuan = ($giaXe + $cpkhac + $htvSupport + $dangky + $bhvc + $pkban) - ($khuyenMai + $giaVon + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $loiNhuanTamTinh = ($giaBanXeTax + $cpkhac + $hoTroHTVTax + $congDKTax + $phuKienBanTax + $baoHiemBanTax) - ($khuyenMai + $giaVonXeTax + $phiVanChuyen);
+                // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
+                $tiSuatTamTinh = ($giaVonXeTax) ? ($loiNhuanTamTinh*100/$giaVonXeTax) : 0;
+                $tiSuatTamTinh = ($tiSuatTamTinh < 3) ? "<span class='text-bold text-danger'>".round($tiSuatTamTinh,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatTamTinh,2)."%</span>";
                 $tiSuat = ($giaVon) ? ($loiNhuan*100/$giaVon) : 0;
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
                 // ---- Suport KT --------
-                $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
-                $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
+                $laiGop = $loiNhuanTamTinh - ($phiLuuKho + $phiLaiVay + $hhSale);
+                $tiSuatLaiGop = ($giaVonXeTax) ? ($laiGop*100/$giaVonXeTax) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
                 // -----------------------
                 $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
-                $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinal = ($giaVonXeTax) ? ($loinhuanfinal*100/$giaVonXeTax) : 0;
                 $tiSuatFinal = ($tiSuatFinal < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinal,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinal,2)."%</span>";
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
@@ -5902,29 +5951,30 @@ class HDController extends Controller
                     <td>".$dongxe."</td>
                     <td>".$mau."</td>
                     <td>".$isTienMat."</td>
-                    <td>".number_format($giaNiemYet)."</td> 
-                    <td class='text-bold'>".number_format($giaXe)."</td>                    
-                    <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")."</td>
+                    <td>".number_format($giaNiemYet)."</td>
+                    <td class='text-bold'>".number_format($giaXe)." <span class='text-success'>(".number_format($giaBanXeTax).")</span></td>                    
+                    <td class='text-bold text-secondary'>".number_format($giaVon)."".($row->isGiaVon ? "" : "<span style='font-size: 90%;'>(+)</span>")." <span class='text-success'>(".number_format($giaVonXeTax).")</span></td>
                     <td class='text-bold' style='color: brown;'>".number_format($truTienMat)."</td>
                     <td class='text-bold'>".number_format($cpkhac)."</td>
-                    <td class='text-bold text-warning'>".number_format($htvSupport)."</td>
+                    <td class='text-bold text-warning'>".number_format($htvSupport)." <span class='text-success'>(".number_format($hoTroHTVTax).")</span></td>
                     <td>".number_format($tangTB)."</td>
-                    <td>".number_format($tangBH)."</td>
+                    <td>".number_format($tangBH)." <span class='text-success'>(".number_format($baoHiemTangTax).")</span></td>
                     <td>".number_format($tangPK)."</td>
                     <td>".number_format($tangCongDK)."</td>
                     <td>".number_format($khuyenMai)."</td>
                     <td>".number_format($bhvc)."</td>
                     <td>".number_format($giavonbh)."</td>
-                    <td>".number_format($loinhuanbaohiem)."</td>
+                    <td>".number_format($loinhuanbaohiem)." <span class='text-success'>(".number_format($baoHiemBanTax).")</span></td>
                     <td>".number_format($pkban)." ".$checkCoGiam."</td>
                     <td>".number_format($_giavonpk)."</td>
-                    <td>".number_format($loinhuanpkban)."</td>
+                    <td>".number_format($loinhuanpkban)." <span class='text-success'>(".number_format($phuKienBanTax).")</span></td>
                     <td>".number_format($dangky)."</td>
                     <td>".number_format($dangky*$hhcongdk/100)."</td>
-                    <td>".number_format($loinhuancongdk)."</td>
+                    <td>".number_format($loinhuancongdk)." <span class='text-success'>(".number_format($congDKTax).")</span></td>
                     <td>".number_format($pvc)."</td>
-                    <td class='text-bold text-success'>".number_format($loiNhuan)."</td>
-                    <td>".$tiSuat."</td>
+                    <td class='text-bold text-secondary'>".number_format($loiNhuan)."</td>
+                    <td class='text-bold text-success'>".number_format($loiNhuanTamTinh)."</td>
+                    <td>".$tiSuatTamTinh."</td>
                     <td>".(($ngayXuatXe) ? "<span class='text-bold text-primary'>".\HelpFunction::revertDate($ngayXuatXe)."</span>" : "")."</td>
                     <td class='text-bold text-warning'>".($ngayNhanNo == 0 ? "" : $ngayNhanNo)."".$hasNhanNo."</td>
                     <td>".number_format($phiLaiVay)."</td>
