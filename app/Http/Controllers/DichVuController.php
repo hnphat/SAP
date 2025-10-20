@@ -5240,4 +5240,53 @@ class DichVuController extends Controller
             ]);
         }
     }
+
+    public function getHangMucWithDate(Request $request) {
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $result = null;        
+            $arr = [];
+            if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien') || Auth::user()->hasRole('ketoan')){
+                $result = BHPK::select("*")->where([
+                    ['loaiXe','!=',null]
+                ])->orderBy('id','desc')->get();
+                foreach($result as $row) {
+                    $typecar = TypeCar::find($row->loaiXe);
+                    $row->idcar = $typecar ? $typecar->id : null;
+                    $row->namecar = $typecar ? $typecar->name : null;
+                    if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                    &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                        array_push($arr, $row);
+                    }
+                }
+                if($result) {
+                    return response()->json([
+                        'message' => 'Get list successfully!',
+                        'code' => 200,
+                        'data' => $arr
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Internal server fail!',
+                        'code' => 500,
+                        'data' => null
+                    ]);
+                }
+            }            
+            else 
+                return response()->json([
+                    'message' => 'Error get Database from server!',
+                    'code' => 500,
+                    'data' => null
+                ]);          
+        } else {
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500,
+                'data' => null
+            ]);
+        }        
+    }
+
 }

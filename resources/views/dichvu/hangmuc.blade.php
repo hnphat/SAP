@@ -53,13 +53,33 @@
                             <div class="card-body">
                                 <div class="tab-content" id="custom-tabs-one-tabContent">
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+                                        <div class="row">
+                                             <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Từ</label>
+                                                    <input type="date" name="chonNgayOne" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Đến</label>
+                                                    <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label><br/>
+                                                    <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button> 
                                         <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>&nbsp;
                                         <button id="hiddenAll" class="btn btn-warning" data-toggle="modal" data-target="#hiddenModal">Ẩn/Hiện Danh Mục</button>
                                         &nbsp;
                                         <button id="raSoat" class="btn btn-secondary">Rà soát chênh lệch giá, công KTV</button>
-                                        &nbsp;
-                                        <button id="danhMucMoRong" class="btn btn-info">Danh mục phụ kiện (mở rộng)</button>
+                                        <!-- &nbsp;
+                                        <button id="danhMucMoRong" class="btn btn-info">Danh mục phụ kiện (mở rộng)</button> -->
                                         <br/><br/>
                                         <p><strong id="loiImport" class="text-danger"></strong></p>
                                         <!-- Medal Add -->
@@ -276,6 +296,7 @@
                                             <thead>
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
+                                                <th>Trạng thái</th>
                                                 <th>Dòng xe</th>    
                                                 <th>Loại</th>                                                
                                                 <th>Mã</th>
@@ -504,7 +525,8 @@
 
         // show data
         $(document).ready(function() {
-
+            let from = $("input[name=chonNgayOne]").val();
+            let to = $("input[name=chonNgayTwo]").val(); 
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,
@@ -512,7 +534,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/dichvu/hangmuc/get/list') }}",
+                ajax: "{{ url('management/dichvu/hangmucwithdate') }}" + '?from=' + from + "&to=" + to,
                 // "columnDefs": [ {
                 //     "searchable": false,
                 //     "orderable": false,
@@ -524,6 +546,16 @@
                 lengthMenu:  [5, 10, 25, 50, 75, 100 ],
                 columns: [
                     { "data": null },
+                    { 
+                        "data": null,
+                        render: function(data, type, row) {
+                          if (row.isShow == true) {
+                            return "<span class='text-success' id='hoatdong' data-id='"+row.id+"'>Đang hoạt động</span>";
+                          } else {
+                            return "<span class='text-danger' id='hoatdong' data-id='"+row.id+"'>Ngừng hoạt động</span>";
+                          }
+                        } 
+                    },
                     { "data": "namecar" },
                     { "data": "loai" },
                     { "data": "ma" },
@@ -701,10 +733,14 @@
                                 if (response.isShow == true) {
                                     $("#khoa[data-id='"+idKhoa+"']").text("off");
                                     $("#khoa[data-id='"+idKhoa+"']").removeClass("btn btn-success btn-sm").addClass("btn btn-warning btn-sm");
+                                    $("#hoatdong[data-id='"+idKhoa+"']").text("Đang hoạt động");
+                                    $("#hoatdong[data-id='"+idKhoa+"']").removeClass("text-danger").addClass("text-success");
 
                                 } else {
                                     $("#khoa[data-id='"+idKhoa+"']").text("on");
                                     $("#khoa[data-id='"+idKhoa+"']").removeClass("btn btn-warning btn-sm").addClass("btn btn-success btn-sm");
+                                    $("#hoatdong[data-id='"+idKhoa+"']").text("Ngừng hoạt động");
+                                    $("#hoatdong[data-id='"+idKhoa+"']").removeClass("text-success").addClass("text-danger");
                                 }
                             } 
                             // table.ajax.reload();
@@ -860,6 +896,13 @@
                         })
                     }
                 });
+            });
+
+            $("#xemReport").click(function(){
+                let from = $("input[name=chonNgayOne]").val();
+                let to = $("input[name=chonNgayTwo]").val();               
+                let urlpathcurrent = "{{ url('management/dichvu/hangmucwithdate') }}";
+                table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to).load();
             });
         });
 
@@ -1031,5 +1074,6 @@
                 });
             }
         });
+        
     </script>
 @endsection
