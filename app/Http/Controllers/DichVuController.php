@@ -1336,7 +1336,7 @@ class DichVuController extends Controller
         $_to = $request->den;
         switch($request->baoCao) {
             case 1: {
-                if (Auth::user()->hasRole('system'))
+                if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien'))
                     $bg = BaoGiaBHPK::select("*")
                     ->where('isBaoHiem',false)
                     ->orderBy('id','desc')
