@@ -214,7 +214,7 @@ class DichVuController extends Controller
 
     public function hangMucPanel(){
         // $typecar = TypeCar::select("*")->where("isShow",true)->get();
-        $typecar = TypeCar::all();
+        $typecar = TypeCar::select("*")->orderBy("isShow","desc")->get();
         return view('dichvu.hangmuc', ['typecar' => $typecar]);
     }
 
@@ -575,19 +575,50 @@ class DichVuController extends Controller
             $kh = BHPK::find($request->id);
             $typeCarArr = $request->typeCar; // Mảng id dòng xe từ checkbox
             $flag = false;
+            $errors = [];
+            $maTachSo = "";
+            // Hàm nhỏ loại bỏ các token chỉ gồm số ở đầu hoặc cuối sau khi explode bởi dấu '_'
+            $trimNumericEnds = function(string $code) : string {
+                $parts = explode('_', $code);
+                // loại bỏ token số ở đầu
+                while (count($parts) && is_numeric($parts[0])) {
+                    array_shift($parts);
+                }
+                // loại bỏ token số ở cuối (có thể nhiều mức: _18_1 ...)
+                while (count($parts) && is_numeric($parts[count($parts) - 1])) {
+                    array_pop($parts);
+                }
+                return implode('_', $parts);
+            };
+
+            // ví dụ lấy từ mã gốc $kh->ma
+            $maTachSo = $kh ? $trimNumericEnds($kh->ma) : "";
+            // ví dụ minh họa:
+            // $trimNumericEnds("COS_GRAND_I_18_1") => "COS_GRAND_I"
+            // $trimNumericEnds("COS_GRAND_I_18")   => "COS_GRAND_I"
             foreach($typeCarArr as $idTypeCar) {
-                if ($idTypeCar == $kh->loaiXe) continue;
+                if ($idTypeCar == $kh->loaiXe) {
+                    array_push($errors,"Lỗi: Map trùng mã gốc");
+                    continue;
+                }
                 $check = BHPK::where([
                     ['noiDung', '=', $kh->noiDung],
-                    ['loaiXe', '=', $idTypeCar]
+                    ['loaiXe', '=', $idTypeCar],
+                    ['ma','like','%' . $maTachSo . '%']
                 ])->exists();
-                if ($check) {
+                if ($check) {  
+                    $getDate = BHPK::where([
+                        ['noiDung', '=', $kh->noiDung],
+                        ['loaiXe', '=', $idTypeCar],
+                        ['ma','like','%' . $maTachSo . '%']
+                    ])->first(); 
+                    array_push($errors,"Mã cùng loại: ". $getDate->ma . "; Ngày tạo: ".\HelpFunction::getOnlyDateFromCreatedAt($getDate->created_at));
                     continue;
                 } else {
                     $newkh = new BHPK();
                     $newkh->id_user_create = Auth::user()->id;
                     $newkh->isPK = $kh->isPK;
-                    $newkh->ma = $kh->ma . "_" . $idTypeCar;
+                    $newkh->ma = $maTachSo . "_" . $idTypeCar;
                     $newkh->noiDung = $kh->noiDung;
                     $newkh->dvt = $kh->dvt;
                     $newkh->donGia = $kh->donGia ? $kh->donGia : 0;
@@ -626,14 +657,16 @@ class DichVuController extends Controller
                 return response()->json([
                     'type' => 'info',
                     'code' => 200,
-                    'message' => 'Đã Map danh mục cho các dòng xe đã chọn'
+                    'loi' => $errors,
+                    'message' => 'Đã Map thành công! Lỗi (nếu có):'
                 ]);
             }
             else
                 return response()->json([
                     'type' => 'error',
                     'code' => 500,
-                    'message' => 'Lỗi: Danh mục đã được Map trước đó!'
+                    'loi' => $errors,
+                    'message' => 'Lỗi: Danh mục đã được Map trước đó'
                 ]);
         } else {
             return response()->json([

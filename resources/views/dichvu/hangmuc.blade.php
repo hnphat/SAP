@@ -113,7 +113,7 @@
                                                                         <label>Dòng xe</label>
                                                                         <select name="typeCar" class="form-control">
                                                                             @foreach($typecar as $row)
-                                                                                <option value="{{$row->id}}">[CODE: {{$row->id}}] {{$row->name}}</option>
+                                                                                <option value="{{$row->id}}">[CODE: {{$row->id}}] {{$row->name}} {{($row->isShow ? "" : "[Dừng kinh doanh]")}}</option>
                                                                             @endforeach
                                                                         </select>
                                                                     </div>
@@ -469,7 +469,7 @@
                                                 <input type="checkbox" name="typeCar[]" value="{{$row->id}}">    
                                             </td>
                                             <td>
-                                                {{$row->name}}
+                                                {{$row->name}} {!!$row->isShow ? "" : "<span class='text-danger'>[Dừng kinh doanh]</span>"!!}
                                             </td>
                                         </tr>
                                         @endforeach
@@ -514,7 +514,8 @@
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 3000
+            timer: 2000,           // tăng lên 5000 ms = 5s
+            timerProgressBar: true // (tùy chọn) hiển thị thanh tiến trình
         });
 
         function formatNumber(num) {
@@ -781,18 +782,31 @@
                         },
                         success: function(response) {
                             if (response.code == 200) {
+                                $('input[name="typeCar[]"]').prop('checked', false);
+                                let loiHtml = "";
+                                response.loi.forEach(function(item, idx) {
+                                    loiHtml += "Lỗi thứ " + (idx+1) + ": " + item + "<br>";
+                                });
                                 Toast.fire({
                                     icon: response.type,
-                                    title:  response.message,
+                                    timer: 5000,
+                                    title:  " " + response.message + "<br/>" + loiHtml,
                                 });
                                 $('input[name="typeCar[]"]').prop('checked', false);
+                                $('input[name="checkAll"]').prop('checked', false);                                
                                 $("#dupMoreModal").modal('hide');
                                 table.ajax.reload();
                             } else {
                                 $('input[name="typeCar[]"]').prop('checked', false);
+                                $('input[name="checkAll"]').prop('checked', false);   
+                                let loiHtml = "";
+                                response.loi.forEach(function(item, idx) {
+                                    loiHtml += "Lỗi " + (idx+1) + ": " + item + "<br>";
+                                });
                                 Toast.fire({
                                     icon: 'warning',
-                                    title: response.message
+                                    timer: 5000,
+                                    title: " "+response.message + "<br/>Kiểm tra thông tin sau: <br/>" + loiHtml
                                 });
                             }
                         },
