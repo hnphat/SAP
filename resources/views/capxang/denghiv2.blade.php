@@ -72,7 +72,7 @@
                                                 </div>
                                                 <!-- /.card-header -->
                                                 <!-- form start -->
-                                                <form id="addForm" method="post" enctype="multipart/form-data" autocomplete="off">
+                                                <form id="addForm" method="post" autocomplete="off">
                                                     <!-- {{csrf_field()}} -->
                                                     <div class="card-body">
                                                         <div class="row">
@@ -80,10 +80,14 @@
                                                                 <label>Cấp cho xe:</label>                                                        
                                                                 <select name="capChoXe" id="capChoXe" class="form-control">
                                                                     <option value="0" disabled selected>Chọn</option>
-                                                                    <option value="1">Xe theo hợp đồng</option>
-                                                                    <option value="2">Xe lưu kho</option>
-                                                                    <option value="3">Xe lái thử/cứu hộ</option>
-                                                                    <option value="4">Xe khác</option>
+                                                                    <option value="1">Xe mới (lưu kho/showroom)</option>
+                                                                    <option value="2">Xe lái thử</option>
+                                                                    <option value="3">Xe cứu hộ</option>
+                                                                    <option value="4">Xe dịch vụ (dùng sửa chữa)</option>
+                                                                    <option value="5">Xe bảo dưỡng lưu động</option>
+                                                                    <option value="6">Xe công tác (mua hàng, ngân hàng, vận chuyển, khảo sát)</option>
+                                                                    <option value="7">Xe đi thị trường</option>   
+                                                                    <option value="8">Xe sự kiện</option>   
                                                                 </select>                                                            
                                                             </div>                                                            
                                                         </div>
@@ -98,25 +102,25 @@
                                                         <div class="row">
                                                             <div class="form-group col-sm-6">
                                                                 <label>Thông tin xe:</label>                                                        
-                                                                <input readonly type="text" name="loaiXe" class="form-control" required="required"/>
+                                                                <input type="text" name="loaiXe" class="form-control" required="required"/>
                                                             </div>
                                                             <div class="form-group col-sm-6">
                                                                 <label>Biển số/số khung: </label>                                                        
-                                                                <input readonly type="text" name="bienSo" class="form-control" required="required"/>
+                                                                <input type="text" name="bienSo" class="form-control" required="required"/>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-sm-12">
                                                                 <label>Thông tin khách hàng (nếu có): </label>                                                        
-                                                                <input readonly type="text" name="khachHang" class="form-control"/>
+                                                                <input type="text" name="khachHang" class="form-control"/>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <!-- <div class="row">
                                                             <div class="form-group col-sm-12">
                                                                 <label>Hình ảnh taplo xe (taplo phải hiển thị số km hiện tại, số km xăng hiện tại (kim chỉ xăng)):</label>                                                        
                                                                 <input type="file" name="taplo" class="form-control">                                                        
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                         <div class="row">
                                                             <div class="form-group col-sm-6">
                                                                 <label>Loại nhiên liệu:</label>                                                        
@@ -126,13 +130,13 @@
                                                                 </select>
                                                             </div>
                                                             <div class="form-group col-sm-6">
-                                                                <label>Số lít đề nghị (lưu ý theo quy định công ty):</label>                                                        
+                                                                <label>Số lít đề nghị <strong class="text-danger">(*)</strong>:</label>                                                        
                                                                 <input placeholder="Số lít" type="number" min="0" name="soLit" required="required" class="form-control"/>
                                                             </div>                                                          
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-sm-12">
-                                                                <label>Lý do cấp:</label>                                                        
+                                                                <label>Lý do cấp <strong class="text-danger">(*)</strong>:</label>                                                        
                                                                 <input placeholder="Phải ghi chi tiết lý do cần cấp nhiên liệu" type="text" name="ghiChu" class="form-control">
                                                             </div>
                                                             <div class="form-group col-sm-12">
@@ -149,7 +153,7 @@
                                                     </div>
                                                     <!-- /.card-body -->
                                                     <div class="card-footer">
-                                                        <button id="btnAdd" type="button" class="btn btn-primary">GỬI</button>
+                                                        <input id="btnAdd" type="submit" value="GỬI" class="btn btn-primary">
                                                     </div>
                                                 </form>
                                             </div>
@@ -167,7 +171,8 @@
                                     <th>TT</th>
                                     <th>Ngày</th>
                                     <th>Đề nghị</th>
-                                    <th>Xe - Biển số</th>
+                                    <th>Xe</th>
+                                    <th>Biển số/Số khung</th>
                                     <th>Nhiên liệu</th>
                                     <th>Số lít</th>
                                     <th>Khách hàng</th>
@@ -214,6 +219,21 @@
             timer: 3000
         });
         $(document).ready(function() {
+            function setHidden() {
+                $("input[name=loaiXe]").prop('readonly', true);
+                $("input[name=bienSo]").prop('readonly', true);
+                // $("input[name=khachHang]").prop('readonly', true);
+            }
+
+            function unSetHidden(){
+                $("input[name=loaiXe]").prop('readonly', false);
+                $("input[name=bienSo]").prop('readonly', false);
+                // $("input[name=khachHang]").prop('readonly', false);
+            }
+
+            setHidden();
+
+
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,
@@ -235,7 +255,8 @@
                     { "data": null },
                     { "data": "ngay" },
                     { "data": "username"},
-                    { "data": "xe_bienso"},
+                    { "data": "xe"},
+                    { "data": "bienso"},
                     { "data": "nhienlieu"},
                     { "data": "solit" },
                     { "data": "khachhang"},
@@ -243,7 +264,7 @@
                     { "data": "ghichu" },
                     { "data": "nguoiduyet"},
                     { "data": "hanhchinh"},
-                    { "data": "action"}      
+                    { "data": "action"}
                 ]
             });
             table.on( 'order.dt search.dt', function () {
@@ -253,163 +274,400 @@
                 } );
             } ).draw();
 
-            $("#btnAdd").click(function(){   
+            $('#btnAdd').off('click').on('click', function(e){
+                e.preventDefault();                
+                if (!$("input[name=loaiXe]").val() || !$("input[name=bienSo]").val()) {
+                    Toast.fire({ 
+                        icon: 'error', 
+                        title: 'Vui lòng nhập tên xe, số khung/biển số đầy đủ!' 
+                    });
+                    return;
+                }
+
+                let giaTri = parseInt($("#capChoXe").val());
+                if (giaTri == 4 && !$("input[name=khachHang]").val()) {
+                    Toast.fire({ 
+                        icon: 'error', 
+                        title: 'Vui lòng nhập thông tin khách hàng cho xe dịch vụ!' 
+                    });
+                    return;
+                }
+
+                if ($("input[name=soLit]").val() <= 0 || !$("input[name=ghiChu]").val()) {
+                    Toast.fire({ 
+                        icon: 'error', 
+                        title: 'Vui lòng nhập số lít hoặc lý do cấp đầy đủ!' 
+                    });
+                    return;
+                }
+
+                $('#addForm').trigger('submit');
+            });
+
+           $('#addForm').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                var form = this;
+                var formData = new FormData(form);
+
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-                $('#addForm').submit(function(e) {
-                    e.preventDefault();   
-                    var formData = new FormData(this);
-                    $.ajax({
-                        type:'POST',
-                        url: "{{route('capxang.post')}}",
-                        data: formData,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        beforeSend: function () {
-                            $("#btnAdd").attr('disabled', true).html("Đang xử lý....");
-                        },
-                        success: (response) => {
-                            this.reset();
-                            Toast.fire({
-                                icon: 'info',
-                                title: response.message
-                            })
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{route('capxang.post')}}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $("#btnAdd").prop('disabled', true).text("Đang xử lý....");
+                    },
+                    success: function(response) {
+                        if (response.code == 200) {
+                            form.reset();
+                            Toast.fire({ icon: 'info', title: response.message });
                             table.ajax.reload();
                             $("#addModal").modal('hide');
-                            $("#btnAdd").attr('disabled', false).html("LƯU");
-                            console.log(response);
-                        },
-                            error: function(response){
-                            Toast.fire({
-                                icon: 'info',
-                                title: ' Thao tác client có vấn đề'
-                            })
-                            $("#addModal").modal('hide');
-                            $("#btnAdd").attr('disabled', false).html("LƯU");
-                            console.log(response);
+                        } else {
+                            Toast.fire({ icon: 'warning', title: response.message || 'Lỗi' });
                         }
-                    });
+                        $("#btnAdd").prop('disabled', false).text("GỬI");
+                    },
+                    error: function(response){
+                        Toast.fire({ icon: 'info', title: 'Vui lòng nhập đầy đủ thông tin như yêu cầu' });
+                        // $("#addModal").modal('hide');
+                        $("#btnAdd").prop('disabled', false).text("GỬI");
+                        console.log(response);
+                    }
                 });
             });
-        });
-
-        // -- event realtime
-        let es = new EventSource("{{route('action.reg')}}");
-        es.onmessage = function(e) {
-            console.log(e.data);
-            let fullData = JSON.parse(e.data);
-            if (fullData.flag == true) {
-               open('{{route('capxang.denghi')}}','_self');
-            }
-        }
-        // -- event realtime
-
-        //Delete data
-        $(document).on('click','#del', function() {
-                if(confirm('Bạn có chắc muốn xóa?')) {
-                    $.ajax({
-                        url: "{{url('management/capxang/del/')}}",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "_token": "{{csrf_token()}}",
-                            "id": $(this).data('id')
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: 'info',
-                                title: response.message
-                            })
-                            setTimeout(function(){
-                                open('{{route('capxang.denghi')}}','_self');
-                            }, 1000);
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không thể xóa lúc này!"
-                            })
-                        }
-                    });
-                }          
-        });       
-        $(document).on('change','#capChoXe', function() {
-            let giaTri = parseInt($("#capChoXe").val());          
-            switch (giaTri) {
-                case 1: {
-                    $("#tieuDeChonCapChoXe").text("Chọn hợp đồng:");
-                    $.ajax({
-                        url: "{{route('capxang.getxehopdong')}}",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "_token": "{{csrf_token()}}"
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            $("#chonCapChoXe").empty();
-                            let data = response.data;
-                            let txt = `<option value="0" disabled selected>Chọn</option>`;
-                            for (let i = 0; i < data.length; i++) {
-                                const ele = data[i];
-                                txt += `<option value="${ele.id}">${ele.thongTinKhachHang}</option>`;
-                            }
-                            $("#chonCapChoXe").html(txt);
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Lỗi!"
-                            })
-                        }
-                    });
-                } break;
-                case 2: {
-
-                } break;
-                case 3: {
-
-                } break;
-                case 4: {
-
-                } break;
-                default: break;
-            }            
-        });
-
-        $(document).on('change','#chonCapChoXe', function() {
-            let giaTri = $("#chonCapChoXe").val();
-            $.ajax({
-                url: "{{route('capxang.getxehopdongchitiet')}}",
-                type: "post",
-                dataType: "json",
-                data: {
-                    "_token": "{{csrf_token()}}",
-                    "id": giaTri
-                },
-                success: function(response) {
-                    Toast.fire({
-                        icon: response.type,
-                        title: response.message
-                    })
-                    $("input[name=loaiXe]").val(response.thongtinxe);
-                    $("input[name=bienSo]").val(response.sokhung);
-                    $("input[name=khachHang]").val(response.thongtinkhachhang);
-                },
-                error: function() {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: "Lỗi!"
-                    })
-                }
+                
+            $(document).on('change','#chonCapChoXe', function() {
+                var giaTriRaw = $("#chonCapChoXe").val() || "";
+                var giaTri = giaTriRaw.split(';').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+                var loaiXe = giaTri.length > 0 ? giaTri[0] : "";
+                var bienSo = giaTri.length > 1 ? giaTri[1] : "";
+                $("input[name=loaiXe]").val(loaiXe);
+                $("input[name=bienSo]").val(bienSo);
             });
-        });
+
+            $(document).on('change','#capChoXe', function() {
+                let giaTri = parseInt($("#capChoXe").val());          
+                switch (giaTri) {
+                    case 1: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxeluukho')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    if (ele.soKhung.length >= 12)
+                                        txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    case 2: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxelaithu')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    case 3: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxelaithu')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    case 4: {
+                        unSetHidden();
+                        $("input[name=loaiXe]").val("");
+                        $("input[name=bienSo]").val("");
+                        $("input[name=khachHang]").val("");
+                        $("#chonCapChoXe").empty();                        
+                    } break;
+                    case 5: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxelaithu')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    case 6: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxelaithumore')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    case 7: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxelaithu')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    case 8: {
+                        setHidden();
+                        $("#tieuDeChonCapChoXe").text("Chọn xe:");
+                        $.ajax({
+                            url: "{{route('capxang.getxelaithu')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}"
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#chonCapChoXe").empty();
+                                let data = response.data || [];
+                                // Sắp xếp theo tenXe tăng dần (hỗ trợ tiếng Việt)
+                                data.sort(function(a, b){
+                                    return ( (a.tenXe||'').toString().localeCompare((b.tenXe||'').toString(), 'vi', { sensitivity: 'base' }) );
+                                });
+                                let txt = `<option value="0" disabled selected>Chọn</option>`;
+                                for (let i = 0; i < data.length; i++) {
+                                    const ele = data[i];
+                                    txt += `<option value="${ele.tenXe}; ${ele.soKhung}">${ele.tenXe}; ${ele.soKhung}</option>`;
+                                }
+                                $("#chonCapChoXe").html(txt);
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Lỗi!"
+                                })
+                            }
+                        });
+                    } break;
+                    default: break;
+                }            
+            });
+
+            //Delete data
+            $(document).on('click','#del', function(e) {
+                    e.preventDefault();
+                    if(confirm('Bạn có chắc muốn xóa?')) {
+                        $.ajax({
+                            url: "{{url('management/capxang/del/')}}",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "id": $(this).data('id')
+                            },
+                            success: function(response) {
+                                if (response.code == 200) {
+                                    Toast.fire({
+                                        icon: 'info',
+                                        title: response.message
+                                    })
+                                    table.ajax.reload();
+                                } else {
+                                    Toast.fire({
+                                        icon: 'error',
+                                        title: response.message
+                                    })
+                                }
+                            },
+                            error: function() {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: "Không thể xóa lúc này!"
+                                })
+                            }
+                        });
+                    }          
+            });
+            
+            // -- event realtime
+            let es = new EventSource("{{route('action.reg')}}");
+            es.onmessage = function(e) {
+                console.log(e.data);
+                let fullData = JSON.parse(e.data);
+                if (fullData.flag == true) {
+                open('{{route('capxang.denghi')}}','_self');
+                }
+            }
+        });           
     </script>
 @endsection

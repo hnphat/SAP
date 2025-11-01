@@ -178,7 +178,10 @@ class LaiThuController extends Controller
     }
 
     public function showReg() {
-        $car = XeLaiThu::select("*")->where('active',true)->get();
+        $car = XeLaiThu::select("*")->where([
+            ['active',"=",true],
+            ['status',"!=","S"]
+        ])->get();
         $lead = User::all();
         if (Auth::user()->hasRole('system')) {
             $reg = DangKySuDung::select('*')->orderBy('id', 'DESC')->get();
@@ -699,7 +702,8 @@ class LaiThuController extends Controller
     }
 
     public function getStatus() {
-        $car = XeLaiThu::all();
+        // $car = XeLaiThu::all();
+        $car = XeLaiThu::select("*")->where("active",true)->get();
         return view('laithu.status',['car' => $car]);
     }
 

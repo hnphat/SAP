@@ -9,6 +9,7 @@ use App\DeNghiCapXang;
 use App\EventReal;
 use App\HopDong;
 use App\KhoV2;
+use App\XeLaiThu;
 use Carbon\Carbon;
 use App\Mail\DuyetCapXangTBP;
 use Illuminate\Support\Facades\Mail;
@@ -33,7 +34,35 @@ class DeNghiCapXangController extends Controller
         $nguoiDuyet = ($userDuyetEmail) ? $userDuyetEmail->userDetail->surname : "";
         $nguoiYeuCau = User::find(Auth::user()->id)->userDetail->surname;
         $xeDangKy = $request->loaiXe . " " . $request->bienSo;
-        $lyDo = $request->lyDoCap;
+        switch ($request->capChoXe) {
+            case 1:
+                $lyDo = "Xe mới (lưu kho/showroom)";
+                break;   
+            case 2:
+                $lyDo = "Xe lái thử";
+                break;   
+            case 3:
+                $lyDo = "Xe cứu hộ";
+                break;
+            case 4:
+                $lyDo = "Xe dịch vụ";
+                break;
+            case 5:
+                $lyDo = "Xe bảo dưỡng lưu động";
+                break;
+            case 6:
+                $lyDo = "Xe công tác";
+                break;
+            case 7:
+                $lyDo = "Xe đi thị trường";
+                break;
+            case 8:
+                $lyDo = "Xe sự kiện";
+                break;          
+            default:
+                $lyDo = "";
+                break;
+        }
         $nhienLieu = $request->loaiNhienLieu;
         $soLit = $request->soLit;
         $khach = $request->khachHang;
@@ -47,7 +76,7 @@ class DeNghiCapXangController extends Controller
         $deNghi->fuel_car = $request->loaiXe;
         $deNghi->fuel_guest = $request->khachHang;
         $deNghi->fuel_frame = $request->bienSo;
-        $deNghi->fuel_lyDo = $request->lyDoCap;
+        $deNghi->fuel_lyDo = $lyDo;
         $deNghi->fuel_ghiChu = $request->ghiChu;
         $deNghi->fuel_km = $request->km;
         $deNghi->lead_id = $request->leadCheck;
@@ -74,13 +103,15 @@ class DeNghiCapXangController extends Controller
                 // Mail::to($data['emailNhienLieu'])->send(new DuyetCapXangTBP(['Phòng hành chính',$nguoiYeuCau,$code,$ngayDangKy,$xeDangKy,$lyDo,$nhienLieu,$soLit,$khach,$ghiChu]));
             //-----
 
-            return redirect()
-            ->route('capxang.denghi')
-            ->with('succ','Đã gửi đề nghị cấp nhiên liệu!');
+             return response()->json([
+                'message' => ' Đã gửi thông tin đề nghị!',
+                'code' => 200
+             ]);
         } else {
-            return redirect()
-            ->route('capxang.denghi')
-            ->with('err','Không thể gửi đề nghị cấp nhiên liệu!');
+            return response()->json([
+                'message' => 'Error!',
+                'code' => 500
+            ]);
         }
     }
 
@@ -151,6 +182,28 @@ class DeNghiCapXangController extends Controller
         }
     }
 
+    public function kiemTraCapXang(Request $request) {
+        $car = DeNghiCapXang::find($request->id);
+        $bienSo = $car->fuel_frame;
+        $check = DeNghiCapXang::select("*")->where([
+            ["fuel_frame", "like", "%". $bienSo . "%"],
+            ["id", "!=", $request->id]
+        ])->orderBy("id", "desc")->first();
+        if($check) {           
+            return response()->json([
+                'message' => 'Đã kiểm tra đề nghị cấp xăng',
+                'code' => 200,
+                'data' => $check
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500,
+                'data' => $check
+            ]);
+        }
+    }
+
     public function cancelCapXang(Request $request) {
         $car = DeNghiCapXang::where('id', $request->id)->delete();
         $eventReal = new EventReal;
@@ -205,6 +258,99 @@ class DeNghiCapXangController extends Controller
             return response()->json([
                 'message' => 'Đã duyệt đề nghị cấp xăng',
                 'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getXeLuuKho(Request $request) {
+        $arr = [];
+
+        $result = KhoV2::select("*")->where([
+            ["xuatXe","=",false],
+            ["type","=","HD"]
+        ])->orWhere([
+            ["xuatXe","=",false],
+            ["type","=","STORE"]
+        ])->get();
+        foreach ($result as $row) {
+           $temp = (object)[];
+           $temp->soKhung = $row->vin;
+           $temp->tenXe = $row->typeCarDetail->name;
+           $temp->lyDo = "";
+           array_push($arr,$temp);
+        }
+        if($result) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã lấy thông tin',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getXeLaiThu(Request $request) {
+        $arr = [];
+
+        $result = XeLaiThu::select("*")->where([
+            ["active","=",true],
+            ["status","!=","S"]
+        ])->get();
+
+        foreach ($result as $row) {
+           $temp = (object)[];
+           $temp->soKhung = $row->number_car;
+           $temp->tenXe = $row->name;
+           $temp->mauXe = $row->mau;
+           $temp->lyDo = "";
+           array_push($arr,$temp);
+        }
+        if($result) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã lấy thông tin',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function getXeLaiThuMore(Request $request) {
+        $arr = [];
+
+        $result = XeLaiThu::select("*")->where([
+            ["active","=",true]
+        ])->get();
+
+        foreach ($result as $row) {
+           $temp = (object)[];
+           $temp->soKhung = $row->number_car;
+           $temp->tenXe = $row->name;
+           $temp->mauXe = $row->mau;
+           $temp->lyDo = "";
+           array_push($arr,$temp);
+        }
+        if($result) {
+            return response()->json([
+                'type' => 'info',
+                'message' => 'Đã lấy thông tin',
+                'code' => 200,
+                'data' => $arr
             ]);
         } else {
             return response()->json([
@@ -282,7 +428,9 @@ class DeNghiCapXangController extends Controller
             $temp = (object)[];
             $temp->ngay = \HelpFunction::revertCreatedAt($row->created_at);
             $temp->username = $row->user->userDetail->surname;
-            $temp->xe_bienso = $row->fuel_car . " - " .$row->fuel_frame;
+            // $temp->xe_bienso = $row->fuel_car . " - " .$row->fuel_frame;
+            $temp->xe = $row->fuel_car;
+            $temp->bienso = $row->fuel_frame;
             $temp->nhienlieu = $row->fuel_type == 'X' ? "Xăng" : "Dầu";
             $temp->solit = $row->fuel_num;
             $temp->khachhang = $row->fuel_guest;
@@ -297,7 +445,7 @@ class DeNghiCapXangController extends Controller
             if ($row->fuel_allow == false 
             && (!\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') 
             && !\Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))) {
-                $temp->action = "<button id='del' data-id='{{$row->id}}' class='btn btn-danger btn-xs'>Xóa</button>";
+                $temp->action = "<a href='#' id='del' data-id='".$row->id."' class='btn btn-danger btn-xs'>Xóa</a>";
             } else if ($row->fuel_allow == true && $row->printed == false) {
                 $temp->action = "<a href='".route('xang.in', ['id' => $row->id])."' class='btn btn-success btn-xs'>IN PHIẾU</a>";
             } else if ($row->fuel_allow == true && $row->printed == true 

@@ -429,10 +429,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // duyet
         Route::get('duyet','DeNghiCapXangController@showDuyetCapXang')->name('capxang.duyet')->middleware(['f_capxang']);
         Route::post('allow','DeNghiCapXangController@allowCapXang')->middleware(['f_capxang']);
+        Route::post('kiemtra','DeNghiCapXangController@kiemTraCapXang')->middleware(['f_capxang']);
         Route::post('cancel','DeNghiCapXangController@cancelCapXang')->middleware(['f_capxang']);
         Route::post('leadallow','DeNghiCapXangController@leadAllowCapXang');
         // Đề nghị v2
         Route::get('loaddenghinhienlieu','DeNghiCapXangController@loadDeNghiNhienLieu')->name('capxang.loaddenghinhienlieu');
+        Route::post('getxeluukho','DeNghiCapXangController@getXeLuuKho')->name('capxang.getxeluukho');
+        Route::post('getxelaithu','DeNghiCapXangController@getXeLaiThu')->name('capxang.getxelaithu');
+        Route::post('getxelaithumore','DeNghiCapXangController@getXeLaiThuMore')->name('capxang.getxelaithumore');
         Route::post('getxehopdong','DeNghiCapXangController@getXeHopDong')->name('capxang.getxehopdong');
         Route::post('getxehopdongchitiet','DeNghiCapXangController@getXeHopDongChiTiet')->name('capxang.getxehopdongchitiet');
     });

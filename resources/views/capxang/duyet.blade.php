@@ -60,7 +60,8 @@
                                     <th>Ngày</th>
                                     <th>CODE</th>
                                     <th>Đề nghị</th>
-                                    <th>Xe - Biển số</th>
+                                    <th>Xe</th>
+                                    <th>Biển số/Số khung</th>
                                     <th>Nhiên liệu</th>
                                     <th>Số lít</th>
                                     <th>Khách hàng</th>
@@ -82,7 +83,8 @@
                                                 @else
                                                     Không
                                                 @endif</td>
-                                        <td>{{$row->fuel_car}}; {{$row->fuel_frame}}</td>
+                                        <td>{{$row->fuel_car}}</td>
+                                        <td>{{$row->fuel_frame}}</td>
                                         <td>
                                             {{$row->fuel_type == 'X' ? "Xăng" : "Dầu"}}
                                         </td>
@@ -112,6 +114,7 @@
                                                 @if($row->fuel_allow == true)
                                                 @else
                                                     <button id="allow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                    <button id="kiemTra" data-id="{{$row->id}}" data-toggle="modal" data-target="#kiemTraModal" class="btn btn-info btn-xs">Kiểm tra</button>
                                                     <button id="cancel" data-id="{{$row->id}}" class="btn btn-danger btn-xs">Hủy</button>
                                                 @endif
                                             </td>
@@ -136,6 +139,34 @@
         </div>
         <!-- /.content -->
     </div>
+    <!-- Medal Add -->
+    <div class="modal fade" id="kiemTraModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">KIỂM TRA</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <h5>Thử nghiệm</h5>
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -261,6 +292,34 @@
                     }
                 });
             }
+        });
+
+         $(document).on('click','#kiemTra', function(){
+            $.ajax({
+                url: "{{url('management/capxang/kiemtra/')}}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "id": $(this).data('id')
+                },
+                success: function(response) {
+                    if (response.code == 200) {
+                        console.log(response);
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "Không thể kiểm tra!"
+                        })
+                    }
+                },
+                error: function() {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: "Không thể kiểm tra!"
+                    })
+                }
+            });
         });
          
         //-- event realtime
