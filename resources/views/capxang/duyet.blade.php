@@ -152,11 +152,21 @@
                         <!-- general form elements -->
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">KIỂM TRA</h3>
+                                <h3 class="card-title">KIỂM TRA TRƯỚC DUYỆT</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <h5>Thử nghiệm</h5>
+                                <h5><strong>LẦN ĐỀ NGHỊ GẦN NHẤT</strong></h5>
+                                <p id="hasFound" style="display: none;">
+                                    Thời gian đề nghị: <strong id="ngayDeNghi"></strong><br/>
+                                    Loại: <strong id="loai"></strong><br/>
+                                    Tên xe: <strong id="tenXe"></strong><br/>
+                                    Biển số/Số khung: <strong id="bienSo"></strong><br/>
+                                    Khách hàng (nếu có): <strong id="khachHang"></strong><br/>
+                                    Số lít yêu cầu: <strong id="soLit"></strong> (lít); Loại: <strong id="loaiNhienLieu"></strong><br/>
+                                    Lý do đề nghị: <strong id="lyDo"></strong><br/>
+                                    Trưởng bộ phận phê duyệt: <strong id="truongBP"></strong><br/>
+                                </p>                               
                             </div>
                         </div>
                         <!-- /.card -->
@@ -205,6 +215,10 @@
                 "responsive": true, "lengthChange": false, "autoWidth": false,
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
             }).buttons().container().appendTo('#dataTable_wrapper .col-md-6:eq(0)');
+        });
+
+        $(document).ready(function() {
+            $("#hasFound").hide();
         });
 
         $(document).on('click','#allow', function(){
@@ -294,7 +308,7 @@
             }
         });
 
-         $(document).on('click','#kiemTra', function(){
+        $(document).on('click','#kiemTra', function(){
             $.ajax({
                 url: "{{url('management/capxang/kiemtra/')}}",
                 type: "post",
@@ -305,12 +319,34 @@
                 },
                 success: function(response) {
                     if (response.code == 200) {
-                        console.log(response);
+                        if (response.data) {                                
+                            
+                            $("#ngayDeNghi").text(response.data.ngayNew);
+                            $("#loai").text(response.data.fuel_lyDo);
+                            $("#tenXe").text(response.data.fuel_car);
+                            $("#bienSo").text(response.data.fuel_frame);
+                            $("#khachHang").text(response.data.fuel_guest);
+                            $("#soLit").text(response.data.fuel_num);
+                            $("#loaiNhienLieu").text(response.data.fuel_type == "X" ? "Xăng" : "Dầu");
+                            $("#lyDo").text(response.data.fuel_ghiChu);
+                            $("#truongBP").text(response.data.truongBP);
+                            $("#hasFound").show();
+                        } else {
+                           
+                            $("#hasFound").hide();
+                            $("#ngayDeNghi").text("");
+                            $("#loai").text("");
+                            $("#tenXe").text("");
+                            $("#bienSo").text("");
+                            $("#khachHang").text("");
+                            $("#soLit").text("");
+                            $("#loaiNhienLieu").text("");
+                            $("#lyDo").text("");
+                            $("#truongBP").text("");
+                        }
                     } else {
-                        Toast.fire({
-                            icon: 'error',
-                            title: "Không thể kiểm tra!"
-                        })
+                        
+                        $("#hasFound").hide();
                     }
                 },
                 error: function() {
@@ -318,6 +354,8 @@
                         icon: 'warning',
                         title: "Không thể kiểm tra!"
                     })
+                   
+                    $("#hasFound").hide();
                 }
             });
         });

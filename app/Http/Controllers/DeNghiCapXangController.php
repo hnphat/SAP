@@ -185,23 +185,39 @@ class DeNghiCapXangController extends Controller
     public function kiemTraCapXang(Request $request) {
         $car = DeNghiCapXang::find($request->id);
         $bienSo = $car->fuel_frame;
-        $check = DeNghiCapXang::select("*")->where([
+        $checkFist = DeNghiCapXang::select("*")->where([
             ["fuel_frame", "like", "%". $bienSo . "%"],
-            ["id", "!=", $request->id]
-        ])->orderBy("id", "desc")->first();
-        if($check) {           
-            return response()->json([
-                'message' => 'Đã kiểm tra đề nghị cấp xăng',
-                'code' => 200,
-                'data' => $check
-            ]);
+            ["id", "!=", $request->id],
+            ["fuel_allow","=",true]
+        ])->orderBy("id", "desc")->exists();
+        if ($checkFist) {
+            $check = DeNghiCapXang::select("*")->where([
+                ["fuel_frame", "like", "%". $bienSo . "%"],
+                ["id", "!=", $request->id],
+                ["fuel_allow","=",true]
+            ])->orderBy("id", "desc")->first();
+            $check->ngayNew = $check->created_at ? \HelpFunction::revertCreatedAt($check->created_at) : "Không có";
+            $check->truongBP = $check->userLead->userDetail->surname;
+            if($check) {           
+                return response()->json([
+                    'message' => 'Đã kiểm tra đề nghị cấp xăng',
+                    'code' => 200,
+                    'data' => $check
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => $check
+                ]);
+            }
         } else {
             return response()->json([
                 'message' => 'Internal server fail!',
                 'code' => 500,
-                'data' => $check
+                'data' => null
             ]);
-        }
+        }        
     }
 
     public function cancelCapXang(Request $request) {
