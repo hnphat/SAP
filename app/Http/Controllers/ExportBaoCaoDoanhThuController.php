@@ -47,6 +47,8 @@ class ExportBaoCaoDoanhThuController extends Controller implements FromCollectio
             case 2: {
                 if ($nv == 0) {
                     $_tongdoanhthu = 0;
+                    $_doanhthuthucte = 0;
+                    $_doanhthuthuctekinhdoanh = 0;
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
                         ['trangThaiThu','=',true],

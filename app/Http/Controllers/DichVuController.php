@@ -3506,6 +3506,8 @@ class DichVuController extends Controller
                     ";
                 } else {    
                     $_tongdoanhthu = 0;
+                    $_doanhthuthucte = 0;
+                    $_doanhthuthuctekinhdoanh = 0;
                     $bg = BaoGiaBHPK::select("*")
                     ->where([
                         ['trangThaiThu','=',true],
@@ -3513,11 +3515,6 @@ class DichVuController extends Controller
                         ['isDone','=',true],
                         ['isCancel','=',false],
                     ])
-                    // ->where([
-                    //     ['isDone','=',true],
-                    //     ['isCancel','=',false],
-                    //     ['isBaoHiem','=', false]
-                    // ])
                     ->orderBy('isPKD','desc')->get();
                     foreach($bg as $row) {
                         // if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($tu)) 
@@ -3529,69 +3526,139 @@ class DichVuController extends Controller
                                 $_doanhthu = 0;
                                 $_chiphitang = 0;
                                 $_chietKhau = 0;
+                                $_thucThu = 0;
                                 $_chietKhauCost = 0;
                                 $_sale = "";
                                 foreach($ct as $item) {
-                                    $_doanhthu += $item->thanhTien;
-                                    $_tongdoanhthu += $item->thanhTien;
+                                    // $_doanhthu += $item->thanhTien;
+                                    // $_tongdoanhthu += $item->thanhTien;
+                                    // $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
+                                    // if ($item->isTang) {
+                                    //     $_chiphitang += $item->thanhTien;
+                                    //     $_tongdoanhthu -= $item->thanhTien;
+                                    // }       
+                                    // if ($row->saler) {
+                                    //     $_sale = User::find($row->saler)->userDetail->surname;
+                                    //     $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    // }    
+                                    $_doanhthu += ($item->soLuong * $item->donGia);
+                                    $_tongdoanhthu += ($item->soLuong * $item->donGia);
                                     $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
                                     if ($item->isTang) {
-                                        $_chiphitang += $item->thanhTien;
-                                        $_tongdoanhthu -= $item->thanhTien;
-                                    }       
-                                    if ($row->saler) {
-                                        $_sale = User::find($row->saler)->userDetail->surname;
+                                        $_chiphitang += ($item->soLuong * $item->donGia);
+                                        if ($row->saler) {
+                                            $_sale = User::find($row->saler)->userDetail->surname;
+                                            $baogiakd += ($item->soLuong * $item->donGia);                                       
+                                        }     
+                                    } else {
                                         $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
-                                    }                             
+                                        $_thucThu += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        if ($row->saler) {
+                                            $_sale = User::find($row->saler)->userDetail->surname;
+                                            $baogiakd += ($item->soLuong * $item->donGia);
+                                            $_doanhthuthuctekinhdoanh += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        }   
+                                        $_doanhthuthucte += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    }                         
                                 }
+                                // echo "<tr>
+                                //     <td>".($i++)."</td>
+                                //     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                //     <td>".$row->user->userDetail->surname."</td>
+                                //     <td>".$_sale."</td>
+                                //     <td>".$row->hoTen."</td>
+                                //     <td>".$row->soHopDongKD."</td>
+                                //     <td><span class='text-bold text-secondary'>Báo giá kinh doanh</span></td>
+                                //     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                //     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
+                                //     <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
+                                //     <td class='text-bold text-warning'>".number_format($_chietKhauCost)."</span></td>
+                                //     <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
+                                //     <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
+                                // </tr>";
                                 echo "<tr>
-                                    <td>".($i++)."</td>
-                                    <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                                    <td>".$row->user->userDetail->surname."</td>
-                                    <td>".$_sale."</td>
-                                    <td>".$row->hoTen."</td>
-                                    <td>".$row->soHopDongKD."</td>
-                                    <td><span class='text-bold text-secondary'>Báo giá kinh doanh</span></td>
-                                    <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
-                                    <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
-                                    <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
-                                    <td class='text-bold text-warning'>".number_format($_chietKhauCost)."</span></td>
-                                    <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
-                                    <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
-                                </tr>";
+                                        <td>".($i++)."</td>
+                                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                        <td>".$row->user->userDetail->surname."</td>
+                                        <td>".$_sale."</td>
+                                        <td>".$row->hoTen."</td>
+                                        <td>".$row->soHopDongKD."</td>
+                                        <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                        <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                        <td><span class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
+                                        <td><span class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
+                                        <td><span class='text-bold text-secondary'>".number_format($_chietKhauCost)."</span></td>
+                                        <td class='text-bold text-success'>".number_format($_thucThu)."</td>
+                                        <td class='text-bold text-info'><strong>".\HelpFunction::revertDate($row->ngayThu)."</strong></span></td>
+                                    </tr>";
                             } 
                             
                             if (!$row->saler && $row->id_user_create == $nv) {
                                 $ct = ChiTietBHPK::where('id_baogia',$row->id)->get();
                                 $_doanhthu = 0;
                                 $_chiphitang = 0;
-                                $_sale = "";
                                 $_chietKhau = 0;
+                                $_sale = "";
+                                $_thucThu = 0;
                                 $_chietKhauCost = 0;
                                 foreach($ct as $item) {
-                                    $_doanhthu += $item->thanhTien;
-                                    $_tongdoanhthu += $item->thanhTien;
+                                    // $_doanhthu += $item->thanhTien;
+                                    // $_tongdoanhthu += $item->thanhTien;
+                                    // $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
+                                    // if ($item->isTang) {
+                                    //     $_chiphitang += $item->thanhTien;
+                                    //     $_tongdoanhthu -= $item->thanhTien;
+                                    // }                            
+                                    // $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    $_doanhthu += ($item->soLuong * $item->donGia);
+                                    $_tongdoanhthu += ($item->soLuong * $item->donGia);
                                     $_chietKhau = $item->chietKhau ? $item->chietKhau : 0;
                                     if ($item->isTang) {
-                                        $_chiphitang += $item->thanhTien;
-                                        $_tongdoanhthu -= $item->thanhTien;
-                                    }                            
-                                    $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        $_chiphitang += ($item->soLuong * $item->donGia);
+                                        if ($row->saler) {
+                                            $_sale = User::find($row->saler)->userDetail->surname;
+                                            $baogiakd += ($item->soLuong * $item->donGia);                                       
+                                        }     
+                                    } else {
+                                        $_chietKhauCost += (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        $_thucThu += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        if ($row->saler) {
+                                            $_sale = User::find($row->saler)->userDetail->surname;
+                                            $baogiakd += ($item->soLuong * $item->donGia);
+                                            $_doanhthuthuctekinhdoanh += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                        }   
+                                        $_doanhthuthucte += ($item->soLuong * $item->donGia) - (($item->soLuong * $item->donGia) * $_chietKhau/100);
+                                    }
                                 }
+                                // echo "<tr>
+                                //     <td>".($i++)."</td>
+                                //     <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                //     <td>".$row->user->userDetail->surname."</td>
+                                //     <td>".$_sale."</td>
+                                //     <td>".$row->hoTen."</td>
+                                //     <td><span class='text-bold'>Báo giá khai thác</span></td>
+                                //     <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                //     <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
+                                //     <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
+                                //     <td class='text-bold text-warning'>".number_format($_chietKhauCost)."</span></td>
+                                //     <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
+                                //     <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
+                                // </tr>";
                                 echo "<tr>
-                                    <td>".($i++)."</td>
-                                    <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
-                                    <td>".$row->user->userDetail->surname."</td>
-                                    <td>".$_sale."</td>
-                                    <td>".$row->hoTen."</td>
-                                    <td><span class='text-bold'>Báo giá khai thác</span></td>
-                                    <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
-                                    <td class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
-                                    <td class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
-                                    <td class='text-bold text-warning'>".number_format($_chietKhauCost)."</span></td>
-                                    <td class='text-bold text-success'>".number_format($_doanhthu-$_chiphitang)."</td>
-                                    <td class='text-bold text-info'>".\HelpFunction::revertDate($row->ngayThu)."</span></td>
-                                </tr>";
+                                        <td>".($i++)."</td>
+                                        <td>".\HelpFunction::getDateRevertCreatedAt($row->created_at)."</td>
+                                        <td>".$row->user->userDetail->surname."</td>
+                                        <td>".$_sale."</td>
+                                        <td>".$row->hoTen."</td>
+                                        <td>".$row->soHopDongKD."</td>
+                                        <td>".($row->saler ? "<span class='text-bold text-secondary'>Báo giá kinh doanh</span>" : "<span class='text-bold'>Báo giá khai thác</span>")."</td>
+                                        <td>BG0".$row->id."-".\HelpFunction::getDateCreatedAtRevert($row->created_at)."</td>
+                                        <td><span class='text-bold text-info'>".number_format($_doanhthu)."</span></td>
+                                        <td><span class='text-bold text-warning'>".number_format($_chiphitang)."</span></td>
+                                        <td><span class='text-bold text-secondary'>".number_format($_chietKhauCost)."</span></td>
+                                        <td class='text-bold text-success'>".number_format($_thucThu)."</td>
+                                        <td class='text-bold text-info'><strong>".\HelpFunction::revertDate($row->ngayThu)."</strong></span></td>
+                                    </tr>";
                             }                                                         
                             
                         }
