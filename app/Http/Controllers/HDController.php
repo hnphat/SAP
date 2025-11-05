@@ -5437,7 +5437,7 @@ class HDController extends Controller
                 // Cập nhật dự báo
                 $phanTramDuBao = 60; // Mặc định 60%
                 $giaVonXeTax = 0;
-                $giaBanXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaXe / 1.05 : $giaXe / 1.1;
+                $giaBanXeTax = ($row->carSale->typeCar->name == "STARIA" ? $giaXe / 1.05 : $giaXe / 1.1);
                 $congDKTax = 0;
                 $phuKienBanTax = 0;
                 $baoHiemBanTax = 0;
@@ -5452,10 +5452,19 @@ class HDController extends Controller
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
-                    $giaVonXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1;
+                    $giaVonXeTax = ($row->carSale->typeCar->name == "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1);
                 } else {
                     $giaVon = $row->giaVon;
-                    $giaVonXeTax = $giaVon / 1.1;
+                    // Xử lý có phải xe cứu thương hay không
+                    if ($row->id_car_kho) {
+                        $step1 = KhoV2::find($row->id_car_kho);
+                        $step2 = TypeCarDetail::find($step1->id_type_car_detail);
+                        $step3 = TypeCar::find($step2->id_type_car);
+                        $name = $step3->name;
+                        $giaVonXeTax = ($name == "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1);
+                    } else {                        
+                        $giaVonXeTax = $giaVon / 1.1;
+                    }
                 }
                 $htvSupport = $row->htvSupport;
                 $hoTroHTVTax = $htvSupport / 1.1;
@@ -5724,7 +5733,7 @@ class HDController extends Controller
                 // Cập nhật dự báo
                 $phanTramDuBao = 60; // Mặc định 60%
                 $giaVonXeTax = 0;
-                $giaBanXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaXe / 1.05 : $giaXe / 1.1;
+                $giaBanXeTax = ($row->carSale->typeCar->name == "STARIA" ? $giaXe / 1.05 : $giaXe / 1.1);
                 $congDKTax = 0;
                 $phuKienBanTax = 0;
                 $baoHiemBanTax = 0;
@@ -5739,10 +5748,18 @@ class HDController extends Controller
                 $giaVon = 0;
                 if ($row->isGiaVon) {
                     $giaVon = TypeCarDetail::find($row->id_car_sale)->giaVon;
-                    $giaVonXeTax = $row->carSale->typeCar->name = "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1;
+                    $giaVonXeTax = ($row->carSale->typeCar->name == "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1);
                 } else {
                     $giaVon = $row->giaVon;
-                    $giaVonXeTax = $giaVon / 1.1;
+                    if ($row->id_car_kho) {
+                        $step1 = KhoV2::find($row->id_car_kho);
+                        $step2 = TypeCarDetail::find($step1->id_type_car_detail);
+                        $step3 = TypeCar::find($step2->id_type_car);
+                        $name = $step3->name;
+                        $giaVonXeTax = ($name == "STARIA" ? $giaVon / 1.05 : $giaVon / 1.1);
+                    } else {                        
+                        $giaVonXeTax = $giaVon / 1.1;
+                    }
                 }
                 $htvSupport = $row->htvSupport;
                 $hoTroHTVTax = $htvSupport / 1.1;
