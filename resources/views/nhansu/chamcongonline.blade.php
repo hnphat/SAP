@@ -33,7 +33,10 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="container">       
+                <div class="container">      
+                    <video id="camera" autoplay playsinline style="width:100%;max-width:200px;"></video>
+                    <button onclick="startCamera()">Start camera</button>
+                    <button onclick="openPermissionSettings()">Chọn lại quyền Camera</button>
                     <p>Trạng thái: <strong class="text-danger">Bạn chưa đăng ký thiết bị <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
                     <p>Trạng thái: <strong class="text-success">Thiết bị đã đăng ký</strong></p>
                     <p>Trạng thái: <strong class="text-danger">Thiết bị lạ khác với thiết bị đã đăng ký trước đó</strong></p>
@@ -85,6 +88,46 @@
     </div>
 @endsection
 @section('script')
+    <script>
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { exact: "user" }   // ép dùng camera trước
+            },
+            audio: false
+            });
+
+            document.getElementById("camera").srcObject = stream;
+        } 
+        catch (err) {
+            // fallback nếu máy không hỗ trợ exact
+            console.warn("Không dùng được exact:user, chuyển sang ideal:user", err);
+
+            try {
+            const fallback = await navigator.mediaDevices.getUserMedia({
+                video: {
+                facingMode: { ideal: "user" }  // ưu tiên camera trước
+                },
+                audio: false
+            });
+            document.getElementById("camera").srcObject = fallback;
+            }
+            catch(e2) {
+            alert("Điện thoại không cho phép mở camera trước: " + e2);
+            }
+        }
+    }
+    function openPermissionSettings() {
+        // Chỉ Chrome hỗ trợ API này
+        if (navigator.permissions && navigator.permissions.query) {
+            alert("Vui lòng tìm mục Camera và đổi thành 'Allow (Cho phép)'.\nTrình duyệt sẽ tự hiện phần cài đặt.");
+        }
+
+        // Mở trang cấu hình site của trình duyệt
+        window.location.href = "chrome://settings/content/siteDetails?site=" + encodeURIComponent(location.origin);
+    }
+    </script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
@@ -112,227 +155,7 @@
 
         $(document).ready(function(){
            
-           function loadWithRoom() {
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvienroom')}}",
-                    type: "get",
-                    dataType: "text",
-                    success: function(response){                        
-                        $("select[name=nhanVien]").append(response);                                  
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không tải bổ sung"
-                        })
-                    }
-                });
-           } 
-           loadWithRoom();
-           function reload() {
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvien')}}",
-                    type: "get",
-                    dataType: "text",
-                    data: {
-                        "id": $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
-                        "thang": $("select[name=thang]").val(),
-                        "nam": $("select[name=nam]").val()
-                    },
-                    success: function(response){                        
-                        $("#chiTietCong").html(response);                                   
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể chọn"
-                        })
-                    }
-                });
-           }            
-
-           $("#chon").click(function(){
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvien')}}",
-                    type: "get",
-                    dataType: "text",
-                    data: {
-                        "id":  $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
-                        "thang": $("select[name=thang]").val(),
-                        "nam": $("select[name=nam]").val()
-                    },
-                    success: function(response){                        
-                        $("#chiTietCong").html(response);                                   
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể chọn"
-                        })
-                    }
-                });      
-                
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/getnhanvieninfo')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "id":  $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
-                    },
-                    success: function(response){       
-                        console.log(response);                
-                        $("#nameshow").val(response.ten);
-                    },
-                    error: function(){
-                        console.log("Lỗi: Không thể load thông tin nhân viên!");
-                    }
-                });    
-           });
-
-           $(document).on('click','#xinPhep', function(){
-                $("input[name=ngayXin]").val($(this).data('ngay'));
-                $("input[name=thangXin]").val($(this).data('thang'));
-                $("input[name=namXin]").val($(this).data('nam'));
-                $("input[name=idUserXin]").val($("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val());
-           });
-
-           $(document).on('click','#tangCa', function(){
-                $("input[name=ngayXinTangCa]").val($(this).data('ngay'));
-                $("input[name=thangXinTangCa]").val($(this).data('thang'));
-                $("input[name=namXinTangCa]").val($(this).data('nam'));
-                $("input[name=idUserXinTangCa]").val($("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val());
-           });
-
-
-           $("#btnAdd").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/themphep')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: $("#addForm").serialize(),
-                    beforeSend: function () {
-                       $("#btnAdd").attr('disabled', true).html("Đang xử lý vui lòng đợi....");
-                    },
-                    success: function(response){
-                        $("#addForm")[0].reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        $("#btnAdd").attr('disabled', false).html("Lưu");
-                        $("#addModal").modal('hide');
-                        reload();
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể tạo phép"
-                        })
-                    }
-                });
-           });
-
-           $("#btnAddTangCa").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/nhansu/chitiet/ajax/themtangca')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: $("#addFormTangCa").serialize(),
-                    success: function(response){
-                        $("#addFormTangCa")[0].reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        $("#addModalTangCa").modal('hide');
-                        reload();
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể xin tăng ca"
-                        })
-                    }
-                });
-           });
-
-
-           $(document).on('click','#xacNhan', function(){
-                if (confirm("Xác nhận giờ công?\nLưu ý: Sau khi xác nhận sẽ không được chỉnh sửa và thêm phép")){
-                    $.ajax({
-                        url: "{{url('management/nhansu/chotcong/ajax/chot')}}",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "id": $("select[name=nhanVien]").val() ? $("select[name=nhanVien]").val() : $("input[name=nhanVien]").val(),
-                            "_token": "{{csrf_token()}}",
-                            "thang": $(this).data('thang'),
-                            "nam": $(this).data('nam'),
-                            "ngayCong": $(this).data('ngaycong'),
-                            "tangCa": $(this).data('tangca'),
-                            "tongTre": $(this).data('tongtre'),
-                            "khongPhep": $(this).data('khongphep'),
-                            "khongPhepCaNgay": $(this).data('khongphepcangay'),
-                            "phepNam": $(this).data('phepnam'),
-                        },
-                        success: function(response){
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            reload();
-                        },
-                        error: function(){
-                            Toast.fire({
-                                icon: "error",
-                                title: "Lỗi! Không thể xác nhận giờ công"
-                            })
-                        }
-                    });
-                }
-           });
-
-
-
-           $(document).on('click','#xemBienBan', function(){
-                $.ajax({
-                    url: "{{url('management/nhansu/xembienban')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "id": $(this).data('id'),
-                        "_token": "{{csrf_token()}}",
-                        "thang": $(this).data('thang'),
-                        "nam": $(this).data('nam')                        
-                    },
-                    success: function(response){
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                        $("#showChiTietBB").empty();
-                        let bbHtml = "";
-                        for(let i = 0; i < response.data.length; i++) {
-                            bbHtml += `<tr>
-                                <td>${(i+1)}</td>
-                                <td>${response.data[i].noiDung}</td>
-                                <td>${response.data[i].hinhThuc}</td>
-                                <td><a class="btn btn-primary btn-sm" href="{{asset('upload/bienbankhenthuong/${response.data[i].url}')}}" target="_blank">XEM</a></td>
-                            </tr>`;
-                        }
-                        $("#showChiTietBB").html(bbHtml);
-                    },
-                    error: function(){
-                        Toast.fire({
-                            icon: "error",
-                            title: "Lỗi! Không thể xem biên bản lúc này"
-                        })
-                    }
-                });
-           });
+               
         });
     </script>
 @endsection
