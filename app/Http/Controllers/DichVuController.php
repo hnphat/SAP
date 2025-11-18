@@ -3665,7 +3665,7 @@ class DichVuController extends Controller
                     }
                     echo "</tbody>
                         </table>";
-                    echo "<h3>Tổng: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span></h3>";
+                    echo "<h3>Tổng doanh thu: <span class='text-bold text-success'>".number_format($_tongdoanhthu)."</span><br/><h3>Tổng doanh thu (đã trừ chiết khấu): <span class='text-bold text-success'>".number_format($_doanhthuthucte)."</span></h3>";
                 }
             } break;  
             case 3: {

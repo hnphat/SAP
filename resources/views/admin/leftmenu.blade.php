@@ -547,12 +547,14 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
-                            <!-- <li class="nav-item">
-                                <a href="{{route('nhansu.baocaoluong')}}" class="nav-link">
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                            <li class="nav-item">
+                                <a href="{{ route('chamcong.online') }}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Lương</p>
+                                    <p>Chấm công Online</p>
                                 </a>
-                            </li>  -->
+                            </li> 
+                            @endif
                             <li class="nav-item">
                                 <a href="{{route('hanhchinh.hoso')}}" class="nav-link">
                                     <i class="fas fa-caret-right nav-icon"></i>

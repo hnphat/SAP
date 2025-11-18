@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('ngay')->nullable();
             $table->string('thang')->nullable();
             $table->string('nam')->nullable();
+            $table->string('device_id')->nullable();
             $table->timestamps();
         });
     }

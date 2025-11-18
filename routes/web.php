@@ -572,6 +572,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('quanlyphep/ajax/post','NhanSuController@quanLyPhepPost');
         Route::post('quanlyphep/ajax/delete','NhanSuController@quanLyPhepDelete');
 
+        // Chấm công online
+        Route::get('chamcongonline','NhanSuController@onlineChamCong')->name('chamcong.online');
+
+
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');

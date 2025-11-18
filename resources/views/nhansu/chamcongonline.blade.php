@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-   Chấm công chi tiết
+   Chấm công online
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Chấm công chi tiết</strong></h1>
+                        <h1 class="m-0"><strong>Chấm công Online</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Nhân sự</li>
-                            <li class="breadcrumb-item active">Chấm công chi tiết</li>
+                            <li class="breadcrumb-item active">Chấm công Online</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -33,229 +33,56 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="row">                    
-                    <div class="col-md-2">
-                        <label>Tháng</label>
-                        <select name="thang" class="form-control">
-                            @for($i = 1; $i <= 12; $i++)
-                                <option value="{{$i}}" <?php if(Date('m') == $i) echo "selected";?>>{{$i}}</option>
-                            @endfor
-                        </select>
+                <div class="container">       
+                    <p>Trạng thái: <strong class="text-danger">Bạn chưa đăng ký thiết bị <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
+                    <p>Trạng thái: <strong class="text-success">Thiết bị đã đăng ký</strong></p>
+                    <p>Trạng thái: <strong class="text-danger">Thiết bị lạ khác với thiết bị đã đăng ký trước đó</strong></p>
+                    <input type="hidden" name="getStt" id="getStt">
+                    <input type="hidden" name="getNowTimer" id="getNowTimer">
+                    <p>Thời gian hiện tại: <strong style="font-size:25pt;">08:00</strong></p>
+                    <p>Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
+                    <p>Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
+                    <p>Điều kiện chấm công: <strong class="text-success">Có thể chấm công</strong></p>
+                    <p>Điều kiện chấm công: <strong class="text-danger">Không thể chấm công</strong></p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>CHỌN BUỔI</strong>
+                            <select class="form-control" name="buoi">
+                                <option value="1">Sáng</option>
+                                <option value="2">Chiều</option>
+                                <option value="3">Tối</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>CHỌN LOẠI CHẤM CÔNG</strong>
+                            <select class="form-control" name="buoi">
+                                <option value="1">Chấm công vào</option>
+                                <option value="2">Chấm công ra</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <label>Năm</label>
-                        <select name="nam" class="form-control">
-                            @for($i = 2021; $i < 2100; $i++)
-                                <option value="{{$i}}" <?php if(Date('Y') == $i) echo "selected";?>>{{$i}}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label>Nhân viên</label>
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
-                        <input list="nhanViens" id="nhanVien" name="nhanVien" class="form-control" placeholder="Nhập tên nhân viên">
-                        <datalist id="nhanViens">
-                            @foreach($user as $row)
-                                @if($row->active == true)
-                                    <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                @endif
-                            @endforeach
-                        </datalist>                        
-                        <!-- <select name="nhanVien" class="form-control">
-                            @foreach($user as $row)
-                                @if($row->active == true)
-                                    <option value="{{$row->id}}">{{$row->name}} - {{$row->userDetail->surname}}</option>
-                                @endif
-                            @endforeach
-                        </select> -->
-                        @else
-                        <select name="nhanVien" class="form-control">
-                            <option value="{{Auth::user()->id}}">{{Auth::user()->userDetail->surname}}</option>
-                        </select>
-                        @endif
-                    </div>
-                    
-                    <div class="col-md-1">
-                        <label>&nbsp;</label><br/>
-                        <button id="chon" type="button" class="btn btn-xs btn-info">Chọn</button>
-                    </div>
-
-                    <div class="col-md-3">                        
-                        <label>&nbsp;</label><br/>
-                        @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong'))
-                        <input type="text" id="nameshow" class="form-control" readonly/>
-                        @endif
-                    </div>
-                </div>  
-                <br/>
-                <input type="hidden" name="idChiTiet">
-                <div style="overflow: auto;">
-                    <table class="table table-striped table-bordered">
-                        <tr class="text-center">
-                            <th>Ngày</th>
-                            <th>Vào Sáng</th>
-                            <th>Ra Sáng</th>
-                            <th>Vào Chiều</th>
-                            <th>Ra Chiều</th>
-                            <th>Công sáng</th>
-                            <th>Công chiều</th>
-                            <th>Trễ/Sớm Sáng</th>
-                            <th>Trễ/Sớm Chiều</th>
-                            <th>Trạng thái</th>
-                            <th>Phép</th>
-                            <th>Tăng ca</th>
-                        </tr>
-                        <tbody class="text-center" id="chiTietCong">
-                        
-                        </tbody>                    
-                    </table>                  
-                </div>                
+                    <br/>
+                    <p class="text-center">
+                        <button class="btn btn-primary">CHẤM CÔNG</button>
+                    </p>
+                    <h6 class="text-info">Ghi nhận chấm công: <strong>12:00 ngày 18/11/2025</strong></h6>
+                    <p>
+                        <strong>ĐÃ CHẤM CÔNG</strong><br>
+                        - Buổi sáng: <br>
+                        + Vào: Chưa có <br>
+                        + Ra: 16:00 <br>
+                        - Buổi chiều: <br>
+                        + Vào: 12:00 <br>
+                        + Ra: Chưa có <br>
+                        - Buổi tối: <br>
+                        + Vào: Chưa có <br>
+                        + Ra: Chưa có <br>
+                    </p>
+                </div>               
             </div>
         </div>
         <!-- /.content -->
     </div>
-    <!-- Medal Add -->
-    <div class="modal fade" id="addModal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Xin phép (giờ hành chính)</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> 
-                        <form method="POST" enctype="multipart/form-data" id="addForm" autocomplete="off">
-                            {{csrf_field()}}         
-                            <input type="hidden" name="idUserXin">    
-                            <div class="form-group row">
-                                <div class="col-md-2"><input type="text" name="ngayXin" readonly class="form-control"></div>
-                                <div class="col-md-2"><input type="text" name="thangXin" readonly class="form-control"></div>
-                                <div class="col-md-2"><input type="text" name="namXin" readonly class="form-control"></div>
-                            </div>            
-                            <div class="form-group">
-                               <label>Chọn buổi</label> 
-                               <select name="buoi" class="form-control">
-                                   <option value="SANG">Sáng</option>
-                                   <option value="CHIEU">Chiều</option>
-                                   <option value="CANGAY">Cả ngày</option>
-                               </select>
-                            </div>
-                            <div class="form-group">
-                               <label>Loại phép</label> 
-                               <select name="loaiPhep" class="form-control">
-                                  @foreach($phep as $row)
-                                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                        <option value="{{$row->id}}">{{$row->tenPhep}}</option>
-                                    @elseif($row->maPhep != 'L' && $row->maPhep != 'LKL' && $row->maPhep != 'PCL')
-                                        <option value="{{$row->id}}">{{$row->tenPhep}}</option>
-                                    @elseif(\Illuminate\Support\Facades\Auth::user()->hasRole('hcns') && $row->maPhep == 'PCL')
-                                        <option value="{{$row->id}}">{{$row->tenPhep}}</option>
-                                    @endif
-                                  @endforeach
-                               </select>
-                            </div>
-                            <div class="form-group">
-                               <label>Lý do xin</label> 
-                               <input type="text" name="lyDo" class="form-control" placeholder="Lý do xin">
-                            </div>
-                            <div class="form-group">
-                               <label>Người duyệt</label> 
-                               <select name="nguoiDuyet" class="form-control">
-                                  @foreach($user as $row)
-                                    @if($row->hasRole('lead'))
-                                        <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                    @endif                                    
-                                  @endforeach
-                               </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                        <button id="btnAdd" class="btn btn-primary" form="addForm">Lưu</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-
-    <!-- Medal Add Tăng ca -->
-    <div class="modal fade" id="addModalTangCa">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Xin phép tăng ca (ngoài giờ)</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> 
-                        <form method="POST" enctype="multipart/form-data" id="addFormTangCa" autocomplete="off">
-                            {{csrf_field()}}         
-                            <input type="hidden" name="idUserXinTangCa">    
-                            <div class="form-group row">
-                                <div class="col-md-2"><input type="text" name="ngayXinTangCa" readonly class="form-control"></div>
-                                <div class="col-md-2"><input type="text" name="thangXinTangCa" readonly class="form-control"></div>
-                                <div class="col-md-2"><input type="text" name="namXinTangCa" readonly class="form-control"></div>
-                            </div>   
-                            <div class="form-group">
-                               <label>Lý do xin</label> 
-                               <input type="text" name="lyDoTangCa" class="form-control" placeholder="Lý do xin">
-                            </div>
-                            <div class="form-group">
-                               <label>Người duyệt</label> 
-                               <select name="nguoiDuyetTangCa" class="form-control">
-                                  @foreach($user as $row)
-                                    @if($row->hasRole('lead'))
-                                        <option value="{{$row->id}}">{{$row->userDetail->surname}}</option>
-                                    @endif                                    
-                                  @endforeach
-                               </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                        <button id="btnAddTangCa" class="btn btn-primary" form="addFormTangCa">Lưu</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-
-    <!-- Medal Add -->
-    <div class="modal fade" id="showModal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">BIÊN BẢN VI PHẠM</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> 
-                        <table class="table table-striped table-bordered">
-                            <tr>
-                                <th>STT</th>
-                                <th>Nội dung</th>
-                                <th>Hình thức xử lý</th>
-                                <th>Biên bản chi tiết</th>
-                            </tr>
-                            <tbody id="showChiTietBB">                                
-                            </tbody>
-                        </table>
-                    </div>                   
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
 @endsection
 @section('script')
     <!-- jQuery -->

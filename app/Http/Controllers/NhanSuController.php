@@ -3976,4 +3976,8 @@ class NhanSuController extends Controller
         }
         
     }
+
+    public function onlineChamCong() {
+        return view("nhansu.chamcongonline");
+    }
 }
