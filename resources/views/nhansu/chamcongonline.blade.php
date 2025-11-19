@@ -33,24 +33,25 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
+                <form id="addForm" autocomplete="off">
                 <div class="container">      
                     <video id="camera" autoplay playsinline style="width:100%;max-width:200px;"></video>
-                    <button onclick="startCamera()">Start camera</button>
-                    <button onclick="openPermissionSettings()">Chọn lại quyền Camera</button>
-                    <p>Trạng thái: <strong class="text-danger">Bạn chưa đăng ký thiết bị <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
-                    <p>Trạng thái: <strong class="text-success">Thiết bị đã đăng ký</strong></p>
-                    <p>Trạng thái: <strong class="text-danger">Thiết bị lạ khác với thiết bị đã đăng ký trước đó</strong></p>
-                    <input type="hidden" name="getStt" id="getStt">
+                    <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
+                    <!-- <button onclick="openPermissionSettings()" class="btn btn-info">Chọn lại quyền Camera</button> -->
+                    <br><br>
+                    <p id="notDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Bạn chưa đăng ký <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
+                    <p id="hasDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-success">Đã đăng ký</strong></p>
+                    <p id="hasDeviceOther" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Thiết bị khác thiết bị đã đăng ký</strong></p>
+                    <input type="hidden" name="statusDevice" id="statusDevice">
                     <input type="hidden" name="getNowTimer" id="getNowTimer">
-                    <p>Thời gian hiện tại: <strong style="font-size:25pt;">08:00</strong></p>
-                    <p>Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
-                    <p>Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
-                    <p>Điều kiện chấm công: <strong class="text-success">Có thể chấm công</strong></p>
-                    <p>Điều kiện chấm công: <strong class="text-danger">Không thể chấm công</strong></p>
+                    <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
+                    <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
+                    <input type="hidden" name="statusPos" id="statusPos">
+                    <p>Thời gian hiện tại: <strong style="font-size:25pt;" id="showTimeNow"></strong></p>
                     <div class="row">
                         <div class="col-md-6">
                             <strong>CHỌN BUỔI</strong>
-                            <select class="form-control" name="buoi">
+                            <select class="form-control" name="buoiChamCong">
                                 <option value="1">Sáng</option>
                                 <option value="2">Chiều</option>
                                 <option value="3">Tối</option>
@@ -58,7 +59,7 @@
                         </div>
                         <div class="col-md-6">
                             <strong>CHỌN LOẠI CHẤM CÔNG</strong>
-                            <select class="form-control" name="buoi">
+                            <select class="form-control" name="loaiChamCong">
                                 <option value="1">Chấm công vào</option>
                                 <option value="2">Chấm công ra</option>
                             </select>
@@ -66,22 +67,40 @@
                     </div>
                     <br/>
                     <p class="text-center">
-                        <button class="btn btn-primary">CHẤM CÔNG</button>
+                        <button id="sendChamCong" class="btn btn-primary">CHẤM CÔNG</button>
                     </p>
-                    <h6 class="text-info">Ghi nhận chấm công: <strong>12:00 ngày 18/11/2025</strong></h6>
-                    <p>
-                        <strong>ĐÃ CHẤM CÔNG</strong><br>
-                        - Buổi sáng: <br>
-                        + Vào: Chưa có <br>
-                        + Ra: 16:00 <br>
-                        - Buổi chiều: <br>
-                        + Vào: 12:00 <br>
-                        + Ra: Chưa có <br>
-                        - Buổi tối: <br>
-                        + Vào: Chưa có <br>
-                        + Ra: Chưa có <br>
-                    </p>
-                </div>               
+                    <h6 class="text-info">Ghi nhận chấm công: <strong id="ghiNhanChamCong">12:00 ngày 18/11/2025</strong></h6>
+                    <div class="row">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Thời gian</th>
+                                    <th>Buổi</th>
+                                    <th>Loại chấm công</th>
+                                    <th>Hình ảnh</th>
+                                </tr>
+                            </thead>
+                            <tbody id="showChamCongHistory">
+                                <tr>
+                                    <td>1</td>
+                                    <td>08:00 18/11/2025</td>
+                                    <td>Sáng</td>
+                                    <td>Vào</td>
+                                    <td><img src="{{asset('images/noavatar.jpg')}}" alt="Hình ảnh nhân viên" width="100" height="100"></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>17:00 18/11/2025</td>
+                                    <td>Chiều</td>
+                                    <td>Ra</td>
+                                    <td><img src="{{asset('images/noavatar.jpg')}}" alt="Hình ảnh nhân viên" width="100" height="100"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>    
+                </form>           
             </div>
         </div>
         <!-- /.content -->
@@ -89,6 +108,7 @@
 @endsection
 @section('script')
     <script>
+
     async function startCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -118,14 +138,12 @@
             }
         }
     }
+
     function openPermissionSettings() {
         // Chỉ Chrome hỗ trợ API này
         if (navigator.permissions && navigator.permissions.query) {
-            alert("Vui lòng tìm mục Camera và đổi thành 'Allow (Cho phép)'.\nTrình duyệt sẽ tự hiện phần cài đặt.");
+            alert("Vui lòng tìm mục Camera và đổi thành 'Allow (Cho phép)' trong phần cài đặt trang web!");
         }
-
-        // Mở trang cấu hình site của trình duyệt
-        window.location.href = "chrome://settings/content/siteDetails?site=" + encodeURIComponent(location.origin);
     }
     </script>
     <!-- jQuery -->
@@ -145,6 +163,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+    <!-- <script src="https://openfpcdn.io/fingerprintjs/v3"></script> -->
+    <script src="https://openfpcdn.io/fingerprintjs/v3/umd.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -153,9 +173,103 @@
             timer: 3000
         });
 
+        (function(){
+            const el = document.getElementById('showTimeNow');
+            if (!el) return;
+
+            const pad = (n) => n.toString().padStart(2, '0');
+
+            function updateTime() {
+                const now = new Date();
+                const hh = pad(now.getHours());
+                const mm = pad(now.getMinutes());
+                el.textContent = hh + ':' + mm;
+            }
+
+            updateTime(); // cập nhật ngay lập tức
+            setInterval(updateTime, 1000); // cập nhật mỗi giây
+        })();
+        
+        async function getDeviceId() {
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            return result.visitorId;
+        }
+
+        async function kiemTraTrangThaiThietBi() {
+            try {
+                const device_id = await getDeviceId();
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/kiemtratrangthaithietbi/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "device_id": device_id
+                    },
+                    success: function(response) {
+                        if (response.code === 200) {
+                            if (response.result === 0) {
+                                $("#notDevice").show();
+                                $("#hasDevice").hide();
+                                $("#hasDeviceOther").hide();
+                            } else if (response.result === 1) {
+                                $("#notDevice").hide();
+                                $("#hasDevice").show();
+                                $("#hasDeviceOther").hide();
+                            } else if (response.result === 2) {
+                                $("#notDevice").hide();
+                                $("#hasDevice").hide();
+                                $("#hasDeviceOther").show();
+                            }
+                        } else {
+                            Toast.fire({ icon: 'error', title: "Lỗi kiểm tra!" });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({ icon: 'error', title: "Không thể kiểm tra!" });
+                    }
+                });
+
+            } catch (e) {
+                console.error(e);
+                Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", kiemTraTrangThaiThietBi);
+    </script>
+    <script>
         $(document).ready(function(){
-           
-               
+            function kiemTraTrangThaiViTri() {
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/kiemtratrangthaivitri/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}"
+                    },
+                    success: function(response) {
+                        if (response.code === 200) {
+                            if (response.result === 1) {
+                                $("#viTriNot").hide();
+                                $("#viTriHas").show();
+                                $("#statusPos").val(1);
+                            } else {
+                                $("#viTriNot").show();
+                                $("#viTriHas").hide();
+                                $("#statusPos").val(0);
+                            }
+                        } else {
+                            Toast.fire({ icon: 'error', title: "Lỗi kiểm tra!" });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({ icon: 'error', title: "Không thể kiểm tra!" });
+                    }
+                });
+            }
+            kiemTraTrangThaiViTri();
         });
     </script>
 @endsection

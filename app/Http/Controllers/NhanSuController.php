@@ -3980,4 +3980,56 @@ class NhanSuController extends Controller
     public function onlineChamCong() {
         return view("nhansu.chamcongonline");
     }
+
+    public function kiemTraTrangThaiThietBi(Request $request) {
+        $hasDevice = Auth::user()->device_id;
+        if ($hasDevice) {
+            if ($hasDevice == $request->device_id) {
+                return response()->json([
+                    'type' => 'success',
+                    'ipWan' => request()->ip(),
+                    'result' => 1, // Thiết bị đã đăng ký và đúng
+                    'message' => 'Thiết bị đã được đăng ký và hợp lệ',
+                    'code' => 200
+                ]);  
+            } else {
+                return response()->json([
+                    'type' => 'warning',
+                    'ipWan' => request()->ip(),
+                    'result' => 2, // Thiết bị đã đăng ký nhưng không đúng
+                    'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
+                    'code' => 200
+                ]);  
+            }
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'ipWan' => request()->ip(),
+                'result' => 0, // Thiết bị chưa đăng ký
+                'message' => 'Thiết bị chưa được đăng ký',
+                'code' => 200
+            ]);  
+        }
+    }
+
+    public function kiemTraTrangThaiViTri(Request $request) {
+        $ipClient = $request->ip();
+        $ipCheck1 = "115.78.73.52";
+        $ipCheck2 = "203.210.232.175";
+        if ($ipClient == $ipCheck1 || $ipClient == $ipCheck2) {
+            return response()->json([
+                'type' => 'success',
+                'ipWan' => request()->ip(),
+                'result' => 1, // Đang ở công ty
+                'code' => 200
+            ]); 
+        } else {
+            return response()->json([
+                'type' => 'info',
+                'ipWan' => request()->ip(),
+                'result' => 0, // Không ở công ty
+                'code' => 200
+            ]);  
+        }
+    }
 }
