@@ -4035,13 +4035,13 @@ class NhanSuController extends Controller
     }
 
     public function postOnlineChamCong(Request $request) {
-        // dd($request->all());
+        dd($request->all());
         $getStatusDevice = $request->statusDevice;
         $getStatusPos = $request->statusPos;
         $getBuoiChamCong = $request->buoiChamCong;
         $getLoaiChamCong = $request->loaiChamCong;
         $getTimerNow = $request->getNowTimer;
-
+         
         // if ($getStatusDevice != 1) {
         //     return response()->json([
         //         'type' => 'error',
@@ -4063,6 +4063,19 @@ class NhanSuController extends Controller
         $chamcong->buoichamcong = $getBuoiChamCong;
         $chamcong->loaichamcong = $getLoaiChamCong;
         $chamcong->thoigianchamcong = $getTimerNow;
+        // Xử lý upload
+        $folderPath = public_path('upload/chamcongonline/');        
+        $image_parts = explode(";base64,", $request->imageCaptured);              
+        $image_type_aux = explode("image/", $image_parts[0]);           
+        $image_type = $image_type_aux[1];           
+        $image_base64 = base64_decode($image_parts[1]);           
+        $name = Auth::user()->name ."_" . uniqid() . '.'.$image_type;
+        $file = $folderPath . $name;
+        file_put_contents($file, $image_base64);        
+        // kết thúc xử lý upload 
+
+        // ---------------------------
+        $chamcong->hinhanh = $name;
         $chamcong->save();
         if ($chamcong) {
             return response()->json([
@@ -4123,6 +4136,9 @@ class NhanSuController extends Controller
 
     public function deleteChamCongOnline(Request $request) {
         $chamcong = ChamCongOnline::find($request->id);
+        $hinhanh = $chamcong->hinhanh;
+        if ($hinhanh != null && file_exists('upload/chamcongonline/' . $hinhanh))
+        unlink('upload/chamcongonline/'.$hinhanh); 
         $chamcong->delete();
 
         if ($chamcong) {           

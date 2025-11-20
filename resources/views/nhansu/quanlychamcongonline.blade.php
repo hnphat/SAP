@@ -154,8 +154,9 @@
                     { "data": "ngaychamcong" },
                     {
                         "data": null,
-                        render: function(data, type, row) {                            
-                            switch(row.buoichamcong) {
+                        render: function(data, type, row) {  
+                            let buoichamcong = parseInt(row.buoichamcong);                          
+                            switch(buoichamcong) {
                                 case 1:
                                     return "<strong>Sáng</strong>";
                                 case 2:
@@ -169,8 +170,9 @@
                     },
                     {
                         "data": null,
-                        render: function(data, type, row) {                            
-                            switch(row.loaichamcong) {
+                        render: function(data, type, row) { 
+                            let loaichamcong = parseInt(row.loaichamcong);                             
+                            switch(loaichamcong) {
                                 case 1:
                                     return "<strong class='text-success'>Vào</strong>";
                                 case 2:
@@ -181,7 +183,12 @@
                         }
                     },
                     { "data": "thoigianchamcong" },
-                    { "data": "hinhanh" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {                            
+                          return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' style='width: 200px; max-width:200px;'/>";
+                        }
+                    },
                     { "data": "ghichu" },
                     {
                         "data": null,

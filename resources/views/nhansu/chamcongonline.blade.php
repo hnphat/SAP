@@ -35,15 +35,8 @@
             <div class="container-fluid">
                 <form id="addForm" autocomplete="off">
                     {{csrf_field()}}
-                <div class="container">      
-                    <video id="camera" autoplay playsinline style="width:100%;max-width:200px;"></video>
-                    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-                    <img id="preview" width="320" style="margin-top: 10px;">
-                    <button onclick="captureImage()" class="btn btn-primary" type="button">Chụp thử ảnh</button>
-
-                    <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
+                <div>   
                     <!-- <button onclick="openPermissionSettings()" class="btn btn-info">Chọn lại quyền Camera</button> -->
-                    <br><br>
                     <p id="notDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Bạn chưa đăng ký <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
                     <p id="hasDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-success">Đã đăng ký</strong></p>
                     <p id="hasDeviceOther" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Thiết bị khác thiết bị đã đăng ký</strong></p>
@@ -70,10 +63,23 @@
                             </select>
                         </div>
                     </div>
-                    <br/>
                     <p class="text-center">
-                        <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
+                        <p class="text-center">
+                            <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
+                        </p>                        
+                        <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
+                        <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+                        <!-- <img id="preview" width="320" style="margin-top: 10px;"> -->
+                        <!-- <button onclick="captureImage()" class="btn btn-primary" type="button">Chụp thử ảnh</button> -->
+                        <input type="hidden" id="imageCaptured" name="imageCaptured">
+                        <br/>
+                        <p class="text-center">
+                            <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
+                            <!-- <button id="sendChamCong" style="display: none;" type="button" class="btn btn-primary">CHẤM CÔNG</button> -->
+                        </p>
+                        <p><strong id="thongBao"></strong></p>
                     </p>
+                    
                     <div class="row">
                         <table class="table table-striped table-bordered">
                             <thead>
@@ -117,12 +123,17 @@
         try {
             stream = await navigator.mediaDevices.getUserMedia({
             video: {
+                width: { ideal: 1920 },  // FULL HD
+                height: { ideal: 1080 },
                 facingMode: { exact: "user" }   // ép dùng camera trước
             },
             audio: false
             });
 
             document.getElementById("camera").srcObject = stream;
+            if (stream) {
+                document.getElementById("sendChamCong").style.display = "inline-block";
+            }
         } 
         catch (err) {
             // fallback nếu máy không hỗ trợ exact
@@ -158,10 +169,14 @@
         const video = document.getElementById('camera');
         const canvas = document.getElementById('canvas');
         let ctx = canvas.getContext("2d");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        let dataUrl = canvas.toDataURL("image/jpeg"); // Base64
+        let dataUrl = canvas.toDataURL("image/jpeg", 0.65); // Base64
         lastImage = dataUrl;
-        document.getElementById("preview").src = dataUrl;
+        // document.getElementById("preview").src = dataUrl;
         return dataUrl;
     }
     </script>
@@ -293,13 +308,15 @@
                     }
                 });
             }
+            
             kiemTraTrangThaiViTri();
 
             $("#sendChamCong").click(function(){
-                if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
-                    return;
-                }
+                // if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
+                //     return;
+                // }
                 let capturedImage = captureImage();
+                $("#imageCaptured").val(capturedImage);
                 $.ajax({
                     url: "{{url('management/nhansu/chamcongonline/chamcong/')}}",
                     type: "post",
@@ -307,15 +324,17 @@
                     data: $("#addForm").serialize(),
                     success: function(response) {
                         if (response.code === 200) {
-                            Toast.fire({ 
-                                icon: 'success', 
-                                title: "Đã ghi nhận chấm công!" 
-                            });
+                            // Toast.fire({ 
+                            //     icon: 'success', 
+                            //     title: "Đã ghi nhận chấm công!" 
+                            // });
+                            $("#thongBao").html("<span class='text-success'>Đã ghi nhận chấm công!</span>");
                         } else {
-                            Toast.fire({ 
-                                icon: 'error', 
-                                title: response.message 
-                            });
+                            // Toast.fire({ 
+                            //     icon: 'error', 
+                            //     title: response.message 
+                            // });
+                            $("#thongBao").html("<span class='text-danger'>"+response.message+"</span>");
                         }
                     },
                     error: function() {
