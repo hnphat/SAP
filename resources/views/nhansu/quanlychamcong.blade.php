@@ -33,6 +33,9 @@
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
+                <div class="container row">
+                    <a href="{{route('quanly.chamcong.online')}}" class="btn btn-xs btn-primary">Quản lý Chấm công Online</a>
+                </div>
                 <div class="row">
                     <div class="col-md-1">
                         <label>Ngày</label>

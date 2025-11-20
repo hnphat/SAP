@@ -34,8 +34,13 @@
         <div class="content">
             <div class="container-fluid">
                 <form id="addForm" autocomplete="off">
+                    {{csrf_field()}}
                 <div class="container">      
                     <video id="camera" autoplay playsinline style="width:100%;max-width:200px;"></video>
+                    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+                    <img id="preview" width="320" style="margin-top: 10px;">
+                    <button onclick="captureImage()" class="btn btn-primary" type="button">Chụp thử ảnh</button>
+
                     <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
                     <!-- <button onclick="openPermissionSettings()" class="btn btn-info">Chọn lại quyền Camera</button> -->
                     <br><br>
@@ -67,9 +72,8 @@
                     </div>
                     <br/>
                     <p class="text-center">
-                        <button id="sendChamCong" class="btn btn-primary">CHẤM CÔNG</button>
+                        <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
                     </p>
-                    <h6 class="text-info">Ghi nhận chấm công: <strong id="ghiNhanChamCong">12:00 ngày 18/11/2025</strong></h6>
                     <div class="row">
                         <table class="table table-striped table-bordered">
                             <thead>
@@ -108,10 +112,10 @@
 @endsection
 @section('script')
     <script>
-
+    let stream = null;    
     async function startCamera() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
+            stream = await navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: { exact: "user" }   // ép dùng camera trước
             },
@@ -145,6 +149,21 @@
             alert("Vui lòng tìm mục Camera và đổi thành 'Allow (Cho phép)' trong phần cài đặt trang web!");
         }
     }
+
+    function captureImage() {
+        if (!stream) {
+            alert("Chưa bật camera!");
+            return;
+        }
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        let dataUrl = canvas.toDataURL("image/jpeg"); // Base64
+        lastImage = dataUrl;
+        document.getElementById("preview").src = dataUrl;
+        return dataUrl;
+    }
     </script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -175,6 +194,7 @@
 
         (function(){
             const el = document.getElementById('showTimeNow');
+            const sttTimer = document.getElementById('getNowTimer');
             if (!el) return;
 
             const pad = (n) => n.toString().padStart(2, '0');
@@ -184,7 +204,8 @@
                 const hh = pad(now.getHours());
                 const mm = pad(now.getMinutes());
                 el.textContent = hh + ':' + mm;
-            }
+                sttTimer.value = hh + ':' + mm;
+            }   
 
             updateTime(); // cập nhật ngay lập tức
             setInterval(updateTime, 1000); // cập nhật mỗi giây
@@ -213,14 +234,17 @@
                                 $("#notDevice").show();
                                 $("#hasDevice").hide();
                                 $("#hasDeviceOther").hide();
+                                $("#statusDevice").val(0);
                             } else if (response.result === 1) {
                                 $("#notDevice").hide();
                                 $("#hasDevice").show();
                                 $("#hasDeviceOther").hide();
+                                $("#statusDevice").val(1);
                             } else if (response.result === 2) {
                                 $("#notDevice").hide();
                                 $("#hasDevice").hide();
                                 $("#hasDeviceOther").show();
+                                $("#statusDevice").val(2);
                             }
                         } else {
                             Toast.fire({ icon: 'error', title: "Lỗi kiểm tra!" });
@@ -270,6 +294,35 @@
                 });
             }
             kiemTraTrangThaiViTri();
+
+            $("#sendChamCong").click(function(){
+                if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
+                    return;
+                }
+                let capturedImage = captureImage();
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/chamcong/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: $("#addForm").serialize(),
+                    success: function(response) {
+                        if (response.code === 200) {
+                            Toast.fire({ 
+                                icon: 'success', 
+                                title: "Đã ghi nhận chấm công!" 
+                            });
+                        } else {
+                            Toast.fire({ 
+                                icon: 'error', 
+                                title: response.message 
+                            });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({ icon: 'error', title: "Không thể chấm công!" });
+                    }
+                });
+            });
         });
     </script>
 @endsection

@@ -103,6 +103,7 @@ class UserController extends Controller
         $user = User::find($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->device_id = $request->deviceId;
         if ($request->changepass == 1) 
             $user->password = bcrypt($request->password);
         $user->allowPhepNam = $request->allow;

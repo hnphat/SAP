@@ -80,7 +80,7 @@
                                     </td>
                                     <td>{{$row->ngay . "-" . $row->thang . "-" . $row->nam}}</td>
                                     <td>
-                                        <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}','{{$row->allowPhepNam}}','{{$row->ngay}}','{{$row->thang}}','{{$row->nam}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
+                                        <button onclick="edit('{{$row->id}}','{{$row->name}}','{{$row->email}}','{{$row->allowPhepNam}}','{{$row->ngay}}','{{$row->thang}}','{{$row->nam}}','{{$row->device_id}}')" data-toggle="modal" data-target="#edit" class="btn btn-success btn-sm"><span class="far fa-edit"></span></button>
                                         <button onclick="lock('{{$row->id}}')" class="btn btn-dark btn-sm">
                                             @if($row->active == 1)
                                                 <span class="fas fa-lock text-success"></span>
@@ -249,6 +249,10 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="deviceId">Thông tin thiết bị</label>
+                                    <input type="text" class="form-control" id="deviceId" placeholder="Device ID" name="deviceId">
+                                </div>
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
@@ -365,6 +369,7 @@
                 let ngay = $("select[name=engay]").val();
                 let thang = $("select[name=ethang]").val();
                 let nam = $("select[name=enam]").val();
+                let deviceId = $("input[name=deviceId]").val();
                 let allowPhep = 0;
                 let changePass = 0;
                 if ($('#eallowPhepNam').is(":checked"))
@@ -397,6 +402,7 @@
                                 thang: thang,
                                 nam: nam,
                                 changepass: changePass,
+                                deviceId: deviceId,
                             },
                             success:function(data){
                                 // alert(data.success);
@@ -430,6 +436,7 @@
                             thang: thang,
                             nam: nam,
                             changepass: changePass,
+                            deviceId: deviceId,
                         },
                         success:function(data){
                             // alert(data.success);
@@ -469,13 +476,14 @@
             }, 1000);
         }
 
-        function edit(id,name,email,phepNam,ngay,thang,nam) {
+        function edit(id,name,email,phepNam,ngay,thang,nam,deviceId) {
             document.getElementById("_id").value = id;
             document.getElementById("acc2").value = name;
             document.getElementById("email2").value = email;            
             document.getElementById("engay").value = ngay ? ngay : 1;
             document.getElementById("ethang").value = thang ? thang : 1;
             document.getElementById("enam").value = nam ? nam : 2022;
+            document.getElementById("deviceId").value = deviceId ? deviceId : '';
             if (phepNam == 1) {
                 document.getElementById("eallowPhepNam").checked = true;
                 $('select[name=engay]').removeAttr('disabled');

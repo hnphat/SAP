@@ -174,4 +174,8 @@ class User extends Authenticatable
     public function xeCuuHo() {
         return $this->hasMany('App\XeCuuHo','id_user','id');
     }
+
+    public function chamCongOnline() {
+        return $this->hasMany('App\ChamCongOnline', 'id_user', 'id');
+    }
 }

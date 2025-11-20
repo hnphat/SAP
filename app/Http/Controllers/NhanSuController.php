@@ -15,6 +15,7 @@ use App\XacNhanCong;
 use App\NhatKy;
 use App\BienBanKhenThuong;
 use App\ChamCongChiTiet;
+use App\ChamCongOnline;
 use Carbon\Carbon;
 use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
@@ -4031,5 +4032,111 @@ class NhanSuController extends Controller
                 'code' => 200
             ]);  
         }
+    }
+
+    public function postOnlineChamCong(Request $request) {
+        // dd($request->all());
+        $getStatusDevice = $request->statusDevice;
+        $getStatusPos = $request->statusPos;
+        $getBuoiChamCong = $request->buoiChamCong;
+        $getLoaiChamCong = $request->loaiChamCong;
+        $getTimerNow = $request->getNowTimer;
+
+        // if ($getStatusDevice != 1) {
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
+        //         'code' => 500
+        //     ]);
+        // }
+
+        // if ($getStatusPos != 1) {
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'message' => 'Bạn đang không ở Công ty, vui lòng sử dụng wifi của Công ty để chấm công',
+        //         'code' => 500
+        //     ]);
+        // }
+
+        $chamcong = new ChamCongOnline();
+        $chamcong->id_user = Auth::user()->id;
+        $chamcong->buoichamcong = $getBuoiChamCong;
+        $chamcong->loaichamcong = $getLoaiChamCong;
+        $chamcong->thoigianchamcong = $getTimerNow;
+        $chamcong->save();
+        if ($chamcong) {
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã ghi nhận giờ công lúc ' . $getTimerNow .  " ngày " . Date('d-m-Y'),
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi chấm công online. Vui lòng thử lại',
+                'code' => 500
+            ]);
+        }
+    }
+
+    public function quanLyChamCongOnline() {
+        return view("nhansu.quanlychamcongonline");
+    }
+
+    public function getChamCongOnlineList(Request $request) {
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $result = null;        
+            $arr = [];
+            $result = ChamCongOnline::select("*")->orderBy('id','desc')->get();
+            foreach($result as $row) {
+                $row->manv = $row->user->name;
+                $row->hoten = $row->user->userDetail->surname;
+                $row->ngaychamcong = \HelpFunction::getDateRevertCreatedAt($row->created_at);
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                    array_push($arr, $row);
+                }
+            }
+            if($result) {
+                return response()->json([
+                    'message' => 'Get list successfully!',
+                    'code' => 200,
+                    'data' => $arr
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            } 
+        } else {
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500,
+                'data' => null
+            ]);
+        } 
+    }
+
+    public function deleteChamCongOnline(Request $request) {
+        $chamcong = ChamCongOnline::find($request->id);
+        $chamcong->delete();
+
+        if ($chamcong) {           
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã xoá'
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi xoá'
+            ]);
     }
 }
