@@ -37,16 +37,16 @@
                     {{csrf_field()}}
                 <div>   
                     <!-- <button onclick="openPermissionSettings()" class="btn btn-info">Chọn lại quyền Camera</button> -->
-                    <p id="notDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Bạn chưa đăng ký <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
+                    <!-- <p id="notDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Bạn chưa đăng ký <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
                     <p id="hasDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-success">Đã đăng ký</strong></p>
-                    <p id="hasDeviceOther" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Thiết bị khác thiết bị đã đăng ký</strong></p>
-                    <input type="hidden" name="statusDevice" id="statusDevice">
+                    <p id="hasDeviceOther" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Thiết bị khác thiết bị đã đăng ký</strong></p> -->
+                    <!-- <input type="hidden" name="statusDevice" id="statusDevice"> -->
                     <input type="hidden" name="getNowTimer" id="getNowTimer">
                     <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
                     <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
                     <input type="hidden" name="statusPos" id="statusPos">
                     <p class="text-center"><strong style="font-size:39pt;" id="showTimeNow"></strong></p>
-                    <div class="row">
+                    <div class="row" style="display:none;">
                         <div class="col-md-6">
                             <strong>CHỌN BUỔI</strong>
                             <select class="form-control" name="buoiChamCong">
@@ -215,93 +215,93 @@
             setInterval(updateTime, 1000); // cập nhật mỗi giây
         })();
         
-        async function getDeviceId() {
-            const fp = await FingerprintJS.load();
-            const result = await fp.get();
-            return result.visitorId;
-        }
+        // async function getDeviceId() {
+        //     const fp = await FingerprintJS.load();
+        //     const result = await fp.get();
+        //     return result.visitorId;
+        // }
 
-        async function kiemTraTrangThaiThietBi() {
-            try {
-                const device_id = await getDeviceId();
-                $.ajax({
-                    url: "{{url('management/nhansu/chamcongonline/kiemtratrangthaithietbi/')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "device_id": device_id
-                    },
-                    success: function(response) {
-                        if (response.code === 200) {
-                            if (response.result === 0) {
-                                $("#notDevice").show();
-                                $("#hasDevice").hide();
-                                $("#hasDeviceOther").hide();
-                                $("#statusDevice").val(0);
-                            } else if (response.result === 1) {
-                                $("#notDevice").hide();
-                                $("#hasDevice").show();
-                                $("#hasDeviceOther").hide();
-                                $("#statusDevice").val(1);
-                            } else if (response.result === 2) {
-                                $("#notDevice").hide();
-                                $("#hasDevice").hide();
-                                $("#hasDeviceOther").show();
-                                $("#statusDevice").val(2);
-                            }
-                        } else {
-                            Toast.fire({ icon: 'error', title: "Lỗi kiểm tra!" });
-                        }
-                    },
-                    error: function() {
-                        Toast.fire({ icon: 'error', title: "Không thể kiểm tra!" });
-                    }
-                });
+        // async function kiemTraTrangThaiThietBi() {
+        //     try {
+        //         const device_id = await getDeviceId();
+        //         $.ajax({
+        //             url: "{{url('management/nhansu/chamcongonline/kiemtratrangthaithietbi/')}}",
+        //             type: "post",
+        //             dataType: "json",
+        //             data: {
+        //                 "_token": "{{csrf_token()}}",
+        //                 "device_id": device_id
+        //             },
+        //             success: function(response) {
+        //                 if (response.code === 200) {
+        //                     if (response.result === 0) {
+        //                         $("#notDevice").show();
+        //                         $("#hasDevice").hide();
+        //                         $("#hasDeviceOther").hide();
+        //                         $("#statusDevice").val(0);
+        //                     } else if (response.result === 1) {
+        //                         $("#notDevice").hide();
+        //                         $("#hasDevice").show();
+        //                         $("#hasDeviceOther").hide();
+        //                         $("#statusDevice").val(1);
+        //                     } else if (response.result === 2) {
+        //                         $("#notDevice").hide();
+        //                         $("#hasDevice").hide();
+        //                         $("#hasDeviceOther").show();
+        //                         $("#statusDevice").val(2);
+        //                     }
+        //                 } else {
+        //                     Toast.fire({ icon: 'error', title: "Lỗi kiểm tra!" });
+        //                 }
+        //             },
+        //             error: function() {
+        //                 Toast.fire({ icon: 'error', title: "Không thể kiểm tra!" });
+        //             }
+        //         });
 
-            } catch (e) {
-                console.error(e);
-                Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
-            }
-        }
+        //     } catch (e) {
+        //         console.error(e);
+        //         Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
+        //     }
+        // }
 
-        document.addEventListener("DOMContentLoaded", kiemTraTrangThaiThietBi);
+        // document.addEventListener("DOMContentLoaded", kiemTraTrangThaiThietBi);
 
-        document.getElementById("regDevice").addEventListener("click", async function(){
-            try {
-                const device_id = await getDeviceId();
-                $.ajax({
-                    url: "{{url('management/nhansu/chamcongonline/dangkythietbi/')}}",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        "_token": "{{csrf_token()}}",
-                        "device_id": device_id
-                    },
-                    success: function(response) {
-                        if (response.code === 200) {
-                            Toast.fire({ 
-                                icon: response.type, 
-                                title: response.message 
-                            });
-                            kiemTraTrangThaiThietBi();
-                        } else {
-                            Toast.fire({ 
-                                icon: 'error', 
-                                title: response.message 
-                            });
-                        }
-                    },
-                    error: function() {
-                        Toast.fire({ icon: 'error', title: "Không thể đăng ký thiết bị!" });
-                    }
-                });
+        // document.getElementById("regDevice").addEventListener("click", async function(){
+        //     try {
+        //         const device_id = await getDeviceId();
+        //         $.ajax({
+        //             url: "{{url('management/nhansu/chamcongonline/dangkythietbi/')}}",
+        //             type: "post",
+        //             dataType: "json",
+        //             data: {
+        //                 "_token": "{{csrf_token()}}",
+        //                 "device_id": device_id
+        //             },
+        //             success: function(response) {
+        //                 if (response.code === 200) {
+        //                     Toast.fire({ 
+        //                         icon: response.type, 
+        //                         title: response.message 
+        //                     });
+        //                     kiemTraTrangThaiThietBi();
+        //                 } else {
+        //                     Toast.fire({ 
+        //                         icon: 'error', 
+        //                         title: response.message 
+        //                     });
+        //                 }
+        //             },
+        //             error: function() {
+        //                 Toast.fire({ icon: 'error', title: "Không thể đăng ký thiết bị!" });
+        //             }
+        //         });
 
-            } catch (e) {
-                console.error(e);
-                Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
-            }
-        });
+        //     } catch (e) {
+        //         console.error(e);
+        //         Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
+        //     }
+        // });
     </script>
     <script>
         $(document).ready(function(){
@@ -377,16 +377,65 @@
                 });
             }
             autoLoadHistory();
-            $("#sendChamCong").click(function(){
-                // if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
-                //     return;
-                // }
+            // $("#sendChamCong").click(function(){
+            //     // if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
+            //     //     return;
+            //     // }
+            //     if (!stream) {
+            //         alert("Chưa bật camera!");
+            //         return;
+            //     }
+            //     let capturedImage = captureImage();
+            //     $("#imageCaptured").val(capturedImage);
+            //     $.ajax({
+            //         url: "{{url('management/nhansu/chamcongonline/chamcong/')}}",
+            //         type: "post",
+            //         dataType: "json",
+            //         data: $("#addForm").serialize(),
+            //         success: function(response) {
+            //             if (response.code === 200) {
+            //                 // Toast.fire({ 
+            //                 //     icon: 'success', 
+            //                 //     title: "Đã ghi nhận chấm công!" 
+            //                 // });
+            //                 $("#camera").hide();
+            //                 $("#btnOpenCamera").hide();
+            //                 $("#thongBao").html("<span class='text-success'>Đã ghi nhận chấm công!</span>");
+            //                 $("#sendChamCong").hide();
+            //                 autoLoadHistory();
+            //             } else {
+            //                 // Toast.fire({ 
+            //                 //     icon: 'error', 
+            //                 //     title: response.message 
+            //                 // });
+            //                 $("#camera").hide();
+            //                 $("#btnOpenCamera").hide();
+            //                 $("#thongBao").html("<span class='text-danger'>"+response.message+"</span>");
+            //                 $("#sendChamCong").hide();
+            //             }
+            //         },
+            //         error: function() {
+            //             $("#camera").hide();
+            //             Toast.fire({ icon: 'error', title: "Không thể chấm công!" });
+            //         }
+            //     });
+            // });
+            $("#sendChamCong").off('click').on('click', function(e){
+                e.preventDefault();
                 if (!stream) {
                     alert("Chưa bật camera!");
                     return;
                 }
+                var $btn = $(this);
+                // nếu đang gửi thì thoát
+                if ($btn.data('sending')) return;
+
+                // khóa nút và đánh dấu đang gửi
+                $btn.data('sending', true).prop('disabled', true).addClass('disabled');
+
                 let capturedImage = captureImage();
                 $("#imageCaptured").val(capturedImage);
+
                 $.ajax({
                     url: "{{url('management/nhansu/chamcongonline/chamcong/')}}",
                     type: "post",
@@ -394,20 +443,12 @@
                     data: $("#addForm").serialize(),
                     success: function(response) {
                         if (response.code === 200) {
-                            // Toast.fire({ 
-                            //     icon: 'success', 
-                            //     title: "Đã ghi nhận chấm công!" 
-                            // });
                             $("#camera").hide();
                             $("#btnOpenCamera").hide();
                             $("#thongBao").html("<span class='text-success'>Đã ghi nhận chấm công!</span>");
                             $("#sendChamCong").hide();
                             autoLoadHistory();
                         } else {
-                            // Toast.fire({ 
-                            //     icon: 'error', 
-                            //     title: response.message 
-                            // });
                             $("#camera").hide();
                             $("#btnOpenCamera").hide();
                             $("#thongBao").html("<span class='text-danger'>"+response.message+"</span>");
@@ -417,6 +458,10 @@
                     error: function() {
                         $("#camera").hide();
                         Toast.fire({ icon: 'error', title: "Không thể chấm công!" });
+                    },
+                    complete: function() {
+                        // mở lại nút sau khi request hoàn tất (nếu vẫn hiển thị)
+                        $btn.data('sending', false).prop('disabled', false).removeClass('disabled');
                     }
                 });
             });

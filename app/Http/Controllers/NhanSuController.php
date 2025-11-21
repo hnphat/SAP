@@ -4041,13 +4041,13 @@ class NhanSuController extends Controller
         $getLoaiChamCong = $request->loaiChamCong;
         $getTimerNow = $request->getNowTimer;
          
-        if ($getStatusDevice != 1) {
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
-                'code' => 500
-            ]);
-        }
+        // if ($getStatusDevice != 1) {
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
+        //         'code' => 500
+        //     ]);
+        // }
 
         if ($getStatusPos != 1) {
             return response()->json([
@@ -4057,10 +4057,44 @@ class NhanSuController extends Controller
             ]);
         }
 
+        // Tự xác định buổi chấm công và loại chấm công
+        $buoiXacDinh = 0;
+        $loaiXacDinh = 0;
+        $getInfoChamCong = ChamCongOnline::select("*")->where([
+            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+            ['id_user','=',Auth::user()->id]
+        ])->get();
+        $soLuongDaCham = count($getInfoChamCong);
+        if ($soLuongDaCham == 0) {
+            $buoiXacDinh = 1; // buổi sáng
+            $loaiXacDinh = 1; // vào
+        } else if ($soLuongDaCham == 1) {
+            $buoiXacDinh = 1; // buổi sáng
+            $loaiXacDinh = 2; // ra
+        } else if ($soLuongDaCham == 2) {
+            $buoiXacDinh = 2; // buổi chiều
+            $loaiXacDinh = 1; // vào
+        } else if ($soLuongDaCham == 3) {
+            $buoiXacDinh = 2; // buổi chiều
+            $loaiXacDinh = 2; // ra
+        } else if ($soLuongDaCham == 4) {
+            $buoiXacDinh = 3; // buổi tối
+            $loaiXacDinh = 1; // vào
+        } else if ($soLuongDaCham == 5) {
+            $buoiXacDinh = 3; // buổi tối
+            $loaiXacDinh = 2; // ra
+        } else {
+            return response()->json([
+                'type' => 'error',               
+                'code' => 500,
+                'message' => 'Hôm nay bạn đã chấm công đủ số lần quy định (06 lần/ngày), không thể chấm công thêm!',
+            ]);  
+        }
+
         $chamcong = new ChamCongOnline();
         $chamcong->id_user = Auth::user()->id;
-        $chamcong->buoichamcong = $getBuoiChamCong;
-        $chamcong->loaichamcong = $getLoaiChamCong;
+        $chamcong->buoichamcong = $buoiXacDinh;
+        $chamcong->loaichamcong = $loaiXacDinh;
         $chamcong->thoigianchamcong = $getTimerNow;
         // Xử lý đã chấm rồi hay chưa và xử lý hack vị trí
         $ipClient = $request->ip();
