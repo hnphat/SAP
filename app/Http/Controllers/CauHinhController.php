@@ -30,7 +30,8 @@ class CauHinhController extends Controller
         $data["emailCapHoa"] = $request->emailCapHoa;        
         $data["emailDuyetXe"] = $request->emailDuyetXe;        
         $data["emailTraXe"] = $request->emailTraXe; 
-        $data["capNhatThongTin"] = $request->capNhatThongTin;       
+        $data["capNhatThongTin"] = $request->capNhatThongTin;     
+        $data["disableChamCongOnline"] = $request->disableChamCongOnline;        
         $data["mauThongBao"] = $request->mauThongBao;       
         $data["loaiThongBao"] = $request->loaiThongBao;
         $data["maxRecord"] = $request->maxRecord;

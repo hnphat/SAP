@@ -45,7 +45,7 @@
                     <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
                     <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
                     <input type="hidden" name="statusPos" id="statusPos">
-                    <p>Thời gian hiện tại: <strong style="font-size:25pt;" id="showTimeNow"></strong></p>
+                    <p class="text-center"><strong style="font-size:39pt;" id="showTimeNow"></strong></p>
                     <div class="row">
                         <div class="col-md-6">
                             <strong>CHỌN BUỔI</strong>
@@ -64,10 +64,12 @@
                         </div>
                     </div>
                     <p class="text-center">
-                        <p class="text-center">
+                        <p class="text-center" id="btnOpenCamera">
                             <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
-                        </p>                        
-                        <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
+                        </p>           
+                        <p class="text-center">
+                          <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
+                        </p>             
                         <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
                         <!-- <img id="preview" width="320" style="margin-top: 10px;"> -->
                         <!-- <button onclick="captureImage()" class="btn btn-primary" type="button">Chụp thử ảnh</button> -->
@@ -77,9 +79,10 @@
                             <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
                             <!-- <button id="sendChamCong" style="display: none;" type="button" class="btn btn-primary">CHẤM CÔNG</button> -->
                         </p>
-                        <p><strong id="thongBao"></strong></p>
+                        <h2 id="thongBao"></h2>
                     </p>
-                    
+                    <hr>
+                    <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
                     <div class="row">
                         <table class="table table-striped table-bordered">
                             <thead>
@@ -88,24 +91,10 @@
                                     <th>Thời gian</th>
                                     <th>Buổi</th>
                                     <th>Loại chấm công</th>
-                                    <th>Hình ảnh</th>
                                 </tr>
                             </thead>
                             <tbody id="showChamCongHistory">
-                                <tr>
-                                    <td>1</td>
-                                    <td>08:00 18/11/2025</td>
-                                    <td>Sáng</td>
-                                    <td>Vào</td>
-                                    <td><img src="{{asset('images/noavatar.jpg')}}" alt="Hình ảnh nhân viên" width="100" height="100"></td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>17:00 18/11/2025</td>
-                                    <td>Chiều</td>
-                                    <td>Ra</td>
-                                    <td><img src="{{asset('images/noavatar.jpg')}}" alt="Hình ảnh nhân viên" width="100" height="100"></td>
-                                </tr>
+                               
                             </tbody>
                         </table>
                     </div>
@@ -277,6 +266,42 @@
         }
 
         document.addEventListener("DOMContentLoaded", kiemTraTrangThaiThietBi);
+
+        document.getElementById("regDevice").addEventListener("click", async function(){
+            try {
+                const device_id = await getDeviceId();
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/dangkythietbi/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}",
+                        "device_id": device_id
+                    },
+                    success: function(response) {
+                        if (response.code === 200) {
+                            Toast.fire({ 
+                                icon: response.type, 
+                                title: response.message 
+                            });
+                            kiemTraTrangThaiThietBi();
+                        } else {
+                            Toast.fire({ 
+                                icon: 'error', 
+                                title: response.message 
+                            });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({ icon: 'error', title: "Không thể đăng ký thiết bị!" });
+                    }
+                });
+
+            } catch (e) {
+                console.error(e);
+                Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
+            }
+        });
     </script>
     <script>
         $(document).ready(function(){
@@ -311,10 +336,55 @@
             
             kiemTraTrangThaiViTri();
 
+            function autoLoadHistory() {
+                // Gọi AJAX load lịch sử chấm công hôm nay
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/loadlichsu/')}}",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{csrf_token()}}"
+                    },
+                    success: function(response) {
+                        if (response.code === 200) {
+                            $("#showChamCongHistory").html("");
+                            let txt = ``;
+                            let stt = 1;
+                            let loai = 0;
+                            let buoi = 0;
+                            for (let index = 0; index < response.data.length; index++) {
+                                const element = response.data[index];
+                                loai = parseInt(element.loaichamcong);
+                                buoi = parseInt(element.buoichamcong);
+                                let loaiText = (loai === 1) ? "<strong class='text-primary'>Vào</strong>" : "<strong class='text-pink'>Ra</strong>";
+                                let buoiText = (buoi === 1) ? "Sáng" : (buoi === 2) ? "Chiều" : "Tối";
+                                txt += `<tr>
+                                        <td>${stt}</td>
+                                        <td><strong>${element.thoigianchamcong}</strong></td>
+                                        <td><strong>${buoiText}</strong></td>
+                                        <td>${loaiText}</td>
+                                    </tr>`;
+                                stt++;
+                            }
+                            $("#showChamCongHistory").html(txt);
+                        } else {
+                            Toast.fire({ icon: 'error', title: "Lỗi tải lịch sử chấm công!" });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({ icon: 'error', title: "Không thể tải lịch sử chấm công!" });
+                    }
+                });
+            }
+            autoLoadHistory();
             $("#sendChamCong").click(function(){
                 // if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
                 //     return;
                 // }
+                if (!stream) {
+                    alert("Chưa bật camera!");
+                    return;
+                }
                 let capturedImage = captureImage();
                 $("#imageCaptured").val(capturedImage);
                 $.ajax({
@@ -328,16 +398,24 @@
                             //     icon: 'success', 
                             //     title: "Đã ghi nhận chấm công!" 
                             // });
+                            $("#camera").hide();
+                            $("#btnOpenCamera").hide();
                             $("#thongBao").html("<span class='text-success'>Đã ghi nhận chấm công!</span>");
+                            $("#sendChamCong").hide();
+                            autoLoadHistory();
                         } else {
                             // Toast.fire({ 
                             //     icon: 'error', 
                             //     title: response.message 
                             // });
+                            $("#camera").hide();
+                            $("#btnOpenCamera").hide();
                             $("#thongBao").html("<span class='text-danger'>"+response.message+"</span>");
+                            $("#sendChamCong").hide();
                         }
                     },
                     error: function() {
+                        $("#camera").hide();
                         Toast.fire({ icon: 'error', title: "Không thể chấm công!" });
                     }
                 });

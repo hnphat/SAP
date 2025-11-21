@@ -34,7 +34,8 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="container row">
-                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
+                    || (data_get($data, 'disableChamCongOnline', 1) == 1))
                     <a href="{{route('quanly.chamcong.online')}}" class="btn btn-xs btn-primary">Quản lý Chấm công Online</a>
                     @endif
                 </div>

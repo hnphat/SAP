@@ -577,11 +577,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chamcongonline/kiemtratrangthaithietbi','NhanSuController@kiemTraTrangThaiThietBi');
         Route::post('chamcongonline/kiemtratrangthaivitri','NhanSuController@kiemTraTrangThaiViTri');
         Route::post('chamcongonline/chamcong','NhanSuController@postOnlineChamCong');
-        Route::get('chamcongonline/quanly','NhanSuController@quanLyChamCongOnline')->name('quanly.chamcong.online')->middleware(['f_nhansu']);
+        Route::get('chamcongonline/quanlychamcong','NhanSuController@quanLyChamCongOnline')->name('quanly.chamcong.online')->middleware(['f_nhansu']);
         Route::get('chamcongonline/getlist','NhanSuController@getChamCongOnlineList');
         Route::post('chamcongonline/delete','NhanSuController@deleteChamCongOnline');
+        Route::post('chamcongonline/dangkythietbi','NhanSuController@dangKyThietBiChamCong');
+        Route::post('chamcongonline/loadlichsu','NhanSuController@loadLichSuChamCong');
+        Route::post('chamcongonline/giaiphonganhdem','NhanSuController@giaiPhongAnhDem');
+        Route::get('chamcongonline/loadsoluonganhdem','NhanSuController@counterAnhDem');
 
-        
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');

@@ -547,13 +547,14 @@
                     </a>
                     @endif
                     <ul class="nav nav-treeview">
-                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                            <li class="nav-item">
-                                <a href="{{ route('chamcong.online') }}" class="nav-link">
-                                    <i class="fas fa-caret-right nav-icon"></i>
-                                    <p>Chấm công Online</p>
-                                </a>
-                            </li> 
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
+                            || (data_get($data, 'disableChamCongOnline', 1) == 1))
+                                <li class="nav-item">
+                                    <a href="{{ route('chamcong.online') }}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Chấm công Online</p>
+                                    </a>
+                                </li> 
                             @endif
                             <li class="nav-item">
                                 <a href="{{route('hanhchinh.hoso')}}" class="nav-link">

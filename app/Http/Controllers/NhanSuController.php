@@ -2109,7 +2109,6 @@ class NhanSuController extends Controller
 		return back()->with('error','Không tìm thấy file theo yêu cầu!!!');
     }
 
-
     // Phê duyệt tăng ca
     public function getTangCaPanel() {        
         return view("nhansu.tangca");
@@ -4035,34 +4034,62 @@ class NhanSuController extends Controller
     }
 
     public function postOnlineChamCong(Request $request) {
-        dd($request->all());
+        // dd($request->all());
         $getStatusDevice = $request->statusDevice;
         $getStatusPos = $request->statusPos;
         $getBuoiChamCong = $request->buoiChamCong;
         $getLoaiChamCong = $request->loaiChamCong;
         $getTimerNow = $request->getNowTimer;
          
-        // if ($getStatusDevice != 1) {
-        //     return response()->json([
-        //         'type' => 'error',
-        //         'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
-        //         'code' => 500
-        //     ]);
-        // }
+        if ($getStatusDevice != 1) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
+                'code' => 500
+            ]);
+        }
 
-        // if ($getStatusPos != 1) {
-        //     return response()->json([
-        //         'type' => 'error',
-        //         'message' => 'Bạn đang không ở Công ty, vui lòng sử dụng wifi của Công ty để chấm công',
-        //         'code' => 500
-        //     ]);
-        // }
+        if ($getStatusPos != 1) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn đang không ở Công ty, vui lòng sử dụng wifi của Công ty để chấm công',
+                'code' => 500
+            ]);
+        }
 
         $chamcong = new ChamCongOnline();
         $chamcong->id_user = Auth::user()->id;
         $chamcong->buoichamcong = $getBuoiChamCong;
         $chamcong->loaichamcong = $getLoaiChamCong;
         $chamcong->thoigianchamcong = $getTimerNow;
+        // Xử lý đã chấm rồi hay chưa và xử lý hack vị trí
+        $ipClient = $request->ip();
+        $ipCheck1 = "115.78.73.52";
+        $ipCheck2 = "203.210.232.175";
+        if ($ipClient == $ipCheck1 || $ipClient == $ipCheck2) {
+        } else {
+            return response()->json([
+                'type' => 'error',               
+                'code' => 500,
+                'message' => 'Bạn đang không ở Công ty, vui lòng sử dụng wifi của Công ty để chấm công',
+            ]);  
+        }
+        // Rà soát đã chấm công rồi thì không thực hiện chấm nữa
+        $check = ChamCongOnline::where([
+            ['id_user','=',Auth::user()->id],
+            ['buoichamcong','=',$getBuoiChamCong],
+            ['loaichamcong','=',$getLoaiChamCong],
+            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
+        ])->exists();
+        if ($check) {
+            return response()->json([
+                'type' => 'error',               
+                'code' => 500,
+                'message' => 'Bạn đã chấm công khoảng thời gian này ' . 
+                ' cho ngày ' . Date('d-m-Y') . 
+                ' rồi, không thể chấm công lại!',
+            ]);  
+        }
         // Xử lý upload
         $folderPath = public_path('upload/chamcongonline/');        
         $image_parts = explode(";base64,", $request->imageCaptured);              
@@ -4078,6 +4105,63 @@ class NhanSuController extends Controller
         $chamcong->hinhanh = $name;
         $chamcong->save();
         if ($chamcong) {
+            // Xử lý bổ sung giờ công
+            // $getAll = ChamCongOnline::where([
+            //     ['id_user','=',Auth::user()->id],
+            //     [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
+            // ])->get();
+            // $vaoSang = null;
+            // $raSang = null;
+            // $vaoChieu = null;
+            // $raChieu = null;
+            // foreach($getAll as $row) {
+            //     if ($row->buoichamcong == 1 && $row->loaichamcong == 1) {
+            //         $vaoSang = $row->thoigianchamcong;
+            //     }
+            //     if ($row->buoichamcong == 1 && $row->loaichamcong == 2) {
+            //         $raSang = $row->thoigianchamcong;
+            //     }
+            //     if ($row->buoichamcong == 2 && $row->loaichamcong == 1) {
+            //         $vaoChieu = $row->thoigianchamcong;
+            //     }
+            //     if ($row->buoichamcong == 2 && $row->loaichamcong == 2) {
+            //         $raChieu = $row->thoigianchamcong;
+            //     }                
+            // }
+            // $ngay = Date('d');
+            // $thang = Date('m');
+            // $nam = Date('Y');
+            // $checkChamCong = ChamCongChiTiet::where([
+            //     ['ngay','=',$ngay],
+            //     ['thang','=',$thang],
+            //     ['nam','=',$nam],
+            //     ['id_user','=',Auth::user()->id]
+            // ])->exists();
+            // if ($checkChamCong) {
+            //     $chiTiet = ChamCongChiTiet::where([
+            //         ['ngay','=',$ngay],
+            //         ['thang','=',$thang],
+            //         ['nam','=',$nam],
+            //         ['id_user','=',Auth::user()->id]
+            //     ])
+            //     ->update([
+            //         'vaoSang' => $vaoSang,
+            //         'raSang' => $raSang,
+            //         'vaoChieu' => $vaoChieu,
+            //         'raChieu' => $raChieu
+            //     ]);
+            // } else {
+            //     $chiTiet = ChamCongChiTiet::insert([
+            //         'id_user' => Auth::user()->id,
+            //         'ngay' => $ngay,
+            //         'thang' => $thang,
+            //         'nam' => $nam,
+            //         'vaoSang' => $vaoSang,
+            //         'raSang' => $raSang,
+            //         'vaoChieu' => $vaoChieu,
+            //         'raChieu' => $raChieu
+            //     ]);
+            // }  
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã ghi nhận giờ công lúc ' . $getTimerNow .  " ngày " . Date('d-m-Y'),
@@ -4154,5 +4238,124 @@ class NhanSuController extends Controller
                 'code' => 500,
                 'message' => 'Lỗi xoá'
             ]);
+    }
+
+    public function dangKyThietBiChamCong(Request $request) {
+        $hasDevice = Auth::user()->device_id;
+        if ($hasDevice) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Thiết bị này đã được đăng ký trước đó, không thể đăng ký thêm',
+                'code' => 500
+            ]);  
+        } else {
+            $user = User::find(Auth::user()->id);
+            $user->device_id = $request->device_id; 
+            $user->save();
+            if ($user) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã đăng ký thiết bị chấm công thành công',
+                    'code' => 200
+                ]);  
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Lỗi đăng ký thiết bị chấm công, vui lòng thử lại',
+                    'code' => 500
+                ]);  
+            }
+        }
+    }
+
+    public function loadLichSuChamCong(Request $request) {
+        $result = null;        
+        $arr = [];
+        $result = ChamCongOnline::select("*")
+        ->where("id_user",Auth::user()->id)
+        ->orderBy('id','desc')
+        ->get();
+        foreach($result as $row) {
+            $dateChamCong = \HelpFunction::getDateRevertCreatedAt($row->created_at);
+            $nowDate = Date('d-m-Y');
+            if (strtotime($dateChamCong) == strtotime($nowDate)) {
+                array_push($arr, $row);
+            }
+        }
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500,
+                'data' => null
+            ]);
+        } 
+    }
+
+    public function counterAnhDem() {
+        $result = ChamCongOnline::select("*")
+        ->where("isXoa",false)
+        ->orderBy('id','desc')
+        ->get();
+        if($result) {
+            return response()->json([
+                'message' => 'Get list successfully!',
+                'code' => 200,
+                'counterAnhDem' => $result->count()
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Internal server fail!',
+                'code' => 500,
+                'data' => null
+            ]);
+        } 
+    }
+
+    public function giaiPhongAnhDem(Request $request) {
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $result = null;        
+            $arr = [];
+            $result = ChamCongOnline::select("*")
+            ->where("isXoa",false)
+            ->orderBy('id','desc')->get();
+            foreach($result as $row) {
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                    $del = ChamCongOnline::find($row->id);
+                    $hinhanh = $del->hinhanh;
+                    if ($hinhanh != null && file_exists('upload/chamcongonline/' . $hinhanh))
+                        unlink('upload/chamcongonline/'.$hinhanh);
+                    $del->isXoa = true;
+                    $del->save();
+                }
+            }
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã xóa ảnh đệm!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            } 
+        } else {
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500,
+                'data' => null
+            ]);
+        } 
     }
 }

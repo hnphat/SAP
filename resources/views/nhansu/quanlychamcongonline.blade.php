@@ -66,17 +66,14 @@
                                                     <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span></button> 
-                                        <button id="import" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Import Excel</button>&nbsp;
-                                        <button id="hiddenAll" class="btn btn-warning" data-toggle="modal" data-target="#hiddenModal">Ẩn/Hiện Danh Mục</button>
-                                        &nbsp;
-                                        <button id="raSoat" class="btn btn-secondary">Rà soát chênh lệch giá, công KTV</button>
-                                        <!-- &nbsp;
-                                        <button id="danhMucMoRong" class="btn btn-info">Danh mục phụ kiện (mở rộng)</button> -->
-                                        <br/><br/>
-                                        <p><strong id="loiImport" class="text-danger"></strong></p>                                                                                                                      
-
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label><br/>
+                                                    <button id="xoaAnh" type="button" class="btn btn-warning btn-xs">GIẢI PHÓNG ẢNH ĐỆM</button>
+                                                </div>
+                                            </div>
+                                        </div>                                                                                                                
+                                        <h5>Tổng ảnh đệm: <span id="tongAnhDem" class="text-danger"></span></h5>
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
                                             <tr class="bg-cyan">
@@ -186,10 +183,19 @@
                     {
                         "data": null,
                         render: function(data, type, row) {                            
-                          return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' style='width: 200px; max-width:200px;'/>";
+                          return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' alt='Ảnh đã xóa' style='width: 120px; max-width:120px;'/>";
                         }
                     },
-                    { "data": "ghichu" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {                          
+                            if (row.isXoa == 1) {
+                                return "<strong class='text-danger'>Đã xóa ảnh đệm</strong>";
+                            } else {
+                                return "<strong class='text-secondary'>Chưa xóa ảnh đệm</strong>";
+                            }
+                        }
+                    },
                     {
                         "data": null,
                         render: function(data, type, row) {                            
@@ -205,39 +211,6 @@
                 } );
             } ).draw();
           
-            // Add data
-            $("#btnAdd").click(function(e){
-                e.preventDefault();
-                $.ajax({
-                    url: "{{url('management/dichvu/hangmuc/guest/add/')}}",
-                    type: "post",
-                    dataType: 'json',
-                    data: $("#addForm").serialize(),
-                    success: function(response) {
-                        if (response.code == 200) {                            
-                            $("#addForm")[0].reset();
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            table.ajax.reload();
-                            $("#addModal").modal('hide');
-                        } else {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                        }
-                    },
-                    error: function() {
-                        Toast.fire({
-                            icon: 'warning',
-                            title: "Lỗi nhập liệu; Lỗi xử lý dữ liệu"
-                        })
-                    }
-                });
-            });
-
             $("#xemReport").click(function(){
                 let from = $("input[name=chonNgayOne]").val();
                 let to = $("input[name=chonNgayTwo]").val();               
@@ -245,7 +218,27 @@
                 table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to).load();
             });
 
-            //Delete data
+            function autoLoadCounter() {
+                // Gọi AJAX load lịch sử chấm công hôm nay
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/loadsoluonganhdem/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code === 200) {
+                            $("#tongAnhDem").text(response.counterAnhDem);
+                        } else {
+                            Toast.fire({ icon: 'error', title: "Lỗi tải!" });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({ icon: 'error', title: "Không thể tải!" });
+                    }
+                });
+            }
+            autoLoadCounter();
+
+             //Delete data
             $(document).on('click','#delete', function(){
                 if(confirm('Bạn có chắc muốn xóa?')) {
                     $.ajax({
@@ -261,6 +254,7 @@
                                 icon: response.type,
                                 title: response.message
                             })
+                            autoLoadCounter();
                             table.ajax.reload();
                         },
                         error: function() {
@@ -272,117 +266,35 @@
                     });
                 }
             });
-        });
-
-        //upload
-        $(document).one('click','#btnImport',function(e){
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $('#importForm').submit(function(e) {
-                e.preventDefault();   
-                var formData = new FormData(this);
-                $.ajax({
-                    type:'POST',
-                    url: "{{ url('management/dichvu/hangmuc/ajax/importfile/')}}",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function () {
-                        $("#btnImport").attr('disabled', true).html("Đang xử lý....");
-                    },
-                    success: (response) => {
-                        this.reset();
-                        if (response.code == 200) {
+            // Xóa ảnh đệm
+            $(document).one('click','#xoaAnh',function(e){
+                if (confirm('Bạn có chắc muốn giải phóng ảnh đệm không?')) {
+                    let from = $("input[name=chonNgayOne]").val();
+                    let to = $("input[name=chonNgayTwo]").val();    
+                    $.ajax({
+                        url: "{{url('management/nhansu/chamcongonline/giaiphonganhdem/')}}" + '?from=' + from + "&to=" + to,
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        },
+                        success: function(response) {
                             Toast.fire({
                                 icon: response.type,
                                 title: response.message
-                            });
-                            $("#btnImport").attr('disabled', false).html("IMPORT");                      
-                            $("#importModal").modal('hide');
-                            if (response.loi && Array.isArray(response.loi)) {
-                                let loiHtml = "<b>Import đã bỏ qua các mã này do xảy ra lỗi:</b><br>";
-                                response.loi.forEach(function(item, idx) {
-                                    loiHtml += (idx+1) + ". " + item + "<br>";
-                                });
-                                $("#loiImport").html(loiHtml);
-                            } else if (typeof response.loi === 'object') {
-                                let loiHtml = "<b>Import đã bỏ qua các mã này do xảy ra lỗi:</b><br>";
-                                Object.values(response.loi).forEach(function(item, idx) {
-                                    loiHtml += (idx+1) + ". " + item + "<br>";
-                                });
-                                $("#loiImport").html(loiHtml);
-                            } else {
-                                $("#loiImport").text("Import đã bỏ qua các mã này do xảy ra lỗi: " + response.loi);
-                            }
+                            })
+                            autoLoadCounter();
                             table.ajax.reload();
-                            // setTimeout(() => {
-                            //     open("{{route('dichvu.hangmuc')}}","_self");
-                            // }, 3000);
-                        } else {
+                        },
+                        error: function() {
                             Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            });                            
-                        }                        
-                    },
-                        error: function(response){
-                        Toast.fire({
-                            icon: 'info',
-                            title: ' Có lỗi: ' + response.responseJSON.errors.fileBase
-                        })
-                        $("#btnImport").attr('disabled', false).html("IMPORT");  
-                        console.log(response);
-                    }
-                });
-            });                
-        });
-
-        // hidden
-        $(document).one('click','#btnHidden',function(e){
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
+                                icon: 'warning',
+                                title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }                     
             });
-            $('#hiddenForm').submit(function(e) {
-                e.preventDefault();   
-                var formData = new FormData(this);
-                $.ajax({
-                    type:'POST',
-                    url: "{{ url('management/dichvu/hangmuc/ajax/hiddendanhmuc/')}}",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function () {
-                        $("#btnHidden").attr('disabled', true).html("Đang xử lý....");
-                    },
-                    success: (response) => {
-                        this.reset();
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message + " - Đã cập nhật: " + response.soluong
-                        });
-                        $("#btnHidden").attr('disabled', false).html("THỰC HIỆN");                      
-                        $("#hiddenModal").modal('hide');
-                        setTimeout(() => {
-                            open("{{route('dichvu.hangmuc')}}","_self");
-                        }, 3000);
-                    },
-                    error: function(response){
-                        Toast.fire({
-                            icon: 'info',
-                            title: 'Có lỗi'
-                        })
-                        $("#btnHidden").attr('disabled', false).html("Thực hiện");  
-                        console.log(response);
-                    }
-                });
-            });                
         });
         
     </script>

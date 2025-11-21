@@ -134,6 +134,13 @@
                                             <strong>Lưu ý: <span class="text-danger"><i>Thời gian 01 buổi (Vào sáng + ra sáng hoặc vào chiều + ra chiều) phải là 04 giờ (Theo quy định (01 ngày 08 tiếng, 01 buổi 04 tiếng)). Sai lệch sẽ phát sinh lỗi hoặc kết quả không đúng.</i></span></strong>
                                         </fieldset>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Mở chấm công Online</label>
+                                        <select name="disableChamCongOnline" class="form-control">
+                                            <option value="1">Có</option>
+                                            <option value="0">Không</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -187,6 +194,7 @@
                         $("input[name=emailDuyetXe]").val(response.data.emailDuyetXe);
                         $("input[name=emailTraXe]").val(response.data.emailTraXe);
                         $("select[name=capNhatThongTin]").val(response.data.capNhatThongTin);
+                        $("select[name=disableChamCongOnline]").val(response.data.disableChamCongOnline);
                         $("select[name=mauThongBao]").val(response.data.mauThongBao);
                         $("select[name=loaiThongBao]").val(response.data.loaiThongBao);
                         $("input[name=maxRecord]").val(response.data.maxRecord);

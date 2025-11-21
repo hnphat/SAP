@@ -22,6 +22,7 @@ class ChamCongOnline extends Migration
             $table->string('thoigianchamcong')->nullable();
             $table->string('hinhanh')->nullable();
             $table->string('ghichu')->nullable();
+            $table->boolean('isXoa')->default(0);
             $table->timestamps();
         });
     }
