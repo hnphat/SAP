@@ -445,7 +445,7 @@
                         if (response.code === 200) {
                             $("#camera").hide();
                             $("#btnOpenCamera").hide();
-                            $("#thongBao").html("<span class='text-success'>Đã ghi nhận chấm công!</span>");
+                            $("#thongBao").html("<span class='text-success'>"+response.message+"</span>");
                             $("#sendChamCong").hide();
                             autoLoadHistory();
                         } else {

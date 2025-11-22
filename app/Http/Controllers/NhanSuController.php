@@ -4109,21 +4109,21 @@ class NhanSuController extends Controller
             ]);  
         }
         // Rà soát đã chấm công rồi thì không thực hiện chấm nữa
-        $check = ChamCongOnline::where([
-            ['id_user','=',Auth::user()->id],
-            ['buoichamcong','=',$getBuoiChamCong],
-            ['loaichamcong','=',$getLoaiChamCong],
-            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
-        ])->exists();
-        if ($check) {
-            return response()->json([
-                'type' => 'error',               
-                'code' => 500,
-                'message' => 'Bạn đã chấm công khoảng thời gian này ' . 
-                ' cho ngày ' . Date('d-m-Y') . 
-                ' rồi, không thể chấm công lại!',
-            ]);  
-        }
+        // $check = ChamCongOnline::where([
+        //     ['id_user','=',Auth::user()->id],
+        //     ['buoichamcong','=',$getBuoiChamCong],
+        //     ['loaichamcong','=',$getLoaiChamCong],
+        //     [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
+        // ])->exists();
+        // if ($check) {
+        //     return response()->json([
+        //         'type' => 'error',               
+        //         'code' => 500,
+        //         'message' => 'Bạn đã chấm công khoảng thời gian này ' . 
+        //         ' cho ngày ' . Date('d-m-Y') . 
+        //         ' rồi, không thể chấm công lại!',
+        //     ]);  
+        // }
         // Xử lý upload
         $folderPath = public_path('upload/chamcongonline/');        
         $image_parts = explode(";base64,", $request->imageCaptured);              
@@ -4140,62 +4140,62 @@ class NhanSuController extends Controller
         $chamcong->save();
         if ($chamcong) {
             // Xử lý bổ sung giờ công
-            // $getAll = ChamCongOnline::where([
-            //     ['id_user','=',Auth::user()->id],
-            //     [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
-            // ])->get();
-            // $vaoSang = null;
-            // $raSang = null;
-            // $vaoChieu = null;
-            // $raChieu = null;
-            // foreach($getAll as $row) {
-            //     if ($row->buoichamcong == 1 && $row->loaichamcong == 1) {
-            //         $vaoSang = $row->thoigianchamcong;
-            //     }
-            //     if ($row->buoichamcong == 1 && $row->loaichamcong == 2) {
-            //         $raSang = $row->thoigianchamcong;
-            //     }
-            //     if ($row->buoichamcong == 2 && $row->loaichamcong == 1) {
-            //         $vaoChieu = $row->thoigianchamcong;
-            //     }
-            //     if ($row->buoichamcong == 2 && $row->loaichamcong == 2) {
-            //         $raChieu = $row->thoigianchamcong;
-            //     }                
-            // }
-            // $ngay = Date('d');
-            // $thang = Date('m');
-            // $nam = Date('Y');
-            // $checkChamCong = ChamCongChiTiet::where([
-            //     ['ngay','=',$ngay],
-            //     ['thang','=',$thang],
-            //     ['nam','=',$nam],
-            //     ['id_user','=',Auth::user()->id]
-            // ])->exists();
-            // if ($checkChamCong) {
-            //     $chiTiet = ChamCongChiTiet::where([
-            //         ['ngay','=',$ngay],
-            //         ['thang','=',$thang],
-            //         ['nam','=',$nam],
-            //         ['id_user','=',Auth::user()->id]
-            //     ])
-            //     ->update([
-            //         'vaoSang' => $vaoSang,
-            //         'raSang' => $raSang,
-            //         'vaoChieu' => $vaoChieu,
-            //         'raChieu' => $raChieu
-            //     ]);
-            // } else {
-            //     $chiTiet = ChamCongChiTiet::insert([
-            //         'id_user' => Auth::user()->id,
-            //         'ngay' => $ngay,
-            //         'thang' => $thang,
-            //         'nam' => $nam,
-            //         'vaoSang' => $vaoSang,
-            //         'raSang' => $raSang,
-            //         'vaoChieu' => $vaoChieu,
-            //         'raChieu' => $raChieu
-            //     ]);
-            // }  
+            $getAll = ChamCongOnline::where([
+                ['id_user','=',Auth::user()->id],
+                [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
+            ])->get();
+            $vaoSang = null;
+            $raSang = null;
+            $vaoChieu = null;
+            $raChieu = null;
+            foreach($getAll as $row) {
+                if ($row->buoichamcong == 1 && $row->loaichamcong == 1) {
+                    $vaoSang = $row->thoigianchamcong;
+                }
+                if ($row->buoichamcong == 1 && $row->loaichamcong == 2) {
+                    $raSang = $row->thoigianchamcong;
+                }
+                if ($row->buoichamcong == 2 && $row->loaichamcong == 1) {
+                    $vaoChieu = $row->thoigianchamcong;
+                }
+                if ($row->buoichamcong == 2 && $row->loaichamcong == 2) {
+                    $raChieu = $row->thoigianchamcong;
+                }                
+            }
+            $ngay = Date('d');
+            $thang = Date('m');
+            $nam = Date('Y');
+            $checkChamCong = ChamCongChiTiet::where([
+                ['ngay','=',$ngay],
+                ['thang','=',$thang],
+                ['nam','=',$nam],
+                ['id_user','=',Auth::user()->id]
+            ])->exists();
+            if ($checkChamCong) {
+                $chiTiet = ChamCongChiTiet::where([
+                    ['ngay','=',$ngay],
+                    ['thang','=',$thang],
+                    ['nam','=',$nam],
+                    ['id_user','=',Auth::user()->id]
+                ])
+                ->update([
+                    'vaoSang' => $vaoSang,
+                    'raSang' => $raSang,
+                    'vaoChieu' => $vaoChieu,
+                    'raChieu' => $raChieu
+                ]);
+            } else {
+                $chiTiet = ChamCongChiTiet::insert([
+                    'id_user' => Auth::user()->id,
+                    'ngay' => $ngay,
+                    'thang' => $thang,
+                    'nam' => $nam,
+                    'vaoSang' => $vaoSang,
+                    'raSang' => $raSang,
+                    'vaoChieu' => $vaoChieu,
+                    'raChieu' => $raChieu
+                ]);
+            }  
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã ghi nhận giờ công lúc ' . $getTimerNow .  " ngày " . Date('d-m-Y'),
@@ -4352,6 +4352,14 @@ class NhanSuController extends Controller
     }
 
     public function giaiPhongAnhDem(Request $request) {
+        if (Auth::user()->hasRole("system")) {
+        } else {
+            return response()->json([
+                'message' => 'Bạn không có quyền thực hiện chức năng này!',
+                'code' => 500,
+                'data' => null
+            ]);
+        }
         if ($request->from && $request->to) {
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);

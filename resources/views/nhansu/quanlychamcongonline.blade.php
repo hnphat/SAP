@@ -66,10 +66,16 @@
                                                     <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label><br/>
                                                     <button id="xoaAnh" type="button" class="btn btn-warning btn-xs">GIẢI PHÓNG ẢNH ĐỆM</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label><br/>
+                                                    <button id="dongBoChamCong" type="button" class="btn btn-primary btn-xs">ĐỒNG BỘ</button>
                                                 </div>
                                             </div>
                                         </div>                                                                                                                
