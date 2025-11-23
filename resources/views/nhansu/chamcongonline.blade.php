@@ -133,6 +133,21 @@
         s22: "{{asset('upload/datavoice/22.mp3')}}", 
         s23: "{{asset('upload/datavoice/23.mp3')}}", 
         s24: "{{asset('upload/datavoice/24.mp3')}}", 
+        s25: "{{asset('upload/datavoice/25.mp3')}}", 
+        s26: "{{asset('upload/datavoice/26.mp3')}}", 
+        s27: "{{asset('upload/datavoice/27.mp3')}}", 
+        s28: "{{asset('upload/datavoice/28.mp3')}}", 
+        s29: "{{asset('upload/datavoice/29.mp3')}}", 
+        s30: "{{asset('upload/datavoice/30.mp3')}}", 
+        s31: "{{asset('upload/datavoice/31.mp3')}}", 
+        s32: "{{asset('upload/datavoice/32.mp3')}}", 
+        s33: "{{asset('upload/datavoice/33.mp3')}}", 
+        s34: "{{asset('upload/datavoice/34.mp3')}}", 
+        s35: "{{asset('upload/datavoice/35.mp3')}}", 
+        s36: "{{asset('upload/datavoice/36.mp3')}}", 
+        s37: "{{asset('upload/datavoice/37.mp3')}}", 
+        s38: "{{asset('upload/datavoice/38.mp3')}}", 
+        s39: "{{asset('upload/datavoice/39.mp3')}}", 
     };   
     const sounds = {};
 
@@ -598,7 +613,7 @@
                             $("#sendChamCong").hide();
                             // $("#AiVoice").show();
                             autoLoadHistory();
-                            playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24"]);
+                            playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24","s25","s26","s27","s28","s29","s30","s31","s32","s33","s34","s35","s36","s37","s38","s39"]);
                         } else {
                             $("#camera").hide();
                             $("#btnOpenCamera").hide();
