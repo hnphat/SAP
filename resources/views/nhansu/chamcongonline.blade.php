@@ -69,7 +69,7 @@
                         </p>           
                         <p class="text-center">
                           <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
-                        </p>             
+                        </p>          
                         <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
                         <!-- <img id="preview" width="320" style="margin-top: 10px;"> -->
                         <!-- <button onclick="captureImage()" class="btn btn-primary" type="button">Chụp thử ảnh</button> -->
@@ -162,18 +162,6 @@
     }
 
     initSounds();
-
-    // function playSound(name){
-    //     const s = sounds[name];
-    //     if (s){ try{ s.currentTime = 0; s.play(); }catch(e){} }
-    // }
-
-    // function playSoundWithRandom(listNames){
-    //     let idx = Math.floor(Math.random() * listNames.length);
-    //     let name = listNames[idx];
-    //     const s = sounds[name];
-    //     if (s){ try{ s.currentTime = 0; s.play(); }catch(e){} }
-    // }
     function playSound(name){
         const s = sounds[name];
         if (s){ 
@@ -207,42 +195,8 @@
             }catch(e){}
         }
     }
-
+    
     let stream = null;    
-    // async function startCamera() {        
-    //     try {
-    //         stream = await navigator.mediaDevices.getUserMedia({
-    //         video: {
-    //             width: { ideal: 1920 },  // FULL HD
-    //             height: { ideal: 1080 },
-    //             facingMode: { exact: "user" }   // ép dùng camera trước
-    //         },
-    //         audio: false
-    //         });
-    //         document.getElementById("camera").srcObject = stream;
-    //         if (stream) {
-    //             playSound("s21");
-    //             document.getElementById("sendChamCong").style.display = "inline-block";
-    //         }
-    //     } 
-    //     catch (err) {
-    //         // fallback nếu máy không hỗ trợ exact
-    //         console.warn("Không dùng được exact:user, chuyển sang ideal:user", err);
-
-    //         try {
-    //         const fallback = await navigator.mediaDevices.getUserMedia({
-    //             video: {
-    //             facingMode: { ideal: "user" }  // ưu tiên camera trước
-    //             },
-    //             audio: false
-    //         });
-    //         document.getElementById("camera").srcObject = fallback;
-    //         }
-    //         catch(e2) {
-    //         alert("Điện thoại không cho phép mở camera trước: " + e2);
-    //         }
-    //     }
-    // }
     async function startCamera() {        
         try {
             stream = await navigator.mediaDevices.getUserMedia({
@@ -282,32 +236,6 @@
             }
         }
     }
-
-    function openPermissionSettings() {
-        // Chỉ Chrome hỗ trợ API này
-        if (navigator.permissions && navigator.permissions.query) {
-            alert("Vui lòng tìm mục Camera và đổi thành 'Allow (Cho phép)' trong phần cài đặt trang web!");
-        }
-    }
-
-    // function captureImage() {
-    //     if (!stream) {
-    //         alert("Chưa bật camera!");
-    //         return;
-    //     }
-    //     const video = document.getElementById('camera');
-    //     const canvas = document.getElementById('canvas');
-    //     let ctx = canvas.getContext("2d");
-
-    //     canvas.width = video.videoWidth;
-    //     canvas.height = video.videoHeight;
-
-    //     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    //     let dataUrl = canvas.toDataURL("image/jpeg", 0.65); // Base64
-    //     lastImage = dataUrl;
-    //     // document.getElementById("preview").src = dataUrl;
-    //     return dataUrl;
-    // }
     function captureImage() {
         if (!stream) {
             alert("Chưa bật camera!");
@@ -350,8 +278,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
-    <!-- <script src="https://openfpcdn.io/fingerprintjs/v3"></script> -->
-    <script src="https://openfpcdn.io/fingerprintjs/v3/umd.min.js"></script>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -377,95 +303,7 @@
 
             updateTime(); // cập nhật ngay lập tức
             setInterval(updateTime, 1000); // cập nhật mỗi giây
-        })();
-        
-        // async function getDeviceId() {
-        //     const fp = await FingerprintJS.load();
-        //     const result = await fp.get();
-        //     return result.visitorId;
-        // }
-
-        // async function kiemTraTrangThaiThietBi() {
-        //     try {
-        //         const device_id = await getDeviceId();
-        //         $.ajax({
-        //             url: "{{url('management/nhansu/chamcongonline/kiemtratrangthaithietbi/')}}",
-        //             type: "post",
-        //             dataType: "json",
-        //             data: {
-        //                 "_token": "{{csrf_token()}}",
-        //                 "device_id": device_id
-        //             },
-        //             success: function(response) {
-        //                 if (response.code === 200) {
-        //                     if (response.result === 0) {
-        //                         $("#notDevice").show();
-        //                         $("#hasDevice").hide();
-        //                         $("#hasDeviceOther").hide();
-        //                         $("#statusDevice").val(0);
-        //                     } else if (response.result === 1) {
-        //                         $("#notDevice").hide();
-        //                         $("#hasDevice").show();
-        //                         $("#hasDeviceOther").hide();
-        //                         $("#statusDevice").val(1);
-        //                     } else if (response.result === 2) {
-        //                         $("#notDevice").hide();
-        //                         $("#hasDevice").hide();
-        //                         $("#hasDeviceOther").show();
-        //                         $("#statusDevice").val(2);
-        //                     }
-        //                 } else {
-        //                     Toast.fire({ icon: 'error', title: "Lỗi kiểm tra!" });
-        //                 }
-        //             },
-        //             error: function() {
-        //                 Toast.fire({ icon: 'error', title: "Không thể kiểm tra!" });
-        //             }
-        //         });
-
-        //     } catch (e) {
-        //         console.error(e);
-        //         Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
-        //     }
-        // }
-
-        // document.addEventListener("DOMContentLoaded", kiemTraTrangThaiThietBi);
-
-        // document.getElementById("regDevice").addEventListener("click", async function(){
-        //     try {
-        //         const device_id = await getDeviceId();
-        //         $.ajax({
-        //             url: "{{url('management/nhansu/chamcongonline/dangkythietbi/')}}",
-        //             type: "post",
-        //             dataType: "json",
-        //             data: {
-        //                 "_token": "{{csrf_token()}}",
-        //                 "device_id": device_id
-        //             },
-        //             success: function(response) {
-        //                 if (response.code === 200) {
-        //                     Toast.fire({ 
-        //                         icon: response.type, 
-        //                         title: response.message 
-        //                     });
-        //                     kiemTraTrangThaiThietBi();
-        //                 } else {
-        //                     Toast.fire({ 
-        //                         icon: 'error', 
-        //                         title: response.message 
-        //                     });
-        //                 }
-        //             },
-        //             error: function() {
-        //                 Toast.fire({ icon: 'error', title: "Không thể đăng ký thiết bị!" });
-        //             }
-        //         });
-
-        //     } catch (e) {
-        //         console.error(e);
-        //         Toast.fire({ icon: 'error', title: "Fingerprint lỗi" });
-        //     }
-        // });
+        })();    
     </script>
     <script>
         $(document).ready(function(){
@@ -541,49 +379,6 @@
                 });
             }
             autoLoadHistory();
-            // $("#sendChamCong").click(function(){
-            //     // if (confirm("Xác nhận chấm công?\nVui lòng kiểm tra kỹ Buổi chấm công, Loại chấm công.\nKhông thể chấm lại nếu chọn sai thông tin") == false) {
-            //     //     return;
-            //     // }
-            //     if (!stream) {
-            //         alert("Chưa bật camera!");
-            //         return;
-            //     }
-            //     let capturedImage = captureImage();
-            //     $("#imageCaptured").val(capturedImage);
-            //     $.ajax({
-            //         url: "{{url('management/nhansu/chamcongonline/chamcong/')}}",
-            //         type: "post",
-            //         dataType: "json",
-            //         data: $("#addForm").serialize(),
-            //         success: function(response) {
-            //             if (response.code === 200) {
-            //                 // Toast.fire({ 
-            //                 //     icon: 'success', 
-            //                 //     title: "Đã ghi nhận chấm công!" 
-            //                 // });
-            //                 $("#camera").hide();
-            //                 $("#btnOpenCamera").hide();
-            //                 $("#thongBao").html("<span class='text-success'>Đã ghi nhận chấm công!</span>");
-            //                 $("#sendChamCong").hide();
-            //                 autoLoadHistory();
-            //             } else {
-            //                 // Toast.fire({ 
-            //                 //     icon: 'error', 
-            //                 //     title: response.message 
-            //                 // });
-            //                 $("#camera").hide();
-            //                 $("#btnOpenCamera").hide();
-            //                 $("#thongBao").html("<span class='text-danger'>"+response.message+"</span>");
-            //                 $("#sendChamCong").hide();
-            //             }
-            //         },
-            //         error: function() {
-            //             $("#camera").hide();
-            //             Toast.fire({ icon: 'error', title: "Không thể chấm công!" });
-            //         }
-            //     });
-            // });
             $("#sendChamCong").off('click').on('click', function(e){
                 e.preventDefault();
                 if (!stream) {
