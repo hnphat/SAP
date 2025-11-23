@@ -79,7 +79,8 @@
                             <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
                             <!-- <button id="sendChamCong" style="display: none;" type="button" class="btn btn-primary">CHẤM CÔNG</button> -->
                         </p>
-                        <h2 id="thongBao"></h2>
+                        <h2 id="thongBao" class="text-center"></h2>
+                        <p id="AiVoice" class="text-center" style="display: none;"><img width="150" src="{{asset('images/voiceai.gif')}}?v={{ time() }}" alt="voice ai"></p>
                     </p>
                     <hr>
                     <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
@@ -107,8 +108,127 @@
 @endsection
 @section('script')
     <script>
+    const ALLSound = {
+        s1: "{{asset('upload/datavoice/1.mp3')}}",   
+        s2: "{{asset('upload/datavoice/2.mp3')}}", 
+        s3: "{{asset('upload/datavoice/3.mp3')}}", 
+        s4: "{{asset('upload/datavoice/4.mp3')}}", 
+        s5: "{{asset('upload/datavoice/5.mp3')}}", 
+        s6: "{{asset('upload/datavoice/6.mp3')}}", 
+        s7: "{{asset('upload/datavoice/7.mp3')}}", 
+        s8: "{{asset('upload/datavoice/8.mp3')}}", 
+        s9: "{{asset('upload/datavoice/9.mp3')}}", 
+        s10: "{{asset('upload/datavoice/10.mp3')}}", 
+        s11: "{{asset('upload/datavoice/11.mp3')}}", 
+        s12: "{{asset('upload/datavoice/12.mp3')}}", 
+        s13: "{{asset('upload/datavoice/13.mp3')}}", 
+        s14: "{{asset('upload/datavoice/14.mp3')}}", 
+        s15: "{{asset('upload/datavoice/15.mp3')}}", 
+        s16: "{{asset('upload/datavoice/16.mp3')}}", 
+        s17: "{{asset('upload/datavoice/17.mp3')}}", 
+        s18: "{{asset('upload/datavoice/18.mp3')}}", 
+        s19: "{{asset('upload/datavoice/19.mp3')}}", 
+        s20: "{{asset('upload/datavoice/20.mp3')}}", 
+        s21: "{{asset('upload/datavoice/21.mp3')}}", 
+        s22: "{{asset('upload/datavoice/22.mp3')}}", 
+        s23: "{{asset('upload/datavoice/23.mp3')}}", 
+        s24: "{{asset('upload/datavoice/24.mp3')}}", 
+    };   
+    const sounds = {};
+
+    function initSounds(){
+        for (const [k,url] of Object.entries(ALLSound)){
+            if (url){
+                const a = new Audio(url);
+                a.preload = "auto";
+                sounds[k] = a;
+            }
+        }
+    }
+
+    initSounds();
+
+    // function playSound(name){
+    //     const s = sounds[name];
+    //     if (s){ try{ s.currentTime = 0; s.play(); }catch(e){} }
+    // }
+
+    // function playSoundWithRandom(listNames){
+    //     let idx = Math.floor(Math.random() * listNames.length);
+    //     let name = listNames[idx];
+    //     const s = sounds[name];
+    //     if (s){ try{ s.currentTime = 0; s.play(); }catch(e){} }
+    // }
+    function playSound(name){
+        const s = sounds[name];
+        if (s){ 
+            try{
+                // Hiển thị biểu tượng AI khi phát
+                $('#AiVoice').show();
+                // reset và phát
+                s.currentTime = 0;
+                s.play();
+                // Khi âm thanh kết thúc => ẩn biểu tượng AI
+                s.onended = function(){
+                    $('#AiVoice').hide();
+                };
+            }catch(e){}
+        }
+    }
+
+    function playSoundWithRandom(listNames){
+        if (!listNames || listNames.length === 0) return;
+        let idx = Math.floor(Math.random() * listNames.length);
+        let name = listNames[idx];
+        const s = sounds[name];
+        if (s){ 
+            try{
+                $('#AiVoice').show();
+                s.currentTime = 0;
+                s.play();
+                s.onended = function(){
+                    $('#AiVoice').hide();
+                };
+            }catch(e){}
+        }
+    }
+
     let stream = null;    
-    async function startCamera() {
+    // async function startCamera() {        
+    //     try {
+    //         stream = await navigator.mediaDevices.getUserMedia({
+    //         video: {
+    //             width: { ideal: 1920 },  // FULL HD
+    //             height: { ideal: 1080 },
+    //             facingMode: { exact: "user" }   // ép dùng camera trước
+    //         },
+    //         audio: false
+    //         });
+    //         document.getElementById("camera").srcObject = stream;
+    //         if (stream) {
+    //             playSound("s21");
+    //             document.getElementById("sendChamCong").style.display = "inline-block";
+    //         }
+    //     } 
+    //     catch (err) {
+    //         // fallback nếu máy không hỗ trợ exact
+    //         console.warn("Không dùng được exact:user, chuyển sang ideal:user", err);
+
+    //         try {
+    //         const fallback = await navigator.mediaDevices.getUserMedia({
+    //             video: {
+    //             facingMode: { ideal: "user" }  // ưu tiên camera trước
+    //             },
+    //             audio: false
+    //         });
+    //         document.getElementById("camera").srcObject = fallback;
+    //         }
+    //         catch(e2) {
+    //         alert("Điện thoại không cho phép mở camera trước: " + e2);
+    //         }
+    //     }
+    // }
+    async function startCamera() {        
         try {
             stream = await navigator.mediaDevices.getUserMedia({
             video: {
@@ -118,9 +238,12 @@
             },
             audio: false
             });
-
-            document.getElementById("camera").srcObject = stream;
+            const videoEl = document.getElementById("camera");
+            videoEl.srcObject = stream;
+            // Hiển thị video theo hướng gương (người dùng mong muốn): lật ngang
+            videoEl.style.transform = 'scaleX(-1)';
             if (stream) {
+                playSound("s21");
                 document.getElementById("sendChamCong").style.display = "inline-block";
             }
         } 
@@ -136,6 +259,8 @@
                 audio: false
             });
             document.getElementById("camera").srcObject = fallback;
+            // cũng áp dụng lật ngang cho fallback
+            document.getElementById("camera").style.transform = 'scaleX(-1)';
             }
             catch(e2) {
             alert("Điện thoại không cho phép mở camera trước: " + e2);
@@ -150,6 +275,24 @@
         }
     }
 
+    // function captureImage() {
+    //     if (!stream) {
+    //         alert("Chưa bật camera!");
+    //         return;
+    //     }
+    //     const video = document.getElementById('camera');
+    //     const canvas = document.getElementById('canvas');
+    //     let ctx = canvas.getContext("2d");
+
+    //     canvas.width = video.videoWidth;
+    //     canvas.height = video.videoHeight;
+
+    //     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //     let dataUrl = canvas.toDataURL("image/jpeg", 0.65); // Base64
+    //     lastImage = dataUrl;
+    //     // document.getElementById("preview").src = dataUrl;
+    //     return dataUrl;
+    // }
     function captureImage() {
         if (!stream) {
             alert("Chưa bật camera!");
@@ -162,10 +305,16 @@
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
+        // Vì video đang được hiển thị đã lật ngang bằng CSS (scaleX(-1)),
+        // khi vẽ lên canvas cần lật ngang để ảnh xuất ra khớp với hiển thị.
+        ctx.save();
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
         let dataUrl = canvas.toDataURL("image/jpeg", 0.65); // Base64
         lastImage = dataUrl;
-        // document.getElementById("preview").src = dataUrl;
         return dataUrl;
     }
     </script>
@@ -447,12 +596,18 @@
                             $("#btnOpenCamera").hide();
                             $("#thongBao").html("<span class='text-success'>"+response.message+"</span>");
                             $("#sendChamCong").hide();
+                            // $("#AiVoice").show();
                             autoLoadHistory();
+                            playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24"]);
                         } else {
                             $("#camera").hide();
                             $("#btnOpenCamera").hide();
                             $("#thongBao").html("<span class='text-danger'>"+response.message+"</span>");
                             $("#sendChamCong").hide();
+                            // $("#AiVoice").show();
+                            if (response.key && response.key !== "random") {
+                                playSound(response.key);
+                            } 
                         }
                     },
                     error: function() {
