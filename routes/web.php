@@ -957,4 +957,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('ghiso','XeCuuHoController@ghiSo')->name('xecuuho.ghiso');
         Route::post('delete','XeCuuHoController@delete');
     });
+
+    Route::group(['prefix' => 'testfeature'], function(){
+        // Test Chấm công online
+        Route::get('chamcongonline','TestController@onlineChamCong')->name('test.chamcong.online');
+        Route::post('chamcongonline/kiemtratrangthaivitri','TestController@kiemTraTrangThaiViTri');
+        Route::post('chamcongonline/chamcong','TestController@postOnlineChamCong');
+        Route::post('chamcongonline/loadlichsu','TestController@loadLichSuChamCong');
+    });
 });

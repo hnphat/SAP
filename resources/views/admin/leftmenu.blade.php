@@ -903,15 +903,17 @@
                     </a>
                 </li>                
                 @endif
-                <!-- <li class="nav-item">
-                    <a href="#" class="nav-link">
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                \Illuminate\Support\Facades\Auth::user()->name == "nv111")
+                <li class="nav-item">
+                    <a href="{{route('test.chamcong.online')}}" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
                         <p>
-                            GÓP Ý
-                            <span class="right badge badge-danger">New</span>
+                            <strong>NHẬN DẠNG</strong>
                         </p>
                     </a>
-                </li>                 -->
+                </li>  
+                @endif              
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

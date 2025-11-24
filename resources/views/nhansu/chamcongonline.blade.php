@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{asset('ai/style/face-detection.css')}}">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="{{asset('ai/js/face-api.min.js')}}"></script>
+    <script src="{{asset('ai/js/webcam-easy.min.js')}}"></script>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -35,71 +39,77 @@
             <div class="container-fluid">
                 <form id="addForm" autocomplete="off">
                     {{csrf_field()}}
-                <div>   
-                    <!-- <button onclick="openPermissionSettings()" class="btn btn-info">Chọn lại quyền Camera</button> -->
-                    <!-- <p id="notDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Bạn chưa đăng ký <button id="regDevice" class="btn btn-success btn-sm">Đăng ký ngay</button></strong></p>     
-                    <p id="hasDevice" style="display: none;">Trạng thái thiết bị: <strong class="text-success">Đã đăng ký</strong></p>
-                    <p id="hasDeviceOther" style="display: none;">Trạng thái thiết bị: <strong class="text-danger">Thiết bị khác thiết bị đã đăng ký</strong></p> -->
-                    <!-- <input type="hidden" name="statusDevice" id="statusDevice"> -->
-                    <input type="hidden" name="getNowTimer" id="getNowTimer">
-                    <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
-                    <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
-                    <input type="hidden" name="statusPos" id="statusPos">
-                    <p class="text-center"><strong style="font-size:39pt;" id="showTimeNow"></strong></p>
-                    <div class="row" style="display:none;">
-                        <div class="col-md-6">
-                            <strong>CHỌN BUỔI</strong>
-                            <select class="form-control" name="buoiChamCong">
-                                <option value="1">Sáng</option>
-                                <option value="2">Chiều</option>
-                                <option value="3">Tối</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>CHỌN LOẠI CHẤM CÔNG</strong>
-                            <select class="form-control" name="loaiChamCong">
-                                <option value="1">Chấm công vào</option>
-                                <option value="2">Chấm công ra</option>
-                            </select>
-                        </div>
-                    </div>
-                    <p class="text-center">
-                        <p class="text-center" id="btnOpenCamera">
-                            <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
-                        </p>           
+                    <!-- <div>   
+                        <input type="hidden" name="getNowTimer" id="getNowTimer">
+                        <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
+                        <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
+                        <input type="hidden" name="statusPos" id="statusPos">
+                        <p class="text-center"><strong style="font-size:39pt;" id="showTimeNow"></strong></p>
                         <p class="text-center">
-                          <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
-                        </p>          
-                        <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
-                        <!-- <img id="preview" width="320" style="margin-top: 10px;"> -->
-                        <!-- <button onclick="captureImage()" class="btn btn-primary" type="button">Chụp thử ảnh</button> -->
-                        <input type="hidden" id="imageCaptured" name="imageCaptured">
-                        <br/>
-                        <p class="text-center">
-                            <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
-                            <!-- <button id="sendChamCong" style="display: none;" type="button" class="btn btn-primary">CHẤM CÔNG</button> -->
+                            <p class="text-center" id="btnOpenCamera">
+                                <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
+                            </p>           
+                            <p class="text-center">
+                            <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
+                            </p>          
+                            <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+                            <input type="hidden" id="imageCaptured" name="imageCaptured">
+                            <br/>
+                            <p class="text-center">
+                                <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
+                            </p>
+                            <h2 id="thongBao" class="text-center"></h2>
+                            <p id="AiVoice" class="text-center" style="display: none;"><img width="150" src="{{asset('images/voiceai.gif')}}?v={{ time() }}" alt="voice ai"></p>
                         </p>
-                        <h2 id="thongBao" class="text-center"></h2>
-                        <p id="AiVoice" class="text-center" style="display: none;"><img width="150" src="{{asset('images/voiceai.gif')}}?v={{ time() }}" alt="voice ai"></p>
-                    </p>
-                    <hr>
-                    <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
-                    <div class="row">
-                        <table class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Thời gian</th>
-                                    <th>Buổi</th>
-                                    <th>Loại chấm công</th>
-                                </tr>
-                            </thead>
-                            <tbody id="showChamCongHistory">
-                               
-                            </tbody>
-                        </table>
+                        <hr>
+                        <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
+                        <div class="row">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Thời gian</th>
+                                        <th>Buổi</th>
+                                        <th>Loại chấm công</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="showChamCongHistory">
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>     -->
+                    <!-- Phiên bản mới -->
+                    <div>
+                        <div class="row">
+                            <div class="col-12 col-md-4 col-xl-3 align-top">
+                                <div class="row mb-3">
+                                        <div class="col-md-10 col-6 form-control">
+                                            <label class="form-switch">
+                                            <input type="checkbox" id="webcam-switch">
+                                            <i></i> Mở Camera </label>  
+                                            <button id="cameraFlip" class="btn d-none"></button>     
+                                        </div>                 
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8 col-xl-9 align-top" id="webcam-container">
+                                <div class="loading d-none">
+                                    Tải mô hình
+                                        <div class="spinner-border" role="status">
+                                        <span class="sr-only"></span>
+                                        </div>
+                                </div>
+                                
+                                <div id="video-container">
+                                        <video id="webcam" autoplay muted playsinline></video>
+                                </div>  
+                                <div id="errorMsg" class="col-12 alert-danger d-none">
+                                Mở camera không thành công<br>
+                                Vui lòng cho phép camera trên thiết bị. <br>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>    
                 </form>           
             </div>
         </div>
@@ -260,6 +270,128 @@
         lastImage = dataUrl;
         return dataUrl;
     }
+
+    // Other function
+        const webcamElement = document.getElementById('webcam');
+        const webcam = new Webcam(webcamElement, 'user');
+        // const modelPath = './ai/models';
+        const modelPath = "{{asset('ai/models')}}";
+        let currentStream;
+        let displaySize;
+        let convas;
+        let faceDetection;
+        $("#webcam-switch").change(function () {
+        if(this.checked){
+            webcam.start()
+                .then(result =>{
+                    cameraStarted();
+                    webcamElement.style.transform = "";
+                    console.log("webcam started");
+                })
+                .catch(err => {
+                    displayError();
+                });
+            setTimeout(() => {
+                $(".loading").removeClass('d-none');
+                Promise.all([
+                faceapi.nets.tinyFaceDetector.load(modelPath),
+                faceapi.nets.faceLandmark68TinyNet.load(modelPath),
+                faceapi.nets.faceExpressionNet.load(modelPath),
+                faceapi.nets.ageGenderNet.load(modelPath)
+                ]).then(function(){
+                createCanvas();
+                startDetection();
+                });
+            }, 5000);
+        }
+        else {        
+            cameraStopped();
+            webcam.stop();
+            console.log("webcam stopped");
+            clearInterval(faceDetection);
+            if(typeof canvas !== "undefined"){
+                setTimeout(function() {
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+                }, 1000);
+            }
+        }        
+        });
+
+        $('#cameraFlip').click(function() {
+            webcam.flip();
+            webcam.start()
+            .then(result =>{ 
+            webcamElement.style.transform = "";
+            });
+        });
+
+        $("#webcam").bind("loadedmetadata", function () {
+        displaySize = { width:this.scrollWidth, height: this.scrollHeight }
+        });
+
+        function createCanvas(){
+        if( document.getElementsByTagName("canvas").length == 0 )
+        {
+            canvas = faceapi.createCanvasFromMedia(webcamElement)
+            document.getElementById('webcam-container').append(canvas)
+            faceapi.matchDimensions(canvas, displaySize)
+        }
+        }
+
+        function toggleContrl(id, show){
+        if(show){
+            $("#"+id).prop('disabled', false);
+            $("#"+id).parent().removeClass('disabled');
+        }else{
+            $("#"+id).prop('checked', false).change();
+            $("#"+id).prop('disabled', true);
+            $("#"+id).parent().addClass('disabled');
+        }
+        }
+
+        function startDetection(){
+        faceDetection = setInterval(async () => {
+            const detections = await faceapi.detectAllFaces(webcamElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceExpressions().withAgeAndGender()
+            const resizedDetections = faceapi.resizeResults(detections, displaySize)
+            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+            // Nhận diện đường biên
+            faceapi.draw.drawDetections(canvas, resizedDetections)
+            // nhận diện tuổi và giới tính
+            resizedDetections.forEach(result => {
+            const { age, gender, genderProbability } = result
+            new faceapi.draw.DrawTextField(
+                [
+                `${faceapi.round(age, 0)} years`,
+                `${gender} (${faceapi.round(genderProbability)})`
+                ],
+                result.detection.box.bottomRight
+            ).draw(canvas)
+            })
+
+            if(!$(".loading").hasClass('d-none')){
+            $(".loading").addClass('d-none')
+            }
+        }, 300)
+        }
+
+        function cameraStarted(){
+        $("#errorMsg").addClass("d-none");
+        if( webcam.webcamList.length > 1){
+            $("#cameraFlip").removeClass('d-none');
+        }
+        }
+
+        function cameraStopped(){
+        $("#errorMsg").addClass("d-none");
+        $("#cameraFlip").addClass('d-none');
+        }
+
+        function displayError(err = ''){
+        if(err!=''){
+            $("#errorMsg").html(err);
+        }
+        $("#errorMsg").removeClass("d-none");
+        }
     </script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
