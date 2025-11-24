@@ -40,11 +40,7 @@
                 <form id="addForm" autocomplete="off">
                     {{csrf_field()}}
                     <!-- <div>   
-                        <input type="hidden" name="getNowTimer" id="getNowTimer">
-                        <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
-                        <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
-                        <input type="hidden" name="statusPos" id="statusPos">
-                        <p class="text-center"><strong style="font-size:39pt;" id="showTimeNow"></strong></p>
+                       
                         <p class="text-center">
                             <p class="text-center" id="btnOpenCamera">
                                 <button onclick="startCamera()" class="btn btn-info" type="button">Mở camera</button>
@@ -52,45 +48,27 @@
                             <p class="text-center">
                             <video id="camera" autoplay playsinline style="width:250px;max-width:250px;"></video>
                             </p>          
-                            <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
-                            <input type="hidden" id="imageCaptured" name="imageCaptured">
-                            <br/>
-                            <p class="text-center">
-                                <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
-                            </p>
-                            <h2 id="thongBao" class="text-center"></h2>
-                            <p id="AiVoice" class="text-center" style="display: none;"><img width="150" src="{{asset('images/voiceai.gif')}}?v={{ time() }}" alt="voice ai"></p>
-                        </p>
+                            
                         <hr>
-                        <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
-                        <div class="row">
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Thời gian</th>
-                                        <th>Buổi</th>
-                                        <th>Loại chấm công</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="showChamCongHistory">
-                                
-                                </tbody>
-                            </table>
-                        </div>
+                        
                     </div>     -->
                     <!-- Phiên bản mới -->
                     <div>
+                         <input type="hidden" name="getNowTimer" id="getNowTimer">
+                        <p id="viTriNot" style="display: none;">Trạng thái vị trí: <strong class="text-danger">Đang không ở Công ty</strong></p>
+                        <p id="viTriHas" style="display: none;">Trạng thái vị trí: <strong class="text-success">Đang ở Công ty</strong></p>
+                        <input type="hidden" name="statusPos" id="statusPos">
+                        <p class="text-center"><strong style="font-size:39pt;" id="showTimeNow"></strong></p>
                         <div class="row">
                             <div class="col-12 col-md-4 col-xl-3 align-top">
                                 <div class="row mb-3">
-                                        <div class="col-md-10 col-6 form-control">
+                                        <div class="form-control" style="padding: 10px 10px 40px 10px;">
                                             <label class="form-switch">
                                             <input type="checkbox" id="webcam-switch">
                                             <i></i> Mở Camera </label>  
                                             <button id="cameraFlip" class="btn d-none"></button>     
                                         </div>                 
-                                </div>
+                                </div>                                
                             </div>
                             <div class="col-12 col-md-8 col-xl-9 align-top" id="webcam-container">
                                 <div class="loading d-none">
@@ -108,6 +86,34 @@
                                 Vui lòng cho phép camera trên thiết bị. <br>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
+                            <p class="text-center">
+                                <!-- <canvas id="canvas" width="400" height="300" style="display:none;"></canvas> -->
+                                <input type="hidden" id="imageCaptured" name="imageCaptured">
+                                <br/>
+                                <p class="text-center">
+                                    <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
+                                </p>
+                                <h2 id="thongBao" class="text-center"></h2>
+                                <p id="AiVoice" class="text-center" style="display: none;"><img width="150" src="{{asset('images/voiceai.gif')}}?v={{ time() }}" alt="voice ai"></p>
+                            </p>
+                        </div>
+                        <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
+                        <div class="row">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Thời gian</th>
+                                        <th>Buổi</th>
+                                        <th>Loại chấm công</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="showChamCongHistory">
+                                
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </form>           
@@ -251,7 +257,7 @@
             alert("Chưa bật camera!");
             return;
         }
-        const video = document.getElementById('camera');
+        const video = document.getElementById('webcam');
         const canvas = document.getElementById('canvas');
         let ctx = canvas.getContext("2d");
 
@@ -275,18 +281,22 @@
         const webcamElement = document.getElementById('webcam');
         const webcam = new Webcam(webcamElement, 'user');
         // const modelPath = './ai/models';
-        const modelPath = "{{asset('ai/models')}}";
+        const modelPath = "{{asset('ai/modelsforhost')}}";
         let currentStream;
         let displaySize;
         let convas;
         let faceDetection;
         $("#webcam-switch").change(function () {
         if(this.checked){
+             playSound("s21");
             webcam.start()
-                .then(result =>{
+                .then(result =>{                   
                     cameraStarted();
-                    webcamElement.style.transform = "";
+                    // webcamElement.style.transform = "";
                     console.log("webcam started");
+                    // Mirror the video so the preview matches a selfie (left/right as user expects)
+                    webcam.flip();
+                    webcamElement.style.transform = 'scaleX(-1)';
                 })
                 .catch(err => {
                     displayError();
@@ -298,6 +308,10 @@
                 faceapi.nets.faceLandmark68TinyNet.load(modelPath),
                 faceapi.nets.faceExpressionNet.load(modelPath),
                 faceapi.nets.ageGenderNet.load(modelPath)
+                // faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
+                // faceapi.nets.faceLandmark68TinyNet.loadFromUri(modelPath),
+                // faceapi.nets.faceExpressionNet.loadFromUri(modelPath),
+                // faceapi.nets.ageGenderNet.loadFromUri(modelPath)
                 ]).then(function(){
                 createCanvas();
                 startDetection();
@@ -321,7 +335,7 @@
             webcam.flip();
             webcam.start()
             .then(result =>{ 
-            webcamElement.style.transform = "";
+                webcamElement.style.transform = "";
             });
         });
 
@@ -336,6 +350,12 @@
             document.getElementById('webcam-container').append(canvas)
             faceapi.matchDimensions(canvas, displaySize)
         }
+        // if( document.getElementById("canvasNew").length == 0 )
+        // {
+        //     canvas = faceapi.createCanvasFromMedia(webcamElement)
+        //     document.getElementById('webcam-container').append(canvas)
+        //     faceapi.matchDimensions(canvas, displaySize)
+        // }
         }
 
         function toggleContrl(id, show){
