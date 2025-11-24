@@ -4040,15 +4040,7 @@ class NhanSuController extends Controller
         $getBuoiChamCong = $request->buoiChamCong;
         $getLoaiChamCong = $request->loaiChamCong;
         $getTimerNow = $request->getNowTimer;
-         
-        // if ($getStatusDevice != 1) {
-        //     return response()->json([
-        //         'type' => 'error',
-        //         'message' => 'Thiết bị không hợp lệ. Vui lòng sử dụng thiết bị đã đăng ký',
-        //         'code' => 500
-        //     ]);
-        // }
-
+        
         if ($getStatusPos != 1) {
             return response()->json([
                 'type' => 'error',

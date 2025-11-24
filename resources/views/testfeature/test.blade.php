@@ -67,8 +67,11 @@
                                             <input type="checkbox" id="webcam-switch">
                                             <i></i> Mở Camera </label>  
                                             <button id="cameraFlip" class="btn d-none"></button>     
-                                        </div>                 
-                                </div>                                
+                                        </div>
+                                        <p class="text-center mt-3">
+                                            <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
+                                        </p>                 
+                                </div>                      
                             </div>
                             <div class="col-12 col-md-8 col-xl-9 align-top" id="webcam-container">
                                 <div class="loading d-none">
@@ -77,7 +80,6 @@
                                         <span class="sr-only"></span>
                                         </div>
                                 </div>
-                                
                                 <div id="video-container">
                                         <video id="webcam" autoplay muted playsinline></video>
                                 </div>  
@@ -89,12 +91,7 @@
                         </div>
                         <div class="row">
                             <p class="text-center">
-                                <!-- <canvas id="canvas" width="400" height="300" style="display:none;"></canvas> -->
                                 <input type="hidden" id="imageCaptured" name="imageCaptured">
-                                <br/>
-                                <p class="text-center">
-                                    <button id="sendChamCong" type="button" class="btn btn-primary">CHẤM CÔNG</button>
-                                </p>
                                 <h2 id="thongBao" class="text-center"></h2>
                                 <p id="AiVoice" class="text-center" style="display: none;"><img width="150" src="{{asset('images/voiceai.gif')}}?v={{ time() }}" alt="voice ai"></p>
                             </p>
@@ -212,70 +209,47 @@
         }
     }
     
-    let stream = null;    
-    async function startCamera() {        
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                width: { ideal: 1920 },  // FULL HD
-                height: { ideal: 1080 },
-                facingMode: { exact: "user" }   // ép dùng camera trước
-            },
-            audio: false
-            });
-            const videoEl = document.getElementById("camera");
-            videoEl.srcObject = stream;
-            // Hiển thị video theo hướng gương (người dùng mong muốn): lật ngang
-            videoEl.style.transform = 'scaleX(-1)';
-            if (stream) {
-                playSound("s21");
-                document.getElementById("sendChamCong").style.display = "inline-block";
-            }
-        } 
-        catch (err) {
-            // fallback nếu máy không hỗ trợ exact
-            console.warn("Không dùng được exact:user, chuyển sang ideal:user", err);
+    // let stream = null;    
+    // async function startCamera() {        
+    //     try {
+    //         stream = await navigator.mediaDevices.getUserMedia({
+    //         video: {
+    //             width: { ideal: 1920 },  // FULL HD
+    //             height: { ideal: 1080 },
+    //             facingMode: { exact: "user" }   // ép dùng camera trước
+    //         },
+    //         audio: false
+    //         });
+    //         const videoEl = document.getElementById("camera");
+    //         videoEl.srcObject = stream;
+    //         // Hiển thị video theo hướng gương (người dùng mong muốn): lật ngang
+    //         videoEl.style.transform = 'scaleX(-1)';
+    //         if (stream) {
+    //             playSound("s21");
+    //             document.getElementById("sendChamCong").style.display = "inline-block";
+    //         }
+    //     } 
+    //     catch (err) {
+    //         // fallback nếu máy không hỗ trợ exact
+    //         console.warn("Không dùng được exact:user, chuyển sang ideal:user", err);
 
-            try {
-            const fallback = await navigator.mediaDevices.getUserMedia({
-                video: {
-                facingMode: { ideal: "user" }  // ưu tiên camera trước
-                },
-                audio: false
-            });
-            document.getElementById("camera").srcObject = fallback;
-            // cũng áp dụng lật ngang cho fallback
-            document.getElementById("camera").style.transform = 'scaleX(-1)';
-            }
-            catch(e2) {
-            alert("Điện thoại không cho phép mở camera trước: " + e2);
-            }
-        }
-    }
-    function captureImage() {
-        if (!stream) {
-            alert("Chưa bật camera!");
-            return;
-        }
-        const video = document.getElementById('webcam');
-        const canvas = document.getElementById('canvas');
-        let ctx = canvas.getContext("2d");
-
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        // Vì video đang được hiển thị đã lật ngang bằng CSS (scaleX(-1)),
-        // khi vẽ lên canvas cần lật ngang để ảnh xuất ra khớp với hiển thị.
-        ctx.save();
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        ctx.restore();
-
-        let dataUrl = canvas.toDataURL("image/jpeg", 0.65); // Base64
-        lastImage = dataUrl;
-        return dataUrl;
-    }
+    //         try {
+    //         const fallback = await navigator.mediaDevices.getUserMedia({
+    //             video: {
+    //             facingMode: { ideal: "user" }  // ưu tiên camera trước
+    //             },
+    //             audio: false
+    //         });
+    //         document.getElementById("camera").srcObject = fallback;
+    //         // cũng áp dụng lật ngang cho fallback
+    //         document.getElementById("camera").style.transform = 'scaleX(-1)';
+    //         }
+    //         catch(e2) {
+    //         alert("Điện thoại không cho phép mở camera trước: " + e2);
+    //         }
+    //     }
+    // }
+    
 
     // Other function
         const webcamElement = document.getElementById('webcam');
@@ -284,7 +258,7 @@
         const modelPath = "{{asset('ai/modelsforhost')}}";
         let currentStream;
         let displaySize;
-        let convas;
+        let canvas;
         let faceDetection;
         $("#webcam-switch").change(function () {
         if(this.checked){
@@ -350,12 +324,6 @@
             document.getElementById('webcam-container').append(canvas)
             faceapi.matchDimensions(canvas, displaySize)
         }
-        // if( document.getElementById("canvasNew").length == 0 )
-        // {
-        //     canvas = faceapi.createCanvasFromMedia(webcamElement)
-        //     document.getElementById('webcam-container').append(canvas)
-        //     faceapi.matchDimensions(canvas, displaySize)
-        // }
         }
 
         function toggleContrl(id, show){
@@ -411,6 +379,56 @@
             $("#errorMsg").html(err);
         }
         $("#errorMsg").removeClass("d-none");
+        }
+
+        function captureImage() {
+            const video = document.getElementById('webcam');
+            if (!video || video.readyState < 2) {
+                alert("Chưa bật camera!");
+                return null;
+            }
+
+            // reuse existing hidden canvas if có, hoặc tạo tạm
+            let canvas = document.getElementById('canvass');
+            let created = false;
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.id = 'canvass';
+                created = true;
+            }
+
+            // set kích thước theo video gốc để giữ chất lượng
+            const vw = video.videoWidth || video.clientWidth;
+            const vh = video.videoHeight || video.clientHeight;
+            canvas.width = vw;
+            canvas.height = vh;
+            const ctx = canvas.getContext('2d');
+
+            // kiểm tra video có bị mirror (scaleX(-1)) không -> vẽ tương ứng
+            const videoStyle = (video.style && video.style.transform) ? video.style.transform : getComputedStyle(video).transform;
+            const isMirrored = videoStyle && videoStyle.includes('scaleX(-1)') || videoStyle && videoStyle.includes('matrix(-1');
+
+            if (isMirrored) {
+                ctx.save();
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
+            } else {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            }
+
+            // chuyển sang base64 (jpg) để gửi về server; chỉnh chất lượng nếu cần
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+            // gán vào input ẩn để submit form nếu cần
+            const $hidden = $("#imageCaptured");
+            if ($hidden.length) $hidden.val(dataUrl);
+
+            // nếu canvas tạm tạo, không thêm vào DOM; nếu DOM cần giữ thì thêm
+            if (created) canvas.remove();
+
+            return dataUrl;
         }
     </script>
     <!-- jQuery -->
@@ -533,10 +551,6 @@
             autoLoadHistory();
             $("#sendChamCong").off('click').on('click', function(e){
                 e.preventDefault();
-                if (!stream) {
-                    alert("Chưa bật camera!");
-                    return;
-                }
                 var $btn = $(this);
                 // nếu đang gửi thì thoát
                 if ($btn.data('sending')) return;
