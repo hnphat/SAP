@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Excel;
 use DataTables;
+use Illuminate\Support\Facades\Storage;
 
 class NhanSuController extends Controller
 {
@@ -4041,14 +4042,14 @@ class NhanSuController extends Controller
         $getLoaiChamCong = $request->loaiChamCong;
         $getTimerNow = $request->getNowTimer;
         
-        if ($getStatusPos != 1) {
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Bạn đang không ở Công ty, hãy truy cập wifi của Công ty và thử lại!',
-                'code' => 500,
-                'key' => "s2"
-            ]);
-        }
+        // if ($getStatusPos != 1) {
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'message' => 'Bạn đang không ở Công ty, hãy truy cập wifi của Công ty và thử lại!',
+        //         'code' => 500,
+        //         'key' => "s2"
+        //     ]);
+        // }
 
         // Tự xác định buổi chấm công và loại chấm công
         $buoiXacDinh = 0;
@@ -4091,18 +4092,18 @@ class NhanSuController extends Controller
         $chamcong->loaichamcong = $loaiXacDinh;
         $chamcong->thoigianchamcong = $getTimerNow;
         // Xử lý đã chấm rồi hay chưa và xử lý hack vị trí
-        $ipClient = $request->ip();
-        $ipCheck1 = "115.78.73.52";
-        $ipCheck2 = "203.210.232.175";
-        if ($ipClient == $ipCheck1 || $ipClient == $ipCheck2) {
-        } else {
-            return response()->json([
-                'type' => 'error',               
-                'code' => 500,
-                'message' => 'Bạn đang không ở Công ty, hãy truy cập wifi của Công ty và thử lại!',
-                'key' => "s2"
-            ]);  
-        }
+        // $ipClient = $request->ip();
+        // $ipCheck1 = "115.78.73.52";
+        // $ipCheck2 = "203.210.232.175";
+        // if ($ipClient == $ipCheck1 || $ipClient == $ipCheck2) {
+        // } else {
+        //     return response()->json([
+        //         'type' => 'error',               
+        //         'code' => 500,
+        //         'message' => 'Bạn đang không ở Công ty, hãy truy cập wifi của Công ty và thử lại!',
+        //         'key' => "s2"
+        //     ]);  
+        // }
         // Xử lý upload
         $folderPath = public_path('upload/chamcongonline/');        
         $image_parts = explode(";base64,", $request->imageCaptured);              
@@ -4379,5 +4380,22 @@ class NhanSuController extends Controller
                 'data' => null
             ]);
         } 
+    }
+
+    public function getListPicture(Request $request) {
+        $manv = Auth::user()->name;
+        $filtered = [];
+        $files = Storage::files('public/chamcongonline');
+
+        foreach ($files as $file) {
+            if (str_contains($file, $manv)) {
+                $filtered[] = basename($file);
+            }
+        }
+        return response()->json([
+                'message' => 'Data list picture!',
+                'code' => 200,
+                'data' => $filtered
+            ]);
     }
 }

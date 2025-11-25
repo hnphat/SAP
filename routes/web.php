@@ -584,6 +584,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chamcongonline/loadlichsu','NhanSuController@loadLichSuChamCong');
         Route::post('chamcongonline/giaiphonganhdem','NhanSuController@giaiPhongAnhDem');
         Route::get('chamcongonline/loadsoluonganhdem','NhanSuController@counterAnhDem');
+        Route::get('chamcongonline/getlistpicture','NhanSuController@getListPicture');
 
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');

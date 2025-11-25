@@ -320,8 +320,8 @@
                     .withAgeAndGender();
 
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
                 canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                const ctx = canvas.getContext('2d');
 
                 // Vẽ khung + landmarks
                 faceapi.draw.drawDetections(canvas, resizedDetections);
@@ -345,16 +345,28 @@
                 // ============================
                 if (resizedDetections.length > 0) {
                     const score = resizedDetections[0].detection._score; // điểm tin cậy
-
+                    const face = resizedDetections[0];
                     console.log("Detection score:", score);
 
                     if (score >= 0.8) {
+                        const tenNV = "Detecting..";
+                        const box = face.detection.box;
+
+                        // HIỂN THỊ TÊN + SCORE TRÊN CAMERA
+                        ctx.font = "bold 18px Arial";
+                        ctx.fillStyle = "yellow";
+                        ctx.fillText(
+                            `      ${tenNV} [${score.toFixed(2)}]`,
+                            box.x,
+                            box.y - 10
+                        );
+
                         $("#sendChamCong").removeClass("d-none");     // hiện nút
                     } else {
                         $("#sendChamCong").addClass("d-none");        // ẩn nút
                     }
                 } else {
-                    $("#chamCong").addClass("d-none");            // không có mặt → ẩn nút
+                    $("#sendChamCong").addClass("d-none");            // không có mặt → ẩn nút
                 }
 
                 // Ẩn loading nếu đang chạy
@@ -508,7 +520,6 @@
                     }
                 });
             }
-            
             kiemTraTrangThaiViTri();
 
             function autoLoadHistory() {
@@ -552,6 +563,27 @@
                 });
             }
             autoLoadHistory();
+
+            function getListPicture() {
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/getlistpicture/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code === 200) {
+                            console.log("List picture:", response.data);
+                        } else {
+                            console.log("Lỗi tải danh sách ảnh!");
+                        }
+                    },
+                    error: function() {
+                        console.log("Không thể tải danh sách ảnh!");
+                    }
+                });
+            }
+
+            getListPicture();
+
             $("#sendChamCong").off('click').on('click', function(e){
                 e.preventDefault();
                 var $btn = $(this);

@@ -903,8 +903,7 @@
                     </a>
                 </li>                
                 @endif
-                <!-- @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
-                \Illuminate\Support\Facades\Auth::user()->name == "nv111")
+                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
                 <li class="nav-item">
                     <a href="{{route('test.chamcong.online')}}" class="nav-link">
                         <i class="nav-icon fas fa-th"></i>
@@ -913,7 +912,7 @@
                         </p>
                     </a>
                 </li>  
-                @endif               -->
+                @endif              
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
