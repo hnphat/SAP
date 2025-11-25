@@ -548,7 +548,7 @@
                     @endif
                     <ul class="nav nav-treeview">
                             @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
-                            || (data_get($data, 'disableChamCongOnline', 1) == 1))
+                            || ((data_get($data, 'disableChamCongOnline', 1) == 1) && \Illuminate\Support\Facades\Auth::user()->hasRole('chamcong')))
                                 <li class="nav-item">
                                     <a href="{{ route('chamcong.online') }}" class="nav-link">
                                         <i class="fas fa-caret-right nav-icon"></i>
@@ -903,7 +903,7 @@
                     </a>
                 </li>                
                 @endif
-                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
+                <!-- @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
                 \Illuminate\Support\Facades\Auth::user()->name == "nv111")
                 <li class="nav-item">
                     <a href="{{route('test.chamcong.online')}}" class="nav-link">
@@ -913,7 +913,7 @@
                         </p>
                     </a>
                 </li>  
-                @endif              
+                @endif               -->
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
