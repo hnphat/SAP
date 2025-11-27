@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\File;
 use Excel;
 use DataTables;
 use Illuminate\Support\Facades\Storage;
@@ -4382,20 +4383,41 @@ class NhanSuController extends Controller
         } 
     }
 
-    public function getListPicture(Request $request) {
+    // public function getListPicture(Request $request) {
+    //     $manv = Auth::user()->name;
+    //     $filtered = [];
+    //     $files = Storage::files('public/chamcongonline');
+
+    //     foreach ($files as $file) {
+    //         if (str_contains($file, $manv)) {
+    //             $filtered[] = basename($file);
+    //         }
+    //     }
+    //     return response()->json([
+    //             'message' => 'Data list picture!',
+    //             'code' => 200,
+    //             'data' => $filtered
+    //         ]);
+    // }
+
+    public function getListPicTure(Request $request) {
+        $path = public_path('upload/mauchamcong/');
         $manv = Auth::user()->name;
         $filtered = [];
-        $files = Storage::files('public/chamcongonline');
+        if (File::isDirectory($path)) {
+            $files = File::allFiles($path);
 
-        foreach ($files as $file) {
-            if (str_contains($file, $manv)) {
-                $filtered[] = basename($file);
+            foreach ($files as $file) {
+                if (str_contains($file->getFilename(), $manv)) {
+                    $filtered[] = $file->getFilename();
+                }                
             }
         }
+
         return response()->json([
-                'message' => 'Data list picture!',
-                'code' => 200,
-                'data' => $filtered
-            ]);
+            'message' => 'Data list picture!',
+            'code' => 200,
+            'data' => $filtered
+        ]);
     }
 }
