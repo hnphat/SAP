@@ -235,7 +235,7 @@
                 createCanvas();
                 startDetection();
                 });
-            }, 5000);
+            }, 3000);
         }
         else {        
             cameraStopped();
@@ -318,7 +318,6 @@
                     .withFaceLandmarks(true)
                     .withFaceExpressions()
                     .withAgeAndGender();
-
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
                 const ctx = canvas.getContext('2d');
@@ -610,7 +609,8 @@
                             // $("#AiVoice").show();
                             $("#mainBtn").hide();
                             autoLoadHistory();
-                            playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24","s25","s26","s27","s28","s29","s30","s31","s32","s33","s34","s35","s36","s37","s38","s39"]);
+                            // playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24","s25","s26","s27","s28","s29","s30","s31","s32","s33","s34","s35","s36","s37","s38","s39"]);
+                            playSound("s23");
                             // --------
                             $("#mainBtn").hide();
                             cameraStopped();
