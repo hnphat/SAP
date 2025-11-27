@@ -205,49 +205,51 @@
         let displaySize;
         let canvas;
         let faceDetection;
+        
         $("#webcam-switch").change(function () {
-        if(this.checked){
-            playSound("s21");
-            webcam.start()
-                .then(result =>{                   
-                    cameraStarted();
-                    // webcamElement.style.transform = "";
-                    console.log("webcam started");
-                    // Mirror the video so the preview matches a selfie (left/right as user expects)
-                    webcam.flip();
-                    webcamElement.style.transform = 'scaleX(-1)';
-                })
-                .catch(err => {
-                    displayError();
-                });
-            setTimeout(() => {
-                $(".loading").removeClass('d-none');
-                Promise.all([
-                faceapi.nets.tinyFaceDetector.load(modelPath),
-                faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-                faceapi.nets.faceExpressionNet.load(modelPath),
-                faceapi.nets.ageGenderNet.load(modelPath)
-                // faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
-                // faceapi.nets.faceLandmark68TinyNet.loadFromUri(modelPath),
-                // faceapi.nets.faceExpressionNet.loadFromUri(modelPath),
-                // faceapi.nets.ageGenderNet.loadFromUri(modelPath)
-                ]).then(function(){
-                createCanvas();
-                startDetection();
-                });
-            }, 5000);
-        }
-        else {        
-            cameraStopped();
-            webcam.stop();
-            console.log("webcam stopped");
-            clearInterval(faceDetection);
-            if(typeof canvas !== "undefined"){
-                setTimeout(function() {
-                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-                }, 1000);
+            if(this.checked){
+                playSound("s21");
+                webcam.start()
+                    .then(result =>{                   
+                        cameraStarted();
+                        // webcamElement.style.transform = "";
+                        console.log("webcam started");
+                        // Mirror the video so the preview matches a selfie (left/right as user expects)
+                        webcam.flip();
+                        webcamElement.style.transform = 'scaleX(-1)';
+                        $("#webcam").one("loadedmetadata", function () {
+                            console.log("Webcam metadata loaded, now loading models...");
+                            setTimeout(() => {
+                                $(".loading").removeClass('d-none');
+                                Promise.all([
+                                    faceapi.nets.tinyFaceDetector.load(modelPath),
+                                    faceapi.nets.faceLandmark68TinyNet.load(modelPath),
+                                    faceapi.nets.faceExpressionNet.load(modelPath),
+                                    faceapi.nets.ageGenderNet.load(modelPath)
+                                ])
+                                .then(function () {
+                                    console.log("Models loaded!");
+                                    createCanvas();
+                                    startDetection();
+                                });
+                            }, 1000); 
+                        });
+                    })
+                    .catch(err => {
+                        displayError();
+                    });                
             }
-        }        
+            else {        
+                cameraStopped();
+                webcam.stop();
+                console.log("webcam stopped");
+                clearInterval(faceDetection);
+                if(typeof canvas !== "undefined"){
+                    setTimeout(function() {
+                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+                    }, 1000);
+                }
+            }        
         });
 
         $('#cameraFlip').click(function() {
@@ -282,35 +284,6 @@
         }
         }
 
-        // function startDetection(){
-        //     faceDetection = setInterval(async () => {
-        //         const detections = await faceapi.detectAllFaces(webcamElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceExpressions().withAgeAndGender()
-        //         const resizedDetections = faceapi.resizeResults(detections, displaySize)
-        //         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-        //         // Nhận diện đường biên
-        //         faceapi.draw.drawDetections(canvas, resizedDetections)
-        //         // Nhận diện các điểm trên khuôn mặt
-        //         faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-        //         // NHẬN DIỆN BIỂU CẢM XU HƯỚNG
-        //         faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-        //         // nhận diện tuổi và giới tính
-        //         resizedDetections.forEach(result => {
-        //             const { age, gender, genderProbability } = result
-        //             new faceapi.draw.DrawTextField(
-        //                 [
-        //                 `${faceapi.round(age, 0)} years`,
-        //                 `${gender} (${faceapi.round(genderProbability)})`
-        //                 ],
-        //                 result.detection.box.bottomRight
-        //             ).draw(canvas)
-        //         })
-
-        //         if(!$(".loading").hasClass('d-none')){
-        //         $(".loading").addClass('d-none')
-        //         }
-        //     }, 300)
-        // }
-
         function startDetection() {
             faceDetection = setInterval(async () => {
                 const detections = await faceapi
@@ -318,7 +291,6 @@
                     .withFaceLandmarks(true)
                     .withFaceExpressions()
                     .withAgeAndGender();
-
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
                 const ctx = canvas.getContext('2d');
@@ -610,7 +582,8 @@
                             // $("#AiVoice").show();
                             $("#mainBtn").hide();
                             autoLoadHistory();
-                            playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24","s25","s26","s27","s28","s29","s30","s31","s32","s33","s34","s35","s36","s37","s38","s39"]);
+                            // playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24","s25","s26","s27","s28","s29","s30","s31","s32","s33","s34","s35","s36","s37","s38","s39"]);
+                            playSound("s23");
                             // --------
                             $("#mainBtn").hide();
                             cameraStopped();
