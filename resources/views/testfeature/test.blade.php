@@ -279,7 +279,7 @@
                                 Promise.all([
                                     faceapi.nets.tinyFaceDetector.load(modelPath),
                                     faceapi.nets.ssdMobilenetv1.load(modelPath), // bổ sung thêm
-                                    faceapi.nets.faceRecognitionNet.load(modelPath),
+                                    faceapi.nets.faceRecognitionNet.loadFromUri(modelPath),
                                     faceapi.nets.faceLandmark68Net.load(modelPath),
                                     faceapi.nets.faceExpressionNet.load(modelPath),
                                     faceapi.nets.ageGenderNet.load(modelPath)
