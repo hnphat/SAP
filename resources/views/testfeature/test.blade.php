@@ -194,149 +194,159 @@
             }catch(e){}
         }
     }
-    // Tải model trước
-    const modelPath = "{{asset('ai/modelsforhost')}}";
-    Promise.all([
-        faceapi.nets.tinyFaceDetector.load(modelPath),
-        faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-        faceapi.nets.faceExpressionNet.load(modelPath),
-        faceapi.nets.ageGenderNet.load(modelPath)
-    ])
-    .then(function () {
-        console.log("Models loaded!");
-    });
-    // Xử lý nhận dạng ảnh
-    let labeledFaceDescriptors;
-    let faceMatcher;
-
-    async function loadEmployeeFaces() {
-        const employees = {}; // { "1001": [file1, file2...] }
-
-        // Danh sách file ảnh từ server (bạn tự trả về bằng PHP hoặc API)
-        const imageList = await fetch("{{url('management/nhansu/chamcongonline/getlistpicture/')}}").then(r => r.json());
-        console.log("Image list: ", imageList);
-
-        // imageList.forEach(filename => {
-        //     const code = filename.data.split("_")[0];   // lấy mã NV từ tên file
-
-        //     if (!employees[code]) employees[code] = [];
-        //     employees[code].push("{{asset('upload/mauchamcong/')}}" + filename);
-        // });
-        imageList.data.forEach(x => {
-            const code = x.split("_")[0];   // lấy mã NV từ tên file
-
-            if (!employees[code]) employees[code] = [];
-            employees[code].push("{{asset('upload/mauchamcong/')}}/" + x);
-        });
-
-        const labels = Object.keys(employees);
-        const descriptors = [];
-
-        for (const label of labels) {
-            const desc = [];
-
-            for (const imgUrl of employees[label]) {
-                const img = await faceapi.fetchImage(imgUrl);
-
-                const detection = await faceapi
-                    .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-
-                if (detection) desc.push(detection.descriptor);
-            }
-
-            descriptors.push(new faceapi.LabeledFaceDescriptors(label, desc));
-        }
-
-        labeledFaceDescriptors = descriptors;
-        faceMatcher = new faceapi.FaceMatcher(descriptors, 0.6); // ngưỡng 0.6 tốt
-    }
-
-    // loadEmployeeFaces();
+    
 
     // Other function
-    const webcamElement = document.getElementById('webcam');
-    const webcam = new Webcam(webcamElement, 'user');
-    let currentStream;
-    let displaySize;
-    let canvas;
-    let faceDetection;
-    
-    $("#webcam-switch").change(function () {
-        if(this.checked){
-            playSound("s21");
-            webcam.start()
-                .then(result =>{                   
-                    cameraStarted();
-                    // webcamElement.style.transform = "";
-                    console.log("webcam started");
-                    // Mirror the video so the preview matches a selfie (left/right as user expects)
-                    webcam.flip();
-                    webcamElement.style.transform = 'scaleX(-1)';
-                    $("#webcam").one("loadedmetadata", function () {
-                        console.log("Webcam metadata loaded, now loading models...");
+        const webcamElement = document.getElementById('webcam');
+        const webcam = new Webcam(webcamElement, 'user');
+        // const modelPath = './ai/models';
+        const modelPath = "{{asset('ai/modelsforhost')}}";
+        let currentStream;
+        let displaySize;
+        let canvas;
+        let faceDetection;
+
+        let labeledDescriptors = [];
+        let faceMatcher = null;
+
+        async function loadEmployeeFaces() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/getlistpicture/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: async function(response) {
+                        if (response.code !== 200) return resolve([]);
+
+                        let data = response.data;
+
+                        const labels = [...new Set(data.map(x => x.code))];
+
+                        for (let label of labels) {
+                            const images = data.filter(x => x.code === label);
+                            console.log("image: ", images);
+                            let descriptors = [];
+
+                            for (let img of images) {
+                                try {
+                                    let _image = await faceapi.fetchImage(img.file);
+                                    let detection = await faceapi
+                                        .detectSingleFace(_image)
+                                        .withFaceLandmarks()
+                                        .withFaceDescriptor();
+                                    
+                                    if (detection) descriptors.push(detection.descriptor);
+                                } catch(e){
+                                    console.warn("Lỗi load ảnh:", img.file);
+                                    console.error("Error: ", e.message);
+                                }
+                            }
+
+                            if (descriptors.length > 0) {
+                                labeledDescriptors.push(
+                                    new faceapi.LabeledFaceDescriptors(label, descriptors)
+                                );
+                            }
+                        }
+
+                        if (labeledDescriptors.length > 0) {
+                            faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.45);
+                            console.log("Face matcher loaded!");
+                        }
+
+                        resolve(true);
+                    },
+                    error: reject
+                });
+            });
+        }
+        
+        $("#webcam-switch").change(function () {
+            if(this.checked){
+                playSound("s21");
+                webcam.start()
+                    .then(result =>{                   
+                        cameraStarted();
+                        // webcamElement.style.transform = "";
+                        console.log("webcam started");
+                        // Mirror the video so the preview matches a selfie (left/right as user expects)
+                        webcam.flip();
+                        webcamElement.style.transform = 'scaleX(-1)';
+                        $("#webcam").one("loadedmetadata", function () {
+                            console.log("Webcam metadata loaded, now loading models...");
+                            setTimeout(() => {
+                                $(".loading").removeClass('d-none');
+                                Promise.all([
+                                    faceapi.nets.tinyFaceDetector.load(modelPath),
+                                    faceapi.nets.ssdMobilenetv1.load(modelPath), // bổ sung thêm
+                                    faceapi.nets.faceRecognitionNet.load(modelPath),
+                                    faceapi.nets.faceLandmark68Net.load(modelPath),
+                                    faceapi.nets.faceExpressionNet.load(modelPath),
+                                    faceapi.nets.ageGenderNet.load(modelPath)
+                                ])
+                                .then(function () {
+                                    console.log("Models loaded!");
+                                    createCanvas();
+                                    // startDetection();
+                                    loadEmployeeFaces().then(()=>{
+                                        console.log("Employee faces loaded");
+                                        startDetection();
+                                    });
+                                });
+                            }, 1000); 
+                        });
                         // setTimeout(() => {
                         //     $(".loading").removeClass('d-none');
                         //     Promise.all([
-                        //         faceapi.nets.tinyFaceDetector.load(modelPath),
-                        //         faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-                        //         faceapi.nets.faceExpressionNet.load(modelPath),
-                        //         faceapi.nets.ageGenderNet.load(modelPath)
-                        //     ])
-                        //     .then(function () {
-                        //         console.log("Models loaded!");
-                        //         createCanvas();
-                        //         startDetection();
-                        //     });
-                        //     console.log("Models loaded!");
+                        //     faceapi.nets.tinyFaceDetector.load(modelPath),
+                        //     faceapi.nets.faceLandmark68TinyNet.load(modelPath),
+                        //     faceapi.nets.faceExpressionNet.load(modelPath),
+                        //     faceapi.nets.ageGenderNet.load(modelPath)
+                        //     ]).then(function(){
                         //     createCanvas();
                         //     startDetection();
-                        // }, 1000);
-                        $(".loading").removeClass('d-none');
-                        createCanvas();
-                        startDetection(); 
-                    });
-                })
-                .catch(err => {
-                    displayError();
-                });                
-        }
-        else {        
-            cameraStopped();
-            webcam.stop();
-            console.log("webcam stopped");
-            clearInterval(faceDetection);
-            if(typeof canvas !== "undefined"){
-                setTimeout(function() {
-                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-                }, 1000);
+                        //     });
+                        // }, 3000);
+                    })
+                    .catch(err => {
+                        displayError();
+                    });                
             }
-        }        
-    });
-
-    $('#cameraFlip').click(function() {
-        webcam.flip();
-        webcam.start()
-        .then(result =>{ 
-            webcamElement.style.transform = "";
+            else {        
+                cameraStopped();
+                webcam.stop();
+                console.log("webcam stopped");
+                clearInterval(faceDetection);
+                if(typeof canvas !== "undefined"){
+                    setTimeout(function() {
+                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+                    }, 1000);
+                }
+            }        
         });
-    });
 
-    $("#webcam").bind("loadedmetadata", function () {
+        $('#cameraFlip').click(function() {
+            webcam.flip();
+            webcam.start()
+            .then(result =>{ 
+                webcamElement.style.transform = "";
+            });
+        });
+
+        $("#webcam").bind("loadedmetadata", function () {
         displaySize = { width:this.scrollWidth, height: this.scrollHeight }
-    });
+        });
 
-    function createCanvas(){
+        function createCanvas(){
         if( document.getElementsByTagName("canvas").length == 0 )
         {
             canvas = faceapi.createCanvasFromMedia(webcamElement)
             document.getElementById('webcam-container').append(canvas)
             faceapi.matchDimensions(canvas, displaySize)
         }
-    }
+        }
 
-    function toggleContrl(id, show){
+        function toggleContrl(id, show){
         if(show){
             $("#"+id).prop('disabled', false);
             $("#"+id).parent().removeClass('disabled');
@@ -345,141 +355,213 @@
             $("#"+id).prop('disabled', true);
             $("#"+id).parent().addClass('disabled');
         }
-    }
+        }
 
-    function startDetection() {
-        faceDetection = setInterval(async () => {
-            const detections = await faceapi
-                .detectAllFaces(webcamElement, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks(true)
-                .withFaceExpressions()
-                .withAgeAndGender();
-            const resizedDetections = faceapi.resizeResults(detections, displaySize);
-            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        // function startDetection() {
+        //     faceDetection = setInterval(async () => {
+        //         const detections = await faceapi
+        //             .detectAllFaces(webcamElement, new faceapi.TinyFaceDetectorOptions())
+        //             .withFaceLandmarks(true)
+        //             .withFaceExpressions()
+        //             .withAgeAndGender();
+        //         const resizedDetections = faceapi.resizeResults(detections, displaySize);
+        //         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        //         const ctx = canvas.getContext('2d');
+
+        //         // Vẽ khung + landmarks
+        //         faceapi.draw.drawDetections(canvas, resizedDetections);
+        //         faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+        //         faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+
+        //         // Hiện tuổi + giới tính
+        //         resizedDetections.forEach(result => {
+        //             const { age, gender, genderProbability } = result;
+        //             new faceapi.draw.DrawTextField(
+        //                 [
+        //                     `${faceapi.round(age, 0)} years`,
+        //                     `${gender} (${faceapi.round(genderProbability)})`
+        //                 ],
+        //                 result.detection.box.bottomRight
+        //             ).draw(canvas);
+        //         });
+
+        //         // ============================
+        //         // 🔥 KIỂM TRA SCORE ≥ 0.8
+        //         // ============================
+        //         if (resizedDetections.length > 0) {
+        //             const score = resizedDetections[0].detection._score; // điểm tin cậy
+        //             const face = resizedDetections[0];
+        //             console.log("Detection score:", score);
+
+        //             if (score >= 0.8) {
+        //                 const tenNV = "Detecting..";
+        //                 const box = face.detection.box;
+
+        //                 // HIỂN THỊ TÊN + SCORE TRÊN CAMERA
+        //                 ctx.font = "bold 18px Arial";
+        //                 ctx.fillStyle = "yellow";
+        //                 ctx.fillText(
+        //                     `      ${tenNV} [${score.toFixed(2)}]`,
+        //                     box.x,
+        //                     box.y - 10
+        //                 );
+
+        //                 $("#sendChamCong").removeClass("d-none");     // hiện nút
+        //             } else {
+        //                 $("#sendChamCong").addClass("d-none");        // ẩn nút
+        //             }
+        //         } else {
+        //             $("#sendChamCong").addClass("d-none");            // không có mặt → ẩn nút
+        //         }
+
+        //         // Ẩn loading nếu đang chạy
+        //         if (!$(".loading").hasClass('d-none')) {
+        //             $(".loading").addClass('d-none');
+        //         }
+
+        //     }, 300);
+        // }
+
+        function startDetection() {
+            faceDetection = setInterval(async () => {
+                const detections = await faceapi
+                    .detectAllFaces(webcamElement, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceExpressions()
+                    .withFaceDescriptors()   
+                    .withAgeAndGender();
+
+                const resized = faceapi.resizeResults(detections, displaySize);
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                faceapi.draw.drawDetections(canvas, resized);
+                faceapi.draw.drawFaceLandmarks(canvas, resized);
+                faceapi.draw.drawFaceExpressions(canvas, resized);
+
+                let showButton = false;
+
+                if (resized.length > 0) {
+                    const face = resized[0];
+                    const score = face.detection._score;
+
+                    let labelFound = "Unknown";
+
+                    // ============================
+                    // 1️⃣ NHẬN DIỆN NHÂN VIÊN
+                    // ============================
+                    if (faceMatcher) {
+                        const bestMatch = faceMatcher.findBestMatch(face.descriptor);
+                        labelFound = bestMatch.label;
+                        const confidence = bestMatch.distance;
+
+                        console.log("Matched:", labelFound, "distance:", confidence);
+
+                        // Vẽ tên lên camera
+                        ctx.font = "bold 20px Arial";
+                        ctx.fillStyle = "yellow";
+                        // ctx.fillText(`${labelFound} (${score.toFixed(2)})`, face.detection.box.x, face.detection.box.y - 10);
+                        ctx.fillText(`         ${labelFound}`, face.detection.box.x, face.detection.box.y - 10);
+
+
+                        // ============================
+                        // 2️⃣ Nếu score >= 0.8 & match hợp lệ
+                        // ============================
+                        if (score >= 0.8 && labelFound !== "unknown") {
+                            showButton = true;
+
+                            // Gửi mã nhân viên lên server khi chấm công
+                            $("#maNhanVien").remove();
+                            $("<input>")
+                                .attr("type","hidden")
+                                .attr("id","maNhanVien")
+                                .attr("name","maNhanVien")
+                                .val(labelFound)
+                                .appendTo("#addForm");
+                        }
+                    }
+                }
+
+                if (showButton) {
+                    $("#sendChamCong").removeClass("d-none");
+                } else {
+                    $("#sendChamCong").addClass("d-none");
+                }
+
+                if (!$(".loading").hasClass('d-none')) {
+                    $(".loading").addClass('d-none');
+                }
+            }, 300);
+        }
+
+        function cameraStarted(){
+        $("#errorMsg").addClass("d-none");
+        if( webcam.webcamList.length > 1){
+            $("#cameraFlip").removeClass('d-none');
+        }
+        }
+
+        function cameraStopped(){
+        $("#errorMsg").addClass("d-none");
+        $("#cameraFlip").addClass('d-none');
+        }
+
+        function displayError(err = ''){
+        if(err!=''){
+            $("#errorMsg").html(err);
+        }
+        $("#errorMsg").removeClass("d-none");
+        }
+
+        function captureImage() {
+            const video = document.getElementById('webcam');
+            if (!video || video.readyState < 2) {
+                alert("Chưa bật camera!");
+                return null;
+            }
+
+            // reuse existing hidden canvas if có, hoặc tạo tạm
+            let canvas = document.getElementById('canvass');
+            let created = false;
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.id = 'canvass';
+                created = true;
+            }
+
+            // set kích thước theo video gốc để giữ chất lượng
+            const vw = video.videoWidth || video.clientWidth;
+            const vh = video.videoHeight || video.clientHeight;
+            canvas.width = vw;
+            canvas.height = vh;
             const ctx = canvas.getContext('2d');
 
-            // Vẽ khung + landmarks
-            faceapi.draw.drawDetections(canvas, resizedDetections);
-            faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-            faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+            // kiểm tra video có bị mirror (scaleX(-1)) không -> vẽ tương ứng
+            const videoStyle = (video.style && video.style.transform) ? video.style.transform : getComputedStyle(video).transform;
+            const isMirrored = videoStyle && videoStyle.includes('scaleX(-1)') || videoStyle && videoStyle.includes('matrix(-1');
 
-            // Hiện tuổi + giới tính
-            resizedDetections.forEach(result => {
-                const { age, gender, genderProbability } = result;
-                new faceapi.draw.DrawTextField(
-                    [
-                        `${faceapi.round(age, 0)} years`,
-                        `${gender} (${faceapi.round(genderProbability)})`
-                    ],
-                    result.detection.box.bottomRight
-                ).draw(canvas);
-            });
-
-            // ============================
-            // 🔥 KIỂM TRA SCORE ≥ 0.8
-            // ============================
-            if (resizedDetections.length > 0) {
-                const score = resizedDetections[0].detection._score; // điểm tin cậy
-                const face = resizedDetections[0];
-                console.log("Detection score:", score);
-
-                if (score >= 0.8) {
-                    const tenNV = "Detecting..";
-                    const box = face.detection.box;
-
-                    // HIỂN THỊ TÊN + SCORE TRÊN CAMERA
-                    ctx.font = "bold 18px Arial";
-                    ctx.fillStyle = "yellow";
-                    ctx.fillText(
-                        `      ${tenNV} [${score.toFixed(2)}]`,
-                        box.x,
-                        box.y - 10
-                    );
-
-                    $("#sendChamCong").removeClass("d-none");     // hiện nút
-                } else {
-                    $("#sendChamCong").addClass("d-none");        // ẩn nút
-                }
+            if (isMirrored) {
+                ctx.save();
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
             } else {
-                $("#sendChamCong").addClass("d-none");            // không có mặt → ẩn nút
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             }
 
-            // Ẩn loading nếu đang chạy
-            if (!$(".loading").hasClass('d-none')) {
-                $(".loading").addClass('d-none');
-            }
+            // chuyển sang base64 (jpg) để gửi về server; chỉnh chất lượng nếu cần
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
 
-        }, 300);
-    }
+            // gán vào input ẩn để submit form nếu cần
+            const $hidden = $("#imageCaptured");
+            if ($hidden.length) $hidden.val(dataUrl);
 
-    function cameraStarted(){
-    $("#errorMsg").addClass("d-none");
-    if( webcam.webcamList.length > 1){
-        $("#cameraFlip").removeClass('d-none');
-    }
-    }
+            // nếu canvas tạm tạo, không thêm vào DOM; nếu DOM cần giữ thì thêm
+            if (created) canvas.remove();
 
-    function cameraStopped(){
-    $("#errorMsg").addClass("d-none");
-    $("#cameraFlip").addClass('d-none');
-    }
-
-    function displayError(err = ''){
-    if(err!=''){
-        $("#errorMsg").html(err);
-    }
-    $("#errorMsg").removeClass("d-none");
-    }
-
-    function captureImage() {
-        const video = document.getElementById('webcam');
-        if (!video || video.readyState < 2) {
-            alert("Chưa bật camera!");
-            return null;
+            return dataUrl;
         }
-
-        // reuse existing hidden canvas if có, hoặc tạo tạm
-        let canvas = document.getElementById('canvass');
-        let created = false;
-        if (!canvas) {
-            canvas = document.createElement('canvas');
-            canvas.id = 'canvass';
-            created = true;
-        }
-
-        // set kích thước theo video gốc để giữ chất lượng
-        const vw = video.videoWidth || video.clientWidth;
-        const vh = video.videoHeight || video.clientHeight;
-        canvas.width = vw;
-        canvas.height = vh;
-        const ctx = canvas.getContext('2d');
-
-        // kiểm tra video có bị mirror (scaleX(-1)) không -> vẽ tương ứng
-        const videoStyle = (video.style && video.style.transform) ? video.style.transform : getComputedStyle(video).transform;
-        const isMirrored = videoStyle && videoStyle.includes('scaleX(-1)') || videoStyle && videoStyle.includes('matrix(-1');
-
-        if (isMirrored) {
-            ctx.save();
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            ctx.restore();
-        } else {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        }
-
-        // chuyển sang base64 (jpg) để gửi về server; chỉnh chất lượng nếu cần
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-
-        // gán vào input ẩn để submit form nếu cần
-        const $hidden = $("#imageCaptured");
-        if ($hidden.length) $hidden.val(dataUrl);
-
-        // nếu canvas tạm tạo, không thêm vào DOM; nếu DOM cần giữ thì thêm
-        if (created) canvas.remove();
-
-        return dataUrl;
-    }
     </script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -599,25 +681,25 @@
             }
             autoLoadHistory();
 
-            // function getListPicture() {
-            //     $.ajax({
-            //         url: "{{url('management/nhansu/chamcongonline/getlistpicture/')}}",
-            //         type: "get",
-            //         dataType: "json",
-            //         success: function(response) {
-            //             if (response.code === 200) {
-            //                 console.log("List picture:", response.data);
-            //             } else {
-            //                 console.log("Lỗi tải danh sách ảnh!");
-            //             }
-            //         },
-            //         error: function() {
-            //             console.log("Không thể tải danh sách ảnh!");
-            //         }
-            //     });
-            // }
+            function getListPicture() {
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/getlistpicture/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code === 200) {
+                            console.log("List picture:", response.data);
+                        } else {
+                            console.log("Lỗi tải danh sách ảnh!");
+                        }
+                    },
+                    error: function() {
+                        console.log("Không thể tải danh sách ảnh!");
+                    }
+                });
+            }
 
-            // getListPicture();
+            getListPicture();
 
             $("#sendChamCong").off('click').on('click', function(e){
                 e.preventDefault();

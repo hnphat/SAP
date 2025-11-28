@@ -4409,7 +4409,11 @@ class NhanSuController extends Controller
 
             foreach ($files as $file) {
                 if (str_contains($file->getFilename(), $manv)) {
-                    $filtered[] = $file->getFilename();
+                    // $filtered[] = $file->getFilename();
+                    $filtered[] = [
+                        "code" => $manv,
+                        "file" => asset('upload/mauchamcong/' . $file->getFilename())
+                    ];
                 }                
             }
         }
