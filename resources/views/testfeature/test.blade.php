@@ -194,6 +194,17 @@
             }catch(e){}
         }
     }
+    // Tải model trước
+    const modelPath = "{{asset('ai/modelsforhost')}}";
+    Promise.all([
+        faceapi.nets.tinyFaceDetector.load(modelPath),
+        faceapi.nets.faceLandmark68TinyNet.load(modelPath),
+        faceapi.nets.faceExpressionNet.load(modelPath),
+        faceapi.nets.ageGenderNet.load(modelPath)
+    ])
+    .then(function () {
+        console.log("Models loaded!");
+    });
     // Xử lý nhận dạng ảnh
     let labeledFaceDescriptors;
     let faceMatcher;
@@ -203,14 +214,21 @@
 
         // Danh sách file ảnh từ server (bạn tự trả về bằng PHP hoặc API)
         const imageList = await fetch("{{url('management/nhansu/chamcongonline/getlistpicture/')}}").then(r => r.json());
-         console.log("Image list: ", imageList);
+        console.log("Image list: ", imageList);
 
-        imageList.forEach(filename.data => {
-            const code = filename.data.split("_")[0];   // lấy mã NV từ tên file
+        // imageList.forEach(filename => {
+        //     const code = filename.data.split("_")[0];   // lấy mã NV từ tên file
+
+        //     if (!employees[code]) employees[code] = [];
+        //     employees[code].push("{{asset('upload/mauchamcong/')}}" + filename);
+        // });
+        imageList.data.forEach(x => {
+            const code = x.split("_")[0];   // lấy mã NV từ tên file
 
             if (!employees[code]) employees[code] = [];
-            employees[code].push("{{asset('upload/mauchamcong/')}}" + filename);
+            employees[code].push("{{asset('upload/mauchamcong/')}}/" + x);
         });
+
         const labels = Object.keys(employees);
         const descriptors = [];
 
@@ -235,13 +253,11 @@
         faceMatcher = new faceapi.FaceMatcher(descriptors, 0.6); // ngưỡng 0.6 tốt
     }
 
-    loadEmployeeFaces();
+    // loadEmployeeFaces();
 
     // Other function
     const webcamElement = document.getElementById('webcam');
     const webcam = new Webcam(webcamElement, 'user');
-    // const modelPath = './ai/models';
-    const modelPath = "{{asset('ai/modelsforhost')}}";
     let currentStream;
     let displaySize;
     let canvas;
@@ -260,20 +276,26 @@
                     webcamElement.style.transform = 'scaleX(-1)';
                     $("#webcam").one("loadedmetadata", function () {
                         console.log("Webcam metadata loaded, now loading models...");
-                        setTimeout(() => {
-                            $(".loading").removeClass('d-none');
-                            Promise.all([
-                                faceapi.nets.tinyFaceDetector.load(modelPath),
-                                faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-                                faceapi.nets.faceExpressionNet.load(modelPath),
-                                faceapi.nets.ageGenderNet.load(modelPath)
-                            ])
-                            .then(function () {
-                                console.log("Models loaded!");
-                                createCanvas();
-                                startDetection();
-                            });
-                        }, 1000); 
+                        // setTimeout(() => {
+                        //     $(".loading").removeClass('d-none');
+                        //     Promise.all([
+                        //         faceapi.nets.tinyFaceDetector.load(modelPath),
+                        //         faceapi.nets.faceLandmark68TinyNet.load(modelPath),
+                        //         faceapi.nets.faceExpressionNet.load(modelPath),
+                        //         faceapi.nets.ageGenderNet.load(modelPath)
+                        //     ])
+                        //     .then(function () {
+                        //         console.log("Models loaded!");
+                        //         createCanvas();
+                        //         startDetection();
+                        //     });
+                        //     console.log("Models loaded!");
+                        //     createCanvas();
+                        //     startDetection();
+                        // }, 1000);
+                        $(".loading").removeClass('d-none');
+                        createCanvas();
+                        startDetection(); 
                     });
                 })
                 .catch(err => {
