@@ -467,18 +467,18 @@
                         // ============================
                         // 2️⃣ Nếu score >= 0.8 & match hợp lệ
                         // ============================
-                        if (score >= 0.8 && labelFound !== "unknown") {
-                            showButton = true;
+                        // if (score >= 0.8 && labelFound !== "unknown") {
+                        //     showButton = true;
 
-                            // Gửi mã nhân viên lên server khi chấm công
-                            $("#maNhanVien").remove();
-                            $("<input>")
-                                .attr("type","hidden")
-                                .attr("id","maNhanVien")
-                                .attr("name","maNhanVien")
-                                .val(labelFound)
-                                .appendTo("#addForm");
-                        }
+                        //     // Gửi mã nhân viên lên server khi chấm công
+                        //     $("#maNhanVien").remove();
+                        //     $("<input>")
+                        //         .attr("type","hidden")
+                        //         .attr("id","maNhanVien")
+                        //         .attr("name","maNhanVien")
+                        //         .val(labelFound)
+                        //         .appendTo("#addForm");
+                        // }
                     }
                 }
 

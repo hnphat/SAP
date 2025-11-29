@@ -166,7 +166,10 @@
                                     Số lít yêu cầu: <strong id="soLit"></strong> (lít); Loại: <strong id="loaiNhienLieu"></strong><br/>
                                     Lý do đề nghị: <strong id="lyDo"></strong><br/>
                                     Trưởng bộ phận phê duyệt: <strong id="truongBP"></strong><br/>
-                                </p>                               
+                                </p>       
+                                <p>
+                                    <strong>Số lít nhiên liệu đã cấp: <span id="soLitDaCap" class="text-info"></span></strong>
+                                </p>                        
                             </div>
                         </div>
                         <!-- /.card -->
@@ -319,8 +322,7 @@
                 },
                 success: function(response) {
                     if (response.code == 200) {
-                        if (response.data) {                                
-                            
+                        if (response.data) {                                                      
                             $("#ngayDeNghi").text(response.data.ngayNew);
                             $("#loai").text(response.data.fuel_lyDo);
                             $("#tenXe").text(response.data.fuel_car);
@@ -330,9 +332,9 @@
                             $("#loaiNhienLieu").text(response.data.fuel_type == "X" ? "Xăng" : "Dầu");
                             $("#lyDo").text(response.data.fuel_ghiChu);
                             $("#truongBP").text(response.data.truongBP);
+                            $("#soLitDaCap").text(response.data.soLitDaCap);
                             $("#hasFound").show();
-                        } else {
-                           
+                        } else {                           
                             $("#hasFound").hide();
                             $("#ngayDeNghi").text("");
                             $("#loai").text("");
@@ -343,6 +345,7 @@
                             $("#loaiNhienLieu").text("");
                             $("#lyDo").text("");
                             $("#truongBP").text("");
+                            $("#soLitDaCap").text("");
                         }
                     } else {
                         
