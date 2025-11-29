@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Chi tiết Chấm công Online
+    Tổng quan Chấm công Online
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -16,13 +16,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Chi tiết Chấm công Online</strong></h1>
+                        <h1 class="m-0"><strong>Tổng quan Chấm công Online</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Nhân sự</li>
-                            <li class="breadcrumb-item active">Chi tiết Chấm công Online</li>
+                            <li class="breadcrumb-item active">Quản lý chấm công -> Quản lý Chấm công Online</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -39,7 +39,7 @@
                                 <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">
-                                            Chi tiết Chấm công Online
+                                            Tổng quan Chấm công Online
                                         </a>
                                     </li>
                                 </ul>
@@ -69,25 +69,31 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label><br/>
-                                                    <button id="xoaAnh" type="button" class="btn btn-warning btn-xs">GIẢI PHÓNG ẢNH ĐỆM</button>
+                                                    <a href="{{route('quanly.chamcong.online.chitiet')}}" target="_blank" class="btn btn-success">CHI TIẾT CHẤM CÔNG</a>
                                                 </div>
                                             </div>
+                                            
                                         </div>                                                                                                                
-                                        <h5>Tổng ảnh đệm: <span id="tongAnhDem" class="text-danger"></span></h5>
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
-                                            <tr class="bg-cyan">
-                                                <th>TT</th>
-                                                <th>Mã NV</th>
-                                                <th>Họ tên</th>    
-                                                <th>Ngày chấm công</th>                                                
-                                                <th>Buổi chấm công</th>
-                                                <th>Loại chấm công</th>
-                                                <th>Thời gian</th>
-                                                <th>Hình ảnh</th>
-                                                <th>Ghi chú</th>
-                                                <th>Tác vụ</th>                                               
-                                            </tr>
+                                                <tr class="bg-cyan">
+                                                    <th>TT</th>
+                                                    <th>Mã NV</th>
+                                                    <th>Họ tên</th>    
+                                                    <th>Ngày chấm công</th>  
+                                                    <th>Vào Sáng</th>                                              
+                                                    <th>Ra Sáng</th>
+                                                    <th>Vào Chiều</th>
+                                                    <th>Ra Chiều</th>
+                                                    <th>Vào Tối</th>
+                                                    <th>Ra Tối</th>
+                                                    <th>Công sáng</th>
+                                                    <th>Công chiều</th>
+                                                    <th>Trể sáng</th>
+                                                    <th>Trể chiều</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Tác vụ</th>                                    
+                                                </tr>
                                             </thead>
                                         </table>
                                     </div>                                    
@@ -139,7 +145,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/nhansu/chamcongonline/getlist') }}" + '?from=' + from + "&to=" + to,
+                ajax: "{{ url('management/nhansu/chamcongonline/getlisttongquan') }}" + '?from=' + from + "&to=" + to,
                 "order": [
                     [ 1, 'desc' ]
                 ],
@@ -149,57 +155,26 @@
                     { "data": "manv" },
                     { "data": "hoten" },
                     { "data": "ngaychamcong" },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {  
-                            let buoichamcong = parseInt(row.buoichamcong);                          
-                            switch(buoichamcong) {
-                                case 1:
-                                    return "<strong>Sáng</strong>";
-                                case 2:
-                                    return "<strong>Chiều</strong>";
-                                case 3:
-                                    return "<strong>Tối</strong>";
-                                default:
-                                    return "Khác";
-                            }
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) { 
-                            let loaichamcong = parseInt(row.loaichamcong);                             
-                            switch(loaichamcong) {
-                                case 1:
-                                    return "<strong class='text-success'>Vào</strong>";
-                                case 2:
-                                    return "<strong class='text-pink'>Ra</strong>";
-                                default:
-                                    return "<strong>Khác</strong>";
-                            }
-                        }
-                    },
-                    { "data": "thoigianchamcong" },
+                    { "data": "vaoSang" },
+                    { "data": "raSang" },
+                    { "data": "vaoChieu" },
+                    { "data": "raChieu" },
+                    { "data": "vaoToi" },
+                    { "data": "raToi" },
+                    { "data": "caSang" },
+                    { "data": "caChieu" },
+                    { "data": "treSang" },
+                    { "data": "treChieu" },
                     {
                         "data": null,
                         render: function(data, type, row) {                            
-                          return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' alt='Ảnh đã xóa' style='width: 120px; max-width:120px;'/>";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {                          
-                            if (row.isXoa == 1) {
-                                return "<strong class='text-danger'>Đã xóa ảnh đệm</strong>";
-                            } else {
-                                return "<strong class='text-secondary'>Chưa xóa ảnh đệm</strong>";
-                            }
+                            return "Trang thai";
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {                            
-                            return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                            return "Tac vu";
                         }
                     }
                 ]
@@ -214,87 +189,9 @@
             $("#xemReport").click(function(){
                 let from = $("input[name=chonNgayOne]").val();
                 let to = $("input[name=chonNgayTwo]").val();               
-                let urlpathcurrent = "{{ url('management/nhansu/chamcongonline/getlist') }}";
+                let urlpathcurrent = "{{ url('management/nhansu/chamcongonline/getlisttongquan') }}";
                 table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to).load();
-            });
-
-            function autoLoadCounter() {
-                // Gọi AJAX load lịch sử chấm công hôm nay
-                $.ajax({
-                    url: "{{url('management/nhansu/chamcongonline/loadsoluonganhdem/')}}",
-                    type: "get",
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.code === 200) {
-                            $("#tongAnhDem").text(response.counterAnhDem);
-                        } else {
-                            Toast.fire({ icon: 'error', title: "Lỗi tải!" });
-                        }
-                    },
-                    error: function() {
-                        Toast.fire({ icon: 'error', title: "Không thể tải!" });
-                    }
-                });
-            }
-            autoLoadCounter();
-
-             //Delete data
-            $(document).on('click','#delete', function(){
-                if(confirm('Bạn có chắc muốn xóa?')) {
-                    $.ajax({
-                        url: "{{url('management/nhansu/chamcongonline/delete/')}}",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "_token": "{{csrf_token()}}",
-                            "id": $(this).data('id')
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            autoLoadCounter();
-                            table.ajax.reload();
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không thể xóa lúc này!"
-                            })
-                        }
-                    });
-                }
-            });
-            // Xóa ảnh đệm
-            $(document).one('click','#xoaAnh',function(e){
-                if (confirm('Bạn có chắc muốn giải phóng ảnh đệm không?')) {
-                    let from = $("input[name=chonNgayOne]").val();
-                    let to = $("input[name=chonNgayTwo]").val();    
-                    $.ajax({
-                        url: "{{url('management/nhansu/chamcongonline/giaiphonganhdem/')}}" + '?from=' + from + "&to=" + to,
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "_token": "{{csrf_token()}}"
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                            autoLoadCounter();
-                            table.ajax.reload();
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'warning',
-                                title: "Không thể xóa lúc này!"
-                            })
-                        }
-                    });
-                }                     
-            });
+            });            
         });
         
     </script>

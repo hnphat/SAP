@@ -4120,63 +4120,6 @@ class NhanSuController extends Controller
         $chamcong->hinhanh = $name;
         $chamcong->save();
         if ($chamcong) {
-            // Xử lý bổ sung giờ công
-            // $getAll = ChamCongOnline::where([
-            //     ['id_user','=',Auth::user()->id],
-            //     [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')]
-            // ])->get();
-            // $vaoSang = null;
-            // $raSang = null;
-            // $vaoChieu = null;
-            // $raChieu = null;
-            // foreach($getAll as $row) {
-            //     if ($row->buoichamcong == 1 && $row->loaichamcong == 1) {
-            //         $vaoSang = $row->thoigianchamcong;
-            //     }
-            //     if ($row->buoichamcong == 1 && $row->loaichamcong == 2) {
-            //         $raSang = $row->thoigianchamcong;
-            //     }
-            //     if ($row->buoichamcong == 2 && $row->loaichamcong == 1) {
-            //         $vaoChieu = $row->thoigianchamcong;
-            //     }
-            //     if ($row->buoichamcong == 2 && $row->loaichamcong == 2) {
-            //         $raChieu = $row->thoigianchamcong;
-            //     }                
-            // }
-            // $ngay = Date('d');
-            // $thang = Date('m');
-            // $nam = Date('Y');
-            // $checkChamCong = ChamCongChiTiet::where([
-            //     ['ngay','=',$ngay],
-            //     ['thang','=',$thang],
-            //     ['nam','=',$nam],
-            //     ['id_user','=',Auth::user()->id]
-            // ])->exists();
-            // if ($checkChamCong) {
-            //     $chiTiet = ChamCongChiTiet::where([
-            //         ['ngay','=',$ngay],
-            //         ['thang','=',$thang],
-            //         ['nam','=',$nam],
-            //         ['id_user','=',Auth::user()->id]
-            //     ])
-            //     ->update([
-            //         'vaoSang' => $vaoSang,
-            //         'raSang' => $raSang,
-            //         'vaoChieu' => $vaoChieu,
-            //         'raChieu' => $raChieu
-            //     ]);
-            // } else {
-            //     $chiTiet = ChamCongChiTiet::insert([
-            //         'id_user' => Auth::user()->id,
-            //         'ngay' => $ngay,
-            //         'thang' => $thang,
-            //         'nam' => $nam,
-            //         'vaoSang' => $vaoSang,
-            //         'raSang' => $raSang,
-            //         'vaoChieu' => $vaoChieu,
-            //         'raChieu' => $raChieu
-            //     ]);
-            // }  
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã ghi nhận giờ công lúc ' . $getTimerNow .  " ngày " . Date('d-m-Y'),
@@ -4192,7 +4135,15 @@ class NhanSuController extends Controller
         }
     }
 
+    // public function quanLyChamCongOnline() {
+    //     return view("nhansu.quanlychamcongonline");
+    // }
+
     public function quanLyChamCongOnline() {
+        return view("nhansu.chamcongonlinequanly");
+    }
+
+    public function chiTietChamCongOnline() {
         return view("nhansu.quanlychamcongonline");
     }
 
@@ -4217,6 +4168,174 @@ class NhanSuController extends Controller
                     'message' => 'Get list successfully!',
                     'code' => 200,
                     'data' => $arr
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            } 
+        } else {
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500,
+                'data' => null
+            ]);
+        } 
+    }
+
+    public function getChamCongOnlineListTongQuan(Request $request) {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true); 
+        $_vaoSang = $data['vaoSang'];
+        $_raSang= $data['raSang'];
+        $_vaoChieu = $data['vaoChieu'];
+        $_raChieu = $data['raChieu'];
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);   
+            $result = null;        
+            $arr = [];
+            $mainResult = [];
+            $result = ChamCongOnline::select("*")->orderBy('id','desc')->get();
+            foreach($result as $row) {
+                $row->manv = $row->user->name;
+                $row->hoten = $row->user->userDetail->surname;
+                $row->ngaychamcong = \HelpFunction::getDateRevertCreatedAt($row->created_at);
+                $getDayChamCong = \HelpFunction::getDateRevertCreatedAt($row->created_at); 
+                $row->ngaychamcong = $getDayChamCong;
+                $arrDay = explode('-', $getDayChamCong);
+                $row->ngay = $arrDay[0];
+                $row->thang = $arrDay[1];
+                $row->nam = $arrDay[2];
+                $vaoSang = null;
+                $raSang = null;
+                $vaoChieu = null;
+                $raChieu = null;
+                $vaoToi = null;
+                $raToi = null;
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                    switch ($row->buoichamcong) {
+                        case 1: {
+                            switch ($row->loaichamcong) {
+                                case 1: {
+                                    $vaoSang = $row->thoigianchamcong;
+                                } break;
+                                case 2: {
+                                    $raSang = $row->thoigianchamcong;
+                                } break;
+                                default:
+                                  break;
+                            }
+                        } break;
+                        case 2: {
+                            switch ($row->loaichamcong) {
+                                case 1: {
+                                    $vaoChieu = $row->thoigianchamcong;
+                                } break;
+                                case 2: {
+                                    $raChieu = $row->thoigianchamcong;
+                                } break;
+                                default:
+                                  break;
+                            }
+                        }                            
+                        break;
+                        case 3: {
+                            switch ($row->loaichamcong) {
+                                case 1: {
+                                    $vaoToi = $row->thoigianchamcong;
+                                } break;
+                                case 2: {
+                                    $raToi = $row->thoigianchamcong;
+                                } break;
+                                default:
+                                  break;
+                            }
+                        }                            
+                        break;
+                        default:
+                            # code...
+                            break;
+                    }
+                    $row->vaoSang = $vaoSang;
+                    $row->raSang = $raSang;
+                    $row->vaoChieu = $vaoChieu;
+                    $row->raChieu = $raChieu;
+                    $row->vaoToi = $vaoToi;
+                    $row->raToi = $raToi;
+                    array_push($arr, $row);
+                }
+            }
+
+            // Xử lý giờ công
+            foreach($arr as $row) {
+                $caSang = 0;
+                $caChieu = 0;
+                $treSang = 0;
+                $treChieu = 0;
+                // Xử lý ca sáng
+                if ($row->vaoSang != null && $row->raSang != null) {
+                    $to_time = strtotime($row->vaoSang);
+                    $from_time = strtotime($_vaoSang);
+                    $test = round(($to_time - $from_time)/60,2);
+                    if ($test > 0)
+                        $treSang += $test;
+
+                    $to_time = strtotime($row->raSang);
+                    $from_time = strtotime($_raSang);
+                    $test = round(($to_time - $from_time)/60,2);
+                    if ($test < 0)
+                        $treSang += abs($test);
+
+                    if ($treSang == 0) {
+                        $to_time = strtotime($row->raSang);
+                        $from_time = strtotime($_vaoSang);
+                        $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                    } else {
+                        $to_time = strtotime($_raSang);
+                        $from_time = strtotime($_vaoSang);
+                        $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
+                    }    
+                }
+                // Xử lý ca chiều
+                if ($row->vaoChieu != null && $row->raChieu != null) {
+                    $to_time = strtotime($row->vaoChieu);
+                    $from_time = strtotime($_vaoChieu);
+                    $test = round(($to_time - $from_time)/60,2);
+                    if ($test > 0)
+                        $treChieu += $test;
+
+                    $to_time = strtotime($row->raChieu);
+                    $from_time = strtotime($_raChieu);
+                    $test = round(($to_time - $from_time)/60,2);
+                    if ($test < 0)
+                        $treChieu += abs($test);
+
+                    if ($treChieu == 0) {
+                        $to_time = strtotime($_raChieu);
+                        $from_time = strtotime($_vaoChieu);
+                        $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                    } else {
+                        $to_time = strtotime($_raChieu);
+                        $from_time = strtotime($_vaoChieu);
+                        $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
+                    }    
+                }
+                $row->caSang = $caSang;
+                $row->caChieu = $caChieu;
+                $row->treSang = $treSang;
+                $row->treChieu = $treChieu;
+                array_push($mainResult, $row);
+            }
+
+            if($mainResult) {
+                return response()->json([
+                    'message' => 'Get list successfully!',
+                    'code' => 200,
+                    'data' => $mainResult
                 ]);
             } else {
                 return response()->json([
