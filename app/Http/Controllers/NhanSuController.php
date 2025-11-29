@@ -4192,81 +4192,87 @@ class NhanSuController extends Controller
         $_raSang= $data['raSang'];
         $_vaoChieu = $data['vaoChieu'];
         $_raChieu = $data['raChieu'];
-        if ($request->from && $request->to) {
+        if ($request->from && $request->to && ($request->from == $request->to)) {
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);   
             $result = null;        
             $arr = [];
             $mainResult = [];
-            $result = ChamCongOnline::select("*")->orderBy('id','desc')->get();
-            foreach($result as $row) {
-                $row->manv = $row->user->name;
-                $row->hoten = $row->user->userDetail->surname;
-                $row->ngaychamcong = \HelpFunction::getDateRevertCreatedAt($row->created_at);
-                $getDayChamCong = \HelpFunction::getDateRevertCreatedAt($row->created_at); 
-                $row->ngaychamcong = $getDayChamCong;
-                $arrDay = explode('-', $getDayChamCong);
-                $row->ngay = $arrDay[0];
-                $row->thang = $arrDay[1];
-                $row->nam = $arrDay[2];
-                $vaoSang = null;
-                $raSang = null;
-                $vaoChieu = null;
-                $raChieu = null;
-                $vaoToi = null;
-                $raToi = null;
-                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
-                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
-                    switch ($row->buoichamcong) {
-                        case 1: {
-                            switch ($row->loaichamcong) {
+            $userChamCong = User::select("*")->where("active",true)->get();
+            foreach($userChamCong as $row) {
+                if ($row->hasRole('chamcong')) {
+                    $obj = "";
+                    $obj = (object) $obj;
+                    $obj->manv = $row->name;
+                    $obj->hoten = $row->userDetail ? $row->userDetail->surname : "";
+                    $obj->ngaychamcong = $_from;
+                    $vaoSang = null;
+                    $raSang = null;
+                    $vaoChieu = null;
+                    $raChieu = null;
+                    $vaoToi = null;
+                    $raToi = null;
+                    $result = ChamCongOnline::select("*")
+                    ->where("id_user",$row->id)->orderBy('id','desc')->get();
+                    foreach($result as $row2) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($_from)) 
+                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($_to))) {
+                            $arrDay = explode('-', $_from);
+                            $obj->ngay = $arrDay[0];
+                            $obj->thang = $arrDay[1];
+                            $obj->nam = $arrDay[2];                            
+                            switch ($row2->buoichamcong) {
                                 case 1: {
-                                    $vaoSang = $row->thoigianchamcong;
+                                    switch ($row2->loaichamcong) {
+                                        case 1: {
+                                            $vaoSang = $row2->thoigianchamcong;
+                                        } break;
+                                        case 2: {
+                                            $raSang = $row2->thoigianchamcong;
+                                        } break;
+                                        default:
+                                        break;
+                                    }
                                 } break;
                                 case 2: {
-                                    $raSang = $row->thoigianchamcong;
-                                } break;
+                                    switch ($row2->loaichamcong) {
+                                        case 1: {
+                                            $vaoChieu = $row2->thoigianchamcong;
+                                        } break;
+                                        case 2: {
+                                            $raChieu = $row2->thoigianchamcong;
+                                        } break;
+                                        default:
+                                        break;
+                                    }
+                                }                            
+                                break;
+                                case 3: {
+                                    switch ($row2->loaichamcong) {
+                                        case 1: {
+                                            $vaoToi = $row2->thoigianchamcong;
+                                        } break;
+                                        case 2: {
+                                            $raToi = $row2->thoigianchamcong;
+                                        } break;
+                                        default:
+                                        break;
+                                    }
+                                }                            
+                                break;
                                 default:
-                                  break;
-                            }
-                        } break;
-                        case 2: {
-                            switch ($row->loaichamcong) {
-                                case 1: {
-                                    $vaoChieu = $row->thoigianchamcong;
-                                } break;
-                                case 2: {
-                                    $raChieu = $row->thoigianchamcong;
-                                } break;
-                                default:
-                                  break;
-                            }
-                        }                            
-                        break;
-                        case 3: {
-                            switch ($row->loaichamcong) {
-                                case 1: {
-                                    $vaoToi = $row->thoigianchamcong;
-                                } break;
-                                case 2: {
-                                    $raToi = $row->thoigianchamcong;
-                                } break;
-                                default:
-                                  break;
-                            }
-                        }                            
-                        break;
-                        default:
-                            # code...
-                            break;
+                                    # code...
+                                    break;
+                            }          
+                        }
                     }
-                    $row->vaoSang = $vaoSang;
-                    $row->raSang = $raSang;
-                    $row->vaoChieu = $vaoChieu;
-                    $row->raChieu = $raChieu;
-                    $row->vaoToi = $vaoToi;
-                    $row->raToi = $raToi;
-                    array_push($arr, $row);
+                    $obj->vaoSang = $vaoSang;
+                    $obj->raSang = $raSang;
+                    $obj->vaoChieu = $vaoChieu;
+                    $obj->raChieu = $raChieu;
+                    $obj->vaoToi = $vaoToi;
+                    $obj->raToi = $raToi;
+                    array_push($arr, $obj);
                 }
             }
 
@@ -4281,8 +4287,10 @@ class NhanSuController extends Controller
                     $to_time = strtotime($row->vaoSang);
                     $from_time = strtotime($_vaoSang);
                     $test = round(($to_time - $from_time)/60,2);
-                    if ($test > 0)
-                        $treSang += $test;
+                    if ($test > 0) {
+                       $treSang += $test;
+
+                    }
 
                     $to_time = strtotime($row->raSang);
                     $from_time = strtotime($_raSang);
@@ -4290,9 +4298,9 @@ class NhanSuController extends Controller
                     if ($test < 0)
                         $treSang += abs($test);
 
-                    if ($treSang == 0) {
+                    if ($treSang) {
                         $to_time = strtotime($row->raSang);
-                        $from_time = strtotime($_vaoSang);
+                        $from_time = strtotime($row->vaoSang);
                         $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                     } else {
                         $to_time = strtotime($_raSang);
@@ -4314,7 +4322,7 @@ class NhanSuController extends Controller
                     if ($test < 0)
                         $treChieu += abs($test);
 
-                    if ($treChieu == 0) {
+                    if ($treChieu) {
                         $to_time = strtotime($_raChieu);
                         $from_time = strtotime($_vaoChieu);
                         $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
