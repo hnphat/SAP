@@ -86,6 +86,7 @@
                                                 <th>Thời gian</th>
                                                 <th>Hình ảnh</th>
                                                 <th>Ghi chú</th>
+                                                <th>Trạng thái</th>
                                                 <th>Tác vụ</th>                                               
                                             </tr>
                                             </thead>
@@ -198,8 +199,23 @@
                     },
                     {
                         "data": null,
-                        render: function(data, type, row) {                            
-                            return "<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                        render: function(data, type, row) { 
+                            if (row.isApprove == 0) {
+                                return "<strong class='text-warning'>Chưa kiểm duyệt</strong>";
+                            } else {
+                                return "<strong class='text-access'>Đã kiểm duyệt</strong>";
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) { 
+                            if (row.isApprove == 0) {
+                                return "<button id='approve' data-id='"+row.id+"' class='btn btn-info btn-sm'>Chấp nhận</button>&nbsp;"+
+                                "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                            } else {
+                                return "";
+                            }                         
                         }
                     }
                 ]

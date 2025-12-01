@@ -4155,9 +4155,9 @@ class NhanSuController extends Controller
             $arr = [];
             $result = ChamCongOnline::select("*")->orderBy('id','desc')->get();
             foreach($result as $row) {
-                $row->manv = $row->user->name;
-                $row->hoten = $row->user->userDetail->surname;
-                $row->ngaychamcong = \HelpFunction::getDateRevertCreatedAt($row->created_at);
+                $row->manv =  $row->user ? $row->user->name : "";
+                $row->hoten = $row->user ? $row->user->userDetail->surname : "";
+                $row->ngaychamcong = $row->user ? \HelpFunction::getDateRevertCreatedAt($row->created_at) : "";
                 if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
                 &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
                     array_push($arr, $row);
@@ -4284,24 +4284,39 @@ class NhanSuController extends Controller
                 $treChieu = 0;
                 // Xử lý ca sáng
                 if ($row->vaoSang != null && $row->raSang != null) {
+                    $hasVaoTre = false;
+                    $hasVeSom = false;
+
                     $to_time = strtotime($row->vaoSang);
                     $from_time = strtotime($_vaoSang);
                     $test = round(($to_time - $from_time)/60,2);
                     if ($test > 0) {
                        $treSang += $test;
-
+                       $hasVaoTre = true;
                     }
 
                     $to_time = strtotime($row->raSang);
                     $from_time = strtotime($_raSang);
                     $test = round(($to_time - $from_time)/60,2);
-                    if ($test < 0)
+                    if ($test < 0) {
                         $treSang += abs($test);
+                        $hasVeSom = true;
+                    }
 
                     if ($treSang) {
-                        $to_time = strtotime($row->raSang);
-                        $from_time = strtotime($row->vaoSang);
-                        $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                        if ($hasVaoTre && $hasVeSom) {
+                            $to_time = strtotime($row->raSang);
+                            $from_time = strtotime($row->vaoSang);
+                            $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                        } else if ($hasVaoTre && !$hasVeSom) {
+                            $to_time = strtotime($_raSang);
+                            $from_time = strtotime($row->vaoSang);
+                            $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                        } else if (!$hasVaoTre && $hasVeSom) {
+                            $to_time = strtotime($row->raSang);
+                            $from_time = strtotime($_vaoSang);
+                            $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                        }
                     } else {
                         $to_time = strtotime($_raSang);
                         $from_time = strtotime($_vaoSang);
@@ -4310,22 +4325,40 @@ class NhanSuController extends Controller
                 }
                 // Xử lý ca chiều
                 if ($row->vaoChieu != null && $row->raChieu != null) {
+                    $hasVaoTre = false;
+                    $hasVeSom = false;
+
+
                     $to_time = strtotime($row->vaoChieu);
                     $from_time = strtotime($_vaoChieu);
                     $test = round(($to_time - $from_time)/60,2);
-                    if ($test > 0)
+                    if ($test > 0) {
                         $treChieu += $test;
+                        $hasVaoTre = true;
+                    }
 
                     $to_time = strtotime($row->raChieu);
                     $from_time = strtotime($_raChieu);
                     $test = round(($to_time - $from_time)/60,2);
-                    if ($test < 0)
+                    if ($test < 0) {
                         $treChieu += abs($test);
+                        $hasVeSom = true;
+                    }
 
                     if ($treChieu) {
-                        $to_time = strtotime($_raChieu);
-                        $from_time = strtotime($_vaoChieu);
-                        $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                        if ($hasVaoTre && $hasVeSom) {
+                            $to_time = strtotime($row->raChieu);
+                            $from_time = strtotime($row->vaoChieu);
+                            $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                        } else if ($hasVaoTre && !$hasVeSom) {
+                            $to_time = strtotime($_raChieu);
+                            $from_time = strtotime($row->vaoChieu);
+                            $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                        } else if (!$hasVaoTre && $hasVeSom) {
+                            $to_time = strtotime($row->raChieu);
+                            $from_time = strtotime($_vaoChieu);
+                            $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                        }                       
                     } else {
                         $to_time = strtotime($_raChieu);
                         $from_time = strtotime($_vaoChieu);

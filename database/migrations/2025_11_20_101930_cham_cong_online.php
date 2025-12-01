@@ -23,6 +23,7 @@ class ChamCongOnline extends Migration
             $table->string('hinhanh')->nullable();
             $table->string('ghichu')->nullable();
             $table->boolean('isXoa')->default(0);
+            $table->boolean('isApprove')->default(0);
             $table->timestamps();
         });
     }

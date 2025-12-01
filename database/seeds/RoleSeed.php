@@ -137,6 +137,30 @@ class RoleSeed extends Seeder
                 'name' => 'quantri',
                 'description' => 'Sử dụng module quản trị'
             ],
+            [
+                'name' => 'xuatbaocao',
+                'description' => 'Xuất báo cáo hợp đồng'
+            ],
+            [
+                'name' => 'upcong',
+                'description' => 'Upload chấm công'
+            ],
+            [
+                'name' => 'mkt_sale',
+                'description' => 'Quản lý khách hàng MKT'
+            ],
+            [
+                'name' => 'dm_phukien',
+                'description' => 'Quản lý danh mục phụ kiện'
+            ],
+            [
+                'name' => 'xecuuho',
+                'description' => 'Quản lý xe cứu hộ'
+            ],
+            [
+                'name' => 'chamcong2lan',
+                'description' => 'Chấm công 02 lần'
+            ],
         ]);
 
         DB::table('role_user')->insert([
