@@ -73,6 +73,11 @@
                                             <strong class="text-primary" id="showGiaCost"></strong><br/>
                                             <strong class="text-secondary" id="showGia"></strong>
                                         </div>
+                                        <div class="form-group">
+                                            <label>Giá tặng</label>
+                                            <strong class="text-primary" id="showGiaTangCost"></strong><br/>
+                                            <strong class="text-secondary" id="showGiaTang"></strong>
+                                        </div>
                                     </div>
                                 </form>                              
                             </div>
@@ -151,10 +156,13 @@
                             $("#showGiaCost").text(formatNumber(parseInt(response.data.donGia)));
                             $("input[name=code]").val(response.data.ma);
                             $('#showGia').text("(" + DOCSO.doc(parseInt(response.data.donGia)) + ")");
+                            $("#showGiaTangCost").text(formatNumber(parseInt(response.data.giaTang)));
+                            $('#showGiaTang').text("(" + DOCSO.doc(parseInt(response.data.giaTang)) + ")");
                         } else {
                             $("input[name=code]").val("Không tìm thấy");
                             $("input[name=namePkPay]").val("Không tìm thấy");
                             $("#showGiaCost").text(0);
+                            $("#showGiaTangCost").text(0);
                         }
                     },
                     error: function() {
