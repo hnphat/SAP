@@ -4192,9 +4192,8 @@ class NhanSuController extends Controller
         $_raSang= $data['raSang'];
         $_vaoChieu = $data['vaoChieu'];
         $_raChieu = $data['raChieu'];
-        if ($request->from && $request->to && ($request->from == $request->to)) {
+        if ($request->from) {
             $_from = \HelpFunction::revertDate($request->from);
-            $_to = \HelpFunction::revertDate($request->to);   
             $result = null;        
             $arr = [];
             $mainResult = [];
@@ -4215,8 +4214,7 @@ class NhanSuController extends Controller
                     $result = ChamCongOnline::select("*")
                     ->where("id_user",$row->id)->orderBy('id','desc')->get();
                     foreach($result as $row2) {
-                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) >= strtotime($_from)) 
-                        &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) <= strtotime($_to))) {
+                        if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row2->created_at)) == strtotime($_from))) {
                             $arrDay = explode('-', $_from);
                             $obj->ngay = $arrDay[0];
                             $obj->thang = $arrDay[1];

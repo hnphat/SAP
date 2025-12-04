@@ -50,14 +50,8 @@
                                         <div class="row">
                                              <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label>Từ</label>
+                                                    <label>Chọn ngày</label>
                                                     <input type="date" name="chonNgayOne" value="<?php echo Date('Y-m-d');?>" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <div class="form-group">
-                                                    <label>Đến</label>
-                                                    <input type="date" name="chonNgayTwo" value="<?php echo Date('Y-m-d');?>" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-sm-1">
@@ -79,7 +73,6 @@
                                                 </div>
                                             </div>
                                         </div>     
-                                        <strong><i class="text-danger">(Lưu ý: Chỉ xem được tổng quan chấm công của cùng 01 ngày)</i></strong>                                                                                                           
                                         <hr>
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
@@ -144,7 +137,6 @@
         // show data
         $(document).ready(function() {
             let from = $("input[name=chonNgayOne]").val();
-            let to = $("input[name=chonNgayTwo]").val(); 
             var table = $('#dataTable').DataTable({
                 // paging: false,    use to show all data
                 responsive: true,
@@ -152,7 +144,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                ajax: "{{ url('management/nhansu/chamcongonline/getlisttongquan') }}" + '?from=' + from + "&to=" + to,
+                ajax: "{{ url('management/nhansu/chamcongonline/getlisttongquan') }}" + '?from=' + from,
                 "order": [
                     [ 1, 'desc' ]
                 ],
@@ -195,9 +187,8 @@
           
             $("#xemReport").click(function(){
                 let from = $("input[name=chonNgayOne]").val();
-                let to = $("input[name=chonNgayTwo]").val();               
                 let urlpathcurrent = "{{ url('management/nhansu/chamcongonline/getlisttongquan') }}";
-                table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to).load();
+                table.ajax.url( urlpathcurrent + '?from=' + from).load();
             });            
         });
         

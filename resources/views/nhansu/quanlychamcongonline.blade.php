@@ -74,7 +74,7 @@
                                             </div>
                                         </div> 
                                         <hr>
-                                        <button class="btn btn-primary">Phê duyệt hàng loạt</button><br>
+                                        <button class="btn btn-primary">PHÊ DUYỆT TẤT CẢ</button><br>
                                         <i><strong class="text-danger">(Những lượt chấm công đã duyệt, từ chối duyệt sẽ được bỏ qua)</strong></i>
                                         <hr>                                                                                                               
                                         <h5>Tổng ảnh đệm: <span id="tongAnhDem" class="text-danger"></span></h5>
