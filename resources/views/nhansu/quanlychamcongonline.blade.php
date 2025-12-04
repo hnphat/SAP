@@ -72,7 +72,11 @@
                                                     <button id="xoaAnh" type="button" class="btn btn-warning btn-xs">GIẢI PHÓNG ẢNH ĐỆM</button>
                                                 </div>
                                             </div>
-                                        </div>                                                                                                                
+                                        </div> 
+                                        <hr>
+                                        <button class="btn btn-primary">Phê duyệt hàng loạt</button><br>
+                                        <i><strong class="text-danger">(Những lượt chấm công đã duyệt, từ chối duyệt sẽ được bỏ qua)</strong></i>
+                                        <hr>                                                                                                               
                                         <h5>Tổng ảnh đệm: <span id="tongAnhDem" class="text-danger"></span></h5>
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
@@ -200,21 +204,24 @@
                     {
                         "data": null,
                         render: function(data, type, row) { 
-                            if (row.isApprove == 0) {
+                            if (row.typeApprove == 0) {
                                 return "<strong class='text-warning'>Chưa kiểm duyệt</strong>";
+                            } else if (row.typeApprove == 1) {
+                                return "<strong class='text-success'>Đã kiểm duyệt</strong>";
                             } else {
-                                return "<strong class='text-access'>Đã kiểm duyệt</strong>";
+                                return "<strong class='text-danger'>Từ chối duyệt</strong>";
                             }
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) { 
-                            if (row.isApprove == 0) {
-                                return "<button id='approve' data-id='"+row.id+"' class='btn btn-info btn-sm'>Chấp nhận</button>&nbsp;"+
+                            if (row.typeApprove == 0) {
+                                return "<button id='approve' data-id='"+row.id+"' class='btn btn-info btn-sm'>Duyệt</button>&nbsp;&nbsp;"+
+                                "&nbsp;<button id='notApprove' data-id='"+row.id+"' class='btn btn-warning btn-sm'>Không Duyệt</button>&nbsp;" +
                                 "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
                             } else {
-                                return "";
+                                return "<button id='revert' data-id='"+row.id+"' class='btn btn-primary btn-sm'>Hoàn trạng</button>";
                             }                         
                         }
                     }

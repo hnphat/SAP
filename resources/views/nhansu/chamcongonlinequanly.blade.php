@@ -72,8 +72,15 @@
                                                     <a href="{{route('quanly.chamcong.online.chitiet')}}" target="_blank" class="btn btn-success">CHI TIẾT CHẤM CÔNG</a>
                                                 </div>
                                             </div>
-                                            
-                                        </div>                                                                                                                
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label><br/>
+                                                    <button class="btn btn-primary">LƯU CHẤM CÔNG</button>
+                                                </div>
+                                            </div>
+                                        </div>     
+                                        <strong><i class="text-danger">(Lưu ý: Chỉ xem được tổng quan chấm công của cùng 01 ngày)</i></strong>                                                                                                           
+                                        <hr>
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
                                                 <tr class="bg-cyan">
