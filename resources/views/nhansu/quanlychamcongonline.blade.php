@@ -188,10 +188,11 @@
                     {
                         "data": null,
                         render: function(data, type, row) {   
-                          if (row.hinhAnh)                         
+                        //   if (row.hinhAnh)                         
+                        //     return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' alt='Ảnh đã xóa' style='width: 120px; max-width:120px;'/>";
+                        //   else
+                        //     return "<strong>None data</strong>";
                             return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' alt='Ảnh đã xóa' style='width: 120px; max-width:120px;'/>";
-                          else
-                            return "<strong>None data</strong>";
                         }
                     },
                     {
