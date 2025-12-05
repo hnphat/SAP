@@ -593,6 +593,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('chamcongonline/notapprove','NhanSuController@notapprove');
         Route::post('chamcongonline/approveall','NhanSuController@approveAll');
         Route::post('chamcongonline/luuchamcong','NhanSuController@luuChamCong');
+        Route::post('chamcongonline/testcode','NhanSuController@testCode');
+
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');

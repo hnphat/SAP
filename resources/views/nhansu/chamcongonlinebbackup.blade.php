@@ -548,25 +548,25 @@
             }
             autoLoadHistory();
 
-            // function getListPicture() {
-            //     $.ajax({
-            //         url: "{{url('management/nhansu/chamcongonline/getlistpicture/')}}",
-            //         type: "get",
-            //         dataType: "json",
-            //         success: function(response) {
-            //             if (response.code === 200) {
-            //                 console.log("List picture:", response.data);
-            //             } else {
-            //                 console.log("Lỗi tải danh sách ảnh!");
-            //             }
-            //         },
-            //         error: function() {
-            //             console.log("Không thể tải danh sách ảnh!");
-            //         }
-            //     });
-            // }
+            function getListPicture() {
+                $.ajax({
+                    url: "{{url('management/nhansu/chamcongonline/getlistpicture/')}}",
+                    type: "get",
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code === 200) {
+                            console.log("List picture:", response.data);
+                        } else {
+                            console.log("Lỗi tải danh sách ảnh!");
+                        }
+                    },
+                    error: function() {
+                        console.log("Không thể tải danh sách ảnh!");
+                    }
+                });
+            }
 
-            // getListPicture();
+            getListPicture();
 
             $("#sendChamCong").off('click').on('click', function(e){
                 e.preventDefault();

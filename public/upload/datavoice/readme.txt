@@ -37,4 +37,9 @@
 37. Bạn có chán tôi không. Tôi cứ nói mãi về chấm công. Ok dù thế nào thì tôi vẫn sẽ nói như thế. 
 38. Đừng nghĩ chụp ảnh nhiều người tôi không nhận ra bạn. Thực ra tôi không thèm nhận luôn đấy. Bạn nhân sự sẽ làm việc với bạn.
 39. Kể bạn nghe chuyện vui có bạn chấm công mà chụp ảnh người khác. Tôi rối quá không phân biệt được bạn ấy. Nên thôi chuyển dữ liệu về cho bạn nhân sự nhận dạng dùm tôi vậy.
+40. Lỗi rồi!
+41. Bạn đã chấm công đủ (vào/ra) cho tăng ca Tối nay rồi! Chúc ngủ ngon. Hẹn gặp lại vào ngày mai
+42. Bạn đã chấm công đủ (vào/ra) cho Ca Chiều! Nếu muốn tăng ca Buổi Tối hãy thử lại sau thời gian quy định
+43. Bạn đã chấm công vào Ca Chiều rồi! Nếu muốn ra Ca Chiều vui lòng thử lại sau thời gian quy định
+44. Bạn đã chấm công đủ (vào/ra) cho Ca Sáng rồi! Nếu muốn vào Ca Chiều hãy thử lại sau thời gian quy định.
  playSoundWithRandom(["s7","s5","s8","s10","s12","s13","s15","s16","s18","s19","s20","s23","s24"]);

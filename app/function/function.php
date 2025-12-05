@@ -382,5 +382,59 @@ class HelpFunction {
         if ($date['weekday'] == "Sunday") return true;
         return false;
     }
+
+    public static function lonHonGioDoiChieu($gioThucTe, $gioDoiChieu) {
+        if (!$gioThucTe || !$gioDoiChieu) return false;
+        $parseToMinutes = function($time) {
+            $time = trim($time);
+            if ($time === '') return null;
+            // Chấp nhận 'hh:mm' hoặc 'h:m' hoặc 'hh.mm'...
+            $parts = preg_split('/[:\.]/', $time);
+            if (count($parts) < 2) return null;
+            $h = intval($parts[0]);
+            $m = intval($parts[1]);
+            if ($h < 0) $h = 0;
+            if ($m < 0) $m = 0;
+            return $h * 60 + $m;
+        };
+        $t1 = $parseToMinutes($gioThucTe);
+        $t2 = $parseToMinutes($gioDoiChieu);
+
+        if ($t1 === null || $t2 === null) return false;
+        return $t1 > $t2;
+    }
+
+    public static function trongKhoangThoiGian($gioThucTe, $thoiGianDau, $thoiGianCuoi) {
+        if (!$gioThucTe || !$thoiGianDau || !$thoiGianCuoi) return false;
+
+        $parseToMinutes = function($time) {
+            $time = trim($time);
+            if ($time === '') return null;
+            $parts = preg_split('/[:\.]/', $time);
+            if (count($parts) < 2) return null;
+            $h = intval($parts[0]);
+            $m = intval($parts[1]);
+            if ($h < 0) $h = 0;
+            if ($m < 0) $m = 0;
+            // normalize hours to 0-23 and minutes to 0-59 (optional)
+            $h = $h % 24;
+            $m = $m % 60;
+            return $h * 60 + $m;
+        };
+
+        $t = $parseToMinutes($gioThucTe);
+        $start = $parseToMinutes($thoiGianDau);
+        $end = $parseToMinutes($thoiGianCuoi);
+
+        if ($t === null || $start === null || $end === null) return false;
+
+        // Nếu khoảng không qua nửa đêm: start <= end thì kiểm tra trực tiếp,
+        // ngược lại (ví dụ 22:00 - 06:00) thì true nếu t >= start OR t <= end
+        if ($start <= $end) {
+            return ($t >= $start && $t <= $end);
+        } else {
+            return ($t >= $start || $t <= $end);
+        }
+    }
 }
 ?>

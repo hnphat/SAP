@@ -4036,7 +4036,13 @@ class NhanSuController extends Controller
     }
 
     public function postOnlineChamCong(Request $request) {
-        // dd($request->all());
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true); 
+        $_vaoSang = $data['vaoSang'];
+        $_raSang= $data['raSang'];
+        $_vaoChieu = $data['vaoChieu']; // Lấy giá trị này xác định buổi
+        $_raChieu = $data['raChieu'];
+
         $getStatusDevice = $request->statusDevice;
         $getStatusPos = $request->statusPos;
         $getBuoiChamCong = $request->buoiChamCong;
@@ -4055,38 +4061,188 @@ class NhanSuController extends Controller
         // Tự xác định buổi chấm công và loại chấm công
         $buoiXacDinh = 0;
         $loaiXacDinh = 0;
-        $getInfoChamCong = ChamCongOnline::select("*")->where([
-            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
-            ['id_user','=',Auth::user()->id]
-        ])->get();
-        $soLuongDaCham = count($getInfoChamCong);
-        if ($soLuongDaCham == 0) {
-            $buoiXacDinh = 1; // buổi sáng
-            $loaiXacDinh = 1; // vào
-        } else if ($soLuongDaCham == 1) {
-            $buoiXacDinh = 1; // buổi sáng
-            $loaiXacDinh = 2; // ra
-        } else if ($soLuongDaCham == 2) {
-            $buoiXacDinh = 2; // buổi chiều
-            $loaiXacDinh = 1; // vào
-        } else if ($soLuongDaCham == 3) {
-            $buoiXacDinh = 2; // buổi chiều
-            $loaiXacDinh = 2; // ra
-        } else if ($soLuongDaCham == 4) {
-            $buoiXacDinh = 3; // buổi tối
-            $loaiXacDinh = 1; // vào
-        } else if ($soLuongDaCham == 5) {
-            $buoiXacDinh = 3; // buổi tối
-            $loaiXacDinh = 2; // ra
+        // Xử lý chấm công thông minh
+        // Xác định đang thuộc khoảng nghỉ trưa hay không
+        if (\HelpFunction::trongKhoangThoiGian($getTimerNow,$_raSang,$_vaoChieu)) {
+            $coChamVaoSangRoi = ChamCongOnline::select("*")->where([
+                [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                ['id_user','=',Auth::user()->id],
+                ['buoichamcong','=',1],
+                ['loaichamcong','=',1]
+            ])->exists();
+            $coChamRaSangRoi = ChamCongOnline::select("*")->where([
+                [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                ['id_user','=',Auth::user()->id],
+                ['buoichamcong','=',1],
+                ['loaichamcong','=',2]
+            ])->exists();
+            if ($coChamVaoSangRoi && $coChamRaSangRoi) {
+                $buoiXacDinh = 2; // buổi chiều
+                $loaiXacDinh = 1; // vào
+            } else if ($coChamVaoSangRoi && !$coChamRaSangRoi) {
+                $buoiXacDinh = 1; // buổi sáng
+                $loaiXacDinh = 2; // ra
+            } else if (!$coChamVaoSangRoi && !$coChamRaSangRoi) {
+                // Xác định vào trưa
+                $coChamVaoTruaRoi = ChamCongOnline::select("*")->where([
+                    [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                    ['id_user','=',Auth::user()->id],
+                    ['buoichamcong','=',2],
+                    ['loaichamcong','=',1]
+                ])->exists();
+                if (!$coChamVaoTruaRoi) {
+                    $buoiXacDinh = 2; // buổi trưa
+                    $loaiXacDinh = 1; // vào
+                } else {
+                    return response()->json([
+                        'type' => 'error',               
+                        'code' => 500,
+                        'message' => 'Bạn đã chấm công vào Ca Chiều rồi! Nếu muốn ra Ca Chiều vui lòng thử lại sau ' . $_vaoChieu . '!',
+                        'key' => "s43"
+                    ]);  
+                }                
+            } 
         } else {
-            return response()->json([
-                'type' => 'error',               
-                'code' => 500,
-                'message' => 'Hôm nay bạn đã chấm công đủ số lần quy định (06 lần/ngày), không thể chấm công thêm!',
-                'key' => "s22"
-            ]);  
+           // Xác định trước khoảng nghỉ hay sau khoảng nghỉ
+           if (\HelpFunction::lonHonGioDoiChieu($getTimerNow,$_raSang)) {
+                // Sau khoảng nghỉ
+                // Xác định xem hiện tại đã qua thời gian Ca Chiều 
+                // chưa để tiếp tục nếu muốn tăng ca
+                if (\HelpFunction::lonHonGioDoiChieu($getTimerNow,$_raChieu)) {
+                    // Có thể bắt đầu Ca Tối
+                    $coChamVaoChieuRoi = ChamCongOnline::select("*")->where([
+                        [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                        ['id_user','=',Auth::user()->id],
+                        ['buoichamcong','=',2],
+                        ['loaichamcong','=',1]
+                    ])->exists();
+                    $coChamRaChieuRoi = ChamCongOnline::select("*")->where([
+                        [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                        ['id_user','=',Auth::user()->id],
+                        ['buoichamcong','=',2],
+                        ['loaichamcong','=',2]
+                    ])->exists();
+                    if ($coChamVaoChieuRoi && $coChamRaChieuRoi) { 
+                        // Có Ca Chiều có thể bắt đầu Ca Tối                       
+                        $coChamVaoToiRoi = ChamCongOnline::select("*")->where([
+                            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                            ['id_user','=',Auth::user()->id],
+                            ['buoichamcong','=',3],
+                            ['loaichamcong','=',1]
+                        ])->exists();
+                        $coChamRaToiRoi = ChamCongOnline::select("*")->where([
+                            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                            ['id_user','=',Auth::user()->id],
+                            ['buoichamcong','=',3],
+                            ['loaichamcong','=',2]
+                        ])->exists();
+                        if ($coChamVaoToiRoi && $coChamRaToiRoi) {
+                                return response()->json([
+                                'type' => 'error',               
+                                'code' => 500,
+                                'message' => 'Bạn đã chấm công đủ (vào/ra) cho tăng ca Tối nay rồi! Chúc ngủ ngon. Hẹn gặp lại vào ngày mai!',
+                                'key' => "s41"
+                            ]); 
+                        } else if (!$coChamVaoToiRoi && !$coChamRaToiRoi) {
+                            $buoiXacDinh = 3; // buổi tối
+                            $loaiXacDinh = 1; // vào 
+                        } else if ($coChamVaoToiRoi && !$coChamRaToiRoi) {
+                            $buoiXacDinh = 3; // buổi tối
+                            $loaiXacDinh = 2; // ra 
+                        }        
+                    } else if (!$coChamVaoChieuRoi && !$coChamRaChieuRoi) {
+                        // Đây là Ca Tối nếu muốn chấm do không làm Ca Chiều
+                        $coChamVaoToiRoi = ChamCongOnline::select("*")->where([
+                            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                            ['id_user','=',Auth::user()->id],
+                            ['buoichamcong','=',3],
+                            ['loaichamcong','=',1]
+                        ])->exists();
+                        $coChamRaToiRoi = ChamCongOnline::select("*")->where([
+                            [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                            ['id_user','=',Auth::user()->id],
+                            ['buoichamcong','=',3],
+                            ['loaichamcong','=',2]
+                        ])->exists();
+                        if ($coChamVaoToiRoi && $coChamRaToiRoi) {
+                                return response()->json([
+                                'type' => 'error',               
+                                'code' => 500,
+                                'message' => 'Bạn đã chấm công đủ (vào/ra) cho tăng ca Tối nay rồi! Chúc ngủ ngon. Hẹn gặp lại vào ngày mai!',
+                                'key' => "s41"
+                            ]); 
+                        } else if (!$coChamVaoToiRoi && !$coChamRaToiRoi) {
+                            $buoiXacDinh = 3; // buổi tối
+                            $loaiXacDinh = 1; // vào 
+                        } else if ($coChamVaoToiRoi && !$coChamRaToiRoi) {
+                            $buoiXacDinh = 3; // buổi tối
+                            $loaiXacDinh = 2; // ra 
+                        }
+                    } else if ($coChamVaoChieuRoi && !$coChamRaChieuRoi) {
+                        $buoiXacDinh = 2; // buổi chiều
+                        $loaiXacDinh = 2; // ra 
+                    }
+                } else {
+                    // Chưa tới buổi tối đây là Ca Chiều có khả năng vô trể và về sớm
+                    $coChamVaoChieuRoi = ChamCongOnline::select("*")->where([
+                        [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                        ['id_user','=',Auth::user()->id],
+                        ['buoichamcong','=',2],
+                        ['loaichamcong','=',1]
+                    ])->exists();
+                    $coChamRaChieuRoi = ChamCongOnline::select("*")->where([
+                        [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                        ['id_user','=',Auth::user()->id],
+                        ['buoichamcong','=',2],
+                        ['loaichamcong','=',2]
+                    ])->exists();
+                    if ($coChamVaoChieuRoi && $coChamRaChieuRoi) {                        
+                        // Đủ Ca Chiều báo lỗi nếu tiếp tục chấm
+                        return response()->json([
+                            'type' => 'error',               
+                            'code' => 500,
+                            'message' => 'Bạn đã chấm công đủ (vào/ra) cho Ca Chiều! Nếu muốn tăng ca Buổi Tối thử lại sau ' . $_raChieu . '!',
+                            'key' => "s42"
+                        ]);               
+                    } else if (!$coChamVaoChieuRoi && !$coChamRaChieuRoi) {
+                        $buoiXacDinh = 2; // buổi chiều
+                        $loaiXacDinh = 1; // vào 
+                    } else if ($coChamVaoChieuRoi && !$coChamRaChieuRoi) {
+                        $buoiXacDinh = 2; // buổi chiều
+                        $loaiXacDinh = 2; // ra 
+                    }     
+                }                  
+           } else {
+                // Trước khoảng nghỉ
+                $coChamVaoSangRoi = ChamCongOnline::select("*")->where([
+                    [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                    ['id_user','=',Auth::user()->id],
+                    ['buoichamcong','=',1],
+                    ['loaichamcong','=',1]
+                ])->exists();
+                $coChamRaSangRoi = ChamCongOnline::select("*")->where([
+                    [\DB::raw('DATE(created_at)'), '=', Date('Y-m-d')],
+                    ['id_user','=',Auth::user()->id],
+                    ['buoichamcong','=',1],
+                    ['loaichamcong','=',2]
+                ])->exists();
+                if ($coChamVaoSangRoi && $coChamRaSangRoi) {
+                    return response()->json([
+                        'type' => 'error',               
+                        'code' => 500,
+                        'message' => 'Bạn đã chấm công đủ (vào/ra) cho Ca Sáng! Nếu muốn vào Ca Chiều thử lại sau ' . $_raSang . '!',
+                        'key' => "s44"
+                    ]);  
+                } else if (!$coChamVaoSangRoi && !$coChamRaSangRoi) {
+                    $buoiXacDinh = 1; // buổi sáng
+                    $loaiXacDinh = 1; // vào 
+                } else if ($coChamVaoSangRoi && !$coChamRaSangRoi) {
+                    $buoiXacDinh = 1; // buổi sáng
+                    $loaiXacDinh = 2; // ra 
+                }
+           }
         }
-
+        // ---------------------------
         $chamcong = new ChamCongOnline();
         $chamcong->id_user = Auth::user()->id;
         $chamcong->buoichamcong = $buoiXacDinh;
@@ -4391,6 +4547,13 @@ class NhanSuController extends Controller
     }
 
     public function deleteChamCongOnline(Request $request) {
+        if (!Auth::user()->hasRole("system")) {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Bạn không có quyền thực hiện thao tác này!'
+            ]);
+        }
         $chamcong = ChamCongOnline::find($request->id);
         $hinhanh = $chamcong->hinhanh;
         if ($hinhanh != null && file_exists('upload/chamcongonline/' . $hinhanh))
@@ -4977,5 +5140,9 @@ class NhanSuController extends Controller
                 'code' => 500
             ]);
         } 
+    }
+
+    public function testCode(Request $request) {
+        dd(\HelpFunction::trongKhoangThoiGian("12:59","12:00","13:00"));
     }
 }

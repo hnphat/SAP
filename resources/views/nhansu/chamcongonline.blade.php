@@ -91,6 +91,7 @@
                                         <th>Thời gian</th>
                                         <th>Buổi</th>
                                         <th>Loại chấm công</th>
+                                        <th>Thực hiện</th>
                                     </tr>
                                 </thead>
                                 <tbody id="showChamCongHistory">
@@ -147,6 +148,11 @@
         s37: "{{asset('upload/datavoice/37.mp3')}}", 
         s38: "{{asset('upload/datavoice/38.mp3')}}", 
         s39: "{{asset('upload/datavoice/39.mp3')}}", 
+        s40: "{{asset('upload/datavoice/40.mp3')}}", 
+        s41: "{{asset('upload/datavoice/41.mp3')}}", 
+        s42: "{{asset('upload/datavoice/42.mp3')}}",
+        s43: "{{asset('upload/datavoice/43.mp3')}}",
+        s44: "{{asset('upload/datavoice/44.mp3')}}",
     };   
     const sounds = {};
 
@@ -522,10 +528,12 @@
                             let stt = 1;
                             let loai = 0;
                             let buoi = 0;
+                            let nhanDang = "";
                             for (let index = 0; index < response.data.length; index++) {
                                 const element = response.data[index];
                                 loai = parseInt(element.loaichamcong);
                                 buoi = parseInt(element.buoichamcong);
+                                nhanDang = element.hinhanh;
                                 let loaiText = (loai === 1) ? "<strong class='text-primary'>Vào</strong>" : "<strong class='text-pink'>Ra</strong>";
                                 let buoiText = (buoi === 1) ? "Sáng" : (buoi === 2) ? "Chiều" : "Tối";
                                 txt += `<tr>
@@ -533,6 +541,7 @@
                                         <td><strong>${element.thoigianchamcong}</strong></td>
                                         <td><strong>${buoiText}</strong></td>
                                         <td>${loaiText}</td>
+                                        <td><img src="{{asset('upload/chamcongonline/')}}/${nhanDang}" alt='Ảnh đã xóa' style='width: 200px; max-width:200px;'/></td>
                                     </tr>`;
                                 stt++;
                             }
