@@ -74,7 +74,7 @@
                                             </div>
                                         </div> 
                                         <hr>
-                                        <button class="btn btn-primary">PHÊ DUYỆT TẤT CẢ</button><br>
+                                        <button id="approveAll" class="btn btn-primary">PHÊ DUYỆT TẤT CẢ</button><br>
                                         <i><strong class="text-danger">(Những lượt chấm công đã duyệt, từ chối duyệt sẽ được bỏ qua)</strong></i>
                                         <hr>                                                                                                               
                                         <h5>Tổng ảnh đệm: <span id="tongAnhDem" class="text-danger"></span></h5>
@@ -187,8 +187,11 @@
                     { "data": "thoigianchamcong" },
                     {
                         "data": null,
-                        render: function(data, type, row) {                            
-                          return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' alt='Ảnh đã xóa' style='width: 120px; max-width:120px;'/>";
+                        render: function(data, type, row) {   
+                          if (row.hinhAnh)                         
+                            return "<img src='{{asset('upload/chamcongonline/')}}/"+row.hinhanh+"' alt='Ảnh đã xóa' style='width: 120px; max-width:120px;'/>";
+                          else
+                            return "<strong>None data</strong>";
                         }
                     },
                     {
@@ -219,7 +222,7 @@
                             if (row.typeApprove == 0) {
                                 return "<button id='approve' data-id='"+row.id+"' class='btn btn-info btn-sm'>Duyệt</button>&nbsp;&nbsp;"+
                                 "&nbsp;<button id='notApprove' data-id='"+row.id+"' class='btn btn-warning btn-sm'>Không Duyệt</button>&nbsp;" +
-                                "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;";
+                                "&nbsp;<button id='delete' data-id='"+row.id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>";
                             } else {
                                 return "<button id='revert' data-id='"+row.id+"' class='btn btn-primary btn-sm'>Hoàn trạng</button>";
                             }                         
@@ -313,6 +316,150 @@
                             Toast.fire({
                                 icon: 'warning',
                                 title: "Không thể xóa lúc này!"
+                            })
+                        }
+                    });
+                }                     
+            });
+
+            // Duyệt chấm công
+            $(document).on('click','#approve',function(e){
+                let idData = $(this).data('id');
+                if (confirm('Xác nhận duyệt chấm công này?')) {  
+                    $.ajax({
+                        url: "{{url('management/nhansu/chamcongonline/approve/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": idData
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#xemReport").click();
+                            } else {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt lúc này!"
+                            })
+                        }
+                    });
+                }                     
+            });
+
+            // Hoàn trạng
+            $(document).on('click','#revert',function(e){
+                let idData = $(this).data('id');
+                if (confirm('Xác nhận hoàn trạng chấm công?')) {  
+                    $.ajax({
+                        url: "{{url('management/nhansu/chamcongonline/revert/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": idData
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#xemReport").click();
+                            } else {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt lúc này!"
+                            })
+                        }
+                    });
+                }                     
+            });
+
+            // Không duyệt
+            $(document).on('click','#notApprove',function(e){
+                let idData = $(this).data('id');
+                if (confirm('Xác nhận không duyệt chấm công này?')) {  
+                    $.ajax({
+                        url: "{{url('management/nhansu/chamcongonline/notapprove/')}}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}",
+                            "id": idData
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#xemReport").click();
+                            } else {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt lúc này!"
+                            })
+                        }
+                    });
+                }                     
+            });
+
+            // Không duyệt
+            $(document).on('click','#approveAll',function(e){
+                let from = $("input[name=chonNgayOne]").val();
+                let to = $("input[name=chonNgayTwo]").val();   
+                if (confirm('Xác nhận phê duyệt tất cả?\nLưu ý: Vui lòng kiểm tra thật kỹ trước khi thực hiện thao tác này!')) {  
+                    $.ajax({
+                        url: "{{url('management/nhansu/chamcongonline/approveall/')}}"+ '?from=' + from + "&to=" + to,
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#xemReport").click();
+                            } else {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể duyệt lúc này!"
                             })
                         }
                     });

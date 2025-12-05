@@ -587,6 +587,12 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('chamcongonline/getlistpicture','NhanSuController@getListPicture');
         Route::get('chamcongonline/chitietchamcong','NhanSuController@chiTietChamCongOnline')->name('quanly.chamcong.online.chitiet')->middleware(['f_nhansu']);
         Route::get('chamcongonline/getlisttongquan','NhanSuController@getChamCongOnlineListTongQuan');
+        // Xử lý chấm công online
+        Route::post('chamcongonline/approve','NhanSuController@approve');
+        Route::post('chamcongonline/revert','NhanSuController@revert');
+        Route::post('chamcongonline/notapprove','NhanSuController@notapprove');
+        Route::post('chamcongonline/approveall','NhanSuController@approveAll');
+        Route::post('chamcongonline/luuchamcong','NhanSuController@luuChamCong');
         // Chi tiết chấm công
         Route::get('chitiet','NhanSuController@chiTietChamCong')->name('chitiet.panel');
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');

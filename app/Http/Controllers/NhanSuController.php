@@ -4325,8 +4325,6 @@ class NhanSuController extends Controller
                 if ($row->vaoChieu != null && $row->raChieu != null) {
                     $hasVaoTre = false;
                     $hasVeSom = false;
-
-
                     $to_time = strtotime($row->vaoChieu);
                     $from_time = strtotime($_vaoChieu);
                     $test = round(($to_time - $from_time)/60,2);
@@ -4581,5 +4579,403 @@ class NhanSuController extends Controller
             'code' => 200,
             'data' => $filtered
         ]);
+    }
+
+    public function approve(Request $request) {
+        $chamcong = ChamCongOnline::find($request->id);
+        $chamcong->typeApprove = 1;
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+            $chamcong->save();
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Bạn không có quyền thực hiện thao tác này'
+            ]);
+        }
+
+        if ($chamcong) {           
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã phê duyệt'
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi'
+            ]);
+    }
+
+    public function revert(Request $request) {
+        $chamcong = ChamCongOnline::find($request->id);
+        $chamcong->typeApprove = 0;
+        if (Auth::user()->hasRole("system")) {
+            $chamcong->save();
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Bạn không có quyền thực hiện thao tác này'
+            ]);
+        }
+
+        if ($chamcong) {           
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Đã hoàn trạng'
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi'
+            ]);
+    }
+
+    public function notapprove(Request $request) {
+        $chamcong = ChamCongOnline::find($request->id);
+        $chamcong->typeApprove = 2;
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+            $chamcong->save();
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Bạn không có quyền thực hiện thao tác này'
+            ]);
+        }
+
+        if ($chamcong) {           
+            return response()->json([
+                'type' => 'info',
+                'code' => 200,
+                'message' => 'Không phê duyệt thành công'
+            ]);
+        }
+        else
+            return response()->json([
+                'type' => 'error',
+                'code' => 500,
+                'message' => 'Lỗi'
+            ]);
+    }
+
+    public function approveAll(Request $request) {
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Bạn không có quyền thực hiện chức năng này!',
+                'code' => 500
+            ]);
+        }
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $result = ChamCongOnline::select("*")
+            ->where([
+                ["typeApprove","=",0]
+            ])->get();
+            foreach($result as $row) {
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) >= strtotime($_from)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row->created_at)) <= strtotime($_to))) {
+                    $chamcong = ChamCongOnline::find($row->id);
+                    $chamcong->typeApprove = 1;
+                    $chamcong->save();
+                }
+            }
+            if($result) {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Đã phê duyệt tất cả!',
+                    'code' => 200
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Internal server fail!',
+                    'code' => 500,
+                    'data' => null
+                ]);
+            } 
+        } else {
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500,
+                'data' => null
+            ]);
+        } 
+    }
+
+    public function luuChamCong(Request $request) {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true); 
+        $_vaoSang = $data['vaoSang'];
+        $_raSang= $data['raSang'];
+        $_vaoChieu = $data['vaoChieu'];
+        $_raChieu = $data['raChieu'];
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Bạn không có quyền thực hiện chức năng này!',
+                'code' => 500
+            ]);
+        }
+        if ($request->from) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $arrDay = explode('-', $_from);
+            $ngay = $arrDay[0];
+            $thang = $arrDay[1];
+            $nam = $arrDay[2];
+            $arr = [];
+            $mainResult = [];
+            $check = ChamCongOnline::select("*")
+            ->where([
+                [\DB::raw('DATE(created_at)'), '=', Date($request->from)],
+                ["typeApprove","=",0]
+            ])->count();
+            if ($check) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Tồn tại bản ghi chấm công ngày ' . $_from . ' của nhân viên chưa được phê duyệt!',
+                    'code' => 500
+                ]);
+            } else {                
+                $userChamCong = User::select("*")->where("active",true)->get();
+                foreach($userChamCong as $row) {
+                    if ($row->hasRole('chamcong')) {
+                        $vaoSang = null;
+                        $raSang = null;
+                        $vaoChieu = null;
+                        $raChieu = null;
+                        $vaoToi = null;
+                        $raToi = null;
+                        $result = ChamCongOnline::select("*")->where([
+                            [\DB::raw('DATE(created_at)'), '=', Date($request->from)],
+                            ["typeApprove","=",1],
+                            ["id_user","=",$row->id]
+                        ])->get();
+                        // Thêm dữ liệu chấm công vào dữ liệu tạm
+                        foreach($result as $row2) {                            
+                            switch ($row2->buoichamcong) {
+                                case 1: {
+                                    switch ($row2->loaichamcong) {
+                                        case 1: {
+                                            $vaoSang = $row2->thoigianchamcong;
+                                        } break;
+                                        case 2: {
+                                            $raSang = $row2->thoigianchamcong;
+                                        } break;
+                                        default:
+                                        break;
+                                    }
+                                } break;
+                                case 2: {
+                                    switch ($row2->loaichamcong) {
+                                        case 1: {
+                                            $vaoChieu = $row2->thoigianchamcong;
+                                        } break;
+                                        case 2: {
+                                            $raChieu = $row2->thoigianchamcong;
+                                        } break;
+                                        default:
+                                        break;
+                                    }
+                                }                            
+                                break;
+                                case 3: {
+                                    switch ($row2->loaichamcong) {
+                                        case 1: {
+                                            $vaoToi = $row2->thoigianchamcong;
+                                        } break;
+                                        case 2: {
+                                            $raToi = $row2->thoigianchamcong;
+                                        } break;
+                                        default:
+                                        break;
+                                    }
+                                }                            
+                                break;
+                                default:
+                                    # code...
+                                    break;
+                            }     
+                        }
+                        if ($result) {
+                            $row->vaoSang = $vaoSang;
+                            $row->raSang = $raSang;
+                            $row->vaoChieu = $vaoChieu;
+                            $row->raChieu = $raChieu;
+                            $row->vaoToi = $vaoToi;
+                            $row->raToi = $raToi;
+                            array_push($arr, $row);
+                        }
+                    }
+                }
+                // Bắt đầu xử lý chấm công
+                // Xử lý giờ công
+                foreach($arr as $row) {
+                    $caSang = 0;
+                    $caChieu = 0;
+                    $treSang = 0;
+                    $treChieu = 0;
+                    // Xử lý ca sáng
+                    if ($row->vaoSang != null && $row->raSang != null) {
+                        $hasVaoTre = false;
+                        $hasVeSom = false;
+
+                        $to_time = strtotime($row->vaoSang);
+                        $from_time = strtotime($_vaoSang);
+                        $test = round(($to_time - $from_time)/60,2);
+                        if ($test > 0) {
+                        $treSang += $test;
+                        $hasVaoTre = true;
+                        }
+
+                        $to_time = strtotime($row->raSang);
+                        $from_time = strtotime($_raSang);
+                        $test = round(($to_time - $from_time)/60,2);
+                        if ($test < 0) {
+                            $treSang += abs($test);
+                            $hasVeSom = true;
+                        }
+
+                        if ($treSang) {
+                            if ($hasVaoTre && $hasVeSom) {
+                                $to_time = strtotime($row->raSang);
+                                $from_time = strtotime($row->vaoSang);
+                                $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                            } else if ($hasVaoTre && !$hasVeSom) {
+                                $to_time = strtotime($_raSang);
+                                $from_time = strtotime($row->vaoSang);
+                                $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                            } else if (!$hasVaoTre && $hasVeSom) {
+                                $to_time = strtotime($row->raSang);
+                                $from_time = strtotime($_vaoSang);
+                                $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
+                            }
+                        } else {
+                            $to_time = strtotime($_raSang);
+                            $from_time = strtotime($_vaoSang);
+                            $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
+                        }    
+                    }
+                    // Xử lý ca chiều
+                    if ($row->vaoChieu != null && $row->raChieu != null) {
+                        $hasVaoTre = false;
+                        $hasVeSom = false;
+                        $to_time = strtotime($row->vaoChieu);
+                        $from_time = strtotime($_vaoChieu);
+                        $test = round(($to_time - $from_time)/60,2);
+                        if ($test > 0) {
+                            $treChieu += $test;
+                            $hasVaoTre = true;
+                        }
+
+                        $to_time = strtotime($row->raChieu);
+                        $from_time = strtotime($_raChieu);
+                        $test = round(($to_time - $from_time)/60,2);
+                        if ($test < 0) {
+                            $treChieu += abs($test);
+                            $hasVeSom = true;
+                        }
+
+                        if ($treChieu) {
+                            if ($hasVaoTre && $hasVeSom) {
+                                $to_time = strtotime($row->raChieu);
+                                $from_time = strtotime($row->vaoChieu);
+                                $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                            } else if ($hasVaoTre && !$hasVeSom) {
+                                $to_time = strtotime($_raChieu);
+                                $from_time = strtotime($row->vaoChieu);
+                                $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                            } else if (!$hasVaoTre && $hasVeSom) {
+                                $to_time = strtotime($row->raChieu);
+                                $from_time = strtotime($_vaoChieu);
+                                $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
+                            }                       
+                        } else {
+                            $to_time = strtotime($_raChieu);
+                            $from_time = strtotime($_vaoChieu);
+                            $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
+                        }    
+                    }
+                    $row->caSang = $caSang;
+                    $row->caChieu = $caChieu;
+                    $row->treSang = $treSang;
+                    $row->treChieu = $treChieu;
+                    array_push($mainResult, $row);
+                }
+                // ------------ Kết thúc xử lý chấm công ------
+                // Lưu chấm công vào CSDL
+                foreach($mainResult as $row) {
+                    $checkChamCong = ChamCongChiTiet::where([
+                        ['ngay','=',$ngay],
+                        ['thang','=',$thang],
+                        ['nam','=',$nam],
+                        ['id_user','=',$row->id]
+                    ])->exists();
+
+                    if ($checkChamCong) {
+                        $chiTiet = ChamCongChiTiet::where([
+                            ['ngay','=',$ngay],
+                            ['thang','=',$thang],
+                            ['nam','=',$nam],
+                            ['id_user','=',$row->id]
+                        ])
+                        ->update([
+                            'vaoSang' => $row->vaoSang,
+                            'raSang' => $row->raSang,
+                            'vaoChieu' => $row->vaoChieu,
+                            'raChieu' => $row->raChieu,
+                            'gioSang' => $row->caSang,
+                            'gioChieu' => $row->caChieu,
+                            'treSang' => $row->treSang,
+                            'treChieu' => $row->treChieu,
+                        ]);
+                    } else {
+                        $chiTiet = ChamCongChiTiet::insert([
+                            'id_user' => $row->id,
+                            'ngay' => $ngay,
+                            'thang' => $thang,
+                            'nam' => $nam,
+                            'vaoSang' => $row->vaoSang,
+                            'raSang' => $row->raSang,
+                            'vaoChieu' => $row->vaoChieu,
+                            'raChieu' => $row->raChieu,
+                            'gioSang' => $row->caSang,
+                            'gioChieu' => $row->caChieu,
+                            'treSang' => $row->treSang,
+                            'treChieu' => $row->treChieu,
+                        ]);
+                    }  
+                }
+                // ---------------------
+                if ($mainResult) {
+                    return response()->json([
+                        'type' => "success",
+                        'message' => 'Đã lưu chấm công ngày ' . $_from . ' của nhân viên vào CSDL!',
+                        'code' => 200
+                    ]);
+                } else {
+                    return response()->json([
+                        'type' => "error",
+                        'message' => 'Lỗi không thể lưu!',
+                        'code' => 500
+                    ]);
+                }
+            }            
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Error get Database from server!',
+                'code' => 500
+            ]);
+        } 
     }
 }

@@ -69,7 +69,7 @@
                                             <div class="col-sm-2">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label><br/>
-                                                    <button class="btn btn-primary">LƯU CHẤM CÔNG</button>
+                                                    <button id="luuChamCong" class="btn btn-primary">LƯU CHẤM CÔNG</button>
                                                 </div>
                                             </div>
                                         </div>     
@@ -130,7 +130,7 @@
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 2000,           // tăng lên 5000 ms = 5s
+            timer: 3000,           // tăng lên 5000 ms = 5s
             timerProgressBar: true // (tùy chọn) hiển thị thanh tiến trình
         });
 
@@ -189,7 +189,42 @@
                 let from = $("input[name=chonNgayOne]").val();
                 let urlpathcurrent = "{{ url('management/nhansu/chamcongonline/getlisttongquan') }}";
                 table.ajax.url( urlpathcurrent + '?from=' + from).load();
-            });            
+            });    
+            
+            // Không duyệt
+            $(document).on('click','#luuChamCong',function(e){
+                let from = $("input[name=chonNgayOne]").val(); 
+                if (confirm('Xác nhận lưu dữ liệu chấm công vào CSDL?\nLưu ý: Vui lòng kiểm tra thật kỹ trước khi thực hiện thao tác này!')) {  
+                    $.ajax({
+                        url: "{{url('management/nhansu/chamcongonline/luuchamcong/')}}"+ '?from=' + from,
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        },
+                        success: function(response) {
+                            if (response.code == 200) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                                $("#xemReport").click();
+                            } else {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                })
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'warning',
+                                title: "Không thể lưu lúc này!"
+                            })
+                        }
+                    });
+                }                     
+            });
         });
         
     </script>
