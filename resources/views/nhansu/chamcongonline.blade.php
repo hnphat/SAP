@@ -339,17 +339,17 @@
                     console.log("Detection score:", score);
 
                     if (score >= 0.8) {
-                        const tenNV = "Detecting..";
-                        const box = face.detection.box;
+                        // const tenNV = "Detecting..";
+                        // const box = face.detection.box;
 
-                        // HIỂN THỊ TÊN + SCORE TRÊN CAMERA
-                        ctx.font = "bold 18px Arial";
-                        ctx.fillStyle = "yellow";
-                        ctx.fillText(
-                            `      ${tenNV} [${score.toFixed(2)}]`,
-                            box.x,
-                            box.y - 10
-                        );
+                        // // HIỂN THỊ TÊN + SCORE TRÊN CAMERA
+                        // ctx.font = "bold 18px Arial";
+                        // ctx.fillStyle = "yellow";
+                        // ctx.fillText(
+                        //     `      ${tenNV} [${score.toFixed(2)}]`,
+                        //     box.x,
+                        //     box.y - 10
+                        // );
 
                         $("#sendChamCong").removeClass("d-none");     // hiện nút
                     } else {

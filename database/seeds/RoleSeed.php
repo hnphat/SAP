@@ -161,6 +161,10 @@ class RoleSeed extends Seeder
                 'name' => 'chamcong2lan',
                 'description' => 'Chấm công 02 lần'
             ],
+            [
+                'name' => 'nhanvienvesinh',
+                'description' => 'Nhân viên vệ sinh'
+            ],
         ]);
 
         DB::table('role_user')->insert([

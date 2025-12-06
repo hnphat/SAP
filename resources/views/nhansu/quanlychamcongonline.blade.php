@@ -74,7 +74,7 @@
                                             </div>
                                         </div> 
                                         <hr>
-                                        <button id="approveAll" class="btn btn-primary">PHÊ DUYỆT TẤT CẢ</button>&nbsp;&nbsp;<button id="testCode">Test code</button><br>
+                                        <button id="approveAll" class="btn btn-primary">PHÊ DUYỆT TẤT CẢ</button>&nbsp;&nbsp;<button id="testCode" style="display: none;">Test code</button><br>
                                         <i><strong class="text-danger">(Những lượt chấm công đã duyệt, từ chối duyệt sẽ được bỏ qua)</strong></i>
                                         <hr>                                                                                                               
                                         <h5>Tổng ảnh đệm: <span id="tongAnhDem" class="text-danger"></span></h5>

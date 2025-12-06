@@ -92,7 +92,7 @@
                                                     <th>Trể sáng</th>
                                                     <th>Trể chiều</th>
                                                     <th>Trạng thái</th>
-                                                    <th>Tác vụ</th>                                    
+                                                    <th>Ghi chú</th>                                    
                                                 </tr>
                                             </thead>
                                         </table>
@@ -166,14 +166,26 @@
                     { "data": "treChieu" },
                     {
                         "data": null,
-                        render: function(data, type, row) {                            
-                            return "Trang thai";
+                        render: function(data, type, row) {  
+                            if (!row.codulieu) {
+                               return "<span class='badge badge-danger'>Không chấm công</span>";
+                            } else if (row.duyet) {
+                               return "<span class='badge badge-success'>Đã kiểm duyệt</span>";
+                            } else {
+                               return "<span class='badge badge-warning'>Chưa kiểm duyệt</span>";
+                            }
                         }
                     },
                     {
                         "data": null,
                         render: function(data, type, row) {                            
-                            return "Tac vu";
+                            if (row.chamcong2lan) {
+                                return "<span class='badge badge-info'>Chấm 02 lần</span>";
+                            } else if (row.nhanvienvesinh) {
+                                return "<span class='badge badge-primary'>NVVS</span>";
+                            } else {
+                                return "";
+                            }
                         }
                     }
                 ]

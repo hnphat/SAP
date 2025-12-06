@@ -436,5 +436,36 @@ class HelpFunction {
             return ($t >= $start || $t <= $end);
         }
     }
+
+    public static function tinhSoGio($gio1, $gio2) {
+        if (!$gio1 || !$gio2) return false;
+
+        $parseToMinutes = function($time) {
+            $time = trim($time);
+            if ($time === '') return null;
+            $parts = preg_split('/[:\.]/', $time);
+            if (count($parts) < 2) return null;
+            $h = intval($parts[0]) % 24;
+            $m = intval($parts[1]) % 60;
+            return $h * 60 + $m;
+        };
+
+        $t1 = $parseToMinutes($gio1);
+        $t2 = $parseToMinutes($gio2);
+        if ($t1 === null || $t2 === null) return false;
+
+        // Nếu gio2 nhỏ hơn gio1 thì coi như qua ngày hôm sau
+        if ($t2 < $t1) $t2 += 24 * 60;
+
+        $duration = $t2 - $t1; // phút
+        $minFor4Hours = 4 * 60; // 240 phút
+
+        if ($duration >= $minFor4Hours) {
+            return $duration;
+        } else {
+            // trả về số phút thiếu để đạt 4 giờ
+            return ($minFor4Hours - $duration);
+        }
+    }
 }
 ?>
