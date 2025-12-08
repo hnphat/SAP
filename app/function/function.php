@@ -467,5 +467,28 @@ class HelpFunction {
             return ($minFor4Hours - $duration);
         }
     }
+
+    public static function tinhSoPhutTre($gioThucTe, $gioDoiChieu) {
+        if (!$gioThucTe || !$gioDoiChieu) return false;
+
+        $parseToMinutes = function($time) {
+            $time = trim($time);
+            if ($time === '') return null;
+            $parts = preg_split('/[:\.]/', $time);
+            if (count($parts) < 2) return null;
+            $h = intval($parts[0]);
+            $m = intval($parts[1]);
+            if ($h < 0) $h = 0;
+            if ($m < 0) $m = 0;
+            return $h * 60 + $m;
+        };
+
+        $t1 = $parseToMinutes($gioThucTe);
+        $t2 = $parseToMinutes($gioDoiChieu);
+
+        if ($t1 === null || $t2 === null) return false;
+
+        return $t1 - $t2;
+    }
 }
 ?>

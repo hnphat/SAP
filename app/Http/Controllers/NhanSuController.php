@@ -4367,8 +4367,10 @@ class NhanSuController extends Controller
                     $obj->thangChamCong = $arrDay[1];
                     $obj->namChamCong = $arrDay[2]; 
                     $vaoSang = null;
+                    $vaoSangTre = null;
                     $raSang = null;
                     $vaoChieu = null;
+                    $vaoChieuTre = null;
                     $raChieu = null;
                     $vaoToi = null;
                     $raToi = null;
@@ -4415,6 +4417,9 @@ class NhanSuController extends Controller
                                     switch ($row2->loaichamcong) {
                                         case 1: {
                                             $vaoSang = $row2->thoigianchamcong;
+                                            if (\HelpFunction::lonHonGioDoiChieu($vaoSang,$_vaoSang)) {
+                                                $vaoSangTre = \HelpFunction::tinhSoPhutTre($vaoSang,$_vaoSang);
+                                            }
                                         } break;
                                         case 2: {
                                             $raSang = $row2->thoigianchamcong;
@@ -4427,6 +4432,9 @@ class NhanSuController extends Controller
                                     switch ($row2->loaichamcong) {
                                         case 1: {
                                             $vaoChieu = $row2->thoigianchamcong;
+                                            if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
+                                                $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                            }
                                         } break;
                                         case 2: {
                                             $raChieu = $row2->thoigianchamcong;
@@ -4461,6 +4469,8 @@ class NhanSuController extends Controller
                     $obj->raChieu = $raChieu;
                     $obj->vaoToi = $vaoToi;
                     $obj->raToi = $raToi;
+                    $obj->vaoSangTre = $vaoSangTre;
+                    $obj->vaoChieuTre = $vaoChieuTre;
                     array_push($arr, $obj);
                 }
             }
@@ -4501,7 +4511,7 @@ class NhanSuController extends Controller
                                 // Chấm công đúng
                                 $to_time = strtotime($_raChieu);
                                 $from_time = strtotime($_vaoChieu);
-                                $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
+                                $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);                              
                             } else {
                                 // Chấm công có về sớm
                                 $hasVeSom = false;
@@ -4535,11 +4545,14 @@ class NhanSuController extends Controller
                                     $from_time = strtotime($layCongDau);
                                     $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                 }
+                                $row->raSang = $_raSang;
                             } else {
                                 // Chấm công đúng
                                 $to_time = strtotime($_raSang);
                                 $from_time = strtotime($_vaoSang);
                                 $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);                           
+                                $row->raSang = $_raSang;
+                                $row->vaoChieu = $_vaoChieu;
                             }
                         } else {
                             // Trường hợp cả 02 lần chấm công đều ngoài khoảng nghỉ
@@ -4579,6 +4592,8 @@ class NhanSuController extends Controller
                                 $from_time = strtotime($_vaoChieu);
                                 $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                             }   
+                            $row->raSang = $_raSang;
+                            $row->vaoChieu = $_vaoChieu;
                         }
                     } else {
                         // Lỗi không lấy được công đầu hoặc cuối
@@ -5276,6 +5291,8 @@ class NhanSuController extends Controller
                                     $from_time = strtotime($_vaoChieu);
                                     $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                                 }   
+                                $row->raSang = $_raSang;
+                                $row->vaoChieu = $_vaoChieu;
                             }
                         } else {
                             // Lỗi không lấy được công đầu hoặc cuối

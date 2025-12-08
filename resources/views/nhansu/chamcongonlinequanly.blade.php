@@ -154,9 +154,27 @@
                     { "data": "manv" },
                     { "data": "hoten" },
                     { "data": "ngaychamcong" },
-                    { "data": "vaoSang" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {  
+                            if (row.vaoSangTre && row.vaoSangTre < 240) {
+                               return "<span>"+row.vaoSang+"</span><br/><span class='badge badge-warning'>[Sáng trễ: "+ row.vaoSangTre + "p]</span>";
+                            } else {
+                               return row.vaoSang;
+                            }
+                        }
+                    },
                     { "data": "raSang" },
-                    { "data": "vaoChieu" },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {  
+                            if (row.vaoChieuTre && row.vaoChieuTre < 240) {
+                               return "<span>"+row.vaoChieu+"</span><br/><span class='badge badge-warning'>[Chiều trễ: "+ row.vaoChieuTre + "p]</span>";
+                            } else {
+                               return row.vaoChieu;
+                            }
+                        }
+                    },
                     { "data": "raChieu" },
                     { "data": "vaoToi" },
                     { "data": "raToi" },
