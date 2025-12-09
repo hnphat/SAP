@@ -83,7 +83,7 @@
                             </p>
                         </div>
                         <h5>BẢNG GHI CHẤM CÔNG HÔM NAY</h5>
-                        <div class="row">
+                        <!-- <div class="row">
                             <table class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
@@ -98,7 +98,9 @@
                                 
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
+                        <div class="showChamCongHistory">
+                        </div>                        
                     </div>
                 </form>           
             </div>
@@ -536,14 +538,30 @@
                                 nhanDang = element.hinhanh;
                                 let loaiText = (loai === 1) ? "<strong class='text-primary'>Vào</strong>" : "<strong class='text-pink'>Ra</strong>";
                                 let buoiText = (buoi === 1) ? "Sáng" : (buoi === 2) ? "Chiều" : "Tối";
-                                txt += `<tr>
-                                        <td>${stt}</td>
-                                        <td><strong>${element.thoigianchamcong}</strong></td>
-                                        <td><strong>${buoiText}</strong></td>
-                                        <td>${loaiText}</td>
-                                        <td><img src="{{asset('upload/chamcongonline/')}}/${nhanDang}" alt='Ảnh đã xóa' style='width: 200px; max-width:200px;'/></td>
-                                    </tr>`;
-                                stt++;
+                                // txt += `<tr>
+                                //         <td>${stt}</td>
+                                //         <td><strong>${element.thoigianchamcong}</strong></td>
+                                //         <td><strong>${buoiText}</strong></td>
+                                //         <td>${loaiText}</td>
+                                //         <td><img src="{{asset('upload/chamcongonline/')}}/${nhanDang}" alt='Ảnh đã xóa' style='width: 200px; max-width:200px;'/></td>
+                                //     </tr>`;
+                                // stt++;
+
+                                txt +=`<div class="d-flex justify-content-center mb-3">
+                                    <div class="card mx-auto" style="max-width:18rem; width:100%;">
+                                        <img src="{{asset('upload/chamcongonline/')}}/${nhanDang}"
+                                            class="card-img-top img-fluid"
+                                            alt="Hình chấm công"
+                                            style="object-fit:cover;">
+                                        <div class="card-body text-center">
+                                        <p>
+                                            Buổi: <strong>${buoiText}</strong><br/>
+                                            Loại: <strong>${loaiText}</strong><br/>
+                                            Thời gian: <strong class="text-success">${element.thoigianchamcong}</strong><br/>
+                                        </p>
+                                        </div>
+                                    </div>
+                                </div>`;
                             }
                             $("#showChamCongHistory").html(txt);
                         } else {
