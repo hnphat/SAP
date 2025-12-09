@@ -4804,7 +4804,6 @@ class NhanSuController extends Controller
         $arr = [];
         $result = ChamCongOnline::select("*")
         ->where("id_user",Auth::user()->id)
-        ->orderBy('id','desc')
         ->get();
         foreach($result as $row) {
             $dateChamCong = \HelpFunction::getDateRevertCreatedAt($row->created_at);

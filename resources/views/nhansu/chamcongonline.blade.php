@@ -99,7 +99,7 @@
                                 </tbody>
                             </table>
                         </div> -->
-                        <div class="showChamCongHistory">
+                        <div id="showChamCongHistory">
                         </div>                        
                     </div>
                 </form>           
@@ -552,7 +552,7 @@
                                         <img src="{{asset('upload/chamcongonline/')}}/${nhanDang}"
                                             class="card-img-top img-fluid"
                                             alt="Hình chấm công"
-                                            style="object-fit:cover;">
+                                            style="width: 200px; margin: auto; padding-top:10px;">
                                         <div class="card-body text-center">
                                         <p>
                                             Buổi: <strong>${buoiText}</strong><br/>
