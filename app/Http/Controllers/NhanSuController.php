@@ -4431,9 +4431,37 @@ class NhanSuController extends Controller
                                 case 2: {
                                     switch ($row2->loaichamcong) {
                                         case 1: {
-                                            $vaoChieu = $row2->thoigianchamcong;
-                                            if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
-                                                $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                            if ($row->hasRole("chamcong2lan")) {
+                                                $daChamItNhatMotLan = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id]
+                                                ])->count();
+                                                $coChamVaoChieu = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id],
+                                                    ['buoichamcong','=',2],
+                                                    ['loaichamcong','=',1]
+                                                ])->exists();
+                                                if ($daChamItNhatMotLan >= 1) {
+                                                    if ($coChamVaoChieu) {
+                                                        $raChieu = $row2->thoigianchamcong;
+                                                    } else {
+                                                        $vaoChieu = $row2->thoigianchamcong;
+                                                        if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
+                                                            $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                                        }
+                                                    }
+                                                } else {
+                                                    $vaoChieu = $row2->thoigianchamcong;
+                                                    if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
+                                                        $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                                    }
+                                                }
+                                            } else {
+                                                $vaoChieu = $row2->thoigianchamcong;
+                                                if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
+                                                    $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                                }
                                             }
                                         } break;
                                         case 2: {
@@ -4447,7 +4475,29 @@ class NhanSuController extends Controller
                                 case 3: {
                                     switch ($row2->loaichamcong) {
                                         case 1: {
-                                            $vaoToi = $row2->thoigianchamcong;
+                                            if ($row->hasRole("chamcong2lan")) {
+                                                $daChamItNhatMotLan = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id]
+                                                ])->count();
+                                                $coChamRaChieu = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id],
+                                                    ['buoichamcong','=',2],
+                                                    ['loaichamcong','=',2]
+                                                ])->exists();
+                                                if ($daChamItNhatMotLan >= 1) {
+                                                    if ($coChamRaChieu) {
+                                                        $vaoToi = $row2->thoigianchamcong;
+                                                    } else {
+                                                        $raChieu = $row2->thoigianchamcong;
+                                                    }
+                                                } else {
+                                                    $vaoToi = $row2->thoigianchamcong;
+                                                }                                                
+                                            } else {                                              
+                                                $vaoToi = $row2->thoigianchamcong;
+                                            }
                                         } break;
                                         case 2: {
                                             $raToi = $row2->thoigianchamcong;
@@ -5136,7 +5186,29 @@ class NhanSuController extends Controller
                                 case 2: {
                                     switch ($row2->loaichamcong) {
                                         case 1: {
-                                            $vaoChieu = $row2->thoigianchamcong;
+                                            if ($row->hasRole("chamcong2lan")) {
+                                                $daChamItNhatMotLan = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id]
+                                                ])->count();
+                                                $coChamVaoChieu = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id],
+                                                    ['buoichamcong','=',2],
+                                                    ['loaichamcong','=',1]
+                                                ])->exists();
+                                                if ($daChamItNhatMotLan >= 1) {
+                                                    if ($coChamVaoChieu) {
+                                                        $raChieu = $row2->thoigianchamcong;
+                                                    } else {
+                                                        $vaoChieu = $row2->thoigianchamcong;                                               
+                                                    }
+                                                } else {
+                                                    $vaoChieu = $row2->thoigianchamcong;                                                
+                                                }
+                                            } else {
+                                                $vaoChieu = $row2->thoigianchamcong;  
+                                            }
                                         } break;
                                         case 2: {
                                             $raChieu = $row2->thoigianchamcong;
@@ -5149,7 +5221,29 @@ class NhanSuController extends Controller
                                 case 3: {
                                     switch ($row2->loaichamcong) {
                                         case 1: {
-                                            $vaoToi = $row2->thoigianchamcong;
+                                            if ($row->hasRole("chamcong2lan")) {
+                                                $daChamItNhatMotLan = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id]
+                                                ])->count();
+                                                $coChamRaChieu = ChamCongOnline::select("*")->where([
+                                                    [\DB::raw('DATE(created_at)'), '=', Date($arrDay[2]."-".$arrDay[1]."-".$arrDay[0])],
+                                                    ['id_user','=',$row->id],
+                                                    ['buoichamcong','=',2],
+                                                    ['loaichamcong','=',2]
+                                                ])->exists();
+                                                if ($daChamItNhatMotLan >= 1) {
+                                                    if ($coChamRaChieu) {
+                                                        $vaoToi = $row2->thoigianchamcong;
+                                                    } else {
+                                                        $raChieu = $row2->thoigianchamcong;
+                                                    }
+                                                } else {
+                                                    $vaoToi = $row2->thoigianchamcong;
+                                                }                                                
+                                            } else {                                              
+                                                $vaoToi = $row2->thoigianchamcong;
+                                            }
                                         } break;
                                         case 2: {
                                             $raToi = $row2->thoigianchamcong;
