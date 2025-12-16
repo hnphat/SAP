@@ -200,21 +200,52 @@
 <!-- <script src="script/tet.js"></script> -->
 <script type="text/javascript">
 $(document).ready(function() {
-        // var windowWidth = $(document).width();
-        // var santa = $(".santa");
-        // santa_right_pos = windowWidth + santa.width();
-        // santa.right = santa_right_pos;
-        // function movesanta(){
-        //     santa.animate({right : windowWidth +  santa.width()},15000, function(){
-        //         santa.css("right","-500px");
-        //         setTimeout(function(){
-        //             movesanta();
-        //             },60000);
-        //     });
-        // }
+        var windowWidth = $(document).width();
+        var santa = $(".santa");
+        santa_right_pos = windowWidth + santa.width();
+        santa.right = santa_right_pos;
+        function movesanta(){
+            santa.animate({right : windowWidth +  santa.width()},12000, function(){
+                santa.css("right","-500px");
+                setTimeout(function(){
+                    movesanta();
+                },3000);
+            });
+        }
         // setTimeout(() => {      
         //     movesanta();
         // }, 30000);
+        let isIndexPage = document.getElementById('isIndexPage');
+       
+        // Xử lý âm thanh
+        const ALLSound = {
+            jinglebell: "{{asset('upload/song/jinglebell.mp3')}}",               
+        };   
+        const sounds = {};
+        function initSounds(){
+            for (const [k,url] of Object.entries(ALLSound)){
+                if (url){
+                    const a = new Audio(url);
+                    a.preload = "auto";
+                    sounds[k] = a;
+                }
+            }
+        }
+        initSounds();
+        function playSound(name){
+            const s = sounds[name];
+            if (s){ 
+                try{
+                    s.currentTime = 0;
+                    s.play();
+                }catch(e){}
+            }
+        }
+
+        if(isIndexPage){
+            playSound('jinglebell');
+            movesanta();
+        }
 });
 </script>
 </body>
