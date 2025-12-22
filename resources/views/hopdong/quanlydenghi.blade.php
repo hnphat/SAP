@@ -319,16 +319,15 @@
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
                                                 <th>Nội dung</th>
-                                                <th>Loại</th>
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
+                                                <th>Loại</th>                                               
                                                 <th>Giá</th>
-                                                @endif
-                                                <th>Tác vụ</th>
                                             </tr>
                                             <tbody id="showPKFREE">
                                             </tbody>
                                         </table>
+                                        <h5>
+                                            Tổng khuyến mãi: <strong id="xtongFree"></strong>
+                                        </h5>
                                         <h4 class="text-right">
                                             TỔNG: <strong id="xtotal"></strong>
                                         </h4>
@@ -1315,12 +1314,14 @@
                     url: 'management/hd/get/pkfree/' + id,
                     dataType: 'json',
                     success: function(response){
+                        // Show package pay
                         txt = "";
-                        sum = 0;
-                        statusLanSau = "";
+                        let sum = 0;
+                        $("#xtongFree").text("0");
                         for(let i = 0; i < response.pkfree.length; i++) {
-                            let mode = ""; 
-                            let isGiaTang = "";                                  
+                            let mode = "";                            
+                            statusLanSau = "";
+                            isGiaTang = "";
                             if (response.pkfree[i].isLanDau == false 
                             && response.pkfree[i].isDuyetLanSau == false) {
                                 statusLanSau = " <span class='text-danger'><b>(Chưa duyệt)</b></span>"
@@ -1337,30 +1338,22 @@
                                 case "TANGTHEM": mode = "<strong class='text-success'>Tặng thêm</strong>"; break;
                                 default: mode = "";
                             }
-                            mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             if (response.pkfree[i].giaTang == 0) {
                                 isGiaTang = "<br/><span class='text-warning'>(Chưa cập nhật giá tặng lấy giá theo mặc định)</span>";
                             } else {
                                 isGiaTang = "";
                             }
+                            mode = (mode != "") ? mode : (response.pkfree[i].free_kem == true ? "<strong class='text-secondary'>Kèm theo xe</strong>" : "<strong class='text-success'>Tặng thêm</strong>");
                             txt += "<tr>" +
                                 "<td>" + (i+1) + "</td>" +
-                                "<td>" + response.pkfree[i].name + " " + statusLanSau + " </td>" +
-                                "<td>" + mode + " " + isGiaTang + "</td>" +
-                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
-                                \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
-                                \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
-                                "<td>" + formatNumber(parseInt(response.pkfree[i].giaTang == 0 ? response.pkfree[i].cost : response.pkfree[i].giaTang)) +  "</td>"
-                                @else
-                                 ""
-                                @endif 
-                                +
-                                "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id_bh_pk_package+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button>&nbsp;"
-                                + "<button id='editPkFree' data-sale='"+id+"' data-mapkfree='"+response.pkfree[i].mapk+"' data-mapkmode='"+response.pkfree[i].mode+"' data-id='"+response.pkfree[i].id_bh_pk_package+"'  data-toggle='modal' data-target='#editPkFreeMedal' class='btn btn-info btn-sm'><span class='fas fa-edit'></span></button>" +
-                                "</td>" +                                
+                                "<td>" + response.pkfree[i].name + " " + statusLanSau +  " " + isGiaTang + "</td>" +
+                                "<td>" + mode + "</td>" +
+                                "<td>" + formatNumber(parseInt(response.pkfree[i].giaTang == 0 ? 0 : response.pkfree[i].giaTang)) + "</td>" +
                                 "</tr>";
+                            sum += parseInt(response.pkfree[i].giaTang);
                         }
                         $("#showPKFREE").html(txt);
+                        $("#xtongFree").text(formatNumber(sum));
                     },
                     error: function() {
                         Toast.fire({
