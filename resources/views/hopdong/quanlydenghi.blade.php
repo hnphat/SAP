@@ -321,6 +321,7 @@
                                                 <th>Nội dung</th>
                                                 <th>Loại</th>                                               
                                                 <th>Giá</th>
+                                                <th>Tác vụ</th>
                                             </tr>
                                             <tbody id="showPKFREE">
                                             </tbody>
@@ -1349,6 +1350,7 @@
                                 "<td>" + response.pkfree[i].name + " " + statusLanSau +  " " + isGiaTang + "</td>" +
                                 "<td>" + mode + "</td>" +
                                 "<td>" + formatNumber(parseInt(response.pkfree[i].giaTang == 0 ? 0 : response.pkfree[i].giaTang)) + "</td>" +
+                                "<td><button id='delPKFREE' data-sale='"+id+"' data-id='"+response.pkfree[i].id+"' class='btn btn-danger btn-sm'><span class='fas fa-times-circle'></span></button></td>"+
                                 "</tr>";
                             sum += parseInt(response.pkfree[i].giaTang);
                         }
