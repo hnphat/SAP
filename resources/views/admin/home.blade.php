@@ -21,7 +21,7 @@
         <div class="content">           
             <img src="{{$data['hinhNen']}}" alt="background" style="width: 100%; height:auto;">
         </div>
-        <span id="isIndexPage"></span>
+        <!-- <span id="isIndexPage"></span> -->
         <!-- /.content -->
     </div>
     <!-- /.modal -->
