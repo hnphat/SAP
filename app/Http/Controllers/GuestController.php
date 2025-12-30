@@ -1578,6 +1578,7 @@ class GuestController extends Controller
                 <th>Ngày ký</th>
                 <th>Trạng thái</th>
                 <th>Khách hàng</th>
+                <th>Nguồn khách</th>
                 <th>Dòng xe</th>
                 <th>Màu</th>
                 <th>Hình thức mua</th>
@@ -1619,6 +1620,7 @@ class GuestController extends Controller
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdtonrow->created_at)."</td>
                         <td>".($rphdtonrow->hdWait ? "<strong class='text-pink text-bold'>Hợp đồng chờ</strong>" : "<strong class='text-success text-bold'>Hợp đồng ký</strong>")."</td>
                         <td>".$rphdtonrow->guest->name."</td>
+                        <td>".$rphdtonrow->guest->nguon."</td>
                         <td>".$rphdtonrow->carSale->name."</td>
                         <td>".$rphdtonrow->mau."</td>
                         <td>".($rphdtonrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
@@ -1661,6 +1663,7 @@ class GuestController extends Controller
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdtonrow->created_at)."</td>
                         <td class='text-success text-bold'>".($rphdtonrow->hdWait ? "Hợp đồng chờ" : "Hợp đồng ký")."</td>
                         <td>".$rphdtonrow->guest->name."</td>
+                        <td>".$rphdtonrow->guest->nguon."</td>
                         <td>".$rphdtonrow->carSale->name."</td>
                         <td>".$rphdtonrow->mau."</td>
                         <td>".($rphdtonrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
@@ -1682,6 +1685,7 @@ class GuestController extends Controller
                 <th>Ngày ký</th>
                 <th>Trạng thái</th>
                 <th>Khách hàng</th>
+                <th>Nguồn khách</th>
                 <th>Dòng xe</th>
                 <th>Màu</th>
                 <th>Hình thức mua</th>
@@ -1722,6 +1726,7 @@ class GuestController extends Controller
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>
                         <td class='text-success text-bold'>Hợp đồng ký</td>
                         <td>".$rphdkyrow->guest->name."</td>
+                        <td>".$rphdkyrow->guest->nguon."</td>
                         <td>".$rphdkyrow->carSale->name."</td>
                         <td>".$rphdkyrow->mau."</td>
                         <td>".($rphdkyrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
@@ -1764,6 +1769,7 @@ class GuestController extends Controller
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkychorow->created_at)."</td>
                         <td class='text-pink text-bold'>Hợp đồng chờ</td>
                         <td>".$rphdkychorow->guest->name."</td>
+                        <td>".$rphdkychorow->guest->nguon."</td>
                         <td>".$rphdkychorow->carSale->name."</td>
                         <td>".$rphdkychorow->mau."</td>
                         <td>".($rphdkychorow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
@@ -1784,6 +1790,7 @@ class GuestController extends Controller
                 <th>Ngày ký</th>
                 <th>Trạng thái</th>
                 <th>Khách hàng</th>
+                <th>Nguồn khách</th>
                 <th>Dòng xe</th>
                 <th>Màu</th>
                 <th>Hình thức mua</th>
@@ -1825,6 +1832,7 @@ class GuestController extends Controller
                         <td>".\HelpFunction::getDateRevertCreatedAt($rphdkyrow->created_at)."</td>
                         <td class='text-primary text-bold'>Hợp đồng xuất</td>
                         <td>".$rphdkyrow->guest->name."</td>
+                        <td>".$rphdkyrow->guest->nguon."</td>
                         <td>".$rphdkyrow->carSale->name."</td>
                         <td>".$rphdkyrow->mau."</td>
                         <td>".($rphdkyrow->isTienMat ? "Tiền mặt" : "<strong>Ngân hàng</strong>")."</td>
