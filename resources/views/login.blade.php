@@ -19,7 +19,7 @@
         /* Made with love by Mutiullah Samim*/
 
         html,body{
-        background-image: url('./images/bg/bg2025.jpg');
+        background-image: url('./images/bg/2026.png');
         background-size: cover;
         background-repeat: no-repeat;
         height: 100%;
