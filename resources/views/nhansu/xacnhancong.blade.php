@@ -83,7 +83,7 @@
                     </div>
                 </details> -->
                 <div class="row">  
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label>Tháng</label>
                         <select name="thang" class="form-control" form="formCommit">
                             @for($i = 1; $i <= 12; $i++)

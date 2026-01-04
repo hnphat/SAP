@@ -670,6 +670,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Báo cáo phép năm
         Route::get('baocaophepnam','NhanSuController@getBaoCaoPhepNam')->name('baocaophepnam.panel')->middleware(['f_nhansupheduyet']);
         Route::get('loadbaocaophepnam','NhanSuController@loadBaoCaoPhepNam');
+        Route::get('baocaophepnamkytruoc','NhanSuController@getBaoCaoPhepNamKyTruoc')->name('baocaophepnamkytruoc.panel')->middleware(['f_nhansupheduyet']);
+        Route::get('loadbaocaophepnamkytruoc','NhanSuController@loadBaoCaoPhepNamKyTruoc');
 
         // Quản lý biên bản
         Route::get('quanlybienban','NhanSuController@getPanelBB')->name('bienban.panel')->middleware(['f_nhansupheduyet']);

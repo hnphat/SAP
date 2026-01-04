@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Báo cáo sử dụng phép năm</strong></h1>
+                        <h1 class="m-0"><strong>Báo cáo sử dụng phép năm <?php echo Date('Y')-1;?></strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -45,14 +45,7 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-one-tabContent">
-                        <h4>Từ <strong class="text-danger">01-01-<?php echo Date('Y');?></strong> đến ngày <strong class="text-danger"><?php echo Date('d-m-Y');?></strong></h4>
-                        <p><i>Phép năm được tính bắt đầu từ 01-01-<?php echo Date('Y');?>. 
-                            Mỗi nhân viên sẽ được 01 ngày phép năm (tối đa 12 ngày/năm) nếu thời gian công tác đủ 30 ngày kể từ ngày bắt đầu làm việc trên phần mềm. <span class="text-danger text-bold">Lưu ý: Phép năm không dùng hết trong năm sẽ bị hủy và không bảo lưu cho năm sau.</span></i></p>
-                        <h5>
-                            <a target="_blank" href="{{url('management/nhansu/baocaophepnamkytruoc')}}" class="btn btn-info btn-sm">
-                                <i class="fas fa-file-alt"></i> Báo cáo phép năm cũ (năm <?php echo Date('Y')-1;?>)
-                            </a>
-                        </h5>
+                        <h2>Năm <?php echo Date('Y')-1;?></h2>
                         <div style="overflow: auto;">
                             <table class="table table-striped table-bordered">
                                 <thead>
@@ -112,7 +105,7 @@
         $(document).ready(function() {
             $.ajax({
                     type:'GET',
-                    url: "{{url('management/nhansu/loadbaocaophepnam/')}}",
+                    url: "{{url('management/nhansu/loadbaocaophepnamkytruoc/')}}",
                     dataType: "text",                  
                     success: (response) => {                         
                         $("#showData").html(response);

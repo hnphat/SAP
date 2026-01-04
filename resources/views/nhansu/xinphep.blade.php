@@ -47,9 +47,9 @@
         <div class="content">
         <div class="container-fluid">
                 <div class="row">  
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label>Tháng</label>
-                        <select name="thang" class="form-control">
+                        <select name="thang" class="form-control" form="formCommit">
                             @for($i = 1; $i <= 12; $i++)
                                 <option value="{{$i}}" <?php if(Date('m') == $i) echo "selected";?>>{{$i}}</option>
                             @endfor
@@ -66,7 +66,8 @@
                     <div class="col-md-3">
                         <label>Nhân viên</label>
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') || 
-                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('boss') || 
+                        \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
                         <select name="nhanVien" class="form-control">
                             @foreach($user as $row)
                                 @if($row->active == true)
@@ -167,7 +168,6 @@
                     dataType: "text",
                     data: {
                         "id": $("select[name=nhanVien]").val(),
-                        "thang": $("select[name=thang]").val(),
                         "nam": $("select[name=nam]").val()
                     },
                     success: function(response){                        
@@ -185,9 +185,14 @@
                     url: "{{url('management/nhansu/xinphep/ajax/getphepnam')}}" + "/" + $("select[name=nhanVien]").val() + "/nam/" + $("select[name=nam]").val(),
                     type: "get",
                     dataType: "json",
-                    success: function(response){                        
-                        $("#conLai").text(response.conlai - response.dasudung);      
-                        $("#daSuDung").text(response.dasudung);                               
+                    success: function(response){ 
+                        if (response.flag == 1) {
+                            $("#conLai").text(0);      
+                            $("#daSuDung").text(response.dasudung); 
+                        } else {
+                            $("#conLai").text(response.conlai - response.dasudung);      
+                            $("#daSuDung").text(response.dasudung); 
+                        }                                                      
                     },
                     error: function(){
                         Toast.fire({

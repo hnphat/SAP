@@ -1068,60 +1068,82 @@ class NhanSuController extends Controller
         return view("nhansu.xinphep", ['user' => $user]);
     }
 
-    public function xinPhepGetNhanVien(Request $request) {
-        $thang = $request->thang;
-        $nam = $request->nam;
-        $day = \HelpFunction::countDayInMonth($request->thang,$request->nam);
-        for($i = 1; $i <= $day; $i++) {
-            $xinPhep = XinPhep::select("*")
-            ->where([
-                ['id_user','=',$request->id],
-                ['ngay','=',$i],
-                ['thang','=',$thang],
-                ['nam','=',$nam]
-            ])->first();
+    // public function xinPhepGetNhanVien(Request $request) {
+    //     $thang = $request->thang;
+    //     $nam = $request->nam;
+    //     $day = \HelpFunction::countDayInMonth($request->thang,$request->nam);
+    //     for($i = 1; $i <= $day; $i++) {
+    //         $xinPhep = XinPhep::select("*")
+    //         ->where([
+    //             ['id_user','=',$request->id],
+    //             ['ngay','=',$i],
+    //             ['thang','=',$thang],
+    //             ['nam','=',$nam]
+    //         ])->first();
             
-            $stt = "";
-            $btn = "";
-            if ($xinPhep !== null && $xinPhep->user_duyet == true) {
-                $stt = "<span class='text-info'>Đã duyệt phép</span>";
-                $btn = "";
-            }               
-            elseif ($xinPhep !== null && $xinPhep->user_duyet == false) {
-                $stt = "<span class='text-secondary'>Chưa duyệt</span>";
-                $btn = "<button id='delete' data-id='".$xinPhep->id."' class='btn btn-sm btn-danger'>Xóa</button>";
-            } else {
-                $btn = "";
-            }   
+    //         $stt = "";
+    //         $btn = "";
+    //         if ($xinPhep !== null && $xinPhep->user_duyet == true) {
+    //             $stt = "<span class='text-info'>Đã duyệt phép</span>";
+    //             $btn = "";
+    //         }               
+    //         elseif ($xinPhep !== null && $xinPhep->user_duyet == false) {
+    //             $stt = "<span class='text-secondary'>Chưa duyệt</span>";
+    //             $btn = "<button id='delete' data-id='".$xinPhep->id."' class='btn btn-sm btn-danger'>Xóa</button>";
+    //         } else {
+    //             $btn = "";
+    //         }   
        
-            if ($xinPhep !== null) {
-                echo "
-                <tr>
-                    <td>".$i."/".$thang."/".$nam."</td>
-                    <td>".$xinPhep->loaiPhep->tenPhep."</td>
-                    <td>".$xinPhep->lyDo."</td>
-                    <td>".$xinPhep->buoi."</td>
-                    <td>".$xinPhep->userDuyet->userDetail->surname."</td>
-                    <td>".$stt."</td>
-                    <td>$btn</td>
-                </tr>
-                ";
-            } else {
-                echo "
-                <tr>
-                    <td>".$i."/".$thang."/".$nam."</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                ";
-            }
-        }   
-    }
+    //         if ($xinPhep !== null) {
+    //             echo "
+    //             <tr>
+    //                 <td>".$i."/".$thang."/".$nam."</td>
+    //                 <td>".$xinPhep->loaiPhep->tenPhep."</td>
+    //                 <td>".$xinPhep->lyDo."</td>
+    //                 <td>".$xinPhep->buoi."</td>
+    //                 <td>".$xinPhep->userDuyet->userDetail->surname."</td>
+    //                 <td>".$stt."</td>
+    //                 <td>$btn</td>
+    //             </tr>
+    //             ";
+    //         } else {
+    //             echo "
+    //             <tr>
+    //                 <td>".$i."/".$thang."/".$nam."</td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //                 <td></td>
+    //             </tr>
+    //             ";
+    //         }
+    //     }   
+    // }
 
+    public function xinPhepGetNhanVien(Request $request) {
+        $nam = $request->nam;
+        $xinPhep = XinPhep::select("*")
+        ->where([
+            ['id_user','=',$request->id],
+            ['nam','=',$nam]
+        ])->orderBy('id','asc')->get();
+        foreach ($xinPhep as $row) {
+            echo "
+            <tr>
+                <td>".$row->ngay."/".$row->thang."/".$row->nam."</td>
+                <td>".$row->loaiPhep->tenPhep."</td>
+                <td>".$row->lyDo."</td>
+                <td>".$row->buoi."</td>
+                <td>".$row->userDuyet->userDetail->surname."</td>
+                <td>".($row->user_duyet == true ? "<span class='text-info'>Đã duyệt phép</span>" : "<span class='text-secondary'>Chưa duyệt</span>")."</td>
+                <td>".($row->user_duyet == false ? "<button id='delete' data-id='".$row->id."' class='btn btn-sm btn-danger'>Xóa</button>" : "")."</td>
+            </tr>
+            ";
+        }  
+    }
+    
     public function xinPhepDelete(Request $request) {
         $xinPhep = XinPhep::find($request->id);
         $ngay = $xinPhep->ngay . "/" . $xinPhep->thang . "/" . $xinPhep->nam;
@@ -1268,7 +1290,6 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhep(Request $request) {
-
         $check = XinPhep::where('id',$request->id)->first();
         $ngays = $check->ngay . "/" . $check->thang . "/" . $check->nam;
         $nhanvien = $check->user->userDetail->surname;
@@ -1306,11 +1327,35 @@ class NhanSuController extends Controller
                 $phepNamThucTe = 0;
                 if ($user->allowPhepNam == true && $user->ngay !== null) {
                     $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
-                    if (strtotime($thangPhepNam) >= strtotime($current))
-                        $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
-                    else 
-                        $phepNamThucTe = (int)Date('m');                     
-                }    
+                    if ($check->nam == (Date('Y') - 1)) {
+                        // Xử lý phép cho năm trước liền kề năm hiện tại
+                        $current = "31-12-".(Date('Y') - 1);
+                        $months = (strtotime($current) - strtotime($thangPhepNam)) / (60 * 60 * 24 * 30);                        
+                        if ($months >= 12) {
+                            // Nhân viên công tác đủ 1 năm
+                            $phepNamThucTe = 12;
+                        } else {
+                            // Nhân viên công tác chưa đủ năm
+                            if ($months > 0) 
+                                $phepNamThucTe = round($months);
+                            else
+                                $phepNamThucTe = 0;
+                        }
+                    } else if ($check->nam == (Date('Y'))) {
+                        // Xử lý phép đúng năm
+                        $months = (strtotime("now") - strtotime($thangPhepNam)) / (60 * 60 * 24 * 30);                        
+                        if ($months >= 12) {
+                            $phepNamThucTe = (int)Date('m');
+                        } else {               
+                            if ($months > 0) 
+                                $phepNamThucTe = round($months);
+                            else
+                                $phepNamThucTe = 0;
+                        }
+                    } else {
+                        $phepNamThucTe = 0;
+                    }
+                }  
                 // ----------------
                 $suDung = 0;
                 switch($check->buoi) {
@@ -2354,15 +2399,25 @@ class NhanSuController extends Controller
 
     public function getPhepNam($id, $nam){
         $user = User::find($id);
+        $flag = false;
         //--- phep thuc te
         $current = "1-1-".Date('Y');            
         $phepNamThucTe = 0;
         if ($user->allowPhepNam == true && $user->ngay !== null) {
-            $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
-            if (strtotime($thangPhepNam) >= strtotime($current))
-                $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
-            else 
-                $phepNamThucTe = (int)Date('m');                     
+            if ($nam < Date('Y')) {
+                // Trường hợp là năm cũ
+                // $current = "31-12-".(Date('Y')-1); 
+                // $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
+                $phepNamThucTe = 0;
+                $flag = true;
+            } else {
+                // Trường hợp là năm hiện tại
+                $thangPhepNam = $user->ngay."-". $user->thang . "-" . $user->nam; 
+                if (strtotime($thangPhepNam) >= strtotime($current))
+                    $phepNamThucTe = (int)Date('m') - (int)$user->thang + 1; 
+                else 
+                    $phepNamThucTe = (int)Date('m');
+            }                               
         }    
         
         $getIdPhep = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
@@ -2392,7 +2447,8 @@ class NhanSuController extends Controller
             'code' => 200,
             'message' => 'success',
             'conlai' => $phepNamThucTe,
-            'dasudung' => $daSuDung
+            'dasudung' => $daSuDung,
+            'flag' => $flag
         ]);
     }
 
@@ -3471,6 +3527,10 @@ class NhanSuController extends Controller
         return view('nhansu.baocaophepnam');
     }
 
+    public function getBaoCaoPhepNamKyTruoc() {
+        return view('nhansu.baocaophepnamkytruoc');
+    }
+
     // public function loadBaoCaoPhepNam() {
     //     $user = User::select("*")->where('active', true)->get();
     //     $i = 1;
@@ -3562,6 +3622,83 @@ class NhanSuController extends Controller
                     ['id_phep','=',$getIdPhepNam],
                     ['user_duyet','=', true],
                     ['nam','=',Date('Y')]
+                ])->get();
+                foreach($checkPN as $rowp) {
+                    if ($rowp->buoi == "SANG") {
+                        $phepNamDaSuDung += 0.5;
+                    }
+                    if ($rowp->buoi == "CHIEU") {
+                        $phepNamDaSuDung += 0.5;
+                    }
+                    if ($rowp->buoi == "CANGAY") {
+                        $phepNamDaSuDung += 1;
+                    }
+                }
+                // ---------                                     
+                $phepNamConLai = $phepNamThucTe - $phepNamDaSuDung;
+                $stt = "";
+
+                if ($flag) 
+                    $stt = "<strong class='text-info'>Được sử dụng phép năm</strong>";                    
+                else
+                    $stt = "<strong class='text-danger'>Chưa thể sử dụng phép năm</strong>";   
+                    
+                if (!$flag) {
+                    $phepNamThucTe = "";
+                } 
+                echo "<tr>
+                        <td>".$i++."</td>
+                        <td>".$row->userDetail->surname."</td>
+                        <td>".$ngayVao."</td>
+                        <td>".($row->ngay . "-".$row->thang . "-" . $row->nam). "</td>
+                        <td class='text-primary text-bold'>".$phepNamThucTe."</td>
+                        <td class='text-danger text-bold'>".$phepNamDaSuDung."</td>
+                        <td class='text-success text-bold'>".$phepNamConLai."</td>
+                        <td>
+                            $stt
+                        </td>
+                    </tr>";
+           }
+        }
+    }
+
+    public function loadBaoCaoPhepNamKyTruoc() {
+        $user = User::select("*")->where('active', true)->get();
+        $i = 1;
+        foreach($user as $row) {            
+           if ($row->hasRole('chamcong')) {
+                $flag = false;
+                $current = "31-12-".(Date('Y')-1);
+                //-------
+                $phepNamThucTe = 0;
+                $phepNamDaSuDung = 0;  
+                if ($row->allowPhepNam == true && $row->ngay !== null) {
+                    $flag = true;
+                    $thangPhepNam = $row->ngay . "-" . $row->thang . "-" . $row->nam;
+                    if ($row->nam > (Date('Y')-1)) {
+                        $phepNamThucTe = 0;
+                    } else {
+                        $months = (strtotime($current) - strtotime($thangPhepNam)) / (60 * 60 * 24 * 30);                        
+                        if ($months >= 12) {
+                            $phepNamThucTe = 12;
+                        } else {
+                            $phepNamThucTe = abs(floor($months));
+                            // if (strtotime($thangPhepNam) >= strtotime($current))
+                            //     $phepNamThucTe = (int)Date('m') - (int)$row->thang + 1; 
+                            // else 
+                            //     $phepNamThucTe = (int)Date('m');
+                        }
+                    }
+                    
+                }                   
+                $ngayVao = \HelpFunction::getDateRevertCreatedAt($row->created_at);
+                // xử lý phép năm
+                $getIdPhepNam = LoaiPhep::where('loaiPhep','PHEPNAM')->first()->id;
+                $checkPN = XinPhep::where([
+                    ['id_user','=',$row->id],
+                    ['id_phep','=',$getIdPhepNam],
+                    ['user_duyet','=', true],
+                    ['nam','=',Date('Y')-1]
                 ])->get();
                 foreach($checkPN as $rowp) {
                     if ($rowp->buoi == "SANG") {
