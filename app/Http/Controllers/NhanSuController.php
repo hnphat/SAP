@@ -3190,13 +3190,13 @@ class NhanSuController extends Controller
         $thang = $request->thang;
         $nam = $request->nam;
         foreach($user as $row) { 
-            $chiTiet = ChamCongChiTiet::select("*")
-            ->where([
-                ['id_user','=',$row->id],
-                ['ngay','=',$ngay],
-                ['thang','=',$thang],
-                ['nam','=',$nam]
-            ])->exists();
+            // $chiTiet = ChamCongChiTiet::select("*")
+            // ->where([
+            //     ['id_user','=',$row->id],
+            //     ['ngay','=',$ngay],
+            //     ['thang','=',$thang],
+            //     ['nam','=',$nam],
+            // ])->exists();
 
             $check = XinPhep::select("*")
             ->where([
@@ -3206,7 +3206,8 @@ class NhanSuController extends Controller
                 ['nam','=',$nam]
             ])->exists();
 
-            if ($row->hasRole('chamcong') && !$chiTiet && !$check) {
+            // if ($row->hasRole('chamcong') && !$chiTiet && !$check) {
+            if ($row->hasRole('chamcong') && !$check) {
                 if ($type == 0) {
                     $xinPhep = new XinPhep();
                     $xinPhep->id_user = $row->id;
