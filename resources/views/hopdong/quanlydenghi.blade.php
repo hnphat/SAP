@@ -1080,6 +1080,10 @@
                     success: function(response){
                         txt = "";
                         result =  response.data;
+
+                        // Sắp xếp theo noiDung alphabetic
+                        result.sort((a, b) => a.noiDung.localeCompare(b.noiDung));
+                        
                         for(let i = 0; i < result.length; i++) {
                             txt += `<option value="${result[i].ma}">${result[i].noiDung}</option>`;
                         }
@@ -1109,6 +1113,7 @@
                     success: function(response){
                         txt = "";
                         result =  response.data;
+                        result.sort((a, b) => a.noiDung.localeCompare(b.noiDung));
                         txt += `<option value="0">Chọn</option>`;
                         for(let i = 0; i < result.length; i++) {
                             txt += `<option value="${result[i].ma}">${result[i].noiDung}</option>`;
