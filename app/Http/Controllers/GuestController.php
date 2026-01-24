@@ -1293,6 +1293,7 @@ class GuestController extends Controller
             <th>HĐ xuất</th>
             <th>Khách hàng mới</th>
             <th>Phụ kiện bán được</th>
+            <th>Phụ kiện lên hợp đồng</th>
         </tr>
         <tbody>";   
         if ($nv == 0) {
@@ -1306,7 +1307,8 @@ class GuestController extends Controller
             $stonghdxuat = 0;
             $stongpkban = 0;
             $stongkh = 0;  
-            $stongmkt = 0;          
+            $stongmkt = 0;       
+            $stongpkhd = 0;   
             foreach($nhomkd as $rowkd) {
                 $i = 1;
                 $tongton = 0;
@@ -1315,6 +1317,7 @@ class GuestController extends Controller
                 $tongpkban = 0;
                 $tongkh = 0;
                 $tongmkt = 0;
+                $tongpkhd = 0;
                 $nhomsale = GroupSale::where('group_id', $rowkd->id)->get();
                 foreach($nhomsale as $rowsale) {
                     $row = User::find($rowsale->user_id);
@@ -1325,7 +1328,8 @@ class GuestController extends Controller
                     $pkban = 0;
                     $mktguest = 0;
                     $guestnew = 0;
-                    $tenNhom = "";                    
+                    $tenNhom = "";   
+                    $pkhd = 0;                 
                     //------------------ Xử lý PK bán
                     $bg = BaoGiaBHPK::where([
                         ['saler','=',$row->id],
@@ -1345,7 +1349,7 @@ class GuestController extends Controller
                             }
                         }                        
                     }
-                    //------------------
+                    //------------------                    
                     if ($row->active && $row->hasRole('sale')) {
                         $g = Guest::select("*")->where('id_user_create', $row->id)->get();
                         $gr = GroupSale::where('user_id',$row->id)->first();
@@ -1413,6 +1417,32 @@ class GuestController extends Controller
                                     $hdcho++;
                             }
                         }
+
+                        //------------------ Xử lý PK lên HĐ
+                        $hdpkList = HopDong::select('hop_dong.*')
+                        ->where([
+                            ['hop_dong.lead_check','=',true],
+                            ['hop_dong.lead_check_cancel','=',false],
+                            ['hop_dong.id_user_create','=',$row->id]
+                        ])->get();
+                        foreach($hdpkList as $row4){
+                            if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row4->created_at)) >= strtotime($tu)) 
+                            &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row4->created_at)) <= strtotime($den))) {
+                                $pkbandata = SaleOffV2::select('package.*','saleoffv2.giamGia')
+                                ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+                                ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+                                    ['saleoffv2.id_hd','=', $row4->id],
+                                    ['package.type','=','pay']
+                                ])->get();
+                                foreach($pkbandata as $rowpkhd) {
+                                    if ($rowpkhd->isLanDau == true || ($rowpkhd->isDuyetLanSau == true && $rowpkhd->isLanDau == false)) {
+                                        // $pkhd += intval($rowpkhd->cost - ($rowpkhd->cost*$rowpkhd->giamGia/100));
+                                        $pkhd += $rowpkhd->cost - ($rowpkhd->cost*$rowpkhd->giamGia/100);
+                                    }                                              
+                                }
+                            }
+                        }
+                        // -------------------
     
                         echo "<tr class='text-center'>
                                 <td>".($i++)."</td>
@@ -1423,6 +1453,7 @@ class GuestController extends Controller
                                 <td><strong class='text-success'>".$hdxuat."</strong></td>
                                 <td><strong class='text-orange'>".$guestnew."</strong>".($mktguest ? "<i class='text-pink'> (mkt: ".$mktguest.")</i>" : "")."</td>
                                 <td><strong class='text-info'>".number_format($pkban)."<strong></td>
+                                <td><strong class='text-secondary'>".number_format($pkhd)."<strong></td> 
                             </tr>";
                         $tongton += $hdton;
                         $tonghd += ($hdky + $hdcho);
@@ -1430,6 +1461,7 @@ class GuestController extends Controller
                         $tongkh += $guestnew;
                         $tongpkban += $pkban;
                         $tongmkt += $mktguest;
+                        $tongpkhd += $pkhd;
                         // ----------------
                     }
                 }   
@@ -1440,6 +1472,7 @@ class GuestController extends Controller
                             <td><strong class='text-success'>".$tonghdxuat."</strong></td>
                             <td><strong class='text-orange'>".$tongkh."".($tongmkt ? "<i class='text-pink'> (mkt: ".$tongmkt.")</i>" : "")."</strong></td>
                             <td><strong class='text-info'>".number_format($tongpkban)."<strong></td>
+                            <td><strong class='text-secondary'>".number_format($tongpkhd)."<strong></td>
                         </tr>";  
                 $stongton += $tongton;               
                 $stonghd += $tonghd;
@@ -1447,6 +1480,7 @@ class GuestController extends Controller
                 $stongpkban += $tongpkban;     
                 $stongkh += $tongkh;        
                 $stongmkt += $tongmkt;
+                $stongpkhd += $tongpkhd;
             }
             if (Auth::user()->hasRole('truongnhomsale')) {
 
@@ -1456,8 +1490,9 @@ class GuestController extends Controller
                     <td><strong class='text-pink'>".$stongton."</strong></td>                          
                     <td><strong class='text-primary'>".$stonghd."</strong></td>
                     <td><strong class='text-success'>".$stonghdxuat."</strong></td>
-                <td><strong class='text-orange'>".$stongkh."".($stongmkt ? "<i class='text-pink'> (mkt: ".$stongmkt.")</i>" : "")."</strong></td>
+                    <td><strong class='text-orange'>".$stongkh."".($stongmkt ? "<i class='text-pink'> (mkt: ".$stongmkt.")</i>" : "")."</strong></td>
                     <td><strong class='text-info'>".number_format($stongpkban)."<strong></td>
+                    <td><strong class='text-secondary'>".number_format($stongpkhd)."<strong></td>
                 </tr><tbody>"; 
             }
 
@@ -1470,6 +1505,7 @@ class GuestController extends Controller
             $hdcho = 0;
             $hdxuat = 0;
             $pkban = 0;
+            $pkhd = 0;
             $guestnew = 0;
             $tenNhom = "";
             $gr = GroupSale::where('user_id',$u->id)->first();
@@ -1560,6 +1596,32 @@ class GuestController extends Controller
                 }
             }
 
+             //------------------ Xử lý PK lên HĐ
+            $hdpkList = HopDong::select('hop_dong.*')
+            ->where([
+                ['hop_dong.lead_check','=',true],
+                ['hop_dong.lead_check_cancel','=',false],
+                ['hop_dong.id_user_create','=',$u->id]
+            ])->get();
+            foreach($hdpkList as $row4){
+                if ((strtotime(\HelpFunction::getDateRevertCreatedAt($row4->created_at)) >= strtotime($tu)) 
+                &&  (strtotime(\HelpFunction::getDateRevertCreatedAt($row4->created_at)) <= strtotime($den))) {
+                    $pkbandata = SaleOffV2::select('package.*','saleoffv2.giamGia')
+                    ->join('packagev2 as package','saleoffv2.id_bh_pk_package','=','package.id')
+                    ->join('hop_dong as s','saleoffv2.id_hd','=','s.id')->where([
+                        ['saleoffv2.id_hd','=', $row4->id],
+                        ['package.type','=','pay']
+                    ])->get();
+                    foreach($pkbandata as $rowpkhd) {
+                        if ($rowpkhd->isLanDau == true || ($rowpkhd->isDuyetLanSau == true && $rowpkhd->isLanDau == false)) {
+                            // $pkhd += intval($rowpkhd->cost - ($rowpkhd->cost*$rowpkhd->giamGia/100));
+                            $pkhd += $rowpkhd->cost - ($rowpkhd->cost*$rowpkhd->giamGia/100);
+                        }                                              
+                    }
+                }
+            }
+            // -------------------
+
             echo "<tr class='text-center'>
                     <td>".($i++)."</td>
                     <td>".$tenNhom."</td>
@@ -1569,6 +1631,7 @@ class GuestController extends Controller
                     <td><strong class='text-success'>".$hdxuat."</strong></td>
                     <td><strong class='text-orange'>".$guestnew."</strong></td>
                     <td><strong class='text-info'>".number_format($pkban)."<strong></td>
+                    <td><strong class='text-secondary'>".number_format($pkhd)."<strong></td>
                 </tr><tbody></table>";
             // Show chi tiết hợp đồng tồn
             echo "<h5>HỢP ĐỒNG TỒN (TÍNH ĐẾN THỜI ĐIỂM HIỆN TẠI)</h5>
