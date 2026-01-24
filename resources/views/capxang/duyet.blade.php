@@ -124,6 +124,7 @@
                                                 @if($row->lead_check == true)
                                                 @else
                                                     <button id="leadAllow" data-id="{{$row->id}}" class="btn btn-success btn-xs">Duyệt</button>
+                                                    <button id="kiemTra" data-id="{{$row->id}}" data-toggle="modal" data-target="#kiemTraModal" class="btn btn-info btn-xs">Kiểm tra</button>
                                                 @endif
                                             </td>
                                         @endif
@@ -169,7 +170,10 @@
                                 </p>       
                                 <p>
                                     <strong>Số lít nhiên liệu đã cấp: <span id="soLitDaCap" class="text-info"></span></strong>
-                                </p>                        
+                                </p>   
+                                <p>
+                                    <strong>Ngày nhập xe vào ứng dụng (Chỉ xe kho): <span id="ngayNhapXe" class="text-info"></span></strong>
+                                </p>                     
                             </div>
                         </div>
                         <!-- /.card -->
@@ -333,6 +337,7 @@
                             $("#lyDo").text(response.data.fuel_ghiChu);
                             $("#truongBP").text(response.data.truongBP);
                             $("#soLitDaCap").text(response.data.soLitDaCap);
+                            $("#ngayNhapXe").text(response.data.ngayNhapXe);
                             $("#hasFound").show();
                         } else {                           
                             $("#hasFound").hide();
@@ -346,6 +351,7 @@
                             $("#lyDo").text("");
                             $("#truongBP").text("");
                             $("#soLitDaCap").text("");
+                            $("#ngayNhapXe").text("");
                         }
                     } else {
                         

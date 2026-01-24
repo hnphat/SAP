@@ -191,6 +191,11 @@ class DeNghiCapXangController extends Controller
             ["id", "!=", $request->id],
             ["fuel_allow","=",true]
         ])->orderBy("id", "desc")->exists();
+
+        $kho = KhoV2::select("*")->where([
+            ["vin", "like", "%". $bienSo . "%"]
+        ])->orderBy("id", "desc")->first();
+
         if ($checkFist) {
             // tinh tong so lit cap cho xe nay
             $getLit = DeNghiCapXang::select("*")->where([
@@ -210,6 +215,7 @@ class DeNghiCapXangController extends Controller
             $check->ngayNew = $check->created_at ? \HelpFunction::revertCreatedAt($check->created_at) : "Không có";
             $check->truongBP = $check->userLead->userDetail->surname;
             $check->soLitDaCap = $tongSoLit;
+            $check->ngayNhapXe = $kho ? \HelpFunction::revertCreatedAt($kho->created_at) : "Không có";
             if($check) {           
                 return response()->json([
                     'message' => 'Đã kiểm tra đề nghị cấp xăng',
