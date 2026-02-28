@@ -116,9 +116,8 @@
                             <th class="table-primary">Lợi nhuận ĐK</th>
                             <!-- <th>Hoa hồng MG</th> -->
                             <th class="table-secondary">Phí vận chuyển</th>
-                            <th class="table-secondary">Lợi nhuận HĐ (Chưa tính)</th>
-                            <th class="table-success">Lợi nhuận HĐ (Tạm tính)</th>
-                            <th class="table-success">Tỉ suất (tạm tính)</th>
+                            <th class="table-success">Lợi nhuận xe</th>
+                            <th class="table-success">Tỉ suất</th>
                             <th class="table-light">Ngày xuất xe</th>
                             
                             <th class="table-light">Ngày nhận nợ</th>
