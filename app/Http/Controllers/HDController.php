@@ -5639,12 +5639,17 @@ class HDController extends Controller
 
                 // ---- Suport KT --------
                 $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
+                $laiGopTamTinh = $loiNhuanTamTinh - ($phiLuuKho + $phiLaiVay + $hhSale);
                 $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
                 // -----------------------
                 $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
+                $loiNhuanFinalTamTinh = $laiGopTamTinh + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
                 $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinalTamTinh = ($giaVon) ? ($loiNhuanFinalTamTinh*100/$giaVon) : 0;
+                $tiSuatFinalTamTinh = ($tiSuatFinalTamTinh < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinalTamTinh,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinalTamTinh,2)."%</span>";
                 $tiSuatFinal = ($tiSuatFinal < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinal,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinal,2)."%</span>";
+            
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
                     $kho = KhoV2::find($row->id_car_kho);
@@ -5726,8 +5731,8 @@ class HDController extends Controller
                     <td>".number_format($hhSale)."</td>
                     <td class='text-bold text-success'>".number_format($laiGop)."</td>
                     <td>".$tiSuatLaiGop."</td>
-                    <td class='text-bold text-pink'>".number_format($loinhuanfinal)."</td>
-                    <td>".$tiSuatFinal."</td>
+                    <td class='text-bold'><span class='text-pink'>".number_format($loinhuanfinal)." <span class='text-success'>(".number_format($loiNhuanFinalTamTinh).")</span></span></td>
+                    <td>".$tiSuatFinal." (".$tiSuatFinalTamTinh.")</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
@@ -5966,11 +5971,15 @@ class HDController extends Controller
                 $tiSuat = ($tiSuat < 3) ? "<span class='text-bold text-danger'>".round($tiSuat,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuat,2)."%</span>";
                 // ---- Suport KT --------
                 $laiGop = $loiNhuan - ($phiLuuKho + $phiLaiVay + $hhSale);
+                $laiGopTamTinh = $loiNhuanTamTinh - ($phiLuuKho + $phiLaiVay + $hhSale);
                 $tiSuatLaiGop = ($giaVon) ? ($laiGop*100/$giaVon) : 0;
                 $tiSuatLaiGop = ($tiSuatLaiGop < 3) ? "<span class='text-bold text-danger'>".round($tiSuatLaiGop,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatLaiGop,2)."%</span>";
                 // -----------------------
                 $loinhuanfinal = $laiGop + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
+                $loiNhuanFinalTamTinh = $laiGopTamTinh + $loinhuanbaohiem + $loinhuancongdk + $loinhuanpkban;
                 $tiSuatFinal = ($giaVon) ? ($loinhuanfinal*100/$giaVon) : 0;
+                $tiSuatFinalTamTinh = ($giaVon) ? ($loiNhuanFinalTamTinh*100/$giaVon) : 0;
+                $tiSuatFinalTamTinh = ($tiSuatFinalTamTinh < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinalTamTinh,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinalTamTinh,2)."%</span>";
                 $tiSuatFinal = ($tiSuatFinal < 3) ? "<span class='text-bold text-danger'>".round($tiSuatFinal,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatFinal,2)."%</span>";
                 $ngayXuatXe = "";
                 if ($row->id_car_kho != null) {
@@ -6053,8 +6062,8 @@ class HDController extends Controller
                     <td>".number_format($hhSale)."</td>
                     <td class='text-bold text-success'>".number_format($laiGop)."</td>
                     <td>".$tiSuatLaiGop."</td>
-                    <td class='text-bold text-pink'>".number_format($loinhuanfinal)."</td>
-                    <td>".$tiSuatFinal."</td>
+                    <td class='text-bold'><span class='text-pink'>".number_format($loinhuanfinal)." <span class='text-success'>(".number_format($loiNhuanFinalTamTinh).")</span></span></td>
+                    <td>".$tiSuatFinal." (".$tiSuatFinalTamTinh.")</td>
                     <td>
                         <button data-idhopdong='".$row->id."' id='xemChiTiet' data-toggle='modal' data-target='#showModal' class='btn btn-success btn-sm'>Chi tiết</button>
                     </td>
