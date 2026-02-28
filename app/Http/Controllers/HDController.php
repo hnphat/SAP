@@ -5446,6 +5446,7 @@ class HDController extends Controller
                 }
                 $congDKTax = 0;
                 $phuKienBanTax = 0;
+                $phuKienTangTax = 0;
                 $baoHiemBanTax = 0;
                 $baoHiemTangTiLe = 110; // Mặc định 80%
                 $baoHiemTangTax = 0;
@@ -5485,6 +5486,8 @@ class HDController extends Controller
                 $hoTroHTVTax = $htvSupport;
                 $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
+                $khuyenMaiTax = 0;
+                $tangKhac = 0;
                 $bhvc = 0;
                 $pkban = 0;
                 $dangky = 0;
@@ -5586,6 +5589,7 @@ class HDController extends Controller
                         $tangCongDK += $row2->cost;
                         $khuyenMai += $row2->cost;
                        } else {
+                        $tangKhac += $row2->cost;
                         $khuyenMai += $row2->cost;
                        }
                        // -----------------------
@@ -5618,12 +5622,15 @@ class HDController extends Controller
                     }
                 }
 
+                $phuKienTangTax = $tangPK / 1.08;
+
                 $loinhuanbaohiem = $bhvc - $giavonbh;
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
                 $loinhuanpkban = $pkban - $_giavonpk;
 
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
-                $loiNhuanTamTinh = ($giaBanXeTax + $cpkhac + $hoTroHTVTax) - ($khuyenMai + $giaVonXeTax + $phiVanChuyen);
+                $khuyenMaiTax = $phuKienTangTax + $baoHiemTangTax + $tangTB + $tangCongDK + $tangKhac;
+                $loiNhuanTamTinh = ($giaBanXeTax + $cpkhac + $hoTroHTVTax) - ($khuyenMaiTax + $giaVonXeTax + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuatTamTinh = ($giaVonXeTax) ? ($loiNhuanTamTinh*100/$giaVonXeTax) : 0;
                 $tiSuatTamTinh = ($tiSuatTamTinh < 3) ? "<span class='text-bold text-danger'>".round($tiSuatTamTinh,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatTamTinh,2)."%</span>";
@@ -5696,9 +5703,10 @@ class HDController extends Controller
                     <td class='text-bold text-warning'>".number_format($htvSupport)." <span class='text-success'>(".number_format($hoTroHTVTax).")</span></td>
                     <td>".number_format($tangTB)."</td>
                     <td>".number_format($tangBH)." <span class='text-success'>(".number_format($baoHiemTangTax).")</span></td>
-                    <td>".number_format($tangPK)."</td>
+                    <td>".number_format($tangPK)." <span class='text-success'>(".number_format($phuKienTangTax).")</span></td>
                     <td>".number_format($tangCongDK)."</td>
-                    <td>".number_format($khuyenMai)."</td>
+                    <td>".number_format($tangKhac)."</td>
+                    <td>".number_format($khuyenMai)." <span class='text-success'>(".number_format($khuyenMaiTax).")</span></td>
                     <td>".number_format($bhvc)."</td>
                     <td>".number_format($giavonbh)."</td>
                     <td>".number_format($loinhuanbaohiem)." <span class='text-success'>(".number_format($baoHiemBanTax).")</span></td>
@@ -5788,6 +5796,7 @@ class HDController extends Controller
                 }
                 $congDKTax = 0;
                 $phuKienBanTax = 0;
+                $phuKienTangTax = 0;
                 $baoHiemBanTax = 0;
                 $baoHiemTangTiLe = 110; // Mặc định 80%
                 $baoHiemTangTax = 0;
@@ -5801,6 +5810,8 @@ class HDController extends Controller
                 $hoTroHTVTax = $htvSupport;
                 $phiVanChuyen = $row->phiVanChuyen;
                 $khuyenMai = 0;
+                $khuyenMaiTax = 0;
+                $tangKhac = 0;
                 $bhvc = 0;
                 $pkban = 0;
                 $dangky = 0;
@@ -5903,6 +5914,7 @@ class HDController extends Controller
                         $tangCongDK += $row2->cost;
                         $khuyenMai += $row2->cost;
                        } else {
+                        $tangKhac += $row2->cost;
                         $khuyenMai += $row2->cost;
                        }
                        // -----------------------
@@ -5934,6 +5946,9 @@ class HDController extends Controller
                         }
                     }
                 }
+
+                $phuKienTangTax = $tangPK / 1.08;
+
                 $loinhuanbaohiem = $bhvc - $giavonbh;
                 $loinhuancongdk = $dangky - ($dangky*$hhcongdk/100);
                 $loinhuanpkban = $pkban - $_giavonpk;
@@ -5942,7 +5957,8 @@ class HDController extends Controller
                 $loiNhuan = ($giaXe + $cpkhac + $htvSupport) - ($khuyenMai + $giaVon + $phiVanChuyen);
 
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
-                $loiNhuanTamTinh = ($giaBanXeTax + $cpkhac + $hoTroHTVTax) - ($khuyenMai + $giaVonXeTax + $phiVanChuyen);
+                $khuyenMaiTax = $phuKienTangTax + $baoHiemTangTax + $tangTB + $tangCongDK + $tangKhac;
+                $loiNhuanTamTinh = ($giaBanXeTax + $cpkhac + $hoTroHTVTax) - ($khuyenMaiTax + $giaVonXeTax + $phiVanChuyen);
                 // $tiSuat = ($giaXe) ? ($loiNhuan*100/$giaXe) : 0;
                 $tiSuatTamTinh = ($giaVonXeTax) ? ($loiNhuanTamTinh*100/$giaVonXeTax) : 0;
                 $tiSuatTamTinh = ($tiSuatTamTinh < 3) ? "<span class='text-bold text-danger'>".round($tiSuatTamTinh,2)."%</span>" : "<span class='text-bold text-info'>".round($tiSuatTamTinh,2)."%</span>";
@@ -6014,9 +6030,10 @@ class HDController extends Controller
                     <td class='text-bold text-warning'>".number_format($htvSupport)." <span class='text-success'>(".number_format($hoTroHTVTax).")</span></td>
                     <td>".number_format($tangTB)."</td>
                     <td>".number_format($tangBH)." <span class='text-success'>(".number_format($baoHiemTangTax).")</span></td>
-                    <td>".number_format($tangPK)."</td>
+                    <td>".number_format($tangPK)." <span class='text-success'>(".number_format($phuKienTangTax).")</span></td>
                     <td>".number_format($tangCongDK)."</td>
-                    <td>".number_format($khuyenMai)."</td>
+                    <td>".number_format($tangKhac)."</td>
+                    <td>".number_format($khuyenMai)." <span class='text-success'>(".number_format($khuyenMaiTax).")</span></td>
                     <td>".number_format($bhvc)."</td>
                     <td>".number_format($giavonbh)."</td>
                     <td>".number_format($loinhuanbaohiem)." <span class='text-success'>(".number_format($baoHiemBanTax).")</span></td>

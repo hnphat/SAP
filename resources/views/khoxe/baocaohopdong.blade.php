@@ -104,6 +104,7 @@
                             <th class="table-secondary">Tặng Bảo hiểm</th>
                             <th class="table-secondary">Tặng Phụ kiện</th>
                             <th class="table-secondary">Tặng Công ĐK</th>
+                            <th class="table-secondary">Tặng Khác</th>
                             <th class="table-secondary">Tổng khuyến mãi</th>
                             <th class="table-primary">Bảo hiểm bán</th>
                             <th class="table-primary">Giá vốn BH</th>
