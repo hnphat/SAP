@@ -67,8 +67,9 @@
                                                 @endif
                                                 </select> <br/>
                                                 <button id="xemReport" type="button" class="btn btn-info btn-xs">XEM</button>
-                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))
-                                                <button id="taiReport" type="button" class="btn btn-primary btn-xs">TẢI EXCEL</button>
+                                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                                    \Illuminate\Support\Facades\Auth::user()->hasRole('baocaophukienbaohiem'))
+                                                    <button id="taiReport" type="button" class="btn btn-primary btn-xs">TẢI EXCEL</button>
                                                 @endif
                                             </div>
                                         </div>
