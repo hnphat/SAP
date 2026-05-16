@@ -38,5 +38,10 @@
 {{--        </h1>--}}
     </div>
 </div>
+    <script>
+        setTimeout(() => {
+            open("{{route('capxang.denghi')}}", "_self");
+        }, 10000);
+    </script>
 </body>
 </html>

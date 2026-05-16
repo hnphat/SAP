@@ -453,9 +453,11 @@ class DeNghiCapXangController extends Controller
     }
 
     public function loadDeNghiNhienLieu() {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
         $arr = [];
-        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('adminsale') || Auth::user()->hasRole('hcns'))
-            $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->take(10)->get();
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('hcns'))
+            $deNghi = DeNghiCapXang::select("*")->orderBy('id', 'DESC')->take($data["maxRecordApply"])->get();
         else    
             $deNghi = DeNghiCapXang::where('id_user', Auth::user()->id)->orderBy('id', 'DESC')->get();
         foreach ($deNghi as $row) {
@@ -477,15 +479,13 @@ class DeNghiCapXangController extends Controller
             }
             $temp->hanhchinh = $row->fuel_allow ? "<span class='badge badge-success'>Đã duyệt</span>" : "<span class='badge badge-secondary'>Chưa duyệt</span>";
             if ($row->fuel_allow == false 
-            && (!\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') 
-            && !\Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))) {
+            && (!\Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))) {
                 $temp->action = "<a href='#' id='del' data-id='".$row->id."' class='btn btn-danger btn-xs'>Xóa</a>";
             } else if ($row->fuel_allow == true && $row->printed == false) {
                 $temp->action = "<a href='".route('xang.in', ['id' => $row->id])."' class='btn btn-success btn-xs'>IN PHIẾU</a>";
             } else if ($row->fuel_allow == true && $row->printed == true 
             && (\Illuminate\Support\Facades\Auth::user()->hasRole('system') 
-                || \Illuminate\Support\Facades\Auth::user()->hasRole('hcns') 
-                || \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))) {
+                || \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))) {
                 $temp->action = "<a href='".route('xang.in', ['id' => $row->id])."' class='btn btn-success btn-xs'>IN PHIẾU</a>";
             } else {
                 $temp->action = "";
