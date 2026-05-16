@@ -5036,7 +5036,8 @@ class NhanSuController extends Controller
     }
 
     public function giaiPhongAnhDem(Request $request) {
-        if (Auth::user()->hasRole("system")) {
+        if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
+            // Thực hiện giải phóng ảnh đệm
         } else {
             return response()->json([
                 'message' => 'Bạn không có quyền thực hiện chức năng này!',
