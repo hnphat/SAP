@@ -340,7 +340,7 @@ class DichVuController extends Controller
                 'code' => 400
             ]);            
         }
-        if ($request->congKTV > 500000) {
+        if ($request->congKTV > 1000000) {
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
@@ -759,7 +759,7 @@ class DichVuController extends Controller
     // }
 
     public function updateHangMuc(Request $request) {
-        if ($request->econgKTV > 500000) {
+        if ($request->econgKTV > 1000000) {
             return response()->json([
                 'type' => 'error',
                 'code' => 500,
