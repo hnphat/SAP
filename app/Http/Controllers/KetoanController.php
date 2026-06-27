@@ -433,4 +433,9 @@ class KetoanController extends Controller
         return view('khoxe.baocaohopdong');
         // return view('ketoan.hopdongchitiet');
     }
+
+    // Bảo lãnh xe/ xe nhận nợ
+    public function getKhoanVay() {
+        return view('ketoan.khoanvay');
+    }
 }

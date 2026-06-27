@@ -356,8 +356,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('xenhanno/getkho','KetoanController@getKhoHDList');
         Route::post('xenhanno/edit/show/','KetoanController@getEditXeNhanNo');
         Route::post('xenhanno/update/','KetoanController@updateXeNhanNo');
-         // Quản lý hợp đồng
+        // Quản lý hợp đồng
         Route::get('quanlyhopdong','HDController@getQuanLyHopDong')->name('ketoan.quanlyhopdong');
+        // Đơn hàng/xe bảo lãnh
+        Route::get('khoanvay','HDController@getKhoanVay')->name('ketoan.khoanvay');
+        // Route::get('xebaolanh/getdata','HDController@xeBaoLanhGetData');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');
