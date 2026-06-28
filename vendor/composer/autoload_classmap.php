@@ -175,6 +175,7 @@ return array(
     'App\\XacNhanCong' => $baseDir . '/app/XacNhanCong.php',
     'App\\XeCuuHo' => $baseDir . '/app/XeCuuHo.php',
     'App\\XeLaiThu' => $baseDir . '/app/XeLaiThu.php',
+    'App\\XeNhanNo' => $baseDir . '/app/XeNhanNo.php',
     'App\\XinPhep' => $baseDir . '/app/XinPhep.php',
     'App\\XuatSP' => $baseDir . '/app/XuatSP.php',
     'Asm89\\Stack\\Cors' => $vendorDir . '/asm89/stack-cors/src/Cors.php',

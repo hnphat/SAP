@@ -517,7 +517,7 @@
                             </a>
                         </li>      
                         <li class="nav-item">
-                            <a href="{{route('ketoan.xebaolanh')}}" class="nav-link">
+                            <a href="{{route('ketoan.khoanvay')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Đơn hàng/Bảo lãnh</p>
                             </a>

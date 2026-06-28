@@ -9,6 +9,8 @@ use App\SaleOffV2;
 use App\NhatKy;
 use App\HistoryHopDong;
 use App\TypeCarDetail;
+use App\KhoanVay;
+use App\XeNhanNo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -437,5 +439,9 @@ class KetoanController extends Controller
     // Bảo lãnh xe/ xe nhận nợ
     public function getKhoanVay() {
         return view('ketoan.khoanvay');
+    }
+
+    public function khoanVayGetData() {
+        
     }
 }

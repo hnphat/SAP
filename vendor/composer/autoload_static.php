@@ -733,6 +733,7 @@ class ComposerStaticInitd8974243306c501590c5af6375aa79ae
         'App\\XacNhanCong' => __DIR__ . '/../..' . '/app/XacNhanCong.php',
         'App\\XeCuuHo' => __DIR__ . '/../..' . '/app/XeCuuHo.php',
         'App\\XeLaiThu' => __DIR__ . '/../..' . '/app/XeLaiThu.php',
+        'App\\XeNhanNo' => __DIR__ . '/../..' . '/app/XeNhanNo.php',
         'App\\XinPhep' => __DIR__ . '/../..' . '/app/XinPhep.php',
         'App\\XuatSP' => __DIR__ . '/../..' . '/app/XuatSP.php',
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Cors.php',

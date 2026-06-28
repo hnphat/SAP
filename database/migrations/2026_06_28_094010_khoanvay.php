@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class XeBaoLanh extends Migration
+class Khoanvay extends Migration
 {
     /**
      * Run the migrations.
@@ -17,7 +17,7 @@ class XeBaoLanh extends Migration
             $table->increments('id');
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');
-            $table->string('soKhoangVay')->nullable();
+            $table->string('soKhoanVay')->nullable();
             $table->string('noiDungVay')->nullable();
             $table->string('ngayNhanNo')->nullable();
             $table->float('laiSuat', 8, 2)->default(0);

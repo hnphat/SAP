@@ -45,29 +45,25 @@
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modalThemKhoanVay">
+                                    <i class="fas fa-plus"></i> Thêm mới
+                                </button>
+                                <hr/>
                                 <table id="dataTable" class="display" style="width:100%">
                                     <thead>
                                     <tr class="bg-gradient-lightblue">
                                         <th>TT</th>
-                                        <th>Tên xe</th>
-                                        <th>Màu</th>
-                                        <th>VIN</th>
-                                        <th>Số máy</th>
-                                        <th>Nhận nợ</th>
-                                        <th>Ngày nhận nợ</th>
-                                        <th>Ngày rút HS</th>
-                                        <th>Số ngày</th>
-                                        <th>Lãi phải trả</th>
-                                        <th>Giá trị vay (%)</th>
-                                        <th>Lãi suất vay (%)</th>
-                                        <th>Xăng lưu kho</th>
-                                        <th>Trạng thái xe</th>
-                                        <th>Sale</th>
-                                        <th>Khách hàng</th>
-                                        <th>Hoa hồng xe</th>
-                                        <th>Giá vốn bảo hiểm</th>
-                                        <th>% Hoa hồng công ĐK</th>
-                                        <th>Giá vốn phụ kiện</th>
+                                        <th>Số khoản vay</th>
+                                        <th>Nội dung vay</th>
+                                        <th>Ngày vay</th>
+                                        <th>Lãi suất</th>
+                                        <th>Tiền vay</th>
+                                        <th>Lãi ngày</th>
+                                        <th>Lãi tháng</th>
+                                        <th>Lãi đến hôm nay</th>
+                                        <th>Số tiền đã trả</th>
+                                        <th>Ngân hàng vay</th>
+                                        <th>Ghi chú</th>
                                         <th>Tác vụ</th>                                        
                                     </tr>
                                     </thead>
@@ -81,121 +77,113 @@
         </div>
         <!-- /.content -->
     </div>
-    <!--  MEDAL -->
-    <div>
-        <!-- Medal Edit -->
-        <div class="modal fade" id="editModal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Cập nhật</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card">
-                            <!-- /.card-header -->
-                            <!-- form start -->
-                            <form id="editForm" autocomplete="off">
-                                {{csrf_field()}}
-                                <input type="hidden" name="eid"/>
-                                <input type="hidden" name="eidhopdong"/>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <h5>
-                                                Xe: <span id="sxe"></span>; Màu: <span id="smau"></span><br/>
-                                                Số khung: <span id="ssokhung"></span><br/>
-                                                Số máy: <span id="ssomay"></span><br/>
-                                            </h5>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <div class="form-group">
-                                                <label>Nhận nợ:</label>
-                                                <select name="ghiChu" class="form-control">
-                                                    <option value="1">Có</option>
-                                                    <option value="0">Không</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label>Ngày nhận nợ</label>
-                                                <input name="ngayNhanNo" placeholder="Ngày nhận nợ" type="date" class="form-control">
-                                            </div>    
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label>Ngày rút hồ sơ</label>
-                                                <input name="ngayRutHoSo" placeholder="Ngày rút hồ sơ" type="date" class="form-control">
-                                            </div>    
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-7">
-                                            <div class="form-group">
-                                                <label>% vay trên giá vốn xe (Mặc định 85%):</label>
-                                                <input min="1" max="100" value="85" name="giaTriVay" placeholder="VD: 85" type="number" class="form-control">
-                                            </div>    
-                                        </div>
-                                        <div class="col-sm-5">
-                                            <div class="form-group">
-                                                <label>Lãi suất vay (%):</label>
-                                                <input min="1" max="100" name="laiSuatVay" placeholder="VD: 12.5" type="number" class="form-control">
-                                            </div>                                              
-                                        </div>
-                                    </div>  
-                                    <div class="row">
-                                        <div class="col-sm-7">
-                                            <div class="form-group">
-                                                <label>Xăng lưu kho (Mặc định 150.000)</label>
-                                                <input name="xangLuuKho" placeholder="Xăng lưu kho" value="150000" type="number" class="form-control">
-                                            </div>    
-                                            <div class="form-group">
-                                                <label>Hoa hồng sale (Nếu có):</label>
-                                                <input name="hoaHongSale" id="hoaHongSale" placeholder="Hoa hồng sale" type="number" class="form-control">
-                                            </div> 
-                                        </div> 
-                                        <div class="col-sm-5">
-                                            <div class="form-group">
-                                                <label>(%) Hoa hồng công đk:</label>
-                                                <input name="hhcongdk" id="hhcongdk" placeholder="VD: 45" type="number" min="0" step="1" max="100" class="form-control">
-                                            </div>   
-                                            <div class="form-group">
-                                                <label>Giá vốn bảo hiểm:</label>
-                                                <input name="giavonbh" id="giavonbh" placeholder="Giá vốn bảo hiểm" type="number" class="form-control">
-                                            </div>   
-                                        </div>                                                               
-                                    </div>  
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <label>Giá vốn phụ kiện</label>
-                                                <input name="giavonpk" placeholder="Giá vốn phụ kiện" value="0" type="number" class="form-control">
-                                            </div>    
-                                        </div>                                                                
-                                    </div>                                     
-                                </div>                             
-                            </form>
+<div class="modal fade" id="modalThemKhoanVay" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form id="formThemKhoanVay">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Khoản Vay Mới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Số khoản vay <span class="text-danger">*</span></label>
+                            <input type="text" name="so_khoan_vay" class="form-group form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Ngân hàng vay <span class="text-danger">*</span></label>
+                            <input type="text" name="ngan_hang_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Ngày vay <span class="text-danger">*</span></label>
+                            <input type="date" name="ngay_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Lãi suất (%/năm) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" name="lai_suat" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Tiền vay (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" name="tien_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Số tiền đã trả (VNĐ)</label>
+                            <input type="number" name="tien_da_tra" class="form-control" value="0">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Nội dung vay <span class="text-danger">*</span></label>
+                            <textarea name="noi_dung_vay" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Ghi chú</label>
+                            <input type="text" name="ghi_chu" class="form-control">
                         </div>
                     </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
-                        <button id="btnUpdate" class="btn btn-primary" form="editForm">Lưu</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSuaKhoanVay" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form id="formSuaKhoanVay">
+                <input type="hidden" id="edit_id" name="id">
+                
+                <div class="modal-header">
+                    <h5 class="modal-title">Cập Nhật Khoản Vay</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Số khoản vay <span class="text-danger">*</span></label>
+                            <input type="text" id="edit_so_khoan_vay" name="so_khoan_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Ngân hàng vay <span class="text-danger">*</span></label>
+                            <input type="text" id="edit_ngan_hang_vay" name="ngan_hang_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Ngày vay <span class="text-danger">*</span></label>
+                            <input type="date" id="edit_ngay_vay" name="ngay_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Lại suất (%/năm) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" id="edit_lai_suat" name="lai_suat" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Tiền vay (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" id="edit_tien_vay" name="tien_vay" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Số tiền đã trả (VNĐ)</label>
+                            <input type="number" id="edit_tien_da_tra" name="tien_da_tra" class="form-control">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Nội dung vay <span class="text-danger">*</span></label>
+                            <textarea id="edit_noi_dung_vay" name="noi_dung_vay" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Ghi chú</label>
+                            <input type="text" id="edit_ghi_chu" name="ghi_chu" class="form-control">
+                        </div>
                     </div>
                 </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-success">Cập nhật thay đổi</button>
+                </div>
+            </form>
         </div>
-        <!-- /.modal -->
     </div>
-    <!----------------------->
+</div>
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -229,13 +217,6 @@
 
         var DOCSO = function(){ var t=["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" mươi",1==e&&(o+=" mốt")):1==a?(o=" mười",1==e&&(o+=" một")):n&&e>0&&(o=" lẻ"),5==e&&a>=1?o+=" lăm":4==e&&a>=1?o+=" tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" tỷ";while(r>0);return n.trim()}}}();
         
-        // $('#hoaHongSale').keyup(function(){
-        //         var cos = $('#hoaHongSale').val();
-        //         $('#showHoaHongSale').val("(" + DOCSO.doc(cos) + ")");
-        // });
-
-        // show data
-
         function CountTheDays(date_1, date_2) {
             let difference = date_1.getTime() - date_2.getTime();
             let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
@@ -248,194 +229,72 @@
                 $('#showCost').text(formatNumber(cos) + " (" + DOCSO.doc(cos) + ")");
             });
 
-            var table = $('#dataTable').DataTable({
-                // paging: false,    use to show all data
+            table = $('#dataTable').DataTable({
                 responsive: true,
-                dom: 'Blfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                ajax: "{{ url('management/ketoan/xebaolanh/getdata') }}",
-                "columnDefs": [ {
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                } ],
-                "order": [
-                    [ 0, 'desc' ]
-                ],
-                lengthMenu:  [5, 10, 25, 50, 75, 100 ],
+                ajax: {
+                    url: "{{route('ketoan.khoanvay.get')}}",
+                    type: "GET",
+                    dataSrc: (json) => Array.isArray(json) ? json : (json.data || [])
+                },
+                order: [[1, 'desc']], // Sắp xếp theo số khoản vay mới nhất
                 columns: [
-                    { "data": null },
-                    { "data": "ten" },
-                    { "data": "color" },
-                    { "data": "vin" },
-                    { "data": "frame" },
-                    {
+                    { 
+                        "data": null, 
+                        render: (data, type, row, meta) => meta.row + 1 // Cột thứ tự tự động tăng
+                    },
+                    { "data": "soKhoanVay" },
+                    { "data": "noiDungVay" },
+                    { 
+                        "data": "ngayNhanNo",
+                        render: (data) => data ? formatDate(data) : ""
+                    },
+                    { 
+                        "data": "laiSuat",
+                        render: (data) => `<strong>${data}%</strong>`
+                    },
+                    { 
+                        "data": "tienVay",
+                        render: (data) => formatCurrency(data)
+                    },
+                    { 
                         "data": null,
-                        render: function(data, type, row) {    
-                            if (row.ghiChu) {
-                                return (row.ghiChu == 1) ? "<span class='text-danger text-bold'>Có</span>" : "Không";
-                            } else {
-                                return "<span class='text-secondary'>Null</span>";
-                            }                            
+                        render: function(data, type, row) {
+                          return `Đang xử lý`;
                         }
                     },
-                    {
+                    { 
                         "data": null,
-                        render: function(data, type, row) {    
-                            if (row.ngayNhanNo) {
-                                let arr = row.ngayNhanNo.toString().split("-");    
-                                return arr[2] + "-" + arr[1] + "-" + arr[0]; 
-                            } else {
-                                return " ";
-                            }                            
+                        render: function(data, type, row) {
+                          return `Đang xử lý`;
                         }
                     },
-                    {
+                    { 
                         "data": null,
-                        render: function(data, type, row) {    
-                            if (row.ngayRutHoSo) {
-                                let arr = row.ngayRutHoSo.toString().split("-");   
-                                return arr[2] + "-" + arr[1] + "-" + arr[0]; 
-                            } else {
-                                return " ";
-                            }                            
+                        render: function(data, type, row) {
+                          return `Đang xử lý`;
                         }
                     },
-                    {
+                    { 
                         "data": null,
-                        render: function(data, type, row) {     
-                            if (row.ngayNhanNo) {
-                                let date_1 = new Date(row.ngayNhanNo);
-                                let date_2 = new Date();
-                                if (row.ngayRutHoSo)
-                                    date_2 = new Date(row.ngayRutHoSo);
-                                return "<strong class='text-secondary'>" + (Math.abs(CountTheDays(date_1, date_2)) + 1) + " ngày </strong>";
-                            }  
-                            return " ";
+                        render: function(data, type, row) {
+                          return `Đang xử lý`;
                         }
                     },
+                    { "data": "nganHangVay" },
+                    { "data": "ghiChu" },
                     {
                         "data": null,
-                        render: function(data, type, row) {  
-                            if (row.giaTriVay !== 0 && row.laiSuatVay !== 0) {
-                                if (row.ngayNhanNo) {
-                                    let date_1 = new Date(row.ngayNhanNo);
-                                    let date_2 = new Date();
-                                    if (row.ngayRutHoSo)
-                                        date_2 = new Date(row.ngayRutHoSo);
-                                    let countNgayNhanNo = Math.abs(CountTheDays(date_1, date_2)) + 1;
-                                    return "<strong class='text-danger'>" + formatNumber(Math.round((row.giaVon * (row.giaTriVay/100) * (row.laiSuatVay/100)) / 365) * countNgayNhanNo) + "</strong>";
-                                }
-                            } 
-                            return " ";                            
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {           
-                            if (row.giaTriVay)                 
-                                return "<strong class='text-primary'>" + row.giaTriVay + "%" + "</strong>"; 
-                            else return " ";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {    
-                            if (row.laiSuatVay)                        
-                                return "<strong class='text-primary'>" + row.laiSuatVay + "%" + "</strong>";  
-                            else return " ";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {       
-                            if (row.xangLuuKho)     
-                                return "<strong>" + formatNumber(row.xangLuuKho) + "</strong>";   
-                            else return " ";  
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {   
-                            if (row.type == "STORE")
-                                return "<strong class='text-primary'>Xe lưu kho</strong>";   
-                            else if (row.type == "HD" && row.xuatXe == true) {
-                                return "<strong class='text-success'>Đã xuất xe</strong>";   
-                            } 
-                            else if (row.type == "HD" && row.xuatXe == false) {
-                                return "<strong class='text-info'>Hợp đồng</strong>";   
-                            }
-                            else return "<strong class='text-warning'>Khác</strong>";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {                           
-                            if (row.saleban) 
-                                return "" + row.saleban;
-                            else
-                                return " ";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {                           
-                            if (row.khach) 
-                                return "" + row.khach;
-                            else
-                                return " ";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {  
-                            if (row.hoaHongSale)                          
-                                return "<strong class='text-pink'>" + formatNumber(row.hoaHongSale) + "</strong>"; 
-                            else   
-                                return " ";
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {       
-                            if (row.giavonbh)     
-                                return "<strong class='text-pink'>" + formatNumber(row.giavonbh) + "</strong>";   
-                            else return " ";  
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {       
-                            if (row.hhcongdk)     
-                                return "<strong class='text-pink'>" + formatNumber(row.hhcongdk) + "</strong>";   
-                            else return " ";  
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {       
-                            if (row.giavonpk)     
-                                return "<strong class='text-pink'>" + formatNumber(row.giavonpk) + "</strong>";   
-                            else return " ";  
-                        }
-                    },
-                    {
-                        "data": null,
-                        render: function(data, type, row) {                           
-                            return "<button id='btnEdit' data-ten='"+row.ten+"' data-id='"+row.id+"' data-idhd='"+row.idhopdong+"' data-toggle='modal' data-target='#editModal' class='btn btn-success btn-sm'><span class='far fa-edit'></span></button>&nbsp;&nbsp;";     
+                        orderable: false,
+                        searchable: false,
+                        render: function (data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-warning btn-edit" data-id="${row.id}"><i class="fas fa-edit"></i> Sửa</button>
+                                <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}"><i class="fas fa-trash"></i> Xóa</button>
+                            `;
                         }
                     }
                 ]
             });
-            table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-                    cell.innerHTML = i+1;
-                    table.cell(cell).invalidate('dom');
-                } );
-            } ).draw();
-
             // edit data
             $(document).on('click','#btnEdit', function(){
                 $.ajax({
