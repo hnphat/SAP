@@ -45,9 +45,34 @@
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-one-tabContent">
                             <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1-tab">
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#modalThemKhoanVay">
-                                    <i class="fas fa-plus"></i> Thêm mới
-                                </button>
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-2 mb-2 mb-md-0">
+                                        <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalThemKhoanVay">
+                                            <i class="fas fa-plus"></i> Thêm mới
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-2 mb-md-0">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Từ ngày</span>
+                                            </div>
+                                            <input type="date" id="filter_tu_ngay" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2 mb-md-0">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Đến ngày</span>
+                                            </div>
+                                            <input type="date" id="filter_den_ngay" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button id="btnFilter" class="btn btn-info btn-block">
+                                            <i class="fas fa-search"></i> TRA CỨU
+                                        </button>
+                                    </div>
+                                </div>
                                 <hr/>
                                 <table id="dataTable" class="display" style="width:100%">
                                     <thead>
@@ -105,12 +130,10 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Tiền vay (VNĐ) <span class="text-danger">*</span></label>
-                            <input type="number" name="tien_vay" class="form-control" required>
+                            <input type="text" id="them_tien_vay" name="tien_vay" class="form-control text-right font-weight-bold" placeholder="Nhập số tiền..." required>
+                            <span id="them_tien_vay_text" class="text-success text-sm font-italic"></span>
                         </div>
-                        <div class="form-group col-md-6">
-                            <label>Số tiền đã trả (VNĐ)</label>
-                            <input type="number" name="tien_da_tra" class="form-control" value="0">
-                        </div>
+
                         <div class="form-group col-md-12">
                             <label>Nội dung vay <span class="text-danger">*</span></label>
                             <textarea name="noi_dung_vay" class="form-control" rows="2" required></textarea>
@@ -160,12 +183,10 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Tiền vay (VNĐ) <span class="text-danger">*</span></label>
-                            <input type="number" id="edit_tien_vay" name="tien_vay" class="form-control" required>
+                            <input type="text" id="edit_tien_vay" name="tien_vay" class="form-control text-right font-weight-bold" placeholder="Nhập số tiền..." required>
+                            <span id="edit_tien_vay_text" class="text-success text-sm font-italic"></span>
                         </div>
-                        <div class="form-group col-md-6">
-                            <label>Số tiền đã trả (VNĐ)</label>
-                            <input type="number" id="edit_tien_da_tra" name="tien_da_tra" class="form-control">
-                        </div>
+
                         <div class="form-group col-md-12">
                             <label>Nội dung vay <span class="text-danger">*</span></label>
                             <textarea id="edit_noi_dung_vay" name="noi_dung_vay" class="form-control" rows="2" required></textarea>
@@ -212,7 +233,7 @@
         });
 
         function formatNumber(num) {
-            if (!num) return "0";
+            if (num === "" || num === null || num === undefined) return "";
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         }
 
@@ -241,12 +262,49 @@
             return TotalDays;
         }
 
+        function initTienVayFormat(inputId, textId) {
+            $(inputId).on('input', function() {
+                // Get raw value (numbers only)
+                let val = $(this).val().replace(/[^0-9]/g, '');
+                
+                // Format with commas
+                let formatted = formatNumber(val);
+                $(this).val(formatted);
+                
+                // Update text below
+                if (formatted !== "") {
+                    let docSo = DOCSO.doc(parseInt(val));
+                    $(textId).text(`(${docSo} đồng)`);
+                } else {
+                    $(textId).text('');
+                }
+            });
+        }
+
         $(document).ready(function() {            
+            // Set default date values to today
+            let today = new Date().toISOString().split('T')[0];
+            $('#filter_tu_ngay').val(today);
+            $('#filter_den_ngay').val(today);
+
+            // Filter button action
+            $('#btnFilter').click(function() {
+                table.ajax.reload();
+            });
+
+            // Initialize formatting for money inputs
+            initTienVayFormat('#them_tien_vay', '#them_tien_vay_text');
+            initTienVayFormat('#edit_tien_vay', '#edit_tien_vay_text');
+
             table = $('#dataTable').DataTable({
                 responsive: true,
                 ajax: {
                     url: "{{route('ketoan.khoanvay.get')}}",
                     type: "GET",
+                    data: function(d) {
+                        d.tu_ngay = $('#filter_tu_ngay').val();
+                        d.den_ngay = $('#filter_den_ngay').val();
+                    },
                     dataSrc: (json) => Array.isArray(json) ? json : (json.data || [])
                 },
                 order: [[1, 'desc']],
@@ -316,11 +374,17 @@
             // Submit Form Them Khoan Vay
             $("#formThemKhoanVay").submit(function(e) {
                 e.preventDefault();
+                let data = $(this).serializeArray();
+                data.forEach(function(item) {
+                    if (item.name === 'tien_vay') {
+                        item.value = item.value.replace(/,/g, '');
+                    }
+                });
                 $.ajax({
                     url: "{{route('ketoan.khoanvay.store')}}",
                     type: "POST",
                     dataType: "json",
-                    data: $(this).serialize() + "&_token={{csrf_token()}}",
+                    data: $.param(data) + "&_token={{csrf_token()}}",
                     success: function(response) {
                         if (response.code == 200) {
                             Toast.fire({
@@ -330,6 +394,7 @@
                             table.ajax.reload();
                             $("#modalThemKhoanVay").modal('hide');
                             $("#formThemKhoanVay")[0].reset();
+                            $("#them_tien_vay_text").text("");
                         } else {
                             Toast.fire({
                                 icon: response.type || 'error',
@@ -364,10 +429,15 @@
                             $("#edit_ngan_hang_vay").val(response.data.nganHangVay);
                             $("#edit_ngay_vay").val(response.data.ngayNhanNo);
                             $("#edit_lai_suat").val(response.data.laiSuat);
-                            $("#edit_tien_vay").val(response.data.tienVay);
+                            $("#edit_tien_vay").val(formatNumber(response.data.tienVay));
+                            if (response.data.tienVay) {
+                                let docSo = DOCSO.doc(parseInt(response.data.tienVay));
+                                $("#edit_tien_vay_text").text(`(${docSo} đồng)`);
+                            } else {
+                                $("#edit_tien_vay_text").text('');
+                            }
                             $("#edit_noi_dung_vay").val(response.data.noiDungVay);
                             $("#edit_ghi_chu").val(response.data.ghiChu);
-                            $("#edit_tien_da_tra").val(response.data.tienDaTra || 0);
 
                             $("#modalSuaKhoanVay").modal('show');
                         } else {
@@ -389,11 +459,17 @@
             // Submit Form Update Khoan Vay
             $("#formSuaKhoanVay").submit(function(e) {
                 e.preventDefault();
+                let data = $(this).serializeArray();
+                data.forEach(function(item) {
+                    if (item.name === 'tien_vay') {
+                        item.value = item.value.replace(/,/g, '');
+                    }
+                });
                 $.ajax({
                     url: "{{route('ketoan.khoanvay.update')}}",
                     type: "POST",
                     dataType: "json",
-                    data: $(this).serialize() + "&_token={{csrf_token()}}",
+                    data: $.param(data) + "&_token={{csrf_token()}}",
                     success: function(response) {
                         if (response.code == 200) {
                             Toast.fire({
@@ -403,6 +479,7 @@
                             table.ajax.reload();
                             $("#modalSuaKhoanVay").modal('hide');
                             $("#formSuaKhoanVay")[0].reset();
+                            $("#edit_tien_vay_text").text("");
                         } else {
                             Toast.fire({
                                 icon: response.type || 'error',

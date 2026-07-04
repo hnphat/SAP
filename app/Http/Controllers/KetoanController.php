@@ -442,13 +442,17 @@ class KetoanController extends Controller
         return view('ketoan.khoanvay');
     }
 
-    public function khoanVayGetData() {
-        $result = KhoanVay::select([
+    public function khoanVayGetData(Request $request) {
+        $query = KhoanVay::select([
             'khoan_vay.*',
             DB::raw('(SELECT COALESCE(SUM(xe_nhan_no.tienThanhToan), 0) FROM xe_nhan_no WHERE xe_nhan_no.id_khoanvay = khoan_vay.id) as tienDaTra')
-        ])
-        ->orderBy('khoan_vay.id', 'desc')
-        ->get();
+        ]);
+
+        if ($request->filled('tu_ngay') && $request->filled('den_ngay')) {
+            $query->whereBetween('khoan_vay.ngayNhanNo', [$request->tu_ngay, $request->den_ngay]);
+        }
+
+        $result = $query->orderBy('khoan_vay.id', 'desc')->get();
 
         return response()->json([
             'message' => 'Get list successfully!',
