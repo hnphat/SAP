@@ -13,6 +13,7 @@ use App\KhoanVay;
 use App\XeNhanNo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class KetoanController extends Controller
@@ -442,6 +443,149 @@ class KetoanController extends Controller
     }
 
     public function khoanVayGetData() {
-        
+        $result = KhoanVay::select([
+            'khoan_vay.*',
+            DB::raw('(SELECT COALESCE(SUM(xe_nhan_no.tienThanhToan), 0) FROM xe_nhan_no WHERE xe_nhan_no.id_khoanvay = khoan_vay.id) as tienDaTra')
+        ])
+        ->orderBy('khoan_vay.id', 'desc')
+        ->get();
+
+        return response()->json([
+            'message' => 'Get list successfully!',
+            'code' => 200,
+            'data' => $result
+        ]);
+    }
+
+    public function postThemKhoanVay(Request $request) {
+        $khoanVay = new KhoanVay();
+        $khoanVay->id_user = Auth::user()->id;
+        $khoanVay->soKhoanVay = $request->so_khoan_vay;
+        $khoanVay->nganHangVay = $request->ngan_hang_vay;
+        $khoanVay->ngayNhanNo = $request->ngay_vay;
+        $khoanVay->laiSuat = $request->lai_suat;
+        $khoanVay->tienVay = $request->tien_vay;
+        $khoanVay->noiDungVay = $request->noi_dung_vay;
+        $khoanVay->ghiChu = $request->ghi_chu;
+        $khoanVay->save();
+
+        // Ghi nhật ký hệ thống
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Kế toán - Khoản vay";
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->noiDung = "Thêm mới khoản vay số: " . $request->so_khoan_vay . ", số tiền: " . number_format($request->tien_vay) . " VNĐ tại ngân hàng " . $request->ngan_hang_vay;
+        $nhatKy->save();
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Thêm mới khoản vay thành công!',
+            'code' => 200
+        ]);
+    }
+
+    public function getEditKhoanVay(Request $request) {
+        $id = $request->id;
+        // Fetch loan with computed tienDaTra
+        $result = KhoanVay::select([
+            'khoan_vay.*',
+            DB::raw('(SELECT COALESCE(SUM(xe_nhan_no.tienThanhToan), 0) FROM xe_nhan_no WHERE xe_nhan_no.id_khoanvay = khoan_vay.id) as tienDaTra')
+        ])
+        ->where('khoan_vay.id', $id)
+        ->first();
+
+        if ($result) {
+            return response()->json([
+                'message' => 'Lấy thông tin khoản vay thành công!',
+                'code' => 200,
+                'type' => "info",
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'type' => "error",
+                'message' => 'Không tìm thấy khoản vay!',
+                'code' => 404
+            ]);
+        }
+    }
+
+    public function updateKhoanVay(Request $request) {
+        $khoanVay = KhoanVay::find($request->id);
+        if (!$khoanVay) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy khoản vay!',
+                'code' => 404
+            ]);
+         }
+
+         $oldSo = $khoanVay->soKhoanVay;
+         $oldTien = $khoanVay->tienVay;
+
+         $khoanVay->soKhoanVay = $request->so_khoan_vay;
+         $khoanVay->nganHangVay = $request->ngan_hang_vay;
+         $khoanVay->ngayNhanNo = $request->ngay_vay;
+         $khoanVay->laiSuat = $request->lai_suat;
+         $khoanVay->tienVay = $request->tien_vay;
+         $khoanVay->noiDungVay = $request->noi_dung_vay;
+         $khoanVay->ghiChu = $request->ghi_chu;
+         $khoanVay->save();
+
+         // Ghi nhật ký hệ thống
+         $nhatKy = new NhatKy();
+         $nhatKy->id_user = Auth::user()->id;
+         $nhatKy->thoiGian = Date("H:i:s");
+         $nhatKy->chucNang = "Kế toán - Khoản vay";
+         $nhatKy->ghiChu = Carbon::now();
+         $nhatKy->noiDung = "Cập nhật khoản vay ID " . $request->id . ". Số khoản vay từ '" . $oldSo . "' thành '" . $request->so_khoan_vay . "', số tiền từ " . number_format($oldTien) . " VNĐ thành " . number_format($request->tien_vay) . " VNĐ";
+         $nhatKy->save();
+
+         return response()->json([
+             'type' => 'success',
+             'message' => 'Cập nhật khoản vay thành công!',
+             'code' => 200
+         ]);
+    }
+
+    public function deleteKhoanVay(Request $request) {
+        $id = $request->id;
+        $khoanVay = KhoanVay::find($id);
+        if (!$khoanVay) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy khoản vay!',
+                'code' => 404
+            ]);
+        }
+
+        // Kiểm tra ràng buộc xem có xe liên kết bảo lãnh không
+        $hasCars = DB::table('xe_nhan_no')->where('id_khoanvay', $id)->exists();
+        if ($hasCars) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không thể xóa khoản vay này vì đang có xe liên kết bảo lãnh!',
+                'code' => 400
+            ]);
+        }
+
+        $so = $khoanVay->soKhoanVay;
+        $khoanVay->delete();
+
+        // Ghi nhật ký hệ thống
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Kế toán - Khoản vay";
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->noiDung = "Xóa khoản vay số: " . $so . " (ID: " . $id . ")";
+        $nhatKy->save();
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Xóa khoản vay thành công!',
+            'code' => 200
+        ]);
     }
 }

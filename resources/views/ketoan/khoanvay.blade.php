@@ -212,23 +212,36 @@
         });
 
         function formatNumber(num) {
+            if (!num) return "0";
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            let date = new Date(dateStr);
+            let day = String(date.getDate()).padStart(2, '0');
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            let year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
+        function formatCurrency(num) {
+            if (num === null || num === undefined) return "0 VNĐ";
+            return formatNumber(num) + " VNĐ";
         }
 
         var DOCSO = function(){ var t=["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" mươi",1==e&&(o+=" mốt")):1==a?(o=" mười",1==e&&(o+=" một")):n&&e>0&&(o=" lẻ"),5==e&&a>=1?o+=" lăm":4==e&&a>=1?o+=" tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" tỷ";while(r>0);return n.trim()}}}();
         
         function CountTheDays(date_1, date_2) {
-            let difference = date_1.getTime() - date_2.getTime();
+            // Set both to midnight to count full days
+            let d1 = new Date(date_1.getFullYear(), date_1.getMonth(), date_1.getDate());
+            let d2 = new Date(date_2.getFullYear(), date_2.getMonth(), date_2.getDate());
+            let difference = d1.getTime() - d2.getTime();
             let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
             return TotalDays;
         }
 
         $(document).ready(function() {            
-            $('#cost').keyup(function(){
-                var cos = $('#cost').val();
-                $('#showCost').text(formatNumber(cos) + " (" + DOCSO.doc(cos) + ")");
-            });
-
             table = $('#dataTable').DataTable({
                 responsive: true,
                 ajax: {
@@ -236,11 +249,11 @@
                     type: "GET",
                     dataSrc: (json) => Array.isArray(json) ? json : (json.data || [])
                 },
-                order: [[1, 'desc']], // Sắp xếp theo số khoản vay mới nhất
+                order: [[1, 'desc']],
                 columns: [
                     { 
                         "data": null, 
-                        render: (data, type, row, meta) => meta.row + 1 // Cột thứ tự tự động tăng
+                        render: (data, type, row, meta) => meta.row + 1
                     },
                     { "data": "soKhoanVay" },
                     { "data": "noiDungVay" },
@@ -250,7 +263,7 @@
                     },
                     { 
                         "data": "laiSuat",
-                        render: (data) => `<strong>${data}%</strong>`
+                        render: (data) => `<strong>${data}%/năm</strong>`
                     },
                     { 
                         "data": "tienVay",
@@ -259,26 +272,30 @@
                     { 
                         "data": null,
                         render: function(data, type, row) {
-                          return `Đang xử lý`;
+                            let daily = (row.tienVay * (row.laiSuat / 100)) / 365;
+                            return formatCurrency(Math.round(daily));
                         }
                     },
                     { 
                         "data": null,
                         render: function(data, type, row) {
-                          return `Đang xử lý`;
+                            let monthly = (row.tienVay * (row.laiSuat / 100)) / 12;
+                            return formatCurrency(Math.round(monthly));
                         }
                     },
                     { 
                         "data": null,
                         render: function(data, type, row) {
-                          return `Đang xử lý`;
+                            let daily = (row.tienVay * (row.laiSuat / 100)) / 365;
+                            let days = CountTheDays(new Date(), new Date(row.ngayNhanNo));
+                            if (days < 0) days = 0;
+                            let totalInterest = daily * days;
+                            return formatCurrency(Math.round(totalInterest)) + ` (${days} ngày)`;
                         }
                     },
                     { 
-                        "data": null,
-                        render: function(data, type, row) {
-                          return `Đang xử lý`;
-                        }
+                        "data": "tienDaTra",
+                        render: (data) => formatCurrency(data)
                     },
                     { "data": "nganHangVay" },
                     { "data": "ghiChu" },
@@ -295,87 +312,154 @@
                     }
                 ]
             });
-            // edit data
-            $(document).on('click','#btnEdit', function(){
+
+            // Submit Form Them Khoan Vay
+            $("#formThemKhoanVay").submit(function(e) {
+                e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/ketoan/xenhanno/edit/show/')}}",
-                    type: "post",
+                    url: "{{route('ketoan.khoanvay.store')}}",
+                    type: "POST",
+                    dataType: "json",
+                    data: $(this).serialize() + "&_token={{csrf_token()}}",
+                    success: function(response) {
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message
+                            });
+                            table.ajax.reload();
+                            $("#modalThemKhoanVay").modal('hide');
+                            $("#formThemKhoanVay")[0].reset();
+                        } else {
+                            Toast.fire({
+                                icon: response.type || 'error',
+                                title: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: xhr.responseJSON ? xhr.responseJSON.message : "Error 500!"
+                        });
+                    }
+                });
+            });
+
+            // Edit Click Show Data
+            $(document).on('click', '.btn-edit', function() {
+                let id = $(this).data('id');
+                $.ajax({
+                    url: "{{route('ketoan.khoanvay.edit')}}",
+                    type: "POST",
                     dataType: "json",
                     data: {
                         "_token": "{{csrf_token()}}",
-                        "id": $(this).data('id'),
-                        "idhd": $(this).data('idhd'),
-                        "tenxe": $(this).data('ten'),
+                        "id": id
                     },
                     success: function(response) {
                         if (response.code == 200) {
-                            $("input[name=eid]").val(response.data.id);
-                            $("input[name=ngayNhanNo]").val(response.data.ngayNhanNo);
-                            $("input[name=ngayRutHoSo]").val(response.data.ngayRutHoSo);
-                            $("input[name=xangLuuKho]").val(response.data.xangLuuKho);
-                            $("input[name=giaTriVay]").val(response.data.giaTriVay);
-                            $("input[name=laiSuatVay]").val(response.data.laiSuatVay);
-                            $("input[name=hoaHongSale]").val(response.hoaHongSale); 
-                            $("input[name=giavonbh]").val(response.data.giavonbh); 
-                            $("input[name=giavonpk]").val(response.data.giavonpk); 
-                            $("input[name=hhcongdk]").val(response.data.hhcongdk); 
-                            if (response.data.ghiChu)
-                                $("select[name=ghiChu]").val(response.data.ghiChu);
-                            else
-                                $("select[name=ghiChu]").val(0);
-                            $("#sxe").text(response.tenXe);
-                            $("#smau").text(response.data.color);
-                            $("#ssokhung").text(response.data.vin);
-                            $("#ssomay").text(response.data.frame);
-                            if (response.idHopDong)
-                                $("input[name=eidhopdong]").val(response.idHopDong);
-                        }
+                            $("#edit_id").val(response.data.id);
+                            $("#edit_so_khoan_vay").val(response.data.soKhoanVay);
+                            $("#edit_ngan_hang_vay").val(response.data.nganHangVay);
+                            $("#edit_ngay_vay").val(response.data.ngayNhanNo);
+                            $("#edit_lai_suat").val(response.data.laiSuat);
+                            $("#edit_tien_vay").val(response.data.tienVay);
+                            $("#edit_noi_dung_vay").val(response.data.noiDungVay);
+                            $("#edit_ghi_chu").val(response.data.ghiChu);
+                            $("#edit_tien_da_tra").val(response.data.tienDaTra || 0);
 
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
+                            $("#modalSuaKhoanVay").modal('show');
+                        } else {
+                            Toast.fire({
+                                icon: response.type || 'error',
+                                title: response.message
+                            });
+                        }
                     },
-                    error: function(){
+                    error: function() {
                         Toast.fire({
                             icon: 'warning',
-                            title: "Error 500!"
-                        })
+                            title: "Không thể lấy thông tin khoản vay!"
+                        });
                     }
                 });
             });
 
-            $("#btnUpdate").click(function(e){
+            // Submit Form Update Khoan Vay
+            $("#formSuaKhoanVay").submit(function(e) {
                 e.preventDefault();
                 $.ajax({
-                    url: "{{url('management/ketoan/xenhanno/update/')}}",
-                    type: "post",
+                    url: "{{route('ketoan.khoanvay.update')}}",
+                    type: "POST",
                     dataType: "json",
-                    data: $("#editForm").serialize(),
+                    data: $(this).serialize() + "&_token={{csrf_token()}}",
                     success: function(response) {
-                        $("#editForm")[0].reset();
-                        Toast.fire({
-                                icon: response.type,
+                        if (response.code == 200) {
+                            Toast.fire({
+                                icon: 'success',
                                 title: response.message
-                        })
-                        table.ajax.reload();
-                        $("#editModal").modal('hide');
+                            });
+                            table.ajax.reload();
+                            $("#modalSuaKhoanVay").modal('hide');
+                            $("#formSuaKhoanVay")[0].reset();
+                        } else {
+                            Toast.fire({
+                                icon: response.type || 'error',
+                                title: response.message
+                            });
+                        }
                     },
-                    error: function(){
+                    error: function(xhr) {
                         Toast.fire({
                             icon: 'warning',
-                            title: "Error 500!"
-                        })
+                            title: xhr.responseJSON ? xhr.responseJSON.message : "Error 500!"
+                        });
                     }
                 });
             });
 
-            // $(document).on('click','#inBB', function(){
-            //     open("{{url('management/ketoan/hopdong/bienban/')}}/" + $(this).data('id'),"_blank");
-            // });
-            // $(document).on('click','#inQT', function(){
-            //     open("{{url('management/ketoan/hopdong/quyettoan/')}}/" + $(this).data('id'),"_blank");
-            // });
+            // Delete Khoan Vay
+            $(document).on('click', '.btn-delete', function() {
+                let id = $(this).data('id');
+                Swal.fire({
+                    title: 'Bạn chắc chắn muốn xóa?',
+                    text: "Hành động này không thể hoàn tác!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Đồng ý xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{route('ketoan.khoanvay.delete')}}",
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "id": id
+                            },
+                            success: function(response) {
+                                Toast.fire({
+                                    icon: response.type,
+                                    title: response.message
+                                });
+                                if (response.code == 200) {
+                                    table.ajax.reload();
+                                }
+                            },
+                            error: function(xhr) {
+                                Toast.fire({
+                                    icon: 'warning',
+                                    title: xhr.responseJSON ? xhr.responseJSON.message : "Error 500!"
+                                });
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 @endsection

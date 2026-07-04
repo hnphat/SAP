@@ -361,6 +361,10 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Đơn hàng/xe bảo lãnh
         Route::get('khoanvay','KetoanController@getKhoanVay')->name('ketoan.khoanvay');
         Route::get('khoanvay/getdata','KetoanController@khoanVayGetData')->name('ketoan.khoanvay.get');
+        Route::post('khoanvay/store','KetoanController@postThemKhoanVay')->name('ketoan.khoanvay.store');
+        Route::post('khoanvay/edit/show','KetoanController@getEditKhoanVay')->name('ketoan.khoanvay.edit');
+        Route::post('khoanvay/update','KetoanController@updateKhoanVay')->name('ketoan.khoanvay.update');
+        Route::post('khoanvay/delete','KetoanController@deleteKhoanVay')->name('ketoan.khoanvay.delete');
     });
     Route::group(['prefix' => 'pheduyet', 'middleware' => ['f_pheduyet']], function(){
         Route::get('list','PheDuyetController@index')->name('pheduyet.list');
