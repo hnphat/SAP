@@ -1,0 +1,40 @@
+# Bỏ qua dependencies và lõi framework
+/vendor/
+/node_modules/
+
+# Bỏ qua các tệp môi trường bảo mật
+.env
+.env.backup
+.env.production
+*.json
+*.lock
+
+# Bỏ qua logs và bộ nhớ đệm (Cache cực kỳ tốn token nếu AI quét vào)
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/logs/
+/bootstrap/cache/
+
+# Bỏ qua tài nguyên tĩnh (Frontend Compiled)
+/public/css/
+/public/js/
+/public/fonts/
+/public/images/
+/public/storage/
+/public/ai/
+/public/dist/
+/public/plugins/
+/public/script/
+/public/store/
+/public/template/
+/public/upload/
+/resources/assets/
+
+# Bỏ qua các tệp cấu hình IDE khác và hệ thống
+.idea/
+.vscode/
+.git/
+.DS_Store
+Thumbs.db
+README.md

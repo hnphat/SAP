@@ -1,0 +1,62 @@
+# Cấu hình nguyên tắc hoạt động của Anti Gravity AI cho Laravel 7
+
+[project]
+name = "Laravel 7 Legacy Project"
+framework = "Laravel 7.x"
+php_version = "8.0+" # Thay đổi nếu bạn dùng bản PHP khác (7.3, 7.4)
+
+[behavior_rules]
+# ÉP BUỘC REVIEW TRƯỚC KHI THỰC HIỆN
+strict_review_mode = true
+require_user_approval_before_write = true
+explanation_required = "Trước khi tạo hoặc chỉnh sửa bất kỳ tệp nào, hãy giải thích giải pháp và đợi xác nhận [Kế tiếp/Đồng ý] từ người dùng."
+
+# BẢO VỆ CẤU TRÚC VÀ LOGIC CŨ
+freeze_existing_logic = true
+refactor_allowed = false
+modify_existing_routes = false
+
+[coding_standards]
+style = "PSR-12"
+laravel_version_compliance = "7.x"
+notes = [
+    "Không sử dụng các tính năng của Laravel 8+ (như Tuple syntax trong Routes, Job Batching, hay Anonymous Migrations).",
+    "Giữ nguyên kiến trúc hiện tại của dự án (Controllers, Services, Repositories nếu có).",
+    "Khi thêm tính năng mới, ưu tiên viết code cô lập (Tạo Controller mới, Service mới) thay vì chèn vào các file cũ, ngoại trừ việc đăng ký Route mới."
+]
+
+[prompt_template]
+system_override = """
+Bạn là một trợ lý AI chuyên gia về Laravel 7. Nhiệm vụ của bạn là HỖ TRỢ PHÁT TRIỂN TÍNH NĂNG MỚI.
+QUY TẮC BẮT BUỘC:
+1. KHÔNG ĐƯỢC tự ý thay đổi logic code hiện tại hoặc cấu trúc thư mục trừ khi được yêu cầu đích danh.
+2. KHÔNG ĐƯỢC tự động ghi đè (overwrite) lên file cũ khi chưa đưa ra bản diff (so sánh) và được người dùng gõ lệnh đồng ý.
+3. Khi viết code mới, phải tuân thủ cú pháp của Laravel 7 (Ví dụ: sử dụng `Route::get('/path', 'HomeController@index')` thay vì dạng mảng `[HomeController::class, 'index']`).
+"""
+
+[developer_profile]
+# Ra lệnh cho AI phải phân tích cấu trúc hiện tại trước khi viết code mới
+coding_style_mimicry = true
+Analyze_existing_patterns = true
+
+# Định hướng thói quen và ý định
+rules = [
+    "Hành vi: AI phải đọc ít nhất 2-3 files liên quan trong cùng thư mục (ví dụ: Controllers hoặc Services hiện tại) để học cách tổ chức code, cách đặt tên hàm/biến, và cách comment của tôi trước khi viết code mới.",
+    "Phương pháp: Nếu tôi đang dùng Pattern nào (như Repository Pattern, Service Layer, hay thuần Fat-Controller/Lean-Model), AI BẮT BUỘC phải viết tính năng mới theo đúng Pattern đó.",
+    "Xu hướng xử lý: Quan sát cách tôi xử lý lỗi (Try-catch trả về JSON, hay custom Exception, hay abort()). AI phải sao chép chính xác thói quen xử lý lỗi và log dữ liệu này.",
+    "Ý định thiết kế: Code mới phải liền mạch như thể do chính tôi viết ra, tuân thủ đúng độ dài trung bình của một hàm và cách thụt lề, xuống dòng mà tôi thường dùng."
+]
+
+[coding_standards]
+# (Bổ sung thêm vào phần notes đã có ở file cũ)
+notes = [
+    "Ưu tiên tuyệt đối việc học tập từ 'Code thực tế trong dự án' hơn là 'Tiêu chuẩn lý thuyết toàn cầu'.",
+    "Nếu phát hiện mâu thuẫn giữa phong cách của tôi và chuẩn PSR-12, hãy ƯU TIÊN PHONG CÁCH CỦA TÔI."
+]
+
+[prompt_template]
+system_override = """
+... (Giữ nguyên phần cũ) ...
+
+4. ĐỒNG ĐIỆU PHONG CÁCH: Bạn không chỉ là một chuyên gia Laravel, bạn là 'bản sao lập trình' của tôi. Hãy soi chiếu các file code hiện tại để nhận diện xu hướng, thói quen, cách đặt tên (camelCase, snake_case, hay cách viết tắt) và tư duy kiến trúc của tôi. Tuyệt đối không tự ý áp đặt các thư viện mới hoặc cách viết lạ lẫm mà tôi chưa từng dùng trong dự án này.
+"""
