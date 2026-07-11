@@ -145,7 +145,8 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
-                                <input type="number" name="tongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm" min="0" value="0">
+                                <input type="text" name="tongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm" value="0">
+                                <small id="add_tongPhi_chu" class="form-text text-success font-italic">Không đồng</small>
                             </div>
                         </div>
                         <div class="row">
@@ -164,7 +165,8 @@
                             </div>
                             <div class="col-md-4 form-group">
                                 <label>Giá trị xe (VNĐ)</label>
-                                <input type="number" name="giaTriXe" class="form-control" placeholder="Giá trị xe" min="0" value="0">
+                                <input type="text" name="giaTriXe" class="form-control" placeholder="Giá trị xe" value="0">
+                                <small id="add_giaTriXe_chu" class="form-text text-success font-italic">Không đồng</small>
                             </div>
                         </div>
                         <div class="row">
@@ -248,7 +250,8 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
-                                <input type="number" name="etongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm" min="0">
+                                <input type="text" name="etongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm">
+                                <small id="edit_tongPhi_chu" class="form-text text-success font-italic">Không đồng</small>
                             </div>
                         </div>
                         <div class="row">
@@ -267,7 +270,8 @@
                             </div>
                             <div class="col-md-4 form-group">
                                 <label>Giá trị xe (VNĐ)</label>
-                                <input type="number" name="egiaTriXe" class="form-control" placeholder="Giá trị xe" min="0">
+                                <input type="text" name="egiaTriXe" class="form-control" placeholder="Giá trị xe">
+                                <small id="edit_giaTriXe_chu" class="form-text text-success font-italic">Không đồng</small>
                             </div>
                         </div>
                         <div class="row">
@@ -381,6 +385,68 @@
             return `${d}/${m}/${y}`;
         }
 
+        // Hàm đọc số thành chữ bằng tiếng Việt
+        function docSoThanhChu(so) {
+            if (so === 0) return 'Không đồng';
+            
+            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+            
+            function docGroup3(n, showZero) {
+                let tr = Math.floor(n / 100);
+                let ch = Math.floor((n % 100) / 10);
+                let dv = n % 10;
+                let res = "";
+                
+                if (tr > 0 || showZero) {
+                    res += chuSo[tr] + " trăm ";
+                }
+                
+                if (ch > 0) {
+                    if (ch === 1) res += "mười ";
+                    else res += chuSo[ch] + " mươi ";
+                } else if (tr > 0 && dv > 0) {
+                    res += "lẻ ";
+                }
+                
+                if (dv > 0) {
+                    if (dv === 1 && ch > 1) {
+                        res += "mốt";
+                    } else if (dv === 5 && ch > 0) {
+                        res += "lăm";
+                    } else {
+                        res += chuSo[dv];
+                    }
+                }
+                return res.trim();
+            }
+            
+            let str = Math.floor(so).toString();
+            let groups = [];
+            while (str.length > 0) {
+                groups.push(str.slice(-3));
+                str = str.slice(0, -3);
+            }
+            
+            const units = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+            let result = "";
+            
+            for (let i = groups.length - 1; i >= 0; i--) {
+                let g = parseInt(groups[i]);
+                if (g > 0) {
+                    let showZero = (i < groups.length - 1);
+                    let gStr = docGroup3(g, showZero);
+                    result += gStr + units[i] + " ";
+                }
+            }
+            
+            result = result.trim();
+            if (result === "") return "";
+            
+            result = result.charAt(0).toUpperCase() + result.slice(1) + " đồng";
+            result = result.replace(/\s+/g, ' ');
+            return result;
+        }
+
         // Định dạng tiền tệ
         function formatNumber(num) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
@@ -473,11 +539,20 @@
             // Form Add submit
             $("#addForm").submit(function(e) {
                 e.preventDefault();
+                let serializedData = $(this).serializeArray();
+                let postData = {};
+                serializedData.forEach(function(item) {
+                    if (item.name === 'tongPhi' || item.name === 'giaTriXe') {
+                        postData[item.name] = item.value.replace(/,/g, '');
+                    } else {
+                        postData[item.name] = item.value;
+                    }
+                });
                 $.ajax({
                     url: "{{ url('management/baohiem/hopdongbaohiem/add') }}",
                     type: "POST",
                     dataType: "json",
-                    data: $(this).serialize(),
+                    data: postData,
                     success: function(response) {
                         Toast.fire({
                             icon: response.type,
@@ -537,10 +612,19 @@
                             }
                             $("#editForm input[name=edonViBaoHiem]").val(data.donViBaoHiem);
                             $("#editForm select[name=eloaiHinhBaoHiem]").val(data.loaiHinhBaoHiem);
-                            $("#editForm input[name=etongPhi]").val(data.tongPhi);
+                            
+                            // Định dạng số và gán đọc chữ cho Tổng Phí
+                            let formattedTongPhi = String(data.tongPhi || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            $("#editForm input[name=etongPhi]").val(formattedTongPhi);
+                            $('#edit_tongPhi_chu').text(docSoThanhChu(data.tongPhi || 0));
+                            
                             $("#editForm select[name=eloaiXe]").val(data.loaiXe);
                             $("#editForm input[name=enamSanXuat]").val(data.namSanXuat);
-                            $("#editForm input[name=egiaTriXe]").val(data.giaTriXe);
+                            
+                            // Định dạng số và gán đọc chữ cho Giá trị xe
+                            let formattedGiaTriXe = String(data.giaTriXe || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            $("#editForm input[name=egiaTriXe]").val(formattedGiaTriXe);
+                            $('#edit_giaTriXe_chu').text(docSoThanhChu(data.giaTriXe || 0));
                             $("#editForm input[name=engayCap]").val(data.ngayCap);
                             $("#editForm input[name=engayHieuLuc]").val(data.ngayHieuLuc);
                             $("#editForm input[name=engayKetThuc]").val(data.ngayKetThuc);
@@ -565,11 +649,20 @@
             // Form Edit submit
             $("#editForm").submit(function(e) {
                 e.preventDefault();
+                let serializedData = $(this).serializeArray();
+                let postData = {};
+                serializedData.forEach(function(item) {
+                    if (item.name === 'etongPhi' || item.name === 'egiaTriXe') {
+                        postData[item.name] = item.value.replace(/,/g, '');
+                    } else {
+                        postData[item.name] = item.value;
+                    }
+                });
                 $.ajax({
                     url: "{{ url('management/baohiem/hopdongbaohiem/update') }}",
                     type: "POST",
                     dataType: "json",
-                    data: $(this).serialize(),
+                    data: postData,
                     success: function(response) {
                         Toast.fire({
                             icon: response.type,
@@ -683,6 +776,29 @@
                 } else {
                     $('#eid_guest_baohiem').val('');
                     $('#edit_guest_info').html('Nhập SĐT để khớp khách hàng.').removeClass('text-success').addClass('text-danger');
+                }
+            });
+
+            // Định dạng phân tách nghìn và hiển thị đọc số thành chữ khi nhập
+            $(document).on('input', 'input[name=tongPhi], input[name=giaTriXe], input[name=etongPhi], input[name=egiaTriXe]', function() {
+                let name = $(this).attr('name');
+                let val = $(this).val().replace(/[^0-9]/g, '');
+                
+                // Cập nhật lại giá trị input đã được định dạng dấu phẩy
+                $(this).val(val.replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+                
+                let num = parseInt(val) || 0;
+                let text = docSoThanhChu(num);
+                
+                // Gán chữ số đọc được vào thẻ nhỏ phía dưới
+                if (name === 'tongPhi') {
+                    $('#add_tongPhi_chu').text(text);
+                } else if (name === 'giaTriXe') {
+                    $('#add_giaTriXe_chu').text(text);
+                } else if (name === 'etongPhi') {
+                    $('#edit_tongPhi_chu').text(text);
+                } else if (name === 'egiaTriXe') {
+                    $('#edit_giaTriXe_chu').text(text);
                 }
             });
 
