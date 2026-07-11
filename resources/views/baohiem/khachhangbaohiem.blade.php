@@ -284,10 +284,14 @@
 
             var table = $('#dataTable').DataTable({
                 responsive: true,
+                @if(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))
                 dom: 'Blfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
+                @else
+                dom: 'lfrtip',
+                @endif
                 ajax: {
                     url: "{{ url('management/baohiem/khachhangbaohiem/list') }}",
                     data: function(d) {
