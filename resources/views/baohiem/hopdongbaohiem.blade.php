@@ -878,6 +878,13 @@
                     });
                 }
             });
+
+            // Xử lý cuộn trang (scroll) khi đóng modal con mà modal cha vẫn hiển thị
+            $(document).on('hidden.bs.modal', '.modal', function () {
+                if ($('.modal.show').length > 0) {
+                    $('body').addClass('modal-open');
+                }
+            });
         });
     </script>
 @endsection
