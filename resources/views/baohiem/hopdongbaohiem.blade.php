@@ -131,7 +131,20 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
-                                <input type="text" name="donViBaoHiem" class="form-control" required placeholder="Ví dụ: MIC, BẢO VIỆT">
+                                <select name="donViBaoHiem" class="form-control" required>
+                                    <option value="">-- Chọn đơn vị --</option>
+                                    <option value="MIC">MIC</option>
+                                    <option value="TASCO">TASCO</option>
+                                    <option value="DBV NSH">DBV NSH</option>
+                                    <option value="BẢO VIỆT">BẢO VIỆT</option>
+                                    <option value="PVI">PVI</option>
+                                    <option value="PJICO">PJICO</option>
+                                    <option value="DBV AG">DBV AG</option>
+                                    <option value="BẢO MINH">BẢO MINH</option>
+                                    <option value="PTI">PTI</option>
+                                    <option value="BSH">BSH</option>
+                                    <option value="VNI">VNI</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -188,7 +201,12 @@
                         <div class="row">
                             <div class="col-md-12 form-group">
                                 <label>Nhân viên kinh doanh</label>
-                                <input type="text" name="nvKinhDoanh" class="form-control" placeholder="Tên nhân viên kinh doanh">
+                                <select name="nvKinhDoanh" class="form-control">
+                                    <option value="">-- Chọn nhân viên kinh doanh --</option>
+                                    @foreach($sales as $sale)
+                                        <option value="{{ $sale->surname }}">{{ $sale->surname }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -236,7 +254,20 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
-                                <input type="text" name="edonViBaoHiem" class="form-control" required placeholder="Ví dụ: MIC, BẢO VIỆT">
+                                <select name="edonViBaoHiem" class="form-control" required>
+                                    <option value="">-- Chọn đơn vị --</option>
+                                    <option value="MIC">MIC</option>
+                                    <option value="TASCO">TASCO</option>
+                                    <option value="DBV NSH">DBV NSH</option>
+                                    <option value="BẢO VIỆT">BẢO VIỆT</option>
+                                    <option value="PVI">PVI</option>
+                                    <option value="PJICO">PJICO</option>
+                                    <option value="DBV AG">DBV AG</option>
+                                    <option value="BẢO MINH">BẢO MINH</option>
+                                    <option value="PTI">PTI</option>
+                                    <option value="BSH">BSH</option>
+                                    <option value="VNI">VNI</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -293,7 +324,12 @@
                         <div class="row">
                             <div class="col-md-12 form-group">
                                 <label>Nhân viên kinh doanh</label>
-                                <input type="text" name="envKinhDoanh" class="form-control" placeholder="Tên nhân viên kinh doanh">
+                                <select name="envKinhDoanh" class="form-control">
+                                    <option value="">-- Chọn nhân viên kinh doanh --</option>
+                                    @foreach($sales as $sale)
+                                        <option value="{{ $sale->surname }}">{{ $sale->surname }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -610,7 +646,7 @@
                                 $('#eid_guest_baohiem').val(data.id_guest_baohiem);
                                 $('#edit_guest_info').html('Không tìm thấy thông tin khách hàng!').removeClass('text-success').addClass('text-danger');
                             }
-                            $("#editForm input[name=edonViBaoHiem]").val(data.donViBaoHiem);
+                            $("#editForm select[name=edonViBaoHiem]").val(data.donViBaoHiem);
                             $("#editForm select[name=eloaiHinhBaoHiem]").val(data.loaiHinhBaoHiem);
                             
                             // Định dạng số và gán đọc chữ cho Tổng Phí
@@ -628,7 +664,7 @@
                             $("#editForm input[name=engayCap]").val(data.ngayCap);
                             $("#editForm input[name=engayHieuLuc]").val(data.ngayHieuLuc);
                             $("#editForm input[name=engayKetThuc]").val(data.ngayKetThuc);
-                            $("#editForm input[name=envKinhDoanh]").val(data.nvKinhDoanh);
+                            $("#editForm select[name=envKinhDoanh]").val(data.nvKinhDoanh);
                             $("#editModal").modal('show');
                         } else {
                             Toast.fire({

@@ -13,11 +13,13 @@ class EventReal extends Migration
      */
     public function up()
     {
-        Schema::create('event_real', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('event_real')) {
+            Schema::create('event_real', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

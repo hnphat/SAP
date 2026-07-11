@@ -13,6 +13,7 @@ use Excel;
 
 use App\TypeCar;
 use App\BaoHiemHopDong;
+use App\User;
 
 class BaoHiemController extends Controller
 {
@@ -220,7 +221,15 @@ class BaoHiemController extends Controller
     public function getHopDongBaoHiemPanel() {
         $cars = TypeCar::all();
         $guests = GuestBaoHiem::all();
-        return view('baohiem.hopdongbaohiem', compact('cars', 'guests'));
+        $sales = User::where('active', 1)
+            ->whereHas('roles', function($query) {
+                $query->where('name', 'sale');
+            })
+            ->with('userDetail')
+            ->get()
+            ->pluck('userDetail')
+            ->filter();
+        return view('baohiem.hopdongbaohiem', compact('cars', 'guests', 'sales'));
     }
 
     public function getListHopDongBaoHiem(Request $request) {
