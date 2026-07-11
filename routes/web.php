@@ -914,6 +914,15 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hoantrangcongviec','DichVuController@hoanTrangCongViec');
     });
 
+    Route::group(['prefix' => 'baohiem'], function(){
+         // Quản lý khách hàng bảo hiểm
+        Route::get('khachhangbaohiem/panel','BaoHiemController@getGuestBaoHiemPanel')->name('dichvu.khachhangbaohiem');
+        Route::get('khachhangbaohiem/list','BaoHiemController@getListGuestBaoHiem');
+        Route::post('khachhangbaohiem/add','BaoHiemController@addGuestBaoHiem');
+        Route::post('khachhangbaohiem/edit/show','BaoHiemController@getGuestBaoHiemEdit');
+        Route::post('khachhangbaohiem/update','BaoHiemController@updateGuestBaoHiem');
+        Route::post('khachhangbaohiem/delete','BaoHiemController@deleteGuestBaoHiem');
+    });
 
     Route::group(['prefix' => 'cuochop', 'middleware' => ['f_hop']], function(){
         Route::get('quanlyhop','HopController@getQuanLy')->name('cuochop.panel');

@@ -379,6 +379,28 @@
                         @endif                                                
                     </ul>
                 </li>
+                <li class="nav-item">
+                    @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('tpdv') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem') ||
+                     \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-shield-alt"></i>
+                        <p>
+                            <strong>BẢO HIỂM</strong>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    @endif
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{route('dichvu.khachhangbaohiem')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Khách hàng bảo hiểm</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('boss') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system'))
@@ -515,13 +537,15 @@
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Doanh thu phụ kiện</p>
                             </a>
-                        </li>      
-                        <li class="nav-item">
-                            <a href="{{route('ketoan.khoanvay')}}" class="nav-link">
-                                <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Đơn hàng/Bảo lãnh</p>
-                            </a>
-                        </li>         
+                        </li> 
+                            @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system'))     
+                            <li class="nav-item">
+                                <a href="{{route('ketoan.khoanvay')}}" class="nav-link">
+                                    <i class="fas fa-caret-right nav-icon"></i>
+                                    <p>Đơn hàng/Bảo lãnh</p>
+                                </a>
+                            </li>         
+                            @endif
                         @endif
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
