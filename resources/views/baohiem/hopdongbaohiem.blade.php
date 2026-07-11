@@ -136,8 +136,12 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label>Loại hình bảo hiểm <span class="text-danger">*</span></label>
-                                <input type="text" name="loaiHinhBaoHiem" class="form-control" required placeholder="Ví dụ: TNDS, VCX">
+                            <label>Loại hình bảo hiểm <span class="text-danger">*</span></label>
+                            <select name="loaiHinhBaoHiem" class="form-control" required>
+                                <option value="">-- Chọn loại hình --</option>
+                                <option value="VCX">VCX</option>
+                                <option value="TNDS">TNDS</option>
+                            </select>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
@@ -235,8 +239,12 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label>Loại hình bảo hiểm <span class="text-danger">*</span></label>
-                                <input type="text" name="eloaiHinhBaoHiem" class="form-control" required placeholder="Ví dụ: TNDS, VCX">
+                            <label>Loại hình bảo hiểm <span class="text-danger">*</span></label>
+                            <select name="eloaiHinhBaoHiem" class="form-control" required>
+                                <option value="">-- Chọn loại hình --</option>
+                                <option value="VCX">VCX</option>
+                                <option value="TNDS">TNDS</option>
+                            </select>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
@@ -528,7 +536,7 @@
                                 $('#edit_guest_info').html('Không tìm thấy thông tin khách hàng!').removeClass('text-success').addClass('text-danger');
                             }
                             $("#editForm input[name=edonViBaoHiem]").val(data.donViBaoHiem);
-                            $("#editForm input[name=eloaiHinhBaoHiem]").val(data.loaiHinhBaoHiem);
+                            $("#editForm select[name=eloaiHinhBaoHiem]").val(data.loaiHinhBaoHiem);
                             $("#editForm input[name=etongPhi]").val(data.tongPhi);
                             $("#editForm select[name=eloaiXe]").val(data.loaiXe);
                             $("#editForm input[name=enamSanXuat]").val(data.namSanXuat);
