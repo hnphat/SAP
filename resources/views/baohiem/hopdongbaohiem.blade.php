@@ -76,7 +76,6 @@
                                                 <th>Loại xe</th>
                                                 <th>Năm sản xuất</th>
                                                 <th>Giá trị xe</th>
-                                                <th>Ngày nhập</th>
                                                 <th>Ngày cấp</th>
                                                 <th>Hiệu lực</th>
                                                 <th>Kết thúc</th>
@@ -114,12 +113,19 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label>Chọn khách hàng <span class="text-danger">*</span></label>
-                                <select name="id_guest_baohiem" class="form-control" required>
-                                    <option value="">-- Chọn khách hàng --</option>
-                                    @foreach($guests as $guest)
-                                        <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="input-group">
+                                    <select name="id_guest_baohiem" class="form-control" required>
+                                        <option value="">-- Chọn khách hàng --</option>
+                                        @foreach($guests as $guest)
+                                            <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#quickAddGuestModal" title="Thêm nhanh khách hàng">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
@@ -156,11 +162,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Ngày nhập</label>
-                                <input type="date" name="ngayNhap" class="form-control" value="{{ date('Y-m-d') }}">
-                            </div>
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-12 form-group">
                                 <label>Ngày cấp bảo hiểm</label>
                                 <input type="date" name="ngayCap" class="form-control" value="{{ date('Y-m-d') }}">
                             </div>
@@ -208,12 +210,19 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label>Chọn khách hàng <span class="text-danger">*</span></label>
-                                <select name="eid_guest_baohiem" class="form-control" required>
-                                    <option value="">-- Chọn khách hàng --</option>
-                                    @foreach($guests as $guest)
-                                        <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="input-group">
+                                    <select name="eid_guest_baohiem" class="form-control" required>
+                                        <option value="">-- Chọn khách hàng --</option>
+                                        @foreach($guests as $guest)
+                                            <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#quickAddGuestModal" title="Thêm nhanh khách hàng">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
@@ -250,11 +259,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Ngày nhập</label>
-                                <input type="date" name="engayNhap" class="form-control">
-                            </div>
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-12 form-group">
                                 <label>Ngày cấp bảo hiểm</label>
                                 <input type="date" name="engayCap" class="form-control">
                             </div>
@@ -279,6 +284,54 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         <button type="submit" id="btnEdit" class="btn btn-info">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Quick Add Guest -->
+    <div class="modal fade" id="quickAddGuestModal" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">THÊM NHANH KHÁCH HÀNG BẢO HIỂM</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="quickAddGuestForm" autocomplete="off">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Họ và Tên <span class="text-danger">*</span></label>
+                            <input type="text" name="hoTen" class="form-control" required placeholder="Họ và Tên">
+                        </div>
+                        <div class="form-group">
+                            <label>Điện thoại <span class="text-danger">*</span></label>
+                            <input type="text" name="dienThoai" class="form-control" required placeholder="Số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải gồm 10 chữ số">
+                        </div>
+                        <div class="form-group">
+                            <label>Địa chỉ <span class="text-danger">*</span></label>
+                            <input type="text" name="diaChi" class="form-control" required placeholder="Địa chỉ">
+                        </div>
+                        <div class="form-group">
+                            <label>Biển số</label>
+                            <input type="text" name="bienSo" class="form-control" placeholder="Biển số xe (nếu có)">
+                        </div>
+                        <div class="form-group">
+                            <label>Thông tin xe</label>
+                            <select name="thongTinXe" class="form-control">
+                                <option value="">-- Chọn xe --</option>
+                                @foreach($cars as $car)
+                                    <option value="{{ $car->name }}">{{ $car->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" id="btnQuickAddGuest" class="btn btn-success">Lưu lại</button>
                     </div>
                 </form>
             </div>
@@ -369,10 +422,6 @@
                             return data ? formatNumber(data) : '';
                         },
                         defaultContent: ''
-                    },
-                    { 
-                        "data": "ngayNhap",
-                        render: function(data) { return formatDate(data); }
                     },
                     { 
                         "data": "ngayCap",
@@ -469,7 +518,6 @@
                             $("#editForm select[name=eloaiXe]").val(data.loaiXe);
                             $("#editForm input[name=enamSanXuat]").val(data.namSanXuat);
                             $("#editForm input[name=egiaTriXe]").val(data.giaTriXe);
-                            $("#editForm input[name=engayNhap]").val(data.ngayNhap);
                             $("#editForm input[name=engayCap]").val(data.ngayCap);
                             $("#editForm input[name=engayHieuLuc]").val(data.ngayHieuLuc);
                             $("#editForm input[name=engayKetThuc]").val(data.ngayKetThuc);
@@ -509,6 +557,58 @@
                             $("#editForm")[0].reset();
                             $("#editModal").modal('hide');
                             table.ajax.reload();
+                        }
+                    },
+                    error: function(xhr) {
+                        let msg = 'Có lỗi xảy ra, vui lòng thử lại!';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Toast.fire({
+                            icon: 'error',
+                            title: msg
+                        });
+                    }
+                });
+            });
+
+            // Submit form thêm nhanh khách hàng
+            $("#quickAddGuestForm").submit(function(e) {
+                e.preventDefault();
+                let phone = $("#quickAddGuestForm input[name=dienThoai]").val();
+                if (!/^[0-9]{10}$/.test(phone)) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'Số điện thoại không hợp lệ! Phải gồm 10 chữ số.'
+                    });
+                    return;
+                }
+                $.ajax({
+                    url: "{{ url('management/baohiem/khachhangbaohiem/add') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        });
+
+                        if (response.code == 200) {
+                            let data = response.data;
+                            // Tạo Option mới
+                            let optText = data.hoTen + ' - ' + data.dienThoai;
+                            let newOptAdd = new Option(optText, data.id, true, true);
+                            let newOptEdit = new Option(optText, data.id, false, false);
+                            
+                            // Thêm và chọn ở form Add
+                            $("select[name=id_guest_baohiem]").append(newOptAdd).trigger('change');
+                            // Thêm vào form Edit
+                            $("select[name=eid_guest_baohiem]").append(newOptEdit);
+                            
+                            // Reset form & ẩn modal thêm nhanh
+                            $("#quickAddGuestForm")[0].reset();
+                            $("#quickAddGuestModal").modal('hide');
                         }
                     },
                     error: function(xhr) {

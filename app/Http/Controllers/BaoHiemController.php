@@ -95,7 +95,8 @@ class BaoHiemController extends Controller
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã thêm khách hàng bảo hiểm mới thành công!',
-                'code' => 200
+                'code' => 200,
+                'data' => $guest
             ]);
         }
 
@@ -253,7 +254,6 @@ class BaoHiemController extends Controller
 
         $hd = new BaoHiemHopDong();
         $hd->id_guest_baohiem = $request->id_guest_baohiem;
-        $hd->ngayNhap = $request->ngayNhap;
         $hd->donViBaoHiem = $request->donViBaoHiem;
         $hd->loaiHinhBaoHiem = $request->loaiHinhBaoHiem;
         $hd->tongPhi = $request->tongPhi ?? 0;
@@ -319,7 +319,6 @@ class BaoHiemController extends Controller
         $hd = BaoHiemHopDong::find($request->id);
         if ($hd) {
             $hd->id_guest_baohiem = $request->eid_guest_baohiem;
-            $hd->ngayNhap = $request->engayNhap;
             $hd->donViBaoHiem = $request->edonViBaoHiem;
             $hd->loaiHinhBaoHiem = $request->eloaiHinhBaoHiem;
             $hd->tongPhi = $request->etongPhi ?? 0;
