@@ -111,6 +111,13 @@ class BaoHiemController extends Controller
     public function getGuestBaoHiemEdit(Request $request) {
         $guest = GuestBaoHiem::find($request->id);
         if ($guest) {
+            if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss') || $guest->id_user_create == Auth::user()->id)) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Bạn không có quyền chỉnh sửa khách hàng này!',
+                    'code' => 403
+                ]);
+            }
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã tải thông tin khách hàng bảo hiểm!',
@@ -134,6 +141,23 @@ class BaoHiemController extends Controller
             ]);
         }
 
+        $guest = GuestBaoHiem::find($request->id);
+        if (!$guest) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy thông tin khách hàng bảo hiểm!',
+                'code' => 404
+            ]);
+        }
+
+        if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss') || $guest->id_user_create == Auth::user()->id)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền chỉnh sửa khách hàng này!',
+                'code' => 403
+            ]);
+        }
+
         // Kiểm tra định dạng số điện thoại (phải gồm 10 chữ số)
         if (!preg_match('/^[0-9]{10}$/', $request->edienThoai)) {
             return response()->json([
@@ -153,43 +177,42 @@ class BaoHiemController extends Controller
             ]);
         }
 
-        $guest = GuestBaoHiem::find($request->id);
-        if ($guest) {
-            $guest->hoTen = $request->ehoTen;
-            $guest->dienThoai = $request->edienThoai;
-            $guest->mst = $request->emst;
-            $guest->diaChi = $request->ediaChi;
-            $guest->bienSo = $request->ebienSo;
-            $guest->soKhung = $request->esoKhung;
-            $guest->soMay = $request->esoMay;
-            $guest->thongTinXe = $request->ethongTinXe;
-            $guest->taiXe = $request->etaiXe;
-            $guest->dienThoaiTaiXe = $request->edienThoaiTaiXe;
-            $guest->save();
+        $guest->hoTen = $request->ehoTen;
+        $guest->dienThoai = $request->edienThoai;
+        $guest->mst = $request->emst;
+        $guest->diaChi = $request->ediaChi;
+        $guest->bienSo = $request->ebienSo;
+        $guest->soKhung = $request->esoKhung;
+        $guest->soMay = $request->esoMay;
+        $guest->thongTinXe = $request->ethongTinXe;
+        $guest->taiXe = $request->etaiXe;
+        $guest->dienThoaiTaiXe = $request->edienThoaiTaiXe;
+        $guest->save();
 
-            // Ghi nhật ký hoạt động
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:i:s");
-            $nhatKy->chucNang = "Bảo hiểm - Khách hàng bảo hiểm";
-            $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng bảo hiểm ID " . $guest->id . ": " . $guest->hoTen . " - SĐT: " . $guest->dienThoai;
-            $nhatKy->save();
-
-            return response()->json([
-                'type' => 'success',
-                'message' => 'Đã cập nhật thông tin khách hàng bảo hiểm thành công!',
-                'code' => 200
-            ]);
-        }
+        // Ghi nhật ký hoạt động
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Bảo hiểm - Khách hàng bảo hiểm";
+        $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng bảo hiểm ID " . $guest->id . ": " . $guest->hoTen . " - SĐT: " . $guest->dienThoai;
+        $nhatKy->save();
 
         return response()->json([
-            'type' => 'error',
-            'message' => 'Lỗi hệ thống không thể cập nhật thông tin khách hàng bảo hiểm!',
-            'code' => 500
+            'type' => 'success',
+            'message' => 'Đã cập nhật thông tin khách hàng bảo hiểm thành công!',
+            'code' => 200
         ]);
     }
 
     public function deleteGuestBaoHiem(Request $request) {
+        if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền xóa khách hàng bảo hiểm!',
+                'code' => 403
+            ]);
+        }
+
         $guest = GuestBaoHiem::find($request->id);
         if ($guest) {
             $name = $guest->hoTen;
@@ -302,6 +325,13 @@ class BaoHiemController extends Controller
     public function getHopDongBaoHiemEdit(Request $request) {
         $hd = BaoHiemHopDong::find($request->id);
         if ($hd) {
+            if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss') || $hd->id_user_create == Auth::user()->id)) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Bạn không có quyền chỉnh sửa hợp đồng bảo hiểm này!',
+                    'code' => 403
+                ]);
+            }
             return response()->json([
                 'type' => 'success',
                 'message' => 'Đã tải thông tin hợp đồng bảo hiểm!',
@@ -326,43 +356,59 @@ class BaoHiemController extends Controller
         }
 
         $hd = BaoHiemHopDong::find($request->id);
-        if ($hd) {
-            $hd->id_guest_baohiem = $request->eid_guest_baohiem;
-            $hd->donViBaoHiem = $request->edonViBaoHiem;
-            $hd->loaiHinhBaoHiem = $request->eloaiHinhBaoHiem;
-            $hd->tongPhi = $request->etongPhi ?? 0;
-            $hd->loaiXe = $request->eloaiXe;
-            $hd->namSanXuat = $request->enamSanXuat;
-            $hd->giaTriXe = $request->egiaTriXe ?? 0;
-            $hd->ngayCap = $request->engayCap;
-            $hd->ngayHieuLuc = $request->engayHieuLuc;
-            $hd->ngayKetThuc = $request->engayKetThuc;
-            $hd->nvKinhDoanh = $request->envKinhDoanh;
-            $hd->save();
-
-            // Ghi nhật ký hoạt động
-            $nhatKy = new NhatKy();
-            $nhatKy->id_user = Auth::user()->id;
-            $nhatKy->thoiGian = Date("H:i:s");
-            $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
-            $nhatKy->noiDung = "Chỉnh sửa thông tin hợp đồng bảo hiểm ID " . $hd->id;
-            $nhatKy->save();
-
+        if (!$hd) {
             return response()->json([
-                'type' => 'success',
-                'message' => 'Đã cập nhật thông tin hợp đồng bảo hiểm thành công!',
-                'code' => 200
+                'type' => 'error',
+                'message' => 'Không tìm thấy hợp đồng bảo hiểm!',
+                'code' => 404
             ]);
         }
 
+        if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss') || $hd->id_user_create == Auth::user()->id)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền chỉnh sửa hợp đồng bảo hiểm này!',
+                'code' => 403
+            ]);
+        }
+
+        $hd->id_guest_baohiem = $request->eid_guest_baohiem;
+        $hd->donViBaoHiem = $request->edonViBaoHiem;
+        $hd->loaiHinhBaoHiem = $request->eloaiHinhBaoHiem;
+        $hd->tongPhi = $request->etongPhi ?? 0;
+        $hd->loaiXe = $request->eloaiXe;
+        $hd->namSanXuat = $request->enamSanXuat;
+        $hd->giaTriXe = $request->egiaTriXe ?? 0;
+        $hd->ngayCap = $request->engayCap;
+        $hd->ngayHieuLuc = $request->engayHieuLuc;
+        $hd->ngayKetThuc = $request->engayKetThuc;
+        $hd->nvKinhDoanh = $request->envKinhDoanh;
+        $hd->save();
+
+        // Ghi nhật ký hoạt động
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
+        $nhatKy->noiDung = "Chỉnh sửa thông tin hợp đồng bảo hiểm ID " . $hd->id;
+        $nhatKy->save();
+
         return response()->json([
-            'type' => 'error',
-            'message' => 'Lỗi hệ thống không thể cập nhật thông tin hợp đồng bảo hiểm!',
-            'code' => 500
+            'type' => 'success',
+            'message' => 'Đã cập nhật thông tin hợp đồng bảo hiểm thành công!',
+            'code' => 200
         ]);
     }
 
     public function deleteHopDongBaoHiem(Request $request) {
+        if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền xóa hợp đồng bảo hiểm!',
+                'code' => 403
+            ]);
+        }
+
         $hd = BaoHiemHopDong::find($request->id);
         if ($hd) {
             $id = $hd->id;

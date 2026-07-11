@@ -557,8 +557,14 @@
                     {
                         "data": null,
                         render: function(data, type, row) {
-                            return `<button class="btn btn-info btn-sm btn-edit" data-id="${row.id}"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            let html = '';
+                            if ({{ (Auth::user()->hasRole('system') || Auth::user()->hasRole('boss')) ? 'true' : 'false' }} || row.id_user_create == {{ Auth::user()->id }}) {
+                                html += `<button class="btn btn-info btn-sm btn-edit" data-id="${row.id}"><i class="fas fa-edit"></i></button> `;
+                            }
+                            if ({{ (Auth::user()->hasRole('system') || Auth::user()->hasRole('boss')) ? 'true' : 'false' }}) {
+                                html += `<button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            }
+                            return html;
                         }
                     }
                 ]
