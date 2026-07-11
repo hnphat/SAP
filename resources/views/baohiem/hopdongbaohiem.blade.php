@@ -1,0 +1,559 @@
+@extends('admin.index')
+@section('title')
+    Hợp đồng bảo hiểm
+@endsection
+@section('script_head')
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+@endsection
+@section('content')
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0"><strong>Quản lý hợp đồng bảo hiểm</strong></h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                            <li class="breadcrumb-item active">Bảo hiểm</li>
+                            <li class="breadcrumb-item active">Hợp đồng bảo hiểm</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div>
+                    <div class="card card-primary card-tabs">
+                        <div class="card-header p-0 pt-1">
+                            <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">
+                                        Danh sách hợp đồng bảo hiểm
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content" id="custom-tabs-one-tabContent">
+                                <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+                                    <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span> Thêm hợp đồng</button><br/><br/>
+                                    
+                                    <!-- Search form -->
+                                    <form id="searchForm" class="form-row mb-3 align-items-end">
+                                        <div class="col-sm-3">
+                                            <label>Từ ngày:</label>
+                                            <input type="date" id="from_date" name="from_date" class="form-control" value="{{ date('Y-m-d') }}">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label>Đến ngày:</label>
+                                            <input type="date" id="to_date" name="to_date" class="form-control" value="{{ date('Y-m-d') }}">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" id="btnSearch" class="btn btn-primary btn-block"><i class="fas fa-search"></i> Tìm kiếm</button>
+                                        </div>
+                                    </form>
+                                    <hr/>
+
+                                    <table id="dataTable" class="display table table-bordered table-striped" style="width:100%">
+                                        <thead>
+                                            <tr class="bg-cyan">
+                                                <th>TT</th>
+                                                <th>Khách hàng</th>
+                                                <th>SĐT</th>
+                                                <th>Đơn vị bảo hiểm</th>
+                                                <th>Loại hình</th>
+                                                <th>Tổng phí</th>
+                                                <th>Loại xe</th>
+                                                <th>Năm sản xuất</th>
+                                                <th>Giá trị xe</th>
+                                                <th>Ngày nhập</th>
+                                                <th>Ngày cấp</th>
+                                                <th>Hiệu lực</th>
+                                                <th>Kết thúc</th>
+                                                <th>Nhân viên KD</th>
+                                                <th>Người tạo</th>
+                                                <th>Ngày tạo</th>
+                                                <th>Tác vụ</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>                                    
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content -->
+    </div>   
+
+    <!-- Modal Add -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">THÊM MỚI HỢP ĐỒNG BẢO HIỂM</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="addForm" autocomplete="off">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Chọn khách hàng <span class="text-danger">*</span></label>
+                                <select name="id_guest_baohiem" class="form-control" required>
+                                    <option value="">-- Chọn khách hàng --</option>
+                                    @foreach($guests as $guest)
+                                        <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
+                                <input type="text" name="donViBaoHiem" class="form-control" required placeholder="Ví dụ: MIC, BẢO VIỆT">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Loại hình bảo hiểm <span class="text-danger">*</span></label>
+                                <input type="text" name="loaiHinhBaoHiem" class="form-control" required placeholder="Ví dụ: TNDS, VCX">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" name="tongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label>Loại xe</label>
+                                <select name="loaiXe" class="form-control">
+                                    <option value="">-- Chọn loại xe --</option>
+                                    @foreach($cars as $car)
+                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Năm sản xuất</label>
+                                <input type="number" name="namSanXuat" class="form-control" placeholder="Năm sản xuất" min="1900" max="2100">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Giá trị xe (VNĐ)</label>
+                                <input type="number" name="giaTriXe" class="form-control" placeholder="Giá trị xe" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Ngày nhập</label>
+                                <input type="date" name="ngayNhap" class="form-control" value="{{ date('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Ngày cấp bảo hiểm</label>
+                                <input type="date" name="ngayCap" class="form-control" value="{{ date('Y-m-d') }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Ngày hiệu lực bảo hiểm</label>
+                                <input type="date" name="ngayHieuLuc" class="form-control" value="{{ date('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Ngày kết thúc bảo hiểm</label>
+                                <input type="date" name="ngayKetThuc" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>Nhân viên kinh doanh</label>
+                                <input type="text" name="nvKinhDoanh" class="form-control" placeholder="Tên nhân viên kinh doanh">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" id="btnAdd" class="btn btn-success">Lưu lại</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">SỬA THÔNG TIN HỢP ĐỒNG BẢO HIỂM</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editForm" autocomplete="off">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="id">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Chọn khách hàng <span class="text-danger">*</span></label>
+                                <select name="eid_guest_baohiem" class="form-control" required>
+                                    <option value="">-- Chọn khách hàng --</option>
+                                    @foreach($guests as $guest)
+                                        <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
+                                <input type="text" name="edonViBaoHiem" class="form-control" required placeholder="Ví dụ: MIC, BẢO VIỆT">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Loại hình bảo hiểm <span class="text-danger">*</span></label>
+                                <input type="text" name="eloaiHinhBaoHiem" class="form-control" required placeholder="Ví dụ: TNDS, VCX">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" name="etongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm" min="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label>Loại xe</label>
+                                <select name="eloaiXe" class="form-control">
+                                    <option value="">-- Chọn loại xe --</option>
+                                    @foreach($cars as $car)
+                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Năm sản xuất</label>
+                                <input type="number" name="enamSanXuat" class="form-control" placeholder="Năm sản xuất" min="1900" max="2100">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Giá trị xe (VNĐ)</label>
+                                <input type="number" name="egiaTriXe" class="form-control" placeholder="Giá trị xe" min="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Ngày nhập</label>
+                                <input type="date" name="engayNhap" class="form-control">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Ngày cấp bảo hiểm</label>
+                                <input type="date" name="engayCap" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Ngày hiệu lực bảo hiểm</label>
+                                <input type="date" name="engayHieuLuc" class="form-control">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Ngày kết thúc bảo hiểm</label>
+                                <input type="date" name="engayKetThuc" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>Nhân viên kinh doanh</label>
+                                <input type="text" name="envKinhDoanh" class="form-control" placeholder="Tên nhân viên kinh doanh">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" id="btnEdit" class="btn btn-info">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+@section('script')
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/adminlte.min.js"></script>
+    <!-- Below is plugin for datatables -->
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        // Hàm định dạng ngày d/m/y
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            let date = new Date(dateString);
+            let d = String(date.getDate()).padStart(2, '0');
+            let m = String(date.getMonth() + 1).padStart(2, '0');
+            let y = date.getFullYear();
+            return `${d}/${m}/${y}`;
+        }
+
+        // Định dạng tiền tệ
+        function formatNumber(num) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+        }
+
+        $(document).ready(function() {
+            var table = $('#dataTable').DataTable({
+                responsive: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                ajax: {
+                    url: "{{ url('management/baohiem/hopdongbaohiem/list') }}",
+                    data: function(d) {
+                        d.from = $("#from_date").val();
+                        d.to = $("#to_date").val();
+                    }
+                },
+                "columnDefs": [ {
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                } ],
+                "order": [
+                    [ 0, 'desc' ]
+                ],
+                lengthMenu: [5, 10, 25, 50, 75, 100 ],
+                columns: [
+                    { "data": null },
+                    { "data": "guest_name" },
+                    { "data": "guest_phone" },
+                    { "data": "donViBaoHiem" },
+                    { "data": "loaiHinhBaoHiem" },
+                    { 
+                        "data": "tongPhi",
+                        render: function(data) {
+                            return formatNumber(data);
+                        }
+                    },
+                    { "data": "loaiXe", defaultContent: '' },
+                    { "data": "namSanXuat", defaultContent: '' },
+                    { 
+                        "data": "giaTriXe",
+                        render: function(data) {
+                            return data ? formatNumber(data) : '';
+                        },
+                        defaultContent: ''
+                    },
+                    { 
+                        "data": "ngayNhap",
+                        render: function(data) { return formatDate(data); }
+                    },
+                    { 
+                        "data": "ngayCap",
+                        render: function(data) { return formatDate(data); }
+                    },
+                    { 
+                        "data": "ngayHieuLuc",
+                        render: function(data) { return formatDate(data); }
+                    },
+                    { 
+                        "data": "ngayKetThuc",
+                        render: function(data) { return formatDate(data); }
+                    },
+                    { "data": "nvKinhDoanh", defaultContent: '' },
+                    { "data": "creator", defaultContent: '' },
+                    { 
+                        "data": "created_at",
+                        render: function(data) { return formatDate(data); }
+                    },
+                    {
+                        "data": null,
+                        render: function(data, type, row) {
+                            return `<button class="btn btn-info btn-sm btn-edit" data-id="${row.id}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                        }
+                    }
+                ]
+            });
+
+            table.on( 'order.dt search.dt', function () {
+                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                    table.cell(cell).invalidate('dom');
+                } );
+            } ).draw();
+
+            // Search trigger
+            $("#btnSearch").click(function(){
+                table.ajax.reload();
+            });
+
+            // Form Add submit
+            $("#addForm").submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ url('management/baohiem/hopdongbaohiem/add') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        });
+
+                        if (response.code == 200) {
+                            $("#addForm")[0].reset();
+                            $("#addModal").modal('hide');
+                            table.ajax.reload();
+                        }
+                    },
+                    error: function(xhr) {
+                        let msg = 'Có lỗi xảy ra, vui lòng thử lại!';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Toast.fire({
+                            icon: 'error',
+                            title: msg
+                        });
+                    }
+                });
+            });
+
+            // Load edit modal
+            $(document).on('click', '.btn-edit', function() {
+                let id = $(this).data('id');
+                $.ajax({
+                    url: "{{ url('management/baohiem/hopdongbaohiem/edit/show') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id
+                    },
+                    success: function(response) {
+                        if (response.code == 200) {
+                            let data = response.data;
+                            $("#editForm input[name=id]").val(data.id);
+                            $("#editForm select[name=eid_guest_baohiem]").val(data.id_guest_baohiem);
+                            $("#editForm input[name=edonViBaoHiem]").val(data.donViBaoHiem);
+                            $("#editForm input[name=eloaiHinhBaoHiem]").val(data.loaiHinhBaoHiem);
+                            $("#editForm input[name=etongPhi]").val(data.tongPhi);
+                            $("#editForm select[name=eloaiXe]").val(data.loaiXe);
+                            $("#editForm input[name=enamSanXuat]").val(data.namSanXuat);
+                            $("#editForm input[name=egiaTriXe]").val(data.giaTriXe);
+                            $("#editForm input[name=engayNhap]").val(data.ngayNhap);
+                            $("#editForm input[name=engayCap]").val(data.ngayCap);
+                            $("#editForm input[name=engayHieuLuc]").val(data.ngayHieuLuc);
+                            $("#editForm input[name=engayKetThuc]").val(data.ngayKetThuc);
+                            $("#editForm input[name=envKinhDoanh]").val(data.nvKinhDoanh);
+                            $("#editModal").modal('show');
+                        } else {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Không thể tải dữ liệu hợp đồng bảo hiểm!'
+                        });
+                    }
+                });
+            });
+
+            // Form Edit submit
+            $("#editForm").submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ url('management/baohiem/hopdongbaohiem/update') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        });
+
+                        if (response.code == 200) {
+                            $("#editForm")[0].reset();
+                            $("#editModal").modal('hide');
+                            table.ajax.reload();
+                        }
+                    },
+                    error: function(xhr) {
+                        let msg = 'Có lỗi xảy ra, vui lòng thử lại!';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Toast.fire({
+                            icon: 'error',
+                            title: msg
+                        });
+                    }
+                });
+            });
+
+            // Delete contract
+            $(document).on('click', '.btn-delete', function() {
+                let id = $(this).data('id');
+                if (confirm("Bạn có chắc muốn xóa hợp đồng bảo hiểm này?")) {
+                    $.ajax({
+                        url: "{{ url('management/baohiem/hopdongbaohiem/delete') }}",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            });
+                            if (response.code == 200) {
+                                table.ajax.reload();
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Không thể xóa hợp đồng bảo hiểm lúc này!'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+@endsection

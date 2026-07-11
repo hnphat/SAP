@@ -115,7 +115,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Điện thoại <span class="text-danger">*</span></label>
-                                <input type="text" name="dienThoai" class="form-control" required placeholder="Số điện thoại">
+                                <input type="text" name="dienThoai" class="form-control" required placeholder="Số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải gồm 10 chữ số (Ví dụ: 0918222333)">
                             </div>
                         </div>
                         <div class="row">
@@ -145,7 +145,12 @@
                         <div class="row">
                             <div class="col-md-12 form-group">
                                 <label>Thông tin xe</label>
-                                <input type="text" name="thongTinXe" class="form-control" placeholder="Thông tin xe">
+                                <select name="thongTinXe" class="form-control">
+                                    <option value="">-- Chọn xe --</option>
+                                    @foreach($cars as $car)
+                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -189,7 +194,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Điện thoại <span class="text-danger">*</span></label>
-                                <input type="text" name="edienThoai" class="form-control" required placeholder="Số điện thoại">
+                                <input type="text" name="edienThoai" class="form-control" required placeholder="Số điện thoại" pattern="[0-9]{10}" title="Số điện thoại phải gồm 10 chữ số (Ví dụ: 0918222333)">
                             </div>
                         </div>
                         <div class="row">
@@ -219,7 +224,12 @@
                         <div class="row">
                             <div class="col-md-12 form-group">
                                 <label>Thông tin xe</label>
-                                <input type="text" name="ethongTinXe" class="form-control" placeholder="Thông tin xe">
+                                <select name="ethongTinXe" class="form-control">
+                                    <option value="">-- Chọn xe --</option>
+                                    @foreach($cars as $car)
+                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -343,6 +353,14 @@
             // Form Add submit
             $("#addForm").submit(function(e) {
                 e.preventDefault();
+                let phone = $("#addForm input[name=dienThoai]").val();
+                if (!/^[0-9]{10}$/.test(phone)) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'Số điện thoại không hợp lệ! Phải gồm 10 chữ số (Ví dụ: 0918222333).'
+                    });
+                    return;
+                }
                 $.ajax({
                     url: "{{ url('management/baohiem/khachhangbaohiem/add') }}",
                     type: "POST",
@@ -395,7 +413,7 @@
                             $("#editForm input[name=ebienSo]").val(data.bienSo);
                             $("#editForm input[name=esoKhung]").val(data.soKhung);
                             $("#editForm input[name=esoMay]").val(data.soMay);
-                            $("#editForm input[name=ethongTinXe]").val(data.thongTinXe);
+                            $("#editForm select[name=ethongTinXe]").val(data.thongTinXe);
                             $("#editForm input[name=etaiXe]").val(data.taiXe);
                             $("#editForm input[name=edienThoaiTaiXe]").val(data.dienThoaiTaiXe);
                             $("#editModal").modal('show');
@@ -418,6 +436,14 @@
             // Form Edit submit
             $("#editForm").submit(function(e) {
                 e.preventDefault();
+                let phone = $("#editForm input[name=edienThoai]").val();
+                if (!/^[0-9]{10}$/.test(phone)) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'Số điện thoại không hợp lệ! Phải gồm 10 chữ số (Ví dụ: 0918222333).'
+                    });
+                    return;
+                }
                 $.ajax({
                     url: "{{ url('management/baohiem/khachhangbaohiem/update') }}",
                     type: "POST",
