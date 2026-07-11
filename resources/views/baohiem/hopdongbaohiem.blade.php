@@ -114,18 +114,20 @@
                             <div class="col-md-6 form-group">
                                 <label>Chọn khách hàng <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select name="id_guest_baohiem" class="form-control" required>
-                                        <option value="">-- Chọn khách hàng --</option>
+                                    <input type="text" id="add_guest_search" class="form-control" list="add_guest_list" placeholder="Nhập SĐT tìm khách hàng..." required autocomplete="off">
+                                    <datalist id="add_guest_list">
                                         @foreach($guests as $guest)
-                                            <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
+                                            <option value="{{ $guest->dienThoai }}" data-id="{{ $guest->id }}" data-name="{{ $guest->hoTen }}">{{ $guest->hoTen }}</option>
                                         @endforeach
-                                    </select>
+                                    </datalist>
+                                    <input type="hidden" name="id_guest_baohiem" id="id_guest_baohiem" required>
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#quickAddGuestModal" title="Thêm nhanh khách hàng">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
                                 </div>
+                                <small id="add_guest_info" class="form-text text-muted">Nhập số điện thoại để tìm khách hàng.</small>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
@@ -211,18 +213,20 @@
                             <div class="col-md-6 form-group">
                                 <label>Chọn khách hàng <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select name="eid_guest_baohiem" class="form-control" required>
-                                        <option value="">-- Chọn khách hàng --</option>
+                                    <input type="text" id="edit_guest_search" class="form-control" list="edit_guest_list" placeholder="Nhập SĐT tìm khách hàng..." required autocomplete="off">
+                                    <datalist id="edit_guest_list">
                                         @foreach($guests as $guest)
-                                            <option value="{{ $guest->id }}">{{ $guest->hoTen }} - {{ $guest->dienThoai }}</option>
+                                            <option value="{{ $guest->dienThoai }}" data-id="{{ $guest->id }}" data-name="{{ $guest->hoTen }}">{{ $guest->hoTen }}</option>
                                         @endforeach
-                                    </select>
+                                    </datalist>
+                                    <input type="hidden" name="eid_guest_baohiem" id="eid_guest_baohiem" required>
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#quickAddGuestModal" title="Thêm nhanh khách hàng">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
                                 </div>
+                                <small id="edit_guest_info" class="form-text text-muted"></small>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Đơn vị Bảo hiểm <span class="text-danger">*</span></label>
@@ -320,13 +324,8 @@
                             <input type="text" name="bienSo" class="form-control" placeholder="Biển số xe (nếu có)">
                         </div>
                         <div class="form-group">
-                            <label>Thông tin xe</label>
-                            <select name="thongTinXe" class="form-control">
-                                <option value="">-- Chọn xe --</option>
-                                @foreach($cars as $car)
-                                    <option value="{{ $car->name }}">{{ $car->name }}</option>
-                                @endforeach
-                            </select>
+                            <label>Số khung</label>
+                            <input type="text" name="soKhung" class="form-control" placeholder="Nhập số khung (nếu có)">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -511,7 +510,23 @@
                         if (response.code == 200) {
                             let data = response.data;
                             $("#editForm input[name=id]").val(data.id);
-                            $("#editForm select[name=eid_guest_baohiem]").val(data.id_guest_baohiem);
+                            
+                            // Tìm khách hàng tương ứng trong datalist để điền SĐT và thông tin
+                            let option = $('#edit_guest_list option').filter(function() {
+                                return $(this).data('id') == data.id_guest_baohiem;
+                            });
+                            
+                            if (option.length) {
+                                let phone = option.val();
+                                let name = option.data('name');
+                                $('#edit_guest_search').val(phone);
+                                $('#eid_guest_baohiem').val(data.id_guest_baohiem);
+                                $('#edit_guest_info').html('Khách hàng đã chọn: <strong>' + name + '</strong>').removeClass('text-danger').addClass('text-success');
+                            } else {
+                                $('#edit_guest_search').val('');
+                                $('#eid_guest_baohiem').val(data.id_guest_baohiem);
+                                $('#edit_guest_info').html('Không tìm thấy thông tin khách hàng!').removeClass('text-success').addClass('text-danger');
+                            }
                             $("#editForm input[name=edonViBaoHiem]").val(data.donViBaoHiem);
                             $("#editForm input[name=eloaiHinhBaoHiem]").val(data.loaiHinhBaoHiem);
                             $("#editForm input[name=etongPhi]").val(data.tongPhi);
@@ -596,15 +611,18 @@
 
                         if (response.code == 200) {
                             let data = response.data;
-                            // Tạo Option mới
-                            let optText = data.hoTen + ' - ' + data.dienThoai;
-                            let newOptAdd = new Option(optText, data.id, true, true);
-                            let newOptEdit = new Option(optText, data.id, false, false);
                             
-                            // Thêm và chọn ở form Add
-                            $("select[name=id_guest_baohiem]").append(newOptAdd).trigger('change');
-                            // Thêm vào form Edit
-                            $("select[name=eid_guest_baohiem]").append(newOptEdit);
+                            // Thêm Option mới vào cả 2 datalist
+                            let newOptAdd = $('<option>').val(data.dienThoai).attr('data-id', data.id).attr('data-name', data.hoTen).text(data.hoTen);
+                            let newOptEdit = $('<option>').val(data.dienThoai).attr('data-id', data.id).attr('data-name', data.hoTen).text(data.hoTen);
+                            
+                            $('#add_guest_list').append(newOptAdd);
+                            $('#edit_guest_list').append(newOptEdit);
+                            
+                            // Tự động điền và chọn ở form Add
+                            $('#add_guest_search').val(data.dienThoai);
+                            $('#id_guest_baohiem').val(data.id);
+                            $('#add_guest_info').html('Khách hàng đã chọn: <strong>' + data.hoTen + '</strong>').removeClass('text-danger').addClass('text-success');
                             
                             // Reset form & ẩn modal thêm nhanh
                             $("#quickAddGuestForm")[0].reset();
@@ -622,6 +640,42 @@
                         });
                     }
                 });
+            });
+
+            // Xử lý đồng bộ datalist khách hàng form thêm mới
+            $(document).on('input', '#add_guest_search', function() {
+                let val = $(this).val();
+                let option = $('#add_guest_list option').filter(function() {
+                    return this.value === val;
+                });
+                
+                if (option.length) {
+                    let id = option.data('id');
+                    let name = option.data('name');
+                    $('#id_guest_baohiem').val(id);
+                    $('#add_guest_info').html('Khách hàng đã chọn: <strong>' + name + '</strong>').removeClass('text-danger').addClass('text-success');
+                } else {
+                    $('#id_guest_baohiem').val('');
+                    $('#add_guest_info').html('Nhập SĐT để khớp khách hàng.').removeClass('text-success').addClass('text-danger');
+                }
+            });
+
+            // Xử lý đồng bộ datalist khách hàng form chỉnh sửa
+            $(document).on('input', '#edit_guest_search', function() {
+                let val = $(this).val();
+                let option = $('#edit_guest_list option').filter(function() {
+                    return this.value === val;
+                });
+                
+                if (option.length) {
+                    let id = option.data('id');
+                    let name = option.data('name');
+                    $('#eid_guest_baohiem').val(id);
+                    $('#edit_guest_info').html('Khách hàng đã chọn: <strong>' + name + '</strong>').removeClass('text-danger').addClass('text-success');
+                } else {
+                    $('#eid_guest_baohiem').val('');
+                    $('#edit_guest_info').html('Nhập SĐT để khớp khách hàng.').removeClass('text-success').addClass('text-danger');
+                }
             });
 
             // Delete contract
