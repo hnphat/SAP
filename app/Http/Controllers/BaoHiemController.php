@@ -91,6 +91,7 @@ class BaoHiemController extends Controller
             $nhatKy->thoiGian = Date("H:i:s");
             $nhatKy->chucNang = "Bảo hiểm - Khách hàng bảo hiểm";
             $nhatKy->noiDung = "Thêm mới khách hàng bảo hiểm: " . $guest->hoTen . " - SĐT: " . $guest->dienThoai;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([
@@ -195,6 +196,7 @@ class BaoHiemController extends Controller
         $nhatKy->thoiGian = Date("H:i:s");
         $nhatKy->chucNang = "Bảo hiểm - Khách hàng bảo hiểm";
         $nhatKy->noiDung = "Chỉnh sửa thông tin khách hàng bảo hiểm ID " . $guest->id . ": " . $guest->hoTen . " - SĐT: " . $guest->dienThoai;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
 
         return response()->json([
@@ -225,6 +227,7 @@ class BaoHiemController extends Controller
             $nhatKy->thoiGian = Date("H:i:s");
             $nhatKy->chucNang = "Bảo hiểm - Khách hàng bảo hiểm";
             $nhatKy->noiDung = "Xóa khách hàng bảo hiểm: " . $name . " - SĐT: " . $phone;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([
@@ -306,6 +309,7 @@ class BaoHiemController extends Controller
             $nhatKy->thoiGian = Date("H:i:s");
             $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
             $nhatKy->noiDung = "Thêm mới hợp đồng bảo hiểm cho khách hàng ID: " . $hd->id_guest_baohiem . " - Tổng phí: " . $hd->tongPhi;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([
@@ -391,6 +395,7 @@ class BaoHiemController extends Controller
         $nhatKy->thoiGian = Date("H:i:s");
         $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
         $nhatKy->noiDung = "Chỉnh sửa thông tin hợp đồng bảo hiểm ID " . $hd->id;
+        $nhatKy->ghiChu = Carbon::now();
         $nhatKy->save();
 
         return response()->json([
@@ -420,6 +425,7 @@ class BaoHiemController extends Controller
             $nhatKy->thoiGian = Date("H:i:s");
             $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
             $nhatKy->noiDung = "Xóa hợp đồng bảo hiểm ID: " . $id;
+            $nhatKy->ghiChu = Carbon::now();
             $nhatKy->save();
 
             return response()->json([
@@ -435,4 +441,280 @@ class BaoHiemController extends Controller
             'code' => 500
         ]);
     }
+
+    public function importHopDongBaoHiem(Request $request) {
+        if (!(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền thực hiện chức năng này!',
+                'code' => 403
+            ]);
+        }
+
+        if (!$request->hasFile('excel')) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Vui lòng chọn tệp Excel!',
+                'code' => 400
+            ]);
+        }
+
+        try {
+            $theArray = Excel::toArray([], $request->file('excel'));
+            if (empty($theArray) || empty($theArray[0]) || count($theArray[0]) < 2) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Tệp Excel trống hoặc không đúng cấu trúc!',
+                    'code' => 400
+                ]);
+            }
+
+            $rows = $theArray[0];
+            $headers = $rows[0];
+            
+            // Map header names to column indices case-insensitively
+            $headersMap = [];
+            foreach ($headers as $index => $header) {
+                if ($header !== null) {
+                    $cleanHeader = mb_strtolower(trim($header), 'UTF-8');
+                    $headersMap[$cleanHeader] = $index;
+                }
+            }
+
+            // Verify essential headers
+            $requiredHeaders = ['khách hàng', 'sđt', 'địa chỉ'];
+            foreach ($requiredHeaders as $req) {
+                if (!isset($headersMap[$req])) {
+                    return response()->json([
+                        'type' => 'error',
+                        'message' => 'Tệp Excel thiếu cột bắt buộc: "' . $req . '". Vui lòng kiểm tra lại tệp mẫu!',
+                        'code' => 400
+                    ]);
+                }
+            }
+
+            // Helper function to get values dynamically
+            $getVal = function($row, $key) use ($headersMap) {
+                $keyLower = mb_strtolower($key, 'UTF-8');
+                if (isset($headersMap[$keyLower]) && isset($row[$headersMap[$keyLower]])) {
+                    $val = $row[$headersMap[$keyLower]];
+                    return $val !== null ? trim($val) : null;
+                }
+                return null;
+            };
+
+            // Date parsing helper
+            $parseDate = function($val) {
+                if (empty($val)) {
+                    return null;
+                }
+                if (is_numeric($val)) {
+                    try {
+                        return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($val)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        // ignore
+                    }
+                }
+                $val = trim($val);
+                try {
+                    if (preg_match('/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/', $val)) {
+                        $separator = strpos($val, '/') !== false ? '/' : '-';
+                        return \Carbon\Carbon::createFromFormat("d{$separator}m{$separator}Y", $val)->format('Y-m-d');
+                    }
+                    return \Carbon\Carbon::parse($val)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    return null;
+                }
+            };
+
+            // DateTime parsing helper
+            $parseDateTime = function($val) {
+                if (empty($val)) {
+                    return now()->format('Y-m-d H:i:s');
+                }
+                if (is_numeric($val)) {
+                    try {
+                        return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($val)->format('Y-m-d H:i:s');
+                    } catch (\Exception $e) {
+                        // ignore
+                    }
+                }
+                $val = trim($val);
+                try {
+                    if (preg_match('/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}( \d{1,2}:\d{1,2}(:\d{1,2})?)?$/', $val)) {
+                        $parts = explode(' ', $val);
+                        $datePart = $parts[0];
+                        $timePart = isset($parts[1]) ? $parts[1] : '00:00:00';
+                        $separator = strpos($datePart, '/') !== false ? '/' : '-';
+                        return \Carbon\Carbon::createFromFormat("d{$separator}m{$separator}Y " . (substr_count($timePart, ':') == 1 ? 'H:i' : 'H:i:s'), $datePart . ' ' . $timePart)->format('Y-m-d H:i:s');
+                    }
+                    return \Carbon\Carbon::parse($val)->format('Y-m-d H:i:s');
+                } catch (\Exception $e) {
+                    return now()->format('Y-m-d H:i:s');
+                }
+            };
+
+            // Clean numeric values helper
+            $cleanNumeric = function($val) {
+                if (empty($val)) {
+                    return 0;
+                }
+                $cleaned = preg_replace('/[^0-9]/', '', $val);
+                return (int)$cleaned;
+            };
+
+            $numRows = count($rows);
+            $importedGuests = 0;
+            $importedContracts = 0;
+
+            \DB::beginTransaction();
+
+            // STEP 1: Loop and insert guests
+            for ($i = 1; $i < $numRows; $i++) {
+                $row = $rows[$i];
+                if (empty($row) || !isset($row[0])) {
+                    continue;
+                }
+
+                $hoTen = $getVal($row, 'Khách hàng');
+                $dienThoai = $getVal($row, 'SĐT');
+                
+                if (empty($hoTen) || empty($dienThoai)) {
+                    continue;
+                }
+
+                // Clean phone number (leave only digits)
+                $dienThoai = preg_replace('/[^0-9]/', '', $dienThoai);
+
+                // Check if phone already exists
+                $guestExists = GuestBaoHiem::where('dienThoai', $dienThoai)->exists();
+                if (!$guestExists) {
+                    // Create guest
+                    $guest = new GuestBaoHiem();
+                    $guest->hoTen = $hoTen;
+                    $guest->dienThoai = $dienThoai;
+                    $guest->diaChi = $getVal($row, 'Địa chỉ');
+                    $guest->bienSo = $getVal($row, 'Biển số');
+                    $guest->soKhung = $getVal($row, 'Số Khung');
+                    
+                    // ThongTinXe column: check if present, otherwise default to "Loại xe"
+                    $thongTinXe = $getVal($row, 'Thông tin xe');
+                    if (empty($thongTinXe)) {
+                        $thongTinXe = $getVal($row, 'Loại xe');
+                    }
+                    $guest->thongTinXe = $thongTinXe;
+
+                    // Match user creator
+                    $creatorVal = $getVal($row, 'Người tạo');
+                    $creatorId = Auth::user()->id;
+                    if (!empty($creatorVal)) {
+                        $userDetail = \DB::table('users_detail')
+                            ->whereRaw('LOWER(surname) = ?', [mb_strtolower($creatorVal, 'UTF-8')])
+                            ->first();
+                        if ($userDetail) {
+                            $creatorId = $userDetail->id_user;
+                        } else {
+                            $userObj = User::whereRaw('LOWER(name) = ?', [mb_strtolower($creatorVal, 'UTF-8')])->first();
+                            if ($userObj) {
+                                $creatorId = $userObj->id;
+                            }
+                        }
+                    }
+                    $guest->id_user_create = $creatorId;
+                    
+                    // Date created
+                    $ngayTaoVal = $getVal($row, 'Ngày tạo');
+                    if (!empty($ngayTaoVal)) {
+                        $guest->created_at = $parseDateTime($ngayTaoVal);
+                    }
+                    
+                    $guest->save();
+                    $importedGuests++;
+                }
+            }
+
+            // STEP 2: Loop and insert insurance contracts
+            for ($i = 1; $i < $numRows; $i++) {
+                $row = $rows[$i];
+                if (empty($row)) continue;
+
+                $dienThoai = $getVal($row, 'SĐT');
+                if (empty($dienThoai)) continue;
+
+                $dienThoai = preg_replace('/[^0-9]/', '', $dienThoai);
+
+                // Find guest
+                $guest = GuestBaoHiem::where('dienThoai', $dienThoai)->first();
+                if (!$guest) {
+                    continue;
+                }
+
+                $hd = new BaoHiemHopDong();
+                $hd->id_guest_baohiem = $guest->id;
+                $hd->donViBaoHiem = $getVal($row, 'Đơn vị bảo hiểm');
+                $hd->loaiHinhBaoHiem = $getVal($row, 'Loại hình');
+                $hd->tongPhi = $cleanNumeric($getVal($row, 'Tổng phí'));
+                $hd->loaiXe = $getVal($row, 'Loại xe');
+                $hd->namSanXuat = $getVal($row, 'Năm sản xuất');
+                $hd->giaTriXe = $cleanNumeric($getVal($row, 'Giá trị xe'));
+                
+                $hd->ngayCap = $parseDate($getVal($row, 'Ngày cấp'));
+                $hd->ngayHieuLuc = $parseDate($getVal($row, 'Hiệu lực'));
+                $hd->ngayKetThuc = $parseDate($getVal($row, 'Kết thúc'));
+                $hd->nvKinhDoanh = $getVal($row, 'Nhân viên KD');
+
+                // Match user creator
+                $creatorVal = $getVal($row, 'Người tạo');
+                $creatorId = Auth::user()->id;
+                if (!empty($creatorVal)) {
+                    $userDetail = \DB::table('users_detail')
+                        ->whereRaw('LOWER(surname) = ?', [mb_strtolower($creatorVal, 'UTF-8')])
+                        ->first();
+                    if ($userDetail) {
+                        $creatorId = $userDetail->id_user;
+                    } else {
+                        $userObj = User::whereRaw('LOWER(name) = ?', [mb_strtolower($creatorVal, 'UTF-8')])->first();
+                        if ($userObj) {
+                            $creatorId = $userObj->id;
+                        }
+                    }
+                }
+                $hd->id_user_create = $creatorId;
+
+                $ngayTaoVal = $getVal($row, 'Ngày tạo');
+                if (!empty($ngayTaoVal)) {
+                    $hd->created_at = $parseDateTime($ngayTaoVal);
+                }
+
+                $hd->save();
+                $importedContracts++;
+            }
+
+            \DB::commit();
+
+            // Log activity
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:i:s");
+            $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
+            $nhatKy->noiDung = "Nhập Excel: đã thêm " . $importedGuests . " khách hàng mới và " . $importedContracts . " hợp đồng bảo hiểm.";
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->save();
+
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Đã nhập thành công ' . $importedGuests . ' khách hàng mới và ' . $importedContracts . ' hợp đồng bảo hiểm!',
+                'code' => 200
+            ]);
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Có lỗi xảy ra trong quá trình nhập Excel: ' . $e->getMessage(),
+                'code' => 500
+            ]);
+        }
+    }
 }
+

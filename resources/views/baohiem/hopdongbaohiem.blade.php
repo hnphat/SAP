@@ -46,7 +46,11 @@
                         <div class="card-body">
                             <div class="tab-content" id="custom-tabs-one-tabContent">
                                 <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
-                                    <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span> Thêm hợp đồng</button><br/><br/>
+                                    <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span> Thêm hợp đồng</button>
+                                    @if(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))
+                                        <button id="pressImport" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><span class="fas fa-file-import"></span> Nhập Excel</button>
+                                    @endif
+                                    <br/><br/>
                                     
                                     <!-- Search form -->
                                     <form id="searchForm" class="form-row mb-3 align-items-end">
@@ -97,6 +101,43 @@
         <!-- /.content -->
     </div>   
 
+    @if(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))
+    <!-- Modal Import -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">NHẬP HỢP ĐỒNG BẢO HIỂM TỪ EXCEL</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="importForm" autocomplete="off" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Chọn tệp Excel (.xlsx, .xls) <span class="text-danger">*</span></label>
+                            <div class="custom-file">
+                                <input type="file" name="excel" class="custom-file-input" id="excelFile" accept=".xlsx, .xls" required>
+                                <label class="custom-file-label" for="excelFile" data-browse="Chọn tệp">Chọn tệp Excel...</label>
+                            </div>
+                        </div>
+                        <div class="form-group text-center mt-3">
+                            <a href="{{ asset('upload/baohiem/samplebaohiem.xlsx') }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-download"></i> Tải tệp mẫu (.xlsx)
+                            </a>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" id="btnImport" class="btn btn-primary">Nhập dữ liệu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Modal Add -->
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -135,15 +176,14 @@
                                     <option value="">-- Chọn đơn vị --</option>
                                     <option value="MIC">MIC</option>
                                     <option value="TASCO">TASCO</option>
-                                    <option value="DBV NSH">DBV NSH</option>
+                                    <option value="DBV Nam Sông Hậu">DBV Nam Sông Hậu</option>
                                     <option value="BẢO VIỆT">BẢO VIỆT</option>
                                     <option value="PVI">PVI</option>
                                     <option value="PJICO">PJICO</option>
-                                    <option value="DBV AG">DBV AG</option>
+                                    <option value="DBV An Giang">DBV An Giang</option>
                                     <option value="BẢO MINH">BẢO MINH</option>
                                     <option value="PTI">PTI</option>
                                     <option value="BSH">BSH</option>
-                                    <option value="VNI">VNI</option>
                                 </select>
                             </div>
                         </div>
@@ -258,15 +298,14 @@
                                     <option value="">-- Chọn đơn vị --</option>
                                     <option value="MIC">MIC</option>
                                     <option value="TASCO">TASCO</option>
-                                    <option value="DBV NSH">DBV NSH</option>
+                                    <option value="DBV Nam Sông Hậu">DBV Nam Sông Hậu</option>
                                     <option value="BẢO VIỆT">BẢO VIỆT</option>
                                     <option value="PVI">PVI</option>
                                     <option value="PJICO">PJICO</option>
-                                    <option value="DBV AG">DBV AG</option>
+                                    <option value="DBV An Giang">DBV An Giang</option>
                                     <option value="BẢO MINH">BẢO MINH</option>
                                     <option value="PTI">PTI</option>
                                     <option value="BSH">BSH</option>
-                                    <option value="VNI">VNI</option>
                                 </select>
                             </div>
                         </div>
@@ -877,6 +916,61 @@
                         }
                     });
                 }
+            });
+
+            // Hiển thị tên file khi chọn file excel
+            $(document).on('change', '.custom-file-input', function() {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            });
+
+            // Form Import submit
+            $("#importForm").submit(function(e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+                
+                // Hiển thị màn hình chờ loading
+                Swal.fire({
+                    title: 'Đang xử lý dữ liệu...',
+                    text: 'Vui lòng chờ trong giây lát.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                $.ajax({
+                    url: "{{ url('management/baohiem/hopdongbaohiem/import') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.close();
+                        Toast.fire({
+                            icon: response.type,
+                            title: response.message
+                        });
+
+                        if (response.code == 200) {
+                            $("#importForm")[0].reset();
+                            $("#importForm .custom-file-label").html('Chọn tệp Excel...');
+                            $("#importModal").modal('hide');
+                            table.ajax.reload();
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.close();
+                        let msg = 'Có lỗi xảy ra, vui lòng thử lại!';
+                        if(xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Toast.fire({
+                            icon: 'error',
+                            title: msg
+                        });
+                    }
+                });
             });
 
             // Xử lý cuộn trang (scroll) khi đóng modal con mà modal cha vẫn hiển thị

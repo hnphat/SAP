@@ -930,6 +930,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hopdongbaohiem/edit/show','BaoHiemController@getHopDongBaoHiemEdit');
         Route::post('hopdongbaohiem/update','BaoHiemController@updateHopDongBaoHiem');
         Route::post('hopdongbaohiem/delete','BaoHiemController@deleteHopDongBaoHiem');
+        Route::post('hopdongbaohiem/import','BaoHiemController@importHopDongBaoHiem');
     });
 
     Route::group(['prefix' => 'cuochop', 'middleware' => ['f_hop']], function(){
