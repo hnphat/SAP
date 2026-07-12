@@ -1,6 +1,6 @@
 @extends('admin.index')
 @section('title')
-    Hợp đồng bảo hiểm
+    ĐƠN HÀNG BẢO HIỂM
 @endsection
 @section('script_head')
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -15,13 +15,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><strong>Quản lý hợp đồng bảo hiểm</strong></h1>
+                        <h1 class="m-0"><strong>Quản lý ĐƠN HÀNG BẢO HIỂM</strong></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
                             <li class="breadcrumb-item active">Bảo hiểm</li>
-                            <li class="breadcrumb-item active">Hợp đồng bảo hiểm</li>
+                            <li class="breadcrumb-item active">ĐƠN HÀNG BẢO HIỂM</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -38,7 +38,7 @@
                             <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">
-                                        Danh sách hợp đồng bảo hiểm
+                                        Danh sách ĐƠN HÀNG BẢO HIỂM
                                     </a>
                                 </li>
                             </ul>
@@ -46,7 +46,7 @@
                         <div class="card-body">
                             <div class="tab-content" id="custom-tabs-one-tabContent">
                                 <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
-                                    <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span> Thêm hợp đồng</button>
+                                    <button id="pressAdd" class="btn btn-success" data-toggle="modal" data-target="#addModal"><span class="fas fa-plus-circle"></span> Thêm đơn hàng</button>
                                     @if(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))
                                         <button id="pressImport" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><span class="fas fa-file-import"></span> Nhập Excel</button>
                                     @endif
@@ -107,7 +107,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">NHẬP HỢP ĐỒNG BẢO HIỂM TỪ EXCEL</h5>
+                    <h5 class="modal-title">NHẬP ĐƠN HÀNG BẢO HIỂM TỪ EXCEL</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -143,7 +143,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">THÊM MỚI HỢP ĐỒNG BẢO HIỂM</h5>
+                    <h5 class="modal-title">THÊM MỚI ĐƠN HÀNG BẢO HIỂM</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -264,7 +264,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">SỬA THÔNG TIN HỢP ĐỒNG BẢO HIỂM</h5>
+                    <h5 class="modal-title">SỬA THÔNG TIN ĐƠN HÀNG BẢO HIỂM</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -725,7 +725,7 @@
                     error: function() {
                         Toast.fire({
                             icon: 'error',
-                            title: 'Không thể tải dữ liệu hợp đồng bảo hiểm!'
+                            title: 'Không thể tải dữ liệu ĐƠN HÀNG BẢO HIỂM!'
                         });
                     }
                 });
@@ -890,7 +890,7 @@
             // Delete contract
             $(document).on('click', '.btn-delete', function() {
                 let id = $(this).data('id');
-                if (confirm("Bạn có chắc muốn xóa hợp đồng bảo hiểm này?")) {
+                if (confirm("Bạn có chắc muốn xóa ĐƠN HÀNG BẢO HIỂM này?")) {
                     $.ajax({
                         url: "{{ url('management/baohiem/hopdongbaohiem/delete') }}",
                         type: "POST",
@@ -911,7 +911,7 @@
                         error: function() {
                             Toast.fire({
                                 icon: 'error',
-                                title: 'Không thể xóa hợp đồng bảo hiểm lúc này!'
+                                title: 'Không thể xóa ĐƠN HÀNG BẢO HIỂM lúc này!'
                             });
                         }
                     });

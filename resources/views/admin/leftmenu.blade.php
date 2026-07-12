@@ -402,7 +402,7 @@
                         <li class="nav-item">
                             <a href="{{route('dichvu.hopdongbaohiem')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
-                                <p>Hợp đồng bảo hiểm</p>
+                                <p>Đơn hàng bảo hiểm</p>
                             </a>
                         </li>
                     </ul>
