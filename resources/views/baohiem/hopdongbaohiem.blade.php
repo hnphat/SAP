@@ -1445,8 +1445,12 @@
                             { "data": "guest_name" },
                             { 
                                 "data": "guest_phone",
-                                render: function(data) {
+                                render: function(data, type, row) {
                                     if (!data) return '';
+                                    let btnHtml = `<a href="tel:${data}" class="btn btn-sm btn-success d-inline-block" style="border-radius: 20px;"><i class="fas fa-phone-alt mr-1"></i> ${data}</a>`;
+                                    if (row.is_duplicate) {
+                                        return `<div class="d-flex align-items-center justify-content-center">${btnHtml} <span class="badge badge-danger ml-2 px-2 py-1">Trùng</span></div>`;
+                                    }
                                     return `<a href="tel:${data}" class="btn btn-sm btn-success btn-block" style="border-radius: 20px;"><i class="fas fa-phone-alt mr-1"></i> ${data}</a>`;
                                 }
                             },

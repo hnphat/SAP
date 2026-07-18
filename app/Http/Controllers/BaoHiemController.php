@@ -284,6 +284,15 @@ class BaoHiemController extends Controller
         $targetMonth = $targetDate->month;
         $targetYear = $targetDate->year;
 
+        // Lấy danh sách số điện thoại trong guest_baohiem để đối chiếu
+        $guestBaoHiemPhones = GuestBaoHiem::pluck('dienThoai')
+            ->map(function($phone) {
+                return preg_replace('/[^0-9]/', '', $phone);
+            })
+            ->filter()
+            ->unique()
+            ->toArray();
+
         // 1. Lấy dữ liệu từ bảng baohiem_hopdong
         $data = BaoHiemHopDong::select(
                 'baohiem_hopdong.*', 
@@ -309,6 +318,7 @@ class BaoHiemController extends Controller
                 'stt' => 0, // Sẽ đánh lại stt tự tăng ở sau
                 'guest_name' => $row->guest_name,
                 'guest_phone' => $row->guest_phone,
+                'is_duplicate' => false, // Dòng này là từ bảng baohiem_hopdong đã là hợp đồng nên không cần hiển thị trùng
                 'loaiHinhBaoHiem' => $row->loaiHinhBaoHiem,
                 'donViBaoHiem' => $row->donViBaoHiem,
                 'ngayCap' => $row->ngayCap ? Carbon::parse($row->ngayCap)->format('Y-m-d') : '',
@@ -338,11 +348,16 @@ class BaoHiemController extends Controller
 
         foreach ($guestsData as $row) {
             $creatorName = $row->creator_name ?: ($row->creator_username ?: '');
+            
+            // So khớp số điện thoại của guest xem đã tồn tại trong guest_baohiem chưa
+            $cleanPhone = preg_replace('/[^0-9]/', '', $row->phone);
+            $isDuplicate = in_array($cleanPhone, $guestBaoHiemPhones);
 
             $result[] = [
                 'stt' => 0,
                 'guest_name' => $row->name,
                 'guest_phone' => $row->phone,
+                'is_duplicate' => $isDuplicate,
                 'loaiHinhBaoHiem' => 'KH mua xe',
                 'donViBaoHiem' => 'KH mua xe',
                 'ngayCap' => 'KH mua xe',
