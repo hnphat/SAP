@@ -935,6 +935,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hopdongbaohiem/create-settlement','BaoHiemController@createSettlement');
         Route::post('hopdongbaohiem/duplicate','BaoHiemController@duplicateHopDongBaoHiem');
         Route::post('hopdongbaohiem/print-settlement','BaoHiemController@printSettlement');
+
+        // Quản lý chăm sóc khách hàng
+        Route::get('chamsockhachhang/panel','ChamSocController@getChamSocKhachHangPanel')->name('dichvu.chamsockhachhang');
+        Route::get('chamsockhachhang/list','ChamSocController@getListChamSocKhachHang');
+        
     });
 
     Route::group(['prefix' => 'cuochop', 'middleware' => ['f_hop']], function(){

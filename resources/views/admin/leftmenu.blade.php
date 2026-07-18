@@ -405,6 +405,12 @@
                                 <p>Đơn hàng bảo hiểm</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('dichvu.chamsockhachhang')}}" class="nav-link">
+                                <i class="fas fa-caret-right nav-icon"></i>
+                                <p>Chăm sóc khách hàng</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('adminsale') ||
