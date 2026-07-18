@@ -716,5 +716,191 @@ class BaoHiemController extends Controller
             ]);
         }
     }
+
+    public function createSettlement(Request $request) {
+        if (empty($request->selected_ids)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Vui lòng chọn ít nhất một bản ghi từ danh sách dữ liệu để thực hiện tạo Quyết toán',
+                'code' => 400
+            ], 200);
+        }
+
+        $ids = explode(',', $request->selected_ids);
+        $contracts = BaoHiemHopDong::whereIn('id', $ids)->get();
+
+        if ($contracts->isEmpty()) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy các đơn hàng bảo hiểm đã chọn!',
+                'code' => 404
+            ], 200);
+        }
+
+        // Kiểm tra tính đồng nhất của id_guest_baohiem và soQuyetToan
+        $guestId = null;
+        foreach ($contracts as $contract) {
+            if ($contract->soQuyetToan !== null && $contract->soQuyetToan !== '') {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Dữ liệu vừa chọn đã tạo Quyết toán rồi vui lòng chọn dữ liệu chưa tạo quyết toán',
+                    'code' => 400
+                ], 200);
+            }
+            if ($guestId === null) {
+                $guestId = $contract->id_guest_baohiem;
+            } elseif ($guestId != $contract->id_guest_baohiem) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Các đơn hàng được chọn phải thuộc về cùng một khách hàng!',
+                    'code' => 400
+                ], 200);
+            }
+        }
+
+        // Lấy thông tin khách hàng
+        $guest = GuestBaoHiem::find($guestId);
+        if (!$guest) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy thông tin khách hàng!',
+                'code' => 404
+            ], 200);
+        }
+
+        // Lấy thông tin created_at của dữ liệu có id cao nhất
+        $maxIdContract = $contracts->sortByDesc('id')->first();
+        $createdAt = Carbon::parse($maxIdContract->created_at);
+        $ngay = $createdAt->format('d');
+        $thang = $createdAt->format('m');
+        $nam = $createdAt->format('Y');
+
+        // Tìm soQuyetToan cao nhất trong tháng và năm tương ứng
+        $maxSeq = BaoHiemHopDong::whereYear('created_at', $nam)
+            ->whereMonth('created_at', $thang)
+            ->max('soQuyetToan');
+
+        $newSeq = $maxSeq ? ($maxSeq + 1) : 1;
+        $soBG = 'QT' . str_pad($newSeq, 3, '0', STR_PAD_LEFT) . '-' . $nam . $thang;
+
+        // Lưu thông tin vào DB
+        $yeuCau = $request->yeuCau;
+        foreach ($contracts as $contract) {
+            $contract->soQuyetToan = $newSeq;
+            $contract->yeuCau = $yeuCau;
+            $contract->save();
+        }
+
+        // Đường dẫn tệp template
+        $templatePath = public_path('template/BAOHIEM/QUYETTOAN.docx');
+        if (!file_exists($templatePath)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy tệp mẫu QUYETTOAN.docx tại thư mục public/template/BAOHIEM/',
+                'code' => 404
+            ], 200);
+        }
+
+        // Xử lý tạo tệp Word
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        // Lấy người tạo từ đơn hàng có ID lớn nhất
+        $creator = User::find($maxIdContract->id_user_create);
+        $creatorName = '';
+        if ($creator) {
+            $creatorName = $creator->userDetail ? $creator->userDetail->surname : $creator->name;
+        }
+
+        // Người bán: nvKinhDoanh nếu không có sẽ lấy tên id_user_create
+        $nguoiBan = $maxIdContract->nvKinhDoanh ?: $creatorName;
+
+        // Đổ dữ liệu chung vào template
+        $templateProcessor->setValues([
+            'ngay' => $ngay,
+            'thang' => $thang,
+            'nam' => $nam,
+            'soBG' => $soBG,
+            'khachHang' => $guest->hoTen,
+            'dienThoai' => $guest->dienThoai,
+            'diaChi' => $guest->diaChi,
+            'bienSo' => $guest->bienSo ?: '',
+            'thongTinXe' => $guest->thongTinXe ?: '',
+            'soKhung' => $guest->soKhung ?: '',
+            'nguoiTao' => $creatorName,
+            'nguoiBan' => $nguoiBan,
+            'yeuCau' => $yeuCau ?: ''
+        ]);
+
+        // Đổ dữ liệu bảng
+        $tt = "";
+        $noiDung = "";
+        $donGia = "";
+        $chietKhau = "";
+        $thanhTien = "";
+        $tongCong = 0;
+
+        $index = 1;
+        foreach ($contracts as $c) {
+            $thanhTienVal = $c->tongPhi - $c->giamGia;
+            $tongCong += $thanhTienVal;
+
+            $tt .= $index . '<w:br/>';
+            $noiDung .= $c->loaiHinhBaoHiem . '<w:br/>';
+            $donGia .= number_format($c->tongPhi) . '<w:br/>';
+            $chietKhau .= number_format($c->giamGia) . '<w:br/>';
+            $thanhTien .= number_format($thanhTienVal) . '<w:br/>';
+
+            $index++;
+        }
+
+        // Loại bỏ thẻ <w:br/> ở dòng cuối để tránh khoảng trống thừa
+        $tt = rtrim($tt, '<w:br/>');
+        $noiDung = rtrim($noiDung, '<w:br/>');
+        $donGia = rtrim($donGia, '<w:br/>');
+        $chietKhau = rtrim($chietKhau, '<w:br/>');
+        $thanhTien = rtrim($thanhTien, '<w:br/>');
+
+        $templateProcessor->setValue('tt', $tt);
+        $templateProcessor->setValue('noiDung', $noiDung);
+        $templateProcessor->setValue('donGia', $donGia);
+        $templateProcessor->setValue('chietKhau', $chietKhau);
+        $templateProcessor->setValue('thanhTien', $thanhTien);
+
+        // Tổng cộng & chữ
+        $templateProcessor->setValue('tongCong', number_format($tongCong));
+
+        // Chuyển tiền thành chữ
+        $tienBangChuText = \HelpFunction::convert($tongCong);
+        if ($tienBangChuText) {
+            $tienBangChuText = trim($tienBangChuText);
+            $firstChar = mb_substr($tienBangChuText, 0, 1, 'UTF-8');
+            $rest = mb_substr($tienBangChuText, 1, null, 'UTF-8');
+            $tienBangChu = mb_strtoupper($firstChar, 'UTF-8') . $rest . ' đồng';
+        } else {
+            $tienBangChu = 'Không đồng';
+        }
+        $templateProcessor->setValue('tienBangChu', $tienBangChu);
+
+        // Lưu tệp tạm thời
+        $tempDir = public_path('template/BAOHIEM');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+        $fileName = 'Quyet_toan_BH_' . \HelpFunction::changeTitle($guest->hoTen) . '_' . date('YmdHis') . '.docx';
+        $pathToSave = $tempDir . '/' . $fileName;
+        $templateProcessor->saveAs($pathToSave);
+
+        // Ghi nhật ký hệ thống
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Bảo hiểm - Quyết toán";
+        $nhatKy->noiDung = "Tạo Quyết toán " . $soBG . " cho khách hàng: " . $guest->hoTen;
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->save();
+
+        // Download và tự động xóa file sau khi gởi đi
+        return response()->download($pathToSave, $fileName)->deleteFileAfterSend(true);
+    }
 }
 

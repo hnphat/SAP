@@ -45,6 +45,10 @@ class CreateBaohiemHopdongTable extends Migration
             // Người thực hiện nhập hệ thống
             $table->integer('id_user_create')->unsigned()->comment('ID tài khoản user nhập hệ thống');
             $table->foreign('id_user_create')->references('id')->on('users');
+            $table->integer('soQuyetToan')->nullable()->comment('Số Quyết toán cho đơn hàng');
+            $table->string('yeuCau')->nullable()->comment('Yêu cầu khách hàng');
+            $table->integer('giamGia')->default(0);
+
 
             $table->timestamps();
         });

@@ -74,6 +74,7 @@
                                             <tr class="bg-cyan">
                                                 <th><input type="checkbox" id="checkAll"> Check</th>
                                                 <th>TT</th>
+                                                <th>Số Quyết toán</th>
                                                 <th>Khách hàng</th>
                                                 <th>SĐT</th>
                                                 <th>Đơn vị bảo hiểm</th>
@@ -426,7 +427,7 @@
         </div>
     </div>
 
-    <!-- Modal Settlement Placeholder -->
+    <!-- Modal Settlement -->
     <div class="modal fade" id="settlementModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -443,8 +444,10 @@
                         <div class="alert alert-info">
                             Đang chọn <strong id="selected_count">0</strong> đơn hàng bảo hiểm để quyết toán.
                         </div>
-                        <p class="text-muted font-italic">Vui lòng cung cấp các trường thông tin cần thiết dưới đây để tạo Quyết toán.</p>
-                        <!-- Giao diện nhập thông tin sẽ được cấu hình chi tiết sau khi có thông tin từ người dùng -->
+                        <div class="form-group">
+                            <label>Yêu cầu Quyết toán <span class="text-danger">*</span></label>
+                            <textarea name="yeuCau" id="yeuCau" class="form-control" rows="3" placeholder="Nhập yêu cầu Quyết toán..." required></textarea>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -596,6 +599,7 @@
                         width: "40px"
                     },
                     { "data": null },
+                    { "data": "soQuyetToan" },
                     { "data": "guest_name" },
                     { "data": "guest_phone" },
                     { "data": "donViBaoHiem" },
@@ -1033,12 +1037,27 @@
 
             // Xử lý sự kiện click nút "Tạo Quyết toán"
             $('#btnCreateSettlement').click(function() {
-                let selectedIds = [];
+                let selectedRows = [];
+                let hasErrorAlreadySettled = false;
+                let guestId = null;
+                let sameGuest = true;
+
                 $('.row-checkbox:checked').each(function() {
-                    selectedIds.push($(this).val());
+                    let rowData = table.row($(this).closest('tr')).data();
+                    if (rowData) {
+                        selectedRows.push(rowData);
+                        if (rowData.soQuyetToan !== null && rowData.soQuyetToan !== '') {
+                            hasErrorAlreadySettled = true;
+                        }
+                        if (guestId === null) {
+                            guestId = rowData.id_guest_baohiem;
+                        } else if (guestId != rowData.id_guest_baohiem) {
+                            sameGuest = false;
+                        }
+                    }
                 });
 
-                if (selectedIds.length === 0) {
+                if (selectedRows.length === 0) {
                     Toast.fire({
                         icon: 'warning',
                         title: 'vui lòng chọn ít nhất một bản ghi từ danh sách dữ liệu để thực hiện tạo Quyết toán'
@@ -1046,12 +1065,105 @@
                     return;
                 }
 
-                // Cập nhật số lượng và lưu danh sách ID vào trường ẩn
-                $('#selected_count').text(selectedIds.length);
-                $('#selected_contract_ids').val(selectedIds.join(','));
+                if (hasErrorAlreadySettled) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Dữ liệu vừa chọn đã tạo Quyết toán rồi vui lòng chọn dữ liệu chưa tạo quyết toán'
+                    });
+                    return;
+                }
 
-                // Hiển thị modal
+                if (!sameGuest) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Các đơn hàng được chọn phải thuộc về cùng một khách hàng!'
+                    });
+                    return;
+                }
+
+                // Reset form và hiển thị modal
+                $('#settlementForm')[0].reset();
+                $('#selected_count').text(selectedRows.length);
+                let selectedIds = selectedRows.map(row => row.id);
+                $('#selected_contract_ids').val(selectedIds.join(','));
                 $('#settlementModal').modal('show');
+            });
+
+            // Xử lý submit form Quyết toán để xuất file Word
+            $('#settlementForm').submit(function(e) {
+                e.preventDefault();
+                let formData = $(this).serialize();
+
+                // Hiển thị màn hình chờ loading
+                Swal.fire({
+                    title: 'Đang tạo quyết toán...',
+                    text: 'Vui lòng chờ trong giây lát.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ url('management/baohiem/hopdongbaohiem/create-settlement') }}",
+                    type: "POST",
+                    data: formData,
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function(response, status, xhr) {
+                        Swal.close();
+
+                        // Kiểm tra Content-Type để phát hiện lỗi JSON được bọc trong blob
+                        let contentType = xhr.getResponseHeader("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            let reader = new FileReader();
+                            reader.onload = function() {
+                                let errObj = JSON.parse(this.result);
+                                Toast.fire({
+                                    icon: errObj.type || 'error',
+                                    title: errObj.message || 'Có lỗi xảy ra!'
+                                });
+                            };
+                            reader.readAsText(response);
+                            return;
+                        }
+
+                        // Thực hiện tải file xuống
+                        let blob = new Blob([response], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                        let link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+
+                        let filename = "QuyetToan.docx";
+                        let disposition = xhr.getResponseHeader('Content-Disposition');
+                        if (disposition && disposition.indexOf('attachment') !== -1) {
+                            let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            let matches = filenameRegex.exec(disposition);
+                            if (matches != null && matches[1]) {
+                                filename = matches[1].replace(/['"]/g, '');
+                            }
+                        }
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Tạo Quyết toán thành công!'
+                        });
+
+                        $('#settlementModal').modal('hide');
+                        table.ajax.reload();
+                    },
+                    error: function(xhr) {
+                        Swal.close();
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Không thể tạo Quyết toán lúc này, vui lòng thử lại!'
+                        });
+                    }
+                });
             });
 
             // Xử lý cuộn trang (scroll) khi đóng modal con mà modal cha vẫn hiển thị
