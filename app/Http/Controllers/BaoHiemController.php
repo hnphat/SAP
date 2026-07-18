@@ -739,8 +739,9 @@ class BaoHiemController extends Controller
             ], 200);
         }
 
-        // Kiểm tra tính đồng nhất của id_guest_baohiem và soQuyetToan
+        // Kiểm tra tính đồng nhất của id_guest_baohiem, soQuyetToan và nvKinhDoanh
         $guestId = null;
+        $nvKinhDoanh = null;
         foreach ($contracts as $contract) {
             if ($contract->soQuyetToan !== null && $contract->soQuyetToan !== '') {
                 return response()->json([
@@ -755,6 +756,17 @@ class BaoHiemController extends Controller
                 return response()->json([
                     'type' => 'error',
                     'message' => 'Các đơn hàng được chọn phải thuộc về cùng một khách hàng!',
+                    'code' => 400
+                ], 200);
+            }
+
+            $currentStaff = trim($contract->nvKinhDoanh ?? '');
+            if ($nvKinhDoanh === null) {
+                $nvKinhDoanh = $currentStaff;
+            } elseif ($nvKinhDoanh !== $currentStaff) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Nhân viên kinh doanh của dữ liệu chọn đang khác nhau không thể tạo quyết toán',
                     'code' => 400
                 ], 200);
             }

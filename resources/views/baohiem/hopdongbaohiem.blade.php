@@ -1123,6 +1123,8 @@
                 let hasErrorAlreadySettled = false;
                 let guestId = null;
                 let sameGuest = true;
+                let nvKinhDoanh = null;
+                let sameNvKinhDoanh = true;
 
                 $('.row-checkbox:checked').each(function() {
                     let rowData = table.row($(this).closest('tr')).data();
@@ -1135,6 +1137,13 @@
                             guestId = rowData.id_guest_baohiem;
                         } else if (guestId != rowData.id_guest_baohiem) {
                             sameGuest = false;
+                        }
+                        
+                        let currentStaff = (rowData.nvKinhDoanh || '').toString().trim();
+                        if (nvKinhDoanh === null) {
+                            nvKinhDoanh = currentStaff;
+                        } else if (nvKinhDoanh !== currentStaff) {
+                            sameNvKinhDoanh = false;
                         }
                     }
                 });
@@ -1159,6 +1168,14 @@
                     Toast.fire({
                         icon: 'error',
                         title: 'Các đơn hàng được chọn phải thuộc về cùng một khách hàng!'
+                    });
+                    return;
+                }
+
+                if (!sameNvKinhDoanh) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Nhân viên kinh doanh của dữ liệu chọn đang khác nhau không thể tạo quyết toán'
                     });
                     return;
                 }
