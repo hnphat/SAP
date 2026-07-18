@@ -81,6 +81,7 @@
                                                 <th>Đơn vị bảo hiểm</th>
                                                 <th>Loại hình</th>
                                                 <th>Tổng phí</th>
+                                                <th>Giảm giá</th>
                                                 <th>Loại xe</th>
                                                 <th>Năm sản xuất</th>
                                                 <th>Giá trị xe</th>
@@ -637,6 +638,12 @@
                             return formatNumber(data);
                         }
                     },
+                    { 
+                        "data": "giamGia",
+                        render: function(data) {
+                            return formatNumber(data || 0);
+                        }
+                    },
                     { "data": "loaiXe", defaultContent: '' },
                     { "data": "namSanXuat", defaultContent: '' },
                     { 
@@ -669,11 +676,12 @@
                         render: function(data, type, row) {
                             let html = '';
                             if ({{ (Auth::user()->hasRole('system') || Auth::user()->hasRole('boss')) ? 'true' : 'false' }} || row.id_user_create == {{ Auth::user()->id }}) {
-                                html += `<button class="btn btn-info btn-sm btn-edit" data-id="${row.id}"><i class="fas fa-edit"></i></button> `;
+                                html += `<button class="btn btn-info btn-sm btn-edit" data-id="${row.id}" title="Chỉnh sửa"><i class="fas fa-edit"></i></button> `;
                             }
                             if ({{ (Auth::user()->hasRole('system') || Auth::user()->hasRole('boss')) ? 'true' : 'false' }}) {
-                                html += `<button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                                html += `<button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}" title="Xóa"><i class="fas fa-trash"></i></button> `;
                             }
+                            html += `<button class="btn btn-warning btn-sm btn-duplicate text-white" data-id="${row.id}" title="Nhân bản"><i class="fas fa-copy"></i></button>`;
                             return html;
                         }
                     }
@@ -1004,6 +1012,37 @@
                             Toast.fire({
                                 icon: 'error',
                                 title: 'Không thể xóa ĐƠN HÀNG BẢO HIỂM lúc này!'
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Duplicate contract
+            $(document).on('click', '.btn-duplicate', function() {
+                let id = $(this).data('id');
+                if (confirm("Bạn có chắc chắn muốn NHÂN BẢN đơn hàng bảo hiểm này để tạo bản ghi mới?")) {
+                    $.ajax({
+                        url: "{{ url('management/baohiem/hopdongbaohiem/duplicate') }}",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: response.type,
+                                title: response.message
+                            });
+                            if (response.code == 200) {
+                                table.ajax.reload();
+                            }
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Không thể nhân bản đơn hàng bảo hiểm lúc này!'
                             });
                         }
                     });

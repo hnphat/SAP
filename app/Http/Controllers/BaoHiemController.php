@@ -927,5 +927,48 @@ class BaoHiemController extends Controller
         // Download và tự động xóa file sau khi gởi đi
         return response()->download($pathToSave, $fileName)->deleteFileAfterSend(true);
     }
+
+    public function duplicateHopDongBaoHiem(Request $request) {
+        if (empty($request->id)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không xác định được đơn hàng cần nhân bản!',
+                'code' => 400
+            ]);
+        }
+
+        $hd = BaoHiemHopDong::find($request->id);
+        if (!$hd) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Không tìm thấy hợp đồng bảo hiểm cần nhân bản!',
+                'code' => 404
+            ]);
+        }
+
+        // Nhân bản đối tượng hợp đồng
+        $newHd = $hd->replicate();
+        $newHd->soQuyetToan = null;
+        $newHd->yeuCau = null;
+        $newHd->id_user_create = Auth::user()->id;
+        $newHd->created_at = Carbon::now();
+        $newHd->updated_at = Carbon::now();
+        $newHd->save();
+
+        // Ghi nhật ký hệ thống
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Bảo hiểm - Hợp đồng bảo hiểm";
+        $nhatKy->noiDung = "Nhân bản hợp đồng bảo hiểm ID: " . $hd->id . " thành hợp đồng mới ID: " . $newHd->id;
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->save();
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Nhân bản đơn hàng bảo hiểm thành công!',
+            'code' => 200
+        ]);
+    }
 }
 
