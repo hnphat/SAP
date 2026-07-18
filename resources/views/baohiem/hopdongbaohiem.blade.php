@@ -73,7 +73,7 @@
                                         <thead>
                                             <tr class="bg-cyan">
                                                 <th>TT</th>
-                                                <th><input type="checkbox" id="checkAll" style="transform: scale(1.4); cursor: pointer; margin-right: 5px;"> Check</th>
+                                                <th>Check</th>
                                                 <th>Số Quyết toán</th>
                                                 <th>Khách hàng</th>
                                                 <th>SĐT</th>
