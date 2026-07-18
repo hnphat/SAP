@@ -50,6 +50,7 @@
                                     @if(Auth::user()->hasRole('system') || Auth::user()->hasRole('boss'))
                                         <button id="pressImport" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><span class="fas fa-file-import"></span> Nhập Excel</button>
                                     @endif
+                                    <button id="btnCreateSettlement" class="btn btn-info"><span class="fas fa-file-word"></span> Tạo Quyết toán</button>
                                     <br/><br/>
                                     
                                     <!-- Search form -->
@@ -71,6 +72,7 @@
                                     <table id="dataTable" class="display table table-bordered table-striped" style="width:100%">
                                         <thead>
                                             <tr class="bg-cyan">
+                                                <th><input type="checkbox" id="checkAll"> Check</th>
                                                 <th>TT</th>
                                                 <th>Khách hàng</th>
                                                 <th>SĐT</th>
@@ -423,6 +425,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Settlement Placeholder -->
+    <div class="modal fade" id="settlementModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">TẠO QUYẾT TOÁN BẢO HIỂM</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="settlementForm" autocomplete="off">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="selected_ids" id="selected_contract_ids">
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            Đang chọn <strong id="selected_count">0</strong> đơn hàng bảo hiểm để quyết toán.
+                        </div>
+                        <p class="text-muted font-italic">Vui lòng cung cấp các trường thông tin cần thiết dưới đây để tạo Quyết toán.</p>
+                        <!-- Giao diện nhập thông tin sẽ được cấu hình chi tiết sau khi có thông tin từ người dùng -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" id="btnSubmitSettlement" class="btn btn-info">Tạo Quyết toán (.docx)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -548,13 +579,22 @@
                 "columnDefs": [ {
                     "searchable": false,
                     "orderable": false,
-                    "targets": 0
+                    "targets": [0, 1]
                 } ],
                 "order": [
                     [ 0, 'desc' ]
                 ],
                 lengthMenu: [5, 10, 25, 50, 75, 100 ],
                 columns: [
+                    { 
+                        "data": "id",
+                        render: function(data, type, row) {
+                            return `<input type="checkbox" class="row-checkbox" value="${data}">`;
+                        },
+                        orderable: false,
+                        searchable: false,
+                        width: "40px"
+                    },
                     { "data": null },
                     { "data": "guest_name" },
                     { "data": "guest_phone" },
@@ -610,11 +650,16 @@
             });
 
             table.on( 'order.dt search.dt', function () {
-                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                table.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                     cell.innerHTML = i+1;
                     table.cell(cell).invalidate('dom');
                 } );
             } ).draw();
+
+            // Reset checkAll on redraw/search
+            table.on('draw.dt', function() {
+                $('#checkAll').prop('checked', false);
+            });
 
             // Search trigger
             $("#btnSearch").click(function(){
@@ -971,6 +1016,42 @@
                         });
                     }
                 });
+            });
+
+            // Xử lý chọn tất cả / bỏ chọn tất cả
+            $(document).on('change', '#checkAll', function() {
+                $('.row-checkbox').prop('checked', this.checked);
+            });
+
+            $(document).on('change', '.row-checkbox', function() {
+                if (!this.checked) {
+                    $('#checkAll').prop('checked', false);
+                } else if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
+                    $('#checkAll').prop('checked', true);
+                }
+            });
+
+            // Xử lý sự kiện click nút "Tạo Quyết toán"
+            $('#btnCreateSettlement').click(function() {
+                let selectedIds = [];
+                $('.row-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length === 0) {
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'vui lòng chọn ít nhất một bản ghi từ danh sách dữ liệu để thực hiện tạo Quyết toán'
+                    });
+                    return;
+                }
+
+                // Cập nhật số lượng và lưu danh sách ID vào trường ẩn
+                $('#selected_count').text(selectedIds.length);
+                $('#selected_contract_ids').val(selectedIds.join(','));
+
+                // Hiển thị modal
+                $('#settlementModal').modal('show');
             });
 
             // Xử lý cuộn trang (scroll) khi đóng modal con mà modal cha vẫn hiển thị
