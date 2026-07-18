@@ -14,6 +14,7 @@ use Excel;
 use App\TypeCar;
 use App\BaoHiemHopDong;
 use App\User;
+use App\Guest;
 
 class BaoHiemController extends Controller
 {
@@ -285,6 +286,7 @@ class BaoHiemController extends Controller
         $targetMonth = $targetDate->month;
         $targetYear = $targetDate->year;
 
+        // 1. Lấy dữ liệu từ bảng baohiem_hopdong
         $data = BaoHiemHopDong::select(
                 'baohiem_hopdong.*', 
                 'g.hoTen as guest_name', 
@@ -301,12 +303,12 @@ class BaoHiemController extends Controller
             ->get();
 
         $result = [];
-        foreach ($data as $index => $row) {
+        foreach ($data as $row) {
             $creatorName = $row->creator_name ?: ($row->creator_username ?: '');
             $nguoiBan = $row->nvKinhDoanh ?: $creatorName;
 
             $result[] = [
-                'stt' => $index + 1,
+                'stt' => 0, // Sẽ đánh lại stt tự tăng ở sau
                 'guest_name' => $row->guest_name,
                 'guest_phone' => $row->guest_phone,
                 'loaiHinhBaoHiem' => $row->loaiHinhBaoHiem,
@@ -317,6 +319,45 @@ class BaoHiemController extends Controller
                 'nguoiTao' => $creatorName,
                 'created_at' => $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : ''
             ];
+        }
+
+        // 2. Lấy dữ liệu từ bảng guest
+        $currentYear = Carbon::now()->year;
+        $minYear = $currentYear - 2;
+
+        $guestsData = Guest::select(
+                'guest.*',
+                'd.surname as creator_name',
+                'u.name as creator_username'
+            )
+            ->leftJoin('users as u', 'u.id', '=', 'guest.id_user_create')
+            ->leftJoin('users_detail as d', 'd.id_user', '=', 'u.id')
+            ->where('guest.lenHopDong', 1)
+            ->whereMonth('guest.created_at', $targetMonth)
+            ->whereYear('guest.created_at', '>=', $minYear)
+            ->orderBy('guest.created_at', 'asc')
+            ->get();
+
+        foreach ($guestsData as $row) {
+            $creatorName = $row->creator_name ?: ($row->creator_username ?: '');
+
+            $result[] = [
+                'stt' => 0,
+                'guest_name' => $row->name,
+                'guest_phone' => $row->phone,
+                'loaiHinhBaoHiem' => 'KH mua xe',
+                'donViBaoHiem' => 'KH mua xe',
+                'ngayCap' => 'KH mua xe',
+                'ngayKetThuc' => 'KH mua xe',
+                'nguoiBan' => 'Chưa xác định',
+                'nguoiTao' => $creatorName,
+                'created_at' => $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        // Đánh lại số thứ tự tự tăng
+        foreach ($result as $index => &$item) {
+            $item['stt'] = $index + 1;
         }
 
         return response()->json([
