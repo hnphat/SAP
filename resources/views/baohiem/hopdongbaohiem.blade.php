@@ -683,7 +683,7 @@
                             }
                             html += `<button class="btn btn-warning btn-sm btn-duplicate text-white" data-id="${row.id}" title="Nhân bản"><i class="fas fa-copy"></i></button>`;
                             if (row.soQuyetToan !== null && row.soQuyetToan !== '') {
-                                html += ` <button class="btn btn-success btn-sm btn-print-settlement" data-id="${row.id}" title="In Quyết toán"><i class="fas fa-print"></i></button>`;
+                                html += ` <button class="btn btn-success btn-sm btn-print-settlement" data-id="${row.id}" data-guest="${row.guest_name}" title="In Quyết toán"><i class="fas fa-print"></i></button>`;
                             }
                             return html;
                         }
@@ -1055,6 +1055,8 @@
             // Print settlement
             $(document).on('click', '.btn-print-settlement', function() {
                 let id = $(this).data('id');
+                let guestName = $(this).data('guest') || '';
+                let cleanName = guestName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, '');
                 
                 Toast.fire({
                     icon: 'info',
@@ -1091,9 +1093,9 @@
                             let link = document.createElement('a');
                             link.href = window.URL.createObjectURL(blob);
                             
-                            let disposition = xhr.getResponseHeader('Content-Disposition');
+                            let disposition = xhr.getResponseHeader('Content-Disposition') || xhr.getResponseHeader('content-disposition');
                             let matches = /filename="([^"]*)"/.exec(disposition);
-                            let filename = (matches && matches[1]) ? matches[1] : 'QuyetToanBaoHiem.docx';
+                            let filename = (matches && matches[1]) ? matches[1] : ('QuyetToanBaoHiem_' + cleanName + '.docx');
                             
                             link.download = filename;
                             document.body.appendChild(link);
