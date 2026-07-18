@@ -804,6 +804,29 @@ class BaoHiemController extends Controller
         // Xử lý tạo tệp Word
         $templateProcessor = new TemplateProcessor($templatePath);
 
+        // Dọn dẹp XML để loại bỏ các thẻ Word tự động chèn vào giữa các ký tự của placeholder
+        $cleanXmlFunc = function($xml) {
+            $xml = preg_replace('/<(?:w:proofErr|w:noProof)[^>]*?>/', '', $xml);
+            return preg_replace_callback('/\$[^\{]*?\{([^\}]+)\}/', function($match) {
+                return '${' . strip_tags($match[1]) . '}';
+            }, $xml);
+        };
+
+        // Sử dụng Reflection để cập nhật các thuộc tính protected của TemplateProcessor
+        $reflection = new \ReflectionClass($templateProcessor);
+        
+        $mainPartProp = $reflection->getProperty('tempDocumentMainPart');
+        $mainPartProp->setAccessible(true);
+        $mainPartProp->setValue($templateProcessor, $cleanXmlFunc($mainPartProp->getValue($templateProcessor)));
+
+        $headersProp = $reflection->getProperty('tempDocumentHeaders');
+        $headersProp->setAccessible(true);
+        $headersProp->setValue($templateProcessor, array_map($cleanXmlFunc, $headersProp->getValue($templateProcessor)));
+
+        $footersProp = $reflection->getProperty('tempDocumentFooters');
+        $footersProp->setAccessible(true);
+        $footersProp->setValue($templateProcessor, array_map($cleanXmlFunc, $footersProp->getValue($templateProcessor)));
+
         // Lấy người tạo từ đơn hàng có ID lớn nhất
         $creator = User::find($maxIdContract->id_user_create);
         $creatorName = '';

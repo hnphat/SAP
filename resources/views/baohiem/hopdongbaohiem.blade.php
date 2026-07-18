@@ -72,11 +72,12 @@
                                     <table id="dataTable" class="display table table-bordered table-striped" style="width:100%">
                                         <thead>
                                             <tr class="bg-cyan">
-                                                <th><input type="checkbox" id="checkAll"> Check</th>
                                                 <th>TT</th>
+                                                <th><input type="checkbox" id="checkAll" style="transform: scale(1.4); cursor: pointer; margin-right: 5px;"> Check</th>
                                                 <th>Số Quyết toán</th>
                                                 <th>Khách hàng</th>
                                                 <th>SĐT</th>
+                                                <th>Yêu cầu</th>
                                                 <th>Đơn vị bảo hiểm</th>
                                                 <th>Loại hình</th>
                                                 <th>Tổng phí</th>
@@ -585,23 +586,34 @@
                     "targets": [0, 1]
                 } ],
                 "order": [
-                    [ 0, 'desc' ]
+                    [ 1, 'desc' ]
                 ],
                 lengthMenu: [5, 10, 25, 50, 75, 100 ],
                 columns: [
+                    { "data": null },
                     { 
                         "data": "id",
                         render: function(data, type, row) {
-                            return `<input type="checkbox" class="row-checkbox" value="${data}">`;
+                            return `<input type="checkbox" class="row-checkbox" value="${data}" style="transform: scale(1.4); cursor: pointer;">`;
                         },
                         orderable: false,
                         searchable: false,
                         width: "40px"
                     },
-                    { "data": null },
-                    { "data": "soQuyetToan" },
+                    { 
+                        "data": "soQuyetToan",
+                        render: function(data, type, row) {
+                            if (data === null || data === '') return '';
+                            let date = new Date(row.created_at);
+                            let y = date.getFullYear();
+                            let m = String(date.getMonth() + 1).padStart(2, '0');
+                            let xxx = String(data).padStart(3, '0');
+                            return `QT${xxx}-${y}${m}`;
+                        }
+                    },
                     { "data": "guest_name" },
                     { "data": "guest_phone" },
+                    { "data": "yeuCau", defaultContent: '' },
                     { "data": "donViBaoHiem" },
                     { "data": "loaiHinhBaoHiem" },
                     { 
@@ -654,7 +666,7 @@
             });
 
             table.on( 'order.dt search.dt', function () {
-                table.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                     cell.innerHTML = i+1;
                     table.cell(cell).invalidate('dom');
                 } );
