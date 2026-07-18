@@ -57,6 +57,13 @@
                                     <!-- Search form -->
                                     <form id="searchForm" class="form-row mb-3 align-items-end">
                                         <div class="col-sm-3">
+                                            <label>Tìm kiếm theo:</label>
+                                            <select id="search_type" name="search_type" class="form-control">
+                                                <option value="created_at" selected>Tìm theo ngày tạo đơn hàng</option>
+                                                <option value="ngayHieuLuc">Tìm theo ngày hiệu lực bảo hiểm</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3">
                                             <label>Từ ngày:</label>
                                             <input type="date" id="from_date" name="from_date" class="form-control" value="{{ date('Y-m-d') }}">
                                         </div>
@@ -640,6 +647,7 @@
                     data: function(d) {
                         d.from = $("#from_date").val();
                         d.to = $("#to_date").val();
+                        d.search_type = $("#search_type").val();
                     }
                 },
                 "columnDefs": [ {

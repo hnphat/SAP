@@ -261,12 +261,13 @@ class BaoHiemController extends Controller
     public function getListHopDongBaoHiem(Request $request) {
         $from = Carbon::parse($request->from)->startOfDay();
         $to = Carbon::parse($request->to)->endOfDay();
+        $searchType = $request->search_type === 'ngayHieuLuc' ? 'baohiem_hopdong.ngayHieuLuc' : 'baohiem_hopdong.created_at';
         
         $data = BaoHiemHopDong::select('baohiem_hopdong.*', 'g.hoTen as guest_name', 'g.dienThoai as guest_phone', 'd.surname as creator')
             ->leftJoin('guest_baohiem as g', 'g.id', '=', 'baohiem_hopdong.id_guest_baohiem')
             ->leftJoin('users as u', 'u.id', '=', 'baohiem_hopdong.id_user_create')
             ->leftJoin('users_detail as d', 'd.id_user', '=', 'u.id')
-            ->whereBetween('baohiem_hopdong.created_at', [$from, $to])
+            ->whereBetween($searchType, [$from, $to])
             ->orderBy('baohiem_hopdong.id', 'desc')
             ->get();
             
