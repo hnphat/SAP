@@ -162,7 +162,7 @@
                                     <input type="text" id="add_guest_search" class="form-control" list="add_guest_list" placeholder="Nhập SĐT tìm khách hàng..." required autocomplete="off">
                                     <datalist id="add_guest_list">
                                         @foreach($guests as $guest)
-                                            <option value="{{ $guest->dienThoai }}" data-id="{{ $guest->id }}" data-name="{{ $guest->hoTen }}">{{ $guest->hoTen }}</option>
+                                            <option value="{{ $guest->dienThoai }}" data-id="{{ $guest->id }}" data-name="{{ $guest->hoTen }}" data-car="{{ $guest->thongTinXe }}">{{ $guest->hoTen }}</option>
                                         @endforeach
                                     </datalist>
                                     <input type="hidden" name="id_guest_baohiem" id="id_guest_baohiem" required>
@@ -209,12 +209,7 @@
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label>Loại xe</label>
-                                <select name="loaiXe" class="form-control">
-                                    <option value="">-- Chọn loại xe --</option>
-                                    @foreach($cars as $car)
-                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" name="loaiXe" class="form-control" readonly placeholder="Loại xe">
                             </div>
                             <div class="col-md-4 form-group">
                                 <label>Năm sản xuất</label>
@@ -284,7 +279,7 @@
                                     <input type="text" id="edit_guest_search" class="form-control" list="edit_guest_list" placeholder="Nhập SĐT tìm khách hàng..." required autocomplete="off">
                                     <datalist id="edit_guest_list">
                                         @foreach($guests as $guest)
-                                            <option value="{{ $guest->dienThoai }}" data-id="{{ $guest->id }}" data-name="{{ $guest->hoTen }}">{{ $guest->hoTen }}</option>
+                                            <option value="{{ $guest->dienThoai }}" data-id="{{ $guest->id }}" data-name="{{ $guest->hoTen }}" data-car="{{ $guest->thongTinXe }}">{{ $guest->hoTen }}</option>
                                         @endforeach
                                     </datalist>
                                     <input type="hidden" name="eid_guest_baohiem" id="eid_guest_baohiem" required>
@@ -331,12 +326,7 @@
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label>Loại xe</label>
-                                <select name="eloaiXe" class="form-control">
-                                    <option value="">-- Chọn loại xe --</option>
-                                    @foreach($cars as $car)
-                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" name="eloaiXe" class="form-control" readonly placeholder="Loại xe">
                             </div>
                             <div class="col-md-4 form-group">
                                 <label>Năm sản xuất</label>
@@ -764,7 +754,7 @@
                             $("#editForm input[name=etongPhi]").val(formattedTongPhi);
                             $('#edit_tongPhi_chu').text(docSoThanhChu(data.tongPhi || 0));
                             
-                            $("#editForm select[name=eloaiXe]").val(data.loaiXe);
+                            $("#editForm input[name=eloaiXe]").val(data.loaiXe);
                             $("#editForm input[name=enamSanXuat]").val(data.namSanXuat);
                             
                             // Định dạng số và gán đọc chữ cho Giá trị xe
@@ -860,8 +850,8 @@
                             let data = response.data;
                             
                             // Thêm Option mới vào cả 2 datalist
-                            let newOptAdd = $('<option>').val(data.dienThoai).attr('data-id', data.id).attr('data-name', data.hoTen).text(data.hoTen);
-                            let newOptEdit = $('<option>').val(data.dienThoai).attr('data-id', data.id).attr('data-name', data.hoTen).text(data.hoTen);
+                            let newOptAdd = $('<option>').val(data.dienThoai).attr('data-id', data.id).attr('data-name', data.hoTen).attr('data-car', data.thongTinXe || '').text(data.hoTen);
+                            let newOptEdit = $('<option>').val(data.dienThoai).attr('data-id', data.id).attr('data-name', data.hoTen).attr('data-car', data.thongTinXe || '').text(data.hoTen);
                             
                             $('#add_guest_list').append(newOptAdd);
                             $('#edit_guest_list').append(newOptEdit);
@@ -869,6 +859,7 @@
                             // Tự động điền và chọn ở form Add
                             $('#add_guest_search').val(data.dienThoai);
                             $('#id_guest_baohiem').val(data.id);
+                            $('#addModal input[name=loaiXe]').val(data.thongTinXe || '');
                             $('#add_guest_info').html('Khách hàng đã chọn: <strong>' + data.hoTen + '</strong>').removeClass('text-danger').addClass('text-success');
                             
                             // Reset form & ẩn modal thêm nhanh
@@ -899,10 +890,13 @@
                 if (option.length) {
                     let id = option.data('id');
                     let name = option.data('name');
+                    let car = option.data('car') || '';
                     $('#id_guest_baohiem').val(id);
+                    $('#addModal input[name=loaiXe]').val(car);
                     $('#add_guest_info').html('Khách hàng đã chọn: <strong>' + name + '</strong>').removeClass('text-danger').addClass('text-success');
                 } else {
                     $('#id_guest_baohiem').val('');
+                    $('#addModal input[name=loaiXe]').val('');
                     $('#add_guest_info').html('Nhập SĐT để khớp khách hàng.').removeClass('text-success').addClass('text-danger');
                 }
             });
@@ -917,10 +911,13 @@
                 if (option.length) {
                     let id = option.data('id');
                     let name = option.data('name');
+                    let car = option.data('car') || '';
                     $('#eid_guest_baohiem').val(id);
+                    $('#editForm input[name=eloaiXe]').val(car);
                     $('#edit_guest_info').html('Khách hàng đã chọn: <strong>' + name + '</strong>').removeClass('text-danger').addClass('text-success');
                 } else {
                     $('#eid_guest_baohiem').val('');
+                    $('#editForm input[name=eloaiXe]').val('');
                     $('#edit_guest_info').html('Nhập SĐT để khớp khách hàng.').removeClass('text-success').addClass('text-danger');
                 }
             });
