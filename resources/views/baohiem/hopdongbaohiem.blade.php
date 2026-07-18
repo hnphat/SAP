@@ -258,6 +258,7 @@
                                 <label>Nhân viên kinh doanh</label>
                                 <select name="nvKinhDoanh" class="form-control">
                                     <option value="">-- Chọn nhân viên kinh doanh --</option>
+                                    {{-- Lấy tất cả user active = 1 thông qua Model User và UsersDetail (surname) --}}
                                     @foreach($sales as $sale)
                                         <option value="{{ $sale->surname }}">{{ $sale->surname }}</option>
                                     @endforeach
@@ -382,6 +383,7 @@
                                 <label>Nhân viên kinh doanh</label>
                                 <select name="envKinhDoanh" class="form-control">
                                     <option value="">-- Chọn nhân viên kinh doanh --</option>
+                                    {{-- Lấy tất cả user active = 1 thông qua Model User và UsersDetail (surname) --}}
                                     @foreach($sales as $sale)
                                         <option value="{{ $sale->surname }}">{{ $sale->surname }}</option>
                                     @endforeach

@@ -249,13 +249,11 @@ class BaoHiemController extends Controller
         $cars = TypeCar::all();
         $guests = GuestBaoHiem::all();
         $sales = User::where('active', 1)
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'sale');
-            })
             ->with('userDetail')
             ->get()
             ->pluck('userDetail')
-            ->filter();
+            ->filter()
+            ->sortBy('surname', SORT_NATURAL | SORT_FLAG_CASE);
         return view('baohiem.hopdongbaohiem', compact('cars', 'guests', 'sales'));
     }
 
