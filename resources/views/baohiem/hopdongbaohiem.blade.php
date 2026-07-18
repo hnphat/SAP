@@ -682,6 +682,9 @@
                                 html += `<button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}" title="Xóa"><i class="fas fa-trash"></i></button> `;
                             }
                             html += `<button class="btn btn-warning btn-sm btn-duplicate text-white" data-id="${row.id}" title="Nhân bản"><i class="fas fa-copy"></i></button>`;
+                            if (row.soQuyetToan !== null && row.soQuyetToan !== '') {
+                                html += ` <button class="btn btn-success btn-sm btn-print-settlement" data-id="${row.id}" title="In Quyết toán"><i class="fas fa-print"></i></button>`;
+                            }
                             return html;
                         }
                     }
@@ -1047,6 +1050,69 @@
                         }
                     });
                 }
+            });
+
+            // Print settlement
+            $(document).on('click', '.btn-print-settlement', function() {
+                let id = $(this).data('id');
+                
+                Toast.fire({
+                    icon: 'info',
+                    title: 'Đang chuẩn bị in Quyết toán...',
+                    timer: false
+                });
+
+                $.ajax({
+                    url: "{{ url('management/baohiem/hopdongbaohiem/print-settlement') }}",
+                    type: "POST",
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id
+                    },
+                    success: function(response, status, xhr) {
+                        Toast.close();
+                        
+                        let contentType = xhr.getResponseHeader("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            let reader = new FileReader();
+                            reader.onload = function() {
+                                let err = JSON.parse(reader.result);
+                                Toast.fire({
+                                    icon: err.type || 'error',
+                                    title: err.message || 'Lỗi không xác định!'
+                                });
+                            };
+                            reader.readAsText(response);
+                        } else {
+                            let blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+                            let link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            
+                            let disposition = xhr.getResponseHeader('Content-Disposition');
+                            let matches = /filename="([^"]*)"/.exec(disposition);
+                            let filename = (matches && matches[1]) ? matches[1] : 'QuyetToanBaoHiem.docx';
+                            
+                            link.download = filename;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Tải tệp Quyết toán thành công!'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Không thể in quyết toán vào lúc này!'
+                        });
+                    }
+                });
             });
 
             // Hiển thị tên file khi chọn file excel

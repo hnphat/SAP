@@ -933,6 +933,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('hopdongbaohiem/import','BaoHiemController@importHopDongBaoHiem');
         Route::post('hopdongbaohiem/create-settlement','BaoHiemController@createSettlement');
         Route::post('hopdongbaohiem/duplicate','BaoHiemController@duplicateHopDongBaoHiem');
+        Route::post('hopdongbaohiem/print-settlement','BaoHiemController@printSettlement');
     });
 
     Route::group(['prefix' => 'cuochop', 'middleware' => ['f_hop']], function(){
