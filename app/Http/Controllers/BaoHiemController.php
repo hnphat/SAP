@@ -280,9 +280,10 @@ class BaoHiemController extends Controller
     }
 
     public function getHopDongBaoHiemNeedCare(Request $request) {
-        $now = Carbon::now();
-        $currentMonth = $now->month;
-        $currentYear = $now->year;
+        $monthsAdvance = (int) $request->get('months', 0);
+        $targetDate = Carbon::now()->addMonths($monthsAdvance);
+        $targetMonth = $targetDate->month;
+        $targetYear = $targetDate->year;
 
         $data = BaoHiemHopDong::select(
                 'baohiem_hopdong.*', 
@@ -294,8 +295,8 @@ class BaoHiemController extends Controller
             ->leftJoin('guest_baohiem as g', 'g.id', '=', 'baohiem_hopdong.id_guest_baohiem')
             ->leftJoin('users as u', 'u.id', '=', 'baohiem_hopdong.id_user_create')
             ->leftJoin('users_detail as d', 'd.id_user', '=', 'u.id')
-            ->whereMonth('baohiem_hopdong.ngayKetThuc', $currentMonth)
-            ->whereYear('baohiem_hopdong.ngayKetThuc', $currentYear)
+            ->whereMonth('baohiem_hopdong.ngayKetThuc', $targetMonth)
+            ->whereYear('baohiem_hopdong.ngayKetThuc', $targetYear)
             ->orderBy('baohiem_hopdong.ngayKetThuc', 'asc')
             ->get();
 
@@ -322,6 +323,7 @@ class BaoHiemController extends Controller
             'type' => 'success',
             'message' => 'Đã tải danh sách khách hàng cần chăm sóc!',
             'code' => 200,
+            'target_month_year' => $targetDate->format('m/Y'),
             'data' => $result
         ]);
     }

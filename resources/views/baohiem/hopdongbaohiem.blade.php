@@ -488,15 +488,28 @@
         <div class="modal-dialog" style="max-width: 98%; margin: 10px auto;">
             <div class="modal-content">
                 <div class="modal-header bg-warning text-white">
-                    <h5 class="modal-title"><i class="fas fa-headset mr-1"></i> KHÁCH HÀNG CẦN CHĂM SÓC TRONG THÁNG ({{ date('m/Y') }})</h5>
+                    <h5 class="modal-title"><i class="fas fa-headset mr-1"></i> KHÁCH HÀNG CẦN CHĂM SÓC TRONG THÁNG (<span id="careTitleMonthYear">{{ date('m/Y') }}</span>)</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="form-row mb-3 align-items-center">
+                        <div class="col-auto">
+                            <label class="col-form-label font-weight-bold"><i class="fas fa-filter text-warning mr-1"></i> Thời gian báo trước:</label>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <select id="careMonthsSelect" class="form-control border-warning">
+                                <option value="0" selected>Trong tháng hiện tại</option>
+                                <option value="1">Trước 1 tháng</option>
+                                <option value="2">Trước 2 tháng</option>
+                                <option value="3">Trước 3 tháng</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="alert alert-warning bg-light border-warning mb-3">
                         <h5><i class="icon fas fa-info-circle text-warning"></i> Chăm sóc khách hàng bảo hiểm</h5>
-                        Dưới đây là danh sách các hợp đồng bảo hiểm hết hạn vào tháng <strong>{{ date('m/Y') }}</strong>. 
+                        Dưới đây là danh sách các hợp đồng bảo hiểm hết hạn vào tháng <strong id="careAlertMonthYear">{{ date('m/Y') }}</strong>. 
                         Vui lòng liên hệ để hỗ trợ và tư vấn khách hàng gia hạn kịp thời.
                     </div>
                     <div class="table-responsive">
@@ -1399,7 +1412,16 @@
                         dom: 'lfrtip',
                         ajax: {
                             url: "{{ url('management/baohiem/hopdongbaohiem/need-care') }}",
-                            dataSrc: 'data'
+                            data: function(d) {
+                                d.months = $('#careMonthsSelect').val();
+                            },
+                            dataSrc: function(json) {
+                                if (json.target_month_year) {
+                                    $('#careTitleMonthYear').text(json.target_month_year);
+                                    $('#careAlertMonthYear').text(json.target_month_year);
+                                }
+                                return json.data;
+                            }
                         },
                         "columnDefs": [ {
                             "searchable": false,
@@ -1487,6 +1509,13 @@
                             careTable.cell(cell).invalidate('dom');
                         } );
                     } ).draw();
+                }
+            });
+
+            // Reload dữ liệu khi thay đổi dropdown số tháng báo trước
+            $(document).on('change', '#careMonthsSelect', function() {
+                if (careTable) {
+                    careTable.ajax.reload();
                 }
             });
 
