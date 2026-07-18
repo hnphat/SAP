@@ -926,6 +926,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // Quản lý đơn hàng mua bảo hiểm
         Route::get('hopdongbaohiem/panel','BaoHiemController@getHopDongBaoHiemPanel')->name('dichvu.hopdongbaohiem');
         Route::get('hopdongbaohiem/list','BaoHiemController@getListHopDongBaoHiem');
+        Route::get('hopdongbaohiem/need-care','BaoHiemController@getHopDongBaoHiemNeedCare');
         Route::post('hopdongbaohiem/add','BaoHiemController@addHopDongBaoHiem');
         Route::post('hopdongbaohiem/edit/show','BaoHiemController@getHopDongBaoHiemEdit');
         Route::post('hopdongbaohiem/update','BaoHiemController@updateHopDongBaoHiem');

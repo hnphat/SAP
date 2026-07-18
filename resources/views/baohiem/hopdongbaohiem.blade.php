@@ -51,6 +51,7 @@
                                         <button id="pressImport" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><span class="fas fa-file-import"></span> Nhập Excel</button>
                                     @endif
                                     <button id="btnCreateSettlement" class="btn btn-info"><span class="fas fa-file-word"></span> Tạo Quyết toán</button>
+                                    <button id="btnCustomerCare" class="btn btn-warning text-white"><span class="fas fa-headset"></span> Khách hàng cần chăm sóc</button>
                                     <br/><br/>
                                     
                                     <!-- Search form -->
@@ -471,6 +472,51 @@
                         <button type="submit" id="btnSubmitSettlement" class="btn btn-info">Tạo Quyết toán (.docx)</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Customer Care -->
+    <div class="modal fade" id="customerCareModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 98%; margin: 10px auto;">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title"><i class="fas fa-headset mr-1"></i> KHÁCH HÀNG CẦN CHĂM SÓC TRONG THÁNG ({{ date('m/Y') }})</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning bg-light border-warning mb-3">
+                        <h5><i class="icon fas fa-info-circle text-warning"></i> Chăm sóc khách hàng bảo hiểm</h5>
+                        Dưới đây là danh sách các hợp đồng bảo hiểm hết hạn vào tháng <strong>{{ date('m/Y') }}</strong>. 
+                        Vui lòng liên hệ để hỗ trợ và tư vấn khách hàng gia hạn kịp thời.
+                    </div>
+                    <div class="table-responsive">
+                        <table id="careDataTable" class="display table table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="bg-warning text-white">
+                                    <th>STT</th>
+                                    <th>Họ tên khách hàng</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Loại hình bảo hiểm</th>
+                                    <th>Đơn vị bảo hiểm</th>
+                                    <th>Ngày cấp</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Người bán</th>
+                                    <th>Người tạo</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded dynamically via AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1331,6 +1377,109 @@
                         });
                     }
                 });
+            });
+
+            // Xử lý nút Khách hàng cần chăm sóc
+            var careTable = null;
+            $('#btnCustomerCare').click(function() {
+                $('#customerCareModal').modal('show');
+                if (careTable) {
+                    careTable.ajax.reload();
+                } else {
+                    careTable = $('#careDataTable').DataTable({
+                        responsive: true,
+                        dom: 'lfrtip',
+                        ajax: {
+                            url: "{{ url('management/baohiem/hopdongbaohiem/need-care') }}",
+                            dataSrc: 'data'
+                        },
+                        "columnDefs": [ {
+                            "searchable": false,
+                            "orderable": false,
+                            "targets": [0]
+                        } ],
+                        "order": [
+                            [ 6, 'asc' ]
+                        ],
+                        columns: [
+                            { 
+                                "data": "stt",
+                                render: function(data, type, row, meta) {
+                                    return meta.row + 1;
+                                }
+                            },
+                            { "data": "guest_name" },
+                            { 
+                                "data": "guest_phone",
+                                render: function(data) {
+                                    if (!data) return '';
+                                    return `<a href="tel:${data}" class="btn btn-sm btn-success btn-block" style="border-radius: 20px;"><i class="fas fa-phone-alt mr-1"></i> ${data}</a>`;
+                                }
+                            },
+                            { 
+                                "data": "loaiHinhBaoHiem",
+                                render: function(data) {
+                                    return `<span class="badge badge-info px-2 py-1" style="font-size: 0.85rem;">${data}</span>`;
+                                }
+                            },
+                            { 
+                                "data": "donViBaoHiem",
+                                render: function(data) {
+                                    return `<span class="badge badge-primary px-2 py-1" style="font-size: 0.85rem;">${data}</span>`;
+                                }
+                            },
+                            { 
+                                "data": "ngayCap",
+                                render: function(data) {
+                                    return formatDate(data);
+                                }
+                            },
+                            { 
+                                "data": "ngayKetThuc",
+                                render: function(data) {
+                                    return `<strong class="text-danger">${formatDate(data)}</strong>`;
+                                }
+                            },
+                            { "data": "nguoiBan" },
+                            { "data": "nguoiTao" },
+                            { 
+                                "data": "created_at",
+                                render: function(data) {
+                                    if (!data) return '';
+                                    let dt = new Date(data);
+                                    let d = String(dt.getDate()).padStart(2, '0');
+                                    let m = String(dt.getMonth() + 1).padStart(2, '0');
+                                    let y = dt.getFullYear();
+                                    let h = String(dt.getHours()).padStart(2, '0');
+                                    let min = String(dt.getMinutes()).padStart(2, '0');
+                                    let s = String(dt.getSeconds()).padStart(2, '0');
+                                    return `${d}/${m}/${y} ${h}:${min}:${s}`;
+                                }
+                            }
+                        ],
+                        language: {
+                            search: "Tìm kiếm nhanh:",
+                            lengthMenu: "Hiển thị _MENU_ dòng",
+                            info: "Hiển thị _START_ đến _END_ của _TOTAL_ khách hàng",
+                            infoEmpty: "Không có dữ liệu",
+                            infoFiltered: "(lọc từ _MAX_ khách hàng)",
+                            paginate: {
+                                first: "Đầu",
+                                last: "Cuối",
+                                next: "Sau",
+                                previous: "Trước"
+                            },
+                            emptyTable: "Không có dữ liệu khách hàng cần chăm sóc trong tháng này"
+                        }
+                    });
+
+                    careTable.on('order.dt search.dt', function () {
+                        careTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                            cell.innerHTML = i+1;
+                            careTable.cell(cell).invalidate('dom');
+                        } );
+                    } ).draw();
+                }
             });
 
             // Xử lý cuộn trang (scroll) khi đóng modal con mà modal cha vẫn hiển thị

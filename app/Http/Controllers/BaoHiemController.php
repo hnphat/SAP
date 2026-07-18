@@ -278,6 +278,53 @@ class BaoHiemController extends Controller
         ]);
     }
 
+    public function getHopDongBaoHiemNeedCare(Request $request) {
+        $now = Carbon::now();
+        $currentMonth = $now->month;
+        $currentYear = $now->year;
+
+        $data = BaoHiemHopDong::select(
+                'baohiem_hopdong.*', 
+                'g.hoTen as guest_name', 
+                'g.dienThoai as guest_phone', 
+                'd.surname as creator_name',
+                'u.name as creator_username'
+            )
+            ->leftJoin('guest_baohiem as g', 'g.id', '=', 'baohiem_hopdong.id_guest_baohiem')
+            ->leftJoin('users as u', 'u.id', '=', 'baohiem_hopdong.id_user_create')
+            ->leftJoin('users_detail as d', 'd.id_user', '=', 'u.id')
+            ->whereMonth('baohiem_hopdong.ngayKetThuc', $currentMonth)
+            ->whereYear('baohiem_hopdong.ngayKetThuc', $currentYear)
+            ->orderBy('baohiem_hopdong.ngayKetThuc', 'asc')
+            ->get();
+
+        $result = [];
+        foreach ($data as $index => $row) {
+            $creatorName = $row->creator_name ?: ($row->creator_username ?: '');
+            $nguoiBan = $row->nvKinhDoanh ?: $creatorName;
+
+            $result[] = [
+                'stt' => $index + 1,
+                'guest_name' => $row->guest_name,
+                'guest_phone' => $row->guest_phone,
+                'loaiHinhBaoHiem' => $row->loaiHinhBaoHiem,
+                'donViBaoHiem' => $row->donViBaoHiem,
+                'ngayCap' => $row->ngayCap ? Carbon::parse($row->ngayCap)->format('Y-m-d') : '',
+                'ngayKetThuc' => $row->ngayKetThuc ? Carbon::parse($row->ngayKetThuc)->format('Y-m-d') : '',
+                'nguoiBan' => $nguoiBan,
+                'nguoiTao' => $creatorName,
+                'created_at' => $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Đã tải danh sách khách hàng cần chăm sóc!',
+            'code' => 200,
+            'data' => $result
+        ]);
+    }
+
     public function addHopDongBaoHiem(Request $request) {
         if (empty($request->id_guest_baohiem) || empty($request->donViBaoHiem) || empty($request->loaiHinhBaoHiem)) {
             return response()->json([
