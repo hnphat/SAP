@@ -400,6 +400,17 @@
                             <label>Địa chỉ <span class="text-danger">*</span></label>
                             <input type="text" name="diaChi" class="form-control" required placeholder="Địa chỉ">
                         </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>Thông tin xe</label>
+                                <select name="thongTinXe" class="form-control">
+                                    <option value="">-- Chọn xe --</option>
+                                    @foreach($cars as $car)
+                                        <option value="{{ $car->name }}">{{ $car->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label>Biển số</label>
                             <input type="text" name="bienSo" class="form-control" placeholder="Biển số xe (nếu có)">
