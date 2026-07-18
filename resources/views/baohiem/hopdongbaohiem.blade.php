@@ -207,6 +207,13 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Chiết khấu (giảm giá) (VNĐ)</label>
+                                <input type="text" name="giamGia" class="form-control" placeholder="Chiết khấu (giảm giá)" value="0">
+                                <small id="add_giamGia_chu" class="form-text text-success font-italic">Không đồng</small>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4 form-group">
                                 <label>Loại xe</label>
                                 <input type="text" name="loaiXe" class="form-control" readonly placeholder="Loại xe">
@@ -321,6 +328,13 @@
                                 <label>Tổng phí (VNĐ) <span class="text-danger">*</span></label>
                                 <input type="text" name="etongPhi" class="form-control" required placeholder="Tổng phí bảo hiểm">
                                 <small id="edit_tongPhi_chu" class="form-text text-success font-italic">Không đồng</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Chiết khấu (giảm giá) (VNĐ)</label>
+                                <input type="text" name="egiamGia" class="form-control" placeholder="Chiết khấu (giảm giá)">
+                                <small id="edit_giamGia_chu" class="form-text text-success font-italic">Không đồng</small>
                             </div>
                         </div>
                         <div class="row">
@@ -689,7 +703,7 @@
                 let serializedData = $(this).serializeArray();
                 let postData = {};
                 serializedData.forEach(function(item) {
-                    if (item.name === 'tongPhi' || item.name === 'giaTriXe') {
+                    if (item.name === 'tongPhi' || item.name === 'giaTriXe' || item.name === 'giamGia') {
                         postData[item.name] = item.value.replace(/,/g, '');
                     } else {
                         postData[item.name] = item.value;
@@ -764,6 +778,11 @@
                             let formattedTongPhi = String(data.tongPhi || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                             $("#editForm input[name=etongPhi]").val(formattedTongPhi);
                             $('#edit_tongPhi_chu').text(docSoThanhChu(data.tongPhi || 0));
+
+                            // Định dạng số và gán đọc chữ cho Chiết khấu
+                            let formattedGiamGia = String(data.giamGia || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            $("#editForm input[name=egiamGia]").val(formattedGiamGia);
+                            $('#edit_giamGia_chu').text(docSoThanhChu(data.giamGia || 0));
                             
                             $("#editForm input[name=eloaiXe]").val(data.loaiXe);
                             $("#editForm input[name=enamSanXuat]").val(data.namSanXuat);
@@ -799,7 +818,7 @@
                 let serializedData = $(this).serializeArray();
                 let postData = {};
                 serializedData.forEach(function(item) {
-                    if (item.name === 'etongPhi' || item.name === 'egiaTriXe') {
+                    if (item.name === 'etongPhi' || item.name === 'egiaTriXe' || item.name === 'egiamGia') {
                         postData[item.name] = item.value.replace(/,/g, '');
                     } else {
                         postData[item.name] = item.value;
@@ -934,7 +953,7 @@
             });
 
             // Định dạng phân tách nghìn và hiển thị đọc số thành chữ khi nhập
-            $(document).on('input', 'input[name=tongPhi], input[name=giaTriXe], input[name=etongPhi], input[name=egiaTriXe]', function() {
+            $(document).on('input', 'input[name=tongPhi], input[name=giaTriXe], input[name=giamGia], input[name=etongPhi], input[name=egiaTriXe], input[name=egiamGia]', function() {
                 let name = $(this).attr('name');
                 let val = $(this).val().replace(/[^0-9]/g, '');
                 
@@ -949,10 +968,14 @@
                     $('#add_tongPhi_chu').text(text);
                 } else if (name === 'giaTriXe') {
                     $('#add_giaTriXe_chu').text(text);
+                } else if (name === 'giamGia') {
+                    $('#add_giamGia_chu').text(text);
                 } else if (name === 'etongPhi') {
                     $('#edit_tongPhi_chu').text(text);
                 } else if (name === 'egiaTriXe') {
                     $('#edit_giaTriXe_chu').text(text);
+                } else if (name === 'egiamGia') {
+                    $('#edit_giamGia_chu').text(text);
                 }
             });
 

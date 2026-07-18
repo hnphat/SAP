@@ -292,6 +292,7 @@ class BaoHiemController extends Controller
         $hd->donViBaoHiem = $request->donViBaoHiem;
         $hd->loaiHinhBaoHiem = $request->loaiHinhBaoHiem;
         $hd->tongPhi = $request->tongPhi ?? 0;
+        $hd->giamGia = $request->giamGia ?? 0;
         $hd->loaiXe = $request->loaiXe;
         $hd->namSanXuat = $request->namSanXuat;
         $hd->giaTriXe = $request->giaTriXe ?? 0;
@@ -380,6 +381,7 @@ class BaoHiemController extends Controller
         $hd->donViBaoHiem = $request->edonViBaoHiem;
         $hd->loaiHinhBaoHiem = $request->eloaiHinhBaoHiem;
         $hd->tongPhi = $request->etongPhi ?? 0;
+        $hd->giamGia = $request->egiamGia ?? 0;
         $hd->loaiXe = $request->eloaiXe;
         $hd->namSanXuat = $request->enamSanXuat;
         $hd->giaTriXe = $request->egiaTriXe ?? 0;
