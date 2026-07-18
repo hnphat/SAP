@@ -249,8 +249,8 @@
                                 <input type="date" name="ngayHieuLuc" class="form-control" value="{{ date('Y-m-d') }}">
                             </div>
                             <div class="col-md-6 form-group">
-                                <label>Ngày kết thúc bảo hiểm</label>
-                                <input type="date" name="ngayKetThuc" class="form-control">
+                                <label>Ngày kết thúc bảo hiểm <span class="text-danger">*</span></label>
+                                <input type="date" name="ngayKetThuc" class="form-control" required>
                             </div>
                         </div>
                         <div class="row">
@@ -373,8 +373,8 @@
                                 <input type="date" name="engayHieuLuc" class="form-control">
                             </div>
                             <div class="col-md-6 form-group">
-                                <label>Ngày kết thúc bảo hiểm</label>
-                                <input type="date" name="engayKetThuc" class="form-control">
+                                <label>Ngày kết thúc bảo hiểm <span class="text-danger">*</span></label>
+                                <input type="date" name="engayKetThuc" class="form-control" required>
                             </div>
                         </div>
                         <div class="row">

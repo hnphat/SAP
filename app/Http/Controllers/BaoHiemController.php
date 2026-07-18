@@ -327,7 +327,7 @@ class BaoHiemController extends Controller
     }
 
     public function addHopDongBaoHiem(Request $request) {
-        if (empty($request->id_guest_baohiem) || empty($request->donViBaoHiem) || empty($request->loaiHinhBaoHiem)) {
+        if (empty($request->id_guest_baohiem) || empty($request->donViBaoHiem) || empty($request->loaiHinhBaoHiem) || empty($request->ngayKetThuc)) {
             return response()->json([
                 'type' => 'error',
                 'message' => 'Vui lòng điền đầy đủ các thông tin bắt buộc!',
@@ -400,7 +400,7 @@ class BaoHiemController extends Controller
     }
 
     public function updateHopDongBaoHiem(Request $request) {
-        if (empty($request->id) || empty($request->eid_guest_baohiem) || empty($request->edonViBaoHiem) || empty($request->eloaiHinhBaoHiem)) {
+        if (empty($request->id) || empty($request->eid_guest_baohiem) || empty($request->edonViBaoHiem) || empty($request->eloaiHinhBaoHiem) || empty($request->engayKetThuc)) {
             return response()->json([
                 'type' => 'error',
                 'message' => 'Vui lòng điền đầy đủ các thông tin bắt buộc!',
