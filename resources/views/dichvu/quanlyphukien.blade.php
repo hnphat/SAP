@@ -177,10 +177,10 @@
                                         <option value="0" selected>Báo giá phụ kiện</option>
                                     @endif
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_baohiem'))
-                                        <option value="1">Báo giá bảo hiểm</option>
+                                        <option value="0" selected>Báo giá phụ kiện</option>
                                     @endif
                                     @if(\Illuminate\Support\Facades\Auth::user()->hasRole('nv_phukien'))
-                                        <option value="0">Báo giá phụ kiện</option>
+                                        <option value="0" selected>Báo giá phụ kiện</option>
                                     @endif
                                     </select>                              
                                 </div>        
