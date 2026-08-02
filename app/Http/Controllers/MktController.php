@@ -47,6 +47,14 @@ class MktController extends Controller
     }
 
     public function postData(Request $request) {
+        $request->validate([
+            'chonNhom'  => 'required|integer',
+            'ten'       => 'required|string|max:100',
+            'dienThoai' => 'required|string|max:20',
+            'nguonKH'   => 'nullable|string|max:250',
+            'yeuCau'    => 'nullable|string|max:1000',
+        ]);
+
         $gr = Group::find($request->chonNhom);
         $mkt = new MarketingGuest();
         $mkt->hoTen = $request->ten;
@@ -243,6 +251,11 @@ class MktController extends Controller
     }
 
     public function setGroup(Request $request) {
+        $request->validate([
+            'id'       => 'required|integer',
+            'id_group' => 'required|integer',
+        ]);
+
         $temp = MarketingGuest::find($request->id);
         $gr = Group::find($request->id_group);
         $mkt = MarketingGuest::find($request->id);
@@ -268,7 +281,7 @@ class MktController extends Controller
             $nhatKy->thoiGian = Date("H:m:s");
             $nhatKy->ghiChu = Carbon::now();
             $nhatKy->chucNang = "Kinh doanh - Khách hàng MKT";
-            $nhatKy->noiDung = "Gán khách hàng " . $temp->hoten . "; Số điện thoại: " . $temp->dienThoai . " cho nhóm " . $gr->name;
+            $nhatKy->noiDung = "Gán khách hàng " . $temp->hoTen . "; Số điện thoại: " . $temp->dienThoai . " cho nhóm " . $gr->name;
             $nhatKy->save();
             return response()->json([
                 'type' => 'info',
@@ -285,6 +298,10 @@ class MktController extends Controller
     }
 
     public function setSale(Request $request) {
+        $request->validate([
+            'id'      => 'required|integer',
+            'id_sale' => 'required|integer',
+        ]);
         $idlastest = "";
         $us = User::find($request->id_sale);
         $temp = MarketingGuest::find($request->id);

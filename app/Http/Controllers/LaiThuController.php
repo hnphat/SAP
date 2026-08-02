@@ -229,6 +229,9 @@ class LaiThuController extends Controller
     }
 
     public function postPay(Request $request) {   
+        $request->validate([
+            '_idOff'      => 'required|integer',
+        ]);
         $reg = DangKySuDung::find($request->_idOff);
         $nguoiYeuCau = User::find($reg->id_user_reg)->userDetail->surname;
         $ngayDi = $reg->time_go . " " . \HelpFunction::revertDate($reg->date_go);
@@ -301,6 +304,9 @@ class LaiThuController extends Controller
     }
 
     public function postReg(Request $request) {
+        $request->validate([
+            'tbpCheck'      => 'required|integer',
+        ]);
         $userDuyetEmail = User::find($request->tbpCheck);
         $emailDuyet = ($userDuyetEmail) ? $userDuyetEmail->email : "";
         $nguoiDuyet = ($userDuyetEmail) ? $userDuyetEmail->userDetail->surname : "";

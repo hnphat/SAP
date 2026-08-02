@@ -649,6 +649,15 @@ class NhanSuController extends Controller
     }
 
     public function chiTietThemPhep(Request $request) {
+        $request->validate([
+            'idUserXin' => 'required|integer',
+            'loaiPhep' => 'required',
+            'ngayXin' => 'required',
+            'thangXin' => 'required',
+            'namXin' => 'required',
+            'nguoiDuyet' => 'required|integer',
+            'lyDo' => 'required'
+        ]);
         $userDuyetEmail = User::find($request->nguoiDuyet);
         $emailDuyet = $userDuyetEmail->email;
         $loaiPhepEmail = LoaiPhep::find($request->loaiPhep)->tenPhep;
@@ -1290,6 +1299,10 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhep(Request $request) {
+        $request->validate([
+            'id' => 'required|integer'
+        ]);
+        
         $check = XinPhep::where('id',$request->id)->first();
         $ngays = $check->ngay . "/" . $check->thang . "/" . $check->nam;
         $nhanvien = $check->user->userDetail->surname;

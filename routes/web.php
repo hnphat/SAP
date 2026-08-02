@@ -410,8 +410,8 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
     Route::group(['prefix' => 'reg'], function(){
         Route::get('list','LaiThuController@showReg')->name('laithu.reg');
         Route::get('list/pay','LaiThuController@showPay')->name('laithu.pay');
-        Route::post('post','LaiThuController@postReg')->name('reg.post');
-        Route::post('pay','LaiThuController@postPay')->name('reg.pay.post');
+        Route::post('post','LaiThuController@postReg')->middleware(['throttle:2,1', 'throttle:5,60'])->name('reg.post');
+        Route::post('pay','LaiThuController@postPay')->middleware(['throttle:2,1', 'throttle:5,60'])->name('reg.pay.post');
         Route::post('del','LaiThuController@delReg');
         Route::get('pay/{id}','LaiThuController@pay');
     });
@@ -607,7 +607,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::get('chitiet/ajax/getnhanvien','NhanSuController@chiTietGetNhanVien');
         Route::post('chitiet/ajax/getnhanvieninfo','NhanSuController@chiTietGetNhanVienInfo');
         Route::get('chitiet/ajax/getnhanvienroom','NhanSuController@chiTietGetNhanVienRoom');
-        Route::post('chitiet/ajax/themphep','NhanSuController@chiTietThemPhep');
+        Route::post('chitiet/ajax/themphep','NhanSuController@chiTietThemPhep')->middleware(['throttle:2,1', 'throttle:5,60']);
 
         // xin phép
         Route::get('xinphep','NhanSuController@xinPhepGetList')->name('xinphep.panel');
@@ -623,7 +623,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // phê duyệt phép
         Route::get('pheduyet','NhanSuController@pheDuyetGetList')->name('pheduyet.panel')->middleware(['f_nhansupheduyet']);
         // Route::get('pheduyet/ajax/getlist','NhanSuController@pheDuyetPhepGetList');
-        Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep');
+        Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep')->middleware(['throttle:2,1', 'throttle:5,60']);
         // Xử lý phép Server Processing
         Route::get('pheduyet/ssp/getlist','NhanSuController@pheDuyetPhepDataTable');
 
@@ -812,14 +812,14 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
 
     Route::group(['prefix' => 'marketing', 'middleware' => ['f_mkt']], function(){
         Route::get('getindex','MktController@index')->name('mkt.index');   
-        Route::post('postdata','MktController@postData');
+        Route::post('postdata','MktController@postData')->middleware(['throttle:2,1', 'throttle:5,60']);
         Route::post('loadbaocao','MktController@loadBaoCao');
         Route::post('setcounter','MktController@setCounter');
-        Route::post('setgroup','MktController@setGroup');
+        Route::post('setgroup','MktController@setGroup')->middleware(['throttle:2,1', 'throttle:5,60']);
         Route::post('deleteguest','MktController@deleteGuest');
         Route::post('revertguest','MktController@revertGuest');
         Route::post('getsalelist','MktController@getSaleList');
-        Route::post('setsale','MktController@setSale');
+        Route::post('setsale','MktController@setSale')->middleware(['throttle:2,1', 'throttle:5,60']);
         Route::post('setfail','MktController@setFail');
     });
 
