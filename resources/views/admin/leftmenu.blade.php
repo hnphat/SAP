@@ -370,12 +370,12 @@
                         @if (\Illuminate\Support\Facades\Auth::user()->hasRole('covan') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                             \Illuminate\Support\Facades\Auth::user()->hasRole('qlcovan'))
-                        <!-- <li class="nav-item">
+                        <li class="nav-item">
                             <a href="{{route('danhgia.panel')}}" class="nav-link">
                                 <i class="fas fa-caret-right nav-icon"></i>
                                 <p>Quản lý đánh giá</p>
                             </a>
-                        </li>         -->
+                        </li>        
                         @endif                                                
                     </ul>
                 </li>
