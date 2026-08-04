@@ -51,7 +51,9 @@
                                         <button id="pressImport" class="btn btn-primary" data-toggle="modal" data-target="#importModal"><span class="fas fa-file-import"></span> Nhập Excel</button>
                                     @endif
                                     <button id="btnCreateSettlement" class="btn btn-info"><span class="fas fa-file-word"></span> Tạo Quyết toán</button>
-                                    <button id="btnCustomerCare" class="btn btn-warning text-white"><span class="fas fa-headset"></span> Khách hàng cần chăm sóc</button>
+                                    @if ($data['openCallBH'] == 1) 
+                                        <button id="btnCustomerCare" class="btn btn-warning text-white"><span class="fas fa-headset"></span> Khách hàng cần chăm sóc</button>
+                                    @endif
                                     <br/><br/>
                                     
                                     <!-- Search form -->

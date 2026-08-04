@@ -623,7 +623,7 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         // phê duyệt phép
         Route::get('pheduyet','NhanSuController@pheDuyetGetList')->name('pheduyet.panel')->middleware(['f_nhansupheduyet']);
         // Route::get('pheduyet/ajax/getlist','NhanSuController@pheDuyetPhepGetList');
-        Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep')->middleware(['throttle:2,1', 'throttle:5,60']);
+        Route::post('pheduyet/ajax/pheduyet','NhanSuController@pheDuyetPhep');
         // Xử lý phép Server Processing
         Route::get('pheduyet/ssp/getlist','NhanSuController@pheDuyetPhepDataTable');
 

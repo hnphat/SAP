@@ -76,7 +76,14 @@
                                     <div class="form-group">
                                         <label>Email yêu cầu duyệt trả xe</label>
                                         <input placeholder="VD: admin@gmail.com" name="emailTraXe" class="form-control" type="text"/>
-                                    </div>                                                
+                                    </div>  
+                                    <div class="form-group">
+                                        <label>Mở cuộc gọi khai thác KH Bảo hiểm</label>
+                                        <select name="openCallBH" class="form-control">
+                                            <option value="1">Có</option>
+                                            <option value="0">Không</option>
+                                        </select>
+                                    </div>                                              
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -195,6 +202,7 @@
                         $("input[name=emailTraXe]").val(response.data.emailTraXe);
                         $("select[name=capNhatThongTin]").val(response.data.capNhatThongTin);
                         $("select[name=disableChamCongOnline]").val(response.data.disableChamCongOnline);
+                        $("select[name=openCallBH]").val(response.data.openCallBH);
                         $("select[name=mauThongBao]").val(response.data.mauThongBao);
                         $("select[name=loaiThongBao]").val(response.data.loaiThongBao);
                         $("input[name=maxRecord]").val(response.data.maxRecord);

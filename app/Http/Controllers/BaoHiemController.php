@@ -246,6 +246,8 @@ class BaoHiemController extends Controller
     }
 
     public function getHopDongBaoHiemPanel() {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true); 
         $cars = TypeCar::all();
         $guests = GuestBaoHiem::all();
         $sales = User::where('active', 1)
@@ -254,7 +256,7 @@ class BaoHiemController extends Controller
             ->pluck('userDetail')
             ->filter()
             ->sortBy('surname', SORT_NATURAL | SORT_FLAG_CASE);
-        return view('baohiem.hopdongbaohiem', compact('cars', 'guests', 'sales'));
+        return view('baohiem.hopdongbaohiem', compact('cars', 'guests', 'sales', 'data'));
     }
 
     public function getListHopDongBaoHiem(Request $request) {
