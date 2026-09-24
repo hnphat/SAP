@@ -357,8 +357,8 @@
                                             <div class="form-group">
                                                 <label>CHỌN MẪU CẦN IN</label>
                                                 <select name="mauHD" class="form-control">
-                                                    <option value="1">Hợp đồng mua bán</option>
-                                                    <option value="2">Phụ lục hợp đồng</option>
+                                                    <!-- <option value="1">Hợp đồng mua bán</option>
+                                                    <option value="2">Phụ lục hợp đồng</option> -->
                                                     <!-- <option value="3">Đề nghị thực hiện hợp đồng</option> -->
                                                     <option value="8">Worksheet</option>
                                                     <option value="4">Yêu cầu PDI</option>
