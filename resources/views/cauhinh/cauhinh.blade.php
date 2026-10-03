@@ -117,6 +117,21 @@
                                             <option value="0">Có</option>
                                         </select>
                                     </div>   
+                                    <div class="form-group">
+                                        <label>Thời hạn phê duyệt phép tối đa</label>
+                                        <select name="maxPheDuyet" class="form-control">
+                                            <option value="1">1 ngày</option>
+                                            <option value="2">2 ngày</option>
+                                            <option value="3">3 ngày</option>
+                                            <option value="4">4 ngày</option>
+                                            <option value="5">5 ngày</option>
+                                            <option value="6">6 ngày</option>
+                                            <option value="7">7 ngày</option>
+                                            <option value="8">8 ngày</option>
+                                            <option value="9">9 ngày</option>
+                                            <option value="10">10 ngày</option>
+                                        </select>
+                                    </div>   
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -201,6 +216,7 @@
                         $("input[name=emailDuyetXe]").val(response.data.emailDuyetXe);
                         $("input[name=emailTraXe]").val(response.data.emailTraXe);
                         $("select[name=capNhatThongTin]").val(response.data.capNhatThongTin);
+                        $("select[name=maxPheDuyet]").val(response.data.maxPheDuyet);
                         $("select[name=disableChamCongOnline]").val(response.data.disableChamCongOnline);
                         $("select[name=openCallBH]").val(response.data.openCallBH);
                         $("select[name=mauThongBao]").val(response.data.mauThongBao);

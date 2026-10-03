@@ -1299,6 +1299,8 @@ class NhanSuController extends Controller
     }
 
     public function pheDuyetPhep(Request $request) {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
         $request->validate([
             'id' => 'required|integer'
         ]);
@@ -1331,7 +1333,7 @@ class NhanSuController extends Controller
                 $diff = $date2_ts - $date1_ts;
                 $dateDiff = round($diff / 86400);
                 // dd($dateDiff);
-                if ($dateDiff <= 10) {
+                if ($dateDiff <= $data["maxPheDuyet"]) {
                     $flag = true;
                 }
                 // Xử lý phép năm đang có của nhân viên
@@ -1536,9 +1538,9 @@ class NhanSuController extends Controller
                                 ]);
                         } else {
                             return response()->json([
-                                "type" => "info",
+                                "type" => "warning",
                                 "code" => 500,
-                                "message" => "Không thể phê duyệt. Phép phải duyệt trước ngày xin phép tối thiểu 10 ngày!"
+                                "message" => "Không thể phê duyệt. Theo quy định phép phải duyệt trước ngày xin phép tối thiểu ".$data["maxPheDuyet"]." ngày!"
                             ]);
                         }             
                     }    
