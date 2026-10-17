@@ -173,6 +173,7 @@
                                                     <option value="5">5 chỗ</option>
                                                     <option value="6">6 chỗ</option>
                                                     <option value="7">7 chỗ</option>
+                                                    <option value="8">8 chỗ</option>
                                                     <option value="9">9 chỗ</option>
                                                 </select>
                                             </div>
@@ -264,6 +265,7 @@
                                                     <option value="5">5 chỗ</option>
                                                     <option value="6">6 chỗ</option>
                                                     <option value="7">7 chỗ</option>
+                                                    <option value="8">8 chỗ</option>
                                                     <option value="9">9 chỗ</option>
                                                 </select>
                                             </div>
