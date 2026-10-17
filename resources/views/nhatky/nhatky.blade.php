@@ -97,7 +97,14 @@
                 ],
                 processing: true,
                 serverSide: true,
-                ajax: "{{ url('management/nhatky/loadnhatky') }}",
+                searchDelay: 500,
+                ajax: {
+                    url: "{{ url('management/nhatky/loadnhatky') }}",
+                    type: "GET",
+                    error: function(xhr, error, code) {
+                        console.error('Lỗi tải dữ liệu nhật ký:', error, code);
+                    }
+                },
                 order: [[0, 'desc']],
                 columns: [
                     { "data": "id"},
@@ -109,7 +116,7 @@
                     //     } 
                       
                     // },
-                    { "data": "name" },
+                    { "data": "name", "defaultContent": "" },
                     { "data": "chucNang" },
                     { "data": "noiDung" },
                 ]

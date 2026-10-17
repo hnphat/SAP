@@ -59,16 +59,28 @@ class NhatKyController extends Controller
     }
 
     public function loadNhatKyV2(Request $request) {
-        $jsonString = file_get_contents('upload/cauhinh/app.json');
-        $data = json_decode($jsonString, true); 
         if ($request->ajax()) {
-            $nhatKy = NhatKy::select("nhat_ky.*","d.surname as name")
-            ->join("users_detail as d","nhat_ky.id_user","=","d.id_user")
-            ->orderBy('nhat_ky.id', 'desc')
-            ->take($data["maxRecord"])
-            ->get();
-            return Datatables::of($nhatKy)
-                   ->make(true);
+            $query = NhatKy::query()
+                ->leftJoin("users_detail as d", "nhat_ky.id_user", "=", "d.id_user")
+                ->select([
+                    "nhat_ky.id",
+                    "nhat_ky.ghiChu",
+                    "nhat_ky.chucNang",
+                    "nhat_ky.noiDung",
+                    "d.surname as name"
+                ]);
+
+            return Datatables::of($query)
+                ->filterColumn('id', function($q, $keyword) {
+                    $q->where('nhat_ky.id', 'like', "%{$keyword}%");
+                })
+                ->filterColumn('name', function($q, $keyword) {
+                    $q->where('d.surname', 'like', "%{$keyword}%");
+                })
+                ->orderColumn('name', function($q, $order) {
+                    $q->orderBy('d.surname', $order);
+                })
+                ->make(true);
         }
         return view('nhatky.nhatky');
     }
