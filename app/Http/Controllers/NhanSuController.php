@@ -16,6 +16,8 @@ use App\NhatKy;
 use App\BienBanKhenThuong;
 use App\ChamCongChiTiet;
 use App\ChamCongOnline;
+use App\CaLam;
+use App\PhanCaNhanVien;
 use Carbon\Carbon;
 use App\Mail\EmailXinPhep;
 use Illuminate\Support\Facades\Auth;
@@ -4196,6 +4198,17 @@ class NhanSuController extends Controller
         $_vaoChieu = $data['vaoChieu']; // Lấy giá trị này xác định buổi
         $_raChieu = $data['raChieu'];
 
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        if ($chamCongMacDinh === "0" || $chamCongMacDinh === "false") {
+            $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', Auth::user()->id)->first();
+            if ($phanCaUser && $phanCaUser->caLam) {
+                $_vaoSang = $phanCaUser->caLam->vao_sang ?: $_vaoSang;
+                $_raSang = $phanCaUser->caLam->ra_sang ?: $_raSang;
+                $_vaoChieu = $phanCaUser->caLam->vao_chieu ?: $_vaoChieu;
+                $_raChieu = $phanCaUser->caLam->ra_chieu ?: $_raChieu;
+            }
+        }
+
         $getStatusDevice = $request->statusDevice;
         $getStatusPos = $request->statusPos;
         $getBuoiChamCong = $request->buoiChamCong;
@@ -4501,6 +4514,11 @@ class NhanSuController extends Controller
         $_raSang= $data['raSang'];
         $_vaoChieu = $data['vaoChieu'];
         $_raChieu = $data['raChieu'];
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+        $soNhanVienChuaPhanCa = 0;
+
         if ($request->from) {
             $_from = \HelpFunction::revertDate($request->from);
             $result = null;        
@@ -4519,6 +4537,39 @@ class NhanSuController extends Controller
                     $obj->ngayChamCong = $arrDay[0];
                     $obj->thangChamCong = $arrDay[1];
                     $obj->namChamCong = $arrDay[2]; 
+
+                    // Xác định mốc giờ chuẩn áp dụng cho nhân viên này
+                    if ($isMacDinh) {
+                        $curVaoSang = $_vaoSang;
+                        $curRaSang = $_raSang;
+                        $curVaoChieu = $_vaoChieu;
+                        $curRaChieu = $_raChieu;
+                        $obj->tenCa = "Mặc định";
+                        $obj->chuaPhanCa = false;
+                    } else {
+                        $userPhanCa = isset($allPhanCa[$row->id]) ? $allPhanCa[$row->id] : null;
+                        if ($userPhanCa && $userPhanCa->caLam) {
+                            $curVaoSang = $userPhanCa->caLam->vao_sang ?: $_vaoSang;
+                            $curRaSang = $userPhanCa->caLam->ra_sang ?: $_raSang;
+                            $curVaoChieu = $userPhanCa->caLam->vao_chieu ?: $_vaoChieu;
+                            $curRaChieu = $userPhanCa->caLam->ra_chieu ?: $_raChieu;
+                            $obj->tenCa = $userPhanCa->caLam->ten_ca;
+                            $obj->chuaPhanCa = false;
+                        } else {
+                            $curVaoSang = $_vaoSang;
+                            $curRaSang = $_raSang;
+                            $curVaoChieu = $_vaoChieu;
+                            $curRaChieu = $_raChieu;
+                            $obj->tenCa = "Chưa phân ca";
+                            $obj->chuaPhanCa = true;
+                            $soNhanVienChuaPhanCa++;
+                        }
+                    }
+                    $obj->curVaoSang = $curVaoSang;
+                    $obj->curRaSang = $curRaSang;
+                    $obj->curVaoChieu = $curVaoChieu;
+                    $obj->curRaChieu = $curRaChieu;
+
                     $vaoSang = null;
                     $vaoSangTre = null;
                     $raSang = null;
@@ -4570,8 +4621,8 @@ class NhanSuController extends Controller
                                     switch ($row2->loaichamcong) {
                                         case 1: {
                                             $vaoSang = $row2->thoigianchamcong;
-                                            if (\HelpFunction::lonHonGioDoiChieu($vaoSang,$_vaoSang)) {
-                                                $vaoSangTre = \HelpFunction::tinhSoPhutTre($vaoSang,$_vaoSang);
+                                            if (\HelpFunction::lonHonGioDoiChieu($vaoSang, $curVaoSang)) {
+                                                $vaoSangTre = \HelpFunction::tinhSoPhutTre($vaoSang, $curVaoSang);
                                             }
                                         } break;
                                         case 2: {
@@ -4600,20 +4651,20 @@ class NhanSuController extends Controller
                                                         $raChieu = $row2->thoigianchamcong;
                                                     } else {
                                                         $vaoChieu = $row2->thoigianchamcong;
-                                                        if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
-                                                            $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                                        if (\HelpFunction::lonHonGioDoiChieu($vaoChieu, $curVaoChieu)) {
+                                                            $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu, $curVaoChieu);
                                                         }
                                                     }
                                                 } else {
                                                     $vaoChieu = $row2->thoigianchamcong;
-                                                    if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
-                                                        $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                                    if (\HelpFunction::lonHonGioDoiChieu($vaoChieu, $curVaoChieu)) {
+                                                        $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu, $curVaoChieu);
                                                     }
                                                 }
                                             } else {
                                                 $vaoChieu = $row2->thoigianchamcong;
-                                                if (\HelpFunction::lonHonGioDoiChieu($vaoChieu,$_vaoChieu)) {
-                                                    $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu,$_vaoChieu);
+                                                if (\HelpFunction::lonHonGioDoiChieu($vaoChieu, $curVaoChieu)) {
+                                                    $vaoChieuTre = \HelpFunction::tinhSoPhutTre($vaoChieu, $curVaoChieu);
                                                 }
                                             }
                                         } break;
@@ -4684,6 +4735,12 @@ class NhanSuController extends Controller
                 $caChieu = 0;
                 $treSang = 0;
                 $treChieu = 0;
+
+                $_u_vaoSang = $row->curVaoSang;
+                $_u_raSang = $row->curRaSang;
+                $_u_vaoChieu = $row->curVaoChieu;
+                $_u_raChieu = $row->curRaChieu;
+
                 // Xử lý chấm công 02 lần nếu có
                 $user = User::find($row->id);
                 if ($user->hasRole("chamcong2lan")) {
@@ -4704,22 +4761,22 @@ class NhanSuController extends Controller
                     if ($soLuong >= 2 && $congDau && $congCuoi) {
                         $layCongDau = $congDau->thoigianchamcong;
                         $layCongCuoi = $congCuoi->thoigianchamcong;
-                        $congDauTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongDau,$_raSang,$_vaoChieu);
-                        $congCuoiTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongCuoi,$_raSang,$_vaoChieu);
+                        $congDauTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongDau,$_u_raSang,$_u_vaoChieu);
+                        $congCuoiTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongCuoi,$_u_raSang,$_u_vaoChieu);
                         if ($congDauTrongKhoangNghi && $congCuoiTrongKhoangNghi) {
                             // Nhân viên chấm công cả 02 lần đều trong khoảng nghỉ
                             // không tính công
                         } else if ($congDauTrongKhoangNghi && !$congCuoiTrongKhoangNghi) {
-                            if (\HelpFunction::lonHonGioDoiChieu($layCongCuoi,$_raChieu)) {
+                            if (\HelpFunction::lonHonGioDoiChieu($layCongCuoi,$_u_raChieu)) {
                                 // Chấm công đúng
-                                $to_time = strtotime($_raChieu);
-                                $from_time = strtotime($_vaoChieu);
+                                $to_time = strtotime($_u_raChieu);
+                                $from_time = strtotime($_u_vaoChieu);
                                 $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);                              
                             } else {
                                 // Chấm công có về sớm
                                 $hasVeSom = false;
                                 $to_time = strtotime($layCongCuoi);
-                                $from_time = strtotime($_raChieu);
+                                $from_time = strtotime($_u_raChieu);
                                 $test = round(($to_time - $from_time)/60,2);
                                 if ($test < 0) {
                                     $treChieu += abs($test);
@@ -4728,59 +4785,59 @@ class NhanSuController extends Controller
 
                                 if ($treChieu) {
                                     $to_time = strtotime($layCongCuoi);
-                                    $from_time = strtotime($_vaoChieu);
+                                    $from_time = strtotime($_u_vaoChieu);
                                     $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);                  
                                 }
                             }
                         } else if (!$congDauTrongKhoangNghi && $congCuoiTrongKhoangNghi) {
-                            if (\HelpFunction::lonHonGioDoiChieu($layCongDau,$_vaoSang)) {
+                            if (\HelpFunction::lonHonGioDoiChieu($layCongDau,$_u_vaoSang)) {
                                 // Chấm công có vào trễ
                                 $hasVaoTre = false;
                                 $to_time = strtotime($layCongDau);
-                                $from_time = strtotime($_vaoSang);
+                                $from_time = strtotime($_u_vaoSang);
                                 $test = round(($to_time - $from_time)/60,2);
                                 if ($test > 0) {
                                     $treSang += $test;
                                     $hasVaoTre = true;
                                 }
                                 if ($treSang) {
-                                    $to_time = strtotime($_raSang);
+                                    $to_time = strtotime($_u_raSang);
                                     $from_time = strtotime($layCongDau);
                                     $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                 }
-                                $row->raSang = $_raSang;
+                                $row->raSang = $_u_raSang;
                             } else {
                                 // Chấm công đúng
-                                $to_time = strtotime($_raSang);
-                                $from_time = strtotime($_vaoSang);
+                                $to_time = strtotime($_u_raSang);
+                                $from_time = strtotime($_u_vaoSang);
                                 $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);                           
-                                $row->raSang = $_raSang;
-                                $row->vaoChieu = $_vaoChieu;
+                                $row->raSang = $_u_raSang;
+                                $row->vaoChieu = $_u_vaoChieu;
                             }
                         } else {
                             // Trường hợp cả 02 lần chấm công đều ngoài khoảng nghỉ
                             // Xử lý ca sáng 
                             $hasVaoTre = false;
                             $to_time = strtotime($layCongDau);
-                            $from_time = strtotime($_vaoSang);
+                            $from_time = strtotime($_u_vaoSang);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test > 0) {
                                 $treSang += $test;
                                 $hasVaoTre = true;
                             }
                             if ($treSang) {
-                                $to_time = strtotime($_raSang);
+                                $to_time = strtotime($_u_raSang);
                                 $from_time = strtotime($layCongDau);
                                 $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else {
-                                $to_time = strtotime($_raSang);
-                                $from_time = strtotime($_vaoSang);
+                                $to_time = strtotime($_u_raSang);
+                                $from_time = strtotime($_u_vaoSang);
                                 $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
                             }    
                             // Xử lý ca chiều
                             $hasVeSom = false;
                             $to_time = strtotime($layCongCuoi);
-                            $from_time = strtotime($_raChieu);
+                            $from_time = strtotime($_u_raChieu);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test < 0) {
                                 $treChieu += abs($test);
@@ -4788,15 +4845,15 @@ class NhanSuController extends Controller
                             }
                             if ($treChieu) {
                                 $to_time = strtotime($layCongCuoi);
-                                $from_time = strtotime($_vaoChieu);
+                                $from_time = strtotime($_u_vaoChieu);
                                 $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);                    
                             } else {
-                                $to_time = strtotime($_raChieu);
-                                $from_time = strtotime($_vaoChieu);
+                                $to_time = strtotime($_u_raChieu);
+                                $from_time = strtotime($_u_vaoChieu);
                                 $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                             }   
-                            $row->raSang = $_raSang;
-                            $row->vaoChieu = $_vaoChieu;
+                            $row->raSang = $_u_raSang;
+                            $row->vaoChieu = $_u_vaoChieu;
                         }
                     } else {
                         // Lỗi không lấy được công đầu hoặc cuối
@@ -4838,7 +4895,7 @@ class NhanSuController extends Controller
                         $hasVeSom = false;
 
                         $to_time = strtotime($row->vaoSang);
-                        $from_time = strtotime($_vaoSang);
+                        $from_time = strtotime($_u_vaoSang);
                         $test = round(($to_time - $from_time)/60,2);
                         if ($test > 0) {
                             $treSang += $test;
@@ -4846,7 +4903,7 @@ class NhanSuController extends Controller
                         }
 
                         $to_time = strtotime($row->raSang);
-                        $from_time = strtotime($_raSang);
+                        $from_time = strtotime($_u_raSang);
                         $test = round(($to_time - $from_time)/60,2);
                         if ($test < 0) {
                             $treSang += abs($test);
@@ -4859,17 +4916,17 @@ class NhanSuController extends Controller
                                 $from_time = strtotime($row->vaoSang);
                                 $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else if ($hasVaoTre && !$hasVeSom) {
-                                $to_time = strtotime($_raSang);
+                                $to_time = strtotime($_u_raSang);
                                 $from_time = strtotime($row->vaoSang);
                                 $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else if (!$hasVaoTre && $hasVeSom) {
                                 $to_time = strtotime($row->raSang);
-                                $from_time = strtotime($_vaoSang);
+                                $from_time = strtotime($_u_vaoSang);
                                 $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                             }
                         } else {
-                            $to_time = strtotime($_raSang);
-                            $from_time = strtotime($_vaoSang);
+                            $to_time = strtotime($_u_raSang);
+                            $from_time = strtotime($_u_vaoSang);
                             $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
                         }    
                     }
@@ -4878,7 +4935,7 @@ class NhanSuController extends Controller
                         $hasVaoTre = false;
                         $hasVeSom = false;
                         $to_time = strtotime($row->vaoChieu);
-                        $from_time = strtotime($_vaoChieu);
+                        $from_time = strtotime($_u_vaoChieu);
                         $test = round(($to_time - $from_time)/60,2);
                         if ($test > 0) {
                             $treChieu += $test;
@@ -4886,7 +4943,7 @@ class NhanSuController extends Controller
                         }
 
                         $to_time = strtotime($row->raChieu);
-                        $from_time = strtotime($_raChieu);
+                        $from_time = strtotime($_u_raChieu);
                         $test = round(($to_time - $from_time)/60,2);
                         if ($test < 0) {
                             $treChieu += abs($test);
@@ -4899,17 +4956,17 @@ class NhanSuController extends Controller
                                 $from_time = strtotime($row->vaoChieu);
                                 $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else if ($hasVaoTre && !$hasVeSom) {
-                                $to_time = strtotime($_raChieu);
+                                $to_time = strtotime($_u_raChieu);
                                 $from_time = strtotime($row->vaoChieu);
                                 $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else if (!$hasVaoTre && $hasVeSom) {
                                 $to_time = strtotime($row->raChieu);
-                                $from_time = strtotime($_vaoChieu);
+                                $from_time = strtotime($_u_vaoChieu);
                                 $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                             }                       
                         } else {
-                            $to_time = strtotime($_raChieu);
-                            $from_time = strtotime($_vaoChieu);
+                            $to_time = strtotime($_u_raChieu);
+                            $from_time = strtotime($_u_vaoChieu);
                             $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                         }    
                     }
@@ -4927,7 +4984,9 @@ class NhanSuController extends Controller
                 return response()->json([
                     'message' => 'Get list successfully!',
                     'code' => 200,
-                    'data' => $mainResult
+                    'data' => $mainResult,
+                    'isMacDinh' => $isMacDinh ? 1 : 0,
+                    'soNhanVienChuaPhanCa' => $soNhanVienChuaPhanCa
                 ]);
             } else {
                 return response()->json([
@@ -5280,6 +5339,10 @@ class NhanSuController extends Controller
         $_raSang= $data['raSang'];
         $_vaoChieu = $data['vaoChieu'];
         $_raChieu = $data['raChieu'];
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+
         if (Auth::user()->hasRole("system") || Auth::user()->hasRole("hcns")) {
         } else {
             return response()->json([
@@ -5413,6 +5476,25 @@ class NhanSuController extends Controller
                             }     
                         }
                         if ($result) {
+                            if ($isMacDinh) {
+                                $row->curVaoSang = $_vaoSang;
+                                $row->curRaSang = $_raSang;
+                                $row->curVaoChieu = $_vaoChieu;
+                                $row->curRaChieu = $_raChieu;
+                            } else {
+                                $userPhanCa = isset($allPhanCa[$row->id]) ? $allPhanCa[$row->id] : null;
+                                if ($userPhanCa && $userPhanCa->caLam) {
+                                    $row->curVaoSang = $userPhanCa->caLam->vao_sang ?: $_vaoSang;
+                                    $row->curRaSang = $userPhanCa->caLam->ra_sang ?: $_raSang;
+                                    $row->curVaoChieu = $userPhanCa->caLam->vao_chieu ?: $_vaoChieu;
+                                    $row->curRaChieu = $userPhanCa->caLam->ra_chieu ?: $_raChieu;
+                                } else {
+                                    $row->curVaoSang = $_vaoSang;
+                                    $row->curRaSang = $_raSang;
+                                    $row->curVaoChieu = $_vaoChieu;
+                                    $row->curRaChieu = $_raChieu;
+                                }
+                            }
                             $row->vaoSang = $vaoSang;
                             $row->raSang = $raSang;
                             $row->vaoChieu = $vaoChieu;
@@ -5430,6 +5512,12 @@ class NhanSuController extends Controller
                     $caChieu = 0;
                     $treSang = 0;
                     $treChieu = 0;
+
+                    $_u_vaoSang = $row->curVaoSang;
+                    $_u_raSang = $row->curRaSang;
+                    $_u_vaoChieu = $row->curVaoChieu;
+                    $_u_raChieu = $row->curRaChieu;
+
                     // Xử lý chấm công 02 lần nếu có
                     $user = User::find($row->id);
                     if ($user->hasRole("chamcong2lan")) {
@@ -5450,22 +5538,22 @@ class NhanSuController extends Controller
                         if ($soLuong >= 2 && $congDau && $congCuoi) {
                             $layCongDau = $congDau->thoigianchamcong;
                             $layCongCuoi = $congCuoi->thoigianchamcong;
-                            $congDauTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongDau,$_raSang,$_vaoChieu);
-                            $congCuoiTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongCuoi,$_raSang,$_vaoChieu);
+                            $congDauTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongDau,$_u_raSang,$_u_vaoChieu);
+                            $congCuoiTrongKhoangNghi = \HelpFunction::trongKhoangThoiGian($layCongCuoi,$_u_raSang,$_u_vaoChieu);
                             if ($congDauTrongKhoangNghi && $congCuoiTrongKhoangNghi) {
                                 // Nhân viên chấm công cả 02 lần đều trong khoảng nghỉ
                                 // không tính công
                             } else if ($congDauTrongKhoangNghi && !$congCuoiTrongKhoangNghi) {
-                                if (\HelpFunction::lonHonGioDoiChieu($layCongCuoi,$_raChieu)) {
+                                if (\HelpFunction::lonHonGioDoiChieu($layCongCuoi,$_u_raChieu)) {
                                     // Chấm công đúng
-                                    $to_time = strtotime($_raChieu);
-                                    $from_time = strtotime($_vaoChieu);
+                                    $to_time = strtotime($_u_raChieu);
+                                    $from_time = strtotime($_u_vaoChieu);
                                     $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                                 } else {
                                     // Chấm công có về sớm
                                     $hasVeSom = false;
                                     $to_time = strtotime($layCongCuoi);
-                                    $from_time = strtotime($_raChieu);
+                                    $from_time = strtotime($_u_raChieu);
                                     $test = round(($to_time - $from_time)/60,2);
                                     if ($test < 0) {
                                         $treChieu += abs($test);
@@ -5474,56 +5562,59 @@ class NhanSuController extends Controller
 
                                     if ($treChieu) {
                                         $to_time = strtotime($layCongCuoi);
-                                        $from_time = strtotime($_vaoChieu);
+                                        $from_time = strtotime($_u_vaoChieu);
                                         $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);                  
                                     }
                                 }
                             } else if (!$congDauTrongKhoangNghi && $congCuoiTrongKhoangNghi) {
-                                if (\HelpFunction::lonHonGioDoiChieu($layCongDau,$_vaoSang)) {
+                                if (\HelpFunction::lonHonGioDoiChieu($layCongDau,$_u_vaoSang)) {
                                     // Chấm công có vào trễ
                                     $hasVaoTre = false;
                                     $to_time = strtotime($layCongDau);
-                                    $from_time = strtotime($_vaoSang);
+                                    $from_time = strtotime($_u_vaoSang);
                                     $test = round(($to_time - $from_time)/60,2);
                                     if ($test > 0) {
                                         $treSang += $test;
                                         $hasVaoTre = true;
                                     }
                                     if ($treSang) {
-                                        $to_time = strtotime($_raSang);
+                                        $to_time = strtotime($_u_raSang);
                                         $from_time = strtotime($layCongDau);
                                         $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                     }
+                                    $row->raSang = $_u_raSang;
                                 } else {
                                     // Chấm công đúng
-                                    $to_time = strtotime($_raSang);
-                                    $from_time = strtotime($_vaoSang);
+                                    $to_time = strtotime($_u_raSang);
+                                    $from_time = strtotime($_u_vaoSang);
                                     $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);                           
+                                    $row->raSang = $_u_raSang;
+                                    $row->vaoChieu = $_u_vaoChieu;
                                 }
                             } else {
                                 // Trường hợp cả 02 lần chấm công đều ngoài khoảng nghỉ
                                 // Xử lý ca sáng 
                                 $hasVaoTre = false;
                                 $to_time = strtotime($layCongDau);
-                                $from_time = strtotime($_vaoSang);
+                                $from_time = strtotime($_u_vaoSang);
                                 $test = round(($to_time - $from_time)/60,2);
                                 if ($test > 0) {
                                     $treSang += $test;
                                     $hasVaoTre = true;
                                 }
                                 if ($treSang) {
-                                    $to_time = strtotime($_raSang);
+                                    $to_time = strtotime($_u_raSang);
                                     $from_time = strtotime($layCongDau);
                                     $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                 } else {
-                                    $to_time = strtotime($_raSang);
-                                    $from_time = strtotime($_vaoSang);
+                                    $to_time = strtotime($_u_raSang);
+                                    $from_time = strtotime($_u_vaoSang);
                                     $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
                                 }    
                                 // Xử lý ca chiều
                                 $hasVeSom = false;
                                 $to_time = strtotime($layCongCuoi);
-                                $from_time = strtotime($_raChieu);
+                                $from_time = strtotime($_u_raChieu);
                                 $test = round(($to_time - $from_time)/60,2);
                                 if ($test < 0) {
                                     $treChieu += abs($test);
@@ -5531,15 +5622,15 @@ class NhanSuController extends Controller
                                 }
                                 if ($treChieu) {
                                     $to_time = strtotime($layCongCuoi);
-                                    $from_time = strtotime($_vaoChieu);
+                                    $from_time = strtotime($_u_vaoChieu);
                                     $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);                    
                                 } else {
-                                    $to_time = strtotime($_raChieu);
-                                    $from_time = strtotime($_vaoChieu);
+                                    $to_time = strtotime($_u_raChieu);
+                                    $from_time = strtotime($_u_vaoChieu);
                                     $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                                 }   
-                                $row->raSang = $_raSang;
-                                $row->vaoChieu = $_vaoChieu;
+                                $row->raSang = $_u_raSang;
+                                $row->vaoChieu = $_u_vaoChieu;
                             }
                         } else {
                             // Lỗi không lấy được công đầu hoặc cuối
@@ -5581,7 +5672,7 @@ class NhanSuController extends Controller
                             $hasVeSom = false;
 
                             $to_time = strtotime($row->vaoSang);
-                            $from_time = strtotime($_vaoSang);
+                            $from_time = strtotime($_u_vaoSang);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test > 0) {
                                 $treSang += $test;
@@ -5589,7 +5680,7 @@ class NhanSuController extends Controller
                             }
 
                             $to_time = strtotime($row->raSang);
-                            $from_time = strtotime($_raSang);
+                            $from_time = strtotime($_u_raSang);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test < 0) {
                                 $treSang += abs($test);
@@ -5602,17 +5693,17 @@ class NhanSuController extends Controller
                                     $from_time = strtotime($row->vaoSang);
                                     $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                 } else if ($hasVaoTre && !$hasVeSom) {
-                                    $to_time = strtotime($_raSang);
+                                    $to_time = strtotime($_u_raSang);
                                     $from_time = strtotime($row->vaoSang);
                                     $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                 } else if (!$hasVaoTre && $hasVeSom) {
                                     $to_time = strtotime($row->raSang);
-                                    $from_time = strtotime($_vaoSang);
+                                    $from_time = strtotime($_u_vaoSang);
                                     $caSang = round(round(($to_time - $from_time)/60,2)/60,2);
                                 }
                             } else {
-                                $to_time = strtotime($_raSang);
-                                $from_time = strtotime($_vaoSang);
+                                $to_time = strtotime($_u_raSang);
+                                $from_time = strtotime($_u_vaoSang);
                                 $caSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
                             }    
                         }
@@ -5621,7 +5712,7 @@ class NhanSuController extends Controller
                             $hasVaoTre = false;
                             $hasVeSom = false;
                             $to_time = strtotime($row->vaoChieu);
-                            $from_time = strtotime($_vaoChieu);
+                            $from_time = strtotime($_u_vaoChieu);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test > 0) {
                                 $treChieu += $test;
@@ -5629,7 +5720,7 @@ class NhanSuController extends Controller
                             }
 
                             $to_time = strtotime($row->raChieu);
-                            $from_time = strtotime($_raChieu);
+                            $from_time = strtotime($_u_raChieu);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test < 0) {
                                 $treChieu += abs($test);
@@ -5642,17 +5733,17 @@ class NhanSuController extends Controller
                                     $from_time = strtotime($row->vaoChieu);
                                     $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                                 } else if ($hasVaoTre && !$hasVeSom) {
-                                    $to_time = strtotime($_raChieu);
+                                    $to_time = strtotime($_u_raChieu);
                                     $from_time = strtotime($row->vaoChieu);
                                     $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                                 } else if (!$hasVaoTre && $hasVeSom) {
                                     $to_time = strtotime($row->raChieu);
-                                    $from_time = strtotime($_vaoChieu);
+                                    $from_time = strtotime($_u_vaoChieu);
                                     $caChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                                 }                       
                             } else {
-                                $to_time = strtotime($_raChieu);
-                                $from_time = strtotime($_vaoChieu);
+                                $to_time = strtotime($_u_raChieu);
+                                $from_time = strtotime($_u_vaoChieu);
                                 $caChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                             }    
                         }
@@ -5735,5 +5826,269 @@ class NhanSuController extends Controller
 
     public function testCode(Request $request) {
         dd(\HelpFunction::trongKhoangThoiGian("12:59","12:00","13:00"));
+    }
+
+    // ==========================================
+    // QUẢN LÝ CA LÀM
+    // ==========================================
+    public function quanLyCaLam() {
+        return view("nhansu.quanlycalam");
+    }
+
+    public function quanLyCaLamGetList() {
+        $caLams = CaLam::withCount('phanCa')->orderBy('id', 'desc')->get();
+        return response()->json([
+            "type" => "success",
+            "code" => 200,
+            "message" => "Đã tải dữ liệu",
+            "data" => $caLams
+        ]);
+    }
+
+    public function quanLyCaLamPost(Request $request) {
+        $request->validate([
+            'ten_ca' => 'required',
+            'vao_sang' => 'required',
+            'ra_sang' => 'required',
+            'vao_chieu' => 'required',
+            'ra_chieu' => 'required'
+        ]);
+
+        $caLam = new CaLam();
+        $caLam->ten_ca = $request->ten_ca;
+        $caLam->vao_sang = $request->vao_sang;
+        $caLam->ra_sang = $request->ra_sang;
+        $caLam->vao_chieu = $request->vao_chieu;
+        $caLam->ra_chieu = $request->ra_chieu;
+        $caLam->ghi_chu = $request->ghi_chu;
+        $caLam->save();
+
+        if ($caLam) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->thoiGian = Date("H:i:s");
+            $nhatKy->chucNang = "Nhân sự - quản lý ca làm";
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->noiDung = "Thêm ca làm: " . $request->ten_ca . " (" . $request->vao_sang . "-" . $request->ra_sang . " | " . $request->vao_chieu . "-" . $request->ra_chieu . ")";
+            $nhatKy->save();
+
+            return response()->json([
+                "type" => "success",
+                "code" => 200,
+                "message" => "Đã thêm ca làm việc thành công!",
+                "data" => $caLam
+            ]);
+        }
+
+        return response()->json([
+            "type" => "error",
+            "code" => 500,
+            "message" => "Lỗi thêm ca làm việc!"
+        ]);
+    }
+
+    public function quanLyCaLamUpdate(Request $request) {
+        $request->validate([
+            'id' => 'required|integer',
+            'ten_ca' => 'required',
+            'vao_sang' => 'required',
+            'ra_sang' => 'required',
+            'vao_chieu' => 'required',
+            'ra_chieu' => 'required'
+        ]);
+
+        $caLam = CaLam::find($request->id);
+        if (!$caLam) {
+            return response()->json([
+                "type" => "error",
+                "code" => 404,
+                "message" => "Không tìm thấy ca làm việc!"
+            ]);
+        }
+
+        $caLam->ten_ca = $request->ten_ca;
+        $caLam->vao_sang = $request->vao_sang;
+        $caLam->ra_sang = $request->ra_sang;
+        $caLam->vao_chieu = $request->vao_chieu;
+        $caLam->ra_chieu = $request->ra_chieu;
+        $caLam->ghi_chu = $request->ghi_chu;
+        $caLam->save();
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Nhân sự - quản lý ca làm";
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->noiDung = "Cập nhật ca làm: " . $request->ten_ca;
+        $nhatKy->save();
+
+        return response()->json([
+            "type" => "success",
+            "code" => 200,
+            "message" => "Đã cập nhật ca làm việc thành công!",
+            "data" => $caLam
+        ]);
+    }
+
+    public function quanLyCaLamDelete(Request $request) {
+        $caLam = CaLam::find($request->id);
+        if (!$caLam) {
+            return response()->json([
+                "type" => "error",
+                "code" => 404,
+                "message" => "Không tìm thấy ca làm việc!"
+            ]);
+        }
+
+        $countAssigned = PhanCaNhanVien::where('id_ca_lam', $caLam->id)->count();
+        if ($countAssigned > 0) {
+            return response()->json([
+                "type" => "warning",
+                "code" => 400,
+                "message" => "Không thể xóa ca này vì đang có " . $countAssigned . " nhân viên được gán ca này! Hãy gỡ hoặc chuyển ca cho nhân viên trước."
+            ]);
+        }
+
+        $tempName = $caLam->ten_ca;
+        $caLam->delete();
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Nhân sự - quản lý ca làm";
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->noiDung = "Xóa ca làm: " . $tempName;
+        $nhatKy->save();
+
+        return response()->json([
+            "type" => "success",
+            "code" => 200,
+            "message" => "Đã xóa ca làm việc thành công!"
+        ]);
+    }
+
+    // ==========================================
+    // GHÉP CA CHẤM CÔNG
+    // ==========================================
+    public function ghepCaChamCong() {
+        $caLams = CaLam::orderBy('id', 'asc')->get();
+        return view("nhansu.ghepca", compact('caLams'));
+    }
+
+    public function ghepCaChamCongGetList(Request $request) {
+        $users = User::with(['userDetail', 'phanCa.caLam', 'nhom'])
+            ->where('active', true)
+            ->get();
+
+        $data = [];
+        $chuaPhanCaCount = 0;
+        $daPhanCaCount = 0;
+
+        foreach ($users as $u) {
+            $phanCa = $u->phanCa;
+            $hasCa = ($phanCa && $phanCa->caLam) ? true : false;
+            if ($hasCa) {
+                $daPhanCaCount++;
+            } else {
+                $chuaPhanCaCount++;
+            }
+
+            $phongBan = "";
+            if ($u->nhom && count($u->nhom) > 0) {
+                $nhomNames = [];
+                foreach ($u->nhom as $n) {
+                    $nhomNames[] = $n->name;
+                }
+                $phongBan = implode(', ', $nhomNames);
+            }
+
+            $data[] = [
+                'id' => $u->id,
+                'manv' => $u->name,
+                'hoten' => $u->userDetail ? $u->userDetail->surname : '',
+                'phongban' => $phongBan,
+                'hasRoleChamCong' => $u->hasRole('chamcong') ? 1 : 0,
+                'id_ca_lam' => $hasCa ? $phanCa->caLam->id : null,
+                'ten_ca' => $hasCa ? $phanCa->caLam->ten_ca : 'Chưa phân ca',
+                'khung_gio' => $hasCa ? ($phanCa->caLam->vao_sang . '-' . $phanCa->caLam->ra_sang . ' | ' . $phanCa->caLam->vao_chieu . '-' . $phanCa->caLam->ra_chieu) : '',
+                'da_phan_ca' => $hasCa ? 1 : 0,
+                'updated_at' => $hasCa ? Carbon::parse($phanCa->updated_at)->format('d/m/Y H:i') : ''
+            ];
+        }
+
+        return response()->json([
+            "type" => "success",
+            "code" => 200,
+            "message" => "Đã tải danh sách nhân viên",
+            "data" => $data,
+            "stats" => [
+                "tong" => count($users),
+                "daPhanCa" => $daPhanCaCount,
+                "chuaPhanCa" => $chuaPhanCaCount
+            ]
+        ]);
+    }
+
+    public function ghepCaChamCongAssign(Request $request) {
+        $request->validate([
+            'user_ids' => 'required|array|min:1',
+            'id_ca_lam' => 'required|integer|exists:ca_lam,id'
+        ]);
+
+        $caLam = CaLam::find($request->id_ca_lam);
+        if (!$caLam) {
+            return response()->json([
+                "type" => "error",
+                "code" => 404,
+                "message" => "Ca làm không tồn tại!"
+            ]);
+        }
+
+        $userIds = $request->user_ids;
+        $count = 0;
+        foreach ($userIds as $uid) {
+            PhanCaNhanVien::updateOrCreate(
+                ['id_user' => $uid],
+                ['id_ca_lam' => $caLam->id, 'ghi_chu' => $request->ghi_chu]
+            );
+            $count++;
+        }
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Nhân sự - ghép ca chấm công";
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->noiDung = "Ghép ca [" . $caLam->ten_ca . "] cho " . $count . " nhân viên";
+        $nhatKy->save();
+
+        return response()->json([
+            "type" => "success",
+            "code" => 200,
+            "message" => "Đã ghép ca [" . $caLam->ten_ca . "] cho " . $count . " nhân viên thành công!"
+        ]);
+    }
+
+    public function ghepCaChamCongRemove(Request $request) {
+        $request->validate([
+            'user_ids' => 'required|array|min:1'
+        ]);
+
+        $userIds = $request->user_ids;
+        $deleted = PhanCaNhanVien::whereIn('id_user', $userIds)->delete();
+
+        $nhatKy = new NhatKy();
+        $nhatKy->id_user = Auth::user()->id;
+        $nhatKy->thoiGian = Date("H:i:s");
+        $nhatKy->chucNang = "Nhân sự - ghép ca chấm công";
+        $nhatKy->ghiChu = Carbon::now();
+        $nhatKy->noiDung = "Gỡ ca làm việc cho " . $deleted . " nhân viên";
+        $nhatKy->save();
+
+        return response()->json([
+            "type" => "success",
+            "code" => 200,
+            "message" => "Đã gỡ ca làm việc cho " . $deleted . " nhân viên thành công!"
+        ]);
     }
 }

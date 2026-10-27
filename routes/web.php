@@ -579,6 +579,19 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('quanlyphep/ajax/post','NhanSuController@quanLyPhepPost');
         Route::post('quanlyphep/ajax/delete','NhanSuController@quanLyPhepDelete');
 
+        // Quản lý ca làm
+        Route::get('calam','NhanSuController@quanLyCaLam')->name('calam.panel')->middleware(['f_nhansu']);
+        Route::get('calam/ajax/getlist','NhanSuController@quanLyCaLamGetList');
+        Route::post('calam/ajax/post','NhanSuController@quanLyCaLamPost');
+        Route::post('calam/ajax/update','NhanSuController@quanLyCaLamUpdate');
+        Route::post('calam/ajax/delete','NhanSuController@quanLyCaLamDelete');
+
+        // Ghép ca chấm công
+        Route::get('ghepca','NhanSuController@ghepCaChamCong')->name('ghepca.panel')->middleware(['f_nhansu']);
+        Route::get('ghepca/ajax/getlist','NhanSuController@ghepCaChamCongGetList');
+        Route::post('ghepca/ajax/assign','NhanSuController@ghepCaChamCongAssign');
+        Route::post('ghepca/ajax/remove','NhanSuController@ghepCaChamCongRemove');
+
         // Chấm công online
         Route::get('chamcongonline','NhanSuController@onlineChamCong')->name('chamcong.online');
         Route::post('chamcongonline/kiemtratrangthaithietbi','NhanSuController@kiemTraTrangThaiThietBi');

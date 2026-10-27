@@ -626,6 +626,22 @@
                                     </a>
                                 </li>
                                 @endif
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('lead_chamcong') ||
+                                \Illuminate\Support\Facades\Auth::user()->hasRole('hcns'))
+                                <li class="nav-item">
+                                    <a href="{{route('calam.panel')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Quản lý ca làm</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('ghepca.panel')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Ghép ca chấm công</p>
+                                    </a>
+                                </li>
+                                @endif
                             @endif
                             <li class="nav-item">
                                 <a href="{{route('tonghop.panel')}}" class="nav-link">

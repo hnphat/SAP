@@ -47,6 +47,10 @@ class User extends Authenticatable
         return $this->hasOne('App\UsersDetail', 'id_user', 'id');
     }
 
+    public function phanCa() {
+        return $this->hasOne('App\PhanCaNhanVien', 'id_user', 'id');
+    }
+
     public function guest() {
         return $this->hasMany('App\Guest', 'id_user_create', 'id');
     }

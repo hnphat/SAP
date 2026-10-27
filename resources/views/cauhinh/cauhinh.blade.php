@@ -163,6 +163,16 @@
                                             <option value="0">Không</option>
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Chế độ tính công</label>
+                                        <select name="chamCongMacDinh" class="form-control">
+                                            <option value="1">1 - Theo mốc giờ mặc định (tệp cấu hình)</option>
+                                            <option value="0">0 - Theo ca làm được phân cho nhân viên</option>
+                                        </select>
+                                        <small class="form-text text-muted">
+                                            Chọn <strong>'0'</strong>: Hệ thống tính công theo ca làm đã ghép của từng nhân viên. Chọn <strong>'1'</strong>: Dùng mốc cố định bên trên.
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -227,6 +237,7 @@
                         $("input[name=raSang]").val(response.data.raSang);
                         $("input[name=vaoChieu]").val(response.data.vaoChieu);
                         $("input[name=raChieu]").val(response.data.raChieu);
+                        $("select[name=chamCongMacDinh]").val(response.data.chamCongMacDinh !== undefined ? response.data.chamCongMacDinh : "1");
 
                     },
                     error: function() {

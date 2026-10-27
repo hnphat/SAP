@@ -89,6 +89,13 @@
                                             </div>
                                         </div>     
                                         <hr>
+                                        <div id="alertChuaPhanCa" class="alert alert-warning font-weight-bold" style="display: none;">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span id="alertChuaPhanCaMsg"></span>
+                                            <a href="{{ route('ghepca.panel') }}" target="_blank" class="btn btn-xs btn-danger ml-2 font-weight-bold">
+                                                <i class="fas fa-user-clock mr-1"></i>Ghép ca ngay
+                                            </a>
+                                        </div>
                                         <table id="dataTable" class="display" style="width:100%">
                                             <thead>
                                                 <tr class="bg-cyan">
@@ -282,17 +289,40 @@
                     {
                         "data": null,
                         render: function(data, type, row) {                            
-                            if (row.chamcong2lan) {
-                                return "<span class='badge badge-info'>Chấm 02 lần</span>";
-                            } else if (row.nhanvienvesinh) {
-                                return "<span class='badge badge-primary'>NVVS</span>";
-                            } else {
-                                return "";
+                            let badges = "";
+                            if (row.chuaPhanCa) {
+                                badges += "<span class='badge badge-danger'>Chưa phân ca</span><br/>";
+                            } else if (row.tenCa && row.tenCa !== 'Mặc định') {
+                                badges += "<span class='badge badge-light border text-primary font-weight-bold'>Ca: " + row.tenCa + "</span><br/>";
                             }
+                            if (row.chamcong2lan) {
+                                badges += "<span class='badge badge-info'>Chấm 02 lần</span> ";
+                            } else if (row.nhanvienvesinh) {
+                                badges += "<span class='badge badge-primary'>NVVS</span> ";
+                            }
+                            return badges;
                         }
                     }
                 ]
             });
+
+            var soNVChuaPhanCaGlobal = 0;
+            var isMacDinhGlobal = 1;
+
+            table.on('xhr', function() {
+                let json = table.ajax.json();
+                if (json) {
+                    isMacDinhGlobal = json.isMacDinh !== undefined ? json.isMacDinh : 1;
+                    soNVChuaPhanCaGlobal = json.soNhanVienChuaPhanCa !== undefined ? json.soNhanVienChuaPhanCa : 0;
+                    if (isMacDinhGlobal === 0 && soNVChuaPhanCaGlobal > 0) {
+                        $("#alertChuaPhanCaMsg").html("Chế độ tính công theo ca làm đang <strong>BẬT</strong>: Hiện có <strong class='text-danger'>" + soNVChuaPhanCaGlobal + "</strong> nhân viên chưa được phân ca! Hệ thống tạm dùng mốc mặc định.");
+                        $("#alertChuaPhanCa").slideDown();
+                    } else {
+                        $("#alertChuaPhanCa").slideUp();
+                    }
+                }
+            });
+
             table.on( 'order.dt search.dt', function () {
                 table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                     cell.innerHTML = i+1;
@@ -306,10 +336,14 @@
                 table.ajax.url( urlpathcurrent + '?from=' + from).load();
             });    
             
-            // Không duyệt
+            // Lưu chấm công
             $(document).on('click','#luuChamCong',function(e){
                 let from = $("input[name=chonNgayOne]").val(); 
-                if (confirm('Xác nhận lưu dữ liệu chấm công vào CSDL?\nLưu ý: Vui lòng kiểm tra thật kỹ trước khi thực hiện thao tác này!')) {  
+                let confirmMsg = 'Xác nhận lưu dữ liệu chấm công vào CSDL?\nLưu ý: Vui lòng kiểm tra thật kỹ trước khi thực hiện thao tác này!';
+                if (isMacDinhGlobal === 0 && soNVChuaPhanCaGlobal > 0) {
+                    confirmMsg = 'CẢNH BÁO: Đang có ' + soNVChuaPhanCaGlobal + ' nhân viên chưa được phân ca làm việc!\n' + confirmMsg;
+                }
+                if (confirm(confirmMsg)) {  
                     $.ajax({
                         url: "{{url('management/nhansu/chamcongonline/luuchamcong/')}}"+ '?from=' + from,
                         type: "post",
