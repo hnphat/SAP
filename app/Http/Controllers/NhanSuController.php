@@ -5978,6 +5978,9 @@ class NhanSuController extends Controller
     public function ghepCaChamCongGetList(Request $request) {
         $users = User::with(['userDetail', 'phanCa.caLam', 'nhom'])
             ->where('active', true)
+            ->whereHas('roles', function($q) {
+                $q->where('name', 'chamcong');
+            })
             ->get();
 
         $data = [];
@@ -6007,7 +6010,7 @@ class NhanSuController extends Controller
                 'manv' => $u->name,
                 'hoten' => $u->userDetail ? $u->userDetail->surname : '',
                 'phongban' => $phongBan,
-                'hasRoleChamCong' => $u->hasRole('chamcong') ? 1 : 0,
+                'hasRoleChamCong' => 1,
                 'id_ca_lam' => $hasCa ? $phanCa->caLam->id : null,
                 'ten_ca' => $hasCa ? $phanCa->caLam->ten_ca : 'Chưa phân ca',
                 'khung_gio' => $hasCa ? ($phanCa->caLam->vao_sang . '-' . $phanCa->caLam->ra_sang . ' | ' . $phanCa->caLam->vao_chieu . '-' . $phanCa->caLam->ra_chieu) : '',
@@ -6044,9 +6047,25 @@ class NhanSuController extends Controller
             ]);
         }
 
-        $userIds = $request->user_ids;
+        // Lọc lại chỉ các nhân viên active = 1 và có role 'chamcong'
+        $validUserIds = User::whereIn('id', $request->user_ids)
+            ->where('active', true)
+            ->whereHas('roles', function($q) {
+                $q->where('name', 'chamcong');
+            })
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($validUserIds)) {
+            return response()->json([
+                "type" => "warning",
+                "code" => 400,
+                "message" => "Không có nhân viên hợp lệ (active = 1 và có quyền chấm công) để gán ca!"
+            ]);
+        }
+
         $count = 0;
-        foreach ($userIds as $uid) {
+        foreach ($validUserIds as $uid) {
             PhanCaNhanVien::updateOrCreate(
                 ['id_user' => $uid],
                 ['id_ca_lam' => $caLam->id, 'ghi_chu' => $request->ghi_chu]

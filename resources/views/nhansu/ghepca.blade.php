@@ -63,14 +63,14 @@
                         <div class="stat-card bg-info" id="cardFilterAll">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-uppercase mb-1">Tổng nhân viên đang hoạt động</h6>
+                                    <h6 class="text-uppercase mb-1">Tổng NV chấm công (active & role chamcong)</h6>
                                     <h2 class="font-weight-bold mb-0" id="statTong">0</h2>
                                 </div>
                                 <div>
                                     <i class="fas fa-users fa-3x opacity-50"></i>
                                 </div>
                             </div>
-                            <small class="text-white-50"><i class="fas fa-filter mr-1"></i>Bấm để xem tất cả</small>
+                            <small class="text-white-50"><i class="fas fa-filter mr-1"></i>Bấm để xem tất cả NV chấm công</small>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -106,7 +106,7 @@
                 <!-- Banner Cảnh báo nếu còn nhân viên chưa phân ca -->
                 <div id="alertChuaPhanCa" class="alert alert-warning alert-dismissible fade show font-weight-bold" style="display: none;" role="alert">
                     <i class="fas fa-exclamation-triangle fa-lg mr-2"></i>
-                    <span>CẢNH BÁO: Hiện có <span id="alertCountChuaPhanCa" class="badge badge-danger text-md">0</span> nhân viên đang hoạt động (active = 1) chưa được phân ca làm việc! Vui lòng chọn và ghép ca làm cho những nhân viên này để hệ thống tính công chính xác.</span>
+                    <span>CẢNH BÁO: Hiện có <span id="alertCountChuaPhanCa" class="badge badge-danger text-md">0</span> nhân viên có quyền chấm công đang hoạt động (active = 1 & có role 'chamcong') chưa được phân ca làm việc! Vui lòng chọn và ghép ca làm cho những nhân viên này để hệ thống tính công chính xác.</span>
                 </div>
 
                 <!-- Bảng Danh sách và Thanh công cụ thao tác hàng loạt -->
