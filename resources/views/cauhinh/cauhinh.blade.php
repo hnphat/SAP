@@ -173,6 +173,13 @@
                                             Chọn <strong>'0'</strong>: Hệ thống tính công theo ca làm đã ghép của từng nhân viên. Chọn <strong>'1'</strong>: Dùng mốc cố định bên trên.
                                         </small>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Ngày bắt đầu áp dụng phân ca</label>
+                                        <input type="date" name="ngayApDungPhanCa" class="form-control" value="2026-10-28">
+                                        <small class="form-text text-muted">
+                                            Khi chọn chế độ <strong>'0'</strong>, các ngày làm việc hoặc xin phép <strong>trước ngày này</strong> sẽ luôn được giữ nguyên theo mốc giờ mặc định cũ.
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -238,6 +245,7 @@
                         $("input[name=vaoChieu]").val(response.data.vaoChieu);
                         $("input[name=raChieu]").val(response.data.raChieu);
                         $("select[name=chamCongMacDinh]").val(response.data.chamCongMacDinh !== undefined ? response.data.chamCongMacDinh : "1");
+                        $("input[name=ngayApDungPhanCa]").val(response.data.ngayApDungPhanCa !== undefined ? response.data.ngayApDungPhanCa : "2026-10-28");
 
                     },
                     error: function() {

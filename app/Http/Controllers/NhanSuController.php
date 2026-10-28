@@ -100,8 +100,11 @@ class NhanSuController extends Controller
         $time_4 = $data['raChieu'];
 
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
         $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
-        if (!$isMacDinh) {
+        $curDateStr = sprintf('%04d-%02d-%02d', (int)$request->nam, (int)$request->thang, (int)$request->ngay);
+        $isTruocNgayApDung = ($curDateStr < $ngayApDungPhanCa);
+        if (!$isMacDinh && !$isTruocNgayApDung) {
             $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', $request->idUser)->first();
             if ($phanCaUser && $phanCaUser->caLam) {
                 $time_1 = $phanCaUser->caLam->vao_sang ?: $time_1;
@@ -780,9 +783,12 @@ class NhanSuController extends Controller
             $_raChieu = $data['raChieu'];
 
             $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
             $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
 
-            if ($isMacDinh) {
+            $ngayXinStr = sprintf('%04d-%02d-%02d', (int)$request->namXin, (int)$request->thangXin, (int)$request->ngayXin);
+            $isTruocNgayApDung = ($ngayXinStr < $ngayApDungPhanCa);
+            if ($isMacDinh || $isTruocNgayApDung) {
                 $gioCaSang = 4;
                 $gioCaChieu = 4;
             } else {
@@ -2069,9 +2075,13 @@ class NhanSuController extends Controller
         $time_4 = $data['raChieu'];
 
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
         $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
-        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
-        $allUsersByName = !$isMacDinh ? User::select('id', 'name')->get()->keyBy(function($item) {
+        $curDateStr = sprintf('%04d-%02d-%02d', (int)$nam, (int)$thang, (int)$ngay);
+        $isTruocNgayApDung = ($curDateStr < $ngayApDungPhanCa);
+        $usePhanCa = (!$isMacDinh && !$isTruocNgayApDung);
+        $allPhanCa = $usePhanCa ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+        $allUsersByName = $usePhanCa ? User::select('id', 'name')->get()->keyBy(function($item) {
             return strtolower($item->name);
         }) : null;
 
@@ -3283,8 +3293,12 @@ class NhanSuController extends Controller
         $_raChieu = $data['raChieu'];
 
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
         $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
-        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+        $curDateStr = sprintf('%04d-%02d-%02d', (int)$request->nam, (int)$request->thang, (int)$request->ngay);
+        $isTruocNgayApDung = ($curDateStr < $ngayApDungPhanCa);
+        $usePhanCa = (!$isMacDinh && !$isTruocNgayApDung);
+        $allPhanCa = $usePhanCa ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
 
         $idPhepCoLuong = LoaiPhep::where('maPhep','L')->first();      
         $idPhepKhongLuong = LoaiPhep::where('maPhep','LKL')->first();         
@@ -3332,7 +3346,7 @@ class NhanSuController extends Controller
                     $xinPhep->vaoChieu = $idPhepKhongLuong->maPhep;  
                     $xinPhep->save();                    
                 } else {
-                    if ($isMacDinh) {
+                    if ($isMacDinh || $isTruocNgayApDung) {
                         $gioCaSang = 4;
                         $gioCaChieu = 4;
                     } else {
@@ -3433,17 +3447,17 @@ class NhanSuController extends Controller
         $_raChieu = $data['raChieu'];
 
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
         $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
         $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
 
         $user = User::all();
         foreach($user as $row) {
             if ($row->hasRole('chamcong') && $row->active == true) {
-                // Xác định giờ công chuẩn ca sáng và ca chiều
-                if ($isMacDinh) {
-                    $gioCaSang = 4;
-                    $gioCaChieu = 4;
-                } else {
+                // Xác định giờ công ca mới nếu có phân ca
+                $gioCaSangMoi = 4;
+                $gioCaChieuMoi = 4;
+                if (!$isMacDinh) {
                     $userPhanCa = isset($allPhanCa[$row->id]) ? $allPhanCa[$row->id] : null;
                     if ($userPhanCa && $userPhanCa->caLam) {
                         $curVaoSang = $userPhanCa->caLam->vao_sang ?: $_vaoSang;
@@ -3456,22 +3470,29 @@ class NhanSuController extends Controller
                         $curVaoChieu = $_vaoChieu;
                         $curRaChieu = $_raChieu;
                     }
-
                     $to_time_s = strtotime($curRaSang);
                     $from_time_s = strtotime($curVaoSang);
-                    $gioCaSang = ($to_time_s > $from_time_s) ? round(($to_time_s - $from_time_s) / 3600, 2) : 4;
-
+                    $gioCaSangMoi = ($to_time_s > $from_time_s) ? round(($to_time_s - $from_time_s) / 3600, 2) : 4;
                     $to_time_c = strtotime($curRaChieu);
                     $from_time_c = strtotime($curVaoChieu);
-                    $gioCaChieu = ($to_time_c > $from_time_c) ? round(($to_time_c - $from_time_c) / 3600, 2) : 4;
+                    $gioCaChieuMoi = ($to_time_c > $from_time_c) ? round(($to_time_c - $from_time_c) / 3600, 2) : 4;
                 }
-
                 $tongPhep = XinPhep::where([
                     ['id_user','=',$row->id],
                     ['thang','=',$thang],
                     ['nam','=',$nam]
                 ])->get();
                 foreach($tongPhep as $phep) {
+                    // Kiểm tra mốc ngày áp dụng phân ca: trước ngày cấu hình thì luôn dùng ca mặc định (4h/4h)
+                    $phepDateStr = sprintf('%04d-%02d-%02d', (int)$phep->nam, (int)$phep->thang, (int)$phep->ngay);
+                    $isTruocNgayApDung = ($phepDateStr < $ngayApDungPhanCa);
+                    if ($isMacDinh || $isTruocNgayApDung) {
+                        $gioCaSang = 4;
+                        $gioCaChieu = 4;
+                    } else {
+                        $gioCaSang = $gioCaSangMoi;
+                        $gioCaChieu = $gioCaChieuMoi;
+                    }
                     $chiTiet = ChamCongChiTiet::select("*")
                     ->where([
                         ['id_user','=',$phep->id_user],
@@ -4351,7 +4372,9 @@ class NhanSuController extends Controller
         $_raChieu = $data['raChieu'];
 
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
-        if ($chamCongMacDinh === "0" || $chamCongMacDinh === "false") {
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
+        $todayStr = date('Y-m-d');
+        if (($chamCongMacDinh === "0" || $chamCongMacDinh === "false") && $todayStr >= $ngayApDungPhanCa) {
             $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', Auth::user()->id)->first();
             if ($phanCaUser && $phanCaUser->caLam) {
                 $_vaoSang = $phanCaUser->caLam->vao_sang ?: $_vaoSang;
@@ -4667,6 +4690,7 @@ class NhanSuController extends Controller
         $_vaoChieu = $data['vaoChieu'];
         $_raChieu = $data['raChieu'];
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
         $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
         $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
         $soNhanVienChuaPhanCa = 0;
@@ -4688,10 +4712,12 @@ class NhanSuController extends Controller
                     $arrDay = explode('-', $_from);
                     $obj->ngayChamCong = $arrDay[0];
                     $obj->thangChamCong = $arrDay[1];
+                    $curDateStr = sprintf('%04d-%02d-%02d', (int)$arrDay[2], (int)$arrDay[1], (int)$arrDay[0]);
+                    $isTruocNgayApDung = ($curDateStr < $ngayApDungPhanCa);
                     $obj->namChamCong = $arrDay[2]; 
 
                     // Xác định mốc giờ chuẩn áp dụng cho nhân viên này
-                    if ($isMacDinh) {
+                    if ($isMacDinh || $isTruocNgayApDung) {
                         $curVaoSang = $_vaoSang;
                         $curRaSang = $_raSang;
                         $curVaoChieu = $_vaoChieu;
@@ -5492,6 +5518,7 @@ class NhanSuController extends Controller
         $_vaoChieu = $data['vaoChieu'];
         $_raChieu = $data['raChieu'];
         $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $ngayApDungPhanCa = isset($data['ngayApDungPhanCa']) && !empty($data['ngayApDungPhanCa']) ? $data['ngayApDungPhanCa'] : "2026-10-28";
         $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
         $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
 
@@ -5628,7 +5655,9 @@ class NhanSuController extends Controller
                             }     
                         }
                         if ($result) {
-                            if ($isMacDinh) {
+                            $curDateStr = sprintf('%04d-%02d-%02d', (int)$nam, (int)$thang, (int)$ngay);
+                            $isTruocNgayApDung = ($curDateStr < $ngayApDungPhanCa);
+                            if ($isMacDinh || $isTruocNgayApDung) {
                                 $row->curVaoSang = $_vaoSang;
                                 $row->curRaSang = $_raSang;
                                 $row->curVaoChieu = $_vaoChieu;
