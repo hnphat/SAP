@@ -99,6 +99,18 @@ class NhanSuController extends Controller
         $time_3 = $data['vaoChieu'];
         $time_4 = $data['raChieu'];
 
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+        if (!$isMacDinh) {
+            $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', $request->idUser)->first();
+            if ($phanCaUser && $phanCaUser->caLam) {
+                $time_1 = $phanCaUser->caLam->vao_sang ?: $time_1;
+                $time_2 = $phanCaUser->caLam->ra_sang ?: $time_2;
+                $time_3 = $phanCaUser->caLam->vao_chieu ?: $time_3;
+                $time_4 = $phanCaUser->caLam->ra_chieu ?: $time_4;
+            }
+        }
+
         $gioSang = 0;
         $gioChieu = 0;
         $treSang = 0;
@@ -760,6 +772,42 @@ class NhanSuController extends Controller
             }
             //--------------
     
+            $jsonString = file_get_contents('upload/cauhinh/app.json');
+            $data = json_decode($jsonString, true);
+            $_vaoSang = $data['vaoSang'];
+            $_raSang = $data['raSang'];
+            $_vaoChieu = $data['vaoChieu'];
+            $_raChieu = $data['raChieu'];
+
+            $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+            $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+
+            if ($isMacDinh) {
+                $gioCaSang = 4;
+                $gioCaChieu = 4;
+            } else {
+                $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', $request->idUserXin)->first();
+                if ($phanCaUser && $phanCaUser->caLam) {
+                    $curVaoSang = $phanCaUser->caLam->vao_sang ?: $_vaoSang;
+                    $curRaSang = $phanCaUser->caLam->ra_sang ?: $_raSang;
+                    $curVaoChieu = $phanCaUser->caLam->vao_chieu ?: $_vaoChieu;
+                    $curRaChieu = $phanCaUser->caLam->ra_chieu ?: $_raChieu;
+                } else {
+                    $curVaoSang = $_vaoSang;
+                    $curRaSang = $_raSang;
+                    $curVaoChieu = $_vaoChieu;
+                    $curRaChieu = $_raChieu;
+                }
+
+                $to_time_s = strtotime($curRaSang);
+                $from_time_s = strtotime($curVaoSang);
+                $gioCaSang = ($to_time_s > $from_time_s) ? round(($to_time_s - $from_time_s) / 3600, 2) : 4;
+
+                $to_time_c = strtotime($curRaChieu);
+                $from_time_c = strtotime($curVaoChieu);
+                $gioCaChieu = ($to_time_c > $from_time_c) ? round(($to_time_c - $from_time_c) / 3600, 2) : 4;
+            }
+
             $chiTiet = ChamCongChiTiet::select("*")
             ->where([
                 ['id_user','=',$request->idUserXin],
@@ -785,18 +833,18 @@ class NhanSuController extends Controller
                         {
                             switch($request->buoi){
                                 case 'SANG': {
-                                    $gioSang = 4;
+                                    $gioSang = $gioCaSang;
                                     $treSang = 0;
                                     $vaoSang = $loaiPhep->maPhep;
                                 } break;
                                 case 'CHIEU': {
-                                    $gioChieu = 4;
+                                    $gioChieu = $gioCaChieu;
                                     $treChieu = 0;
                                     $vaoChieu = $loaiPhep->maPhep;
                                 } break;
                                 case 'CANGAY': {
-                                    $gioSang = 4;
-                                    $gioChieu = 4;
+                                    $gioSang = $gioCaSang;
+                                    $gioChieu = $gioCaChieu;
                                     $treSang = 0;
                                     $treChieu = 0;
                                     $vaoSang = $loaiPhep->maPhep;
@@ -810,12 +858,12 @@ class NhanSuController extends Controller
                         {
                             switch($request->buoi){
                                 case 'SANG': {
-                                    $gioSang = 4;
+                                    $gioSang = $gioCaSang;
                                     $treSang = 0;
                                     $vaoSang = $loaiPhep->maPhep;
                                 } break;
                                 case 'CHIEU': {
-                                    $gioChieu = 4;
+                                    $gioChieu = $gioCaChieu;
                                     $treChieu = 0;
                                     $vaoChieu = $loaiPhep->maPhep;
                                 } break;
@@ -827,18 +875,18 @@ class NhanSuController extends Controller
                         {
                             switch($request->buoi){
                                 case 'SANG': {
-                                    $gioSang = 4;
+                                    $gioSang = $gioCaSang;
                                     $treSang = 0;
                                     $vaoSang = $loaiPhep->maPhep;
                                 } break;
                                 case 'CHIEU': {
-                                    $gioChieu = 4;
+                                    $gioChieu = $gioCaChieu;
                                     $treChieu = 0;
                                     $vaoChieu = $loaiPhep->maPhep;
                                 } break;
                                 case 'CANGAY': {
-                                    $gioSang = 4;
-                                    $gioChieu = 4;
+                                    $gioSang = $gioCaSang;
+                                    $gioChieu = $gioCaChieu;
                                     $treSang = 0;
                                     $treChieu = 0;
                                     $vaoSang = $loaiPhep->maPhep;
@@ -918,16 +966,16 @@ class NhanSuController extends Controller
                         {
                             switch($request->buoi){
                                 case 'SANG': {
-                                    $gioSang = 4;    
+                                    $gioSang = $gioCaSang;    
                                     $vaoSang = $loaiPhep->maPhep;                           
                                 } break;
                                 case 'CHIEU': {
-                                    $gioChieu = 4;    
+                                    $gioChieu = $gioCaChieu;    
                                     $vaoChieu = $loaiPhep->maPhep;                            
                                 } break;
                                 case 'CANGAY': {
-                                    $gioSang = 4;
-                                    $gioChieu = 4;  
+                                    $gioSang = $gioCaSang;
+                                    $gioChieu = $gioCaChieu;  
                                     $vaoSang = $loaiPhep->maPhep;   
                                     $vaoChieu = $loaiPhep->maPhep;                              
                                 } break;
@@ -939,16 +987,16 @@ class NhanSuController extends Controller
                         {
                             switch($request->buoi){
                                 case 'SANG': {
-                                    $gioSang = 4;     
+                                    $gioSang = $gioCaSang;     
                                     $vaoSang = $loaiPhep->maPhep;                                  
                                 } break;
                                 case 'CHIEU': {
-                                    $gioChieu = 4;       
+                                    $gioChieu = $gioCaChieu;       
                                     $vaoChieu = $loaiPhep->maPhep;                                  
                                 } break;
                                 case 'CANGAY': {
-                                    $gioSang = 4;
-                                    $gioChieu = 4;     
+                                    $gioSang = $gioCaSang;
+                                    $gioChieu = $gioCaChieu;     
                                     $vaoSang = $loaiPhep->maPhep;   
                                     $vaoChieu = $loaiPhep->maPhep;                                
                                 } break;
@@ -2020,6 +2068,13 @@ class NhanSuController extends Controller
         $time_3 = $data['vaoChieu'];
         $time_4 = $data['raChieu'];
 
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+        $allUsersByName = !$isMacDinh ? User::select('id', 'name')->get()->keyBy(function($item) {
+            return strtolower($item->name);
+        }) : null;
+
         if($request->hasFile('excel')){
             $theArray = Excel::toArray([], request()->file('excel'));  
             if (strval($theArray[0][0][0]) == "CODE" && strval($theArray[0][0][1]) == "NAME" && 
@@ -2037,7 +2092,17 @@ class NhanSuController extends Controller
                         $arrsub = [];
                         $tempcode = "";
                     }
-                    array_push($arrsub, $theArray[0][$i][0], $theArray[0][$i][3], $time_2, $time_3, $theArray[0][$i][4]);
+                    $uName = strtolower($theArray[0][$i][0]);
+                    $bh_time_2 = $time_2;
+                    $bh_time_3 = $time_3;
+                    if (!$isMacDinh && isset($allUsersByName[$uName])) {
+                        $uId = $allUsersByName[$uName]->id;
+                        if (isset($allPhanCa[$uId]) && $allPhanCa[$uId]->caLam) {
+                            $bh_time_2 = $allPhanCa[$uId]->caLam->ra_sang ?: $time_2;
+                            $bh_time_3 = $allPhanCa[$uId]->caLam->vao_chieu ?: $time_3;
+                        }
+                    }
+                    array_push($arrsub, $theArray[0][$i][0], $theArray[0][$i][3], $bh_time_2, $bh_time_3, $theArray[0][$i][4]);
                     array_push($arrmain, $arrsub);
                     $arrsub = [];
                     } else {
@@ -2069,51 +2134,62 @@ class NhanSuController extends Controller
                     $treChieu = 0;
                     $user = User::where('name',strtolower($row[0]))->first();
                     if ($user != null) {
+                        $u_time_1 = $time_1;
+                        $u_time_2 = $time_2;
+                        $u_time_3 = $time_3;
+                        $u_time_4 = $time_4;
+                        if (!$isMacDinh && isset($allPhanCa[$user->id]) && $allPhanCa[$user->id]->caLam) {
+                            $u_time_1 = $allPhanCa[$user->id]->caLam->vao_sang ?: $time_1;
+                            $u_time_2 = $allPhanCa[$user->id]->caLam->ra_sang ?: $time_2;
+                            $u_time_3 = $allPhanCa[$user->id]->caLam->vao_chieu ?: $time_3;
+                            $u_time_4 = $allPhanCa[$user->id]->caLam->ra_chieu ?: $time_4;
+                        }
+
                         // Xử lý ca sáng
                         if ($row[1] != null && $row[2] != null) {
                             $to_time = strtotime($row[1]);
-                            $from_time = strtotime($time_1);
+                            $from_time = strtotime($u_time_1);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test > 0)
                                 $treSang += $test;
             
                             $to_time = strtotime($row[2]);
-                            $from_time = strtotime($time_2);
+                            $from_time = strtotime($u_time_2);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test < 0)
                                 $treSang += abs($test);
             
                             if ($treSang == 0) {
-                                $to_time = strtotime($time_2);
-                                $from_time = strtotime($time_1);
+                                $to_time = strtotime($u_time_2);
+                                $from_time = strtotime($u_time_1);
                                 $gioSang = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else {
-                                $to_time = strtotime($time_2);
-                                $from_time = strtotime($time_1);
+                                $to_time = strtotime($u_time_2);
+                                $from_time = strtotime($u_time_1);
                                 $gioSang = round((round(($to_time - $from_time)/60,2) - $treSang)/60,2);
                             }    
                         }
                         // Xử lý ca chiều
                         if ($row[3] != null && $row[4] != null) {
                             $to_time = strtotime($row[3]);
-                            $from_time = strtotime($time_3);
+                            $from_time = strtotime($u_time_3);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test > 0)
                                 $treChieu += $test;
             
                             $to_time = strtotime($row[4]);
-                            $from_time = strtotime($time_4);
+                            $from_time = strtotime($u_time_4);
                             $test = round(($to_time - $from_time)/60,2);
                             if ($test < 0)
                                 $treChieu += abs($test);
             
                             if ($treChieu == 0) {
-                                $to_time = strtotime($time_4);
-                                $from_time = strtotime($time_3);
+                                $to_time = strtotime($u_time_4);
+                                $from_time = strtotime($u_time_3);
                                 $gioChieu = round(round(($to_time - $from_time)/60,2)/60,2);
                             } else {
-                                $to_time = strtotime($time_4);
-                                $from_time = strtotime($time_3);
+                                $to_time = strtotime($u_time_4);
+                                $from_time = strtotime($u_time_3);
                                 $gioChieu = round((round(($to_time - $from_time)/60,2) - $treChieu)/60,2);
                             }    
                         }
@@ -3199,6 +3275,17 @@ class NhanSuController extends Controller
     }
 
     public function themAllNhanVienTangCa(Request $request) {
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
+        $_vaoSang = $data['vaoSang'];
+        $_raSang = $data['raSang'];
+        $_vaoChieu = $data['vaoChieu'];
+        $_raChieu = $data['raChieu'];
+
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+
         $idPhepCoLuong = LoaiPhep::where('maPhep','L')->first();      
         $idPhepKhongLuong = LoaiPhep::where('maPhep','LKL')->first();         
         $user = User::select("*")->where('active', true)->get();
@@ -3237,7 +3324,7 @@ class NhanSuController extends Controller
                     $xinPhep->lyDo = "Tự động cập nhật từ hệ thống";
                     $xinPhep->user_duyet = true;
                     $xinPhep->duyet = true;
-                    $xinPhep->gioSang =0;
+                    $xinPhep->gioSang = 0;
                     $xinPhep->gioChieu = 0;
                     $xinPhep->treSang = 0;
                     $xinPhep->treChieu= 0;
@@ -3245,6 +3332,32 @@ class NhanSuController extends Controller
                     $xinPhep->vaoChieu = $idPhepKhongLuong->maPhep;  
                     $xinPhep->save();                    
                 } else {
+                    if ($isMacDinh) {
+                        $gioCaSang = 4;
+                        $gioCaChieu = 4;
+                    } else {
+                        $userPhanCa = isset($allPhanCa[$row->id]) ? $allPhanCa[$row->id] : null;
+                        if ($userPhanCa && $userPhanCa->caLam) {
+                            $curVaoSang = $userPhanCa->caLam->vao_sang ?: $_vaoSang;
+                            $curRaSang = $userPhanCa->caLam->ra_sang ?: $_raSang;
+                            $curVaoChieu = $userPhanCa->caLam->vao_chieu ?: $_vaoChieu;
+                            $curRaChieu = $userPhanCa->caLam->ra_chieu ?: $_raChieu;
+                        } else {
+                            $curVaoSang = $_vaoSang;
+                            $curRaSang = $_raSang;
+                            $curVaoChieu = $_vaoChieu;
+                            $curRaChieu = $_raChieu;
+                        }
+
+                        $to_time_s = strtotime($curRaSang);
+                        $from_time_s = strtotime($curVaoSang);
+                        $gioCaSang = ($to_time_s > $from_time_s) ? round(($to_time_s - $from_time_s) / 3600, 2) : 4;
+
+                        $to_time_c = strtotime($curRaChieu);
+                        $from_time_c = strtotime($curVaoChieu);
+                        $gioCaChieu = ($to_time_c > $from_time_c) ? round(($to_time_c - $from_time_c) / 3600, 2) : 4;
+                    }
+
                     $xinPhep = new XinPhep();
                     $xinPhep->id_user = $row->id;
                     $xinPhep->id_phep = $idPhepCoLuong->id;
@@ -3256,8 +3369,8 @@ class NhanSuController extends Controller
                     $xinPhep->lyDo = "Tự động cập nhật từ hệ thống";
                     $xinPhep->user_duyet = true;
                     $xinPhep->duyet = true;
-                    $xinPhep->gioSang = 4;
-                    $xinPhep->gioChieu = 4;
+                    $xinPhep->gioSang = $gioCaSang;
+                    $xinPhep->gioChieu = $gioCaChieu;
                     $xinPhep->treSang = 0;
                     $xinPhep->treChieu= 0;
                     $xinPhep->vaoSang = $idPhepCoLuong->maPhep;   
@@ -3311,9 +3424,48 @@ class NhanSuController extends Controller
     public function dongBoPhep(Request $request) {
         $thang = $request->thang;
         $nam = $request->nam;
+
+        $jsonString = file_get_contents('upload/cauhinh/app.json');
+        $data = json_decode($jsonString, true);
+        $_vaoSang = $data['vaoSang'];
+        $_raSang = $data['raSang'];
+        $_vaoChieu = $data['vaoChieu'];
+        $_raChieu = $data['raChieu'];
+
+        $chamCongMacDinh = isset($data['chamCongMacDinh']) ? strval($data['chamCongMacDinh']) : "1";
+        $isMacDinh = ($chamCongMacDinh === "1" || $chamCongMacDinh === "true" || $chamCongMacDinh === 1 || $chamCongMacDinh === true);
+        $allPhanCa = !$isMacDinh ? PhanCaNhanVien::with('caLam')->get()->keyBy('id_user') : null;
+
         $user = User::all();
         foreach($user as $row) {
             if ($row->hasRole('chamcong') && $row->active == true) {
+                // Xác định giờ công chuẩn ca sáng và ca chiều
+                if ($isMacDinh) {
+                    $gioCaSang = 4;
+                    $gioCaChieu = 4;
+                } else {
+                    $userPhanCa = isset($allPhanCa[$row->id]) ? $allPhanCa[$row->id] : null;
+                    if ($userPhanCa && $userPhanCa->caLam) {
+                        $curVaoSang = $userPhanCa->caLam->vao_sang ?: $_vaoSang;
+                        $curRaSang = $userPhanCa->caLam->ra_sang ?: $_raSang;
+                        $curVaoChieu = $userPhanCa->caLam->vao_chieu ?: $_vaoChieu;
+                        $curRaChieu = $userPhanCa->caLam->ra_chieu ?: $_raChieu;
+                    } else {
+                        $curVaoSang = $_vaoSang;
+                        $curRaSang = $_raSang;
+                        $curVaoChieu = $_vaoChieu;
+                        $curRaChieu = $_raChieu;
+                    }
+
+                    $to_time_s = strtotime($curRaSang);
+                    $from_time_s = strtotime($curVaoSang);
+                    $gioCaSang = ($to_time_s > $from_time_s) ? round(($to_time_s - $from_time_s) / 3600, 2) : 4;
+
+                    $to_time_c = strtotime($curRaChieu);
+                    $from_time_c = strtotime($curVaoChieu);
+                    $gioCaChieu = ($to_time_c > $from_time_c) ? round(($to_time_c - $from_time_c) / 3600, 2) : 4;
+                }
+
                 $tongPhep = XinPhep::where([
                     ['id_user','=',$row->id],
                     ['thang','=',$thang],
@@ -3345,18 +3497,18 @@ class NhanSuController extends Controller
                                 {
                                     switch($phep->buoi){
                                         case 'SANG': {
-                                            $gioSang = 4;
+                                            $gioSang = $gioCaSang;
                                             $treSang = 0;
                                             $vaoSang = $loaiPhep->maPhep;
                                         } break;
                                         case 'CHIEU': {
-                                            $gioChieu = 4;
+                                            $gioChieu = $gioCaChieu;
                                             $treChieu = 0;
                                             $vaoChieu = $loaiPhep->maPhep;
                                         } break;
                                         case 'CANGAY': {
-                                            $gioSang = 4;
-                                            $gioChieu = 4;
+                                            $gioSang = $gioCaSang;
+                                            $gioChieu = $gioCaChieu;
                                             $treSang = 0;
                                             $treChieu = 0;
                                             $vaoSang = $loaiPhep->maPhep;
@@ -3370,12 +3522,12 @@ class NhanSuController extends Controller
                                 {
                                     switch($phep->buoi){
                                         case 'SANG': {
-                                            $gioSang = 4;
+                                            $gioSang = $gioCaSang;
                                             $treSang = 0;
                                             $vaoSang = $loaiPhep->maPhep;
                                         } break;
                                         case 'CHIEU': {
-                                            $gioChieu = 4;
+                                            $gioChieu = $gioCaChieu;
                                             $treChieu = 0;
                                             $vaoChieu = $loaiPhep->maPhep;
                                         } break;
@@ -3387,18 +3539,18 @@ class NhanSuController extends Controller
                                 {
                                     switch($phep->buoi){
                                         case 'SANG': {
-                                            $gioSang = 4;
+                                            $gioSang = $gioCaSang;
                                             $treSang = 0;
                                             $vaoSang = $loaiPhep->maPhep;
                                         } break;
                                         case 'CHIEU': {
-                                            $gioChieu = 4;
+                                            $gioChieu = $gioCaChieu;
                                             $treChieu = 0;
                                             $vaoChieu = $loaiPhep->maPhep;
                                         } break;
                                         case 'CANGAY': {
-                                            $gioSang = 4;
-                                            $gioChieu = 4;
+                                            $gioSang = $gioCaSang;
+                                            $gioChieu = $gioCaChieu;
                                             $treSang = 0;
                                             $treChieu = 0;
                                             $vaoSang = $loaiPhep->maPhep;
@@ -3453,16 +3605,16 @@ class NhanSuController extends Controller
                                 {
                                     switch($phep->buoi){
                                         case 'SANG': {
-                                            $gioSang = 4;    
+                                            $gioSang = $gioCaSang;    
                                             $vaoSang = $loaiPhep->maPhep;                           
                                         } break;
                                         case 'CHIEU': {
-                                            $gioChieu = 4;    
+                                            $gioChieu = $gioCaChieu;    
                                             $vaoChieu = $loaiPhep->maPhep;                            
                                         } break;
                                         case 'CANGAY': {
-                                            $gioSang = 4;
-                                            $gioChieu = 4;  
+                                            $gioSang = $gioCaSang;
+                                            $gioChieu = $gioCaChieu;  
                                             $vaoSang = $loaiPhep->maPhep;   
                                             $vaoChieu = $loaiPhep->maPhep;                              
                                         } break;
@@ -3474,16 +3626,16 @@ class NhanSuController extends Controller
                                 {
                                     switch($phep->buoi){
                                         case 'SANG': {
-                                            $gioSang = 4;     
+                                            $gioSang = $gioCaSang;     
                                             $vaoSang = $loaiPhep->maPhep;                                  
                                         } break;
                                         case 'CHIEU': {
-                                            $gioChieu = 4;       
+                                            $gioChieu = $gioCaChieu;       
                                             $vaoChieu = $loaiPhep->maPhep;                                  
                                         } break;
                                         case 'CANGAY': {
-                                            $gioSang = 4;
-                                            $gioChieu = 4;     
+                                            $gioSang = $gioCaSang;
+                                            $gioChieu = $gioCaChieu;     
                                             $vaoSang = $loaiPhep->maPhep;   
                                             $vaoChieu = $loaiPhep->maPhep;                                
                                         } break;
