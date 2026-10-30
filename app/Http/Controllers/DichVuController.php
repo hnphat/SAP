@@ -5388,4 +5388,55 @@ class DichVuController extends Controller
             ]);
         }        
     }
-}  
+
+    public function getDanhMucGoc(Request $request) {
+        if (Auth::user()->hasRole('system') || Auth::user()->hasRole('dm_phukien') || Auth::user()->hasRole('ketoan')) {
+            $all = BHPK::select("*")->whereNotNull('loaiXe')->orderBy('id', 'desc')->get();
+            $allCodes = $all->pluck('ma')->toArray();
+            $codeSet = array_flip($allCodes);
+
+            // Tìm các tiền tố (mã gốc tiềm năng) có ít nhất 1 mã con kết thúc bằng _<số>
+            $candidates = [];
+            foreach ($allCodes as $code) {
+                if (preg_match('/^(.*?)(_\d+)$/', $code, $m)) {
+                    $parent = $m[1];
+                    if (isset($codeSet[$parent])) {
+                        $candidates[$parent] = true;
+                    }
+                }
+            }
+
+            // Loại bỏ các mã cha mà chính nó lại là mã con của một mã khác (loại bỏ trường hợp map lặp, ví dụ: ..._19_35)
+            $trueRoots = [];
+            foreach (array_keys($candidates) as $code) {
+                if (preg_match('/^(.*?)(_\d+)$/', $code, $m) && isset($candidates[$m[1]])) {
+                    continue;
+                }
+                $trueRoots[$code] = true;
+            }
+
+            // Gán thông tin xe tương thích với DataTable
+            $typeCars = TypeCar::all()->keyBy('id');
+            $arr = [];
+            foreach ($all as $row) {
+                if (isset($trueRoots[$row->ma])) {
+                    $row->idcar = $row->loaiXe;
+                    $row->namecar = isset($typeCars[$row->loaiXe]) ? $typeCars[$row->loaiXe]->name : null;
+                    $arr[] = $row;
+                }
+            }
+
+            return response()->json([
+                'message' => 'Lấy danh mục gốc thành công!',
+                'code' => 200,
+                'data' => $arr
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Error get Database from server!',
+                'code' => 500,
+                'data' => null
+            ]);
+        }
+    }
+}

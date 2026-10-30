@@ -78,6 +78,7 @@
                                         <button id="hiddenAll" class="btn btn-warning" data-toggle="modal" data-target="#hiddenModal">Ẩn/Hiện Danh Mục</button>
                                         &nbsp;
                                         <button id="raSoat" class="btn btn-secondary">Rà soát chênh lệch giá, công KTV</button>
+                                        <button id="layDanhMucGoc" class="btn btn-info">Lấy danh mục gốc (MAP)</button>
                                         <!-- &nbsp;
                                         <button id="danhMucMoRong" class="btn btn-info">Danh mục phụ kiện (mở rộng)</button> -->
                                         <br/><br/>
@@ -917,6 +918,11 @@
                 let to = $("input[name=chonNgayTwo]").val();               
                 let urlpathcurrent = "{{ url('management/dichvu/hangmucwithdate') }}";
                 table.ajax.url( urlpathcurrent + '?from=' + from + "&to=" + to).load();
+            });
+
+            $("#layDanhMucGoc").click(function(){
+                let urlpathgoc = "{{ url('management/dichvu/hangmuc/danhmucgoc') }}";
+                table.ajax.url(urlpathgoc).load();
             });
         });
 
