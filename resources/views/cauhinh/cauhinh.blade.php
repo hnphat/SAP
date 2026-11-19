@@ -180,6 +180,13 @@
                                             Khi chọn chế độ <strong>'0'</strong>, các ngày làm việc hoặc xin phép <strong>trước ngày này</strong> sẽ luôn được giữ nguyên theo mốc giờ mặc định cũ.
                                         </small>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="text-danger">Ngày bắt đầu áp dụng Thu hồi khách hàng</label>
+                                        <input type="date" name="ngayApDungThuHoi" class="form-control" value="2026-11-19">
+                                        <small class="form-text text-muted">
+                                            Các khách hàng tạo <strong>trước ngày này</strong> sẽ không bao giờ bị thu hồi tự động. Chỉ áp dụng quy tắc thu hồi (CS 1h, 24h, 72h) cho khách hàng tạo từ ngày này trở đi.
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                             <button id="saveConfig" class="btn btn-info">LƯU CẤU HÌNH</button>
@@ -246,6 +253,7 @@
                         $("input[name=raChieu]").val(response.data.raChieu);
                         $("select[name=chamCongMacDinh]").val(response.data.chamCongMacDinh !== undefined ? response.data.chamCongMacDinh : "1");
                         $("input[name=ngayApDungPhanCa]").val(response.data.ngayApDungPhanCa !== undefined ? response.data.ngayApDungPhanCa : "2026-10-28");
+                        $("input[name=ngayApDungThuHoi]").val(response.data.ngayApDungThuHoi !== undefined ? response.data.ngayApDungThuHoi : "2026-11-19");
 
                     },
                     error: function() {

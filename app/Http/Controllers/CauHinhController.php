@@ -44,6 +44,7 @@ class CauHinhController extends Controller
         $data["raChieu"] = $request->raChieu;              
         $data["chamCongMacDinh"] = $request->chamCongMacDinh !== null ? $request->chamCongMacDinh : "1";
         $data["ngayApDungPhanCa"] = $request->ngayApDungPhanCa !== null ? $request->ngayApDungPhanCa : "2026-10-28";
+        $data["ngayApDungThuHoi"] = $request->ngayApDungThuHoi !== null ? $request->ngayApDungThuHoi : "2026-11-19";
 
         $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
         file_put_contents('upload/cauhinh/app.json', $newJsonString);

@@ -67,6 +67,7 @@ class GuestController extends Controller
     }
 
     public function getList(Request $request) {
+        $this->scanKhachHangThuHoi();
         if ($request->from && $request->to) {
             $_from = \HelpFunction::revertDate($request->from);
             $_to = \HelpFunction::revertDate($request->to);
@@ -81,6 +82,7 @@ class GuestController extends Controller
                     $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->where('id_user_create', $sale)
                     ->orderBy('guest.id', 'desc')
                     ->get();
@@ -88,6 +90,7 @@ class GuestController extends Controller
                     $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->orderBy('guest.id', 'desc')
                     ->get();
                }            
@@ -100,6 +103,7 @@ class GuestController extends Controller
                     $resultSale = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->where('id_user_create', $row->id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
@@ -124,6 +128,7 @@ class GuestController extends Controller
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->where('id_user_create', Auth::user()->id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
@@ -135,6 +140,7 @@ class GuestController extends Controller
                     $temple = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->where('id_user_create', $row->user_id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
@@ -186,12 +192,14 @@ class GuestController extends Controller
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->orderBy('guest.id', 'desc')
                     ->get();
             elseif (Auth::user()->hasRole('sale'))
                 $result = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->where('id_user_create', Auth::user()->id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
@@ -203,6 +211,7 @@ class GuestController extends Controller
                     $temple = Guest::select('t.name as type','guest.*','guest.id as idmaster', 'd.surname as sale')
                     ->join('type_guest as t','guest.id_type_guest','=','t.id')
                     ->join('users_detail as d','d.id_user','=','guest.id_user_create')
+                    ->where(function($q) { $q->where('guest.is_thu_hoi', 0)->orWhereNull('guest.is_thu_hoi'); })
                     ->where('id_user_create', $row->user_id)
                     ->orderBy('guest.id', 'desc')
                     ->get();
@@ -2033,6 +2042,200 @@ class GuestController extends Controller
                     'code' => 500
                 ]);
             }
+        }
+    }
+
+    // ==========================================
+    // KHÁCH HÀNG THU HỒI (SLA CS 1h - 24h - 72h)
+    // ==========================================
+
+    public function scanKhachHangThuHoi() {
+        $ngayApDung = '2026-11-19';
+        if (file_exists('upload/cauhinh/app.json')) {
+            $jsonString = file_get_contents('upload/cauhinh/app.json');
+            $data = json_decode($jsonString, true);
+            if (isset($data['ngayApDungThuHoi']) && !empty($data['ngayApDungThuHoi'])) {
+                $ngayApDung = $data['ngayApDungThuHoi'];
+            }
+        }
+
+        $guests = Guest::where(function($q) {
+                $q->where('is_thu_hoi', 0)->orWhereNull('is_thu_hoi');
+            })
+            ->where('created_at', '>=', $ngayApDung . ' 00:00:00')
+            ->where('lenHopDong', 0)
+            ->where(function($q) {
+                $q->whereNull('danhGia')->orWhere('danhGia', '!=', 'FAIL');
+            })
+            ->get();
+
+        $now = time();
+
+        foreach ($guests as $guest) {
+            $hasHopDong = HopDong::where('id_guest', $guest->id)->exists();
+            if ($hasHopDong) {
+                continue;
+            }
+
+            $createdAtTime = strtotime($guest->created_at);
+            $diffHours = ($now - $createdAtTime) / 3600;
+
+            $cs1_empty = ($guest->cs1 === null || trim($guest->cs1) === '');
+            $cs2_empty = ($guest->cs2 === null || trim($guest->cs2) === '');
+            $cs3_empty = ($guest->cs3 === null || trim($guest->cs3) === '');
+
+            $canThuHoi = false;
+            $lyDo = '';
+
+            // Mốc 1: Quá 1 giờ chưa có CS 1h
+            if ($diffHours >= 1 && $cs1_empty) {
+                $canThuHoi = true;
+                $lyDo = 'Khách hàng này chưa được chăm sóc trong 01 giờ đầu tiên';
+            }
+            // Mốc 2: CS 1h đã có, quá 25 giờ (1h + 24h) chưa có CS 24h
+            elseif (!$cs1_empty && $diffHours >= 25 && $cs2_empty) {
+                $canThuHoi = true;
+                $lyDo = 'Khách hàng này chưa được chăm sóc trong 24 giờ';
+            }
+            // Mốc 3: CS 1h & CS 24h đã có, quá 97 giờ (25h + 72h) chưa có CS 72h
+            elseif (!$cs1_empty && !$cs2_empty && $diffHours >= 97 && $cs3_empty) {
+                $canThuHoi = true;
+                $lyDo = 'Khách hàng này chưa được chăm sóc trong 72 giờ';
+            }
+
+            if ($canThuHoi) {
+                $guest->is_thu_hoi = 1;
+                $guest->ly_do_thu_hoi = $lyDo;
+                $guest->thoi_gian_thu_hoi = Carbon::now();
+                $guest->sale_cu_id = $guest->id_user_create;
+                $guest->cs1 = null;
+                $guest->cs2 = null;
+                $guest->cs3 = null;
+                $guest->cs4 = null;
+                $guest->cs5 = null;
+                $guest->cs6 = null;
+                $guest->save();
+            }
+        }
+    }
+
+    public function getKhachHangThuHoi() {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss')) {
+            abort(403, 'Bạn không có quyền truy cập trang này!');
+        }
+
+        $typecar = TypeCar::select("*")->where("isShow", true)->get();
+        $type_guest = TypeGuest::all();
+
+        $arr = [];
+        $user = User::all();
+        foreach($user as $row){            
+            if ($row->hasRole('sale') && $row->active) {
+                array_push($arr, [
+                    'id' => $row->id,
+                    'code' => $row->name,
+                    'name' => $row->userDetail ? $row->userDetail->surname : $row->name
+                ]);
+            }
+        }
+
+        return view('page.khachhang_thuhoi', [
+            'typeGuest' => $type_guest,
+            'groupsale' => $arr,
+            'typecar' => $typecar
+        ]);
+    }
+
+    public function getDataKhachHangThuHoi(Request $request) {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss')) {
+            return response()->json([
+                'message' => 'Không có quyền truy cập!',
+                'code' => 403,
+                'data' => []
+            ]);
+        }
+
+        // Tự động quét cập nhật các khách hàng quá hạn
+        $this->scanKhachHangThuHoi();
+
+        $query = Guest::select('t.name as type', 'guest.*', 'guest.id as idmaster', 'd.surname as sale')
+            ->join('type_guest as t', 'guest.id_type_guest', '=', 't.id')
+            ->leftJoin('users_detail as d', 'd.id_user', '=', 'guest.id_user_create')
+            ->where('guest.is_thu_hoi', 1);
+
+        if ($request->from && $request->to) {
+            $_from = \HelpFunction::revertDate($request->from);
+            $_to = \HelpFunction::revertDate($request->to);
+            $query->whereDate('guest.thoi_gian_thu_hoi', '>=', $_from)
+                  ->whereDate('guest.thoi_gian_thu_hoi', '<=', $_to);
+        }
+
+        $result = $query->orderBy('guest.thoi_gian_thu_hoi', 'desc')
+                        ->orderBy('guest.id', 'desc')
+                        ->get();
+
+        return response()->json([
+            'message' => 'Get list successfully!',
+            'code' => 200,
+            'data' => $result
+        ]);
+    }
+
+    public function postChuyenKhachThuHoi(Request $request) {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss')) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Bạn không có quyền chuyển khách!',
+                'code' => 403
+            ]);
+        }
+
+        $temp = Guest::find($request->idguest);
+        $user = User::find($request->idsale);
+
+        if (!$temp || !$user) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Dữ liệu khách hàng hoặc nhân viên sale không hợp lệ!',
+                'code' => 400
+            ]);
+        }
+
+        $temp->id_user_create = $request->idsale;
+        $temp->created_at = Carbon::now(); // Reset mốc tính hạn CS 1h, 24h, 72h cho sale mới
+        $temp->is_thu_hoi = 0;
+        $temp->ly_do_thu_hoi = null;
+        $temp->thoi_gian_thu_hoi = null;
+        $temp->cs1 = null;
+        $temp->cs2 = null;
+        $temp->cs3 = null;
+        $temp->cs4 = null;
+        $temp->cs5 = null;
+        $temp->cs6 = null;
+        $result = $temp->save();
+
+        if ($result) {
+            $nhatKy = new NhatKy();
+            $nhatKy->id_user = Auth::user()->id;
+            $nhatKy->chucNang = "Kinh doanh - Khách hàng Thu hồi";
+            $nhatKy->thoiGian = Date("H:i:s");
+            $nhatKy->ghiChu = Carbon::now();
+            $nhatKy->noiDung = "Chuyển khách hàng từ BỂ THU HỒI: Họ tên: "
+                . $temp->name . " Điện thoại: " . $temp->phone . " Địa chỉ: " . $temp->address 
+                . " cho sale " . ($user->userDetail ? $user->userDetail->surname : $user->name);
+            $nhatKy->save();
+
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Chuyển khách hàng ' . $temp->name . ' cho ' . ($user->userDetail ? $user->userDetail->surname : $user->name) . ' thành công!',
+                'code' => 200
+            ]);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Lỗi cập nhật dữ liệu máy chủ!',
+                'code' => 500
+            ]);
         }
     }
 }

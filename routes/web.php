@@ -162,6 +162,11 @@ Route::group(['prefix' => 'management', 'middleware' => 'login'], function(){
         Route::post('update','GuestController@update');
         Route::post('update/moving','GuestController@updateMoving');
 
+        // Khách hàng thu hồi
+        Route::get('thuhoi/list', 'GuestController@getKhachHangThuHoi')->name('guest.thuhoi.list');
+        Route::get('thuhoi/getdata', 'GuestController@getDataKhachHangThuHoi');
+        Route::post('thuhoi/chuyenkhach', 'GuestController@postChuyenKhachThuHoi');
+
         // khách hàng - sale - hợp đồng
         Route::get('listkhachhangsalehd','GuestController@getKhachHangSaleHD')->name('khachhang.sale.hd')->middleware(['f_mkt']);
         Route::post('loadbaocaokhachhang','GuestController@loadBaoCaoKhachhangSaleHD');  

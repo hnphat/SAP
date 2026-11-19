@@ -210,6 +210,16 @@
                                         <p>Quản lý khách hàng</p>
                                     </a>
                                 </li>                                
+                                @if (\Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('tpkd') ||
+                                 \Illuminate\Support\Facades\Auth::user()->hasRole('boss'))
+                                <li class="nav-item">
+                                    <a href="{{route('guest.thuhoi.list')}}" class="nav-link">
+                                        <i class="fas fa-caret-right nav-icon"></i>
+                                        <p>Khách hàng Thu hồi</p>
+                                    </a>
+                                </li>
+                                @endif
                                 @if (\Illuminate\Support\Facades\Auth::user()->hasRole('sale') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('system') ||
                                  \Illuminate\Support\Facades\Auth::user()->hasRole('adminsale'))
