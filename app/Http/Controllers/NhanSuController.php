@@ -105,7 +105,7 @@ class NhanSuController extends Controller
         $curDateStr = sprintf('%04d-%02d-%02d', (int)$request->nam, (int)$request->thang, (int)$request->ngay);
         $isTruocNgayApDung = ($curDateStr < $ngayApDungPhanCa);
         if (!$isMacDinh && !$isTruocNgayApDung) {
-            $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', $request->idUser)->first();
+            $phanCaUser = PhanCaNhanVien::with('caLam')->where('id_user', $request->idUser ?: $request->id)->first();
             if ($phanCaUser && $phanCaUser->caLam) {
                 $time_1 = $phanCaUser->caLam->vao_sang ?: $time_1;
                 $time_2 = $phanCaUser->caLam->ra_sang ?: $time_2;
