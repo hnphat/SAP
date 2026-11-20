@@ -2120,7 +2120,7 @@ class GuestController extends Controller
     }
 
     public function getKhachHangThuHoi() {
-        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss')) {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss') && !Auth::user()->hasRole('adminsale')) {
             abort(403, 'Bạn không có quyền truy cập trang này!');
         }
 
@@ -2147,7 +2147,7 @@ class GuestController extends Controller
     }
 
     public function getDataKhachHangThuHoi(Request $request) {
-        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss')) {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss') && !Auth::user()->hasRole('adminsale')) {
             return response()->json([
                 'message' => 'Không có quyền truy cập!',
                 'code' => 403,
@@ -2159,15 +2159,31 @@ class GuestController extends Controller
         $this->scanKhachHangThuHoi();
 
         $query = Guest::select('t.name as type', 'guest.*', 'guest.id as idmaster', 'd.surname as sale')
-            ->join('type_guest as t', 'guest.id_type_guest', '=', 't.id')
+            ->leftJoin('type_guest as t', 'guest.id_type_guest', '=', 't.id')
             ->leftJoin('users_detail as d', 'd.id_user', '=', 'guest.id_user_create')
             ->where('guest.is_thu_hoi', 1);
 
         if ($request->from && $request->to) {
-            $_from = \HelpFunction::revertDate($request->from);
-            $_to = \HelpFunction::revertDate($request->to);
-            $query->whereDate('guest.thoi_gian_thu_hoi', '>=', $_from)
-                  ->whereDate('guest.thoi_gian_thu_hoi', '<=', $_to);
+            $fromStr = trim($request->from);
+            $toStr = trim($request->to);
+            if (preg_match('/^\d{2}-\d{2}-\d{4}$/', $fromStr)) {
+                $fromStr = \HelpFunction::revertDate($fromStr);
+            }
+            if (preg_match('/^\d{2}-\d{2}-\d{4}$/', $toStr)) {
+                $toStr = \HelpFunction::revertDate($toStr);
+            }
+
+            $query->where(function($q) use ($fromStr, $toStr) {
+                $q->where(function($sub) use ($fromStr, $toStr) {
+                    $sub->whereNotNull('guest.thoi_gian_thu_hoi')
+                        ->whereDate('guest.thoi_gian_thu_hoi', '>=', $fromStr)
+                        ->whereDate('guest.thoi_gian_thu_hoi', '<=', $toStr);
+                })->orWhere(function($sub) use ($fromStr, $toStr) {
+                    $sub->whereNull('guest.thoi_gian_thu_hoi')
+                        ->whereDate('guest.created_at', '>=', $fromStr)
+                        ->whereDate('guest.created_at', '<=', $toStr);
+                });
+            });
         }
 
         $result = $query->orderBy('guest.thoi_gian_thu_hoi', 'desc')
@@ -2182,7 +2198,7 @@ class GuestController extends Controller
     }
 
     public function postChuyenKhachThuHoi(Request $request) {
-        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss')) {
+        if (!Auth::user()->hasRole('system') && !Auth::user()->hasRole('tpkd') && !Auth::user()->hasRole('boss') && !Auth::user()->hasRole('adminsale')) {
             return response()->json([
                 'type' => 'error',
                 'message' => 'Bạn không có quyền chuyển khách!',

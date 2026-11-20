@@ -190,8 +190,12 @@
                         "data": null,
                         render: function(data, type, row) {
                             if (!row.created_at) return "";
-                            let arr = row.created_at.split("T")[0].split("-");
-                            return arr[2] + "-" + arr[1] + "-" + arr[0];
+                            let dateOnly = row.created_at.replace("T", " ").split(" ")[0];
+                            let arr = dateOnly.split("-");
+                            if (arr.length === 3) {
+                                return arr[2] + "-" + arr[1] + "-" + arr[0];
+                            }
+                            return row.created_at;
                         } 
                     },
                     { "data": "idmaster" },
